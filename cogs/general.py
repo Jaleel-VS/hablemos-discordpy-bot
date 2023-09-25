@@ -7,8 +7,12 @@ REPO = 'https://github.com/Jaleel-VS/hablemos-discordpy-bot'
 DPY = 'https://discordpy.readthedocs.io/en/latest/'
 PYC = 'https://github.com/Pycord-Development/pycord'
 INVITE_LINK = "https://discord.com/api/oauth2/authorize?client_id=808377026330492941&permissions=3072&scope=bot"
+from dotenv import load_dotenv
+import os
 
-from hablemos import PREFIX as PREFIX_
+load_dotenv('.env')
+
+PREFIX_ = os.getenv('PREFIX') 
 
 
 def green_embed(text):
@@ -114,5 +118,5 @@ class General(BaseCog):
         await ctx.send(f"The bot is in the following guilds: \n {my_guilds}")
 
 
-def setup(bot):
-    bot.add_cog(General(bot))
+async def setup(bot):
+    await bot.add_cog(General(bot))
