@@ -114,5 +114,5 @@ class General(BaseCog):
         await ctx.send(f"The bot is in the following guilds: \n {my_guilds}")
 
 
-def setup(bot):
-    bot.add_cog(General(bot))
+async def setup(bot):
+    await bot.add_cog(General(bot))

@@ -1,18 +1,20 @@
 from os import path
-import imgkit
+# import imgkit
+from html2image import Html2Image
 
-dir_path = path.dirname(path.dirname(path.realpath(__file__)))
+dir_path = path.dirname(path.dirname(path.realpath(__file__))).replace('\\', '/')
 
 
 def create_image(user_name, user_avatar, message_content):
-    options = {
-        'format': 'png',
-        'crop-w': '644',
-        'encoding': "UTF-8",
-        'enable-local-file-access': None,
-        'transparent': None,
+    # options formerly for imgkit package
 
-    }
+    # options = {
+    #     'format': 'png',
+    #     'crop-w': '644',
+    #     'encoding': "UTF-8",
+    #     'enable-local-file-access': None,
+    #     'transparent': None,
+    # }
 
     font_size = ""
 
@@ -33,38 +35,38 @@ def create_image(user_name, user_avatar, message_content):
             <style>   
         @font-face {{
         font-family: 'Satisfy Pro';
-        src: url('{dir_path}/quote_generator_helper/fonts/SatisfyPro.eot');
-        src: url('{dir_path}/quote_generator_helper/fonts/SatisfyPro.eot?#iefix') format('embedded-opentype'),
-             url('{dir_path}/quote_generator_helper/fonts/SatisfyPro.woff') format('woff'),
-             url('{dir_path}/quote_generator_helper/fonts/SatisfyPro.ttf') format('truetype'),
-             url('{dir_path}/quote_generator_helper/fonts/SatisfyPro.svg#SatisfyPro') format('svg');
+        src: url('file:///{dir_path}/quote_generator_helper/fonts/SatisfyPro.eot');
+        src: url('file:///{dir_path}/quote_generator_helper/fonts/SatisfyPro.eot?#iefix') format('embedded-opentype'),
+             url('file:///{dir_path}/quote_generator_helper/fonts/SatisfyPro.woff') format('woff'),
+             url('file:///{dir_path}/quote_generator_helper/fonts/SatisfyPro.ttf') format('truetype'),
+             url('file:///{dir_path}/quote_generator_helper/fonts/SatisfyPro.svg#SatisfyPro') format('svg');
         font-weight: normal;
         font-style: normal;
         font-display: swap;
-    }}
-    
-    @font-face {{
+        }}
+        
+        @font-face {{
         font-family: 'Helvetica Neue';
-        src: url('{dir_path}/quote_generator_helper/fonts/HelveticaNeue-Roman.eot');
-        src: url('{dir_path}/quote_generator_helper/fonts/HelveticaNeue-Roman.eot?#iefix') format('embedded-opentype'),
-             url('{dir_path}/quote_generator_helper/fonts/HelveticaNeue-Roman.woff') format('woff'),
-             url('{dir_path}/quote_generator_helper/fonts/HelveticaNeue-Roman.ttf') format('truetype'),
-             url('{dir_path}/quote_generator_helper/fonts/HelveticaNeue-Roman.svg#HelveticaNeue-Roman') format('svg');
+        src: url('file:///{dir_path}/quote_generator_helper/fonts/HelveticaNeue-Roman.eot');
+        src: url('file:///{dir_path}/quote_generator_helper/fonts/HelveticaNeue-Roman.eot?#iefix') format('embedded-opentype'),
+             url('file:///{dir_path}/quote_generator_helper/fonts/HelveticaNeue-Roman.woff') format('woff'),
+             url('file:///{dir_path}/quote_generator_helper/fonts/HelveticaNeue-Roman.ttf') format('truetype'),
+             url('file:///{dir_path}/quote_generator_helper/fonts/HelveticaNeue-Roman.svg#HelveticaNeue-Roman') format('svg');
         font-weight: normal;
         font-style: normal;
         font-display: swap;
-    }}
-
-       .fullquote {{
-    border: 4px solid #fff;
-    border-radius: 10px;
-    width: 634px;
-    height: 256px;
-
-    -webkit-filter: grayscale(100%);
-    filter: grayscale(100%);
-    }}
-    
+        }}
+        
+        .fullquote {{
+        border: 4px solid #fff;
+        border-radius: 10px;
+        width: 634px;
+        height: 256px;
+        
+        -webkit-filter: grayscale(100%);
+        filter: grayscale(100%);
+        }}
+        
         .myImage {{
             float: left;
             
@@ -73,9 +75,12 @@ def create_image(user_name, user_avatar, message_content):
             border-bottom-left-radius: 8px;
             width: 258px;
             height: 256px;
+            
+            -webkit-filter: grayscale(100%);
+            filter: grayscale(100%);
             }}
-
-
+        
+        
             .quote {{
                 float: left;
                 width: 376px;
@@ -86,31 +91,31 @@ def create_image(user_name, user_avatar, message_content):
                 border-left: 0;
                 border-top-right-radius: 8px;
                 border-bottom-right-radius: 8px;
-
+        
                 text-align: center;
                 }}
-
+        
             .main-quote {{
             color: white;
             font-family: Helvetica Neue;
             font-size: {font_size};
             padding: 10% 5% 5%;
             }}
-
+        
             
-
+        
             .author {{
                 color: white;
                 font-size: 135%;
                 font-family: Satisfy Pro;
             }}
-
+        
             span:after,
         span:before{{
             content:"\\00a0\\00a0\\00a0\\00a0\\00a0";
             text-decoration:line-through;
         }}
-
+        
         body {{
             padding: 0;
             margin: 0;
@@ -130,16 +135,20 @@ def create_image(user_name, user_avatar, message_content):
             </html>
         '''
 
-    img_path = f"{dir_path}/quote_generator_helper/picture.png"
-    imgkit.from_string(html, img_path, options=options)
+    img_dir = f"{dir_path}/quote_generator_helper"
+    img_path = f"{img_dir}/picture.png"
+    hti = Html2Image(size=(644, 264), output_path=img_dir)
+    try:
+        hti.screenshot(html_str=html, save_as="picture.png")
+        # imgkit.from_string(html, img_path, options=options)  # , config=config)
+    except OSError:
+        raise OSError("\n\nYou need to install wkhtmltoimage. Go to https://wkhtmltopdf.org/downloads.html and place \n"
+                      "the binary somewhere that `which wkhtmltoimage` (Linux) or `where wkhtmltoimage` (Windows) \n"
+                      "can find it (you may need to add it to your system path).")
     return img_path
+
 
 # for testing
 create_image('Priúñaku',
              'https://cdn.discordapp.com/avatars/166580565548466176/a106c3ab56c9c99d48b437b05a5552e4.png?size=256',
              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc vel ultricies ultricies')
-
-
-
-
-

@@ -49,5 +49,5 @@ class HangmanController(BaseCog):
         self.channels.remove(channel)
 
 
-def setup(bot):
-    bot.add_cog(HangmanController(bot))
+async def setup(bot):
+    await bot.add_cog(HangmanController(bot))

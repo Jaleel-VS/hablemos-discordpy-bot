@@ -20,7 +20,7 @@ def remove_emoji_from_message(message):  # for custom emojis
 
 
 def give_emoji_free_text(text: str) -> str:  # for standard emojis
-    return demoji.replace('', text)[:28]
+    return demoji.replace(text, '')[:28]
 
 
 async def get_html_css_info(channel, message_id, server):
@@ -66,9 +66,6 @@ class QuoteGenerator(BaseCog):
             return await ctx.send(
                 "You tried to use a message_id. Please use a link or just a regular message. See `$help quote` for "
                 "correct usage")
-        user_nick = ""
-        user_avatar = ""
-        message_content = ""
 
         if is_message_reply:
             message_id = ctx.message.reference.message_id
@@ -107,8 +104,7 @@ class QuoteGenerator(BaseCog):
 
         # delete file
         remove(f"{dir_path}/quote_generator_helper/picture.png")
-        print("File removed")
 
 
-def setup(bot):
-    bot.add_cog(QuoteGenerator(bot))
+async def setup(bot):
+    await bot.add_cog(QuoteGenerator(bot))
