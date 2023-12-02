@@ -1,5 +1,8 @@
 from os import path
 import imgkit
+import time
+from PIL import Image
+import requests
 
 dir_path = path.dirname(path.dirname(path.realpath(__file__)))
 
@@ -11,6 +14,8 @@ def create_image(user_name, user_avatar, message_content):
         'encoding': "UTF-8",
         'enable-local-file-access': None,
         'transparent': None,
+        # grayscale filter
+        
 
     }
 
@@ -61,8 +66,7 @@ def create_image(user_name, user_avatar, message_content):
     width: 634px;
     height: 256px;
 
-    -webkit-filter: grayscale(100%);
-    filter: grayscale(100%);
+ 
     }}
     
         .myImage {{
@@ -86,6 +90,9 @@ def create_image(user_name, user_avatar, message_content):
                 border-left: 0;
                 border-top-right-radius: 8px;
                 border-bottom-right-radius: 8px;
+
+                word-wrap: break-word;
+                hyphens: auto;
 
                 text-align: center;
                 }}
@@ -135,9 +142,27 @@ def create_image(user_name, user_avatar, message_content):
     return img_path
 
 # for testing
+# test speed
+
+start = time.time()
+
+image = 'https://www.citizen.co.za/rekord/wp-content/uploads/sites/85/2022/08/Rekord-LL-image-780x470.jpg'
+
+
+user_avatar = Image.open(requests.get(image, stream=True).raw).convert('L')
+user_avatar_path = f"{dir_path}/quote_generator_helper/user_avatar_grayscale.png"
+user_avatar.save(user_avatar_path)
+
 create_image('Priúñaku',
-             'https://cdn.discordapp.com/avatars/166580565548466176/a106c3ab56c9c99d48b437b05a5552e4.png?size=256',
-             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc vel ultricies ultricies')
+             user_avatar_path,
+             'Hello from the other side')
+
+end = time.time()
+
+# do a formatting print in ms
+
+print(f"Time taken: {(end - start) * 1000} ms")
+
 
 
 
