@@ -1,10 +1,11 @@
 from cogs.reverso_cog.helper import HelperFunctions
 from base_cog import BaseCog
 
+from discord.ext import commands
 from discord.ext.commands import command, cooldown, BucketType
-from discord.ext import pages
+# from discord.ext.commands import Paginator
 from reverso_api.context import ReversoContextAPI as reverso
-from discord import Embed, Color, ButtonStyle
+from discord import Embed  # , Color, ButtonStyle
 
 NOT_FOUND_ERROR = "Input not recognised. Please type `$langcodes` to see a list of available languages. " \
                   "Please type `$help reverso` too see correct example usage."
@@ -22,7 +23,7 @@ class Reverso(BaseCog):
 
     @command(aliases=['rev', 'reverse', ])
     @cooldown(1, 10, type=BucketType.user)
-    async def reverso(self, ctx, lang_original=None, lang_target=None, *, message=None):
+    async def reverso(self, ctx: commands.Context, lang_original=None, lang_target=None, *, message=None):
         """
         (still experimental, please report any bugs or errors)
         Receive in-context examples of a specific text in your target language
@@ -39,7 +40,7 @@ class Reverso(BaseCog):
         if not await self.is_input_valid(ctx, lang_original, lang_target, message):
             return
 
-        ctx_message = await ctx.send(embed=Embed(color=Color.nitro_pink(),
+        ctx_message = await ctx.send(embed=Embed(color=0xf47fff,  # nitro pink
                                                  description="<a:loading:925770299188867105> Please wait"))
 
         self.languages = [lang_original, lang_target]
@@ -48,8 +49,9 @@ class Reverso(BaseCog):
         await ctx_message.delete()
         if results_found:
             reverso_pages = self.get_pages(reverso_entries)
-            reverso_paginator = self.get_paginator(reverso_pages)
-            await reverso_paginator.send(ctx, ephemeral=False)
+            # reverso_paginator = self.get_paginator(reverso_pages)
+            # await reverso_paginator.send(ctx, ephemeral=False)
+            await ctx.send(embed=reverso_pages[0])  # temporary until fix paginator
         else:
             await ctx.send(f"No results found. Please check your language codes and or spelling. "
                            f"Feel free to also checkout :\n{REVERSO_URL}")
@@ -90,8 +92,8 @@ class Reverso(BaseCog):
         return [self.result_embed(entry) for entry in entries]
 
     def result_embed(self, entry):
-        embed = Embed(color=Color.nitro_pink())
-        url = self.get_url()
+        embed = Embed(color=0xf47fff)  # nitro pink
+        url = self.get_source_url()
         embed.description = f"<:reverso:925746938379386882> {helper_functions.language_codes[self.languages[0]]} -> " \
                             f"{helper_functions.language_codes[self.languages[1]]}\n"
         embed.title = f"{self.user_input.lower()}"
@@ -100,14 +102,14 @@ class Reverso(BaseCog):
         embed.add_field(name="\u200b", value=f"[See original page on ReversoContext]({url})", inline=False)
         return embed
 
-    @staticmethod
-    def get_paginator(embedded_pages):
-        paginator = pages.Paginator(pages=embedded_pages, show_disabled=False, show_indicator=True)
-        paginator.customize_button("next", button_label=">", button_style=ButtonStyle.green)
-        paginator.customize_button("prev", button_label="<", button_style=ButtonStyle.green)
-        paginator.customize_button("first", button_label="<<", button_style=ButtonStyle.blurple)
-        paginator.customize_button("last", button_label=">>", button_style=ButtonStyle.blurple)
-        return paginator
+    # @staticmethod
+    # def get_paginator(embedded_pages):
+    #     paginator = Paginator(pages=embedded_pages, show_disabled=False, show_indicator=True)
+    #     paginator.customize_button("next", button_label=">", button_style=ButtonStyle.green)
+    #     paginator.customize_button("prev", button_label="<", button_style=ButtonStyle.green)
+    #     paginator.customize_button("first", button_label="<<", button_style=ButtonStyle.blurple)
+    #     paginator.customize_button("last", button_label=">>", button_style=ButtonStyle.blurple)
+    #     return paginator
 
     def get_source_url(self):
         return (
@@ -122,8 +124,9 @@ class Reverso(BaseCog):
             for code, lang in helper_functions.language_codes.items()
         )
 
-        await ctx.send(embed=Embed(color=Color.nitro_pink(), description=language_codes))
+        await ctx.send(embed=Embed(color=0xf47fff,  # nitro pink
+                                   description=language_codes))
 
 
-def setup(bot):
-    bot.add_cog(Reverso(bot))
+async def setup(bot):
+    await bot.add_cog(Reverso(bot))
