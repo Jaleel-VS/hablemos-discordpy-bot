@@ -27,13 +27,12 @@ class Hablemos(Bot):
         
     
     async def setup_hook(self):
-        for filename in os.listdir("./cogs"):
-            if filename.endswith(".py"):
+        for cog in ['cogs.general_cog',]:
                 try:
-                    await self.load_extension(f"cogs.{filename[:-3]}")
-                    print(f"Loaded {filename}")
+                    await self.load_extension(cog)
+                    print(f"Loaded {cog}")
                 except Exception as e:
-                    print(f"Failed to load {filename}")
+                    print(f"Failed to load {cog}")
                     print(f"[ERROR] {e}")
 
 
