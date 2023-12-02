@@ -5,4 +5,6 @@ venv/
 cogs/utils/hangman_data/testy.py
 cogs/utils/unused_old
 database/
+bot_config.py
+*.log
 
