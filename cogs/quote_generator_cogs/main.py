@@ -1,4 +1,4 @@
-from cogs.quote_generator_cog.quote_generator_helper.image_creator import dir_path, create_image
+from cogs.quote_generator_cogs.quote_generator_helper.image_creator import dir_path, create_image
 from base_cog import BaseCog
 
 from re import sub

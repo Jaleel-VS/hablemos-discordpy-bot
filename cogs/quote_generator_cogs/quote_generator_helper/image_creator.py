@@ -14,8 +14,7 @@ def create_image(user_name, user_avatar, message_content):
         'encoding': "UTF-8",
         'enable-local-file-access': None,
         'transparent': None,
-        # grayscale filter
-        
+      
 
     }
 

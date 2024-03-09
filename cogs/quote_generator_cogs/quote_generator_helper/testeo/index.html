@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quote Card</title>
+    <style>
+      .quote-card {
+        display: flex;
+        width: 634px;
+        height: 256px;
+        border: 4px solid #fff;
+        border-radius: 10px;
+        font-family: Arial, sans-serif;
+      }
+
+      .quote-image {
+        width: auto;
+      }
+
+      .quote-image img {
+        width: 258px;
+        height: 100%;
+        border-radius: 5px 0 0 5px;
+        filter: grayscale(100%);
+      }
+
+      .quote-text {
+        width: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #fff;
+        color: #000;
+      }
+
+      .quote-content {
+        font-style: italic;
+      }
+
+      .quote-author {
+        margin-top: 20px;
+        text-align: right;
+        font-weight: bold;
+      }
+
+      span:after,
+      span:before {
+        content: "\00a0\00a0\00a0\00a0\00a0";
+        text-decoration: line-through;
+      }
+    </style>
+  </head>
+  <body style="background-color: blueviolet">
+    <div class="quote-card">
+      <div class="quote-image">
+        <img
+          src="https://cdn.discordapp.com/avatars/464414369652932618/4061adad672d35c466989ade3cff48a7.png?size=4096"
+          alt="Image description"
+        />
+      </div>
+      <div class="quote-text">
+        <p class="quote-content">
+          Con ustedes siempre la misma wéa, ya dejen de joder
+        </p>
+        <p class="quote-author"><span>Léa</span></p>
+      </div>
+    </div>
+  </body>
+</html>
