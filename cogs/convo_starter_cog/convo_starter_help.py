@@ -8,7 +8,7 @@ dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 
 def get_random_question(category: str) -> tuple:
-    with open(f"{dir_path}/convo_starter_data/{category}.csv") as csv_file:
+    with open(f"{dir_path}/convo_starter_cog/convo_starter_data/{category}.csv") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         spa_q = []
         eng_q = []
