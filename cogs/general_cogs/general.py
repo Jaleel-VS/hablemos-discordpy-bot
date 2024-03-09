@@ -1,26 +1,20 @@
-from discord.ext.commands import command
+from discord.ext.commands import command, Bot
 from base_cog import BaseCog
-from discord import Embed, Color, Forbidden
+from discord import Embed, Color
+
 
 SOURCE_URL = 'https://docs.google.com/spreadsheets/d/10jsNQsSG9mbLZgDoYIdVrbogVSN7eAKbOfCASA5hN0A/edit?usp=sharing'
 REPO = 'https://github.com/Jaleel-VS/hablemos-discordpy-bot'
 DPY = 'https://discordpy.readthedocs.io/en/latest/'
 PYC = 'https://github.com/Pycord-Development/pycord'
 INVITE_LINK = "https://discord.com/api/oauth2/authorize?client_id=808377026330492941&permissions=3072&scope=bot"
-from dotenv import load_dotenv
-import os
-
-load_dotenv('.env')
-
-PREFIX_ = os.getenv('PREFIX') 
-
 
 def green_embed(text):
     return Embed(description=text, color=Color(int('00ff00', 16)))
 
 
 class General(BaseCog):
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         super().__init__(bot)
 
     @command()
@@ -31,7 +25,7 @@ class General(BaseCog):
                 await ctx.send("I was unable to find the command you requested")
                 return
             message = ""
-            message += f"**{PREFIX_}{requested.qualified_name}**\n"
+            message += f"**{self.bot.command_prefix}{requested.qualified_name}**\n"
             if requested.aliases:
                 message += f"Aliases: `{'`, `'.join(requested.aliases)}`\n"
             if requested.help:
@@ -39,8 +33,8 @@ class General(BaseCog):
             emb = green_embed(message)
             await ctx.send(embed=emb)
         else:
-            to_send = """
-            Type `$help <command>` for more info about on any command.
+            to_send = f"""
+            Type `{self.bot.command_prefix}help <command>` for more info about on any command.
             
             **General**: 
                 `info` - Display information and a GitHub link to the source code
@@ -83,7 +77,7 @@ class General(BaseCog):
         """
 
         text = f"""
-        The bot was coded in Python using the [Pycord]({PYC}) wrapper for  [discord.py]({DPY}) framework.
+        The bot was coded in Python using the [discord.py]({DPY}) framework. Possible future migration to a C# or Rust framework
         
         To report an error or make a suggestion please message <@216848576549093376>
         [Github Repository]({REPO})
@@ -113,7 +107,7 @@ class General(BaseCog):
 
     @command()
     async def mystats(self, ctx):
-        guilds = await self.bot.fetch_guilds().flatten()
+        guilds = [guild.name for guild in self.bot.guilds]
         my_guilds = ''.join(f"{guild}\n" for guild in guilds)
         await ctx.send(f"The bot is in the following guilds: \n {my_guilds}")
 
