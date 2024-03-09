@@ -49,7 +49,7 @@ class Hablemos(Bot):
 
     async def setup_hook(self):
         for folder in os.listdir('./cogs'):
-            if folder.endswith('_cogs'):
+            if folder.endswith('_cog'):
                 for file in os.listdir(f'./cogs/{folder}'):
                     if file.endswith('.py') and not file.startswith('_'):
                         try:
