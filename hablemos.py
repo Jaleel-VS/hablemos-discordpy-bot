@@ -1,14 +1,13 @@
 import os
-from discord import Game, Intents
+from discord import Game
 import discord
 from discord.ext.commands import Bot, CommandNotFound, CommandOnCooldown
-from dotenv import load_dotenv
 from logger import setup_logging
 import logging
 from bot_config import environment_selector
 
 # Define a variable to select the environment
-environment_name = 'test'  # Change this to 'production' as needed
+environment_name = 'dev'  # accepted values: 'development', 'dev', 'production', 'prod'
 
 # Select the configuration based on the environment variable
 ActiveConfig = environment_selector(environment_name)
@@ -55,7 +54,7 @@ class Hablemos(Bot):
                     if file.endswith('.py') and not file.startswith('_'):
                         try:
                             await self.load_extension(f'cogs.{folder}.{file[:-3]}')
-                            logging.info(f'Loaded extension {file[:-3]}')
+                            logging.info(f'Loaded extension: {file[:-3]}')
                         except Exception as e:
                             logging.error(f'Failed to load extension {file[:-3]}.', exc_info=e)
                     
