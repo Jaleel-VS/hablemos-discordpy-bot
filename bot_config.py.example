@@ -1,0 +1,38 @@
+# bot_config.py
+
+class Config:
+    """Base configuration class."""
+    BOT_TOKEN = None
+    PREFIX = '!'
+    BOT_URL = ''
+
+class DevelopmentConfig(Config):
+    """Configuration class for development environment."""
+    BOT_TOKEN = 'your_development_bot_token_here'
+    PREFIX = '!'
+    BOT_URL = 'http://localhost:3000'
+
+class TestConfig(Config):
+    """Configuration class for test environment."""
+    BOT_TOKEN = 'your_test_bot_token_here'
+    PREFIX = '!'
+    BOT_URL = 'http://test.example.com'
+
+class ProductionConfig(Config):
+    """Configuration class for production environment."""
+    BOT_TOKEN = 'your_production_bot_token_here'
+    PREFIX = '!'
+    BOT_URL = 'http://example.com'
+
+def environment_selector(environment_name):
+    """Selects the configuration class based on the environment name."""
+    if environment_name not in ['development', 'test', 'production']:
+        return None
+    if environment_name == 'development':
+        return DevelopmentConfig
+    elif environment_name == 'test':
+        return TestConfig
+    elif environment_name == 'production':
+        return ProductionConfig
+    else:
+        return None
