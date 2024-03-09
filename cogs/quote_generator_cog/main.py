@@ -1,4 +1,4 @@
-from cogs.quote_generator_cogs.quote_generator_helper.image_creator import dir_path, create_image
+from cogs.quote_generator_cog.quote_generator_helper.image_creator import dir_path, create_image
 from base_cog import BaseCog
 
 from re import sub
@@ -6,7 +6,7 @@ from os import remove
 
 from discord.ext.commands import command, cooldown, BucketType
 from discord import File
-import emoji
+import demoji
 
 
 def get_img_url(url_identifier: str):
@@ -20,7 +20,7 @@ def remove_emoji_from_message(message):  # for custom emojis
 
 
 def give_emoji_free_text(text: str) -> str:  # for standard emojis
-    return emoji.get_emoji_regexp().sub(u'', text)[:28]
+    return demoji.replace(text, '')[:28]
 
 
 async def get_html_css_info(channel, message_id, server):
@@ -72,7 +72,13 @@ class QuoteGenerator(BaseCog):
             guild_id = ctx.message.reference.guild_id
             channel_id = ctx.message.reference.channel_id
             server = self.bot.get_guild(guild_id)
-            channel = server.get_channel(channel_id)
+            server = self.bot.get_guild(guild_id)
+            if server is None:
+                # Handle the error, e.g. by logging a message or raising an exception
+                print(f"Could not find server with ID {guild_id}")
+            else:
+                channel = server.get_channel(channel_id)
+                # Continue with your code...
 
             user_nick, user_avatar, message_content = await get_html_css_info(channel, message_id, server)
 
@@ -96,14 +102,14 @@ class QuoteGenerator(BaseCog):
             user_nick = ctx.author.display_name if ctx.author.nick is None else give_emoji_free_text(ctx.author.nick)
             user_avatar = get_img_url(ctx.author.avatar)
 
-        if len(message_content) > 150:
+        if len(message_content) > 250:
             return await ctx.send("Beep boop, I can't create an image. I'm limited to 150 characters")
         generated_url = create_image(user_nick, user_avatar, message_content)
 
         await ctx.send(file=File(generated_url))
 
         # delete file
-        remove(f"{dir_path}/quote_generator_helper/picture.png")
+        remove(f"{dir_path}/picture.png")
 
 
 async def setup(bot):

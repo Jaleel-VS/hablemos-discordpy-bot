@@ -35,19 +35,7 @@ class General(BaseCog):
         else:
             to_send = f"""
             Type `{self.bot.command_prefix}help <command>` for more info about on any command.
-            
-            **General**: 
-                `info` - Display information and a GitHub link to the source code
-                `invite` - Invite the bot to your server
-            **Conversation starters**: 
-                `topic` - Displays random conversation starter 
-                `lst` - Lists available categories
-            **Hangman**
-                `hangman` - Starts a new game with Spanish vocabulary
-            **Quote generator** 
-                `quote <message>` or `quote <message_link>` - Generates a "quote image" of a user's message
-            **Reverso Contexto**
-                `reverso <source_language> <target_language> <message>` - Find in-context examples in your target languages
+            ⚠️ If something doesn't work as expected, it's expected lol. I'm currently refactoring the bot, please be patient.
             """
             await ctx.send(embed=green_embed(to_send))
 
