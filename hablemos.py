@@ -51,10 +51,10 @@ class Hablemos(Bot):
         for folder in os.listdir('./cogs'):
             if folder.endswith('_cog'):
                 for file in os.listdir(f'./cogs/{folder}'):
-                    if file.endswith('.py') and not file.startswith('_'):
+                    if file.endswith('.py') and file.startswith('main'):
                         try:
                             await self.load_extension(f'cogs.{folder}.{file[:-3]}')
-                            logging.info(f'Loaded extension: {file[:-3]}')
+                            logging.info(f'Loaded extension: {file[:-3]} from folder: {folder}')
                         except Exception as e:
                             logging.error(f'Failed to load extension {file[:-3]}.', exc_info=e)
                     
