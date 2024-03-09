@@ -6,7 +6,7 @@ beautifulsoup4
 certifi
 charset-normalizer
 discord.py
-emoji
+demoji
 frozenlist
 idna
 imgkit
