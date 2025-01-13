@@ -1,6 +1,7 @@
 .idea/
 __pycache__/
 venv/
+.venv/
 .env
 cogs/utils/hangman_data/testy.py
 cogs/utils/unused_old
