@@ -1,0 +1,1007 @@
+[
+  {
+    "infinitive": "ser",
+    "english": "to be",
+    "frequency_rank": 1
+  },
+  {
+    "infinitive": "haber",
+    "english": "to have (have been, having been)",
+    "frequency_rank": 2
+  },
+  {
+    "infinitive": "estar",
+    "english": "to be",
+    "frequency_rank": 3
+  },
+  {
+    "infinitive": "tener",
+    "english": "to have, to possess",
+    "frequency_rank": 4
+  },
+  {
+    "infinitive": "hacer",
+    "english": "to make, to do",
+    "frequency_rank": 5
+  },
+  {
+    "infinitive": "poder",
+    "english": "to be able to, to can",
+    "frequency_rank": 6
+  },
+  {
+    "infinitive": "decir",
+    "english": "to say, to tell",
+    "frequency_rank": 7
+  },
+  {
+    "infinitive": "ir",
+    "english": "to go",
+    "frequency_rank": 8
+  },
+  {
+    "infinitive": "ver",
+    "english": "to see",
+    "frequency_rank": 9
+  },
+  {
+    "infinitive": "dar",
+    "english": "to give",
+    "frequency_rank": 10
+  },
+  {
+    "infinitive": "saber",
+    "english": "to know a fact, how to do something (present), to find out (preterite)",
+    "frequency_rank": 11
+  },
+  {
+    "infinitive": "querer",
+    "english": "to wish, to want, to love",
+    "frequency_rank": 12
+  },
+  {
+    "infinitive": "llegar",
+    "english": "to arrive",
+    "frequency_rank": 13
+  },
+  {
+    "infinitive": "pasar",
+    "english": "to pass, to spend",
+    "frequency_rank": 14
+  },
+  {
+    "infinitive": "deber",
+    "english": "to should, to ought, to owe",
+    "frequency_rank": 15
+  },
+  {
+    "infinitive": "poner",
+    "english": "to put, to place",
+    "frequency_rank": 16
+  },
+  {
+    "infinitive": "parecer",
+    "english": "to seem, to look like",
+    "frequency_rank": 17
+  },
+  {
+    "infinitive": "quedar",
+    "english": "to remain, to stay",
+    "frequency_rank": 18
+  },
+  {
+    "infinitive": "creer",
+    "english": "to believe, to think",
+    "frequency_rank": 19
+  },
+  {
+    "infinitive": "hablar",
+    "english": "to speak, to talk",
+    "frequency_rank": 20
+  },
+  {
+    "infinitive": "llevar",
+    "english": "to take, to carry, to wear",
+    "frequency_rank": 21
+  },
+  {
+    "infinitive": "dejar",
+    "english": "to let, to allow, to leave, to leave behind",
+    "frequency_rank": 22
+  },
+  {
+    "infinitive": "seguir",
+    "english": "to follow, to continue",
+    "frequency_rank": 23
+  },
+  {
+    "infinitive": "encontrar",
+    "english": "to find, to encounter",
+    "frequency_rank": 24
+  },
+  {
+    "infinitive": "llamar",
+    "english": "to call, to call oneself",
+    "frequency_rank": 25
+  },
+  {
+    "infinitive": "llamarse",
+    "english": "to call, to call oneself",
+    "frequency_rank": 26
+  },
+  {
+    "infinitive": "venir",
+    "english": "to come",
+    "frequency_rank": 27
+  },
+  {
+    "infinitive": "pensar",
+    "english": "to think, to plan",
+    "frequency_rank": 28
+  },
+  {
+    "infinitive": "salir",
+    "english": "to leave, to go out",
+    "frequency_rank": 29
+  },
+  {
+    "infinitive": "volver",
+    "english": "to return, to do something again",
+    "frequency_rank": 30
+  },
+  {
+    "infinitive": "tomar",
+    "english": "to take, to ingest, to drink",
+    "frequency_rank": 31
+  },
+  {
+    "infinitive": "conocer",
+    "english": "to be familiar with, to know",
+    "frequency_rank": 32
+  },
+  {
+    "infinitive": "vivir",
+    "english": "to live",
+    "frequency_rank": 33
+  },
+  {
+    "infinitive": "sentir",
+    "english": "to feel",
+    "frequency_rank": 34
+  },
+  {
+    "infinitive": "tratar",
+    "english": "to try, to treat, to deal with",
+    "frequency_rank": 35
+  },
+  {
+    "infinitive": "mirar",
+    "english": "to look, to watch",
+    "frequency_rank": 36
+  },
+  {
+    "infinitive": "contar",
+    "english": "to count, to tell",
+    "frequency_rank": 37
+  },
+  {
+    "infinitive": "empezar",
+    "english": "to begin, to start",
+    "frequency_rank": 38
+  },
+  {
+    "infinitive": "esperar",
+    "english": "to wait, to hope",
+    "frequency_rank": 39
+  },
+  {
+    "infinitive": "buscar",
+    "english": "to look for",
+    "frequency_rank": 40
+  },
+  {
+    "infinitive": "existir",
+    "english": "to exist",
+    "frequency_rank": 41
+  },
+  {
+    "infinitive": "entrar",
+    "english": "to enter",
+    "frequency_rank": 42
+  },
+  {
+    "infinitive": "trabajar",
+    "english": "to work",
+    "frequency_rank": 43
+  },
+  {
+    "infinitive": "escribir",
+    "english": "to write",
+    "frequency_rank": 44
+  },
+  {
+    "infinitive": "perder",
+    "english": "to lose, to miss",
+    "frequency_rank": 45
+  },
+  {
+    "infinitive": "producir",
+    "english": "to produce, to cause",
+    "frequency_rank": 46
+  },
+  {
+    "infinitive": "ocurrir",
+    "english": "to happen, to occur",
+    "frequency_rank": 47
+  },
+  {
+    "infinitive": "entender",
+    "english": "to understand",
+    "frequency_rank": 48
+  },
+  {
+    "infinitive": "pedir",
+    "english": "to ask for",
+    "frequency_rank": 49
+  },
+  {
+    "infinitive": "recibir",
+    "english": "to receive",
+    "frequency_rank": 50
+  },
+  {
+    "infinitive": "recordar",
+    "english": "to remember, to remind",
+    "frequency_rank": 51
+  },
+  {
+    "infinitive": "terminar",
+    "english": "to end, to finish, to terminate",
+    "frequency_rank": 52
+  },
+  {
+    "infinitive": "permitir",
+    "english": "to allow, to permit",
+    "frequency_rank": 53
+  },
+  {
+    "infinitive": "aparecer",
+    "english": "to appear",
+    "frequency_rank": 54
+  },
+  {
+    "infinitive": "conseguir",
+    "english": "to get, to obtain, to acquire",
+    "frequency_rank": 55
+  },
+  {
+    "infinitive": "comenzar",
+    "english": "to start, to commence",
+    "frequency_rank": 56
+  },
+  {
+    "infinitive": "servir",
+    "english": "to serve",
+    "frequency_rank": 57
+  },
+  {
+    "infinitive": "sacar",
+    "english": "to take",
+    "frequency_rank": 58
+  },
+  {
+    "infinitive": "necesitar",
+    "english": "to need",
+    "frequency_rank": 59
+  },
+  {
+    "infinitive": "mantener",
+    "english": "to maintain, to keep",
+    "frequency_rank": 60
+  },
+  {
+    "infinitive": "resultar",
+    "english": "to turn out, to result",
+    "frequency_rank": 61
+  },
+  {
+    "infinitive": "leer",
+    "english": "to read",
+    "frequency_rank": 62
+  },
+  {
+    "infinitive": "caer",
+    "english": "to fall",
+    "frequency_rank": 63
+  },
+  {
+    "infinitive": "cambiar",
+    "english": "to chage",
+    "frequency_rank": 64
+  },
+  {
+    "infinitive": "presentar",
+    "english": "to introduce, to present",
+    "frequency_rank": 65
+  },
+  {
+    "infinitive": "crear",
+    "english": "to create",
+    "frequency_rank": 66
+  },
+  {
+    "infinitive": "abrir",
+    "english": "to open",
+    "frequency_rank": 67
+  },
+  {
+    "infinitive": "considerar",
+    "english": "to consider",
+    "frequency_rank": 68
+  },
+  {
+    "infinitive": "oír",
+    "english": "to hear",
+    "frequency_rank": 69
+  },
+  {
+    "infinitive": "acabar",
+    "english": "to end, to finish",
+    "frequency_rank": 70
+  },
+  {
+    "infinitive": "convertir",
+    "english": "to convert, to change, to become",
+    "frequency_rank": 71
+  },
+  {
+    "infinitive": "ganar",
+    "english": "to win, to earn",
+    "frequency_rank": 72
+  },
+  {
+    "infinitive": "formar",
+    "english": "to form",
+    "frequency_rank": 73
+  },
+  {
+    "infinitive": "traer",
+    "english": "to bring, to carry",
+    "frequency_rank": 74
+  },
+  {
+    "infinitive": "partir",
+    "english": "to divide, to leave",
+    "frequency_rank": 75
+  },
+  {
+    "infinitive": "morir",
+    "english": "to die",
+    "frequency_rank": 76
+  },
+  {
+    "infinitive": "aceptar",
+    "english": "to accept",
+    "frequency_rank": 77
+  },
+  {
+    "infinitive": "realizar",
+    "english": "to fulfill, to bring to fruition, to carry out",
+    "frequency_rank": 78
+  },
+  {
+    "infinitive": "suponer",
+    "english": "to suppose, to assume",
+    "frequency_rank": 79
+  },
+  {
+    "infinitive": "comprender",
+    "english": "to understand, to comprehend",
+    "frequency_rank": 80
+  },
+  {
+    "infinitive": "lograr",
+    "english": "to manage, to achieve",
+    "frequency_rank": 81
+  },
+  {
+    "infinitive": "explicar",
+    "english": "to explain",
+    "frequency_rank": 82
+  },
+  {
+    "infinitive": "preguntar",
+    "english": "to ask",
+    "frequency_rank": 83
+  },
+  {
+    "infinitive": "tocar",
+    "english": "to touch, to play",
+    "frequency_rank": 84
+  },
+  {
+    "infinitive": "reconocer",
+    "english": "to recognize, to admit",
+    "frequency_rank": 85
+  },
+  {
+    "infinitive": "estudiar",
+    "english": "to study",
+    "frequency_rank": 86
+  },
+  {
+    "infinitive": "alcanzar",
+    "english": "to reach, to overtake, to catch up to",
+    "frequency_rank": 87
+  },
+  {
+    "infinitive": "nacer",
+    "english": "to be born",
+    "frequency_rank": 88
+  },
+  {
+    "infinitive": "dirigir",
+    "english": "to direct, to manage",
+    "frequency_rank": 89
+  },
+  {
+    "infinitive": "correr",
+    "english": "to run",
+    "frequency_rank": 90
+  },
+  {
+    "infinitive": "utilizar",
+    "english": "to use, to utilize",
+    "frequency_rank": 91
+  },
+  {
+    "infinitive": "pagar",
+    "english": "to pay",
+    "frequency_rank": 92
+  },
+  {
+    "infinitive": "ayudar",
+    "english": "to help",
+    "frequency_rank": 93
+  },
+  {
+    "infinitive": "gustar",
+    "english": "to be pleasing to",
+    "frequency_rank": 94
+  },
+  {
+    "infinitive": "jugar",
+    "english": "to play a sport",
+    "frequency_rank": 95
+  },
+  {
+    "infinitive": "escuchar",
+    "english": "to listen to",
+    "frequency_rank": 96
+  },
+  {
+    "infinitive": "cumplir",
+    "english": "to fulfill",
+    "frequency_rank": 97
+  },
+  {
+    "infinitive": "ofrecer",
+    "english": "to offer, to present",
+    "frequency_rank": 98
+  },
+  {
+    "infinitive": "descubrir",
+    "english": "to discover",
+    "frequency_rank": 99
+  },
+  {
+    "infinitive": "levantar",
+    "english": "to raise, to lift, to levitate",
+    "frequency_rank": 100
+  },
+  {
+    "infinitive": "intentar",
+    "english": "to try, to attempt",
+    "frequency_rank": 101
+  },
+  {
+    "infinitive": "usar",
+    "english": "to use",
+    "frequency_rank": 102
+  },
+  {
+    "infinitive": "decidir",
+    "english": "to decide",
+    "frequency_rank": 103
+  },
+  {
+    "infinitive": "repetir",
+    "english": "to repeat",
+    "frequency_rank": 104
+  },
+  {
+    "infinitive": "olvidar",
+    "english": "to forget",
+    "frequency_rank": 105
+  },
+  {
+    "infinitive": "valer",
+    "english": "to be worth, to cost",
+    "frequency_rank": 106
+  },
+  {
+    "infinitive": "comer",
+    "english": "to eat",
+    "frequency_rank": 107
+  },
+  {
+    "infinitive": "mostrar",
+    "english": "to show",
+    "frequency_rank": 108
+  },
+  {
+    "infinitive": "ocupar",
+    "english": "to occupy, to use",
+    "frequency_rank": 109
+  },
+  {
+    "infinitive": "mover",
+    "english": "to move, to incite",
+    "frequency_rank": 110
+  },
+  {
+    "infinitive": "continuar",
+    "english": "to continue",
+    "frequency_rank": 111
+  },
+  {
+    "infinitive": "suceder",
+    "english": "to happen",
+    "frequency_rank": 112
+  },
+  {
+    "infinitive": "fijar",
+    "english": "to set, to fix",
+    "frequency_rank": 113
+  },
+  {
+    "infinitive": "referir",
+    "english": "to refer",
+    "frequency_rank": 114
+  },
+  {
+    "infinitive": "acercar",
+    "english": "to come near",
+    "frequency_rank": 115
+  },
+  {
+    "infinitive": "dedicar",
+    "english": "to dedicate, to devote",
+    "frequency_rank": 116
+  },
+  {
+    "infinitive": "aprender",
+    "english": "to learn",
+    "frequency_rank": 117
+  },
+  {
+    "infinitive": "comprar",
+    "english": "to buy",
+    "frequency_rank": 118
+  },
+  {
+    "infinitive": "subir",
+    "english": "to go up",
+    "frequency_rank": 119
+  },
+  {
+    "infinitive": "evitar",
+    "english": "to avoid, to prevent",
+    "frequency_rank": 120
+  },
+  {
+    "infinitive": "interesar",
+    "english": "to interest",
+    "frequency_rank": 121
+  },
+  {
+    "infinitive": "cerrar",
+    "english": "to close",
+    "frequency_rank": 122
+  },
+  {
+    "infinitive": "echar",
+    "english": "to toss, to throw, to cast",
+    "frequency_rank": 123
+  },
+  {
+    "infinitive": "responder",
+    "english": "to answer, to respond",
+    "frequency_rank": 124
+  },
+  {
+    "infinitive": "sufrir",
+    "english": "to suffer, to undergo",
+    "frequency_rank": 125
+  },
+  {
+    "infinitive": "importar",
+    "english": "to matter, to import",
+    "frequency_rank": 126
+  },
+  {
+    "infinitive": "obtener",
+    "english": "to obtain, to get",
+    "frequency_rank": 127
+  },
+  {
+    "infinitive": "observar",
+    "english": "to observe",
+    "frequency_rank": 128
+  },
+  {
+    "infinitive": "indicar",
+    "english": "to indicate",
+    "frequency_rank": 129
+  },
+  {
+    "infinitive": "imaginar",
+    "english": "to imagine",
+    "frequency_rank": 130
+  },
+  {
+    "infinitive": "soler",
+    "english": "to be accustomed to",
+    "frequency_rank": 131
+  },
+  {
+    "infinitive": "detener",
+    "english": "to stop, to detain",
+    "frequency_rank": 132
+  },
+  {
+    "infinitive": "desarrollar",
+    "english": "to develop",
+    "frequency_rank": 133
+  },
+  {
+    "infinitive": "señalar",
+    "english": "to point out, to signal",
+    "frequency_rank": 134
+  },
+  {
+    "infinitive": "elegir",
+    "english": "to choose, to elect",
+    "frequency_rank": 135
+  },
+  {
+    "infinitive": "preparar",
+    "english": "to prepar",
+    "frequency_rank": 136
+  },
+  {
+    "infinitive": "proponer",
+    "english": "to propose",
+    "frequency_rank": 137
+  },
+  {
+    "infinitive": "demostrar",
+    "english": "to show, to demonstrate",
+    "frequency_rank": 138
+  },
+  {
+    "infinitive": "significar",
+    "english": "to mean",
+    "frequency_rank": 139
+  },
+  {
+    "infinitive": "reunir",
+    "english": "to gather, to meet, to collect",
+    "frequency_rank": 140
+  },
+  {
+    "infinitive": "faltar",
+    "english": "to be lacking",
+    "frequency_rank": 141
+  },
+  {
+    "infinitive": "acompañar",
+    "english": "to accompany",
+    "frequency_rank": 142
+  },
+  {
+    "infinitive": "desear",
+    "english": "to want, to desire, to wish for",
+    "frequency_rank": 143
+  },
+  {
+    "infinitive": "enseñar",
+    "english": "to teach, to show",
+    "frequency_rank": 144
+  },
+  {
+    "infinitive": "construir",
+    "english": "to build, to construct",
+    "frequency_rank": 145
+  },
+  {
+    "infinitive": "vender",
+    "english": "to sell",
+    "frequency_rank": 146
+  },
+  {
+    "infinitive": "representar",
+    "english": "to represent",
+    "frequency_rank": 147
+  },
+  {
+    "infinitive": "desaparecer",
+    "english": "to disappear, to vanish",
+    "frequency_rank": 148
+  },
+  {
+    "infinitive": "mandar",
+    "english": "to send, to order",
+    "frequency_rank": 149
+  },
+  {
+    "infinitive": "andar",
+    "english": "to walk, to function",
+    "frequency_rank": 150
+  },
+  {
+    "infinitive": "preferir",
+    "english": "to prefer",
+    "frequency_rank": 151
+  },
+  {
+    "infinitive": "asegurar",
+    "english": "to assure, to secure, to insure",
+    "frequency_rank": 152
+  },
+  {
+    "infinitive": "crecer",
+    "english": "to grow, to increase",
+    "frequency_rank": 153
+  },
+  {
+    "infinitive": "surgir",
+    "english": "to appear, to spring forth, to surge",
+    "frequency_rank": 154
+  },
+  {
+    "infinitive": "matar",
+    "english": "to kill",
+    "frequency_rank": 155
+  },
+  {
+    "infinitive": "entregar",
+    "english": "to deliver, to turn in, to hand in",
+    "frequency_rank": 156
+  },
+  {
+    "infinitive": "colocar",
+    "english": "to place, to position, to colocate",
+    "frequency_rank": 157
+  },
+  {
+    "infinitive": "establecer",
+    "english": "to establish",
+    "frequency_rank": 158
+  },
+  {
+    "infinitive": "guardar",
+    "english": "to keep, to save, to put away",
+    "frequency_rank": 159
+  },
+  {
+    "infinitive": "iniciar",
+    "english": "to initiate, to start",
+    "frequency_rank": 160
+  },
+  {
+    "infinitive": "bajar",
+    "english": "to go down, to let down",
+    "frequency_rank": 161
+  },
+  {
+    "infinitive": "notar",
+    "english": "to notice",
+    "frequency_rank": 162
+  },
+  {
+    "infinitive": "meter",
+    "english": "to put in, to insert",
+    "frequency_rank": 163
+  },
+  {
+    "infinitive": "actuar",
+    "english": "to act, to behave",
+    "frequency_rank": 164
+  },
+  {
+    "infinitive": "pretender",
+    "english": "to attempt",
+    "frequency_rank": 165
+  },
+  {
+    "infinitive": "acordar",
+    "english": "to remember, to remind",
+    "frequency_rank": 166
+  },
+  {
+    "infinitive": "cortar",
+    "english": "to cut",
+    "frequency_rank": 167
+  },
+  {
+    "infinitive": "corresponder",
+    "english": "to correspond with",
+    "frequency_rank": 168
+  },
+  {
+    "infinitive": "romper",
+    "english": "to break",
+    "frequency_rank": 169
+  },
+  {
+    "infinitive": "adquirir",
+    "english": "to acquire, to get",
+    "frequency_rank": 170
+  },
+  {
+    "infinitive": "lanzar",
+    "english": "to throw, to launch",
+    "frequency_rank": 171
+  },
+  {
+    "infinitive": "aprovechar",
+    "english": "to take advantage of",
+    "frequency_rank": 172
+  },
+  {
+    "infinitive": "apoyar",
+    "english": "to support, to lean on",
+    "frequency_rank": 173
+  },
+  {
+    "infinitive": "negar",
+    "english": "to deny, to refuse",
+    "frequency_rank": 174
+  },
+  {
+    "infinitive": "avanzar",
+    "english": "to advance, to progress",
+    "frequency_rank": 175
+  },
+  {
+    "infinitive": "resolver",
+    "english": "to resolve, to settle, to work out",
+    "frequency_rank": 176
+  },
+  {
+    "infinitive": "costar",
+    "english": "to cost, to be hard",
+    "frequency_rank": 177
+  },
+  {
+    "infinitive": "exigir",
+    "english": "to demand",
+    "frequency_rank": 178
+  },
+  {
+    "infinitive": "aumentar",
+    "english": "to increase, to augment",
+    "frequency_rank": 179
+  },
+  {
+    "infinitive": "recoger",
+    "english": "to pick up, to straighten up",
+    "frequency_rank": 180
+  },
+  {
+    "infinitive": "abandonar",
+    "english": "to abandon, to leave a place",
+    "frequency_rank": 181
+  },
+  {
+    "infinitive": "imponer",
+    "english": "to impose, to enforce",
+    "frequency_rank": 182
+  },
+  {
+    "infinitive": "obligar",
+    "english": "to oblige, to force",
+    "frequency_rank": 183
+  },
+  {
+    "infinitive": "aplicar",
+    "english": "to apply",
+    "frequency_rank": 184
+  },
+  {
+    "infinitive": "pertenecer",
+    "english": "to belong",
+    "frequency_rank": 185
+  },
+  {
+    "infinitive": "disponer",
+    "english": "to have means, to dispose",
+    "frequency_rank": 186
+  },
+  {
+    "infinitive": "expresar",
+    "english": "to express",
+    "frequency_rank": 187
+  },
+  {
+    "infinitive": "provocar",
+    "english": "to cause, to provoke",
+    "frequency_rank": 188
+  },
+  {
+    "infinitive": "defender",
+    "english": "to defend, to protect",
+    "frequency_rank": 189
+  },
+  {
+    "infinitive": "quitar",
+    "english": "to remove, to take away",
+    "frequency_rank": 190
+  },
+  {
+    "infinitive": "conservar",
+    "english": "to preserve, to conserve",
+    "frequency_rank": 191
+  },
+  {
+    "infinitive": "depender",
+    "english": "to depend upon",
+    "frequency_rank": 192
+  },
+  {
+    "infinitive": "marcar",
+    "english": "to mark, to dial",
+    "frequency_rank": 193
+  },
+  {
+    "infinitive": "compartir",
+    "english": "to share",
+    "frequency_rank": 194
+  },
+  {
+    "infinitive": "consistir",
+    "english": "to consist of",
+    "frequency_rank": 195
+  },
+  {
+    "infinitive": "constituir",
+    "english": "to constitute, to consist of",
+    "frequency_rank": 196
+  },
+  {
+    "infinitive": "cubrir",
+    "english": "to cover",
+    "frequency_rank": 197
+  },
+  {
+    "infinitive": "funcionar",
+    "english": "to work, to funcion",
+    "frequency_rank": 198
+  },
+  {
+    "infinitive": "caber",
+    "english": "to fit",
+    "frequency_rank": 199
+  },
+  {
+    "infinitive": "atender",
+    "english": "to serve, to attend to",
+    "frequency_rank": 200
+  },
+  {
+    "infinitive": "insistir",
+    "english": "to insist on",
+    "frequency_rank": 201
+  }
+]
