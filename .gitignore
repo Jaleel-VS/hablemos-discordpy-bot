@@ -3,7 +3,7 @@ __pycache__/
 venv/
 .venv/
 .env
-cogs/utils/hangman_data/testy.py
+cogs/utils/data/testy.py
 cogs/utils/unused_old
 database/
 bot_config.py
