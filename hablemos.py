@@ -5,9 +5,10 @@ from discord.ext.commands import Bot, CommandNotFound, CommandOnCooldown
 from logger import setup_logging
 import logging
 from bot_config import environment_selector
+from typing import List
 
 # Define a variable to select the environment
-environment_name = 'dev'  # accepted values: 'development', 'dev', 'production', 'prod'
+environment_name = 'development'  # accepted values: 'development', 'dev', 'production', 'prod'
 
 # Select the configuration based on the environment variable
 ActiveConfig = environment_selector(environment_name)
@@ -47,18 +48,18 @@ class Hablemos(Bot):
         self.online_channel = None
         self.error_channel = None
 
-    async def setup_hook(self):
+    async def setup_hook(self):        
         for folder in os.listdir('./cogs'):
             if folder.endswith('_cog'):
-                for file in os.listdir(f'./cogs/{folder}'):
-                    if file.endswith('.py') and file.startswith('main'):
-                        try:
-                            await self.load_extension(f'cogs.{folder}.{file[:-3]}')
-                            logging.info(f'Loaded extension: {file[:-3]} from folder: {folder}')
-                        except Exception as e:
-                            logging.error(f'Failed to load extension {file[:-3]}.', exc_info=e)
-                    
-            
+                cog_path = f'./cogs/{folder}'
+                if os.path.isdir(cog_path):
+                    for file in os.listdir(cog_path):
+                        if file.endswith('.py') and file.startswith('main'):
+                            try:
+                                await self.load_extension(f'cogs.{folder}.{file[:-3]}')
+                                logging.info(f'Loaded extension: {file[:-3]} from folder: {folder}')
+                            except Exception as e:
+                                logging.error(f'Failed to load extension {file[:-3]}.', exc_info=e)
 
     async def on_ready(self):
         guild_id = BOT_PLAYGROUND
@@ -79,7 +80,7 @@ class Hablemos(Bot):
         await self.change_presence(activity=Game(f'{self.command_prefix}help'))
 
     async def on_command_error(self, ctx, error):
-        if ctx.message.content[1].isdigit() or ctx.message.content[-1] == self.command_prefix:
+        if len(ctx.message.content) > 1 and (ctx.message.content[1].isdigit() or ctx.message.content[-1] == self.command_prefix):
             return
 
         if isinstance(error, CommandNotFound):
