@@ -30,6 +30,26 @@ async def get_html_css_info(channel, message_id, server):
     user_id = message.author.id
     message_content = remove_emoji_from_message(message.content)
 
+    # Replace mentions (<@id>, <@!id>), role mentions (<@&id>) and channel mentions (<#id>)
+    # with human readable forms so the generated image shows names instead of raw IDs.
+    # Users
+    for mentioned_user in message.mentions:
+        member = server.get_member(mentioned_user.id) if server else None
+        display = '@' + (member.display_name if member else mentioned_user.name)
+        for pattern in (f'<@!{mentioned_user.id}>', f'<@{mentioned_user.id}>'):
+            if pattern in message_content:
+                message_content = message_content.replace(pattern, display)
+    # Roles
+    for role in message.role_mentions:
+        pattern = f'<@&{role.id}>'
+        if pattern in message_content:
+            message_content = message_content.replace(pattern, f'@{role.name}')
+    # Channels
+    for ch in message.channel_mentions:
+        pattern = f'<#{ch.id}>'
+        if pattern in message_content:
+            message_content = message_content.replace(pattern, f'#{ch.name}')
+
     if server.get_member(user_id) is None:
         user_nick = user.name
     else:
@@ -100,6 +120,21 @@ class QuoteGenerator(BaseCog):
 
         else:
             message_content = remove_emoji_from_message(' '.join(user_input))
+            # Convert any mention markup present in the invoking command message itself.
+            for mentioned_user in ctx.message.mentions:
+                member = ctx.guild.get_member(mentioned_user.id) if ctx.guild else None
+                display = '@' + (member.display_name if member else mentioned_user.name)
+                for pattern in (f'<@!{mentioned_user.id}>', f'<@{mentioned_user.id}>'):
+                    if pattern in message_content:
+                        message_content = message_content.replace(pattern, display)
+            for role in ctx.message.role_mentions:
+                pattern = f'<@&{role.id}>'
+                if pattern in message_content:
+                    message_content = message_content.replace(pattern, f'@{role.name}')
+            for ch in ctx.message.channel_mentions:
+                pattern = f'<#{ch.id}>'
+                if pattern in message_content:
+                    message_content = message_content.replace(pattern, f'#{ch.name}')
             user_nick = ctx.author.display_name if ctx.author.nick is None else give_emoji_free_text(ctx.author.nick)
             user_avatar = get_img_url(ctx.author.avatar)
 
@@ -157,6 +192,21 @@ class QuoteGenerator(BaseCog):
 
         else:
             message_content = remove_emoji_from_message(' '.join(user_input))
+            # Convert any mention markup present in the invoking command message itself.
+            for mentioned_user in ctx.message.mentions:
+                member = ctx.guild.get_member(mentioned_user.id) if ctx.guild else None
+                display = '@' + (member.display_name if member else mentioned_user.name)
+                for pattern in (f'<@!{mentioned_user.id}>', f'<@{mentioned_user.id}>'):
+                    if pattern in message_content:
+                        message_content = message_content.replace(pattern, display)
+            for role in ctx.message.role_mentions:
+                pattern = f'<@&{role.id}>'
+                if pattern in message_content:
+                    message_content = message_content.replace(pattern, f'@{role.name}')
+            for ch in ctx.message.channel_mentions:
+                pattern = f'<#{ch.id}>'
+                if pattern in message_content:
+                    message_content = message_content.replace(pattern, f'#{ch.name}')
             user_nick = ctx.author.display_name if ctx.author.nick is None else give_emoji_free_text(ctx.author.nick)
             user_avatar = get_img_url(ctx.author.avatar)
 
