@@ -8,14 +8,14 @@ dir_path = path.dirname(path.realpath(__file__))
 def _compute_phrase_font_size(message: str) -> int:
     length = len(message or "")
     if length <= 60:
-        return 32
+        return 38
     if length <= 90:
-        return 28
+        return 32
     if length <= 130:
-        return 26
+        return 30
     if length <= 180:
-        return 24
-    return 22
+        return 28
+    return 24
 
 
 def _compute_quote_glyph_font_size(message: str) -> int:
@@ -187,7 +187,7 @@ def create_image2(user_name: str, user_avatar: str, message_content: str) -> str
 if __name__ == "__main__":
     create_image2(
         'Priúñaku',
-        'https://i.imgur.com/z9tOsSz.png',
+        'https://tse1.mm.bing.net/th/id/OIP.aQvztH3rNT-QMNNeixa91QHaNK?rs=1&pid=ImgDetMain&o=7&rm=3',
         'Dolor sit amet',
     )
 
