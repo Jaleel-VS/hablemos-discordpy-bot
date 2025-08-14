@@ -77,23 +77,7 @@ class HangmanController(BaseCog):
                 logger.error(f"Failed to start hangman game in channel {channel_id}: {e}", exc_info=True)
                 await ctx.send(f"❌ Failed to start game: {str(e)}")
                 raise
-            available = ', '.join(f'`{cat}` ({count})' for cat, count in CATEGORIES.items())
-            return await ctx.send(f"❌ Category not found!\n\n**Available categories:**\n{available}")
-
-        channel_id = ctx.channel.id
-        
-        # Use lock to prevent race conditions
-        async with self._get_channel_lock(channel_id):
-            if self._is_game_active(channel_id):
-                return await ctx.send("🎮 There's already a hangman game running in this channel!")
-            
-            try:
-                await self._start_new_game(ctx, channel_id, category)
-            except Exception as e:
-                # Ensure cleanup on any error
-                self.active_games.pop(channel_id, None)
-                await ctx.send(f"❌ Failed to start game: {str(e)}")
-                raise
+            # Successfully started; nothing else to send here
 
     async def _start_new_game(self, ctx, channel_id: int, category: str):
         """Start a new hangman game with proper cleanup."""
