@@ -4,24 +4,26 @@ import discord
 from discord.ext.commands import Bot, CommandNotFound, CommandOnCooldown
 from logger import setup_logging
 import logging
-from bot_config import environment_selector
 from typing import List
+import dotenv
+dotenv.load_dotenv()
 
-# Define a variable to select the environment
-environment_name = 'development'  # accepted values: 'development', 'dev', 'production', 'prod'
+# environment variables
+environment_name = os.getenv('ENVIRONMENT', 'development')
+bot_token = os.getenv('BOT_TOKEN', '')
+prefix = os.getenv('PREFIX', '!')
+bot_url = os.getenv('BOT_URL', 'http://localhost:8000')
 
-# Select the configuration based on the environment variable
-ActiveConfig = environment_selector(environment_name)
-
-if not ActiveConfig:
-    logging.error(f"Invalid environment name {environment_name}")
-    exit(1)
+class Config:
+    BOT_TOKEN: str = bot_token
+    PREFIX: str = prefix
+    BOT_URL: str = bot_url
 
 # Accessing configuration values
 logging.info(f"Environment: {environment_name}")
-bot_token = ActiveConfig.BOT_TOKEN
-prefix = ActiveConfig.PREFIX
-bot_url = ActiveConfig.BOT_URL
+bot_token = Config.BOT_TOKEN
+prefix = Config.PREFIX
+bot_url = Config.BOT_URL
 
 
 # Configure logging
