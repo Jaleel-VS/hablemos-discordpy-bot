@@ -5,8 +5,8 @@ from discord.ext.commands import Bot, CommandNotFound, CommandOnCooldown
 from logger import setup_logging
 import logging
 from typing import List
-import dotenv
-dotenv.load_dotenv()
+# import dotenv
+# dotenv.load_dotenv()
 
 bot_token = os.getenv('BOT_TOKEN')
 
