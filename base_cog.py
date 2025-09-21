@@ -1,4 +1,4 @@
-from discord.ext.commands import Cog
+from discord.ext.commands import Cog, CommandOnCooldown, CommandError
 from discord.ext.commands import Bot
 
 COLORS = [0x57F287, 0xED4245, 0xEB459E, 0xFEE75C, 0xf47fff, 0x7289da, 0xe74c3c,
@@ -10,6 +10,11 @@ class BaseCog(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
 
-    @staticmethod
-    async def cog_command_error(ctx, error):
-        print(f'An error occurred: {error} in {ctx.channel}')
+    async def cog_command_error(self, ctx, error):
+        """Handle errors for commands in this cog"""
+        if isinstance(error, CommandOnCooldown):
+            await ctx.send(f"⏱️ Command is on cooldown. Try again in {error.retry_after:.1f} seconds.")
+        else:
+            print(f'An error occurred: {error} in {ctx.channel}')
+            # Re-raise other errors so they can be handled by global error handlers
+            raise error
