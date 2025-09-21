@@ -8,6 +8,18 @@ from typing import List
 import dotenv
 dotenv.load_dotenv()
 
+bot_token = os.getenv('BOT_TOKEN')
+
+# Debugging temporal - agregar estas líneas
+print("=== DEBUG TOKEN ===")
+print("Token exists:", bot_token is not None)
+print("Token length:", len(bot_token) if bot_token else 0)
+print("Token preview:", bot_token[:10] + "..." if bot_token else "NOT_FOUND")
+print("==================")
+
+if not bot_token:
+    raise ValueError("DISCORD_TOKEN environment variable is required!")
+
 # environment variables
 environment_name = os.getenv('ENVIRONMENT', 'development')
 bot_token = os.getenv('BOT_TOKEN', '')
