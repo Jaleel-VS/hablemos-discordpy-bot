@@ -10,6 +10,12 @@ dotenv.load_dotenv()
 
 bot_token = os.getenv('BOT_TOKEN')
 
+print("=== ALL ENVIRONMENT VARIABLES ===")
+for key, value in os.environ.items():
+    if 'DISCORD' in key or 'TOKEN' in key:
+        print(f"{key}: {value[:10]}..." if value else f"{key}: EMPTY")
+print("================================")
+
 # Debugging temporal - agregar estas líneas
 print("=== DEBUG TOKEN ===")
 print("Token exists:", bot_token is not None)
