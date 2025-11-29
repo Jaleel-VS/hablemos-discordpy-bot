@@ -60,26 +60,12 @@ class SpotifyCog(BaseCog):
         # Create embed with song information
         embed = Embed(
             title=f"{target.display_name} is currently listening to",
-            description=f"**{spotify_activity.title}**",
+            description=f"# {spotify_activity.title}\n{spotify_activity.artist}",
             color=Color.green()
         )
 
         # Add song details
-        embed.add_field(name="Artist", value=spotify_activity.artist, inline=True)
         embed.add_field(name="Album", value=spotify_activity.album, inline=True)
-
-        # Calculate song duration and current position
-        duration = spotify_activity.duration
-        position = (ctx.message.created_at - spotify_activity.start).total_seconds()
-
-        # Format time as MM:SS
-        def format_time(seconds):
-            mins = int(seconds // 60)
-            secs = int(seconds % 60)
-            return f"{mins}:{secs:02d}"
-
-        progress = f"{format_time(position)} / {format_time(duration.total_seconds())}"
-        embed.add_field(name="Progress", value=progress, inline=False)
 
         # Add album artwork as thumbnail
         if spotify_activity.album_cover_url:
