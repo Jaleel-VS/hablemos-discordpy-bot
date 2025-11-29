@@ -2,6 +2,7 @@ from discord.ext.commands import command, Bot
 from base_cog import BaseCog
 from discord import Embed, Color, Member, Spotify
 from typing import Optional
+import logging
 
 
 class SpotifyCog(BaseCog):
@@ -15,17 +16,35 @@ class SpotifyCog(BaseCog):
         Usage: !nowplaying [@user]
         If no user is mentioned, shows your current song
         """
-        # Default to the command author if no member is specified
-        target = member or ctx.author
+        logging.info(f"nowplaying command called by {ctx.author} for member: {member}")
+
+        # Fetch the member from the guild to get full presence data
+        if member is None:
+            target = ctx.guild.get_member(ctx.author.id)
+            logging.debug(f"Fetched member from guild: {target}")
+        else:
+            target = member
+            logging.debug(f"Using provided member: {target}")
+
+        if target is None:
+            logging.warning(f"Could not find member in guild: {ctx.author.id}")
+            await ctx.send(embed=Embed(
+                description="Could not find that user!",
+                color=Color.red()
+            ))
+            return
 
         # Find Spotify activity
+        logging.debug(f"Checking activities for {target.display_name}: {[type(a).__name__ for a in target.activities]}")
         spotify_activity = None
         for activity in target.activities:
             if isinstance(activity, Spotify):
                 spotify_activity = activity
+                logging.info(f"Found Spotify activity for {target.display_name}: {activity.title} by {activity.artist}")
                 break
 
         if not spotify_activity:
+            logging.info(f"No Spotify activity found for {target.display_name}")
             if target == ctx.author:
                 await ctx.send(embed=Embed(
                     description="You're not listening to Spotify right now!",
@@ -72,6 +91,7 @@ class SpotifyCog(BaseCog):
         # Add track URL
         embed.add_field(name="Listen on Spotify", value=f"[Click here]({spotify_activity.track_url})", inline=False)
 
+        logging.info(f"Successfully sending Spotify embed for {target.display_name}")
         await ctx.send(embed=embed)
 
 
