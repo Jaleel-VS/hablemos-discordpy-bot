@@ -9,7 +9,7 @@ class SpotifyCog(BaseCog):
     def __init__(self, bot: Bot):
         super().__init__(bot)
 
-    @command(aliases=['spotify', 'song', 'music'])
+    @command(aliases=['spoti', 'np'])
     async def nowplaying(self, ctx, member: Optional[Member] = None):
         """
         Shows what song a user is currently listening to on Spotify
@@ -60,7 +60,7 @@ class SpotifyCog(BaseCog):
         # Create embed with song information
         embed = Embed(
             title=f"{target.display_name} is currently listening to",
-            description=f"# {spotify_activity.title}\n{spotify_activity.artist}",
+            description=f"# {spotify_activity.title}\n**Artist**\n{spotify_activity.artist}",
             color=Color.green()
         )
 
