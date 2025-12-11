@@ -24,10 +24,27 @@ def give_emoji_free_text(text: str) -> str:  # for standard emojis
     return demoji.replace(text, '')[:28]
 
 
+def get_safe_username(user, server=None):
+    """
+    Get a safe username that handles special characters and emojis.
+    Falls back to Discord username if stripped nickname is <= 1 character.
+    """
+    # If user has no nickname or not in server, use display_name
+    if server is None or server.get_member(user.id) is None or user.nick is None:
+        username = user.display_name
+    else:
+        username = give_emoji_free_text(user.nick)
+
+    # If stripped username is too short (1 char or less), use Discord username
+    if len(username.strip()) <= 1:
+        username = user.name
+
+    return username
+
+
 async def get_html_css_info(channel, message_id, server):
     message = await channel.fetch_message(message_id)
     user = message.author
-    user_id = message.author.id
     message_content = remove_emoji_from_message(message.content)
 
     # Replace mentions (<@id>, <@!id>), role mentions (<@&id>) and channel mentions (<#id>)
@@ -50,10 +67,7 @@ async def get_html_css_info(channel, message_id, server):
         if pattern in message_content:
             message_content = message_content.replace(pattern, f'#{ch.name}')
 
-    if server.get_member(user_id) is None:
-        user_nick = user.name
-    else:
-        user_nick = user.display_name if user.nick is None else give_emoji_free_text(user.nick)
+    user_nick = get_safe_username(user, server)
 
     user_avatar = get_img_url(user.avatar)
 
@@ -135,7 +149,7 @@ class QuoteGenerator(BaseCog):
                 pattern = f'<#{ch.id}>'
                 if pattern in message_content:
                     message_content = message_content.replace(pattern, f'#{ch.name}')
-            user_nick = ctx.author.display_name if ctx.author.nick is None else give_emoji_free_text(ctx.author.nick)
+            user_nick = get_safe_username(ctx.author, ctx.guild)
             user_avatar = get_img_url(ctx.author.avatar)
 
         if len(message_content) > 250:
@@ -207,7 +221,7 @@ class QuoteGenerator(BaseCog):
                 pattern = f'<#{ch.id}>'
                 if pattern in message_content:
                     message_content = message_content.replace(pattern, f'#{ch.name}')
-            user_nick = ctx.author.display_name if ctx.author.nick is None else give_emoji_free_text(ctx.author.nick)
+            user_nick = get_safe_username(ctx.author, ctx.guild)
             user_avatar = get_img_url(ctx.author.avatar)
 
         if len(message_content) > 250:
