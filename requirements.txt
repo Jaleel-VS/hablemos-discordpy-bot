@@ -1,6 +1,7 @@
 aiohttp
 aiosignal
 async-timeout
+asyncpg
 attrs
 beautifulsoup4
 certifi

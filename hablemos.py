@@ -5,6 +5,7 @@ from discord.ext.commands import Bot, CommandNotFound, CommandOnCooldown
 from logger import setup_logging
 import logging
 from typing import List
+from database import Database
 # import dotenv
 # dotenv.load_dotenv()
 
@@ -67,8 +68,15 @@ class Hablemos(Bot):
 
         self.online_channel = None
         self.error_channel = None
+        self.db = Database()
 
-    async def setup_hook(self):        
+    async def setup_hook(self):
+        try:
+            await self.db.connect()
+            logging.info("Database connected successfully")
+        except Exception as e:
+            logging.error(f"Failed to connect to database: {e}")
+
         for folder in os.listdir('./cogs'):
             if folder.endswith('_cog'):
                 cog_path = f'./cogs/{folder}'
