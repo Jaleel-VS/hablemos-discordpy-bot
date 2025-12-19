@@ -37,6 +37,7 @@ class Database:
         if self.pool is None:
             raise RuntimeError("Database pool not initialized. Call connect() first.")
         async with self.pool.acquire() as conn:
+            # Notes table
             await conn.execute('''
                 CREATE TABLE IF NOT EXISTS notes (
                     id SERIAL PRIMARY KEY,
@@ -46,6 +47,32 @@ class Database:
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             ''')
+
+            # Introductions tracking table
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS introductions (
+                    id SERIAL PRIMARY KEY,
+                    user_id BIGINT NOT NULL,
+                    posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(user_id)
+                )
+            ''')
+
+            # Feature settings table
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS feature_settings (
+                    feature_name VARCHAR(100) PRIMARY KEY,
+                    enabled BOOLEAN NOT NULL DEFAULT FALSE
+                )
+            ''')
+
+            # Initialize intro tracker as disabled by default
+            await conn.execute('''
+                INSERT INTO feature_settings (feature_name, enabled)
+                VALUES ('intro_tracker', FALSE)
+                ON CONFLICT (feature_name) DO NOTHING
+            ''')
+
             logging.info("Database schema initialized")
 
     async def add_note(self, user_id: int, username: str, content: str) -> int:
@@ -93,3 +120,63 @@ class Database:
                 note_id, user_id
             )
             return result == 'DELETE 1'
+
+    # Introduction Tracking Methods
+
+    async def check_user_introduction(self, user_id: int) -> Optional[dict]:
+        """Check if user has posted an introduction in the last 30 days"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow('''
+                SELECT id, user_id, posted_at
+                FROM introductions
+                WHERE user_id = $1
+                AND posted_at > NOW() - INTERVAL '30 days'
+            ''', user_id)
+            if row:
+                return dict(row)
+            return None
+
+    async def record_introduction(self, user_id: int) -> bool:
+        """Record a user's introduction. Returns True if successful, False if already exists"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            try:
+                await conn.execute('''
+                    INSERT INTO introductions (user_id, posted_at)
+                    VALUES ($1, NOW())
+                    ON CONFLICT (user_id) DO UPDATE
+                    SET posted_at = NOW()
+                ''', user_id)
+                return True
+            except Exception as e:
+                logging.error(f"Error recording introduction: {e}")
+                return False
+
+    async def get_feature_setting(self, feature_name: str) -> bool:
+        """Get whether a feature is enabled"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow(
+                'SELECT enabled FROM feature_settings WHERE feature_name = $1',
+                feature_name
+            )
+            if row:
+                return row['enabled']
+            return False
+
+    async def set_feature_setting(self, feature_name: str, enabled: bool) -> bool:
+        """Set whether a feature is enabled"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            await conn.execute('''
+                INSERT INTO feature_settings (feature_name, enabled)
+                VALUES ($1, $2)
+                ON CONFLICT (feature_name) DO UPDATE
+                SET enabled = $2
+            ''', feature_name, enabled)
+            return True

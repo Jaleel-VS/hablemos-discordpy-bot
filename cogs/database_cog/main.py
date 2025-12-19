@@ -1,4 +1,4 @@
-from discord.ext.commands import command, Bot
+from discord.ext.commands import command, Bot, is_owner
 from base_cog import BaseCog
 from discord import Embed, Color
 import logging
@@ -21,6 +21,7 @@ class DatabaseCommands(BaseCog):
         super().__init__(bot)
 
     @command(aliases=['addnote'])
+    @is_owner()
     async def note(self, ctx, *, content: str):
         """
         Add a note to the database
@@ -45,6 +46,7 @@ class DatabaseCommands(BaseCog):
             await ctx.send(embed=red_embed(f"Failed to save note: {str(e)}"))
 
     @command(aliases=['getnote', 'readnote'])
+    @is_owner()
     async def shownote(self, ctx, note_id: int):
         """
         Get a specific note by ID
@@ -71,6 +73,7 @@ class DatabaseCommands(BaseCog):
             await ctx.send(embed=red_embed(f"Failed to retrieve note: {str(e)}"))
 
     @command(aliases=['mynotes', 'listnotes'])
+    @is_owner()
     async def notes(self, ctx, limit: int = 5):
         """
         List your recent notes
@@ -106,6 +109,7 @@ class DatabaseCommands(BaseCog):
             await ctx.send(embed=red_embed(f"Failed to list notes: {str(e)}"))
 
     @command(aliases=['delnote', 'removenote'])
+    @is_owner()
     async def deletenote(self, ctx, note_id: int):
         """
         Delete one of your notes
