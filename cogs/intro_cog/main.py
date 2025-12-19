@@ -8,6 +8,20 @@ INTRO_CHANNEL_ID = 399713966781235200  # Channel to watch for introductions
 NOTIFY_CHANNEL_ID = 247135634265735168  # Channel to notify users about violations
 GENERAL_CHANNEL_ID = 296491080881537024  # General chat channel to redirect users to
 
+# Exemptions - Users and roles that can post multiple times
+EXEMPT_ROLE_IDS = (
+    643097537850376199, #Rai
+    243854949522472971, #Admin 
+    1014256322436415580, # Retired Mod
+    258819531193974784, # Server Staff
+    591745589054668817, # Trail Staff Helper
+    1082402633979011082 # Retired Staff
+)
+
+EXEMPT_USER_IDS = (
+    202995638860906496, # Ryan
+)
+
 
 def green_embed(text):
     return Embed(description=text, color=Color(int('00ff00', 16)))
@@ -44,6 +58,18 @@ class IntroductionTracker(BaseCog):
 
             user_id = message.author.id
 
+            # Check if user is exempt
+            if user_id in EXEMPT_USER_IDS:
+                logging.info(f"User {message.author} ({user_id}) is exempt from intro tracking")
+                return
+
+            # Check if user has any exempt roles
+            if hasattr(message.author, 'roles'):
+                user_role_ids = [role.id for role in message.author.roles]
+                if any(role_id in EXEMPT_ROLE_IDS for role_id in user_role_ids):
+                    logging.info(f"User {message.author} ({user_id}) has exempt role, skipping intro tracking")
+                    return
+
             # Check if user has already posted an introduction in the last 30 days
             existing_intro = await self.bot.db.check_user_introduction(user_id)
 
@@ -60,14 +86,17 @@ class IntroductionTracker(BaseCog):
                 notify_channel = self.bot.get_channel(NOTIFY_CHANNEL_ID)
                 if notify_channel:
                     # TODO: Make this message customizable with user_id parameter
-                    notification = (
-                        f"Hey {message.author.mention}! 👋\n\n"
+                    notification_text = (
                         f"We noticed you tried to post another introduction. "
                         f"You've already introduced yourself recently, so we removed your duplicate message.\n\n"
                         f"Feel free to chat with everyone in <#{GENERAL_CHANNEL_ID}> instead! "
                         f"We'd love to hear from you there. 😊"
                     )
-                    await notify_channel.send(embed=yellow_embed(notification))
+                    # Put mention in content (not embed) to trigger ping notification
+                    await notify_channel.send(
+                        content=f"Hey {message.author.mention}! 👋",
+                        embed=yellow_embed(notification_text)
+                    )
                     logging.info(f"Notified {message.author} about duplicate introduction")
 
             else:
