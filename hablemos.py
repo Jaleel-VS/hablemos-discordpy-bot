@@ -102,6 +102,13 @@ class Hablemos(Bot):
 
         logging.info("BOT LOADED!")
 
+        # Sync slash commands
+        try:
+            synced = await self.tree.sync()
+            logging.info(f"Synced {len(synced)} slash command(s)")
+        except Exception as e:
+            logging.error(f"Failed to sync slash commands: {e}")
+
         if isinstance(self.online_channel, discord.TextChannel):
             await self.online_channel.send("I'm online bra :smiling_imp:")
 

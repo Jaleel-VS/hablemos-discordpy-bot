@@ -1,4 +1,5 @@
-from discord.ext.commands import command, Bot
+from discord.ext import commands
+from discord import app_commands
 from base_cog import BaseCog
 from discord import Embed, Color, Member, Spotify
 from typing import Optional
@@ -6,11 +7,12 @@ import logging
 
 
 class SpotifyCog(BaseCog):
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: commands.Bot):
         super().__init__(bot)
 
-    @command(aliases=['spoti', 'np'])
-    async def nowplaying(self, ctx, member: Optional[Member] = None):
+    @commands.hybrid_command(name="nowplaying", aliases=['spoti', 'np'])
+    @app_commands.describe(member="The user to check (leave empty for yourself)")
+    async def nowplaying(self, ctx: commands.Context, member: Optional[Member] = None):
         """
         Shows what song a user is currently listening to on Spotify
         Usage: !nowplaying [@user]
