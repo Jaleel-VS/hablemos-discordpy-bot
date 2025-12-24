@@ -28,8 +28,9 @@ class GeminiClient:
         # Initialize the client with API key
         self.client = genai.Client(api_key=api_key)
 
-        # Model to use (gemini-2.0-flash-exp or gemini-2.5-flash)
-        self.model_name = 'gemini-2.0-flash-exp'
+        # Model to use - gemini-2.0-flash-lite is free tier compatible
+        # Alternative: gemini-2.5-flash-lite (newest, most cost-effective)
+        self.model_name = 'gemini-2.0-flash-lite'
 
         logger.info("Gemini client initialized successfully")
 
