@@ -8,4 +8,5 @@ cogs/utils/unused_old
 database/
 bot_config.py
 *.log
-
+.python-version
+test_*.py

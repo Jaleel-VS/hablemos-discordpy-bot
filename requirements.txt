@@ -10,6 +10,7 @@ discord.py
 demoji
 dotenv
 frozenlist
+google-genai
 idna
 imgkit
 lxml
