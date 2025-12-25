@@ -293,7 +293,7 @@ class ConversationCog(BaseCog):
         # Split if too long (Discord limit 1024 per field)
         if len(conversation_text) <= 1000:
             embed.add_field(
-                name=f"{conversation['speaker1']} ↔️ {conversation['speaker2']}",
+                name=f"{conversation['speaker1_name']} ↔️ {conversation['speaker2_name']}",
                 value=f"```\n{conversation_text}\n```",
                 inline=False
             )
@@ -318,7 +318,7 @@ class ConversationCog(BaseCog):
                 chunks.append('\n'.join(current_chunk))
 
             for i, chunk in enumerate(chunks):
-                field_name = f"{conversation['speaker1']} ↔️ {conversation['speaker2']}" if i == 0 else "..."
+                field_name = f"{conversation['speaker1_name']} ↔️ {conversation['speaker2_name']}" if i == 0 else "..."
                 embed.add_field(
                     name=field_name,
                     value=f"```\n{chunk}\n```",
