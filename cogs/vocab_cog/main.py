@@ -8,6 +8,9 @@ from discord import app_commands, Interaction, Embed
 from discord.ui import Modal, TextInput
 from base_cog import BaseCog
 import logging
+import csv
+import io
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -280,6 +283,83 @@ class VocabCog(BaseCog):
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @vocab_group.command(name="export", description="Export all your vocabulary notes to a CSV file")
+    async def vocab_export(self, interaction: Interaction):
+        """Export all vocabulary notes as CSV file (ephemeral)"""
+        try:
+            # Defer response since this might take a moment
+            await interaction.response.defer(ephemeral=True)
+
+            user_id = interaction.user.id
+            username = str(interaction.user)
+
+            # Get all notes for the user (no limit)
+            notes = await self.bot.db.get_user_vocab_notes(user_id, limit=10000)
+
+            if not notes:
+                embed = Embed(
+                    title="No Notes to Export",
+                    description="You haven't added any vocabulary notes yet!\n\nUse `/vocab add` to create your first note.",
+                    color=discord.Color.orange()
+                )
+                await interaction.followup.send(embed=embed, ephemeral=True)
+                return
+
+            # Create CSV in memory
+            output = io.StringIO()
+            csv_writer = csv.writer(output)
+
+            # Write header
+            csv_writer.writerow(['ID', 'Word', 'Translation', 'Language', 'Created At'])
+
+            # Write data rows
+            for note in notes:
+                csv_writer.writerow([
+                    note['id'],
+                    note['word'],
+                    note['translation'] or '',
+                    note['language'] or '',
+                    note['created_at'].strftime('%Y-%m-%d %H:%M:%S') if note['created_at'] else ''
+                ])
+
+            # Convert to bytes for Discord file
+            output.seek(0)
+            csv_bytes = output.getvalue().encode('utf-8')
+            csv_file = io.BytesIO(csv_bytes)
+
+            # Create filename with timestamp
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = f"vocab_notes_{username}_{timestamp}.csv"
+
+            # Create Discord file object
+            file = discord.File(csv_file, filename=filename)
+
+            # Create success embed
+            embed = Embed(
+                title="📥 Vocabulary Notes Exported",
+                description=f"Successfully exported **{len(notes)}** vocabulary notes!",
+                color=discord.Color.green()
+            )
+            embed.add_field(
+                name="File Format",
+                value="CSV (Compatible with Excel, Google Sheets, etc.)",
+                inline=False
+            )
+            embed.set_footer(text=f"Exported at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
+            # Send file with embed
+            await interaction.followup.send(embed=embed, file=file, ephemeral=True)
+            logger.info(f"User {username} ({user_id}) exported {len(notes)} vocab notes to CSV")
+
+        except Exception as e:
+            logger.error(f"Error exporting vocab notes: {e}", exc_info=True)
+            embed = Embed(
+                title="❌ Export Failed",
+                description=f"Failed to export vocabulary notes: {str(e)}",
+                color=discord.Color.red()
+            )
+            await interaction.followup.send(embed=embed, ephemeral=True)
 
 
 async def setup(bot):
