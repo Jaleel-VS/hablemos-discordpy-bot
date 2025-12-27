@@ -18,7 +18,8 @@ class Database:
                 self.database_url,
                 min_size=1,
                 max_size=10,
-                command_timeout=60
+                command_timeout=60,
+                statement_cache_size=0  # Disable statement cache to avoid schema change issues
             )
             logging.info("Database connection pool created successfully")
             await self.initialize_schema()
