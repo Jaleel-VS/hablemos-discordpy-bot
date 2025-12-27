@@ -104,8 +104,15 @@ class Hablemos(Bot):
 
         # Sync slash commands
         try:
+            # Global sync (can take up to 1 hour to propagate)
             synced = await self.tree.sync()
-            logging.info(f"Synced {len(synced)} slash command(s)")
+            logging.info(f"Synced {len(synced)} global slash command(s)")
+
+            # Guild-specific sync for Language League (instant)
+            # Guild ID: 243838819743432704 (your server)
+            league_guild = discord.Object(id=243838819743432704)
+            synced_guild = await self.tree.sync(guild=league_guild)
+            logging.info(f"Synced {len(synced_guild)} slash command(s) to Language League guild (instant)")
         except Exception as e:
             logging.error(f"Failed to sync slash commands: {e}")
 

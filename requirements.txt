@@ -13,6 +13,7 @@ frozenlist
 google-genai
 idna
 imgkit
+langdetect
 lxml
 multidict
 python-dotenv

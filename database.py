@@ -135,6 +135,58 @@ class Database:
                 ON vocab_notes(user_id, word)
             ''')
 
+            # Leaderboard users table
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS leaderboard_users (
+                    user_id BIGINT PRIMARY KEY,
+                    username VARCHAR(255) NOT NULL,
+                    opted_in BOOLEAN DEFAULT TRUE,
+                    banned BOOLEAN DEFAULT FALSE,
+                    learning_spanish BOOLEAN DEFAULT FALSE,
+                    learning_english BOOLEAN DEFAULT FALSE,
+                    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+            await conn.execute('''
+                CREATE INDEX IF NOT EXISTS idx_leaderboard_active
+                ON leaderboard_users(opted_in, banned)
+            ''')
+
+            # Leaderboard activity table
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS leaderboard_activity (
+                    id SERIAL PRIMARY KEY,
+                    user_id BIGINT NOT NULL,
+                    activity_type VARCHAR(50) NOT NULL DEFAULT 'message',
+                    channel_id BIGINT,
+                    points INTEGER DEFAULT 1,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES leaderboard_users(user_id) ON DELETE CASCADE
+                )
+            ''')
+
+            await conn.execute('''
+                CREATE INDEX IF NOT EXISTS idx_activity_user_date
+                ON leaderboard_activity(user_id, created_at)
+            ''')
+
+            await conn.execute('''
+                CREATE INDEX IF NOT EXISTS idx_activity_date
+                ON leaderboard_activity(created_at)
+            ''')
+
+            # Leaderboard excluded channels table
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS leaderboard_excluded_channels (
+                    channel_id BIGINT PRIMARY KEY,
+                    channel_name VARCHAR(255),
+                    added_by BIGINT NOT NULL,
+                    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
             logging.info("Database schema initialized")
 
     async def add_note(self, user_id: int, username: str, content: str) -> int:
@@ -472,3 +524,304 @@ class Database:
                 SELECT COUNT(*) FROM vocab_notes WHERE user_id = $1
             ''', user_id)
             return count or 0
+
+    # Leaderboard Methods
+
+    async def leaderboard_join(self, user_id: int, username: str,
+                              learning_spanish: bool, learning_english: bool) -> bool:
+        """Add user to leaderboard system"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            await conn.execute('''
+                INSERT INTO leaderboard_users
+                (user_id, username, opted_in, learning_spanish, learning_english)
+                VALUES ($1, $2, TRUE, $3, $4)
+                ON CONFLICT (user_id) DO UPDATE
+                SET opted_in = TRUE,
+                    learning_spanish = $3,
+                    learning_english = $4,
+                    username = $2,
+                    updated_at = CURRENT_TIMESTAMP
+            ''', user_id, username, learning_spanish, learning_english)
+            return True
+
+    async def leaderboard_leave(self, user_id: int) -> bool:
+        """Remove user from leaderboard system"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            result = await conn.execute('''
+                UPDATE leaderboard_users
+                SET opted_in = FALSE,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = $1
+            ''', user_id)
+            return 'UPDATE' in result
+
+    async def leaderboard_ban_user(self, user_id: int) -> bool:
+        """Ban user from leaderboard"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            result = await conn.execute('''
+                UPDATE leaderboard_users
+                SET banned = TRUE,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = $1
+            ''', user_id)
+            return 'UPDATE' in result
+
+    async def leaderboard_unban_user(self, user_id: int) -> bool:
+        """Unban user from leaderboard"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            result = await conn.execute('''
+                UPDATE leaderboard_users
+                SET banned = FALSE,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = $1
+            ''', user_id)
+            return 'UPDATE' in result
+
+    async def is_user_opted_in(self, user_id: int) -> bool:
+        """Check if user is opted into leaderboard"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow('''
+                SELECT opted_in FROM leaderboard_users
+                WHERE user_id = $1
+            ''', user_id)
+            return row['opted_in'] if row else False
+
+    async def is_user_banned(self, user_id: int) -> bool:
+        """Check if user is banned from leaderboard"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow('''
+                SELECT banned FROM leaderboard_users
+                WHERE user_id = $1
+            ''', user_id)
+            return row['banned'] if row else False
+
+    async def get_user_learning_languages(self, user_id: int) -> dict:
+        """
+        Get what languages a user is learning.
+
+        Returns:
+            {'learning_spanish': bool, 'learning_english': bool}
+        """
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow('''
+                SELECT learning_spanish, learning_english FROM leaderboard_users
+                WHERE user_id = $1 AND opted_in = TRUE AND banned = FALSE
+            ''', user_id)
+            if row:
+                return {
+                    'learning_spanish': row['learning_spanish'],
+                    'learning_english': row['learning_english']
+                }
+            return {'learning_spanish': False, 'learning_english': False}
+
+    async def record_activity(self, user_id: int, activity_type: str = 'message',
+                             channel_id: Optional[int] = None, points: int = 1) -> None:
+        """Record user activity for leaderboard"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            await conn.execute('''
+                INSERT INTO leaderboard_activity
+                (user_id, activity_type, channel_id, points)
+                VALUES ($1, $2, $3, $4)
+            ''', user_id, activity_type, channel_id, points)
+
+    async def get_daily_message_count(self, user_id: int) -> int:
+        """Get count of messages recorded today for a user"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            count = await conn.fetchval('''
+                SELECT COUNT(*)
+                FROM leaderboard_activity
+                WHERE user_id = $1
+                AND activity_type = 'message'
+                AND created_at >= CURRENT_DATE
+            ''', user_id)
+            return count or 0
+
+    async def get_user_stats(self, user_id: int, days: int = 30) -> Optional[dict]:
+        """Get leaderboard stats for a specific user"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            # Get user info
+            user_row = await conn.fetchrow('''
+                SELECT username, learning_spanish, learning_english
+                FROM leaderboard_users
+                WHERE user_id = $1 AND opted_in = TRUE AND banned = FALSE
+            ''', user_id)
+
+            if not user_row:
+                return None
+
+            # Get stats
+            stats_row = await conn.fetchrow('''
+                SELECT
+                    COALESCE(SUM(points), 0) as total_points,
+                    COUNT(DISTINCT DATE(created_at)) as active_days
+                FROM leaderboard_activity
+                WHERE user_id = $1
+                AND created_at > NOW() - INTERVAL '30 days'
+            ''', user_id)
+
+            total_points = stats_row['total_points'] or 0
+            active_days = stats_row['active_days'] or 0
+            total_score = total_points + (active_days * 5)
+
+            # Get ranks
+            rank_spanish = None
+            rank_english = None
+            rank_combined = None
+
+            if user_row['learning_spanish']:
+                rank_spanish = await self._get_user_rank(conn, user_id, 'spanish', days)
+
+            if user_row['learning_english']:
+                rank_english = await self._get_user_rank(conn, user_id, 'english', days)
+
+            rank_combined = await self._get_user_rank(conn, user_id, 'combined', days)
+
+            return {
+                'username': user_row['username'],
+                'total_points': total_points,
+                'active_days': active_days,
+                'total_score': total_score,
+                'rank_spanish': rank_spanish,
+                'rank_english': rank_english,
+                'rank_combined': rank_combined
+            }
+
+    async def _get_user_rank(self, conn, user_id: int, board_type: str, days: int = 30) -> Optional[int]:
+        """Helper to get user rank on a specific leaderboard"""
+        where_clause = "lu.learning_spanish = TRUE" if board_type == 'spanish' else (
+            "lu.learning_english = TRUE" if board_type == 'english' else "TRUE"
+        )
+
+        row = await conn.fetchrow(f'''
+            WITH user_stats AS (
+                SELECT
+                    lu.user_id,
+                    COALESCE(SUM(la.points), 0) as total_points,
+                    COUNT(DISTINCT DATE(la.created_at)) as active_days
+                FROM leaderboard_users lu
+                LEFT JOIN leaderboard_activity la
+                    ON lu.user_id = la.user_id
+                    AND la.created_at > NOW() - INTERVAL '30 days'
+                WHERE lu.opted_in = TRUE
+                    AND lu.banned = FALSE
+                    AND {where_clause}
+                GROUP BY lu.user_id
+            ),
+            ranked_users AS (
+                SELECT
+                    user_id,
+                    (total_points + (active_days * 5)) as total_score,
+                    RANK() OVER (ORDER BY (total_points + (active_days * 5)) DESC) as rank
+                FROM user_stats
+            )
+            SELECT rank FROM ranked_users WHERE user_id = $1
+        ''', user_id)
+
+        return row['rank'] if row else None
+
+    async def get_leaderboard(self, board_type: str, limit: int = 10) -> list[dict]:
+        """Get leaderboard rankings"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+
+        where_clause = "lu.learning_spanish = TRUE" if board_type == 'spanish' else (
+            "lu.learning_english = TRUE" if board_type == 'english' else "TRUE"
+        )
+
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch(f'''
+                WITH user_stats AS (
+                    SELECT
+                        lu.user_id,
+                        lu.username,
+                        COALESCE(SUM(la.points), 0) as total_points,
+                        COUNT(DISTINCT DATE(la.created_at)) as active_days
+                    FROM leaderboard_users lu
+                    LEFT JOIN leaderboard_activity la
+                        ON lu.user_id = la.user_id
+                        AND la.created_at > NOW() - INTERVAL '30 days'
+                    WHERE lu.opted_in = TRUE
+                        AND lu.banned = FALSE
+                        AND {where_clause}
+                    GROUP BY lu.user_id, lu.username
+                )
+                SELECT
+                    user_id,
+                    username,
+                    total_points,
+                    active_days,
+                    (total_points + (active_days * 5)) as total_score,
+                    RANK() OVER (ORDER BY (total_points + (active_days * 5)) DESC) as rank
+                FROM user_stats
+                ORDER BY total_score DESC
+                LIMIT $1
+            ''', limit)
+
+            return [dict(row) for row in rows]
+
+    async def exclude_channel(self, channel_id: int, channel_name: str, admin_id: int) -> bool:
+        """Add channel to exclusion list"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            await conn.execute('''
+                INSERT INTO leaderboard_excluded_channels (channel_id, channel_name, added_by)
+                VALUES ($1, $2, $3)
+                ON CONFLICT (channel_id) DO UPDATE
+                SET channel_name = $2, added_by = $3, added_at = CURRENT_TIMESTAMP
+            ''', channel_id, channel_name, admin_id)
+            return True
+
+    async def include_channel(self, channel_id: int) -> bool:
+        """Remove channel from exclusion list"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            result = await conn.execute('''
+                DELETE FROM leaderboard_excluded_channels
+                WHERE channel_id = $1
+            ''', channel_id)
+            return result == 'DELETE 1'
+
+    async def is_channel_excluded(self, channel_id: int) -> bool:
+        """Check if channel is excluded from leaderboard"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow('''
+                SELECT channel_id FROM leaderboard_excluded_channels
+                WHERE channel_id = $1
+            ''', channel_id)
+            return row is not None
+
+    async def get_excluded_channels(self) -> list[dict]:
+        """Get all excluded channels"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch('''
+                SELECT channel_id, channel_name, added_by, added_at
+                FROM leaderboard_excluded_channels
+                ORDER BY added_at DESC
+            ''')
+            return [dict(row) for row in rows]
