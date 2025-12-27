@@ -37,7 +37,8 @@ class LeagueCog(BaseCog):
 
     league_group = app_commands.Group(
         name="league",
-        description="Language League - Compete with other learners!"
+        description="Language League - Compete with other learners!",
+        guild_ids=[LEAGUE_GUILD_ID]  # Guild-specific for instant sync
     )
 
     async def validate_user_roles(self, member: Member) -> dict:
@@ -132,7 +133,6 @@ class LeagueCog(BaseCog):
         }
 
     @league_group.command(name="join", description="Join the Language League")
-    @app_commands.guilds(LEAGUE_GUILD_ID)  # Only show in this guild
     async def league_join(self, interaction: Interaction):
         """Join the Language League (opt-in)"""
         try:
@@ -188,7 +188,6 @@ class LeagueCog(BaseCog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @league_group.command(name="leave", description="Leave the Language League")
-    @app_commands.guilds(LEAGUE_GUILD_ID)  # Only show in this guild
     async def league_leave(self, interaction: Interaction):
         """Leave the Language League (opt-out)"""
         try:
@@ -224,7 +223,6 @@ class LeagueCog(BaseCog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @league_group.command(name="view", description="View league rankings")
-    @app_commands.guilds(LEAGUE_GUILD_ID)  # Only show in this guild
     @app_commands.describe(
         board="Which league to view",
         limit="Number of users to show (max 25)"
@@ -318,7 +316,6 @@ class LeagueCog(BaseCog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @league_group.command(name="stats", description="View league stats")
-    @app_commands.guilds(LEAGUE_GUILD_ID)  # Only show in this guild
     @app_commands.describe(
         user="User to view stats for (leave empty for yourself)"
     )
