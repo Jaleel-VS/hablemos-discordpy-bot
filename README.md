@@ -9,6 +9,7 @@ Hablemos is a feature-rich bot designed to help users learn Spanish and English 
 ## Features
 
 - 🤖 **AI-Generated Conversations** - Practice with realistic dialogues powered by Google Gemini
+- 🏆 **Language League** - Compete with other learners, track progress, earn rewards for consistency
 - 📚 **Vocabulary Tools** - Personal vocab notes with export, synonyms/antonyms lookup
 - 🎮 **Interactive Games** - Conjugation practice, Hangman, conversation starters
 - 🎵 **Spotify Integration** - See what users are listening to
@@ -24,6 +25,7 @@ Hablemos is a feature-rich bot designed to help users learn Spanish and English 
   - [AI Conversations](#ai-conversations)
   - [Conjugation Practice](#conjugation-practice)
   - [Vocabulary Notes](#vocabulary-notes)
+  - [Language League](#language-league)
   - [Synonyms & Antonyms](#synonyms--antonyms)
 - [Games](#games)
   - [Hangman](#hangman)
@@ -41,6 +43,7 @@ Basic bot information and utilities.
 
 | Command | Description |
 |---------|-------------|
+| `/help [category]` | Interactive help with categories (slash command) |
 | `$help [command]` | Shows available commands and detailed usage information |
 | `$info` | Information about the bot and links |
 | `$invite` | Get an invite link for the bot |
@@ -138,6 +141,82 @@ Personal vocabulary note management with privacy-focused ephemeral messages.
 - Word/Phrase (required)
 - Translation/Definition (optional, multi-line)
 - Language (optional, e.g., "spanish", "english")
+
+---
+
+### Language League
+
+Opt-in competitive leaderboard system that tracks and ranks language learning activity.
+
+| Command | Description |
+|---------|-------------|
+| `/league join` | Join the Language League competition |
+| `/league leave` | Opt out of the league (preserves historical data) |
+| `/league view [spanish\|english\|combined] [limit]` | View league rankings |
+| `/league stats [@user]` | View your stats or another user's stats |
+
+**Admin Commands (Owner only):**
+- `$league ban <@user>` - Ban user from league
+- `$league unban <@user>` - Unban user from league
+- `$league exclude <#channel>` - Exclude channel from tracking
+- `$league include <#channel>` - Include previously excluded channel
+- `$league excluded` - List all excluded channels
+
+**How It Works:**
+
+1. **Choose ONE Language** - Pick Spanish OR English to focus on
+2. **Practice with Real Messages** - Only messages in your learning language count
+3. **Quality Over Quantity** - Anti-spam measures reward genuine practice
+4. **Earn Consistency Bonuses** - +5 points for each day you're active
+5. **Compete on Leaderboards** - Track your progress over 30-day rolling windows
+
+**Scoring System:**
+```
+Total Score = Message Points + (Active Days × 5)
+
+Example:
+- 100 messages across 20 days = 100 + (20 × 5) = 200 points
+```
+
+**Requirements to Join:**
+- ✅ Must have ONE Learning role (Learning Spanish OR Learning English)
+- ❌ Cannot be native in the language you're learning
+- ✅ Cannot have both Learning roles (choose one language to focus on)
+
+**Anti-Spam Protection:**
+- **Minimum message length:** 10 characters (to ensure language detection works)
+- **Language detection:** Automatic detection ensures you're writing in your target language
+- **2-minute cooldown:** Per channel (prevents rapid-fire spam)
+- **Daily cap:** Maximum 50 counted messages per day
+- **Excluded channels:** Admin-configured channels don't count (e.g., bot commands)
+
+**Three Leaderboards:**
+- **Spanish League** 🇪🇸 - Only users learning Spanish
+- **English League** 🇬🇧 - Only users learning English
+- **Combined League** 🌍 - All league participants
+
+**Features:**
+- ✅ **30-day rolling window** - No manual resets needed
+- ✅ **Guild-specific** - Only available in authorized servers
+- ✅ **Privacy-focused** - Ephemeral messages for opt-in/stats
+- ✅ **Language detection** - Powered by `langdetect` library
+- ✅ **Consistency rewards** - Encourages daily practice
+- ✅ **Fair competition** - Multiple anti-gaming measures
+
+**Stats Tracked:**
+- Total message points
+- Number of active days
+- Total score (points + consistency bonus)
+- Rankings on each applicable leaderboard
+
+**Example Flow:**
+```
+1. /league join → Choose your learning language
+2. Write messages in your target language (Spanish or English)
+3. Bot automatically counts valid messages
+4. /league stats → Check your progress
+5. /league view spanish → See where you rank
+```
 
 ---
 
