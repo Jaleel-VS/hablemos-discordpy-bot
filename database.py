@@ -210,10 +210,10 @@ class Database:
                 CREATE TABLE IF NOT EXISTS league_rounds (
                     round_id SERIAL PRIMARY KEY,
                     round_number INTEGER NOT NULL,
-                    start_date TIMESTAMP NOT NULL,
-                    end_date TIMESTAMP NOT NULL,
+                    start_date TIMESTAMPTZ NOT NULL,
+                    end_date TIMESTAMPTZ NOT NULL,
                     status VARCHAR(20) DEFAULT 'active',
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
                 )
             ''')
 
@@ -233,7 +233,7 @@ class Database:
                     rank INTEGER NOT NULL,
                     total_score INTEGER NOT NULL,
                     active_days INTEGER NOT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (round_id) REFERENCES league_rounds(round_id) ON DELETE CASCADE
                 )
             ''')
