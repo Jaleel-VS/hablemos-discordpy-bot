@@ -168,7 +168,8 @@ Opt-in competitive leaderboard system that tracks and ranks language learning ac
 2. **Practice with Real Messages** - Only messages in your learning language count
 3. **Quality Over Quantity** - Anti-spam measures reward genuine practice
 4. **Earn Consistency Bonuses** - +5 points for each day you're active
-5. **Compete on Leaderboards** - Track your progress over 30-day rolling windows
+5. **Compete in Biweekly Rounds** - Each round lasts 2 weeks, ending Sunday at midnight UTC
+6. **Win Awards** - #1 winners get a star ⭐ next to their name in future rounds
 
 **Scoring System:**
 ```
@@ -196,7 +197,9 @@ Example:
 - **Combined League** 🌍 - All league participants
 
 **Features:**
-- ✅ **30-day rolling window** - No manual resets needed
+- ✅ **Biweekly rounds** - Fresh competition every 2 weeks with automatic transitions
+- ✅ **Winner announcements** - Top 3 users announced at end of each round
+- ✅ **Award system** - #1 winners get permanent star ⭐ recognition
 - ✅ **Guild-specific** - Only available in authorized servers
 - ✅ **Privacy-focused** - Ephemeral messages for opt-in/stats
 - ✅ **Language detection** - Powered by `langdetect` library

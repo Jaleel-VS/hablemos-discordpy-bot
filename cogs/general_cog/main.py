@@ -246,7 +246,8 @@ class General(BaseCog):
                     "• **Write messages** in that language (min 10 characters)\n"
                     "• **Earn points** for quality language practice\n"
                     "• **Get bonuses** for consistency (+5 points per active day)\n"
-                    "• **Compete** on 30-day rolling leaderboards"
+                    "• **Compete** in biweekly rounds (2 weeks each)\n"
+                    "• **Win awards** - #1 winners get a star ⭐"
                 ),
                 inline=False
             )
@@ -378,6 +379,7 @@ class General(BaseCog):
                     "`$league exclude <#channel>` - Exclude channel\n"
                     "`$league include <#channel>` - Include channel\n"
                     "`$league excluded` - List excluded channels\n"
+                    "`$league admin_stats` - View league statistics\n"
                     "*Owner only*"
                 ),
                 inline=False

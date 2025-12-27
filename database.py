@@ -177,6 +177,24 @@ class Database:
                 ON leaderboard_activity(created_at)
             ''')
 
+            # Add round_id column to leaderboard_activity if it doesn't exist
+            await conn.execute('''
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name='leaderboard_activity' AND column_name='round_id'
+                    ) THEN
+                        ALTER TABLE leaderboard_activity ADD COLUMN round_id INTEGER;
+                    END IF;
+                END $$;
+            ''')
+
+            await conn.execute('''
+                CREATE INDEX IF NOT EXISTS idx_activity_round
+                ON leaderboard_activity(round_id)
+            ''')
+
             # Leaderboard excluded channels table
             await conn.execute('''
                 CREATE TABLE IF NOT EXISTS leaderboard_excluded_channels (
@@ -185,6 +203,44 @@ class Database:
                     added_by BIGINT NOT NULL,
                     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
+            ''')
+
+            # League rounds table
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS league_rounds (
+                    round_id SERIAL PRIMARY KEY,
+                    round_number INTEGER NOT NULL,
+                    start_date TIMESTAMP NOT NULL,
+                    end_date TIMESTAMP NOT NULL,
+                    status VARCHAR(20) DEFAULT 'active',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+            await conn.execute('''
+                CREATE INDEX IF NOT EXISTS idx_league_rounds_status
+                ON league_rounds(status)
+            ''')
+
+            # League round winners table
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS league_round_winners (
+                    id SERIAL PRIMARY KEY,
+                    round_id INTEGER NOT NULL,
+                    user_id BIGINT NOT NULL,
+                    username VARCHAR(255) NOT NULL,
+                    league_type VARCHAR(20) NOT NULL,
+                    rank INTEGER NOT NULL,
+                    total_score INTEGER NOT NULL,
+                    active_days INTEGER NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (round_id) REFERENCES league_rounds(round_id) ON DELETE CASCADE
+                )
+            ''')
+
+            await conn.execute('''
+                CREATE INDEX IF NOT EXISTS idx_league_winners_user
+                ON league_round_winners(user_id, rank)
             ''')
 
             logging.info("Database schema initialized")
@@ -629,16 +685,17 @@ class Database:
             return {'learning_spanish': False, 'learning_english': False}
 
     async def record_activity(self, user_id: int, activity_type: str = 'message',
-                             channel_id: Optional[int] = None, points: int = 1) -> None:
+                             channel_id: Optional[int] = None, points: int = 1,
+                             round_id: Optional[int] = None) -> None:
         """Record user activity for leaderboard"""
         if self.pool is None:
             raise RuntimeError("Database pool not initialized. Call connect() first.")
         async with self.pool.acquire() as conn:
             await conn.execute('''
                 INSERT INTO leaderboard_activity
-                (user_id, activity_type, channel_id, points)
-                VALUES ($1, $2, $3, $4)
-            ''', user_id, activity_type, channel_id, points)
+                (user_id, activity_type, channel_id, points, round_id)
+                VALUES ($1, $2, $3, $4, $5)
+            ''', user_id, activity_type, channel_id, points, round_id)
 
     async def get_daily_message_count(self, user_id: int) -> int:
         """Get count of messages recorded today for a user"""
@@ -654,10 +711,18 @@ class Database:
             ''', user_id)
             return count or 0
 
-    async def get_user_stats(self, user_id: int, days: int = 30) -> Optional[dict]:
-        """Get leaderboard stats for a specific user"""
+    async def get_user_stats(self, user_id: int, round_id: Optional[int] = None) -> Optional[dict]:
+        """Get leaderboard stats for a specific user in a specific round"""
         if self.pool is None:
             raise RuntimeError("Database pool not initialized. Call connect() first.")
+
+        # If no round_id specified, get current round
+        if round_id is None:
+            current_round = await self.get_current_round()
+            if not current_round:
+                return None
+            round_id = current_round['round_id']
+
         async with self.pool.acquire() as conn:
             # Get user info
             user_row = await conn.fetchrow('''
@@ -669,15 +734,14 @@ class Database:
             if not user_row:
                 return None
 
-            # Get stats
+            # Get stats for this round
             stats_row = await conn.fetchrow('''
                 SELECT
                     COALESCE(SUM(points), 0) as total_points,
                     COUNT(DISTINCT DATE(created_at)) as active_days
                 FROM leaderboard_activity
-                WHERE user_id = $1
-                AND created_at > NOW() - INTERVAL '30 days'
-            ''', user_id)
+                WHERE user_id = $1 AND round_id = $2
+            ''', user_id, round_id)
 
             total_points = stats_row['total_points'] or 0
             active_days = stats_row['active_days'] or 0
@@ -689,12 +753,12 @@ class Database:
             rank_combined = None
 
             if user_row['learning_spanish']:
-                rank_spanish = await self._get_user_rank(conn, user_id, 'spanish', days)
+                rank_spanish = await self._get_user_rank(conn, user_id, 'spanish', round_id)
 
             if user_row['learning_english']:
-                rank_english = await self._get_user_rank(conn, user_id, 'english', days)
+                rank_english = await self._get_user_rank(conn, user_id, 'english', round_id)
 
-            rank_combined = await self._get_user_rank(conn, user_id, 'combined', days)
+            rank_combined = await self._get_user_rank(conn, user_id, 'combined', round_id)
 
             return {
                 'username': user_row['username'],
@@ -706,8 +770,8 @@ class Database:
                 'rank_combined': rank_combined
             }
 
-    async def _get_user_rank(self, conn, user_id: int, board_type: str, days: int = 30) -> Optional[int]:
-        """Helper to get user rank on a specific leaderboard"""
+    async def _get_user_rank(self, conn, user_id: int, board_type: str, round_id: int) -> Optional[int]:
+        """Helper to get user rank on a specific leaderboard for a specific round"""
         where_clause = "lu.learning_spanish = TRUE" if board_type == 'spanish' else (
             "lu.learning_english = TRUE" if board_type == 'english' else "TRUE"
         )
@@ -721,7 +785,7 @@ class Database:
                 FROM leaderboard_users lu
                 LEFT JOIN leaderboard_activity la
                     ON lu.user_id = la.user_id
-                    AND la.created_at > NOW() - INTERVAL '30 days'
+                    AND la.round_id = $2
                 WHERE lu.opted_in = TRUE
                     AND lu.banned = FALSE
                     AND {where_clause}
@@ -735,14 +799,21 @@ class Database:
                 FROM user_stats
             )
             SELECT rank FROM ranked_users WHERE user_id = $1
-        ''', user_id)
+        ''', user_id, round_id)
 
         return row['rank'] if row else None
 
-    async def get_leaderboard(self, board_type: str, limit: int = 10) -> list[dict]:
-        """Get leaderboard rankings"""
+    async def get_leaderboard(self, board_type: str, limit: int = 10, round_id: Optional[int] = None) -> list[dict]:
+        """Get leaderboard rankings for a specific round (or current round if not specified)"""
         if self.pool is None:
             raise RuntimeError("Database pool not initialized. Call connect() first.")
+
+        # If no round_id specified, get current round
+        if round_id is None:
+            current_round = await self.get_current_round()
+            if not current_round:
+                return []
+            round_id = current_round['round_id']
 
         where_clause = "lu.learning_spanish = TRUE" if board_type == 'spanish' else (
             "lu.learning_english = TRUE" if board_type == 'english' else "TRUE"
@@ -759,7 +830,7 @@ class Database:
                     FROM leaderboard_users lu
                     LEFT JOIN leaderboard_activity la
                         ON lu.user_id = la.user_id
-                        AND la.created_at > NOW() - INTERVAL '30 days'
+                        AND la.round_id = $2
                     WHERE lu.opted_in = TRUE
                         AND lu.banned = FALSE
                         AND {where_clause}
@@ -775,7 +846,7 @@ class Database:
                 FROM user_stats
                 ORDER BY total_score DESC
                 LIMIT $1
-            ''', limit)
+            ''', limit, round_id)
 
             return [dict(row) for row in rows]
 
@@ -825,3 +896,128 @@ class Database:
                 ORDER BY added_at DESC
             ''')
             return [dict(row) for row in rows]
+
+    async def get_league_admin_stats(self) -> dict:
+        """Get admin statistics for the Language League"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            # Get total opted-in users
+            total_row = await conn.fetchrow('''
+                SELECT COUNT(*) as total
+                FROM leaderboard_users
+                WHERE opted_in = TRUE AND banned = FALSE
+            ''')
+
+            # Get Spanish learners count
+            spanish_row = await conn.fetchrow('''
+                SELECT COUNT(*) as count
+                FROM leaderboard_users
+                WHERE opted_in = TRUE AND banned = FALSE AND learning_spanish = TRUE
+            ''')
+
+            # Get English learners count
+            english_row = await conn.fetchrow('''
+                SELECT COUNT(*) as count
+                FROM leaderboard_users
+                WHERE opted_in = TRUE AND banned = FALSE AND learning_english = TRUE
+            ''')
+
+            # Get banned users count
+            banned_row = await conn.fetchrow('''
+                SELECT COUNT(*) as count
+                FROM leaderboard_users
+                WHERE banned = TRUE
+            ''')
+
+            # Get total activity in last 30 days
+            activity_row = await conn.fetchrow('''
+                SELECT COUNT(*) as total_messages
+                FROM leaderboard_activity
+                WHERE created_at > NOW() - INTERVAL '30 days'
+            ''')
+
+            return {
+                'total_users': total_row['total'],
+                'spanish_learners': spanish_row['count'],
+                'english_learners': english_row['count'],
+                'banned_users': banned_row['count'],
+                'total_messages_30d': activity_row['total_messages']
+            }
+
+    # League Rounds Management
+
+    async def get_current_round(self) -> Optional[dict]:
+        """Get the currently active round"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow('''
+                SELECT round_id, round_number, start_date, end_date, status
+                FROM league_rounds
+                WHERE status = 'active'
+                ORDER BY round_id DESC
+                LIMIT 1
+            ''')
+            return dict(row) if row else None
+
+    async def create_round(self, round_number: int, start_date, end_date) -> int:
+        """Create a new league round"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow('''
+                INSERT INTO league_rounds (round_number, start_date, end_date, status)
+                VALUES ($1, $2, $3, 'active')
+                RETURNING round_id
+            ''', round_number, start_date, end_date)
+            return row['round_id']
+
+    async def end_round(self, round_id: int) -> bool:
+        """Mark a round as completed"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            await conn.execute('''
+                UPDATE league_rounds
+                SET status = 'completed'
+                WHERE round_id = $1
+            ''', round_id)
+            return True
+
+    async def save_round_winners(self, round_id: int, winners_data: list) -> None:
+        """Save round winners to database"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            for winner in winners_data:
+                await conn.execute('''
+                    INSERT INTO league_round_winners
+                    (round_id, user_id, username, league_type, rank, total_score, active_days)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7)
+                ''', round_id, winner['user_id'], winner['username'],
+                winner['league_type'], winner['rank'], winner['total_score'], winner['active_days'])
+
+    async def has_user_won_before(self, user_id: int) -> bool:
+        """Check if user has ever won first place in any league"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow('''
+                SELECT COUNT(*) as count
+                FROM league_round_winners
+                WHERE user_id = $1 AND rank = 1
+            ''', user_id)
+            return row['count'] > 0 if row else False
+
+    async def get_round_by_id(self, round_id: int) -> Optional[dict]:
+        """Get round details by ID"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow('''
+                SELECT round_id, round_number, start_date, end_date, status
+                FROM league_rounds
+                WHERE round_id = $1
+            ''', round_id)
+            return dict(row) if row else None

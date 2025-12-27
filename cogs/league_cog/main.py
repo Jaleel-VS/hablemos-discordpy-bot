@@ -3,13 +3,14 @@ Language League Cog
 Tracks user activity and maintains league rankings for language learners
 """
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import app_commands, Interaction, Embed, Member
 from base_cog import BaseCog
 import logging
 import time
 from typing import Optional
 from langdetect import detect, DetectorFactory, LangDetectException
+from datetime import datetime, timedelta, timezone
 
 # Set seed for consistent language detection results
 DetectorFactory.seed = 0
@@ -18,6 +19,9 @@ logger = logging.getLogger(__name__)
 
 # Guild ID - Language League is only available in this server
 LEAGUE_GUILD_ID = 243838819743432704
+
+# Winner announcement channel
+WINNER_CHANNEL_ID = 247135634265735168
 
 # Role IDs
 ENGLISH_NATIVE = 243853718758359040
@@ -34,6 +38,188 @@ class LeagueCog(BaseCog):
         super().__init__(bot)
         # In-memory cooldown cache: {user_id: {channel_id: timestamp}}
         self.message_cooldowns = {}
+        self.check_round_end.start()  # Start scheduled task
+
+    async def cog_load(self):
+        """Called when cog is loaded - ensure we have an active round"""
+        await self.ensure_round_exists()
+
+    def cog_unload(self):
+        """Called when cog is unloaded"""
+        self.check_round_end.cancel()
+
+    async def ensure_round_exists(self):
+        """Create initial round if none exists"""
+        try:
+            current_round = await self.bot.db.get_current_round()
+            if not current_round:
+                # Start today, end next Sunday midnight UTC
+                start_date = datetime.now(timezone.utc)
+                # Calculate next Sunday
+                days_until_sunday = (6 - start_date.weekday()) % 7
+                if days_until_sunday == 0:
+                    days_until_sunday = 7
+                end_date = start_date + timedelta(days=days_until_sunday)
+                end_date = end_date.replace(hour=23, minute=59, second=59)
+
+                round_id = await self.bot.db.create_round(1, start_date, end_date)
+                logger.info(f"Created initial round {round_id}: {start_date} to {end_date}")
+        except Exception as e:
+            logger.error(f"Error ensuring round exists: {e}", exc_info=True)
+
+    @tasks.loop(minutes=1)
+    async def check_round_end(self):
+        """Scheduled task to check if current round has ended"""
+        try:
+            current_round = await self.bot.db.get_current_round()
+            if not current_round:
+                return
+
+            now = datetime.now(timezone.utc)
+            end_date = current_round['end_date']
+
+            # Make end_date timezone-aware if it isn't
+            if end_date.tzinfo is None:
+                end_date = end_date.replace(tzinfo=timezone.utc)
+
+            # Check if round has ended
+            if now >= end_date:
+                logger.info(f"Round {current_round['round_id']} has ended, processing...")
+                await self.end_current_round(current_round)
+
+        except Exception as e:
+            logger.error(f"Error in check_round_end task: {e}", exc_info=True)
+
+    @check_round_end.before_loop
+    async def before_check_round_end(self):
+        """Wait for bot to be ready before starting the round check task"""
+        await self.bot.wait_until_ready()
+
+    async def end_current_round(self, current_round: dict):
+        """
+        End the current round and announce winners
+
+        Args:
+            current_round: Dict with round info from get_current_round()
+        """
+        try:
+            round_id = current_round['round_id']
+            round_number = current_round['round_number']
+
+            logger.info(f"Ending round {round_number} (ID: {round_id})")
+
+            # Get top 3 from Spanish league
+            spanish_top3 = await self.bot.db.get_leaderboard('spanish', limit=3, round_id=round_id)
+
+            # Get top 3 from English league
+            english_top3 = await self.bot.db.get_leaderboard('english', limit=3, round_id=round_id)
+
+            # Save winners to database
+            winners_data = []
+
+            for rank, entry in enumerate(spanish_top3, start=1):
+                winners_data.append({
+                    'user_id': entry['user_id'],
+                    'username': entry['username'],
+                    'league_type': 'spanish',
+                    'rank': rank,
+                    'total_score': entry['total_score'],
+                    'active_days': entry['active_days']
+                })
+
+            for rank, entry in enumerate(english_top3, start=1):
+                winners_data.append({
+                    'user_id': entry['user_id'],
+                    'username': entry['username'],
+                    'league_type': 'english',
+                    'rank': rank,
+                    'total_score': entry['total_score'],
+                    'active_days': entry['active_days']
+                })
+
+            # Save all winners
+            await self.bot.db.save_round_winners(round_id, winners_data)
+
+            # Mark round as completed
+            await self.bot.db.end_round(round_id)
+
+            # Announce winners
+            await self.announce_winners(round_number, spanish_top3, english_top3)
+
+            # Create next round (2 weeks from end of current round)
+            next_start = current_round['end_date'] + timedelta(seconds=1)
+            next_end = next_start + timedelta(days=14)
+            next_end = next_end.replace(hour=23, minute=59, second=59)
+
+            next_round_id = await self.bot.db.create_round(round_number + 1, next_start, next_end)
+            logger.info(f"Created next round {round_number + 1} (ID: {next_round_id}): {next_start} to {next_end}")
+
+        except Exception as e:
+            logger.error(f"Error ending round: {e}", exc_info=True)
+
+    async def announce_winners(self, round_number: int, spanish_top3: list, english_top3: list):
+        """
+        Announce round winners in the winner announcement channel
+
+        Args:
+            round_number: The round number that just ended
+            spanish_top3: List of top 3 Spanish league entries
+            english_top3: List of top 3 English league entries
+        """
+        try:
+            channel = self.bot.get_channel(WINNER_CHANNEL_ID)
+            if not channel:
+                logger.error(f"Could not find winner announcement channel {WINNER_CHANNEL_ID}")
+                return
+
+            embed = Embed(
+                title=f"🏆 Round {round_number} Winners!",
+                description="Congratulations to our top performers this round!",
+                color=discord.Color.gold()
+            )
+
+            # Spanish League Winners
+            if spanish_top3:
+                spanish_text = []
+                medals = ["🥇", "🥈", "🥉"]
+                for i, entry in enumerate(spanish_top3):
+                    user_mention = f"<@{entry['user_id']}>"
+                    spanish_text.append(
+                        f"{medals[i]} **{entry['username']}** {user_mention}\n"
+                        f"   Score: {entry['total_score']} ({entry['active_days']} days)"
+                    )
+
+                embed.add_field(
+                    name="🇪🇸 Spanish League",
+                    value="\n\n".join(spanish_text),
+                    inline=False
+                )
+
+            # English League Winners
+            if english_top3:
+                english_text = []
+                medals = ["🥇", "🥈", "🥉"]
+                for i, entry in enumerate(english_top3):
+                    user_mention = f"<@{entry['user_id']}>"
+                    english_text.append(
+                        f"{medals[i]} **{entry['username']}** {user_mention}\n"
+                        f"   Score: {entry['total_score']} ({entry['active_days']} days)"
+                    )
+
+                embed.add_field(
+                    name="🇬🇧 English League",
+                    value="\n\n".join(english_text),
+                    inline=False
+                )
+
+            embed.set_footer(text=f"Round {round_number} • Keep learning and see you next round!")
+
+            # Send announcement
+            await channel.send(embed=embed)
+            logger.info(f"Announced round {round_number} winners in channel {WINNER_CHANNEL_ID}")
+
+        except Exception as e:
+            logger.error(f"Error announcing winners: {e}", exc_info=True)
 
     league_group = app_commands.Group(
         name="league",
@@ -223,10 +409,7 @@ class LeagueCog(BaseCog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @league_group.command(name="view", description="View league rankings")
-    @app_commands.describe(
-        board="Which league to view",
-        limit="Number of users to show (max 25)"
-    )
+    @app_commands.describe(board="Which league to view")
     @app_commands.choices(board=[
         app_commands.Choice(name="Spanish League 🇪🇸", value="spanish"),
         app_commands.Choice(name="English League 🇬🇧", value="english"),
@@ -235,23 +418,23 @@ class LeagueCog(BaseCog):
     async def league_view(
         self,
         interaction: Interaction,
-        board: str = "combined",
-        limit: int = 10
+        board: str = "combined"
     ):
-        """View league rankings"""
+        """View league rankings (top 20)"""
         try:
-            # Validate limit
-            if limit < 1 or limit > 25:
+            # Get current round info
+            current_round = await self.bot.db.get_current_round()
+            if not current_round:
                 embed = Embed(
-                    title="❌ Invalid Limit",
-                    description="Limit must be between 1 and 25.",
-                    color=discord.Color.red()
+                    title="ℹ️ No Active Round",
+                    description="There is no active league round at the moment.",
+                    color=discord.Color.orange()
                 )
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
 
-            # Get league data
-            rankings = await self.bot.db.get_leaderboard(board, limit)
+            # Get top 20 for display
+            rankings = await self.bot.db.get_leaderboard(board, 20)
 
             if not rankings:
                 embed = Embed(
@@ -265,9 +448,43 @@ class LeagueCog(BaseCog):
             # Build league embed
             board_emoji = "🇪🇸" if board == "spanish" else ("🇬🇧" if board == "english" else "🌍")
             embed = Embed(
-                title=f"{board_emoji} {board.title()} League (Last 30 Days)",
+                title=f"{board_emoji} {board.title()} League - Round {current_round['round_number']}",
                 color=discord.Color.gold()
             )
+
+            # Check if requester is in top 20
+            requester_in_top_20 = any(entry['user_id'] == interaction.user.id for entry in rankings)
+            requester_stats = None
+
+            # If not in top 20, get their stats
+            if not requester_in_top_20:
+                user_stats = await self.bot.db.get_user_stats(interaction.user.id)
+                if user_stats:
+                    # Determine which rank to show based on board type
+                    if board == 'spanish' and user_stats.get('rank_spanish'):
+                        requester_stats = {
+                            'rank': user_stats['rank_spanish'],
+                            'username': str(interaction.user),
+                            'total_score': user_stats['total_score'],
+                            'active_days': user_stats['active_days'],
+                            'user_id': interaction.user.id
+                        }
+                    elif board == 'english' and user_stats.get('rank_english'):
+                        requester_stats = {
+                            'rank': user_stats['rank_english'],
+                            'username': str(interaction.user),
+                            'total_score': user_stats['total_score'],
+                            'active_days': user_stats['active_days'],
+                            'user_id': interaction.user.id
+                        }
+                    elif board == 'combined' and user_stats.get('rank_combined'):
+                        requester_stats = {
+                            'rank': user_stats['rank_combined'],
+                            'username': str(interaction.user),
+                            'total_score': user_stats['total_score'],
+                            'active_days': user_stats['active_days'],
+                            'user_id': interaction.user.id
+                        }
 
             # Format rankings
             description_lines = []
@@ -277,7 +494,15 @@ class LeagueCog(BaseCog):
 
             for entry in rankings:
                 rank = entry['rank']
-                username = entry['username'][:17] + "..." if len(entry['username']) > 20 else entry['username']
+                username = entry['username']
+
+                # Check if user has won #1 before
+                has_won = await self.bot.db.has_user_won_before(entry['user_id'])
+                if has_won:
+                    username = f"⭐ {username}"
+
+                # Truncate username if too long
+                username = username[:17] + "..." if len(username) > 20 else username
                 score = entry['total_score']
                 days = entry['active_days']
 
@@ -292,16 +517,35 @@ class LeagueCog(BaseCog):
 
                 description_lines.append(f"{rank_display:<6}{username:<20}{score:<8}{days:<6}")
 
+            # Add requester's rank if not in top 20
+            if requester_stats and requester_stats['rank'] > 20:
+                description_lines.append("..." + " " * 40)
+                rank_display = f"#{requester_stats['rank']}"
+                username = requester_stats['username']
+
+                # Check if requester has won before
+                has_won = await self.bot.db.has_user_won_before(requester_stats['user_id'])
+                if has_won:
+                    username = f"⭐ {username}"
+
+                username = username[:17] + "..." if len(username) > 20 else username
+                description_lines.append(f"{rank_display:<6}{username:<20}{requester_stats['total_score']:<8}{requester_stats['active_days']:<6}")
+
             description_lines.append("```")
             embed.description = "\n".join(description_lines)
 
             embed.add_field(
                 name="ℹ️ Scoring",
-                value="Score = Points + (Active Days × 5)",
+                value="Score = Points + (Active Days × 5)\n⭐ = Previous #1 winner",
                 inline=False
             )
 
-            embed.set_footer(text=f"Use /league stats to see your ranking")
+            # Show round end date
+            end_date = current_round['end_date']
+            if end_date.tzinfo is None:
+                end_date = end_date.replace(tzinfo=timezone.utc)
+
+            embed.set_footer(text=f"Round {current_round['round_number']} • Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
 
             await interaction.response.send_message(embed=embed)
             logger.info(f"User {interaction.user} viewed {board} league")
@@ -328,6 +572,17 @@ class LeagueCog(BaseCog):
         try:
             target = user or interaction.user
 
+            # Get current round info
+            current_round = await self.bot.db.get_current_round()
+            if not current_round:
+                embed = Embed(
+                    title="ℹ️ No Active Round",
+                    description="There is no active league round at the moment.",
+                    color=discord.Color.orange()
+                )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return
+
             # Get stats
             stats = await self.bot.db.get_user_stats(target.id)
 
@@ -347,9 +602,13 @@ class LeagueCog(BaseCog):
             is_self = target == interaction.user
             title = "📊 Your League Stats" if is_self else f"📊 {target.display_name}'s League Stats"
 
+            # Check if user has won before
+            has_won = await self.bot.db.has_user_won_before(target.id)
+            star = " ⭐" if has_won else ""
+
             embed = Embed(
-                title=title,
-                description=f"**Last 30 Days**",
+                title=title + star,
+                description=f"**Round {current_round['round_number']}**",
                 color=discord.Color.blue()
             )
 
@@ -379,8 +638,16 @@ class LeagueCog(BaseCog):
                     inline=False
                 )
 
+            # Show round end date in footer
+            end_date = current_round['end_date']
+            if end_date.tzinfo is None:
+                end_date = end_date.replace(tzinfo=timezone.utc)
+
+            footer_text = f"Round ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC"
             if is_self and stats['active_days'] > 0:
-                embed.set_footer(text="Keep it up! Try to stay active daily for consistency bonuses! 🔥")
+                footer_text += " • Keep it up! 🔥"
+
+            embed.set_footer(text=footer_text)
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
             logger.info(f"User {interaction.user} viewed stats for {target}")
@@ -498,8 +765,41 @@ class LeagueCog(BaseCog):
             await ctx.send(embed=embed)
 
         elif action == "admin_stats":
-            # Get system stats (would need new DB method)
-            await ctx.send("📊 Admin stats coming soon!")
+            # Get league statistics
+            stats = await self.bot.db.get_league_admin_stats()
+
+            embed = Embed(
+                title="📊 Language League - Admin Statistics",
+                color=discord.Color.blue()
+            )
+
+            embed.add_field(
+                name="👥 Participant Breakdown",
+                value=(
+                    f"**Total Active Users:** {stats['total_users']}\n"
+                    f"🇪🇸 Spanish Learners: {stats['spanish_learners']}\n"
+                    f"🇬🇧 English Learners: {stats['english_learners']}\n"
+                    f"🚫 Banned Users: {stats['banned_users']}"
+                ),
+                inline=False
+            )
+
+            embed.add_field(
+                name="📈 Activity (Last 30 Days)",
+                value=f"**Total Messages Counted:** {stats['total_messages_30d']:,}",
+                inline=False
+            )
+
+            # Get excluded channels count
+            excluded_channels = await self.bot.db.get_excluded_channels()
+            embed.add_field(
+                name="⚙️ Configuration",
+                value=f"**Excluded Channels:** {len(excluded_channels)}",
+                inline=False
+            )
+
+            await ctx.send(embed=embed)
+            logger.info(f"Admin {ctx.author} viewed league statistics")
 
         else:
             await ctx.send(f"❌ Unknown action: `{action}`")
@@ -561,12 +861,19 @@ class LeagueCog(BaseCog):
             if not is_valid_message:
                 return  # Message not in the language they're learning
 
+            # Get current round
+            current_round = await self.bot.db.get_current_round()
+            if not current_round:
+                logger.warning("No active round found, cannot record activity")
+                return
+
             # Record activity
             await self.bot.db.record_activity(
                 user_id=message.author.id,
                 activity_type='message',
                 channel_id=message.channel.id,
-                points=1
+                points=1,
+                round_id=current_round['round_id']
             )
 
             # Update cooldown cache
