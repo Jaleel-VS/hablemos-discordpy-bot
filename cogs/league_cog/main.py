@@ -649,7 +649,7 @@ class LeagueCog(BaseCog):
 
             embed.set_footer(text=footer_text)
 
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.response.send_message(embed=embed)
             logger.info(f"User {interaction.user} viewed stats for {target}")
 
         except Exception as e:
