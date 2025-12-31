@@ -69,26 +69,22 @@ def _get_entry_class(rank: int, is_requester: bool = False) -> str:
             return "entry rank-11-plus rank-even"
 
 
-def _calculate_image_height(num_entries: int, has_requester: bool) -> int:
+def _calculate_image_height(num_entries: int) -> int:
     """Calculate dynamic height for the image"""
-    header_height = 120
-    footer_height = 80
+    header_height = 100
+    footer_height = 50
 
     # Top 3 get slightly more height
     entry_heights = sum([70 if i < 3 else 60 for i in range(num_entries)])
 
-    # Add height for requester section if present
-    requester_height = 80 if has_requester else 0
-
-    total_height = header_height + entry_heights + requester_height + footer_height
+    total_height = header_height + entry_heights + footer_height
     return max(600, min(2400, total_height))  # Clamp between 600-2400
 
 
 def _generate_html(
     leaderboard_data: list[dict],
     board_type: str,
-    round_info: dict,
-    requester_data: dict | None
+    round_info: dict
 ) -> tuple[str, int]:
     """Generate HTML string for leaderboard"""
 
@@ -104,7 +100,7 @@ def _generate_html(
         end_date_str = str(end_date)
 
     # Calculate image height
-    image_height = _calculate_image_height(len(leaderboard_data), requester_data is not None)
+    image_height = _calculate_image_height(len(leaderboard_data))
 
     # Build entries HTML
     entries_html = ""
@@ -112,7 +108,6 @@ def _generate_html(
         rank = entry['rank']
         username = entry['username']
         total_score = entry['total_score']
-        active_days = entry['active_days']
         avatar_url = entry['avatar_url']
         is_winner = entry['is_previous_winner']
 
@@ -127,33 +122,6 @@ def _generate_html(
             <div class="username">{formatted_username}</div>
             <div class="stats">
                 <div class="score">{total_score} pts</div>
-                <div class="days">{active_days} days</div>
-            </div>
-        </div>
-        '''
-
-    # Add requester section if present
-    requester_html = ""
-    if requester_data:
-        rank = requester_data['rank']
-        username = requester_data['username']
-        total_score = requester_data['total_score']
-        active_days = requester_data['active_days']
-        avatar_url = requester_data['avatar_url']
-        is_winner = requester_data['is_previous_winner']
-
-        rank_display = _get_rank_display(rank)
-        formatted_username = _format_username(username, is_winner)
-
-        requester_html = f'''
-        <div class="separator">...</div>
-        <div class="entry requester-entry">
-            <div class="rank-badge">{rank_display}</div>
-            <img src="{avatar_url}" class="avatar" alt="avatar" />
-            <div class="username">{formatted_username}</div>
-            <div class="stats">
-                <div class="score">{total_score} pts</div>
-                <div class="days">{active_days} days</div>
             </div>
         </div>
         '''
@@ -313,13 +281,6 @@ def _generate_html(
             background: rgba(99, 102, 241, 0.2);
         }}
 
-        /* Requester entry - Green highlight */
-        .entry.requester-entry {{
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border: 2px solid #10b981;
-            box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3);
-        }}
-
         .rank-badge {{
             min-width: 60px;
             text-align: center;
@@ -345,36 +306,13 @@ def _generate_html(
         }}
 
         .stats {{
-            display: flex;
-            gap: 20px;
             text-align: right;
             margin-left: auto;
         }}
 
-        .score,
-        .days {{
-            font-size: 14px;
-            min-width: 80px;
-        }}
-
-        .separator {{
-            text-align: center;
-            font-size: 24px;
-            color: rgba(255, 255, 255, 0.5);
-            margin: 15px 0;
-        }}
-
-        .footer {{
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
-        }}
-
-        .footer-line {{
-            margin-bottom: 5px;
+        .score {{
+            font-size: 16px;
+            font-weight: 600;
         }}
     </style>
     <meta name="viewport" content="width=800, initial-scale=1" />
@@ -390,13 +328,6 @@ def _generate_html(
         <div class="entries">
             {entries_html}
         </div>
-
-        {requester_html}
-
-        <div class="footer">
-            <div class="footer-line">Score = Points + (Active Days × 5)</div>
-            <div class="footer-line">⭐ = Previous #1 winner</div>
-        </div>
     </div>
 </body>
 </html>
@@ -408,8 +339,7 @@ def _generate_html(
 def generate_leaderboard_image(
     leaderboard_data: list[dict],
     board_type: str,
-    round_info: dict,
-    requester_data: dict | None = None
+    round_info: dict
 ) -> str:
     """
     Generate leaderboard image using HTML/CSS and imgkit.
@@ -430,13 +360,11 @@ def generate_leaderboard_image(
             - round_number (int)
             - end_date (datetime)
 
-        requester_data: Optional dict for user ranked 21+ (same structure as leaderboard_data)
-
     Returns:
         str: Path to generated PNG file
     """
     # Generate HTML
-    html, image_height = _generate_html(leaderboard_data, board_type, round_info, requester_data)
+    html, image_height = _generate_html(leaderboard_data, board_type, round_info)
 
     # Configure imgkit options
     options = {
@@ -492,5 +420,5 @@ if __name__ == "__main__":
         'end_date': datetime.now()
     }
 
-    img_path = generate_leaderboard_image(sample_data, 'combined', round_info, None)
+    img_path = generate_leaderboard_image(sample_data, 'combined', round_info)
     print(f"Generated image: {img_path}")

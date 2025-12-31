@@ -435,8 +435,8 @@ class LeagueCog(BaseCog):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
 
-            # Get top 20 for display
-            rankings = await self.bot.db.get_leaderboard(board, 20)
+            # Get top 10 for image
+            rankings = await self.bot.db.get_leaderboard(board, 10)
 
             if not rankings:
                 embed = Embed(
@@ -486,16 +486,15 @@ class LeagueCog(BaseCog):
                         'is_previous_winner': False
                     })
 
-            # Check if requester is in top 20
-            requester_in_top_20 = any(entry['user_id'] == interaction.user.id for entry in rankings)
-            enriched_requester = None
+            # Check if requester is in top 10
+            requester_in_top_10 = any(entry['user_id'] == interaction.user.id for entry in rankings)
+            requester_stats = None
 
-            # If not in top 20, get their stats and enrich
-            if not requester_in_top_20:
+            # If not in top 10, get their stats for the embed
+            if not requester_in_top_10:
                 user_stats = await self.bot.db.get_user_stats(interaction.user.id)
                 if user_stats:
                     # Determine which rank to show based on board type
-                    requester_stats = None
                     if board == 'spanish' and user_stats.get('rank_spanish'):
                         requester_stats = {
                             'rank': user_stats['rank_spanish'],
@@ -521,30 +520,6 @@ class LeagueCog(BaseCog):
                             'user_id': interaction.user.id
                         }
 
-                    # Enrich requester data if ranked 21+
-                    if requester_stats and requester_stats['rank'] > 20:
-                        try:
-                            member = interaction.guild.get_member(interaction.user.id)
-                            if member and member.display_avatar:
-                                avatar_url = str(member.display_avatar.url)
-                            else:
-                                default_num = interaction.user.id % 5
-                                avatar_url = f"https://cdn.discordapp.com/embed/avatars/{default_num}.png"
-
-                            is_winner = await self.bot.db.has_user_won_before(interaction.user.id)
-
-                            enriched_requester = {
-                                'rank': requester_stats['rank'],
-                                'user_id': requester_stats['user_id'],
-                                'username': requester_stats['username'],
-                                'total_score': requester_stats['total_score'],
-                                'active_days': requester_stats['active_days'],
-                                'avatar_url': avatar_url,
-                                'is_previous_winner': is_winner
-                            }
-                        except Exception as e:
-                            logger.error(f"Error enriching requester data: {e}")
-
             # Generate leaderboard image
             try:
                 # Defer response for better UX (image takes 1-3 seconds)
@@ -557,12 +532,45 @@ class LeagueCog(BaseCog):
                     round_info={
                         'round_number': current_round['round_number'],
                         'end_date': current_round['end_date']
-                    },
-                    requester_data=enriched_requester
+                    }
                 )
 
-                # Send as Discord File
-                await interaction.followup.send(file=File(image_path))
+                # Create embed with additional info
+                board_emoji = "🇪🇸" if board == "spanish" else ("🇬🇧" if board == "english" else "🌍")
+                embed = Embed(
+                    color=discord.Color.gold()
+                )
+
+                # Set the leaderboard image in the embed
+                file = File(image_path, filename="leaderboard.png")
+                embed.set_image(url="attachment://leaderboard.png")
+
+                # Add scoring info
+                embed.add_field(
+                    name="ℹ️ Scoring",
+                    value="Score = Points + (Active Days × 5)\n⭐ = Previous #1 winner",
+                    inline=False
+                )
+
+                # Add requester's rank if outside top 10
+                if requester_stats and requester_stats['rank'] > 10:
+                    has_won = await self.bot.db.has_user_won_before(requester_stats['user_id'])
+                    star = "⭐ " if has_won else ""
+                    embed.add_field(
+                        name="📍 Your Rank",
+                        value=f"{star}**#{requester_stats['rank']}** • {requester_stats['total_score']} pts • {requester_stats['active_days']} active days",
+                        inline=False
+                    )
+
+                # Show round end date
+                end_date = current_round['end_date']
+                if end_date.tzinfo is None:
+                    end_date = end_date.replace(tzinfo=timezone.utc)
+
+                embed.set_footer(text=f"Round {current_round['round_number']} • Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
+
+                # Send embed with image attached
+                await interaction.followup.send(file=file, embed=embed)
 
                 # Clean up temp file
                 try:
