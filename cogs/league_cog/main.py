@@ -4,13 +4,15 @@ Tracks user activity and maintains league rankings for language learners
 """
 import discord
 from discord.ext import commands, tasks
-from discord import app_commands, Interaction, Embed, Member
+from discord import app_commands, Interaction, Embed, Member, File
 from base_cog import BaseCog
 import logging
 import time
 from typing import Optional
 from langdetect import detect, DetectorFactory, LangDetectException
 from datetime import datetime, timedelta, timezone
+from os import remove
+from cogs.league_cog.league_helper.leaderboard_image import generate_leaderboard_image
 
 # Set seed for consistent language detection results
 DetectorFactory.seed = 0
@@ -445,22 +447,55 @@ class LeagueCog(BaseCog):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
 
-            # Build league embed
-            board_emoji = "🇪🇸" if board == "spanish" else ("🇬🇧" if board == "english" else "🌍")
-            embed = Embed(
-                title=f"{board_emoji} {board.title()} League - Round {current_round['round_number']}",
-                color=discord.Color.gold()
-            )
+            # Enrich leaderboard data with avatars and winner status
+            enriched_data = []
+            for entry in rankings:
+                try:
+                    # Fetch member to get avatar
+                    member = interaction.guild.get_member(entry['user_id'])
+                    if member and member.display_avatar:
+                        avatar_url = str(member.display_avatar.url)
+                    else:
+                        # Fallback to default Discord avatar
+                        default_num = entry['user_id'] % 5
+                        avatar_url = f"https://cdn.discordapp.com/embed/avatars/{default_num}.png"
+
+                    # Check if user has won before
+                    is_winner = await self.bot.db.has_user_won_before(entry['user_id'])
+
+                    enriched_data.append({
+                        'rank': entry['rank'],
+                        'user_id': entry['user_id'],
+                        'username': entry['username'],
+                        'total_score': entry['total_score'],
+                        'active_days': entry['active_days'],
+                        'avatar_url': avatar_url,
+                        'is_previous_winner': is_winner
+                    })
+                except Exception as e:
+                    logger.error(f"Error enriching user {entry['user_id']}: {e}")
+                    # Add entry with default avatar on error
+                    default_num = entry['user_id'] % 5
+                    enriched_data.append({
+                        'rank': entry['rank'],
+                        'user_id': entry['user_id'],
+                        'username': entry['username'],
+                        'total_score': entry['total_score'],
+                        'active_days': entry['active_days'],
+                        'avatar_url': f"https://cdn.discordapp.com/embed/avatars/{default_num}.png",
+                        'is_previous_winner': False
+                    })
 
             # Check if requester is in top 20
             requester_in_top_20 = any(entry['user_id'] == interaction.user.id for entry in rankings)
-            requester_stats = None
+            enriched_requester = None
 
-            # If not in top 20, get their stats
+            # If not in top 20, get their stats and enrich
             if not requester_in_top_20:
                 user_stats = await self.bot.db.get_user_stats(interaction.user.id)
                 if user_stats:
                     # Determine which rank to show based on board type
+                    requester_stats = None
                     if board == 'spanish' and user_stats.get('rank_spanish'):
                         requester_stats = {
                             'rank': user_stats['rank_spanish'],
@@ -486,69 +521,66 @@ class LeagueCog(BaseCog):
                             'user_id': interaction.user.id
                         }
 
-            # Format rankings
-            description_lines = []
-            description_lines.append("```")
-            description_lines.append(f"{'Rank':<6}{'User':<20}{'Score':<8}{'Days':<6}")
-            description_lines.append("-" * 45)
+                    # Enrich requester data if ranked 21+
+                    if requester_stats and requester_stats['rank'] > 20:
+                        try:
+                            member = interaction.guild.get_member(interaction.user.id)
+                            if member and member.display_avatar:
+                                avatar_url = str(member.display_avatar.url)
+                            else:
+                                default_num = interaction.user.id % 5
+                                avatar_url = f"https://cdn.discordapp.com/embed/avatars/{default_num}.png"
 
-            for entry in rankings:
-                rank = entry['rank']
-                username = entry['username']
+                            is_winner = await self.bot.db.has_user_won_before(interaction.user.id)
 
-                # Check if user has won #1 before
-                has_won = await self.bot.db.has_user_won_before(entry['user_id'])
-                if has_won:
-                    username = f"⭐ {username}"
+                            enriched_requester = {
+                                'rank': requester_stats['rank'],
+                                'user_id': requester_stats['user_id'],
+                                'username': requester_stats['username'],
+                                'total_score': requester_stats['total_score'],
+                                'active_days': requester_stats['active_days'],
+                                'avatar_url': avatar_url,
+                                'is_previous_winner': is_winner
+                            }
+                        except Exception as e:
+                            logger.error(f"Error enriching requester data: {e}")
 
-                # Truncate username if too long
-                username = username[:17] + "..." if len(username) > 20 else username
-                score = entry['total_score']
-                days = entry['active_days']
+            # Generate leaderboard image
+            try:
+                # Defer response for better UX (image takes 1-3 seconds)
+                await interaction.response.defer()
 
-                # Add medal emojis for top 3
-                rank_display = f"#{rank}"
-                if rank == 1:
-                    rank_display = "🥇"
-                elif rank == 2:
-                    rank_display = "🥈"
-                elif rank == 3:
-                    rank_display = "🥉"
+                # Generate image
+                image_path = generate_leaderboard_image(
+                    leaderboard_data=enriched_data,
+                    board_type=board,
+                    round_info={
+                        'round_number': current_round['round_number'],
+                        'end_date': current_round['end_date']
+                    },
+                    requester_data=enriched_requester
+                )
 
-                description_lines.append(f"{rank_display:<6}{username:<20}{score:<8}{days:<6}")
+                # Send as Discord File
+                await interaction.followup.send(file=File(image_path))
 
-            # Add requester's rank if not in top 20
-            if requester_stats and requester_stats['rank'] > 20:
-                description_lines.append("..." + " " * 40)
-                rank_display = f"#{requester_stats['rank']}"
-                username = requester_stats['username']
+                # Clean up temp file
+                try:
+                    remove(image_path)
+                except Exception:
+                    pass  # Ignore cleanup errors
 
-                # Check if requester has won before
-                has_won = await self.bot.db.has_user_won_before(requester_stats['user_id'])
-                if has_won:
-                    username = f"⭐ {username}"
+                logger.info(f"User {interaction.user} viewed {board} league (image)")
 
-                username = username[:17] + "..." if len(username) > 20 else username
-                description_lines.append(f"{rank_display:<6}{username:<20}{requester_stats['total_score']:<8}{requester_stats['active_days']:<6}")
-
-            description_lines.append("```")
-            embed.description = "\n".join(description_lines)
-
-            embed.add_field(
-                name="ℹ️ Scoring",
-                value="Score = Points + (Active Days × 5)\n⭐ = Previous #1 winner",
-                inline=False
-            )
-
-            # Show round end date
-            end_date = current_round['end_date']
-            if end_date.tzinfo is None:
-                end_date = end_date.replace(tzinfo=timezone.utc)
-
-            embed.set_footer(text=f"Round {current_round['round_number']} • Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
-
-            await interaction.response.send_message(embed=embed)
-            logger.info(f"User {interaction.user} viewed {board} league")
+            except Exception as img_error:
+                logger.error(f"Error generating leaderboard image: {img_error}", exc_info=True)
+                # Fallback to error message
+                error_embed = Embed(
+                    title="❌ Error",
+                    description="Failed to generate leaderboard image. Please try again later.",
+                    color=discord.Color.red()
+                )
+                await interaction.followup.send(embed=error_embed, ephemeral=True)
 
         except Exception as e:
             logger.error(f"Error viewing league: {e}", exc_info=True)
