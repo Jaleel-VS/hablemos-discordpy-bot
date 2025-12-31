@@ -174,7 +174,7 @@ def _generate_html(
 
         @font-face {{
             font-family: 'HelveticaNeue';
-            src: url('{dir_path}/fonts/HelveticaNeue-Roman.otf') format('opentype');
+            src: url('{dir_path}/fonts/HelveticaNeue-Roman.ttf') format('truetype');
             font-weight: 400;
             font-style: normal;
             font-display: swap;
