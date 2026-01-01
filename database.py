@@ -196,6 +196,24 @@ class Database:
                 ON leaderboard_activity(round_id)
             ''')
 
+            # Add message_id column to leaderboard_activity if it doesn't exist
+            await conn.execute('''
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name='leaderboard_activity' AND column_name='message_id'
+                    ) THEN
+                        ALTER TABLE leaderboard_activity ADD COLUMN message_id BIGINT;
+                    END IF;
+                END $$;
+            ''')
+
+            await conn.execute('''
+                CREATE INDEX IF NOT EXISTS idx_activity_message
+                ON leaderboard_activity(message_id)
+            ''')
+
             # Leaderboard excluded channels table
             await conn.execute('''
                 CREATE TABLE IF NOT EXISTS leaderboard_excluded_channels (
@@ -687,16 +705,16 @@ class Database:
 
     async def record_activity(self, user_id: int, activity_type: str = 'message',
                              channel_id: Optional[int] = None, points: int = 1,
-                             round_id: Optional[int] = None) -> None:
+                             round_id: Optional[int] = None, message_id: Optional[int] = None) -> None:
         """Record user activity for leaderboard"""
         if self.pool is None:
             raise RuntimeError("Database pool not initialized. Call connect() first.")
         async with self.pool.acquire() as conn:
             await conn.execute('''
                 INSERT INTO leaderboard_activity
-                (user_id, activity_type, channel_id, points, round_id)
-                VALUES ($1, $2, $3, $4, $5)
-            ''', user_id, activity_type, channel_id, points, round_id)
+                (user_id, activity_type, channel_id, points, round_id, message_id)
+                VALUES ($1, $2, $3, $4, $5, $6)
+            ''', user_id, activity_type, channel_id, points, round_id, message_id)
 
     async def get_daily_message_count(self, user_id: int) -> int:
         """Get count of messages recorded today for a user"""

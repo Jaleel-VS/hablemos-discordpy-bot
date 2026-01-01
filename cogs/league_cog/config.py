@@ -76,10 +76,10 @@ class RateLimitConfig:
     """Configuration for anti-spam and rate limiting."""
 
     # Cooldown between counted messages in the same channel (seconds)
-    MESSAGE_COOLDOWN_SECONDS: int = 120  # 2 minutes
+    MESSAGE_COOLDOWN_SECONDS: int = 60  # 1 minute
 
     # Maximum messages that count toward score per day
-    DAILY_MESSAGE_CAP: int = 50
+    DAILY_MESSAGE_CAP: int = 100
 
     # Minimum message length to count (characters)
     MIN_MESSAGE_LENGTH: int = 10
@@ -98,7 +98,7 @@ class RoundConfig:
     """Configuration for league rounds."""
 
     # Duration of each round in days
-    ROUND_DURATION_DAYS: int = 14  # 2 weeks
+    ROUND_DURATION_DAYS: int = 7  # 1 week
 
     # How often to check if round should end (minutes)
     ROUND_CHECK_INTERVAL_MINUTES: int = 1

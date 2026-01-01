@@ -171,6 +171,9 @@ class LeagueCog(BaseCog):
                 logger.error(f"Could not find winner announcement channel {WINNER_CHANNEL_ID}")
                 return
 
+            # Collect all winner mentions for message content (to actually ping them)
+            all_mentions = []
+
             embed = Embed(
                 title=f"🏆 Round {round_number} Winners!",
                 description="Congratulations to our top performers this round!",
@@ -182,9 +185,9 @@ class LeagueCog(BaseCog):
                 spanish_text = []
                 medals = ["🥇", "🥈", "🥉"]
                 for i, entry in enumerate(spanish_top3):
-                    user_mention = f"<@{entry['user_id']}>"
+                    all_mentions.append(f"<@{entry['user_id']}>")
                     spanish_text.append(
-                        f"{medals[i]} **{entry['username']}** {user_mention}\n"
+                        f"{medals[i]} **{entry['username']}**\n"
                         f"   Score: {entry['total_score']} ({entry['active_days']} days)"
                     )
 
@@ -199,9 +202,9 @@ class LeagueCog(BaseCog):
                 english_text = []
                 medals = ["🥇", "🥈", "🥉"]
                 for i, entry in enumerate(english_top3):
-                    user_mention = f"<@{entry['user_id']}>"
+                    all_mentions.append(f"<@{entry['user_id']}>")
                     english_text.append(
-                        f"{medals[i]} **{entry['username']}** {user_mention}\n"
+                        f"{medals[i]} **{entry['username']}**\n"
                         f"   Score: {entry['total_score']} ({entry['active_days']} days)"
                     )
 
@@ -213,8 +216,9 @@ class LeagueCog(BaseCog):
 
             embed.set_footer(text=f"Round {round_number} • Keep learning and see you next round!")
 
-            # Send announcement
-            await channel.send(embed=embed)
+            # Send announcement with mentions in message content to actually ping users
+            mention_text = " ".join(all_mentions) if all_mentions else ""
+            await channel.send(content=mention_text, embed=embed)
             logger.info(f"Announced round {round_number} winners in channel {WINNER_CHANNEL_ID}")
 
         except Exception as e:
@@ -905,7 +909,8 @@ class LeagueCog(BaseCog):
                 activity_type='message',
                 channel_id=message.channel.id,
                 points=SCORING.POINTS_PER_MESSAGE,
-                round_id=current_round['round_id']
+                round_id=current_round['round_id'],
+                message_id=message.id
             )
 
             # Update cooldown cache
