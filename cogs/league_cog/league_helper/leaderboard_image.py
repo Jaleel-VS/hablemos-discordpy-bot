@@ -71,14 +71,15 @@ def _get_entry_class(rank: int, is_requester: bool = False) -> str:
 
 def _calculate_image_height(num_entries: int) -> int:
     """Calculate dynamic height for the image"""
-    header_height = 100
-    footer_height = 50
+    # No header needed - title/round info moved to Discord embed
+    padding_height = 40  # Top and bottom padding
 
-    # Top 3 get slightly more height
-    entry_heights = sum([70 if i < 3 else 60 for i in range(num_entries)])
+    # Increased height per entry for bigger fonts/avatars
+    # Top 3 get more height due to larger styling
+    entry_heights = sum([85 if i < 3 else 75 for i in range(num_entries)])
 
-    total_height = header_height + entry_heights + footer_height
-    return max(600, min(2400, total_height))  # Clamp between 600-2400
+    total_height = padding_height + entry_heights
+    return max(400, min(2400, total_height))  # Clamp between 400-2400
 
 
 def _generate_html(
@@ -168,38 +169,18 @@ def _generate_html(
         .leaderboard-container {{
             width: 800px;
             background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-            padding: 30px;
-        }}
-
-        .header {{
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }}
-
-        .title {{
-            font-family: 'Gothic CG No1', sans-serif;
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #ffffff;
-        }}
-
-        .round-info {{
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.7);
+            padding: 20px 30px;
         }}
 
         .entries {{
-            margin-bottom: 20px;
+            margin: 0;
         }}
 
         .entry {{
             display: flex;
             align-items: center;
-            padding: 15px 20px;
-            margin-bottom: 10px;
+            padding: 18px 25px;
+            margin-bottom: 12px;
             border-radius: 12px;
             transition: transform 0.2s;
         }}
@@ -209,7 +190,7 @@ def _generate_html(
             background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
             border: 3px solid #FFD700;
             box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
-            padding: 18px 20px;
+            padding: 22px 25px;
             color: #000000;
         }}
 
@@ -228,7 +209,7 @@ def _generate_html(
             background: linear-gradient(135deg, #E8E8E8 0%, #C0C0C0 100%);
             border: 3px solid #C0C0C0;
             box-shadow: 0 4px 12px rgba(192, 192, 192, 0.4);
-            padding: 18px 20px;
+            padding: 22px 25px;
             color: #000000;
         }}
 
@@ -247,7 +228,7 @@ def _generate_html(
             background: linear-gradient(135deg, #F4A460 0%, #CD7F32 100%);
             border: 3px solid #CD7F32;
             box-shadow: 0 4px 12px rgba(205, 127, 50, 0.4);
-            padding: 18px 20px;
+            padding: 22px 25px;
             color: #000000;
         }}
 
@@ -282,22 +263,23 @@ def _generate_html(
         }}
 
         .rank-badge {{
-            min-width: 60px;
+            min-width: 80px;
             text-align: center;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 30px;
         }}
 
         .avatar {{
-            width: 50px;
-            height: 50px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
-            margin: 0 15px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            margin: 0 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
         }}
 
         .username {{
-            font-size: 18px;
+            font-size: 27px;
+            font-weight: 500;
             flex: 1;
             max-width: 400px;
             overflow: hidden;
@@ -311,7 +293,7 @@ def _generate_html(
         }}
 
         .score {{
-            font-size: 16px;
+            font-size: 24px;
             font-weight: 600;
         }}
     </style>
@@ -320,11 +302,6 @@ def _generate_html(
 </head>
 <body>
     <div class="leaderboard-container">
-        <div class="header">
-            <div class="title">{board_emoji} {board_title} - Round {round_number}</div>
-            <div class="round-info">Ends: {end_date_str}</div>
-        </div>
-
         <div class="entries">
             {entries_html}
         </div>

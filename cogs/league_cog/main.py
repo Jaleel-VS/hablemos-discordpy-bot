@@ -537,7 +537,9 @@ class LeagueCog(BaseCog):
 
                 # Create embed with additional info
                 board_emoji = "🇪🇸" if board == "spanish" else ("🇬🇧" if board == "english" else "🌍")
+                board_title = "Spanish League" if board == "spanish" else ("English League" if board == "english" else "Combined League")
                 embed = Embed(
+                    title=f"{board_emoji} {board_title}",
                     color=discord.Color.gold()
                 )
 
