@@ -11,6 +11,8 @@ import time
 from typing import Optional
 from langdetect import detect, DetectorFactory, LangDetectException
 from datetime import datetime, timedelta, timezone
+from os import remove
+from cogs.league_cog.league_helper.leaderboard_image_pillow import generate_leaderboard_image
 from cogs.league_cog.config import (
     LEAGUE_GUILD_ID,
     WINNER_CHANNEL_ID,
@@ -442,10 +444,44 @@ class LeagueCog(BaseCog):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
 
-            # Helper function for rank medals
-            def get_rank_emoji(rank: int) -> str:
-                medals = {1: "🥇", 2: "🥈", 3: "🥉"}
-                return medals.get(rank, f"**#{rank}**")
+            # Enrich leaderboard data with avatars and winner status
+            enriched_data = []
+            for entry in rankings:
+                try:
+                    # Fetch member to get avatar
+                    member = interaction.guild.get_member(entry['user_id'])
+                    if member and member.display_avatar:
+                        avatar_url = str(member.display_avatar.url)
+                    else:
+                        # Fallback to default Discord avatar
+                        default_num = entry['user_id'] % 5
+                        avatar_url = f"https://cdn.discordapp.com/embed/avatars/{default_num}.png"
+
+                    # Check if user has won before
+                    is_winner = await self.bot.db.has_user_won_before(entry['user_id'])
+
+                    enriched_data.append({
+                        'rank': entry['rank'],
+                        'user_id': entry['user_id'],
+                        'username': entry['username'],
+                        'total_score': entry['total_score'],
+                        'active_days': entry['active_days'],
+                        'avatar_url': avatar_url,
+                        'is_previous_winner': is_winner
+                    })
+                except Exception as e:
+                    logger.error(f"Error enriching user {entry['user_id']}: {e}")
+                    # Add entry with default avatar on error
+                    default_num = entry['user_id'] % 5
+                    enriched_data.append({
+                        'rank': entry['rank'],
+                        'user_id': entry['user_id'],
+                        'username': entry['username'],
+                        'total_score': entry['total_score'],
+                        'active_days': entry['active_days'],
+                        'avatar_url': f"https://cdn.discordapp.com/embed/avatars/{default_num}.png",
+                        'is_previous_winner': False
+                    })
 
             # Check if requester is in top rankings
             requester_in_top = any(entry['user_id'] == interaction.user.id for entry in rankings)
@@ -481,67 +517,70 @@ class LeagueCog(BaseCog):
                             'user_id': interaction.user.id
                         }
 
-            # Create embed leaderboard
-            board_emoji = DISPLAY.get_emoji(board)
-            board_title = DISPLAY.get_name(board)
+            # Generate leaderboard image
+            try:
+                # Defer response for image generation
+                await interaction.response.defer()
 
-            embed = Embed(
-                title=f"{board_emoji} {board_title}",
-                description=f"**Round {current_round['round_number']}**",
-                color=discord.Color.gold()
-            )
-
-            # Build leaderboard entries
-            leaderboard_lines = []
-            for entry in rankings:
-                rank_display = get_rank_emoji(entry['rank'])
-
-                # Check if previous winner
-                is_winner = await self.bot.db.has_user_won_before(entry['user_id'])
-                star = "⭐ " if is_winner else ""
-
-                # Format entry line
-                line = f"{rank_display} {star}**{entry['username']}**\n     {entry['total_score']} pts • {entry['active_days']} days active"
-                leaderboard_lines.append(line)
-
-            # Add leaderboard to embed (split into chunks if needed to avoid field limit)
-            chunk_size = 10
-            for i in range(0, len(leaderboard_lines), chunk_size):
-                chunk = leaderboard_lines[i:i + chunk_size]
-                field_name = "📊 Rankings" if i == 0 else "\u200b"  # Zero-width space for continuation
-                embed.add_field(
-                    name=field_name,
-                    value="\n\n".join(chunk),
-                    inline=False
+                # Generate image using Pillow
+                image_path = generate_leaderboard_image(
+                    leaderboard_data=enriched_data,
+                    board_type=board,
+                    round_info={
+                        'round_number': current_round['round_number'],
+                        'end_date': current_round['end_date']
+                    }
                 )
 
-            # Add requester's rank if outside top rankings
-            if requester_stats and requester_stats['rank'] > SCORING.LEADERBOARD_DISPLAY_LIMIT:
-                has_won = await self.bot.db.has_user_won_before(requester_stats['user_id'])
-                star = "⭐ " if has_won else ""
-                embed.add_field(
-                    name="📍 Your Rank",
-                    value=f"{star}**#{requester_stats['rank']}** • {requester_stats['total_score']} pts • {requester_stats['active_days']} active days",
-                    inline=False
+                # Create embed
+                board_emoji = DISPLAY.get_emoji(board)
+                board_title = DISPLAY.get_name(board)
+                embed = Embed(
+                    title=f"{board_emoji} {board_title}",
+                    color=discord.Color.gold()
                 )
 
-            # Add scoring info
-            embed.add_field(
-                name="ℹ️ How Scoring Works",
-                value=f"Score = Points + (Active Days × {SCORING.ACTIVE_DAY_BONUS_MULTIPLIER})\n⭐ = Previous #1 winner",
-                inline=False
-            )
+                # Set the leaderboard image in the embed
+                file = File(image_path, filename="leaderboard.png")
+                embed.set_image(url="attachment://leaderboard.png")
 
-            # Show round end date in footer
-            end_date = current_round['end_date']
-            if end_date.tzinfo is None:
-                end_date = end_date.replace(tzinfo=timezone.utc)
+                # Add requester's rank if outside top rankings
+                if requester_stats and requester_stats['rank'] > SCORING.LEADERBOARD_DISPLAY_LIMIT:
+                    has_won = await self.bot.db.has_user_won_before(requester_stats['user_id'])
+                    star = "⭐ " if has_won else ""
+                    embed.add_field(
+                        name="📍 Your Rank",
+                        value=f"{star}**#{requester_stats['rank']}** • {requester_stats['total_score']} pts • {requester_stats['active_days']} active days",
+                        inline=False
+                    )
 
-            embed.set_footer(text=f"Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
+                # Show round end date in footer
+                end_date = current_round['end_date']
+                if end_date.tzinfo is None:
+                    end_date = end_date.replace(tzinfo=timezone.utc)
 
-            # Send embed
-            await interaction.response.send_message(embed=embed)
-            logger.info(f"User {interaction.user} viewed {board} league")
+                embed.set_footer(text=f"Round {current_round['round_number']} • Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
+
+                # Send embed with image attached
+                await interaction.followup.send(file=file, embed=embed)
+
+                # Clean up temp file
+                try:
+                    remove(image_path)
+                except Exception:
+                    pass  # Ignore cleanup errors
+
+                logger.info(f"User {interaction.user} viewed {board} league (Pillow image)")
+
+            except Exception as img_error:
+                logger.error(f"Error generating leaderboard image: {img_error}", exc_info=True)
+                # Fallback to error message
+                error_embed = Embed(
+                    title="❌ Error",
+                    description="Failed to generate leaderboard image. Please try again later.",
+                    color=discord.Color.red()
+                )
+                await interaction.followup.send(embed=error_embed, ephemeral=True)
 
         except Exception as e:
             logger.error(f"Error viewing league: {e}", exc_info=True)

@@ -1,6 +1,12 @@
 from discord.ext.commands import command, Bot
 from discord import app_commands, Interaction, Embed, Color
 from base_cog import BaseCog
+try:
+    from cogs.league_cog.config import ROUNDS
+except ImportError:
+    # Fallback if league cog not available
+    class ROUNDS:
+        ROUND_DURATION_DAYS = 14
 
 
 SOURCE_URL = 'https://docs.google.com/spreadsheets/d/10jsNQsSG9mbLZgDoYIdVrbogVSN7eAKbOfCASA5hN0A/edit?usp=sharing'
@@ -390,6 +396,52 @@ class General(BaseCog):
     @command()
     async def help(self, ctx, arg=''):
         if arg:
+            # Special handling for league
+            if arg.lower() == 'league':
+                # Calculate round duration display
+                days = ROUNDS.ROUND_DURATION_DAYS
+                if days == 7:
+                    duration_text = "week"
+                elif days == 14:
+                    duration_text = "2 weeks"
+                elif days % 7 == 0:
+                    duration_text = f"{days // 7} weeks"
+                else:
+                    duration_text = f"{days} days"
+
+                league_embed = Embed(
+                    title="🏆 Language League",
+                    description=(
+                        "**Practice your target language. Compete. Win.**\n\n"
+                        "The Language League rewards consistent practice in Spanish or English. "
+                        "Every message you write in your target language earns points. "
+                        "Stay active, climb the rankings, and show your dedication!\n\n"
+                        f"🔁 **Rounds:** Every {duration_text}\n"
+                        f"🎯 **Focus:** Write in your target language to earn points\n"
+                        f"⭐ **Rewards:** Top 3 winners each round get recognition\n\n"
+                    ),
+                    color=Color.gold()
+                )
+
+                league_embed.add_field(
+                    name="⚡ Quick Start",
+                    value=(
+                        "**1.** Use `/league join` to opt in\n"
+                        "**2.** Start writing messages in your target language\n"
+                        "**3.** Check `/league view` to see rankings\n"
+                        "**4.** Track your progress with `/league stats`"
+                    ),
+                    inline=False
+                )
+
+                league_embed.set_footer(
+                    text="💬 Use /league commands | Questions? Message/tag the bot owner"
+                )
+
+                await ctx.send(embed=league_embed)
+                return
+
+            # Default command lookup
             requested = self.bot.get_command(arg)
             if not requested:
                 await ctx.send("I was unable to find the command you requested")
