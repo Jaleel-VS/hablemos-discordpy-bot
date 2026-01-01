@@ -8,6 +8,7 @@ from discord import app_commands, Interaction, Embed, Member, File
 from base_cog import BaseCog
 import logging
 import time
+import re
 from typing import Optional
 from langdetect import detect, DetectorFactory, LangDetectException
 from datetime import datetime, timedelta, timezone
@@ -947,12 +948,35 @@ class LeagueCog(BaseCog):
         Returns:
             'es' for Spanish, 'en' for English, None if uncertain or error
         """
-        # Skip very short messages (hard to detect accurately)
-        if len(message_content.strip()) < RATE_LIMITS.MIN_MESSAGE_LENGTH:
+        # Remove custom Discord emojis (format: <:name:id> or <a:name:id>)
+        content_no_custom_emojis = re.sub(r'<a?:\w+:\d+>', '', message_content)
+
+        # Remove Unicode emojis
+        # This regex matches most Unicode emoji ranges
+        emoji_pattern = re.compile(
+            "["
+            "\U0001F600-\U0001F64F"  # emoticons
+            "\U0001F300-\U0001F5FF"  # symbols & pictographs
+            "\U0001F680-\U0001F6FF"  # transport & map symbols
+            "\U0001F1E0-\U0001F1FF"  # flags (iOS)
+            "\U00002702-\U000027B0"  # dingbats
+            "\U000024C2-\U0001F251"  # enclosed characters
+            "\U0001F900-\U0001F9FF"  # supplemental symbols
+            "\U0001FA00-\U0001FA6F"  # extended pictographs
+            "]+",
+            flags=re.UNICODE
+        )
+        content_no_emojis = emoji_pattern.sub('', content_no_custom_emojis)
+
+        # Strip whitespace and check if there's actual text content
+        clean_content = content_no_emojis.strip()
+
+        # Skip very short messages or emoji-only messages
+        if len(clean_content) < RATE_LIMITS.MIN_MESSAGE_LENGTH:
             return None
 
         try:
-            detected_lang = detect(message_content)
+            detected_lang = detect(clean_content)
 
             # Only return if we detected Spanish or English
             if detected_lang in [LANGUAGE.SPANISH_CODE, LANGUAGE.ENGLISH_CODE]:
