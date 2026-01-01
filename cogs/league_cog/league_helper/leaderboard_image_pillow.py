@@ -194,48 +194,31 @@ def generate_leaderboard_image(
         bg_color1, bg_color2 = get_rank_colors(rank)
         text_color = get_text_color(rank)
 
-        # Draw gradient background
-        entry_bbox = (
-            PADDING,
-            y_offset,
-            WIDTH - PADDING,
-            y_offset + ENTRY_HEIGHT - 10
-        )
+        # Entry dimensions
+        entry_width = WIDTH - 2 * PADDING
+        entry_height = ENTRY_HEIGHT - 10
 
-        # Create rounded rectangle mask
-        entry_img = Image.new('RGBA', (WIDTH, ENTRY_HEIGHT), (0, 0, 0, 0))
-        entry_draw = ImageDraw.Draw(entry_img)
-
-        # Draw gradient on separate layer
-        gradient_img = Image.new('RGB', (WIDTH, ENTRY_HEIGHT), (0, 0, 0))
+        # Create gradient rectangle
+        gradient_img = Image.new('RGB', (entry_width, entry_height), (0, 0, 0))
         gradient_draw = ImageDraw.Draw(gradient_img)
         draw_gradient_rect(
             gradient_draw,
-            (0, 0, WIDTH - 2 * PADDING, ENTRY_HEIGHT - 10),
+            (0, 0, entry_width, entry_height),
             bg_color1,
             bg_color2
         )
 
-        # Draw rounded rectangle
-        entry_draw.rounded_rectangle(
-            (0, 0, WIDTH - 2 * PADDING, ENTRY_HEIGHT - 10),
+        # Create rounded rectangle mask
+        mask = Image.new('L', (entry_width, entry_height), 0)
+        mask_draw = ImageDraw.Draw(mask)
+        mask_draw.rounded_rectangle(
+            (0, 0, entry_width, entry_height),
             radius=12,
-            fill=(255, 255, 255, 255)
+            fill=255
         )
 
-        # Composite gradient with mask
-        gradient_img.paste(image, (0, 0))
-        gradient_img.paste(
-            gradient_img.crop((0, 0, WIDTH - 2 * PADDING, ENTRY_HEIGHT - 10)),
-            (0, 0),
-            entry_img.split()[3]  # Use alpha as mask
-        )
-
-        # Paste gradient back to main image
-        image.paste(
-            gradient_img.crop((0, 0, WIDTH - 2 * PADDING, ENTRY_HEIGHT - 10)),
-            (PADDING, y_offset)
-        )
+        # Paste gradient with rounded corners onto main image
+        image.paste(gradient_img, (PADDING, y_offset), mask)
 
         # Draw rank badge
         rank_text = get_rank_emoji(rank)
