@@ -11,26 +11,21 @@ import time
 from typing import Optional
 from langdetect import detect, DetectorFactory, LangDetectException
 from datetime import datetime, timedelta, timezone
-from os import remove
-from cogs.league_cog.league_helper.leaderboard_image import generate_leaderboard_image
+from cogs.league_cog.config import (
+    LEAGUE_GUILD_ID,
+    WINNER_CHANNEL_ID,
+    ROLES,
+    SCORING,
+    RATE_LIMITS,
+    ROUNDS,
+    DISPLAY,
+    LANGUAGE
+)
 
 # Set seed for consistent language detection results
-DetectorFactory.seed = 0
+DetectorFactory.seed = LANGUAGE.LANGDETECT_SEED
 
 logger = logging.getLogger(__name__)
-
-# Guild ID - Language League is only available in this server
-LEAGUE_GUILD_ID = 243838819743432704
-
-# Winner announcement channel
-WINNER_CHANNEL_ID = 247135634265735168
-
-# Role IDs
-ENGLISH_NATIVE = 243853718758359040
-SPANISH_NATIVE = 243854128424550401
-LEARNING_SPANISH = 297415063302832128
-LEARNING_ENGLISH = 247021017740869632
-OTHER_NATIVE = 247020385730691073
 
 
 class LeagueCog(BaseCog):
@@ -69,7 +64,7 @@ class LeagueCog(BaseCog):
         except Exception as e:
             logger.error(f"Error ensuring round exists: {e}", exc_info=True)
 
-    @tasks.loop(minutes=1)
+    @tasks.loop(minutes=ROUNDS.ROUND_CHECK_INTERVAL_MINUTES)
     async def check_round_end(self):
         """Scheduled task to check if current round has ended"""
         try:
@@ -111,10 +106,10 @@ class LeagueCog(BaseCog):
             logger.info(f"Ending round {round_number} (ID: {round_id})")
 
             # Get top 3 from Spanish league
-            spanish_top3 = await self.bot.db.get_leaderboard('spanish', limit=3, round_id=round_id)
+            spanish_top3 = await self.bot.db.get_leaderboard('spanish', limit=SCORING.TOP_WINNERS_COUNT, round_id=round_id)
 
             # Get top 3 from English league
-            english_top3 = await self.bot.db.get_leaderboard('english', limit=3, round_id=round_id)
+            english_top3 = await self.bot.db.get_leaderboard('english', limit=SCORING.TOP_WINNERS_COUNT, round_id=round_id)
 
             # Save winners to database
             winners_data = []
@@ -148,9 +143,9 @@ class LeagueCog(BaseCog):
             # Announce winners
             await self.announce_winners(round_number, spanish_top3, english_top3)
 
-            # Create next round (2 weeks from end of current round)
+            # Create next round
             next_start = current_round['end_date'] + timedelta(seconds=1)
-            next_end = next_start + timedelta(days=14)
+            next_end = next_start + timedelta(days=ROUNDS.ROUND_DURATION_DAYS)
             next_end = next_end.replace(hour=23, minute=59, second=59)
 
             next_round_id = await self.bot.db.create_round(round_number + 1, next_start, next_end)
@@ -245,10 +240,10 @@ class LeagueCog(BaseCog):
         user_role_ids = [role.id for role in member.roles]
 
         # Check what roles they have
-        has_english_native = ENGLISH_NATIVE in user_role_ids
-        has_spanish_native = SPANISH_NATIVE in user_role_ids
-        has_learning_spanish = LEARNING_SPANISH in user_role_ids
-        has_learning_english = LEARNING_ENGLISH in user_role_ids
+        has_english_native = ROLES.ENGLISH_NATIVE in user_role_ids
+        has_spanish_native = ROLES.SPANISH_NATIVE in user_role_ids
+        has_learning_spanish = ROLES.LEARNING_SPANISH in user_role_ids
+        has_learning_english = ROLES.LEARNING_ENGLISH in user_role_ids
 
         # Rule 1: Must have EXACTLY ONE Learning role
         if not has_learning_spanish and not has_learning_english:
@@ -259,8 +254,8 @@ class LeagueCog(BaseCog):
                 'error_message': (
                     "❌ **Invalid Role Configuration**\n\n"
                     "You must have exactly one learning role:\n"
-                    f"• <@&{LEARNING_SPANISH}> (Learning Spanish)\n"
-                    f"• <@&{LEARNING_ENGLISH}> (Learning English)\n\n"
+                    f"• <@&{ROLES.LEARNING_SPANISH}> (Learning Spanish)\n"
+                    f"• <@&{ROLES.LEARNING_ENGLISH}> (Learning English)\n\n"
                     "Please add the appropriate role and try again!"
                 )
             }
@@ -275,8 +270,8 @@ class LeagueCog(BaseCog):
                     "❌ **Too Many Learning Roles**\n\n"
                     "You can only participate in ONE league at a time.\n"
                     "You currently have both:\n"
-                    f"• <@&{LEARNING_SPANISH}> (Learning Spanish)\n"
-                    f"• <@&{LEARNING_ENGLISH}> (Learning English)\n\n"
+                    f"• <@&{ROLES.LEARNING_SPANISH}> (Learning Spanish)\n"
+                    f"• <@&{ROLES.LEARNING_ENGLISH}> (Learning English)\n\n"
                     "Please keep only the role for the language you want to focus on!"
                 )
             }
@@ -290,8 +285,8 @@ class LeagueCog(BaseCog):
                 'error_message': (
                     "❌ **Conflicting Roles**\n\n"
                     "You have both:\n"
-                    f"• <@&{LEARNING_SPANISH}> (Learning Spanish)\n"
-                    f"• <@&{SPANISH_NATIVE}> (Spanish Native)\n\n"
+                    f"• <@&{ROLES.LEARNING_SPANISH}> (Learning Spanish)\n"
+                    f"• <@&{ROLES.SPANISH_NATIVE}> (Spanish Native)\n\n"
                     "You cannot be native in a language you're learning.\n"
                     "Please remove one of these roles and try again!"
                 )
@@ -305,8 +300,8 @@ class LeagueCog(BaseCog):
                 'error_message': (
                     "❌ **Conflicting Roles**\n\n"
                     "You have both:\n"
-                    f"• <@&{LEARNING_ENGLISH}> (Learning English)\n"
-                    f"• <@&{ENGLISH_NATIVE}> (English Native)\n\n"
+                    f"• <@&{ROLES.LEARNING_ENGLISH}> (Learning English)\n"
+                    f"• <@&{ROLES.ENGLISH_NATIVE}> (English Native)\n\n"
                     "You cannot be native in a language you're learning.\n"
                     "Please remove one of these roles and try again!"
                 )
@@ -353,10 +348,10 @@ class LeagueCog(BaseCog):
                     f"You're now competing in the **{league_name}**!\n\n"
                     f"📝 **How it works:**\n"
                     f"• Only messages in **{language_name}** will count\n"
-                    f"• Messages must be at least 10 characters\n"
-                    f"• 2-minute cooldown per channel (no spam!)\n"
-                    f"• Max 50 counted messages per day\n"
-                    f"• +5 bonus points for each active day\n\n"
+                    f"• Messages must be at least {RATE_LIMITS.MIN_MESSAGE_LENGTH} characters\n"
+                    f"• {RATE_LIMITS.MESSAGE_COOLDOWN_SECONDS // 60}-minute cooldown per channel (no spam!)\n"
+                    f"• Max {RATE_LIMITS.DAILY_MESSAGE_CAP} counted messages per day\n"
+                    f"• +{SCORING.ACTIVE_DAY_BONUS_MULTIPLIER} bonus points for each active day\n\n"
                     f"Use `/league stats` to track your progress!\n\n"
                     f"Good luck! 🎯"
                 ),
@@ -435,8 +430,8 @@ class LeagueCog(BaseCog):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
 
-            # Get top 10 for image
-            rankings = await self.bot.db.get_leaderboard(board, 10)
+            # Get top entries for image
+            rankings = await self.bot.db.get_leaderboard(board, SCORING.LEADERBOARD_DISPLAY_LIMIT)
 
             if not rankings:
                 embed = Embed(
@@ -447,51 +442,17 @@ class LeagueCog(BaseCog):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
 
-            # Enrich leaderboard data with avatars and winner status
-            enriched_data = []
-            for entry in rankings:
-                try:
-                    # Fetch member to get avatar
-                    member = interaction.guild.get_member(entry['user_id'])
-                    if member and member.display_avatar:
-                        avatar_url = str(member.display_avatar.url)
-                    else:
-                        # Fallback to default Discord avatar
-                        default_num = entry['user_id'] % 5
-                        avatar_url = f"https://cdn.discordapp.com/embed/avatars/{default_num}.png"
+            # Helper function for rank medals
+            def get_rank_emoji(rank: int) -> str:
+                medals = {1: "🥇", 2: "🥈", 3: "🥉"}
+                return medals.get(rank, f"**#{rank}**")
 
-                    # Check if user has won before
-                    is_winner = await self.bot.db.has_user_won_before(entry['user_id'])
-
-                    enriched_data.append({
-                        'rank': entry['rank'],
-                        'user_id': entry['user_id'],
-                        'username': entry['username'],
-                        'total_score': entry['total_score'],
-                        'active_days': entry['active_days'],
-                        'avatar_url': avatar_url,
-                        'is_previous_winner': is_winner
-                    })
-                except Exception as e:
-                    logger.error(f"Error enriching user {entry['user_id']}: {e}")
-                    # Add entry with default avatar on error
-                    default_num = entry['user_id'] % 5
-                    enriched_data.append({
-                        'rank': entry['rank'],
-                        'user_id': entry['user_id'],
-                        'username': entry['username'],
-                        'total_score': entry['total_score'],
-                        'active_days': entry['active_days'],
-                        'avatar_url': f"https://cdn.discordapp.com/embed/avatars/{default_num}.png",
-                        'is_previous_winner': False
-                    })
-
-            # Check if requester is in top 10
-            requester_in_top_10 = any(entry['user_id'] == interaction.user.id for entry in rankings)
+            # Check if requester is in top rankings
+            requester_in_top = any(entry['user_id'] == interaction.user.id for entry in rankings)
             requester_stats = None
 
-            # If not in top 10, get their stats for the embed
-            if not requester_in_top_10:
+            # If not in top rankings, get their stats for the embed
+            if not requester_in_top:
                 user_stats = await self.bot.db.get_user_stats(interaction.user.id)
                 if user_stats:
                     # Determine which rank to show based on board type
@@ -520,77 +481,67 @@ class LeagueCog(BaseCog):
                             'user_id': interaction.user.id
                         }
 
-            # Generate leaderboard image
-            try:
-                # Defer response for better UX (image takes 1-3 seconds)
-                await interaction.response.defer()
+            # Create embed leaderboard
+            board_emoji = DISPLAY.get_emoji(board)
+            board_title = DISPLAY.get_name(board)
 
-                # Generate image
-                image_path = generate_leaderboard_image(
-                    leaderboard_data=enriched_data,
-                    board_type=board,
-                    round_info={
-                        'round_number': current_round['round_number'],
-                        'end_date': current_round['end_date']
-                    }
-                )
+            embed = Embed(
+                title=f"{board_emoji} {board_title}",
+                description=f"**Round {current_round['round_number']}**",
+                color=discord.Color.gold()
+            )
 
-                # Create embed with additional info
-                board_emoji = "🇪🇸" if board == "spanish" else ("🇬🇧" if board == "english" else "🌍")
-                board_title = "Spanish League" if board == "spanish" else ("English League" if board == "english" else "Combined League")
-                embed = Embed(
-                    title=f"{board_emoji} {board_title}",
-                    color=discord.Color.gold()
-                )
+            # Build leaderboard entries
+            leaderboard_lines = []
+            for entry in rankings:
+                rank_display = get_rank_emoji(entry['rank'])
 
-                # Set the leaderboard image in the embed
-                file = File(image_path, filename="leaderboard.png")
-                embed.set_image(url="attachment://leaderboard.png")
+                # Check if previous winner
+                is_winner = await self.bot.db.has_user_won_before(entry['user_id'])
+                star = "⭐ " if is_winner else ""
 
-                # Add scoring info
+                # Format entry line
+                line = f"{rank_display} {star}**{entry['username']}**\n     {entry['total_score']} pts • {entry['active_days']} days active"
+                leaderboard_lines.append(line)
+
+            # Add leaderboard to embed (split into chunks if needed to avoid field limit)
+            chunk_size = 10
+            for i in range(0, len(leaderboard_lines), chunk_size):
+                chunk = leaderboard_lines[i:i + chunk_size]
+                field_name = "📊 Rankings" if i == 0 else "\u200b"  # Zero-width space for continuation
                 embed.add_field(
-                    name="ℹ️ Scoring",
-                    value="Score = Points + (Active Days × 5)\n⭐ = Previous #1 winner",
+                    name=field_name,
+                    value="\n\n".join(chunk),
                     inline=False
                 )
 
-                # Add requester's rank if outside top 10
-                if requester_stats and requester_stats['rank'] > 10:
-                    has_won = await self.bot.db.has_user_won_before(requester_stats['user_id'])
-                    star = "⭐ " if has_won else ""
-                    embed.add_field(
-                        name="📍 Your Rank",
-                        value=f"{star}**#{requester_stats['rank']}** • {requester_stats['total_score']} pts • {requester_stats['active_days']} active days",
-                        inline=False
-                    )
-
-                # Show round end date
-                end_date = current_round['end_date']
-                if end_date.tzinfo is None:
-                    end_date = end_date.replace(tzinfo=timezone.utc)
-
-                embed.set_footer(text=f"Round {current_round['round_number']} • Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
-
-                # Send embed with image attached
-                await interaction.followup.send(file=file, embed=embed)
-
-                # Clean up temp file
-                try:
-                    remove(image_path)
-                except Exception:
-                    pass  # Ignore cleanup errors
-
-                logger.info(f"User {interaction.user} viewed {board} league (image)")
-
-            except Exception as img_error:
-                logger.error(f"Error generating leaderboard image: {img_error}", exc_info=True)
-                # Fallback to error message
-                error_embed = Embed(
-                    title="❌ Error",
-                    description="Failed to generate leaderboard image. Please try again later.",
-                    color=discord.Color.red()
+            # Add requester's rank if outside top rankings
+            if requester_stats and requester_stats['rank'] > SCORING.LEADERBOARD_DISPLAY_LIMIT:
+                has_won = await self.bot.db.has_user_won_before(requester_stats['user_id'])
+                star = "⭐ " if has_won else ""
+                embed.add_field(
+                    name="📍 Your Rank",
+                    value=f"{star}**#{requester_stats['rank']}** • {requester_stats['total_score']} pts • {requester_stats['active_days']} active days",
+                    inline=False
                 )
-                await interaction.followup.send(embed=error_embed, ephemeral=True)
+
+            # Add scoring info
+            embed.add_field(
+                name="ℹ️ How Scoring Works",
+                value=f"Score = Points + (Active Days × {SCORING.ACTIVE_DAY_BONUS_MULTIPLIER})\n⭐ = Previous #1 winner",
+                inline=False
+            )
+
+            # Show round end date in footer
+            end_date = current_round['end_date']
+            if end_date.tzinfo is None:
+                end_date = end_date.replace(tzinfo=timezone.utc)
+
+            embed.set_footer(text=f"Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
+
+            # Send embed
+            await interaction.response.send_message(embed=embed)
+            logger.info(f"User {interaction.user} viewed {board} league")
 
         except Exception as e:
             logger.error(f"Error viewing league: {e}", exc_info=True)
@@ -659,7 +610,7 @@ class LeagueCog(BaseCog):
                 value=(
                     f"**Total Points:** {stats['total_points']}\n"
                     f"**Active Days:** {stats['active_days']}\n"
-                    f"**Total Score:** {stats['total_score']} ({stats['total_points']} + {stats['active_days'] * 5} bonus)"
+                    f"**Total Score:** {stats['total_score']} ({stats['total_points']} + {stats['active_days'] * SCORING.ACTIVE_DAY_BONUS_MULTIPLIER} bonus)"
                 ),
                 inline=False
             )
@@ -882,7 +833,7 @@ class LeagueCog(BaseCog):
 
             # Anti-spam: Check daily cap
             daily_count = await self.bot.db.get_daily_message_count(message.author.id)
-            if daily_count >= 50:
+            if daily_count >= RATE_LIMITS.DAILY_MESSAGE_CAP:
                 return  # Hit daily cap
 
             # Language detection: Only count messages in the language being learned
@@ -895,9 +846,9 @@ class LeagueCog(BaseCog):
 
             # Check if message is in the language they're learning
             is_valid_message = False
-            if detected_lang == 'es' and learning['learning_spanish']:
+            if detected_lang == LANGUAGE.SPANISH_CODE and learning['learning_spanish']:
                 is_valid_message = True
-            elif detected_lang == 'en' and learning['learning_english']:
+            elif detected_lang == LANGUAGE.ENGLISH_CODE and learning['learning_english']:
                 is_valid_message = True
 
             if not is_valid_message:
@@ -914,7 +865,7 @@ class LeagueCog(BaseCog):
                 user_id=message.author.id,
                 activity_type='message',
                 channel_id=message.channel.id,
-                points=1,
+                points=SCORING.POINTS_PER_MESSAGE,
                 round_id=current_round['round_id']
             )
 
@@ -927,7 +878,7 @@ class LeagueCog(BaseCog):
     def check_message_cooldown(self, user_id: int, channel_id: int) -> bool:
         """Check if enough time has passed since last counted message"""
         now = time.time()
-        cooldown_seconds = 120  # 2 minutes
+        cooldown_seconds = RATE_LIMITS.MESSAGE_COOLDOWN_SECONDS
 
         if user_id not in self.message_cooldowns:
             return True
@@ -953,14 +904,14 @@ class LeagueCog(BaseCog):
             'es' for Spanish, 'en' for English, None if uncertain or error
         """
         # Skip very short messages (hard to detect accurately)
-        if len(message_content.strip()) < 10:
+        if len(message_content.strip()) < RATE_LIMITS.MIN_MESSAGE_LENGTH:
             return None
 
         try:
             detected_lang = detect(message_content)
 
             # Only return if we detected Spanish or English
-            if detected_lang in ['es', 'en']:
+            if detected_lang in [LANGUAGE.SPANISH_CODE, LANGUAGE.ENGLISH_CODE]:
                 return detected_lang
 
             return None
