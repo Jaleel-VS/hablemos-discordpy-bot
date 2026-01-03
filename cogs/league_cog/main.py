@@ -721,7 +721,7 @@ class LeagueCog(BaseCog):
     async def league_admin(self, ctx, action: str = None, target=None):
         """Admin league management (Owner only)"""
         if not action:
-            await ctx.send("❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats> [target]`")
+            await ctx.send("❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage> [target]`")
             return
 
         action = action.lower()
@@ -853,6 +853,104 @@ class LeagueCog(BaseCog):
 
             await ctx.send(embed=embed)
             logger.info(f"Admin {ctx.author} viewed league statistics")
+
+        elif action == "validatemessage":
+            if not target:
+                await ctx.send("❌ Usage: `$league validatemessage <message_link>`")
+                return
+
+            # Parse message link
+            # Format: https://discord.com/channels/guild_id/channel_id/message_id
+            try:
+                parts = target.rstrip('/').split('/')
+                if len(parts) < 3:
+                    await ctx.send("❌ Invalid message link format")
+                    return
+
+                message_id = int(parts[-1])
+                channel_id = int(parts[-2])
+                guild_id = int(parts[-3])
+
+                # Fetch the message
+                guild = self.bot.get_guild(guild_id)
+                if not guild:
+                    await ctx.send(f"❌ Could not find guild {guild_id}")
+                    return
+
+                channel = guild.get_channel(channel_id)
+                if not channel:
+                    await ctx.send(f"❌ Could not find channel {channel_id}")
+                    return
+
+                message = await channel.fetch_message(message_id)
+
+                # Process message through language detection
+                raw_content = message.content
+                detected_lang = self.detect_message_language(raw_content)
+
+                # Remove emojis to show what the detector sees
+                content_no_custom = CUSTOM_EMOJI_PATTERN.sub('', raw_content)
+                content_clean = UNICODE_EMOJI_PATTERN.sub('', content_no_custom).strip()
+
+                # Build debug embed
+                embed = Embed(
+                    title="🔍 Message Validation",
+                    color=discord.Color.blue()
+                )
+
+                embed.add_field(
+                    name="Author",
+                    value=f"{message.author.mention} ({message.author.id})",
+                    inline=False
+                )
+
+                embed.add_field(
+                    name="Raw Content",
+                    value=f"```\n{raw_content[:1000]}\n```" if raw_content else "*(empty)*",
+                    inline=False
+                )
+
+                embed.add_field(
+                    name="After Emoji Removal",
+                    value=f"```\n{content_clean[:1000]}\n```" if content_clean else "*(empty after cleanup)*",
+                    inline=False
+                )
+
+                embed.add_field(
+                    name="Length Check",
+                    value=f"Raw: {len(raw_content)} chars | Clean: {len(content_clean)} chars | Min required: {RATE_LIMITS.MIN_MESSAGE_LENGTH}",
+                    inline=False
+                )
+
+                result_emoji = "✅" if detected_lang else "❌"
+                result_text = f"{result_emoji} **{detected_lang.upper()}**" if detected_lang else "❌ **Not detected** (too short or no valid language)"
+
+                embed.add_field(
+                    name="Detected Language",
+                    value=result_text,
+                    inline=False
+                )
+
+                embed.add_field(
+                    name="Would Count?",
+                    value="✅ Yes (if user opted in, not on cooldown, etc.)" if detected_lang else "❌ No (language detection failed)",
+                    inline=False
+                )
+
+                embed.set_footer(text=f"Message ID: {message_id}")
+
+                await ctx.send(embed=embed)
+                logger.info(f"Admin {ctx.author} validated message {message_id}")
+
+            except ValueError:
+                await ctx.send("❌ Invalid message link format (IDs must be numbers)")
+            except discord.NotFound:
+                await ctx.send("❌ Message not found")
+            except discord.Forbidden:
+                await ctx.send("❌ No permission to access that message")
+            except Exception as e:
+                await ctx.send(f"❌ Error: {str(e)}")
+                logger.error(f"Error in validatemessage: {e}", exc_info=True)
 
         else:
             await ctx.send(f"❌ Unknown action: `{action}`")
