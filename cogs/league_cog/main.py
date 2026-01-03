@@ -10,9 +10,9 @@ import logging
 import time
 import re
 from typing import Optional
+from pathlib import Path
 from langdetect import detect, DetectorFactory, LangDetectException
 from datetime import datetime, timedelta, timezone
-from os import remove
 from cogs.league_cog.league_helper.leaderboard_image_pillow import generate_leaderboard_image
 from cogs.league_cog.config import (
     LEAGUE_GUILD_ID,
@@ -27,6 +27,22 @@ from cogs.league_cog.config import (
 
 # Set seed for consistent language detection results
 DetectorFactory.seed = LANGUAGE.LANGDETECT_SEED
+
+# Regex patterns for message filtering
+CUSTOM_EMOJI_PATTERN = re.compile(r'<a?:\w+:\d+>')
+UNICODE_EMOJI_PATTERN = re.compile(
+    "["
+    "\U0001F600-\U0001F64F"  # emoticons
+    "\U0001F300-\U0001F5FF"  # symbols & pictographs
+    "\U0001F680-\U0001F6FF"  # transport & map symbols
+    "\U0001F1E0-\U0001F1FF"  # flags (iOS)
+    "\U00002702-\U000027B0"  # dingbats
+    "\U000024C2-\U0001F251"  # enclosed characters
+    "\U0001F900-\U0001F9FF"  # supplemental symbols
+    "\U0001FA00-\U0001FA6F"  # extended pictographs
+    "]+",
+    flags=re.UNICODE
+)
 
 logger = logging.getLogger(__name__)
 
@@ -86,6 +102,9 @@ class LeagueCog(BaseCog):
             if now >= end_date:
                 logger.info(f"Round {current_round['round_id']} has ended, processing...")
                 await self.end_current_round(current_round)
+
+            # Periodic cleanup of old cooldown entries (prevent memory leak)
+            self.cleanup_old_cooldowns()
 
         except Exception as e:
             logger.error(f"Error in check_round_end task: {e}", exc_info=True)
@@ -570,10 +589,7 @@ class LeagueCog(BaseCog):
                 await interaction.followup.send(file=file, embed=embed)
 
                 # Clean up temp file
-                try:
-                    remove(image_path)
-                except Exception:
-                    pass  # Ignore cleanup errors
+                Path(image_path).unlink(missing_ok=True)
 
                 logger.info(f"User {interaction.user} viewed {board} league (Pillow image)")
 
@@ -941,6 +957,20 @@ class LeagueCog(BaseCog):
 
         self.message_cooldowns[user_id][channel_id] = time.time()
 
+    def cleanup_old_cooldowns(self):
+        """Remove expired cooldown entries to prevent memory leak"""
+        # Remove entries older than 2x the cooldown period (well expired)
+        cutoff = time.time() - (RATE_LIMITS.MESSAGE_COOLDOWN_SECONDS * 2)
+
+        for user_id in list(self.message_cooldowns.keys()):
+            for channel_id in list(self.message_cooldowns[user_id].keys()):
+                if self.message_cooldowns[user_id][channel_id] < cutoff:
+                    del self.message_cooldowns[user_id][channel_id]
+
+            # Remove user entry if no channels remain
+            if not self.message_cooldowns[user_id]:
+                del self.message_cooldowns[user_id]
+
     def detect_message_language(self, message_content: str) -> Optional[str]:
         """
         Detect the language of a message using langdetect.
@@ -949,24 +979,10 @@ class LeagueCog(BaseCog):
             'es' for Spanish, 'en' for English, None if uncertain or error
         """
         # Remove custom Discord emojis (format: <:name:id> or <a:name:id>)
-        content_no_custom_emojis = re.sub(r'<a?:\w+:\d+>', '', message_content)
+        content_no_custom_emojis = CUSTOM_EMOJI_PATTERN.sub('', message_content)
 
         # Remove Unicode emojis
-        # This regex matches most Unicode emoji ranges
-        emoji_pattern = re.compile(
-            "["
-            "\U0001F600-\U0001F64F"  # emoticons
-            "\U0001F300-\U0001F5FF"  # symbols & pictographs
-            "\U0001F680-\U0001F6FF"  # transport & map symbols
-            "\U0001F1E0-\U0001F1FF"  # flags (iOS)
-            "\U00002702-\U000027B0"  # dingbats
-            "\U000024C2-\U0001F251"  # enclosed characters
-            "\U0001F900-\U0001F9FF"  # supplemental symbols
-            "\U0001FA00-\U0001FA6F"  # extended pictographs
-            "]+",
-            flags=re.UNICODE
-        )
-        content_no_emojis = emoji_pattern.sub('', content_no_custom_emojis)
+        content_no_emojis = UNICODE_EMOJI_PATTERN.sub('', content_no_custom_emojis)
 
         # Strip whitespace and check if there's actual text content
         clean_content = content_no_emojis.strip()
