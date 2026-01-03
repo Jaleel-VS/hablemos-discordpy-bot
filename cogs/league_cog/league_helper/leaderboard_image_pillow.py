@@ -117,11 +117,11 @@ def get_rank_colors(rank: int) -> tuple:
         # Bronze gradient
         return ((244, 164, 96), (205, 127, 50))
     elif rank <= 10:
-        # Purple gradient
-        return ((102, 126, 234), (118, 75, 162))
+        # Purple gradient (darkened for WCAG AA compliance)
+        return ((88, 101, 191), (118, 75, 162))
     else:
-        # Dark blue gradient
-        return ((59, 130, 246), (37, 99, 235))
+        # Dark blue gradient (darkened for WCAG AA compliance)
+        return ((45, 105, 196), (37, 99, 235))
 
 
 def get_text_color(rank: int) -> tuple:
@@ -133,9 +133,8 @@ def get_text_color(rank: int) -> tuple:
 
 
 def get_rank_emoji(rank: int) -> str:
-    """Get medal emoji or rank number"""
-    medals = {1: "🥇", 2: "🥈", 3: "🥉"}
-    return medals.get(rank, f"#{rank}")
+    """Get rank number"""
+    return f"#{rank}"
 
 
 def generate_leaderboard_image(
@@ -223,15 +222,15 @@ def generate_leaderboard_image(
         # Draw rank badge
         rank_text = get_rank_emoji(rank)
         rank_bbox = draw.textbbox((0, 0), rank_text, font=rank_font)
-        rank_width = rank_bbox[2] - rank_bbox[0]
         rank_x = PADDING + 20
         rank_y = y_offset + (ENTRY_HEIGHT - 10) // 2 - (rank_bbox[3] - rank_bbox[1]) // 2
         draw.text((rank_x, rank_y), rank_text, fill=text_color, font=rank_font)
 
-        # Download and draw avatar
+        # Download and draw avatar (use fixed offset for consistent alignment)
         avatar_size = 56
         avatar = download_avatar(avatar_url, avatar_size)
-        avatar_x = rank_x + rank_width + 25
+        RANK_AREA_WIDTH = 60  # Fixed width for rank area
+        avatar_x = PADDING + 20 + RANK_AREA_WIDTH
         avatar_y = y_offset + (ENTRY_HEIGHT - 10) // 2 - avatar_size // 2
 
         # Add border to avatar
