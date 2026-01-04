@@ -8,10 +8,9 @@ from discord import app_commands, Interaction, Embed, Member, File
 from base_cog import BaseCog
 import logging
 import time
-import re
 from typing import Optional
 from pathlib import Path
-from langdetect import detect, DetectorFactory, LangDetectException
+from langdetect import DetectorFactory
 from datetime import datetime, timedelta, timezone
 from cogs.league_cog.league_helper.leaderboard_image_pillow import generate_leaderboard_image
 from cogs.league_cog.config import (
@@ -24,25 +23,10 @@ from cogs.league_cog.config import (
     DISPLAY,
     LANGUAGE
 )
+from cogs.league_cog.utils import detect_message_language
 
 # Set seed for consistent language detection results
 DetectorFactory.seed = LANGUAGE.LANGDETECT_SEED
-
-# Regex patterns for message filtering
-CUSTOM_EMOJI_PATTERN = re.compile(r'<a?:\w+:\d+>')
-UNICODE_EMOJI_PATTERN = re.compile(
-    "["
-    "\U0001F600-\U0001F64F"  # emoticons
-    "\U0001F300-\U0001F5FF"  # symbols & pictographs
-    "\U0001F680-\U0001F6FF"  # transport & map symbols
-    "\U0001F1E0-\U0001F1FF"  # flags (iOS)
-    "\U00002702-\U000027B0"  # dingbats
-    "\U000024C2-\U0001F251"  # enclosed characters
-    "\U0001F900-\U0001F9FF"  # supplemental symbols
-    "\U0001FA00-\U0001FA6F"  # extended pictographs
-    "]+",
-    flags=re.UNICODE
-)
 
 logger = logging.getLogger(__name__)
 
@@ -714,247 +698,6 @@ class LeagueCog(BaseCog):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    # Admin Commands (Prefix)
-
-    @commands.command(name="league")
-    @commands.is_owner()
-    async def league_admin(self, ctx, action: str = None, target=None):
-        """Admin league management (Owner only)"""
-        if not action:
-            await ctx.send("❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage> [target]`")
-            return
-
-        action = action.lower()
-
-        if action == "ban":
-            if not target:
-                await ctx.send("❌ Usage: `$league ban <user_id|@user>`")
-                return
-
-            # Get user ID
-            try:
-                if ctx.message.mentions:
-                    user_id = ctx.message.mentions[0].id
-                else:
-                    user_id = int(target)
-
-                success = await self.bot.db.leaderboard_ban_user(user_id)
-                if success:
-                    await ctx.send(f"✅ Banned user `{user_id}` from league.")
-                    logger.info(f"Admin {ctx.author} banned user {user_id} from league")
-                else:
-                    await ctx.send(f"❌ Failed to ban user `{user_id}`.")
-            except ValueError:
-                await ctx.send("❌ Invalid user ID.")
-
-        elif action == "unban":
-            if not target:
-                await ctx.send("❌ Usage: `$league unban <user_id|@user>`")
-                return
-
-            try:
-                if ctx.message.mentions:
-                    user_id = ctx.message.mentions[0].id
-                else:
-                    user_id = int(target)
-
-                success = await self.bot.db.leaderboard_unban_user(user_id)
-                if success:
-                    await ctx.send(f"✅ Unbanned user `{user_id}` from league.")
-                    logger.info(f"Admin {ctx.author} unbanned user {user_id} from league")
-                else:
-                    await ctx.send(f"❌ Failed to unban user `{user_id}`.")
-            except ValueError:
-                await ctx.send("❌ Invalid user ID.")
-
-        elif action == "exclude":
-            if not ctx.message.channel_mentions:
-                await ctx.send("❌ Usage: `$league exclude <#channel>`")
-                return
-
-            channel = ctx.message.channel_mentions[0]
-            success = await self.bot.db.exclude_channel(channel.id, channel.name, ctx.author.id)
-            if success:
-                await ctx.send(f"✅ Excluded {channel.mention} from league tracking.")
-                logger.info(f"Admin {ctx.author} excluded channel {channel.name} ({channel.id}) from league")
-            else:
-                await ctx.send(f"❌ Failed to exclude {channel.mention}.")
-
-        elif action == "include":
-            if not ctx.message.channel_mentions:
-                await ctx.send("❌ Usage: `$league include <#channel>`")
-                return
-
-            channel = ctx.message.channel_mentions[0]
-            success = await self.bot.db.include_channel(channel.id)
-            if success:
-                await ctx.send(f"✅ Re-included {channel.mention} in league tracking.")
-                logger.info(f"Admin {ctx.author} re-included channel {channel.name} ({channel.id}) in league")
-            else:
-                await ctx.send(f"❌ Channel {channel.mention} was not excluded.")
-
-        elif action == "excluded":
-            channels = await self.bot.db.get_excluded_channels()
-            if not channels:
-                await ctx.send("ℹ️ No channels are currently excluded.")
-                return
-
-            embed = Embed(
-                title="🚫 Excluded Channels",
-                description=f"Total: {len(channels)} channels",
-                color=discord.Color.blue()
-            )
-
-            channel_list = []
-            for ch in channels[:25]:  # Limit to 25
-                channel_list.append(f"<#{ch['channel_id']}> (`{ch['channel_id']}`)")
-
-            embed.add_field(
-                name="Channels",
-                value="\n".join(channel_list) if channel_list else "None",
-                inline=False
-            )
-
-            await ctx.send(embed=embed)
-
-        elif action == "admin_stats":
-            # Get league statistics
-            stats = await self.bot.db.get_league_admin_stats()
-
-            embed = Embed(
-                title="📊 Language League - Admin Statistics",
-                color=discord.Color.blue()
-            )
-
-            embed.add_field(
-                name="👥 Participant Breakdown",
-                value=(
-                    f"**Total Active Users:** {stats['total_users']}\n"
-                    f"🇪🇸 Spanish Learners: {stats['spanish_learners']}\n"
-                    f"🇬🇧 English Learners: {stats['english_learners']}\n"
-                    f"🚫 Banned Users: {stats['banned_users']}"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="📈 Activity (Last 30 Days)",
-                value=f"**Total Messages Counted:** {stats['total_messages_30d']:,}",
-                inline=False
-            )
-
-            # Get excluded channels count
-            excluded_channels = await self.bot.db.get_excluded_channels()
-            embed.add_field(
-                name="⚙️ Configuration",
-                value=f"**Excluded Channels:** {len(excluded_channels)}",
-                inline=False
-            )
-
-            await ctx.send(embed=embed)
-            logger.info(f"Admin {ctx.author} viewed league statistics")
-
-        elif action == "validatemessage":
-            if not target:
-                await ctx.send("❌ Usage: `$league validatemessage <message_link>`")
-                return
-
-            # Parse message link
-            # Format: https://discord.com/channels/guild_id/channel_id/message_id
-            try:
-                parts = target.rstrip('/').split('/')
-                if len(parts) < 3:
-                    await ctx.send("❌ Invalid message link format")
-                    return
-
-                message_id = int(parts[-1])
-                channel_id = int(parts[-2])
-                guild_id = int(parts[-3])
-
-                # Fetch the message
-                guild = self.bot.get_guild(guild_id)
-                if not guild:
-                    await ctx.send(f"❌ Could not find guild {guild_id}")
-                    return
-
-                channel = guild.get_channel(channel_id)
-                if not channel:
-                    await ctx.send(f"❌ Could not find channel {channel_id}")
-                    return
-
-                message = await channel.fetch_message(message_id)
-
-                # Process message through language detection
-                raw_content = message.content
-                detected_lang = self.detect_message_language(raw_content)
-
-                # Remove emojis to show what the detector sees
-                content_no_custom = CUSTOM_EMOJI_PATTERN.sub('', raw_content)
-                content_clean = UNICODE_EMOJI_PATTERN.sub('', content_no_custom).strip()
-
-                # Build debug embed
-                embed = Embed(
-                    title="🔍 Message Validation",
-                    color=discord.Color.blue()
-                )
-
-                embed.add_field(
-                    name="Author",
-                    value=f"{message.author.mention} ({message.author.id})",
-                    inline=False
-                )
-
-                embed.add_field(
-                    name="Raw Content",
-                    value=f"```\n{raw_content[:1000]}\n```" if raw_content else "*(empty)*",
-                    inline=False
-                )
-
-                embed.add_field(
-                    name="After Emoji Removal",
-                    value=f"```\n{content_clean[:1000]}\n```" if content_clean else "*(empty after cleanup)*",
-                    inline=False
-                )
-
-                embed.add_field(
-                    name="Length Check",
-                    value=f"Raw: {len(raw_content)} chars | Clean: {len(content_clean)} chars | Min required: {RATE_LIMITS.MIN_MESSAGE_LENGTH}",
-                    inline=False
-                )
-
-                result_emoji = "✅" if detected_lang else "❌"
-                result_text = f"{result_emoji} **{detected_lang.upper()}**" if detected_lang else "❌ **Not detected** (too short or no valid language)"
-
-                embed.add_field(
-                    name="Detected Language",
-                    value=result_text,
-                    inline=False
-                )
-
-                embed.add_field(
-                    name="Would Count?",
-                    value="✅ Yes (if user opted in, not on cooldown, etc.)" if detected_lang else "❌ No (language detection failed)",
-                    inline=False
-                )
-
-                embed.set_footer(text=f"Message ID: {message_id}")
-
-                await ctx.send(embed=embed)
-                logger.info(f"Admin {ctx.author} validated message {message_id}")
-
-            except ValueError:
-                await ctx.send("❌ Invalid message link format (IDs must be numbers)")
-            except discord.NotFound:
-                await ctx.send("❌ Message not found")
-            except discord.Forbidden:
-                await ctx.send("❌ No permission to access that message")
-            except Exception as e:
-                await ctx.send(f"❌ Error: {str(e)}")
-                logger.error(f"Error in validatemessage: {e}", exc_info=True)
-
-        else:
-            await ctx.send(f"❌ Unknown action: `{action}`")
-
     # Message Listener for Activity Tracking
 
     @commands.Cog.listener()
@@ -995,7 +738,7 @@ class LeagueCog(BaseCog):
                 return  # Hit daily cap
 
             # Language detection: Only count messages in the language being learned
-            detected_lang = self.detect_message_language(message.content)
+            detected_lang = detect_message_language(message.content)
             if not detected_lang:
                 return  # Could not detect language or message too short
 
@@ -1069,43 +812,14 @@ class LeagueCog(BaseCog):
             if not self.message_cooldowns[user_id]:
                 del self.message_cooldowns[user_id]
 
-    def detect_message_language(self, message_content: str) -> Optional[str]:
-        """
-        Detect the language of a message using langdetect.
-
-        Returns:
-            'es' for Spanish, 'en' for English, None if uncertain or error
-        """
-        # Remove custom Discord emojis (format: <:name:id> or <a:name:id>)
-        content_no_custom_emojis = CUSTOM_EMOJI_PATTERN.sub('', message_content)
-
-        # Remove Unicode emojis
-        content_no_emojis = UNICODE_EMOJI_PATTERN.sub('', content_no_custom_emojis)
-
-        # Strip whitespace and check if there's actual text content
-        clean_content = content_no_emojis.strip()
-
-        # Skip very short messages or emoji-only messages
-        if len(clean_content) < RATE_LIMITS.MIN_MESSAGE_LENGTH:
-            return None
-
-        try:
-            detected_lang = detect(clean_content)
-
-            # Only return if we detected Spanish or English
-            if detected_lang in [LANGUAGE.SPANISH_CODE, LANGUAGE.ENGLISH_CODE]:
-                return detected_lang
-
-            return None
-        except LangDetectException:
-            # Detection failed (empty string, etc.)
-            return None
-        except Exception as e:
-            logger.error(f"Language detection error: {e}")
-            return None
-
 
 async def setup(bot):
     """Setup function to add the cog to the bot"""
+    # Load main league cog
     await bot.add_cog(LeagueCog(bot))
     logger.info("LeagueCog loaded successfully")
+
+    # Load admin cog
+    from cogs.league_cog.admin import LeagueAdminCog
+    await bot.add_cog(LeagueAdminCog(bot))
+    logger.info("LeagueAdminCog loaded successfully")
