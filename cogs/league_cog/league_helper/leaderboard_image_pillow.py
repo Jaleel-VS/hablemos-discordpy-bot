@@ -245,7 +245,8 @@ def generate_leaderboard_image(
         image.paste(avatar, (avatar_x, avatar_y), avatar)
 
         # Draw username with star if previous winner
-        username_text = f"⭐ {username}" if is_winner else username
+        # Use Unicode BLACK STAR (U+2605) instead of emoji - fonts don't support emoji
+        username_text = f"★ {username}" if is_winner else username
 
         # Truncate username if too long
         max_username_width = 400

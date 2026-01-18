@@ -1029,6 +1029,20 @@ class Database:
             ''', user_id)
             return row['count'] > 0 if row else False
 
+    async def get_previous_winners(self, user_ids: list[int]) -> set[int]:
+        """Get set of user_ids who have won first place before (batch query)"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        if not user_ids:
+            return set()
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch('''
+                SELECT DISTINCT user_id
+                FROM league_round_winners
+                WHERE user_id = ANY($1) AND rank = 1
+            ''', user_ids)
+            return {row['user_id'] for row in rows}
+
     async def get_round_by_id(self, round_id: int) -> Optional[dict]:
         """Get round details by ID"""
         if self.pool is None:

@@ -8,7 +8,8 @@ from discord import app_commands, Interaction, Embed, Member, File
 from base_cog import BaseCog
 import logging
 import time
-from typing import Optional
+import functools
+from typing import Optional, Callable, TypeVar, ParamSpec
 from pathlib import Path
 from langdetect import DetectorFactory
 from datetime import datetime, timedelta, timezone
@@ -30,14 +31,47 @@ DetectorFactory.seed = LANGUAGE.LANGDETECT_SEED
 
 logger = logging.getLogger(__name__)
 
+# Type variables for decorator
+P = ParamSpec('P')
+T = TypeVar('T')
+
+
+def handle_interaction_errors(func: Callable[P, T]) -> Callable[P, T]:
+    """
+    Decorator for consistent error handling in slash commands.
+    Automatically handles exceptions and sends user-friendly error messages.
+    """
+    @functools.wraps(func)
+    async def wrapper(self, interaction: Interaction, *args, **kwargs):
+        try:
+            return await func(self, interaction, *args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error in {func.__name__}: {e}", exc_info=True)
+            error_embed = Embed(
+                title="❌ Error",
+                description=f"Something went wrong: {str(e)}",
+                color=discord.Color.red()
+            )
+            # Check if we've already responded/deferred
+            if interaction.response.is_done():
+                await interaction.followup.send(embed=error_embed, ephemeral=True)
+            else:
+                await interaction.response.send_message(embed=error_embed, ephemeral=True)
+    return wrapper
+
 
 class LeagueCog(BaseCog):
     """Cog for managing the opt-in Language League"""
+
+    # Cache TTL in seconds
+    LEADERBOARD_CACHE_TTL = 30
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
         # In-memory cooldown cache: {user_id: {channel_id: timestamp}}
         self.message_cooldowns = {}
+        # Leaderboard cache: {cache_key: (data, timestamp)}
+        self._leaderboard_cache: dict[str, tuple[list, datetime]] = {}
         self.check_round_end.start()  # Start scheduled task
 
     async def cog_load(self):
@@ -47,6 +81,29 @@ class LeagueCog(BaseCog):
     def cog_unload(self):
         """Called when cog is unloaded"""
         self.check_round_end.cancel()
+
+    async def get_cached_leaderboard(self, board: str, limit: int) -> list[dict]:
+        """Get leaderboard data with caching to reduce DB load"""
+        cache_key = f"{board}:{limit}"
+        now = datetime.now(timezone.utc)
+
+        # Check if we have valid cached data
+        if cache_key in self._leaderboard_cache:
+            data, cached_at = self._leaderboard_cache[cache_key]
+            age_seconds = (now - cached_at).total_seconds()
+            if age_seconds < self.LEADERBOARD_CACHE_TTL:
+                logger.debug(f"Leaderboard cache hit for {cache_key} (age: {age_seconds:.1f}s)")
+                return data
+
+        # Cache miss or expired - fetch fresh data
+        data = await self.bot.db.get_leaderboard(board, limit)
+        self._leaderboard_cache[cache_key] = (data, now)
+        logger.debug(f"Leaderboard cache miss for {cache_key}, fetched fresh data")
+        return data
+
+    def invalidate_leaderboard_cache(self):
+        """Clear the leaderboard cache (call after score updates)"""
+        self._leaderboard_cache.clear()
 
     async def ensure_round_exists(self):
         """Create initial round if none exists"""
@@ -428,6 +485,9 @@ class LeagueCog(BaseCog):
         board: str = "combined"
     ):
         """View league rankings (top 20)"""
+        # Defer immediately - DB and image generation take time
+        await interaction.response.defer()
+
         try:
             # Get current round info
             current_round = await self.bot.db.get_current_round()
@@ -437,11 +497,11 @@ class LeagueCog(BaseCog):
                     description="There is no active league round at the moment.",
                     color=discord.Color.orange()
                 )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.followup.send(embed=embed, ephemeral=True)
                 return
 
-            # Get top entries for image
-            rankings = await self.bot.db.get_leaderboard(board, SCORING.LEADERBOARD_DISPLAY_LIMIT)
+            # Get top entries for image (use cache if available)
+            rankings = await self.get_cached_leaderboard(board, SCORING.LEADERBOARD_DISPLAY_LIMIT)
 
             if not rankings:
                 embed = Embed(
@@ -449,8 +509,12 @@ class LeagueCog(BaseCog):
                     description="No users in this league yet!\n\nUse `/league join` to be the first!",
                     color=discord.Color.blue()
                 )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.followup.send(embed=embed, ephemeral=True)
                 return
+
+            # Batch query: get all previous winners at once (instead of N queries)
+            user_ids = [entry['user_id'] for entry in rankings]
+            previous_winners = await self.bot.db.get_previous_winners(user_ids)
 
             # Enrich leaderboard data with avatars and winner status
             enriched_data = []
@@ -465,9 +529,6 @@ class LeagueCog(BaseCog):
                         default_num = entry['user_id'] % 5
                         avatar_url = f"https://cdn.discordapp.com/embed/avatars/{default_num}.png"
 
-                    # Check if user has won before
-                    is_winner = await self.bot.db.has_user_won_before(entry['user_id'])
-
                     enriched_data.append({
                         'rank': entry['rank'],
                         'user_id': entry['user_id'],
@@ -475,7 +536,7 @@ class LeagueCog(BaseCog):
                         'total_score': entry['total_score'],
                         'active_days': entry['active_days'],
                         'avatar_url': avatar_url,
-                        'is_previous_winner': is_winner
+                        'is_previous_winner': entry['user_id'] in previous_winners
                     })
                 except Exception as e:
                     logger.error(f"Error enriching user {entry['user_id']}: {e}")
@@ -526,66 +587,51 @@ class LeagueCog(BaseCog):
                         }
 
             # Generate leaderboard image
-            try:
-                # Defer response for image generation
-                await interaction.response.defer()
+            image_path = generate_leaderboard_image(
+                leaderboard_data=enriched_data,
+                board_type=board,
+                round_info={
+                    'round_number': current_round['round_number'],
+                    'end_date': current_round['end_date']
+                }
+            )
 
-                # Generate image using Pillow
-                image_path = generate_leaderboard_image(
-                    leaderboard_data=enriched_data,
-                    board_type=board,
-                    round_info={
-                        'round_number': current_round['round_number'],
-                        'end_date': current_round['end_date']
-                    }
+            # Create embed
+            board_emoji = DISPLAY.get_emoji(board)
+            board_title = DISPLAY.get_name(board)
+            embed = Embed(
+                title=f"{board_emoji} {board_title}",
+                color=discord.Color.gold()
+            )
+
+            # Set the leaderboard image in the embed
+            file = File(image_path, filename="leaderboard.png")
+            embed.set_image(url="attachment://leaderboard.png")
+
+            # Add requester's rank if outside top rankings
+            if requester_stats and requester_stats['rank'] > SCORING.LEADERBOARD_DISPLAY_LIMIT:
+                requester_has_won = requester_stats['user_id'] in previous_winners or await self.bot.db.has_user_won_before(requester_stats['user_id'])
+                star = "⭐ " if requester_has_won else ""
+                embed.add_field(
+                    name="📍 Your Rank",
+                    value=f"{star}**#{requester_stats['rank']}** • {requester_stats['total_score']} pts • {requester_stats['active_days']} active days",
+                    inline=False
                 )
 
-                # Create embed
-                board_emoji = DISPLAY.get_emoji(board)
-                board_title = DISPLAY.get_name(board)
-                embed = Embed(
-                    title=f"{board_emoji} {board_title}",
-                    color=discord.Color.gold()
-                )
+            # Show round end date in footer
+            end_date = current_round['end_date']
+            if end_date.tzinfo is None:
+                end_date = end_date.replace(tzinfo=timezone.utc)
 
-                # Set the leaderboard image in the embed
-                file = File(image_path, filename="leaderboard.png")
-                embed.set_image(url="attachment://leaderboard.png")
+            embed.set_footer(text=f"Round {current_round['round_number']} • Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
 
-                # Add requester's rank if outside top rankings
-                if requester_stats and requester_stats['rank'] > SCORING.LEADERBOARD_DISPLAY_LIMIT:
-                    has_won = await self.bot.db.has_user_won_before(requester_stats['user_id'])
-                    star = "⭐ " if has_won else ""
-                    embed.add_field(
-                        name="📍 Your Rank",
-                        value=f"{star}**#{requester_stats['rank']}** • {requester_stats['total_score']} pts • {requester_stats['active_days']} active days",
-                        inline=False
-                    )
+            # Send embed with image attached
+            await interaction.followup.send(file=file, embed=embed)
 
-                # Show round end date in footer
-                end_date = current_round['end_date']
-                if end_date.tzinfo is None:
-                    end_date = end_date.replace(tzinfo=timezone.utc)
+            # Clean up temp file
+            Path(image_path).unlink(missing_ok=True)
 
-                embed.set_footer(text=f"Round {current_round['round_number']} • Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
-
-                # Send embed with image attached
-                await interaction.followup.send(file=file, embed=embed)
-
-                # Clean up temp file
-                Path(image_path).unlink(missing_ok=True)
-
-                logger.info(f"User {interaction.user} viewed {board} league (Pillow image)")
-
-            except Exception as img_error:
-                logger.error(f"Error generating leaderboard image: {img_error}", exc_info=True)
-                # Fallback to error message
-                error_embed = Embed(
-                    title="❌ Error",
-                    description="Failed to generate leaderboard image. Please try again later.",
-                    color=discord.Color.red()
-                )
-                await interaction.followup.send(embed=error_embed, ephemeral=True)
+            logger.info(f"User {interaction.user} viewed {board} league (Pillow image)")
 
         except Exception as e:
             logger.error(f"Error viewing league: {e}", exc_info=True)
@@ -594,7 +640,7 @@ class LeagueCog(BaseCog):
                 description=f"Failed to load league: {str(e)}",
                 color=discord.Color.red()
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.followup.send(embed=embed, ephemeral=True)
 
     @league_group.command(name="stats", description="View league stats")
     @app_commands.describe(
