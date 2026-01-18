@@ -137,6 +137,23 @@ def get_rank_emoji(rank: int) -> str:
     return f"#{rank}"
 
 
+def draw_star(draw: ImageDraw.ImageDraw, center: tuple[int, int], size: int, color: tuple, outline_color: tuple = None):
+    """Draw a 5-pointed star at the given center position"""
+    import math
+    cx, cy = center
+    points = []
+    for i in range(10):
+        # Alternate between outer and inner radius
+        radius = size if i % 2 == 0 else size * 0.4
+        # Start from top (-90 degrees) and go clockwise
+        angle = math.radians(-90 + i * 36)
+        x = cx + radius * math.cos(angle)
+        y = cy + radius * math.sin(angle)
+        points.append((x, y))
+
+    draw.polygon(points, fill=color, outline=outline_color)
+
+
 def generate_leaderboard_image(
     leaderboard_data: list[dict],
     board_type: str,
@@ -244,19 +261,28 @@ def generate_leaderboard_image(
         image.paste(border_avatar, (avatar_x - border_size, avatar_y - border_size), border_avatar)
         image.paste(avatar, (avatar_x, avatar_y), avatar)
 
-        # Draw username with star if previous winner
-        # Use Unicode BLACK STAR (U+2605) instead of emoji - fonts don't support emoji
-        username_text = f"★ {username}" if is_winner else username
+        # Calculate username position
+        username_x = avatar_x + avatar_size + 20
+        username_bbox = draw.textbbox((0, 0), username, font=username_font)
+        username_y = y_offset + (ENTRY_HEIGHT - 10) // 2 - (username_bbox[3] - username_bbox[1]) // 2
+
+        # Draw star icon if previous winner
+        if is_winner:
+            star_size = 10
+            star_x = username_x + star_size
+            star_y = username_y + (username_bbox[3] - username_bbox[1]) // 2
+            # Gold star with darker outline
+            draw_star(draw, (star_x, star_y), star_size, color=(255, 215, 0), outline_color=(200, 160, 0))
+            username_x += star_size * 2 + 8  # Offset username after star
 
         # Truncate username if too long
-        max_username_width = 400
+        username_text = username
+        max_username_width = 380 if is_winner else 400  # Slightly less width if star is shown
         if draw.textlength(username_text, font=username_font) > max_username_width:
             while draw.textlength(username_text + "...", font=username_font) > max_username_width and len(username_text) > 10:
                 username_text = username_text[:-1]
             username_text += "..."
 
-        username_x = avatar_x + avatar_size + 20
-        username_y = y_offset + (ENTRY_HEIGHT - 10) // 2 - (draw.textbbox((0, 0), username_text, font=username_font)[3] - draw.textbbox((0, 0), username_text, font=username_font)[1]) // 2
         draw.text((username_x, username_y), username_text, fill=text_color, font=username_font)
 
         # Draw score (right-aligned)

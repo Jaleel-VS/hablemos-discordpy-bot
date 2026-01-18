@@ -1,4 +1,5 @@
 import logging
+import sys
 from logging.handlers import RotatingFileHandler
 
 def setup_logging():
@@ -9,8 +10,8 @@ def setup_logging():
     file_handler.setFormatter(log_formatter)
     file_handler.setLevel(logging.INFO)
 
-    # Stream Handler
-    stream_handler = logging.StreamHandler()
+    # Stream Handler - use stdout so Railway doesn't mark INFO as errors
+    stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setFormatter(log_formatter)
     stream_handler.setLevel(logging.INFO)
 
