@@ -127,8 +127,8 @@ class AddPodcastModalFull(Modal, title="Add New Podcast"):
     )
 
     metadata = TextInput(
-        label="Language, Level, Country, Topic (comma-separated)",
-        placeholder="es, intermediate, Spain, Grammar",
+        label="Language, Level, Country, Topic",
+        placeholder="es, intermediate, Spain, Grammar (comma-separated)",
         required=True,
         max_length=200
     )
@@ -234,7 +234,7 @@ class EditPodcastModal(Modal, title="Edit Podcast"):
     )
 
     metadata = TextInput(
-        label="Language, Level, Country, Topic (comma-separated)",
+        label="Language, Level, Country, Topic",
         required=True,
         max_length=200
     )

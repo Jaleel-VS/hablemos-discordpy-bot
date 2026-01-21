@@ -330,17 +330,6 @@ class PodcastActionsView(View):
             logger.error(f"Error toggling archive: {e}", exc_info=True)
             await interaction.followup.send(f"Error: {e}", ephemeral=True)
 
-    @button(label="Delete", style=ButtonStyle.danger, emoji="🗑️")
-    async def delete_button(self, interaction: Interaction, btn: Button):
-        """Confirm and delete podcast"""
-        view = ConfirmDeleteView(self.api_client, self.podcast)
-        embed = Embed(
-            title="Confirm Delete",
-            description=f"Are you sure you want to delete **{self.podcast.title}**?\n\nThis action cannot be undone.",
-            color=discord.Color.red()
-        )
-        await interaction.response.edit_message(embed=embed, view=view)
-
     @button(label="Back to List", style=ButtonStyle.secondary, emoji="◀️", row=1)
     async def back_button(self, interaction: Interaction, btn: Button):
         """Go back to podcast list"""
