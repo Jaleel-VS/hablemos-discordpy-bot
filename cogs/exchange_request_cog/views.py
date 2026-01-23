@@ -179,7 +179,8 @@ class ExchangeRequestStep2View(View):
         self._build_selects()
 
     def _build_selects(self):
-        """Build timezone select."""
+        """Build timezone and DM preference selects."""
+        # Timezone select
         tz_options = [
             SelectOption(label=label, value=value)
             for label, value in TIMEZONES
@@ -193,6 +194,20 @@ class ExchangeRequestStep2View(View):
         self.tz_select.callback = self.tz_callback
         self.add_item(self.tz_select)
 
+        # DM preference select
+        dm_options = [
+            SelectOption(label="Yes", value="yes", description="Others should contact you via DM"),
+            SelectOption(label="No", value="no", description="Others can mention you in the channel"),
+        ]
+        self.dm_select = Select(
+            placeholder="Prefer DM contact?",
+            options=dm_options,
+            custom_id="prefer_dm",
+            row=1
+        )
+        self.dm_select.callback = self.dm_callback
+        self.add_item(self.dm_select)
+
     async def tz_callback(self, interaction: Interaction):
         self.parent_view.timezone = interaction.data["values"][0]
         self.parent_view.timezone_display = next(
@@ -201,22 +216,11 @@ class ExchangeRequestStep2View(View):
         )
         await interaction.response.defer()
 
-    @button(label="Prefer DM Contact", style=ButtonStyle.secondary, emoji="📩", row=1)
-    async def dm_toggle_button(self, interaction: Interaction, btn: Button):
-        """Toggle DM preference."""
-        self.prefer_dm = not self.prefer_dm
-        self.parent_view.prefer_dm = self.prefer_dm
+    async def dm_callback(self, interaction: Interaction):
+        self.parent_view.prefer_dm = interaction.data["values"][0] == "yes"
+        await interaction.response.defer()
 
-        if self.prefer_dm:
-            btn.style = ButtonStyle.success
-            btn.label = "Prefer DM Contact ✓"
-        else:
-            btn.style = ButtonStyle.secondary
-            btn.label = "Prefer DM Contact"
-
-        await interaction.response.edit_message(view=self)
-
-    @button(label="◀ Back", style=ButtonStyle.secondary, row=2)
+    @button(label="◀ Back", style=ButtonStyle.secondary, row=3)
     async def back_button(self, interaction: Interaction, btn: Button):
         """Go back to step 1."""
         embed = Embed(
@@ -226,7 +230,7 @@ class ExchangeRequestStep2View(View):
         )
         await interaction.response.edit_message(embed=embed, view=self.parent_view)
 
-    @button(label="Next: Add Details", style=ButtonStyle.primary, row=2)
+    @button(label="Next: Add Details", style=ButtonStyle.primary, row=3)
     async def continue_button(self, interaction: Interaction, btn: Button):
         """Open modal for free-text details."""
         if not self.parent_view.timezone:

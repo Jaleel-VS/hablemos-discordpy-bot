@@ -4,6 +4,8 @@ import discord
 from discord.ui import Modal, TextInput
 from discord import Interaction, Embed, TextStyle
 import logging
+from datetime import datetime, timezone, timedelta
+import re
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -12,21 +14,47 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+def parse_utc_offset(tz_value: str) -> timedelta | None:
+    """Parse UTC offset string like 'UTC-5', 'UTC+5:30' into a timedelta."""
+    match = re.match(r'UTC([+-])(\d+)(?::(\d+))?', tz_value)
+    if not match:
+        return None
+
+    sign = 1 if match.group(1) == '+' else -1
+    hours = int(match.group(2))
+    minutes = int(match.group(3)) if match.group(3) else 0
+
+    return timedelta(hours=sign * hours, minutes=sign * minutes)
+
+
+def get_local_time_str(tz_value: str) -> str | None:
+    """Get the current local time string for a given timezone value."""
+    offset = parse_utc_offset(tz_value)
+    if offset is None:
+        return None
+
+    utc_now = datetime.now(timezone.utc)
+    local_time = utc_now + offset
+
+    # Format as "4:00 AM" style
+    return local_time.strftime("%-I:%M %p").lstrip("0").replace(" 0", " ")
+
+
 class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
     """Modal for collecting free-text details about the exchange request."""
 
     interests = TextInput(
-        label="Your Interests",
+        label="Your Interests (Optional)",
         placeholder="e.g., Watching YouTube, sports, music, cooking, gaming...",
-        required=True,
+        required=False,
         max_length=500,
         style=TextStyle.paragraph
     )
 
     activities = TextInput(
-        label="Activities You'd Like To Do",
+        label="Activities You'd Like To Do (Optional)",
         placeholder="e.g., Watch shows together, voice calls, text chat, play games...",
-        required=True,
+        required=False,
         max_length=500,
         style=TextStyle.paragraph
     )
@@ -99,11 +127,16 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
             color=discord.Color.blue()
         )
 
-        # What I Offer section
+        # What I Offer section - include local time
+        local_time = get_local_time_str(pv.timezone)
+        timezone_text = pv.timezone_display
+        if local_time:
+            timezone_text += f" — *It's currently {local_time} for them*"
+
         offer_text = (
             f"**Language:** {pv.language_offering_display}\n"
             f"**Level:** {pv.offering_level_display}\n"
-            f"**Timezone:** {pv.timezone_display}"
+            f"**Timezone:** {timezone_text}"
         )
         embed.add_field(name="What I Offer", value=offer_text, inline=False)
 
@@ -114,13 +147,15 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
         )
         embed.add_field(name="What I'm Looking For", value=seeking_text, inline=False)
 
-        # Interests
-        interests_formatted = self._format_list(self.interests.value)
-        embed.add_field(name="My Interests", value=interests_formatted, inline=False)
+        # Interests (if provided)
+        if self.interests.value and self.interests.value.strip():
+            interests_formatted = self._format_list(self.interests.value)
+            embed.add_field(name="My Interests", value=interests_formatted, inline=False)
 
-        # Activities
-        activities_formatted = self._format_list(self.activities.value)
-        embed.add_field(name="Activities I'd Like To Do", value=activities_formatted, inline=False)
+        # Activities (if provided)
+        if self.activities.value and self.activities.value.strip():
+            activities_formatted = self._format_list(self.activities.value)
+            embed.add_field(name="Activities I'd Like To Do", value=activities_formatted, inline=False)
 
         # Additional info (if provided)
         if self.additional_info.value and self.additional_info.value.strip():
