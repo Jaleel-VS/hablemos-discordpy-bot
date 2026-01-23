@@ -75,3 +75,11 @@ TIMEZONES: Final[list[tuple[str, str]]] = [
     ("UTC+10:00 (Sydney)", "UTC+10"),
     ("UTC+12:00 (New Zealand)", "UTC+12"),
 ]
+
+# Countries for partner preference
+COUNTRIES: Final[list[tuple[str, str]]] = [
+    ("No Preference", "no_preference"),
+    ("Spain", "spain"),
+    ("England", "england"),
+    ("Mexico", "mexico"),
+]

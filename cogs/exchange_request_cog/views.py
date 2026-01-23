@@ -2,7 +2,7 @@ import discord
 from discord.ui import View, Select, Button, select, button
 from discord import SelectOption, Interaction, ButtonStyle, Embed
 
-from .config import LANGUAGES, PROFICIENCY_LEVELS, TIMEZONES
+from .config import LANGUAGES, PROFICIENCY_LEVELS, TIMEZONES, COUNTRIES
 from .modals import ExchangeDetailsModal
 
 
@@ -20,6 +20,7 @@ class ExchangeRequestView(View):
         self.seeking_level: str | None = None
         self.timezone: str | None = None
         self.prefer_dm: bool = False
+        self.country: str | None = None
 
         # Display values for the final embed
         self.language_offering_display: str | None = None
@@ -27,6 +28,7 @@ class ExchangeRequestView(View):
         self.language_seeking_display: str | None = None
         self.seeking_level_display: str | None = None
         self.timezone_display: str | None = None
+        self.country_display: str | None = None
 
         self._build_selects()
 
@@ -208,6 +210,20 @@ class ExchangeRequestStep2View(View):
         self.dm_select.callback = self.dm_callback
         self.add_item(self.dm_select)
 
+        # Country preference select
+        country_options = [
+            SelectOption(label=label, value=value)
+            for label, value in COUNTRIES
+        ]
+        self.country_select = Select(
+            placeholder="Partner's country preference...",
+            options=country_options,
+            custom_id="country",
+            row=2
+        )
+        self.country_select.callback = self.country_callback
+        self.add_item(self.country_select)
+
     async def tz_callback(self, interaction: Interaction):
         self.parent_view.timezone = interaction.data["values"][0]
         self.parent_view.timezone_display = next(
@@ -220,7 +236,15 @@ class ExchangeRequestStep2View(View):
         self.parent_view.prefer_dm = interaction.data["values"][0] == "yes"
         await interaction.response.defer()
 
-    @button(label="◀ Back", style=ButtonStyle.secondary, row=3)
+    async def country_callback(self, interaction: Interaction):
+        self.parent_view.country = interaction.data["values"][0]
+        self.parent_view.country_display = next(
+            (label for label, value in COUNTRIES if value == self.parent_view.country),
+            self.parent_view.country
+        )
+        await interaction.response.defer()
+
+    @button(label="◀ Back", style=ButtonStyle.secondary, row=4)
     async def back_button(self, interaction: Interaction, btn: Button):
         """Go back to step 1."""
         embed = Embed(
@@ -230,7 +254,7 @@ class ExchangeRequestStep2View(View):
         )
         await interaction.response.edit_message(embed=embed, view=self.parent_view)
 
-    @button(label="Next: Add Details", style=ButtonStyle.primary, row=3)
+    @button(label="Next: Add Details", style=ButtonStyle.primary, row=4)
     async def continue_button(self, interaction: Interaction, btn: Button):
         """Open modal for free-text details."""
         if not self.parent_view.timezone:

@@ -145,25 +145,23 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
             color=discord.Color.blue()
         )
 
-        # What I Offer section - include local time
+        # What I Offer section - 3 columns
+        embed.add_field(name="── What I Offer ──", value="\u200b", inline=False)
+        embed.add_field(name="Language", value=pv.language_offering_display, inline=True)
+        embed.add_field(name="Level", value=pv.offering_level_display, inline=True)
+
+        # Timezone with local time: "UTC-5 - 4:00 PM"
         local_time = get_local_time_str(pv.timezone)
-        timezone_text = pv.timezone_display
+        timezone_text = pv.timezone
         if local_time:
-            timezone_text += f" — *It's currently {local_time} for them*"
+            timezone_text = f"{pv.timezone} - {local_time}"
+        embed.add_field(name="Timezone", value=timezone_text, inline=True)
 
-        offer_text = (
-            f"**Language:** {pv.language_offering_display}\n"
-            f"**Level:** {pv.offering_level_display}\n"
-            f"**Timezone:** {timezone_text}"
-        )
-        embed.add_field(name="What I Offer", value=offer_text, inline=False)
-
-        # What I'm Looking For section
-        seeking_text = (
-            f"**Language:** {pv.language_seeking_display}\n"
-            f"**Minimum Level:** {pv.seeking_level_display}"
-        )
-        embed.add_field(name="What I'm Looking For", value=seeking_text, inline=False)
+        # What I'm Looking For section - 3 columns
+        embed.add_field(name="── What I'm Looking For ──", value="\u200b", inline=False)
+        embed.add_field(name="Language", value=pv.language_seeking_display, inline=True)
+        embed.add_field(name="Level", value=pv.seeking_level_display, inline=True)
+        embed.add_field(name="Country", value=pv.country_display or "No Preference", inline=True)
 
         # Interests (if provided)
         if self.interests.value and self.interests.value.strip():
