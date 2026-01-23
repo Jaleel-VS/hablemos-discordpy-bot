@@ -118,16 +118,14 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
                 inline=False
             )
 
-        # What I Offer section - 3 columns
-        embed.add_field(name="What I Offer", value="\u200b", inline=False)
-        embed.add_field(name="Language", value=pv.language_offering_display, inline=True)
-        embed.add_field(name="Level", value=pv.offering_level_display, inline=True)
+        # What I Offer - 3 columns
+        embed.add_field(name="Offering Language", value=pv.language_offering_display, inline=True)
+        embed.add_field(name="My Level", value=pv.offering_level_display, inline=True)
         embed.add_field(name="Timezone", value=pv.timezone, inline=True)
 
-        # What I'm Looking For section - 3 columns
-        embed.add_field(name="What I'm Looking For", value="\u200b", inline=False)
-        embed.add_field(name="Language", value=pv.language_seeking_display, inline=True)
-        embed.add_field(name="Level", value=pv.seeking_level_display, inline=True)
+        # What I'm Looking For - 3 columns
+        embed.add_field(name="Seeking Language", value=pv.language_seeking_display, inline=True)
+        embed.add_field(name="Partner Level", value=pv.seeking_level_display, inline=True)
         embed.add_field(name="Country", value=pv.country_display or "No Preference", inline=True)
 
         # Interests (if provided)
