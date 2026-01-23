@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import discord
-from discord.ui import Modal, TextInput
+from discord.ui import Modal, TextInput, View, Button
 from discord import Interaction, Embed, TextStyle
 import logging
 from datetime import datetime, timezone, timedelta
@@ -12,6 +12,20 @@ if TYPE_CHECKING:
     from .views import ExchangeRequestView
 
 logger = logging.getLogger(__name__)
+
+
+class ProfileButtonView(View):
+    """Simple view with a profile link button."""
+
+    def __init__(self, user_id: int):
+        super().__init__(timeout=None)  # Persistent view
+        profile_url = f"https://discord.com/users/{user_id}"
+        self.add_item(Button(
+            label="View Profile",
+            style=discord.ButtonStyle.link,
+            url=profile_url,
+            emoji="👤"
+        ))
 
 
 def parse_utc_offset(tz_value: str) -> timedelta | None:
@@ -88,11 +102,12 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
                 )
                 return
 
-            # Build the exchange request embed
+            # Build the exchange request embed and view
             embed = self._build_request_embed(interaction.user)
+            view = ProfileButtonView(interaction.user.id)
 
             # Post to results channel
-            await results_channel.send(embed=embed)
+            await results_channel.send(embed=embed, view=view)
 
             # Confirm to user
             success_embed = Embed(
@@ -118,12 +133,15 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
         """Build the formatted embed for the results channel."""
         pv = self.parent_view
 
-        # Build description
-        dm_indicator = "📩 *Prefers DM contact*\n\n" if pv.prefer_dm else ""
+        # Build description with contact preference
+        if pv.prefer_dm:
+            contact_pref = "📩 *Please send me a DM*"
+        else:
+            contact_pref = "💬 *Please tag me in the server*"
 
         embed = Embed(
             title="Language Exchange Partner Request",
-            description=f"{dm_indicator}**{user.mention}** is looking for a language exchange partner!",
+            description=f"**{user.mention}** is looking for a language exchange partner!\n\n{contact_pref}",
             color=discord.Color.blue()
         )
 
@@ -165,11 +183,8 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
                 inline=False
             )
 
-        # Footer with contact instruction
-        contact_method = "send me a DM" if pv.prefer_dm else "reach out to me"
-        embed.set_footer(
-            text=f"If you're interested in being my exchange partner, please {contact_method}!"
-        )
+        # Footer
+        embed.set_footer(text="Click the button below to view their profile")
 
         # User avatar as thumbnail
         if user.avatar:
