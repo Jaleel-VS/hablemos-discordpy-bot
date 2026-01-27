@@ -262,6 +262,51 @@ class Database:
                 ON league_round_winners(user_id, rank)
             ''')
 
+            # Practice cards table (global card pool for SRS practice)
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS practice_cards (
+                    id SERIAL PRIMARY KEY,
+                    word VARCHAR(500) NOT NULL,
+                    translation TEXT NOT NULL,
+                    language VARCHAR(50) NOT NULL,
+                    sentence TEXT NOT NULL,
+                    sentence_with_blank TEXT NOT NULL,
+                    created_at TIMESTAMPTZ DEFAULT NOW(),
+                    UNIQUE(word, language)
+                )
+            ''')
+
+            await conn.execute('''
+                CREATE INDEX IF NOT EXISTS idx_practice_language
+                ON practice_cards(language)
+            ''')
+
+            # User card progress table (per-user SRS tracking)
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS user_card_progress (
+                    id SERIAL PRIMARY KEY,
+                    user_id BIGINT NOT NULL,
+                    card_id INTEGER NOT NULL REFERENCES practice_cards(id) ON DELETE CASCADE,
+                    last_review TIMESTAMPTZ,
+                    next_review TIMESTAMPTZ,
+                    interval_days REAL DEFAULT 1.0,
+                    ease_factor REAL DEFAULT 2.5,
+                    repetitions INTEGER DEFAULT 0,
+                    created_at TIMESTAMPTZ DEFAULT NOW(),
+                    UNIQUE(user_id, card_id)
+                )
+            ''')
+
+            await conn.execute('''
+                CREATE INDEX IF NOT EXISTS idx_progress_user
+                ON user_card_progress(user_id)
+            ''')
+
+            await conn.execute('''
+                CREATE INDEX IF NOT EXISTS idx_progress_due
+                ON user_card_progress(user_id, next_review)
+            ''')
+
             logging.info("Database schema initialized")
 
     async def add_note(self, user_id: int, username: str, content: str) -> int:
@@ -1054,3 +1099,173 @@ class Database:
                 WHERE round_id = $1
             ''', round_id)
             return dict(row) if row else None
+
+    # Practice Card Methods (SRS Vocabulary Practice)
+
+    async def add_practice_card(self, word: str, translation: str, language: str,
+                                sentence: str, sentence_with_blank: str) -> Optional[int]:
+        """
+        Add a practice card to the global card pool.
+        Returns card ID or None if duplicate.
+        """
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            try:
+                row = await conn.fetchrow('''
+                    INSERT INTO practice_cards (word, translation, language, sentence, sentence_with_blank)
+                    VALUES ($1, $2, $3, $4, $5)
+                    ON CONFLICT (word, language) DO NOTHING
+                    RETURNING id
+                ''', word, translation, language, sentence, sentence_with_blank)
+                return row['id'] if row else None
+            except Exception as e:
+                logging.error(f"Error adding practice card: {e}")
+                return None
+
+    async def get_cards_for_language(self, language: str) -> list[dict]:
+        """Get all practice cards for a language"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch('''
+                SELECT id, word, translation, language, sentence, sentence_with_blank, created_at
+                FROM practice_cards
+                WHERE language = $1
+                ORDER BY id
+            ''', language)
+            return [dict(row) for row in rows]
+
+    async def get_due_cards(self, user_id: int, language: str, limit: int = 10) -> list[dict]:
+        """
+        Get cards due for review for a user.
+        Returns cards where next_review <= NOW() ordered by most overdue first.
+        """
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch('''
+                SELECT pc.id, pc.word, pc.translation, pc.language,
+                       pc.sentence, pc.sentence_with_blank,
+                       ucp.interval_days, ucp.ease_factor, ucp.repetitions,
+                       ucp.last_review, ucp.next_review
+                FROM practice_cards pc
+                JOIN user_card_progress ucp ON pc.id = ucp.card_id
+                WHERE ucp.user_id = $1
+                  AND pc.language = $2
+                  AND ucp.next_review <= NOW()
+                ORDER BY ucp.next_review ASC
+                LIMIT $3
+            ''', user_id, language, limit)
+            return [dict(row) for row in rows]
+
+    async def get_new_cards(self, user_id: int, language: str, limit: int = 10) -> list[dict]:
+        """
+        Get cards the user hasn't seen yet.
+        """
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch('''
+                SELECT pc.id, pc.word, pc.translation, pc.language,
+                       pc.sentence, pc.sentence_with_blank
+                FROM practice_cards pc
+                WHERE pc.language = $1
+                  AND pc.id NOT IN (
+                      SELECT card_id FROM user_card_progress WHERE user_id = $2
+                  )
+                ORDER BY pc.id
+                LIMIT $3
+            ''', language, user_id, limit)
+            return [dict(row) for row in rows]
+
+    async def update_user_progress(self, user_id: int, card_id: int,
+                                   interval_days: float, ease_factor: float,
+                                   repetitions: int, next_review) -> None:
+        """
+        Update or create user progress for a card.
+        """
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            await conn.execute('''
+                INSERT INTO user_card_progress
+                    (user_id, card_id, interval_days, ease_factor, repetitions, last_review, next_review)
+                VALUES ($1, $2, $3, $4, $5, NOW(), $6)
+                ON CONFLICT (user_id, card_id) DO UPDATE
+                SET interval_days = $3,
+                    ease_factor = $4,
+                    repetitions = $5,
+                    last_review = NOW(),
+                    next_review = $6
+            ''', user_id, card_id, interval_days, ease_factor, repetitions, next_review)
+
+    async def get_card_distractors(self, language: str, exclude_word: str, count: int = 3) -> list[str]:
+        """
+        Get random words for multiple choice distractors.
+        """
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch('''
+                SELECT word FROM practice_cards
+                WHERE language = $1 AND word != $2
+                ORDER BY RANDOM()
+                LIMIT $3
+            ''', language, exclude_word, count)
+            return [row['word'] for row in rows]
+
+    async def get_practice_stats(self, user_id: int, language: str) -> dict:
+        """
+        Get practice statistics for a user.
+        Returns counts of: new, learning, due, mastered cards.
+        """
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            # Total cards for language
+            total = await conn.fetchval('''
+                SELECT COUNT(*) FROM practice_cards WHERE language = $1
+            ''', language)
+
+            # Cards user has progress on
+            user_cards = await conn.fetch('''
+                SELECT ucp.interval_days, ucp.next_review, ucp.repetitions
+                FROM user_card_progress ucp
+                JOIN practice_cards pc ON ucp.card_id = pc.id
+                WHERE ucp.user_id = $1 AND pc.language = $2
+            ''', user_id, language)
+
+            new_count = (total or 0) - len(user_cards)
+            due_count = 0
+            learning_count = 0
+            mastered_count = 0
+
+            from datetime import datetime, timezone
+            now = datetime.now(timezone.utc)
+
+            for card in user_cards:
+                if card['next_review'] and card['next_review'] <= now:
+                    due_count += 1
+                elif card['interval_days'] >= 21:
+                    mastered_count += 1
+                else:
+                    learning_count += 1
+
+            return {
+                'total': total or 0,
+                'new': new_count,
+                'learning': learning_count,
+                'due': due_count,
+                'mastered': mastered_count
+            }
+
+    async def get_practice_card_count(self, language: str) -> int:
+        """Get total count of practice cards for a language"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            count = await conn.fetchval('''
+                SELECT COUNT(*) FROM practice_cards WHERE language = $1
+            ''', language)
+            return count or 0
