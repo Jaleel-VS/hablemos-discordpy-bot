@@ -4,6 +4,9 @@ from base_cog import BaseCog
 
 from re import sub
 from os import remove
+import logging
+
+logger = logging.getLogger(__name__)
 
 from discord.ext.commands import command, cooldown, BucketType
 from discord import File
@@ -21,7 +24,9 @@ def remove_emoji_from_message(message):  # for custom emojis
 
 
 def give_emoji_free_text(text: str) -> str:  # for standard emojis
-    return demoji.replace(text, '')[:28]
+    result = demoji.replace(text, '')[:28]
+    logger.debug(f"give_emoji_free_text: input={text!r}, output={result!r}")
+    return result
 
 
 def get_safe_username(user, server=None):
@@ -29,16 +34,27 @@ def get_safe_username(user, server=None):
     Get a safe username that handles special characters and emojis.
     Falls back to Discord username if stripped nickname is <= 1 character.
     """
+    logger.debug(
+        f"get_safe_username called: user.id={user.id}, user.name={user.name!r}, "
+        f"user.display_name={user.display_name!r}, user.nick={getattr(user, 'nick', None)!r}, "
+        f"server={server}"
+    )
+
     # If user has no nickname or not in server, use display_name
-    if server is None or server.get_member(user.id) is None or user.nick is None:
+    nick = getattr(user, 'nick', None)
+    if server is None or server.get_member(user.id) is None or nick is None:
         username = user.display_name
+        logger.debug(f"Using display_name path: username={username!r}")
     else:
-        username = give_emoji_free_text(user.nick)
+        username = give_emoji_free_text(nick)
+        logger.debug(f"Using nick path: raw nick={nick!r}, after emoji strip={username!r}")
 
     # If stripped username is too short (1 char or less), use Discord username
     if len(username.strip()) <= 1:
+        logger.debug(f"Username too short ({len(username.strip())} chars), falling back to user.name={user.name!r}")
         username = user.name
 
+    logger.debug(f"Final username: {username!r}")
     return username
 
 
