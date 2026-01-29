@@ -1,6 +1,8 @@
 from os import path
 import imgkit
+import logging
 
+logger = logging.getLogger(__name__)
 
 dir_path = path.dirname(path.realpath(__file__))
 
@@ -32,6 +34,7 @@ def _compute_quote_glyph_font_size(message: str) -> int:
 
 
 def create_image2(user_name: str, user_avatar: str, message_content: str) -> str:
+    logger.info(f"create_image2 called: user_name={user_name!r}, message_content={message_content!r}")
     options = {
         'format': 'png',
         'encoding': 'UTF-8',

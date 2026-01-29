@@ -1,10 +1,14 @@
 from os import path
 import imgkit
+import logging
+
+logger = logging.getLogger(__name__)
 
 dir_path = path.dirname(path.realpath(__file__))
 
 
 def create_image(user_name, user_avatar, message_content):
+    logger.info(f"create_image called: user_name={user_name!r}, message_content={message_content!r}")
     options = {
         'format': 'png',
         'crop-w': '644',
