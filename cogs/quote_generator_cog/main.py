@@ -29,6 +29,26 @@ def give_emoji_free_text(text: str) -> str:  # for standard emojis
     return result
 
 
+def has_font_safe_characters(text: str) -> bool:
+    """
+    Check if text contains only characters likely supported by common fonts.
+    Covers Basic Latin, Latin Extended, common punctuation, and accented characters.
+    """
+    for char in text:
+        code = ord(char)
+        # Allow: Basic Latin, Latin-1 Supplement, Latin Extended-A/B, spacing/punctuation
+        if not (
+            0x0020 <= code <= 0x007F or  # Basic Latin (ASCII printable)
+            0x00A0 <= code <= 0x00FF or  # Latin-1 Supplement (accents like é, ñ, ü)
+            0x0100 <= code <= 0x017F or  # Latin Extended-A
+            0x0180 <= code <= 0x024F or  # Latin Extended-B
+            0x0300 <= code <= 0x036F     # Combining Diacritical Marks
+        ):
+            logger.info(f"Unsupported character found: {char!r} (U+{code:04X})")
+            return False
+    return True
+
+
 def get_safe_username(user, server=None):
     """
     Get a safe username that handles special characters and emojis.
@@ -52,6 +72,11 @@ def get_safe_username(user, server=None):
     # If stripped username is too short (1 char or less), use Discord username
     if len(username.strip()) <= 1:
         logger.info(f"Username too short ({len(username.strip())} chars), falling back to user.name={user.name!r}")
+        username = user.name
+
+    # If username contains characters unsupported by fonts, fall back to Discord username
+    if not has_font_safe_characters(username):
+        logger.info(f"Username contains unsupported characters, falling back to user.name={user.name!r}")
         username = user.name
 
     logger.info(f"Final username: {username!r}")
