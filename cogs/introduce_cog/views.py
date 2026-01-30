@@ -2,16 +2,82 @@ import discord
 from discord.ui import View, Select, Button, select, button
 from discord import SelectOption, Interaction, ButtonStyle, Embed
 
-from .config import LANGUAGES, PROFICIENCY_LEVELS, TIMEZONES, COUNTRIES
-from .modals import ExchangeDetailsModal
+from .config import LANGUAGES, PROFICIENCY_LEVELS, TIMEZONES, COUNTRIES, INTRO_COLOR, EXCHANGE_COLOR
+from .modals import ExchangeDetailsModal, IntroOnlyModal
+
+
+class IntroStartView(View):
+    """Initial view asking if user wants to find an exchange partner."""
+
+    def __init__(self, introductions_channel_id: int, timeout: float = 300):
+        super().__init__(timeout=timeout)
+        self.introductions_channel_id = introductions_channel_id
+        self.seeking_exchange: bool | None = None
+
+        self._build_select()
+
+    def _build_select(self):
+        """Build the yes/no select menu."""
+        options = [
+            SelectOption(
+                label="Yes",
+                value="yes",
+                description="I want to find a language exchange partner"
+            ),
+            SelectOption(
+                label="No",
+                value="no",
+                description="I just want to introduce myself"
+            ),
+        ]
+        self.exchange_select = Select(
+            placeholder="Looking for an exchange partner?",
+            options=options,
+            custom_id="seeking_exchange",
+            row=0
+        )
+        self.exchange_select.callback = self.exchange_select_callback
+        self.add_item(self.exchange_select)
+
+    async def exchange_select_callback(self, interaction: Interaction):
+        self.seeking_exchange = interaction.data["values"][0] == "yes"
+        await interaction.response.defer()
+
+    @button(label="Continue →", style=ButtonStyle.primary, row=1)
+    async def continue_button(self, interaction: Interaction, btn: Button):
+        """Branch to appropriate flow based on selection."""
+        if self.seeking_exchange is None:
+            await interaction.response.send_message(
+                "Please select whether you're looking for an exchange partner.",
+                ephemeral=True
+            )
+            return
+
+        if self.seeking_exchange:
+            # Show language selection view (Step 2/4)
+            view = ExchangeRequestView(introductions_channel_id=self.introductions_channel_id)
+            embed = Embed(
+                title="Introduction (Step 2/4)",
+                description=(
+                    "Great! Let's find you a language exchange partner.\n\n"
+                    "**Step 2:** Select the languages you offer and are looking for."
+                ),
+                color=EXCHANGE_COLOR
+            )
+            embed.set_footer(text="This form will expire in 5 minutes")
+            await interaction.response.edit_message(embed=embed, view=view)
+        else:
+            # Show simple intro modal
+            modal = IntroOnlyModal(introductions_channel_id=self.introductions_channel_id)
+            await interaction.response.send_modal(modal)
 
 
 class ExchangeRequestView(View):
-    """Multi-step view for collecting exchange partner request data."""
+    """Multi-step view for collecting exchange partner request data (Step 2/4)."""
 
-    def __init__(self, results_channel_id: int, timeout: float = 300):
+    def __init__(self, introductions_channel_id: int, timeout: float = 300):
         super().__init__(timeout=timeout)
-        self.results_channel_id = results_channel_id
+        self.introductions_channel_id = introductions_channel_id
 
         # Store user selections
         self.language_offering: str | None = None
@@ -124,7 +190,7 @@ class ExchangeRequestView(View):
 
     @button(label="Next: Timezone & Details", style=ButtonStyle.primary, row=4)
     async def continue_button(self, interaction: Interaction, btn: Button):
-        """Move to second step with timezone and DM preference."""
+        """Move to third step with timezone and DM preference."""
         # Validate required fields
         missing = []
         if not self.language_offering:
@@ -143,20 +209,20 @@ class ExchangeRequestView(View):
             )
             return
 
-        # Show second step view
-        step2_view = ExchangeRequestStep2View(
+        # Show third step view
+        step3_view = ExchangeRequestStep3View(
             parent_view=self,
-            results_channel_id=self.results_channel_id
+            introductions_channel_id=self.introductions_channel_id
         )
-        embed = self._create_step2_embed()
-        await interaction.response.edit_message(embed=embed, view=step2_view)
+        embed = self._create_step3_embed()
+        await interaction.response.edit_message(embed=embed, view=step3_view)
 
-    def _create_step2_embed(self) -> Embed:
-        """Create embed for step 2."""
+    def _create_step3_embed(self) -> Embed:
+        """Create embed for step 3."""
         embed = Embed(
-            title="Exchange Partner Request (Step 2/3)",
+            title="Introduction (Step 3/4)",
             description="Select your timezone and contact preference.",
-            color=discord.Color.blue()
+            color=EXCHANGE_COLOR
         )
         embed.add_field(
             name="Your Selection",
@@ -169,13 +235,13 @@ class ExchangeRequestView(View):
         return embed
 
 
-class ExchangeRequestStep2View(View):
-    """Second step: timezone and DM preference."""
+class ExchangeRequestStep3View(View):
+    """Third step: timezone and DM preference (Step 3/4)."""
 
-    def __init__(self, parent_view: ExchangeRequestView, results_channel_id: int, timeout: float = 300):
+    def __init__(self, parent_view: ExchangeRequestView, introductions_channel_id: int, timeout: float = 300):
         super().__init__(timeout=timeout)
         self.parent_view = parent_view
-        self.results_channel_id = results_channel_id
+        self.introductions_channel_id = introductions_channel_id
         self.prefer_dm = False
 
         self._build_selects()
@@ -246,11 +312,11 @@ class ExchangeRequestStep2View(View):
 
     @button(label="◀ Back", style=ButtonStyle.secondary, row=4)
     async def back_button(self, interaction: Interaction, btn: Button):
-        """Go back to step 1."""
+        """Go back to step 2."""
         embed = Embed(
-            title="Exchange Partner Request (Step 1/3)",
+            title="Introduction (Step 2/4)",
             description="Select the languages you offer and are looking for.",
-            color=discord.Color.blue()
+            color=EXCHANGE_COLOR
         )
         await interaction.response.edit_message(embed=embed, view=self.parent_view)
 
@@ -266,6 +332,6 @@ class ExchangeRequestStep2View(View):
 
         modal = ExchangeDetailsModal(
             parent_view=self.parent_view,
-            results_channel_id=self.results_channel_id
+            introductions_channel_id=self.introductions_channel_id
         )
         await interaction.response.send_modal(modal)

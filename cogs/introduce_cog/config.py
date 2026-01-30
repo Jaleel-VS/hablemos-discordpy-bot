@@ -1,14 +1,20 @@
 from dataclasses import dataclass
 from typing import Final
 
+import discord
+
 
 @dataclass(frozen=True)
 class ChannelIDs:
     COMMAND_CHANNEL: int = 1437832952028467251
-    RESULTS_CHANNEL: int = 1464254572204916969
+    INTRODUCTIONS_CHANNEL: int = 1464254572204916969
 
 
 CHANNELS = ChannelIDs()
+
+# Embed colors
+INTRO_COLOR = discord.Color.greyple()  # Gray/neutral for intro-only
+EXCHANGE_COLOR = discord.Color.teal()  # Green/teal for seeking exchange partner
 
 # Language options for select menus
 LANGUAGES: Final[list[tuple[str, str]]] = [

@@ -5,23 +5,23 @@ from base_cog import BaseCog
 import logging
 
 from .config import CHANNELS
-from .views import ExchangeRequestView
+from .views import IntroStartView
 
 logger = logging.getLogger(__name__)
 
 
-class ExchangeRequestCog(BaseCog):
-    """Cog for managing language exchange partner requests."""
+class IntroduceCog(BaseCog):
+    """Cog for member introductions and language exchange partner requests."""
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
 
     @app_commands.command(
-        name="exchange_request",
-        description="Create a language exchange partner request"
+        name="introduce",
+        description="Introduce yourself to the community"
     )
-    async def exchange_request(self, interaction: Interaction):
-        """Start the exchange partner request flow."""
+    async def introduce(self, interaction: Interaction):
+        """Start the introduction flow."""
         # Check if command is used in the correct channel
         if interaction.channel_id != CHANNELS.COMMAND_CHANNEL:
             command_channel = interaction.client.get_channel(CHANNELS.COMMAND_CHANNEL)
@@ -33,14 +33,14 @@ class ExchangeRequestCog(BaseCog):
             return
 
         # Create the initial view
-        view = ExchangeRequestView(results_channel_id=CHANNELS.RESULTS_CHANNEL)
+        view = IntroStartView(introductions_channel_id=CHANNELS.INTRODUCTIONS_CHANNEL)
 
         # Create the initial embed
         embed = Embed(
-            title="Exchange Partner Request (Step 1/3)",
+            title="Introduction (Step 1/4)",
             description=(
-                "Looking for a language exchange partner? Fill out this form!\n\n"
-                "**Step 1:** Select the languages you offer and are looking for."
+                "Welcome! Let's introduce you to the community.\n\n"
+                "**Step 1:** Are you looking for a language exchange partner?"
             ),
             color=discord.Color.blue()
         )
@@ -51,10 +51,10 @@ class ExchangeRequestCog(BaseCog):
             view=view,
             ephemeral=True
         )
-        logger.info(f"Exchange request started by {interaction.user} ({interaction.user.id})")
+        logger.info(f"Introduction started by {interaction.user} ({interaction.user.id})")
 
 
 async def setup(bot: commands.Bot):
     """Setup function for loading the cog."""
-    await bot.add_cog(ExchangeRequestCog(bot))
-    logger.info("ExchangeRequestCog loaded successfully")
+    await bot.add_cog(IntroduceCog(bot))
+    logger.info("IntroduceCog loaded successfully")
