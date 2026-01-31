@@ -4,6 +4,7 @@ import discord
 from discord.ui import Modal, TextInput
 from discord import Interaction, Embed, TextStyle
 import logging
+import time
 from typing import TYPE_CHECKING
 
 from .config import INTRO_COLOR, EXCHANGE_COLOR
@@ -124,17 +125,9 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
     """Modal for collecting free-text details about the exchange request."""
 
     about_me = TextInput(
-        label="About Me (Optional)",
+        label="About Me",
         placeholder="Tell others a bit about yourself...",
-        required=False,
-        max_length=500,
-        style=TextStyle.paragraph
-    )
-
-    interests = TextInput(
-        label="Your Interests (Optional)",
-        placeholder="e.g., Watching YouTube, sports, music, cooking, gaming...",
-        required=False,
+        required=True,
         max_length=500,
         style=TextStyle.paragraph
     )
@@ -202,75 +195,74 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
                 ephemeral=True
             )
 
+    def _format_timezone_with_timestamp(self, timezone: str) -> str:
+        """Format timezone with Discord timestamp showing current local time."""
+        current_unix = int(time.time())
+        return f"{timezone} — <t:{current_unix}:t>"
+
+    def _format_blockquote(self, text: str) -> str:
+        """Format text as a Discord blockquote."""
+        lines = text.strip().split('\n')
+        return '\n'.join(f"> {line}" for line in lines)
+
     def _build_request_embed(self, user: discord.User | discord.Member) -> Embed:
         """Build the formatted embed for exchange partner requests."""
         pv = self.parent_view
 
-        # Build description with contact preference and exchange badge
-        if pv.prefer_dm:
-            contact_pref = "📩 *Please send me a DM*"
-        else:
-            contact_pref = "💬 *Please tag me in the server*"
+        # Get display name
+        display_name = user.display_name if hasattr(user, 'display_name') else user.name
+
+        # Build description with About Me in blockquote
+        about_me_text = self._format_blockquote(self.about_me.value.strip())
+        description = f"{user.mention}'s seeking an exchange partner!\n\n**About Me**\n{about_me_text}"
 
         embed = Embed(
-            title="New Member Introduction",
-            description=f"**{user.mention}** 🔄 **Seeking Exchange Partner**\n\n{contact_pref}",
+            description=description,
             color=EXCHANGE_COLOR
         )
 
-        # About me (if provided) - at the top
-        if self.about_me.value and self.about_me.value.strip():
-            embed.add_field(
-                name="About Me",
-                value=self.about_me.value.strip(),
-                inline=False
-            )
+        # Set author with user's name and avatar
+        avatar_url = user.avatar.url if user.avatar else user.default_avatar.url
+        embed.set_author(name=display_name, icon_url=avatar_url)
 
         # What I Offer - 3 columns
-        embed.add_field(name="Offering Language", value=pv.language_offering_display, inline=True)
-        embed.add_field(name="My Level", value=pv.offering_level_display, inline=True)
-        embed.add_field(name="Timezone", value=pv.timezone, inline=True)
+        embed.add_field(name="Language", value=pv.language_offering_display, inline=True)
+        embed.add_field(name="Level", value=pv.offering_level_display, inline=True)
+        timezone_formatted = self._format_timezone_with_timestamp(pv.timezone)
+        embed.add_field(name="Timezone", value=timezone_formatted, inline=True)
+
+        # "What I want" section header
+        embed.add_field(
+            name="⭐ What I want",
+            value="-# What I'm looking for in a language partner and how we can practice together.",
+            inline=False
+        )
 
         # What I'm Looking For - 3 columns
-        embed.add_field(name="Seeking Language", value=pv.language_seeking_display, inline=True)
-        embed.add_field(name="Partner Level", value=pv.seeking_level_display, inline=True)
-        embed.add_field(name="Country", value=pv.country_display or "No Preference", inline=True)
+        embed.add_field(name="Language", value=pv.language_seeking_display, inline=True)
+        embed.add_field(name="Level", value=pv.seeking_level_display, inline=True)
+        country_value = pv.country_display if pv.country_display and pv.country != "no_preference" else "No preference"
+        embed.add_field(name="Country", value=country_value, inline=True)
 
-        # Interests (if provided)
-        if self.interests.value and self.interests.value.strip():
-            interests_formatted = self._format_list(self.interests.value)
-            embed.add_field(name="My Interests", value=interests_formatted, inline=False)
-
-        # Activities (if provided)
+        # Activities (if provided) - in blockquote
         if self.activities.value and self.activities.value.strip():
-            activities_formatted = self._format_list(self.activities.value)
-            embed.add_field(name="Activities I'd Like To Do", value=activities_formatted, inline=False)
+            activities_formatted = self._format_blockquote(self.activities.value.strip())
+            embed.add_field(name="Activities", value=activities_formatted, inline=False)
 
-        # Additional info (if provided)
+        # Additional info (if provided) - in blockquote
         if self.additional_info.value and self.additional_info.value.strip():
+            additional_formatted = self._format_blockquote(self.additional_info.value.strip())
             embed.add_field(
                 name="Additional Information",
-                value=self.additional_info.value.strip(),
+                value=additional_formatted,
                 inline=False
             )
 
-        # User avatar as thumbnail
-        if user.avatar:
-            embed.set_thumbnail(url=user.avatar.url)
+        # Footer with contact preference
+        if pv.prefer_dm:
+            footer_text = "Please send me DM if you want to be my language partner!"
+        else:
+            footer_text = "Please tag me in the server if you want to be my language partner!"
+        embed.set_footer(text=footer_text)
 
         return embed
-
-    def _format_list(self, text: str) -> str:
-        """Format text as a bulleted list if it contains commas or newlines."""
-        # Split by newlines or commas
-        if '\n' in text:
-            items = [item.strip() for item in text.split('\n') if item.strip()]
-        elif ',' in text:
-            items = [item.strip() for item in text.split(',') if item.strip()]
-        else:
-            return text.strip()
-
-        if len(items) <= 1:
-            return text.strip()
-
-        return '\n'.join(f"• {item}" for item in items)

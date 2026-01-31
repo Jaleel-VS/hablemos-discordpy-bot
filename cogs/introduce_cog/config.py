@@ -20,37 +20,17 @@ EXCHANGE_COLOR = discord.Color.teal()  # Green/teal for seeking exchange partner
 LANGUAGES: Final[list[tuple[str, str]]] = [
     ("English", "english"),
     ("Spanish", "spanish"),
-    ("Portuguese", "portuguese"),
-    ("French", "french"),
-    ("German", "german"),
-    ("Italian", "italian"),
-    ("Japanese", "japanese"),
-    ("Korean", "korean"),
-    ("Chinese (Mandarin)", "chinese_mandarin"),
-    ("Chinese (Cantonese)", "chinese_cantonese"),
-    ("Russian", "russian"),
-    ("Arabic", "arabic"),
-    ("Dutch", "dutch"),
-    ("Polish", "polish"),
-    ("Turkish", "turkish"),
-    ("Vietnamese", "vietnamese"),
-    ("Thai", "thai"),
-    ("Hindi", "hindi"),
-    ("Swedish", "swedish"),
-    ("Norwegian", "norwegian"),
-    ("Danish", "danish"),
-    ("Finnish", "finnish"),
-    ("Greek", "greek"),
-    ("Hebrew", "hebrew"),
-    ("Indonesian", "indonesian"),
 ]
 
 # Proficiency levels
 PROFICIENCY_LEVELS: Final[list[tuple[str, str]]] = [
-    ("Native", "native"),
-    ("Advanced (C1-C2)", "advanced"),
-    ("Intermediate (B1-B2)", "intermediate"),
-    ("Beginner (A1-A2)", "beginner"),
+    ("Native", "Native"),
+    ("C2 (Proficient)", "C2"),
+    ("C1 (Advanced)", "C1"),
+    ("B2 (Upper Intermediate)", "B2"),
+    ("B1 (Intermediate)", "B1"),
+    ("A2 (Elementary)", "A2"),
+    ("A1 (Beginner)", "A1"),
 ]
 
 # Common timezones grouped by region
