@@ -49,10 +49,11 @@ class LeagueAdminCog(BaseCog):
         - audit <user_id|@user>: Show last 3 counted messages for a user
         - endround: End current round and start new one (ends next Sunday 12:00 UTC)
         - seedrole <user_ids>: Seed last round's role recipients (comma-separated IDs)
+        - preview: Preview round-end announcement without making changes
         """
         if not action:
             await ctx.send(
-                "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole> [target]`"
+                "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole|preview> [target]`"
             )
             return
 
@@ -78,6 +79,8 @@ class LeagueAdminCog(BaseCog):
             await self._handle_endround(ctx)
         elif action == "seedrole":
             await self._handle_seedrole(ctx, target)
+        elif action == "preview":
+            await self._handle_preview(ctx)
         else:
             await ctx.send(f"❌ Unknown action: `{action}`")
 
@@ -724,6 +727,126 @@ class LeagueAdminCog(BaseCog):
         except Exception as e:
             await ctx.send(f"❌ Error: {str(e)}")
             logger.error(f"Error in seedrole command: {e}", exc_info=True)
+
+    async def _handle_preview(self, ctx):
+        """
+        Preview the round-end announcement without actually ending the round.
+
+        Shows what the announcement would look like with current data.
+        No pings, no role changes, no round modifications.
+        """
+        try:
+            # Get current round
+            current_round = await self.bot.db.get_current_round()
+            if not current_round:
+                await ctx.send("❌ No active round found.")
+                return
+
+            round_id = current_round['round_id']
+            round_number = current_round['round_number']
+
+            # Get users who had the role last round (cooldown list)
+            last_round_recipients = await self.bot.db.get_last_round_role_recipients()
+
+            # Get top 10 from each league
+            spanish_top = await self.bot.db.get_leaderboard('spanish', limit=10, round_id=round_id)
+            english_top = await self.bot.db.get_leaderboard('english', limit=10, round_id=round_id)
+
+            spanish_top3 = spanish_top[:3]
+            english_top3 = english_top[:3]
+
+            # Determine eligible champions (skip cooldown users)
+            def get_eligible_champions(top_list, cooldown_set, count=3):
+                eligible = []
+                for entry in top_list:
+                    if entry['user_id'] not in cooldown_set:
+                        eligible.append(entry)
+                        if len(eligible) >= count:
+                            break
+                return eligible
+
+            spanish_champions = get_eligible_champions(spanish_top, last_round_recipients)
+            english_champions = get_eligible_champions(english_top, last_round_recipients)
+
+            # Build preview embed
+            medals = ["🥇", "🥈", "🥉"]
+
+            embed = Embed(
+                title=f"🏆 Round {round_number} has ended! 🏆",
+                description="Congratulations to this week's top performers!\n\n*— PREVIEW MODE (no pings, no changes) —*",
+                color=discord.Color.gold()
+            )
+
+            # Spanish League Winners
+            if spanish_top3:
+                spanish_text = []
+                for i, entry in enumerate(spanish_top3):
+                    on_cooldown = " *(resting)*" if entry['user_id'] in last_round_recipients else ""
+                    spanish_text.append(
+                        f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}"
+                    )
+                embed.add_field(
+                    name="🇪🇸 Spanish League",
+                    value="\n".join(spanish_text),
+                    inline=False
+                )
+            else:
+                embed.add_field(name="🇪🇸 Spanish League", value="*No participants*", inline=False)
+
+            # English League Winners
+            if english_top3:
+                english_text = []
+                for i, entry in enumerate(english_top3):
+                    on_cooldown = " *(resting)*" if entry['user_id'] in last_round_recipients else ""
+                    english_text.append(
+                        f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}"
+                    )
+                embed.add_field(
+                    name="🇬🇧 English League",
+                    value="\n".join(english_text),
+                    inline=False
+                )
+            else:
+                embed.add_field(name="🇬🇧 English League", value="*No participants*", inline=False)
+
+            # Weekly Champions
+            champion_mentions = []
+            seen_ids = set()
+            for entry in spanish_champions + english_champions:
+                if entry['user_id'] not in seen_ids:
+                    champion_mentions.append(f"<@{entry['user_id']}>")
+                    seen_ids.add(entry['user_id'])
+
+            if champion_mentions:
+                embed.add_field(
+                    name="⭐ Weekly Champions ⭐",
+                    value=(
+                        f"This week's <@&{CHAMPION_ROLE_ID}> goes to:\n"
+                        f"{', '.join(champion_mentions)}\n\n"
+                        f"-# To keep things fair, champions take a 1-week break before they can earn the role again — but they can still compete for the top spots!"
+                    ),
+                    inline=False
+                )
+            else:
+                embed.add_field(name="⭐ Weekly Champions ⭐", value="*No eligible champions*", inline=False)
+
+            embed.set_footer(text=f"Round {round_number} • See you next round! 🔥")
+
+            # Show cooldown info
+            if last_round_recipients:
+                cooldown_mentions = [f"<@{uid}>" for uid in last_round_recipients]
+                embed.add_field(
+                    name="ℹ️ On Cooldown (from last round)",
+                    value=", ".join(cooldown_mentions),
+                    inline=False
+                )
+
+            await ctx.send(embed=embed)
+            logger.info(f"Admin {ctx.author} previewed round {round_number} announcement")
+
+        except Exception as e:
+            await ctx.send(f"❌ Error: {str(e)}")
+            logger.error(f"Error in preview command: {e}", exc_info=True)
 
 
 async def setup(bot):
