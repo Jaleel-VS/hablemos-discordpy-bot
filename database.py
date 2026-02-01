@@ -252,9 +252,16 @@ class Database:
                     rank INTEGER NOT NULL,
                     total_score INTEGER NOT NULL,
                     active_days INTEGER NOT NULL,
+                    received_role BOOLEAN DEFAULT FALSE,
                     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (round_id) REFERENCES league_rounds(round_id) ON DELETE CASCADE
                 )
+            ''')
+
+            # Add received_role column if it doesn't exist (migration for existing DBs)
+            await conn.execute('''
+                ALTER TABLE league_round_winners
+                ADD COLUMN IF NOT EXISTS received_role BOOLEAN DEFAULT FALSE
             ''')
 
             await conn.execute('''
@@ -1099,6 +1106,66 @@ class Database:
                 WHERE round_id = $1
             ''', round_id)
             return dict(row) if row else None
+
+    async def get_last_round_role_recipients(self) -> set[int]:
+        """Get user IDs who received the champion role in the previous completed round"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            # Get the most recent completed round
+            last_round = await conn.fetchrow('''
+                SELECT round_id FROM league_rounds
+                WHERE status = 'completed'
+                ORDER BY round_number DESC
+                LIMIT 1
+            ''')
+            if not last_round:
+                return set()
+
+            # Get users who received the role in that round
+            rows = await conn.fetch('''
+                SELECT user_id FROM league_round_winners
+                WHERE round_id = $1 AND received_role = TRUE
+            ''', last_round['round_id'])
+            return {row['user_id'] for row in rows}
+
+    async def mark_role_recipients(self, round_id: int, user_ids: list[int]) -> None:
+        """Mark which users received the champion role for a round"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        if not user_ids:
+            return
+        async with self.pool.acquire() as conn:
+            await conn.execute('''
+                UPDATE league_round_winners
+                SET received_role = TRUE
+                WHERE round_id = $1 AND user_id = ANY($2)
+            ''', round_id, user_ids)
+
+    async def seed_role_recipients(self, user_ids: list[int]) -> None:
+        """
+        Seed role recipients for the most recent completed round.
+        Used for initial setup/migration when manually tracking who had the role.
+        """
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            # Get the most recent completed round
+            last_round = await conn.fetchrow('''
+                SELECT round_id FROM league_rounds
+                WHERE status = 'completed'
+                ORDER BY round_number DESC
+                LIMIT 1
+            ''')
+            if not last_round:
+                return
+
+            # Mark these users as having received the role
+            await conn.execute('''
+                UPDATE league_round_winners
+                SET received_role = TRUE
+                WHERE round_id = $1 AND user_id = ANY($2)
+            ''', last_round['round_id'], user_ids)
 
     # Practice Card Methods (SRS Vocabulary Practice)
 

@@ -9,9 +9,13 @@ from discord.ext import commands
 from discord import Embed
 from base_cog import BaseCog
 import logging
+from datetime import datetime, timedelta, timezone
 from cogs.league_cog.config import (
     LEAGUE_GUILD_ID,
-    RATE_LIMITS
+    RATE_LIMITS,
+    SCORING,
+    CHAMPION_ROLE_ID,
+    WINNER_CHANNEL_ID
 )
 from cogs.league_cog.utils import (
     detect_message_language,
@@ -43,10 +47,12 @@ class LeagueAdminCog(BaseCog):
         - admin_stats: Show league statistics
         - validatemessage <message_link>: Validate message language detection
         - audit <user_id|@user>: Show last 3 counted messages for a user
+        - endround: End current round and start new one (ends next Sunday 12:00 UTC)
+        - seedrole <user_ids>: Seed last round's role recipients (comma-separated IDs)
         """
         if not action:
             await ctx.send(
-                "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit> [target]`"
+                "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole> [target]`"
             )
             return
 
@@ -68,6 +74,10 @@ class LeagueAdminCog(BaseCog):
             await self._handle_validate_message(ctx, target)
         elif action == "audit":
             await self._handle_audit(ctx, target)
+        elif action == "endround":
+            await self._handle_endround(ctx)
+        elif action == "seedrole":
+            await self._handle_seedrole(ctx, target)
         else:
             await ctx.send(f"❌ Unknown action: `{action}`")
 
@@ -417,6 +427,303 @@ class LeagueAdminCog(BaseCog):
         except Exception as e:
             await ctx.send(f"❌ Error: {str(e)}")
             logger.error(f"Error in audit command: {e}", exc_info=True)
+
+    async def _handle_endround(self, ctx):
+        """
+        End the current round and start a new one.
+
+        New round ends next Sunday at 12:00 UTC.
+        Handles champion role assignment with 1-week cooldown.
+        """
+        try:
+            # Get current round
+            current_round = await self.bot.db.get_current_round()
+            if not current_round:
+                await ctx.send("❌ No active round found.")
+                return
+
+            round_id = current_round['round_id']
+            round_number = current_round['round_number']
+
+            await ctx.send(f"⏳ Ending round {round_number}...")
+
+            # Get guild and role
+            guild = self.bot.get_guild(LEAGUE_GUILD_ID)
+            if not guild:
+                await ctx.send("❌ Could not find league guild.")
+                return
+
+            champion_role = guild.get_role(CHAMPION_ROLE_ID)
+            if not champion_role:
+                await ctx.send(f"⚠️ Warning: Champion role {CHAMPION_ROLE_ID} not found. Continuing without role assignment.")
+
+            # Get users who had the role last round (they're on cooldown)
+            last_round_recipients = await self.bot.db.get_last_round_role_recipients()
+
+            # Get top 10 from each league (buffer for skipping cooldown users)
+            spanish_top = await self.bot.db.get_leaderboard('spanish', limit=10, round_id=round_id)
+            english_top = await self.bot.db.get_leaderboard('english', limit=10, round_id=round_id)
+
+            # Save top 3 as official winners
+            winners_data = []
+            spanish_top3 = spanish_top[:3]
+            english_top3 = english_top[:3]
+
+            for rank, entry in enumerate(spanish_top3, start=1):
+                winners_data.append({
+                    'user_id': entry['user_id'],
+                    'username': entry['username'],
+                    'league_type': 'spanish',
+                    'rank': rank,
+                    'total_score': entry['total_score'],
+                    'active_days': entry['active_days']
+                })
+
+            for rank, entry in enumerate(english_top3, start=1):
+                winners_data.append({
+                    'user_id': entry['user_id'],
+                    'username': entry['username'],
+                    'league_type': 'english',
+                    'rank': rank,
+                    'total_score': entry['total_score'],
+                    'active_days': entry['active_days']
+                })
+
+            # Save all winners to database
+            if winners_data:
+                await self.bot.db.save_round_winners(round_id, winners_data)
+
+            # Mark round as completed
+            await self.bot.db.end_round(round_id)
+
+            # Determine who gets the champion role (top 3 eligible per league)
+            def get_eligible_champions(top_list, cooldown_set, count=3):
+                """Get top N users who aren't on cooldown"""
+                eligible = []
+                for entry in top_list:
+                    if entry['user_id'] not in cooldown_set:
+                        eligible.append(entry)
+                        if len(eligible) >= count:
+                            break
+                return eligible
+
+            spanish_champions = get_eligible_champions(spanish_top, last_round_recipients)
+            english_champions = get_eligible_champions(english_top, last_round_recipients)
+
+            # Collect all new role recipients
+            new_role_recipients = []
+            new_role_recipient_ids = []
+
+            for entry in spanish_champions + english_champions:
+                if entry['user_id'] not in new_role_recipient_ids:
+                    new_role_recipients.append(entry)
+                    new_role_recipient_ids.append(entry['user_id'])
+
+            # Role management
+            roles_added = []
+            roles_removed = []
+
+            if champion_role:
+                # Remove role from last round's recipients
+                for user_id in last_round_recipients:
+                    try:
+                        member = guild.get_member(user_id)
+                        if member and champion_role in member.roles:
+                            await member.remove_roles(champion_role, reason=f"Round {round_number} ended - champion cooldown")
+                            roles_removed.append(user_id)
+                    except Exception as e:
+                        logger.error(f"Failed to remove champion role from {user_id}: {e}")
+
+                # Add role to new champions
+                for entry in new_role_recipients:
+                    try:
+                        member = guild.get_member(entry['user_id'])
+                        if member and champion_role not in member.roles:
+                            await member.add_roles(champion_role, reason=f"Round {round_number} champion")
+                            roles_added.append(entry['user_id'])
+                    except Exception as e:
+                        logger.error(f"Failed to add champion role to {entry['user_id']}: {e}")
+
+            # Mark who received the role this round in database
+            if new_role_recipient_ids:
+                await self.bot.db.mark_role_recipients(round_id, new_role_recipient_ids)
+
+            # Send winner announcement to the winner channel
+            await self._announce_round_winners(
+                round_number=round_number,
+                spanish_top3=spanish_top3,
+                english_top3=english_top3,
+                spanish_champions=spanish_champions,
+                english_champions=english_champions,
+                last_round_recipients=last_round_recipients
+            )
+
+            # Calculate next Sunday at 12:00 UTC
+            now = datetime.now(timezone.utc)
+            days_until_sunday = (6 - now.weekday()) % 7
+            if days_until_sunday == 0:
+                days_until_sunday = 7  # If today is Sunday, go to next Sunday
+
+            next_sunday = now + timedelta(days=days_until_sunday)
+            next_end = next_sunday.replace(hour=12, minute=0, second=0, microsecond=0)
+
+            # Start date is now
+            next_start = now
+
+            # Create new round
+            next_round_id = await self.bot.db.create_round(round_number + 1, next_start, next_end)
+
+            # Format end date for display
+            end_timestamp = int(next_end.timestamp())
+
+            # Admin confirmation embed
+            embed = Embed(
+                title="✅ Round Ended Successfully",
+                description=f"Round {round_number} has been ended.",
+                color=discord.Color.green()
+            )
+            embed.add_field(
+                name="New Round",
+                value=f"**Round {round_number + 1}** has started!",
+                inline=False
+            )
+            embed.add_field(
+                name="Ends",
+                value=f"<t:{end_timestamp}:F> (<t:{end_timestamp}:R>)",
+                inline=False
+            )
+            embed.add_field(
+                name="Winners Saved",
+                value=f"Spanish: {len(spanish_top3)} | English: {len(english_top3)}",
+                inline=False
+            )
+            embed.add_field(
+                name="Champion Role",
+                value=f"Added: {len(roles_added)} | Removed: {len(roles_removed)}",
+                inline=False
+            )
+
+            await ctx.send(embed=embed)
+            logger.info(f"Admin {ctx.author} manually ended round {round_number}, created round {round_number + 1} ending {next_end}")
+
+        except Exception as e:
+            await ctx.send(f"❌ Error ending round: {str(e)}")
+            logger.error(f"Error in endround command: {e}", exc_info=True)
+
+    async def _announce_round_winners(
+        self,
+        round_number: int,
+        spanish_top3: list,
+        english_top3: list,
+        spanish_champions: list,
+        english_champions: list,
+        last_round_recipients: set
+    ):
+        """
+        Announce round winners in the winner channel.
+
+        Shows top 3 for each league and who earned the champion role.
+        """
+        try:
+            channel = self.bot.get_channel(WINNER_CHANNEL_ID)
+            if not channel:
+                logger.error(f"Could not find winner announcement channel {WINNER_CHANNEL_ID}")
+                return
+
+            # Collect all mentions for pinging
+            all_mentions = []
+            medals = ["🥇", "🥈", "🥉"]
+
+            embed = Embed(
+                title=f"🏆 Round {round_number} has ended! 🏆",
+                description="Congratulations to this week's top performers!",
+                color=discord.Color.gold()
+            )
+
+            # Spanish League Winners
+            if spanish_top3:
+                spanish_text = []
+                for i, entry in enumerate(spanish_top3):
+                    all_mentions.append(f"<@{entry['user_id']}>")
+                    on_cooldown = " *(resting)*" if entry['user_id'] in last_round_recipients else ""
+                    spanish_text.append(
+                        f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}"
+                    )
+                embed.add_field(
+                    name="🇪🇸 Spanish League",
+                    value="\n".join(spanish_text),
+                    inline=False
+                )
+
+            # English League Winners
+            if english_top3:
+                english_text = []
+                for i, entry in enumerate(english_top3):
+                    all_mentions.append(f"<@{entry['user_id']}>")
+                    on_cooldown = " *(resting)*" if entry['user_id'] in last_round_recipients else ""
+                    english_text.append(
+                        f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}"
+                    )
+                embed.add_field(
+                    name="🇬🇧 English League",
+                    value="\n".join(english_text),
+                    inline=False
+                )
+
+            # Weekly Champions (role recipients)
+            champion_mentions = []
+            seen_ids = set()
+            for entry in spanish_champions + english_champions:
+                if entry['user_id'] not in seen_ids:
+                    champion_mentions.append(f"<@{entry['user_id']}>")
+                    seen_ids.add(entry['user_id'])
+
+            if champion_mentions:
+                embed.add_field(
+                    name="⭐ Weekly Champions ⭐",
+                    value=(
+                        f"This week's <@&{CHAMPION_ROLE_ID}> goes to:\n"
+                        f"{', '.join(champion_mentions)}\n\n"
+                        f"-# To keep things fair, champions take a 1-week break before they can earn the role again — but they can still compete for the top spots!"
+                    ),
+                    inline=False
+                )
+
+            embed.set_footer(text=f"Round {round_number} • See you next round! 🔥")
+
+            # Send with mentions to ping users
+            mention_text = " ".join(set(all_mentions)) if all_mentions else ""
+            await channel.send(content=mention_text, embed=embed)
+            logger.info(f"Announced round {round_number} winners in channel {WINNER_CHANNEL_ID}")
+
+        except Exception as e:
+            logger.error(f"Error announcing winners: {e}", exc_info=True)
+
+    async def _handle_seedrole(self, ctx, target):
+        """
+        Seed the database with last round's role recipients.
+
+        Used for initial setup when migrating from manual tracking.
+        Usage: $league seedrole 123,456,789 (comma-separated user IDs)
+        """
+        if not target:
+            await ctx.send("❌ Usage: `$league seedrole <user_id1,user_id2,...>`")
+            return
+
+        try:
+            # Parse comma-separated user IDs
+            user_ids = [int(uid.strip()) for uid in target.split(',')]
+
+            await self.bot.db.seed_role_recipients(user_ids)
+
+            await ctx.send(f"✅ Seeded {len(user_ids)} users as last round's role recipients:\n{', '.join(str(uid) for uid in user_ids)}")
+            logger.info(f"Admin {ctx.author} seeded role recipients: {user_ids}")
+
+        except ValueError:
+            await ctx.send("❌ Invalid format. Use comma-separated user IDs: `$league seedrole 123,456,789`")
+        except Exception as e:
+            await ctx.send(f"❌ Error: {str(e)}")
+            logger.error(f"Error in seedrole command: {e}", exc_info=True)
 
 
 async def setup(bot):

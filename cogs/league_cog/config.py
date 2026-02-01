@@ -19,6 +19,9 @@ LEAGUE_GUILD_ID: Final[int] = 243838819743432704
 # Channel where round winners are announced
 WINNER_CHANNEL_ID: Final[int] = 247135634265735168
 
+# Role given to weekly champions (top 3 eligible per league)
+CHAMPION_ROLE_ID: Final[int] = 1062819085789970564
+
 
 # =============================================================================
 # ROLE IDS
