@@ -626,6 +626,7 @@ class LeagueAdminCog(BaseCog):
         Announce round winners in the winner channel.
 
         Shows top 3 for each league and who earned the champion role.
+        Uses plain text message to ensure mentions ping users.
         """
         try:
             channel = self.bot.get_channel(WINNER_CHANNEL_ID)
@@ -633,45 +634,31 @@ class LeagueAdminCog(BaseCog):
                 logger.error(f"Could not find winner announcement channel {WINNER_CHANNEL_ID}")
                 return
 
-            # Collect all mentions for pinging
-            all_mentions = []
             medals = ["🥇", "🥈", "🥉"]
 
-            embed = Embed(
-                title=f"🏆 Round {round_number} has ended! 🏆",
-                description="Congratulations to this week's top performers!",
-                color=discord.Color.gold()
-            )
+            # Build the message
+            lines = [
+                f"# 🏆 Round {round_number} has ended! 🏆",
+                "",
+                "Congratulations to this week's top performers!",
+                ""
+            ]
 
             # Spanish League Winners
             if spanish_top3:
-                spanish_text = []
+                lines.append("## 🇪🇸 Spanish League")
                 for i, entry in enumerate(spanish_top3):
-                    all_mentions.append(f"<@{entry['user_id']}>")
                     on_cooldown = " *(resting)*" if entry['user_id'] in last_round_recipients else ""
-                    spanish_text.append(
-                        f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}"
-                    )
-                embed.add_field(
-                    name="🇪🇸 Spanish League",
-                    value="\n".join(spanish_text),
-                    inline=False
-                )
+                    lines.append(f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}")
+                lines.append("")
 
             # English League Winners
             if english_top3:
-                english_text = []
+                lines.append("## 🇬🇧 English League")
                 for i, entry in enumerate(english_top3):
-                    all_mentions.append(f"<@{entry['user_id']}>")
                     on_cooldown = " *(resting)*" if entry['user_id'] in last_round_recipients else ""
-                    english_text.append(
-                        f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}"
-                    )
-                embed.add_field(
-                    name="🇬🇧 English League",
-                    value="\n".join(english_text),
-                    inline=False
-                )
+                    lines.append(f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}")
+                lines.append("")
 
             # Weekly Champions (role recipients)
             champion_mentions = []
@@ -682,21 +669,18 @@ class LeagueAdminCog(BaseCog):
                     seen_ids.add(entry['user_id'])
 
             if champion_mentions:
-                embed.add_field(
-                    name="⭐ Weekly Champions ⭐",
-                    value=(
-                        f"This week's <@&{CHAMPION_ROLE_ID}> goes to:\n"
-                        f"{', '.join(champion_mentions)}\n\n"
-                        f"-# To keep things fair, champions take a 1-week break before they can earn the role again — but they can still compete for the top spots!"
-                    ),
-                    inline=False
-                )
+                lines.append("## ⭐ Weekly Champions ⭐")
+                lines.append(f"This week's <@&{CHAMPION_ROLE_ID}> goes to:")
+                lines.append(", ".join(champion_mentions))
+                lines.append("")
+                lines.append("-# To keep things fair, champions take a 1-week break before they can earn the role again — but they can still compete for the top spots!")
+                lines.append("")
 
-            embed.set_footer(text=f"Round {round_number} • See you next round! 🔥")
+            lines.append(f"*Round {round_number} • See you next round!* 🔥")
+            lines.append("-# Run `$help league` for more info")
 
-            # Send with mentions to ping users
-            mention_text = " ".join(set(all_mentions)) if all_mentions else ""
-            await channel.send(content=mention_text, embed=embed)
+            message = "\n".join(lines)
+            await channel.send(message)
             logger.info(f"Announced round {round_number} winners in channel {WINNER_CHANNEL_ID}")
 
         except Exception as e:
@@ -768,46 +752,41 @@ class LeagueAdminCog(BaseCog):
             spanish_champions = get_eligible_champions(spanish_top, last_round_recipients)
             english_champions = get_eligible_champions(english_top, last_round_recipients)
 
-            # Build preview embed
+            # Build preview message (plain text, same format as real announcement)
             medals = ["🥇", "🥈", "🥉"]
 
-            embed = Embed(
-                title=f"🏆 Round {round_number} has ended! 🏆",
-                description="Congratulations to this week's top performers!\n\n*— PREVIEW MODE (no pings, no changes) —*",
-                color=discord.Color.gold()
-            )
+            lines = [
+                f"# 🏆 Round {round_number} has ended! 🏆",
+                "",
+                "Congratulations to this week's top performers!",
+                "",
+                "*— PREVIEW MODE (no pings, no changes) —*",
+                ""
+            ]
 
             # Spanish League Winners
             if spanish_top3:
-                spanish_text = []
+                lines.append("## 🇪🇸 Spanish League")
                 for i, entry in enumerate(spanish_top3):
                     on_cooldown = " *(resting)*" if entry['user_id'] in last_round_recipients else ""
-                    spanish_text.append(
-                        f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}"
-                    )
-                embed.add_field(
-                    name="🇪🇸 Spanish League",
-                    value="\n".join(spanish_text),
-                    inline=False
-                )
+                    lines.append(f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}")
+                lines.append("")
             else:
-                embed.add_field(name="🇪🇸 Spanish League", value="*No participants*", inline=False)
+                lines.append("## 🇪🇸 Spanish League")
+                lines.append("*No participants*")
+                lines.append("")
 
             # English League Winners
             if english_top3:
-                english_text = []
+                lines.append("## 🇬🇧 English League")
                 for i, entry in enumerate(english_top3):
                     on_cooldown = " *(resting)*" if entry['user_id'] in last_round_recipients else ""
-                    english_text.append(
-                        f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}"
-                    )
-                embed.add_field(
-                    name="🇬🇧 English League",
-                    value="\n".join(english_text),
-                    inline=False
-                )
+                    lines.append(f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}")
+                lines.append("")
             else:
-                embed.add_field(name="🇬🇧 English League", value="*No participants*", inline=False)
+                lines.append("## 🇬🇧 English League")
+                lines.append("*No participants*")
+                lines.append("")
 
             # Weekly Champions
             champion_mentions = []
@@ -818,30 +797,28 @@ class LeagueAdminCog(BaseCog):
                     seen_ids.add(entry['user_id'])
 
             if champion_mentions:
-                embed.add_field(
-                    name="⭐ Weekly Champions ⭐",
-                    value=(
-                        f"This week's <@&{CHAMPION_ROLE_ID}> goes to:\n"
-                        f"{', '.join(champion_mentions)}\n\n"
-                        f"-# To keep things fair, champions take a 1-week break before they can earn the role again — but they can still compete for the top spots!"
-                    ),
-                    inline=False
-                )
+                lines.append("## ⭐ Weekly Champions ⭐")
+                lines.append(f"This week's <@&{CHAMPION_ROLE_ID}> goes to:")
+                lines.append(", ".join(champion_mentions))
+                lines.append("")
+                lines.append("-# To keep things fair, champions take a 1-week break before they can earn the role again — but they can still compete for the top spots!")
+                lines.append("")
             else:
-                embed.add_field(name="⭐ Weekly Champions ⭐", value="*No eligible champions*", inline=False)
+                lines.append("## ⭐ Weekly Champions ⭐")
+                lines.append("*No eligible champions*")
+                lines.append("")
 
-            embed.set_footer(text=f"Round {round_number} • See you next round! 🔥")
+            lines.append(f"*Round {round_number} • See you next round!* 🔥")
+            lines.append("-# Run `$help league` for more info")
 
-            # Show cooldown info
+            # Show cooldown info (preview only)
             if last_round_recipients:
-                cooldown_mentions = [f"<@{uid}>" for uid in last_round_recipients]
-                embed.add_field(
-                    name="ℹ️ On Cooldown (from last round)",
-                    value=", ".join(cooldown_mentions),
-                    inline=False
-                )
+                lines.append("")
+                lines.append("---")
+                lines.append(f"**ℹ️ On Cooldown (from last round):** {', '.join(f'<@{uid}>' for uid in last_round_recipients)}")
 
-            await ctx.send(embed=embed)
+            message = "\n".join(lines)
+            await ctx.send(message)
             logger.info(f"Admin {ctx.author} previewed round {round_number} announcement")
 
         except Exception as e:

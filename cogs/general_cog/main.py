@@ -386,6 +386,9 @@ class General(BaseCog):
                     "`$league include <#channel>` - Include channel\n"
                     "`$league excluded` - List excluded channels\n"
                     "`$league admin_stats` - View league statistics\n"
+                    "`$league endround` - End round & start new one\n"
+                    "`$league preview` - Preview round-end announcement\n"
+                    "`$league seedrole <ids>` - Seed role recipients\n"
                     "*Owner only*"
                 ),
                 inline=False
