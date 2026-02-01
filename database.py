@@ -264,6 +264,19 @@ class Database:
                 ADD COLUMN IF NOT EXISTS received_role BOOLEAN DEFAULT FALSE
             ''')
 
+            # Separate table to track champion role recipients (decoupled from winners)
+            # This handles cases where role goes to rank 4+ due to cooldown
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS league_role_recipients (
+                    id SERIAL PRIMARY KEY,
+                    round_id INTEGER NOT NULL,
+                    user_id BIGINT NOT NULL,
+                    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (round_id) REFERENCES league_rounds(round_id) ON DELETE CASCADE,
+                    UNIQUE(round_id, user_id)
+                )
+            ''')
+
             await conn.execute('''
                 CREATE INDEX IF NOT EXISTS idx_league_winners_user
                 ON league_round_winners(user_id, rank)
@@ -1124,8 +1137,8 @@ class Database:
 
             # Get users who received the role in that round
             rows = await conn.fetch('''
-                SELECT user_id FROM league_round_winners
-                WHERE round_id = $1 AND received_role = TRUE
+                SELECT user_id FROM league_role_recipients
+                WHERE round_id = $1
             ''', last_round['round_id'])
             return {row['user_id'] for row in rows}
 
@@ -1136,11 +1149,12 @@ class Database:
         if not user_ids:
             return
         async with self.pool.acquire() as conn:
-            await conn.execute('''
-                UPDATE league_round_winners
-                SET received_role = TRUE
-                WHERE round_id = $1 AND user_id = ANY($2)
-            ''', round_id, user_ids)
+            for user_id in user_ids:
+                await conn.execute('''
+                    INSERT INTO league_role_recipients (round_id, user_id)
+                    VALUES ($1, $2)
+                    ON CONFLICT (round_id, user_id) DO NOTHING
+                ''', round_id, user_id)
 
     async def seed_role_recipients(self, user_ids: list[int]) -> None:
         """
@@ -1160,12 +1174,13 @@ class Database:
             if not last_round:
                 return
 
-            # Mark these users as having received the role
-            await conn.execute('''
-                UPDATE league_round_winners
-                SET received_role = TRUE
-                WHERE round_id = $1 AND user_id = ANY($2)
-            ''', last_round['round_id'], user_ids)
+            # Insert role recipients
+            for user_id in user_ids:
+                await conn.execute('''
+                    INSERT INTO league_role_recipients (round_id, user_id)
+                    VALUES ($1, $2)
+                    ON CONFLICT (round_id, user_id) DO NOTHING
+                ''', last_round['round_id'], user_id)
 
     # Practice Card Methods (SRS Vocabulary Practice)
 
