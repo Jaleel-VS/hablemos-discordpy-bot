@@ -152,9 +152,7 @@ class QuoteGenerator(BaseCog):
             if server is None:
                 # Handle the error, e.g. by logging a message or raising an exception
                 print(f"Could not find server with ID {guild_id}")
-            else:
-                channel = server.get_channel(channel_id)
-                # Continue with your code...
+            channel = self.bot.get_channel(channel_id)  # Works for both channels and threads
 
             user_nick, user_avatar, message_content = await get_html_css_info(channel, message_id, server)
 
@@ -167,7 +165,7 @@ class QuoteGenerator(BaseCog):
             server = self.bot.get_guild(server_id)
             if server is None:
                 return await ctx.send("I can't access this server")
-            channel = server.get_channel(channel_id)
+            channel = self.bot.get_channel(channel_id)  # Works for both channels and threads
             if channel is None:
                 return await ctx.send("I can't access this channel")
 
@@ -222,11 +220,9 @@ class QuoteGenerator(BaseCog):
             guild_id = ctx.message.reference.guild_id
             channel_id = ctx.message.reference.channel_id
             server = self.bot.get_guild(guild_id)
-            server = self.bot.get_guild(guild_id)
             if server is None:
                 print(f"Could not find server with ID {guild_id}")
-            else:
-                channel = server.get_channel(channel_id)
+            channel = self.bot.get_channel(channel_id)  # Works for both channels and threads
 
             user_nick, user_avatar, message_content = await get_html_css_info(channel, message_id, server)
 
@@ -239,7 +235,7 @@ class QuoteGenerator(BaseCog):
             server = self.bot.get_guild(server_id)
             if server is None:
                 return await ctx.send("I can't access this server")
-            channel = server.get_channel(channel_id)
+            channel = self.bot.get_channel(channel_id)  # Works for both channels and threads
             if channel is None:
                 return await ctx.send("I can't access this channel")
 
