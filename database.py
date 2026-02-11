@@ -49,13 +49,38 @@ class Database:
                 )
             ''')
 
-            # Introductions tracking table
+            # Introductions tracking table (stores every attempt, no unique constraint)
             await conn.execute('''
                 CREATE TABLE IF NOT EXISTS introductions (
                     id SERIAL PRIMARY KEY,
                     user_id BIGINT NOT NULL,
-                    posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    UNIQUE(user_id)
+                    posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+            # Migration: drop old unique constraint if it exists
+            await conn.execute('''
+                DO $$
+                BEGIN
+                    IF EXISTS (
+                        SELECT 1 FROM pg_constraint
+                        WHERE conname = 'introductions_user_id_key'
+                    ) THEN
+                        ALTER TABLE introductions DROP CONSTRAINT introductions_user_id_key;
+                    END IF;
+                END $$;
+            ''')
+
+            await conn.execute('''
+                CREATE INDEX IF NOT EXISTS idx_introductions_user_id
+                ON introductions(user_id)
+            ''')
+
+            # Bot settings table (general key-value store for channel IDs, etc.)
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS bot_settings (
+                    setting_key VARCHAR(100) PRIMARY KEY,
+                    setting_value BIGINT NOT NULL
                 )
             ''')
 
@@ -378,7 +403,7 @@ class Database:
     # Introduction Tracking Methods
 
     async def check_user_introduction(self, user_id: int) -> Optional[dict]:
-        """Check if user has posted an introduction in the last 30 days"""
+        """Check if user has posted an introduction in the last 90 days"""
         if self.pool is None:
             raise RuntimeError("Database pool not initialized. Call connect() first.")
         async with self.pool.acquire() as conn:
@@ -386,14 +411,26 @@ class Database:
                 SELECT id, user_id, posted_at
                 FROM introductions
                 WHERE user_id = $1
-                AND posted_at > NOW() - INTERVAL '30 days'
+                AND posted_at > NOW() - INTERVAL '90 days'
+                ORDER BY posted_at DESC
+                LIMIT 1
             ''', user_id)
             if row:
                 return dict(row)
             return None
 
+    async def get_introduction_count(self, user_id: int) -> int:
+        """Get total number of introductions a user has posted"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            count = await conn.fetchval('''
+                SELECT COUNT(*) FROM introductions WHERE user_id = $1
+            ''', user_id)
+            return count or 0
+
     async def record_introduction(self, user_id: int) -> bool:
-        """Record a user's introduction. Returns True if successful, False if already exists"""
+        """Record a user's introduction attempt"""
         if self.pool is None:
             raise RuntimeError("Database pool not initialized. Call connect() first.")
         async with self.pool.acquire() as conn:
@@ -401,13 +438,37 @@ class Database:
                 await conn.execute('''
                     INSERT INTO introductions (user_id, posted_at)
                     VALUES ($1, NOW())
-                    ON CONFLICT (user_id) DO UPDATE
-                    SET posted_at = NOW()
                 ''', user_id)
                 return True
             except Exception as e:
                 logging.error(f"Error recording introduction: {e}")
                 return False
+
+    # Bot Settings Methods
+
+    async def get_bot_setting(self, setting_key: str) -> Optional[int]:
+        """Get a bot setting value by key"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow(
+                'SELECT setting_value FROM bot_settings WHERE setting_key = $1',
+                setting_key
+            )
+            return row['setting_value'] if row else None
+
+    async def set_bot_setting(self, setting_key: str, setting_value: int) -> bool:
+        """Set a bot setting value (upsert)"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            await conn.execute('''
+                INSERT INTO bot_settings (setting_key, setting_value)
+                VALUES ($1, $2)
+                ON CONFLICT (setting_key) DO UPDATE
+                SET setting_value = $2
+            ''', setting_key, setting_value)
+            return True
 
     async def get_feature_setting(self, feature_name: str) -> bool:
         """Get whether a feature is enabled"""
