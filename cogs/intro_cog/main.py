@@ -1,4 +1,4 @@
-from discord.ext.commands import command, Bot, is_owner, Cog
+from discord.ext.commands import command, Bot, is_owner, has_permissions, Cog
 from base_cog import BaseCog
 from discord import Embed, Color, Message, TextChannel
 import logging
@@ -163,7 +163,7 @@ class IntroductionTracker(BaseCog):
             logging.error(f"Error in introduction tracker: {e}")
 
     @command(aliases=['toggleintro'])
-    @is_owner()
+    @has_permissions(manage_messages=True)
     async def introtracker(self, ctx, action: str = None, *, argument: str = None):
         """
         Toggle the introduction tracker on/off or configure channels
@@ -220,7 +220,7 @@ class IntroductionTracker(BaseCog):
             await ctx.send(embed=red_embed(f"Error: {str(e)}"))
 
     @command(aliases=['introstats'])
-    @is_owner()
+    @has_permissions(manage_messages=True)
     async def introstatus(self, ctx):
         """
         Show introduction tracker statistics

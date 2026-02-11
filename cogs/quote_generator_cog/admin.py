@@ -35,7 +35,7 @@ class QuoteAdminCog(BaseCog):
         super().__init__(bot)
 
     @commands.command(name="quoteadmin")
-    @commands.is_owner()
+    @commands.has_permissions(manage_messages=True)
     async def quoteadmin(self, ctx, action: str = None, *, target: str = None):
         """
         Admin quote management (Owner only)
