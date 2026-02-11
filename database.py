@@ -352,6 +352,32 @@ class Database:
                 ON user_card_progress(user_id, next_review)
             ''')
 
+            # Quote banned users table
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS quote_banned_users (
+                    user_id BIGINT PRIMARY KEY,
+                    banned_by BIGINT NOT NULL,
+                    banned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+            # Quote banned channels table
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS quote_banned_channels (
+                    channel_id BIGINT PRIMARY KEY,
+                    banned_by BIGINT NOT NULL,
+                    banned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+            # Quote opt-outs table
+            await conn.execute('''
+                CREATE TABLE IF NOT EXISTS quote_optouts (
+                    user_id BIGINT PRIMARY KEY,
+                    opted_out_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
             logging.info("Database schema initialized")
 
     async def add_note(self, user_id: int, username: str, content: str) -> int:
@@ -1412,3 +1438,113 @@ class Database:
                 SELECT COUNT(*) FROM practice_cards WHERE language = $1
             ''', language)
             return count or 0
+
+    # Quote Admin Methods
+
+    async def quote_ban_user(self, user_id: int, banned_by: int) -> bool:
+        """Ban a user from using quote commands"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            await conn.execute('''
+                INSERT INTO quote_banned_users (user_id, banned_by)
+                VALUES ($1, $2)
+                ON CONFLICT (user_id) DO NOTHING
+            ''', user_id, banned_by)
+            return True
+
+    async def quote_unban_user(self, user_id: int) -> bool:
+        """Unban a user from quote commands"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            result = await conn.execute('''
+                DELETE FROM quote_banned_users WHERE user_id = $1
+            ''', user_id)
+            return result == 'DELETE 1'
+
+    async def is_quote_banned(self, user_id: int) -> bool:
+        """Check if a user is banned from quote commands"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow('''
+                SELECT user_id FROM quote_banned_users WHERE user_id = $1
+            ''', user_id)
+            return row is not None
+
+    async def quote_ban_channel(self, channel_id: int, banned_by: int) -> bool:
+        """Ban a channel from quote usage"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            await conn.execute('''
+                INSERT INTO quote_banned_channels (channel_id, banned_by)
+                VALUES ($1, $2)
+                ON CONFLICT (channel_id) DO NOTHING
+            ''', channel_id, banned_by)
+            return True
+
+    async def quote_unban_channel(self, channel_id: int) -> bool:
+        """Unban a channel from quote usage"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            result = await conn.execute('''
+                DELETE FROM quote_banned_channels WHERE channel_id = $1
+            ''', channel_id)
+            return result == 'DELETE 1'
+
+    async def is_quote_channel_banned(self, channel_id: int) -> bool:
+        """Check if a channel is banned from quote usage"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow('''
+                SELECT channel_id FROM quote_banned_channels WHERE channel_id = $1
+            ''', channel_id)
+            return row is not None
+
+    async def get_quote_banned_channels(self) -> list[dict]:
+        """Get all quote-banned channels"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch('''
+                SELECT channel_id, banned_by, banned_at
+                FROM quote_banned_channels
+                ORDER BY banned_at DESC
+            ''')
+            return [dict(row) for row in rows]
+
+    async def quote_optout(self, user_id: int) -> bool:
+        """Opt a user out of being quoted"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            await conn.execute('''
+                INSERT INTO quote_optouts (user_id)
+                VALUES ($1)
+                ON CONFLICT (user_id) DO NOTHING
+            ''', user_id)
+            return True
+
+    async def quote_optin(self, user_id: int) -> bool:
+        """Opt a user back into being quoted"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            result = await conn.execute('''
+                DELETE FROM quote_optouts WHERE user_id = $1
+            ''', user_id)
+            return result == 'DELETE 1'
+
+    async def is_quote_opted_out(self, user_id: int) -> bool:
+        """Check if a user has opted out of being quoted"""
+        if self.pool is None:
+            raise RuntimeError("Database pool not initialized. Call connect() first.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow('''
+                SELECT user_id FROM quote_optouts WHERE user_id = $1
+            ''', user_id)
+            return row is not None
