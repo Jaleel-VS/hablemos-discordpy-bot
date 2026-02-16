@@ -9,12 +9,10 @@ from discord.ext import commands
 from discord import Embed
 from base_cog import BaseCog
 import logging
-from datetime import datetime, timedelta, timezone
 from cogs.league_cog.config import (
     LEAGUE_GUILD_ID,
     RATE_LIMITS,
-    SCORING,
-    CHAMPION_ROLE_ID
+    SCORING
 )
 from cogs.league_cog.utils import (
     detect_message_language,
@@ -519,109 +517,50 @@ class LeagueAdminCog(BaseCog):
         """
         Preview the round-end announcement without actually ending the round.
 
-        Shows what the announcement would look like with current data.
-        No pings, no role changes, no round modifications.
+        Uses LeagueCog.build_round_end_announcement() for the same output
+        as the real announcement, plus cooldown debug info.
         """
         try:
-            # Get current round
             current_round = await self.bot.db.get_current_round()
             if not current_round:
                 await ctx.send("❌ No active round found.")
                 return
 
+            league_cog = self.bot.get_cog('LeagueCog')
+            if not league_cog:
+                await ctx.send("❌ LeagueCog not loaded.")
+                return
+
             round_id = current_round['round_id']
             round_number = current_round['round_number']
 
-            # Get users who had the role last round (cooldown list)
+            # Use the same data-fetching logic as process_round_end
             last_round_recipients = await self.bot.db.get_last_round_role_recipients()
-
-            # Get top 10 from each league
             spanish_top = await self.bot.db.get_leaderboard('spanish', limit=10, round_id=round_id)
             english_top = await self.bot.db.get_leaderboard('english', limit=10, round_id=round_id)
 
             spanish_top3 = spanish_top[:3]
             english_top3 = english_top[:3]
+            spanish_champions = league_cog.get_eligible_champions(spanish_top, last_round_recipients)
+            english_champions = league_cog.get_eligible_champions(english_top, last_round_recipients)
 
-            # Determine eligible champions (skip cooldown users)
-            def get_eligible_champions(top_list, cooldown_set, count=3):
-                eligible = []
-                for entry in top_list:
-                    if entry['user_id'] not in cooldown_set:
-                        eligible.append(entry)
-                        if len(eligible) >= count:
-                            break
-                return eligible
+            # Build the same announcement message
+            message = league_cog.build_round_end_announcement(
+                round_number=round_number,
+                spanish_top3=spanish_top3,
+                english_top3=english_top3,
+                spanish_champions=spanish_champions,
+                english_champions=english_champions,
+                last_round_recipients=last_round_recipients
+            )
 
-            spanish_champions = get_eligible_champions(spanish_top, last_round_recipients)
-            english_champions = get_eligible_champions(english_top, last_round_recipients)
-
-            # Build preview message (plain text, same format as real announcement)
-            medals = ["🥇", "🥈", "🥉"]
-
-            lines = [
-                f"# 🏆 Round {round_number} has ended! 🏆",
-                "",
-                "Congratulations to this week's top performers!",
-                "",
-                "*— PREVIEW MODE (no pings, no changes) —*",
-                ""
-            ]
-
-            # Spanish League Winners
-            if spanish_top3:
-                lines.append("## 🇪🇸 Spanish League")
-                for i, entry in enumerate(spanish_top3):
-                    on_cooldown = " *(resting)*" if entry['user_id'] in last_round_recipients else ""
-                    lines.append(f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}")
-                lines.append("")
-            else:
-                lines.append("## 🇪🇸 Spanish League")
-                lines.append("*No participants*")
-                lines.append("")
-
-            # English League Winners
-            if english_top3:
-                lines.append("## 🇬🇧 English League")
-                for i, entry in enumerate(english_top3):
-                    on_cooldown = " *(resting)*" if entry['user_id'] in last_round_recipients else ""
-                    lines.append(f"{medals[i]} <@{entry['user_id']}> — **{entry['total_score']}** pts{on_cooldown}")
-                lines.append("")
-            else:
-                lines.append("## 🇬🇧 English League")
-                lines.append("*No participants*")
-                lines.append("")
-
-            # Weekly Champions
-            champion_mentions = []
-            seen_ids = set()
-            for entry in spanish_champions + english_champions:
-                if entry['user_id'] not in seen_ids:
-                    champion_mentions.append(f"<@{entry['user_id']}>")
-                    seen_ids.add(entry['user_id'])
-
-            if champion_mentions:
-                lines.append("## ⭐ Weekly Champions ⭐")
-                lines.append(f"This week's <@&{CHAMPION_ROLE_ID}> goes to:")
-                lines.append(", ".join(champion_mentions))
-                lines.append("")
-                lines.append("-# To keep things fair, champions take a 1-week break before they can earn the role again — but they can still compete for the top spots!")
-                lines.append("")
-            else:
-                lines.append("## ⭐ Weekly Champions ⭐")
-                lines.append("*No eligible champions*")
-                lines.append("")
-
-            lines.append(f"*Round {round_number} • See you next round!* 🔥")
-            lines.append("-# Run `$help league` for more info")
-
-            # Show cooldown info (preview only)
+            # Add preview header and cooldown debug info
+            preview_header = "*— PREVIEW MODE (no pings, no changes) —*\n\n"
+            preview_footer = ""
             if last_round_recipients:
-                lines.append("")
-                lines.append("---")
-                lines.append(f"**ℹ️ On Cooldown (from last round):** {', '.join(f'<@{uid}>' for uid in last_round_recipients)}")
+                preview_footer = f"\n\n---\n**ℹ️ On Cooldown (from last round):** {', '.join(f'<@{uid}>' for uid in last_round_recipients)}"
 
-            message = "\n".join(lines)
-            await ctx.send(message)
+            await ctx.send(preview_header + message + preview_footer)
             logger.info(f"Admin {ctx.author} previewed round {round_number} announcement")
 
         except Exception as e:
