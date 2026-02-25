@@ -9,6 +9,8 @@ from discord.ext import commands
 from discord import Embed
 from base_cog import BaseCog
 import logging
+import re
+import time
 from cogs.league_cog.config import (
     LEAGUE_GUILD_ID,
     RATE_LIMITS,
@@ -566,6 +568,92 @@ class LeagueAdminCog(BaseCog):
         except Exception as e:
             await ctx.send(f"❌ Error: {str(e)}")
             logger.error(f"Error in preview command: {e}", exc_info=True)
+
+
+    @commands.command(name="langa", aliases=["lng"])
+    @commands.is_owner()
+    async def langa(self, ctx, *, message_or_id: str = None):
+        """
+        Detect the language of a message (Owner only)
+
+        Usage:
+        - $langa <text>: Detect language of provided text
+        - $langa <message_link>: Fetch message by Discord link and detect its language
+        """
+        if not message_or_id:
+            await ctx.send("❌ Usage: `$langa <text or message link>`")
+            return
+
+        stripped = message_or_id.strip()
+        content = None
+        source_label = None
+
+        # If it looks like a Discord message link, parse and fetch it
+        # Format: https://discord.com/channels/guild_id/channel_id/message_id
+        if 'discord.com/channels/' in stripped:
+            try:
+                parts = stripped.rstrip('/').split('/')
+                message_id = int(parts[-1])
+                channel_id = int(parts[-2])
+                guild_id = int(parts[-3])
+
+                guild = self.bot.get_guild(guild_id)
+                if not guild:
+                    await ctx.send(f"❌ Could not find guild `{guild_id}`.")
+                    return
+
+                channel = guild.get_channel(channel_id)
+                if not channel:
+                    await ctx.send(f"❌ Could not find channel `{channel_id}`.")
+                    return
+
+                message = await channel.fetch_message(message_id)
+                content = message.content
+                source_label = f"Message by {message.author.mention} in #{channel.name}"
+            except (ValueError, IndexError):
+                await ctx.send("❌ Invalid message link format.")
+                return
+            except discord.NotFound:
+                await ctx.send("❌ Message not found.")
+                return
+            except discord.Forbidden:
+                await ctx.send("❌ No permission to fetch that message.")
+                return
+            except Exception as e:
+                await ctx.send(f"❌ Error fetching message: {e}")
+                return
+        else:
+            content = stripped
+            source_label = "Provided text"
+
+        if not content:
+            await ctx.send("❌ Message has no text content.")
+            return
+
+        mention_pattern = re.compile(r'<@!?\d+>|<@&\d+>|<#\d+>')
+        content_no_mentions = mention_pattern.sub('', content)
+        content_no_custom = CUSTOM_EMOJI_PATTERN.sub('', content_no_mentions)
+        content_clean = UNICODE_EMOJI_PATTERN.sub('', content_no_custom).strip()
+
+        start = time.perf_counter()
+        detected = detect_message_language(content_no_mentions)
+        elapsed_ms = (time.perf_counter() - start) * 1000
+
+        if detected == 'es':
+            lang_display = "🇪🇸 Spanish"
+        elif detected == 'en':
+            lang_display = "🇬🇧 English"
+        else:
+            lang_display = "❓ Neither / Unknown"
+
+        embed = Embed(title="🔎 Language Detection", color=discord.Color.blue())
+        embed.add_field(name="Source", value=source_label, inline=False)
+        embed.add_field(name="Language", value=lang_display, inline=True)
+        embed.add_field(name="Characters", value=f"Raw: {len(content)} | Clean: {len(content_clean)}", inline=True)
+        embed.add_field(name="Time", value=f"{elapsed_ms:.2f}ms", inline=True)
+
+        await ctx.send(embed=embed)
+        logger.info(f"Admin {ctx.author} ran langa on {len(content)}-char message → {detected}")
 
 
 async def setup(bot):
