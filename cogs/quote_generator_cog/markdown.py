@@ -1,7 +1,7 @@
 from io import StringIO
 from urllib.parse import urlparse
 
-def remove_markdown_from_message(message: str, current_recursion_size: int = 0) -> str:
+def remove_markdown_from_message(message: str, current_recursion_size: int = 0, allow_escapes: bool = True) -> str:
     """
     Parses text and removes all markdown from it.
     Covers only Discord's subset of markdown.
@@ -39,7 +39,15 @@ def remove_markdown_from_message(message: str, current_recursion_size: int = 0) 
 
         # Handle escaped characters first
         if character == "\\" and index + 1 < len(message) and not message[index + 1].isalnum() and not is_in_code_block:
-            output.write(message[index + 1])
+            if allow_escapes:
+                output.write(message[index + 1])
+            else:
+                # Manually write the backslash and its following character.
+                # This mimics a bug in Discord's markdown parser, where escaped
+                # characters are not handled properly in hyperlink labels.
+                output.write("\\")
+                output.write(message[index + 1])
+
             index += 2
             is_new_line = False
             continue
@@ -127,7 +135,7 @@ def remove_markdown_from_message(message: str, current_recursion_size: int = 0) 
                     is_nesting = False
 
                 # Discord doesn't support escaped characters in nested parentheses, ironically.
-                if not is_nesting and message[new_index] == "\\" and new_index + 1 < len(message) and not message[new_index + 1].isalnum():
+                if allow_escapes and not is_nesting and message[new_index] == "\\" and new_index + 1 < len(message) and not message[new_index + 1].isalnum():
                     url.write(message[new_index + 1])
                     new_index += 2
                     continue
@@ -149,7 +157,7 @@ def remove_markdown_from_message(message: str, current_recursion_size: int = 0) 
                 is_new_line = False
                 continue
 
-            output.write(remove_markdown_from_message(label.getvalue(), current_recursion_size + 1))
+            output.write(remove_markdown_from_message(label.getvalue(), current_recursion_size + 1, False))
             index = new_index + 1
             is_new_line = False
             continue
