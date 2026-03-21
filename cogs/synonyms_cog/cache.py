@@ -25,7 +25,7 @@ class SynonymCache:
             'evictions': 0
         }
 
-    def get(self, word: str) -> Dict | None:
+    def get(self, word: str) -> dict | None:
         """
         Get cached data for a word
 
@@ -56,7 +56,7 @@ class SynonymCache:
         logger.debug(f"Cache hit for '{word}' (age: {age:.0f}s)")
         return entry['data']
 
-    def set(self, word: str, data: Dict) -> None:
+    def set(self, word: str, data: dict) -> None:
         """
         Store data in cache
 
@@ -108,7 +108,7 @@ class SynonymCache:
 
         return len(expired_words)
 
-    def get_stats(self) -> Dict:
+    def get_stats(self) -> dict:
         """Get cache statistics"""
         total_requests = self._stats['hits'] + self._stats['misses']
         hit_rate = (self._stats['hits'] / total_requests * 100) if total_requests > 0 else 0

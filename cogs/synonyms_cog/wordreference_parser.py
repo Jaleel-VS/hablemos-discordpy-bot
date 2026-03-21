@@ -20,7 +20,7 @@ class WordReferenceParser:
         self.session = requests.Session()
         self.session.headers.update(self.HEADERS)
 
-    def fetch_word(self, word: str, timeout: int = 10) -> dict[str, any | None]:
+    def fetch_word(self, word: str, timeout: int = 10) -> dict[str, object]:
         """
         Fetch synonyms and antonyms for a given word
 
@@ -134,7 +134,7 @@ class WordReferenceParser:
             logger.error(f"Unexpected error parsing {word}: {e}", exc_info=True)
             return None
 
-    def get_synonym_count(self, data: Dict) -> int:
+    def get_synonym_count(self, data: dict) -> int:
         """Get total number of unique synonyms"""
         if not data or 'synonym_groups' not in data:
             return 0
@@ -143,7 +143,7 @@ class WordReferenceParser:
             all_synonyms.update(group)
         return len(all_synonyms)
 
-    def get_antonym_count(self, data: Dict) -> int:
+    def get_antonym_count(self, data: dict) -> int:
         """Get total number of unique antonyms"""
         if not data or 'antonym_groups' not in data:
             return 0

@@ -126,7 +126,7 @@ class SpanishVerbParser:
             
         logger.info(f"Loaded {len(self.verbs)} verbs")
     
-    def conjugate_verb(self, infinitive: str, template_name: str, tense: str = 'presente', mood: str = 'indicativo') -> Dict | None:
+    def conjugate_verb(self, infinitive: str, template_name: str, tense: str = 'presente', mood: str = 'indicativo') -> dict | None:
         """Conjugate a verb using its template"""
         if template_name not in self.conjugation_templates:
             return None
@@ -172,7 +172,7 @@ class SpanishVerbParser:
             
         return conjugated
     
-    def get_common_verbs(self, limit: int = 200, include_all_tenses: bool = True) -> list[Dict]:
+    def get_common_verbs(self, limit: int = 200, include_all_tenses: bool = True) -> list[dict]:
         """Get a list of common Spanish verbs with their conjugations"""
         # Load the 200 most common verbs from frequency data
         common_verbs = self._load_200_common_verbs()
@@ -208,7 +208,7 @@ class SpanishVerbParser:
                     
         return result
     
-    def _load_200_common_verbs(self) -> list[Dict]:
+    def _load_200_common_verbs(self) -> list[dict]:
         """Load the 200 most common Spanish verbs from JSON file"""
         import os
         json_path = os.path.join(os.path.dirname(__file__), 'data', '200_common_verbs.json')
@@ -246,7 +246,7 @@ class SpanishVerbParser:
     
 
     
-    def get_verb_info(self, infinitive: str) -> Dict | None:
+    def get_verb_info(self, infinitive: str) -> dict | None:
         """Get detailed information about a specific verb"""
         if infinitive not in self.verbs:
             return None

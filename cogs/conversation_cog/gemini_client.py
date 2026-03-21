@@ -41,7 +41,7 @@ class ConversationGeminiClient:
 
     async def generate_conversation(self, language: str, level: str,
                                    category: str, scenario: str,
-                                   max_retries: int = 3) -> Dict | None:
+                                   max_retries: int = 3) -> dict | None:
         """
         Generate a conversation with retry logic
 
@@ -53,7 +53,7 @@ class ConversationGeminiClient:
             max_retries: Maximum retry attempts
 
         Returns:
-            Dict with keys: scenario, speaker1, speaker2, conversation
+            dict with keys: scenario, speaker1, speaker2, conversation
             or None if generation fails
         """
         for attempt in range(max_retries):
@@ -186,7 +186,7 @@ Generate the conversation now:"""
 
         return prompt
 
-    def _parse_conversation_response(self, response_text: str) -> Dict | None:
+    def _parse_conversation_response(self, response_text: str) -> dict | None:
         """
         Parse the structured response from Gemini
 
@@ -199,7 +199,7 @@ Generate the conversation now:"""
         ...
 
         Returns:
-            Dict with scenario, speaker1, speaker2, conversation keys
+            dict with scenario, speaker1, speaker2, conversation keys
             or None if parsing fails
         """
         try:

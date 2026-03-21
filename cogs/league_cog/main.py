@@ -185,10 +185,10 @@ class LeagueCog(BaseCog):
         Used by both the automated check_round_end task and the manual $league endround command.
 
         Args:
-            current_round: Dict with round info from get_current_round()
+            current_round: dict with round info from get_current_round()
 
         Returns:
-            Dict with summary info for the caller (roles_added, roles_removed, next_end, etc.)
+            dict with summary info for the caller (roles_added, roles_removed, next_end, etc.)
         """
         round_id = current_round['round_id']
         round_number = current_round['round_number']

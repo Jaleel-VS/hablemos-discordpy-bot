@@ -33,7 +33,7 @@ class GeminiClient:
 
         logger.info("Gemini client initialized successfully")
 
-    def generate_summary(self, messages: list[Dict]) -> str:
+    def generate_summary(self, messages: list[dict]) -> str:
         """
         Generate conversation summary from messages
 
@@ -78,7 +78,7 @@ class GeminiClient:
             logger.error(f"Error generating summary with Gemini: {e}", exc_info=True)
             raise
 
-    def _format_messages_for_prompt(self, messages: list[Dict]) -> str:
+    def _format_messages_for_prompt(self, messages: list[dict]) -> str:
         """
         Format messages for inclusion in the prompt
 

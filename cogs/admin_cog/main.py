@@ -67,11 +67,11 @@ class AdminCog(BaseCog):
     @commands.is_owner()
     async def cog(self, ctx: commands.Context):
         """Manage bot cogs. Subcommands: list, enable, disable"""
-        await ctx.invoke(self.cog_list)
+        await ctx.invoke(self.list_cogs)
 
     @cog.command(name='list')
     @commands.is_owner()
-    async def cog_list(self, ctx: commands.Context):
+    async def list_cogs(self, ctx: commands.Context):
         """List all cogs and their status."""
         extensions = _discover_extensions()
         disabled = await self.bot.db.get_disabled_cogs()
@@ -99,7 +99,7 @@ class AdminCog(BaseCog):
 
     @cog.command(name='enable')
     @commands.is_owner()
-    async def cog_enable(self, ctx: commands.Context, name: str):
+    async def enable_cog(self, ctx: commands.Context, name: str):
         """Enable and load a cog. Usage: $cog enable league_cog"""
         ext = f'cogs.{name}.main' if not name.startswith('cogs.') else name
 
@@ -117,7 +117,7 @@ class AdminCog(BaseCog):
 
     @cog.command(name='disable')
     @commands.is_owner()
-    async def cog_disable(self, ctx: commands.Context, name: str):
+    async def disable_cog(self, ctx: commands.Context, name: str):
         """Disable and unload a cog. Usage: $cog disable league_cog"""
         ext = f'cogs.{name}.main' if not name.startswith('cogs.') else name
 
@@ -139,7 +139,7 @@ class AdminCog(BaseCog):
 
     @cog.command(name='reload')
     @commands.is_owner()
-    async def cog_reload(self, ctx: commands.Context, name: str):
+    async def reload_cog(self, ctx: commands.Context, name: str):
         """Reload a cog. Usage: $cog reload league_cog"""
         ext = f'cogs.{name}.main' if not name.startswith('cogs.') else name
 

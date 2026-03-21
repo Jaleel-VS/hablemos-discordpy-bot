@@ -168,7 +168,7 @@ def generate_leaderboard_image(
 
         board_type: 'spanish' | 'english' | 'combined'
 
-        round_info: Dict with keys:
+        round_info: dict with keys:
             - round_number (int)
             - end_date (datetime)
 
