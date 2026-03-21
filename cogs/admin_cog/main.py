@@ -39,7 +39,7 @@ class AdminCog(BaseCog):
         super().__init__(bot)
         self.daily_cleanup.start()
 
-    def cog_unload(self):
+    async def cog_unload(self):
         self.daily_cleanup.cancel()
 
     # ── Daily cleanup task ──

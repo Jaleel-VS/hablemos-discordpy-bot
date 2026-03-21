@@ -74,9 +74,9 @@ class Hablemos(Bot):
                                 continue
                             try:
                                 await self.load_extension(ext)
-                                logger.info(f'Loaded extension: {file[:-3]} from folder: {folder}')
+                                logger.info(f'Loaded extension: {ext}')
                             except Exception as e:
-                                logger.error(f'Failed to load extension {file[:-3]}.', exc_info=e)
+                                logger.error(f'Failed to load extension {ext}: {e}', exc_info=True)
 
     async def on_ready(self):
         guild_id = BOT_PLAYGROUND
