@@ -3,6 +3,9 @@ Admin cog — owner-only commands for cog management and bot metrics.
 """
 import logging
 import os
+import time
+from collections import Counter
+from datetime import datetime, timedelta, timezone
 
 import discord
 from discord.ext import commands, tasks
@@ -38,6 +41,9 @@ class AdminCog(BaseCog):
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
         self.daily_cleanup.start()
+        # Cache for interaction analysis: {channel_id: (timestamp, result_embed)}
+        self._interaction_cache: dict[int, tuple[float, list[Embed]]] = {}
+        self._interaction_cache_ttl = 3600  # 1 hour
 
     async def cog_unload(self):
         self.daily_cleanup.cancel()
@@ -290,6 +296,111 @@ class AdminCog(BaseCog):
                 f"League activity: {league_purged} purged."
             )
         )
+
+    # ── Interaction analysis ──
+
+    @commands.command(name='interactions')
+    @commands.is_owner()
+    async def interactions(self, ctx: commands.Context, channel: discord.TextChannel = None, days: int = 7):
+        """
+        Analyze reply and mention pairs in a channel.
+
+        Usage: $interactions [#channel] [days]
+        """
+        channel = channel or ctx.channel
+        days = max(1, min(days, 30))
+
+        # Check cache
+        cached = self._interaction_cache.get(channel.id)
+        if cached and time.time() - cached[0] < self._interaction_cache_ttl:
+            for embed in cached[1]:
+                await ctx.send(embed=embed)
+            return
+
+        after = datetime.now(timezone.utc) - timedelta(days=days)
+        processing = await ctx.send(f"Scanning #{channel.name} for the last {days} days...")
+
+        reply_pairs: Counter[tuple[int, int]] = Counter()
+        mention_pairs: Counter[tuple[int, int]] = Counter()
+        user_names: dict[int, str] = {}
+        msg_count = 0
+
+        try:
+            async for msg in channel.history(limit=None, after=after, oldest_first=False):
+                if msg.author.bot:
+                    continue
+
+                msg_count += 1
+                user_names[msg.author.id] = msg.author.display_name
+
+                # Count replies
+                if msg.reference and msg.reference.resolved and not isinstance(msg.reference.resolved, discord.DeletedReferencedMessage):
+                    target = msg.reference.resolved.author
+                    if not target.bot and target.id != msg.author.id:
+                        user_names[target.id] = target.display_name
+                        pair = tuple(sorted((msg.author.id, target.id)))
+                        reply_pairs[pair] += 1
+
+                # Count mentions
+                for mentioned in msg.mentions:
+                    if not mentioned.bot and mentioned.id != msg.author.id:
+                        user_names[mentioned.id] = mentioned.display_name
+                        pair = tuple(sorted((msg.author.id, mentioned.id)))
+                        mention_pairs[pair] += 1
+
+        except discord.Forbidden:
+            await processing.edit(content="I don't have permission to read that channel.")
+            return
+
+        if not reply_pairs and not mention_pairs:
+            await processing.edit(content=f"No interactions found in #{channel.name} over the last {days} days ({msg_count:,} messages scanned).")
+            return
+
+        # Combined score: replies weighted 2x
+        combined: Counter[tuple[int, int]] = Counter()
+        for pair, count in reply_pairs.items():
+            combined[pair] += count * 2
+        for pair, count in mention_pairs.items():
+            combined[pair] += count
+
+        # Build embed
+        embed = Embed(
+            title=f"Interactions in #{channel.name}",
+            description=f"Last {days} days — {msg_count:,} messages scanned",
+            color=Color.blurple(),
+        )
+
+        # Top pairs by combined score
+        top = combined.most_common(15)
+        lines = []
+        for i, (pair, score) in enumerate(top, 1):
+            a, b = pair
+            replies = reply_pairs.get(pair, 0)
+            mentions = mention_pairs.get(pair, 0)
+            parts = []
+            if replies:
+                parts.append(f"{replies} replies")
+            if mentions:
+                parts.append(f"{mentions} mentions")
+            lines.append(
+                f"`{i:>2}.` **{user_names.get(a, '?')}** & **{user_names.get(b, '?')}** — {', '.join(parts)}"
+            )
+
+        embed.add_field(name="Top Pairs", value='\n'.join(lines), inline=False)
+
+        # Quick stats
+        unique_pairs = len(combined)
+        total_replies = sum(reply_pairs.values())
+        total_mentions = sum(mention_pairs.values())
+        embed.add_field(
+            name="Stats",
+            value=f"**{unique_pairs}** unique pairs — **{total_replies}** replies, **{total_mentions}** mentions",
+            inline=False,
+        )
+
+        embeds = [embed]
+        self._interaction_cache[channel.id] = (time.time(), embeds)
+        await processing.edit(content=None, embed=embed)
 
 
 async def setup(bot: commands.Bot):
