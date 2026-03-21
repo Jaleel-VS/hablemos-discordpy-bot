@@ -1,7 +1,7 @@
 from io import StringIO
 from urllib.parse import urlparse
 
-def remove_markdown_from_message(message: str) -> str:
+def remove_markdown_from_message(message: str, current_recursion_size: int = 0) -> str:
     """
     Parses text and removes all markdown from it.
     Covers only Discord's subset of markdown.
@@ -13,6 +13,12 @@ def remove_markdown_from_message(message: str) -> str:
     # We need to handle spoilers (||hello||)
     # We need to handle quotes (> hello)
     # We need to handle escaped characters
+
+    # If we've recursed 100 calls deep, it's probably a malicious message.
+    # We'll just return the message as-is, which will likely cause the
+    # "I'm limited to 250 characters" message, preventing the quote.
+    if current_recursion_size > 100:
+        return message
 
     templates = ("||", "**", "*", "__", "_", "~~", "```", "`")
     supported_protocols = ("http", "https")
@@ -96,7 +102,7 @@ def remove_markdown_from_message(message: str) -> str:
 
             bounds_check = new_index >= len(message)
             if bounds_check or new_index + 1 >= len(message) or message[new_index + 1] != "(":
-                output.write("[" + remove_markdown_from_message(label.getvalue()))
+                output.write("[" + remove_markdown_from_message(label.getvalue(), current_recursion_size + 1))
 
                 if not bounds_check:
                     output.write("]")
@@ -109,15 +115,26 @@ def remove_markdown_from_message(message: str) -> str:
             # that `message[new_index + 1]` is `(`, so we can skip 2 chars
             new_index += 2
             url = StringIO()
+            is_nesting = False
 
-            while new_index < len(message) and message[new_index] != ")":
+            while new_index < len(message) and (message[new_index] != ")" or is_nesting):
+                # Technically, Discord's hyperlink parsing is actually not spec-compliant.
+                # It can match parentheses in URLs, but it does not allow any nesting.
+                # This implementation matches that behavior for accuracy with Discord.
+                if message[new_index] == "(":
+                    is_nesting = True
+                elif message[new_index] == ")":
+                    is_nesting = False
+
                 url.write(message[new_index])
                 new_index += 1
 
             bounds_check = new_index >= len(message)
             full_url = url.getvalue()
             if bounds_check or urlparse(full_url).scheme not in supported_protocols:
-                output.write("[" + remove_markdown_from_message(label.getvalue()) + "](" + remove_markdown_from_message(full_url))
+                escaped_label = remove_markdown_from_message(label.getvalue(), current_recursion_size + 1)
+                escaped_url = remove_markdown_from_message(full_url, current_recursion_size + 1)
+                output.write("[" + escaped_label + "](" + escaped_url)
 
                 if not bounds_check:
                     output.write(")")
@@ -126,7 +143,7 @@ def remove_markdown_from_message(message: str) -> str:
                 is_new_line = False
                 continue
 
-            output.write(remove_markdown_from_message(label.getvalue()))
+            output.write(remove_markdown_from_message(label.getvalue(), current_recursion_size + 1))
             index = new_index + 1
             is_new_line = False
             continue
