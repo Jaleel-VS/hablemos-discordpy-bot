@@ -1,6 +1,7 @@
 """
 Ask cog — owner-only Gemini Q&A with paginated responses.
 """
+import asyncio
 import logging
 import os
 
@@ -14,6 +15,7 @@ from base_cog import BaseCog
 logger = logging.getLogger(__name__)
 
 PAGE_CONTENT_LIMIT = 3900
+GEMINI_TIMEOUT = 30
 
 
 def split_response(text: str) -> list[str]:
@@ -94,6 +96,15 @@ class VisibilityView(discord.ui.View):
     async def discard(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.message.delete()
 
+    async def on_timeout(self):
+        """Edit message when buttons expire."""
+        try:
+            # self.message is set after we send/edit with this view
+            if self.message:
+                await self.message.edit(content="Response expired (no choice made).", view=None)
+        except discord.NotFound:
+            pass
+
 
 class PageView(discord.ui.View):
     """Pagination buttons for multi-page responses."""
@@ -139,6 +150,17 @@ class AskCog(BaseCog):
         self.client = genai.Client(api_key=api_key)
         self.model_name = 'gemini-2.0-flash-lite'
 
+    def _call_gemini(self, question: str):
+        """Sync Gemini call — run in executor for timeout support."""
+        return self.client.models.generate_content(
+            model=self.model_name,
+            contents=question,
+            config=types.GenerateContentConfig(
+                temperature=0.7,
+                max_output_tokens=4096,
+            ),
+        )
+
     @commands.command(name='ask')
     @commands.is_owner()
     async def ask(self, ctx: commands.Context, *, question: str):
@@ -150,14 +172,16 @@ class AskCog(BaseCog):
         processing = await ctx.send("Thinking...")
 
         try:
-            response = self.client.models.generate_content(
-                model=self.model_name,
-                contents=question,
-                config=types.GenerateContentConfig(
-                    temperature=0.7,
-                    max_output_tokens=4096,
-                ),
-            )
+            # Wrap sync Gemini call in executor with timeout
+            loop = asyncio.get_event_loop()
+            try:
+                response = await asyncio.wait_for(
+                    loop.run_in_executor(None, self._call_gemini, question),
+                    timeout=GEMINI_TIMEOUT,
+                )
+            except asyncio.TimeoutError:
+                await processing.edit(content=f"Gemini didn't respond within {GEMINI_TIMEOUT}s. Try again.")
+                return
 
             text = response.text
             if not text:
@@ -166,7 +190,8 @@ class AskCog(BaseCog):
 
             pages = split_response(text)
             view = VisibilityView(pages, question, ctx.author.id)
-            await processing.edit(content="Ready. How do you want to send it?", view=view)
+            msg = await processing.edit(content="Ready. How do you want to send it?", view=view)
+            view.message = msg or processing  # edit returns None in some versions
 
         except Exception as e:
             logger.error(f"Ask command error: {e}", exc_info=True)
