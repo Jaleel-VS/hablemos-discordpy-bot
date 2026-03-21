@@ -32,7 +32,7 @@ def remove_markdown_from_message(message: str) -> str:
         is_in_code_block = expecting_closing["`"] or expecting_closing["```"]
 
         # Handle escaped characters first
-        if character == "\\" and not message[index + 1].isalnum() and not is_in_code_block:
+        if character == "\\" and index + 1 < len(message) and not message[index + 1].isalnum() and not is_in_code_block:
             output.write(message[index + 1])
             index += 2
             is_new_line = False
@@ -69,7 +69,7 @@ def remove_markdown_from_message(message: str) -> str:
                 index += length
 
                 if template == "```" and not want_to_close:
-                    end = message.index(template, index + length)
+                    end = message.index(template, index)
                     
                     if "\n" in message[index + length:end]:
                         while message[index].isalnum():
@@ -93,13 +93,13 @@ def remove_markdown_from_message(message: str) -> str:
                 new_index += 1
 
             bounds_check = new_index >= len(message)
-            if bounds_check or message[new_index + 1] != "(":
+            if bounds_check or new_index + 1 >= len(message) or message[new_index + 1] != "(":
                 output.write("[" + remove_markdown_from_message(label.getvalue()))
 
                 if not bounds_check:
                     output.write("]")
 
-                index = new_index + 2
+                index = new_index + 1
                 is_new_line = False
                 continue
 
