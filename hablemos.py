@@ -3,7 +3,7 @@ import logging
 
 import discord
 from discord import Game
-from discord.ext.commands import Bot, CommandNotFound, CommandOnCooldown
+from discord.ext.commands import Bot, CommandNotFound, CommandOnCooldown, MissingPermissions, NotOwner
 
 from logger import setup_logging
 from db import Database
@@ -140,6 +140,9 @@ class Hablemos(Bot):
                 if isinstance(ctx.channel, discord.TextChannel):
                     await ctx.send(f"This command is on cooldown. Try again in {round(error.retry_after)} seconds.")
                 logger.info(f"Command on cooldown: {ctx.message.content}")
+
+            elif isinstance(error, (MissingPermissions, NotOwner)):
+                await ctx.send("You don't have permission to use that command.")
 
             else:
                 logger.error(f'Unhandled error: {error} in command {ctx.command}')
