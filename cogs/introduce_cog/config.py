@@ -3,12 +3,10 @@ from typing import Final
 
 import discord
 
-
 @dataclass(frozen=True)
 class ChannelIDs:
     COMMAND_CHANNEL: int = 1437832952028467251
     INTRODUCTIONS_CHANNEL: int = 1464254572204916969
-
 
 CHANNELS = ChannelIDs()
 

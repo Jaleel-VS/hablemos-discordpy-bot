@@ -4,13 +4,15 @@ Pure Python implementation - no external dependencies like wkhtmltopdf
 """
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from io import BytesIO
+import logging
 import requests
 from pathlib import Path
 from datetime import datetime
 
+logger = logging.getLogger(__name__)
+
 # Get directory for font files
 FONT_DIR = Path(__file__).parent / "fonts"
-
 
 def download_avatar(url: str, size: int = 64) -> Image.Image:
     """Download and process user avatar"""
@@ -36,7 +38,6 @@ def download_avatar(url: str, size: int = 64) -> Image.Image:
     except Exception:
         # Return default avatar on error
         return create_default_avatar(size)
-
 
 def create_default_avatar(size: int = 64) -> Image.Image:
     """Create a default avatar (simple circle)"""
@@ -68,7 +69,6 @@ def create_default_avatar(size: int = 64) -> Image.Image:
 
     return avatar
 
-
 def get_font(size: int, bold: bool = False):
     """Load font with fallback to default"""
     try:
@@ -87,7 +87,6 @@ def get_font(size: int, bold: bool = False):
     # Fallback to default font
     return ImageFont.load_default()
 
-
 def draw_gradient_rect(draw, bbox, color1, color2):
     """Draw a vertical gradient rectangle"""
     x0, y0, x1, y1 = bbox
@@ -103,7 +102,6 @@ def draw_gradient_rect(draw, bbox, color1, color2):
             [(x0, y0 + i), (x1, y0 + i + 1)],
             fill=(r, g, b)
         )
-
 
 def get_rank_colors(rank: int) -> tuple:
     """Get background gradient colors for rank"""
@@ -123,7 +121,6 @@ def get_rank_colors(rank: int) -> tuple:
         # Dark blue gradient (darkened for WCAG AA compliance)
         return ((45, 105, 196), (37, 99, 235))
 
-
 def get_text_color(rank: int) -> tuple:
     """Get text color based on rank"""
     if rank <= 3:
@@ -131,11 +128,9 @@ def get_text_color(rank: int) -> tuple:
     else:
         return (255, 255, 255)  # White for others
 
-
 def get_rank_emoji(rank: int) -> str:
     """Get rank number"""
     return f"#{rank}"
-
 
 def draw_star(draw: ImageDraw.ImageDraw, center: tuple[int, int], size: int, color: tuple, outline_color: tuple = None):
     """Draw a 5-pointed star at the given center position"""
@@ -152,7 +147,6 @@ def draw_star(draw: ImageDraw.ImageDraw, center: tuple[int, int], size: int, col
         points.append((x, y))
 
     draw.polygon(points, fill=color, outline=outline_color)
-
 
 def generate_leaderboard_image(
     leaderboard_data: list[dict],
@@ -301,7 +295,6 @@ def generate_leaderboard_image(
 
     return str(output_path)
 
-
 if __name__ == "__main__":
     # Test with sample data
     sample_data = [
@@ -340,4 +333,4 @@ if __name__ == "__main__":
     }
 
     img_path = generate_leaderboard_image(sample_data, 'combined', round_info)
-    print(f"Generated image: {img_path}")
+    logger.info(f"Generated image: {img_path}")

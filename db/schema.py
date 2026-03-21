@@ -2,7 +2,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 async def initialize_schema(pool):
     """Initialize database tables if they don't exist"""
     async with pool.acquire() as conn:

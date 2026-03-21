@@ -4,43 +4,14 @@ Gemini API client for generating practice sentences.
 import os
 import re
 import logging
-import time
-import asyncio
 import random
-from typing import Optional, Tuple
+import asyncio
 
 from google import genai
 from google.genai import types
+from cogs.utils.rate_limiter import RateLimiter
 
 logger = logging.getLogger(__name__)
-
-
-class RateLimiter:
-    """Rate limiter for Gemini API calls"""
-
-    def __init__(self, requests_per_minute: int = 15):
-        self.rpm = requests_per_minute
-        self.requests = []
-
-    async def wait_if_needed(self):
-        """Wait if we're at rate limit"""
-        now = time.time()
-
-        # Remove requests older than 1 minute
-        self.requests = [r for r in self.requests if now - r < 60]
-
-        if len(self.requests) >= self.rpm:
-            # Calculate wait time
-            oldest = self.requests[0]
-            wait_time = 60 - (now - oldest) + 0.5  # +0.5 for safety
-
-            if wait_time > 0:
-                logger.info(f"Rate limit reached, waiting {wait_time:.1f}s")
-                await asyncio.sleep(wait_time)
-
-        # Record this request
-        self.requests.append(time.time())
-
 
 class PracticeGeminiClient:
     """Wrapper for Google Gemini API for sentence generation"""
@@ -72,7 +43,7 @@ Mi hermana puede hablar tres idiomas diferentes."""
         logger.info("Practice Gemini client initialized successfully")
 
     async def generate_sentence(self, word: str, translation: str,
-                                language: str, max_retries: int = 3) -> Optional[Tuple[str, str]]:
+                                language: str, max_retries: int = 3) -> tuple[str, str | None]:
         """
         Generate a sentence containing the target word.
 
@@ -139,7 +110,7 @@ Mi hermana puede hablar tres idiomas diferentes."""
         pattern = r'\b' + re.escape(word) + r'\b'
         return bool(re.search(pattern, sentence, re.IGNORECASE))
 
-    def _create_blank(self, sentence: str, word: str) -> Optional[str]:
+    def _create_blank(self, sentence: str, word: str) -> str | None:
         """Replace the word with ___ in the sentence"""
         # Use regex to replace word with blank (case-insensitive, preserve case)
         pattern = r'\b' + re.escape(word) + r'\b'

@@ -27,7 +27,6 @@ ORDER BY RANDOM()
 LIMIT 1;
 """
 
-
 def random_question(table):
     if table in tables_values:
         with connection:

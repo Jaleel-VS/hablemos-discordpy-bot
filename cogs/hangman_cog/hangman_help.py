@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Tuple
+
 from base_cog import COLORS as colors
 
 from os import path, walk
@@ -23,7 +23,6 @@ ACENTOS = {
     'ü': 'u',
 }
 
-
 @dataclass
 class GameResult:
     """Represents the result of a hangman game."""
@@ -40,18 +39,15 @@ class GameResult:
             return self.word
         return self.definition.replace(' ', '')
 
-
 def get_unaccented_word(word: str) -> str:
     no_accent = [ACENTOS[letter] if letter in ACENTOS else letter for letter in word]
 
     return ''.join(no_accent)
 
-
 def get_unaccented_letter(letter: str) -> str:
     if letter in ACENTOS:
         return ACENTOS[letter]
     return letter
-
 
 def get_word(category):
     with open(f"{dir_path}/hangman_cog/data/{category}.csv", "r", encoding='utf 8') as animals_csv:
@@ -59,8 +55,7 @@ def get_word(category):
         words = (choice(list(result)))
     return words[0], words[1]
 
-
-def get_image(img: str, category: str) -> Optional[Tuple[str, str]]:
+def get_image(img: str, category: str) -> tuple[str, str | None]:
     """
     Get a random image file for the given word and category.
     
@@ -86,8 +81,7 @@ def get_image(img: str, category: str) -> Optional[Tuple[str, str]]:
     
     return None
 
-
-def _create_embed_content(result: GameResult) -> Tuple[str, str]:
+def _create_embed_content(result: GameResult) -> tuple[str, str]:
     """Create the title and description for the final embed."""
     title = ENDED.format(result.category)
     
@@ -98,7 +92,6 @@ def _create_embed_content(result: GameResult) -> Tuple[str, str]:
     
     return title, description
 
-
 def _get_fallback_embed(result: GameResult) -> Embed:
     """Create a fallback embed when no image is available."""
     embed = Embed(color=choice(colors))
@@ -107,8 +100,7 @@ def _get_fallback_embed(result: GameResult) -> Embed:
     embed.description = description
     return embed
 
-
-def create_final_embed(player_name: str, words: list[str], category: str, won: bool) -> Tuple[Optional[File], Embed]:
+def create_final_embed(player_name: str, words: list[str], category: str, won: bool) -> tuple[File | None, Embed]:
     """
     Create the final embed for a completed hangman game.
     
@@ -153,11 +145,9 @@ def create_final_embed(player_name: str, words: list[str], category: str, won: b
     
     return file, embed
 
-
 # returns hidden string with space(s)
 def get_hidden_word(word):
     return [' ' if s == ' ' else '◯' for s in word]  # faster than regex sub('[^\s]', '◯', string)
-
 
 # new hangman
 def start_game(word):
@@ -171,7 +161,6 @@ def start_game(word):
     .┃ 
     /-\\
     """
-
 
 def get_hangman_string(errors, message="", correctly_guest="", wrongly_guessed=""):
     back_slash = "\\"  # can't use back_slash in f-string
@@ -187,7 +176,6 @@ def get_hangman_string(errors, message="", correctly_guest="", wrongly_guessed="
     /-\\    
     {' '.join(wrongly_guessed)}
     """
-
 
 def embed_quote(header, state):
     embed = Embed(color=choice(colors))

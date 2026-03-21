@@ -31,7 +31,6 @@ VOWELS = {'a': ['a', 'á'],
           'u': ['u', 'ú', 'ü'], }
 MAX_ERRORS = 8
 
-
 class Hangman(Cog):
     def __init__(self, bot, words, category):
         self.bot = bot

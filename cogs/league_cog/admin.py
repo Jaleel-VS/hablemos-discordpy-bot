@@ -24,7 +24,6 @@ from cogs.league_cog.utils import (
 
 logger = logging.getLogger(__name__)
 
-
 class LeagueAdminCog(BaseCog):
     """Admin-only commands for Language League management"""
 
@@ -585,7 +584,6 @@ class LeagueAdminCog(BaseCog):
             await ctx.send(f"❌ Error: {str(e)}")
             logger.error(f"Error in preview command: {e}", exc_info=True)
 
-
     @commands.command(name="langa", aliases=["lng"])
     @commands.is_owner()
     async def langa(self, ctx, *, message_or_id: str = None):
@@ -670,7 +668,6 @@ class LeagueAdminCog(BaseCog):
 
         await ctx.send(embed=embed)
         logger.info(f"Admin {ctx.author} ran langa on {len(content)}-char message → {detected}")
-
 
 async def setup(bot):
     """Setup function to add the cog to the bot"""

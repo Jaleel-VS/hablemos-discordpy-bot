@@ -5,7 +5,7 @@ import discord
 from discord import Interaction, Embed, ButtonStyle
 from discord.ui import View, Button, Select, button, select
 import logging
-from typing import Optional, Callable, Awaitable
+from typing import Callable, Awaitable
 
 from .modals import AddPodcastModalFull, EditPodcastModal
 
@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 # Constants
 ITEMS_PER_PAGE = 5
-
 
 class MainManageView(View):
     """Main management menu with resource type buttons"""
@@ -52,7 +51,6 @@ class MainManageView(View):
             view=None
         )
         self.stop()
-
 
 class PodcastMenuView(View):
     """Podcast management menu"""
@@ -146,7 +144,6 @@ class PodcastMenuView(View):
             color=discord.Color.blue()
         )
         await interaction.response.edit_message(embed=embed, view=view)
-
 
 class PodcastListView(View):
     """Paginated list of podcasts with actions"""
@@ -275,7 +272,6 @@ class PodcastListView(View):
         )
         await interaction.response.edit_message(embed=embed, view=view)
 
-
 class PodcastActionsView(View):
     """Actions for a single podcast"""
 
@@ -342,7 +338,6 @@ class PodcastActionsView(View):
             logger.error(f"Error returning to list: {e}", exc_info=True)
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
 
-
 class ConfirmDeleteView(View):
     """Confirmation dialog for deleting a podcast"""
 
@@ -400,7 +395,6 @@ class ConfirmDeleteView(View):
             embed.set_thumbnail(url=self.podcast.image_url)
 
         await interaction.response.edit_message(embed=embed, view=view)
-
 
 class ReportActionsView(View):
     """Actions for managing reported podcasts"""
@@ -476,7 +470,6 @@ class ReportActionsView(View):
             color=discord.Color.orange()
         )
         await interaction.response.edit_message(embed=embed, view=view)
-
 
 class ReportedPodcastActionsView(View):
     """Actions for a reported podcast"""

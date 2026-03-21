@@ -6,7 +6,6 @@ Converts the XML data into Python dictionaries for use in the Discord bot
 import xml.etree.ElementTree as ET
 import json
 import logging
-from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -127,7 +126,7 @@ class SpanishVerbParser:
             
         logger.info(f"Loaded {len(self.verbs)} verbs")
     
-    def conjugate_verb(self, infinitive: str, template_name: str, tense: str = 'presente', mood: str = 'indicativo') -> Optional[Dict]:
+    def conjugate_verb(self, infinitive: str, template_name: str, tense: str = 'presente', mood: str = 'indicativo') -> Dict | None:
         """Conjugate a verb using its template"""
         if template_name not in self.conjugation_templates:
             return None
@@ -173,7 +172,7 @@ class SpanishVerbParser:
             
         return conjugated
     
-    def get_common_verbs(self, limit: int = 200, include_all_tenses: bool = True) -> List[Dict]:
+    def get_common_verbs(self, limit: int = 200, include_all_tenses: bool = True) -> list[Dict]:
         """Get a list of common Spanish verbs with their conjugations"""
         # Load the 200 most common verbs from frequency data
         common_verbs = self._load_200_common_verbs()
@@ -209,7 +208,7 @@ class SpanishVerbParser:
                     
         return result
     
-    def _load_200_common_verbs(self) -> List[Dict]:
+    def _load_200_common_verbs(self) -> list[Dict]:
         """Load the 200 most common Spanish verbs from JSON file"""
         import os
         json_path = os.path.join(os.path.dirname(__file__), 'data', '200_common_verbs.json')
@@ -247,7 +246,7 @@ class SpanishVerbParser:
     
 
     
-    def get_verb_info(self, infinitive: str) -> Optional[Dict]:
+    def get_verb_info(self, infinitive: str) -> Dict | None:
         """Get detailed information about a specific verb"""
         if infinitive not in self.verbs:
             return None

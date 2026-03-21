@@ -12,7 +12,6 @@ import random
 
 logger = logging.getLogger(__name__)
 
-
 class SummaryCog(BaseCog):
     """Cog for AI-powered conversation summaries using Gemini"""
 
@@ -241,7 +240,6 @@ class SummaryCog(BaseCog):
         else:
             # Let the base class handle other errors
             await super().cog_command_error(ctx, error)
-
 
 async def setup(bot):
     """Required setup function for loading the cog"""

@@ -1,9 +1,8 @@
-from typing import Optional
+
 from db import DatabaseMixin
 
-
 class SettingsMixin(DatabaseMixin):
-    async def get_bot_setting(self, setting_key: str) -> Optional[int]:
+    async def get_bot_setting(self, setting_key: str) -> int | None:
         """Get a bot setting value by key"""
         row = await self._fetchrow(
             'SELECT setting_value FROM bot_settings WHERE setting_key = $1', setting_key,

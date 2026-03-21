@@ -1,14 +1,12 @@
 import asyncpg
 import os
 import logging
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-
 class DatabaseMixin:
     """Base mixin providing pool access helpers."""
-    pool: Optional[asyncpg.Pool]
+    pool: asyncpg.Pool | None
 
     def _check_pool(self):
         if self.pool is None:
@@ -34,7 +32,6 @@ class DatabaseMixin:
         async with self.pool.acquire() as conn:
             return await conn.execute(query, *args)
 
-
 from db.notes import NotesMixin
 from db.introductions import IntroductionsMixin
 from db.settings import SettingsMixin
@@ -44,7 +41,6 @@ from db.leaderboard import LeaderboardMixin
 from db.quotes import QuotesMixin
 from db.practice import PracticeMixin
 from db.schema import initialize_schema
-
 
 class Database(
     NotesMixin,
@@ -57,7 +53,7 @@ class Database(
     PracticeMixin,
 ):
     def __init__(self):
-        self.pool: Optional[asyncpg.Pool] = None
+        self.pool: asyncpg.Pool | None = None
         self.database_url = os.getenv('DATABASE_URL')
         if not self.database_url:
             raise ValueError("DATABASE_URL not found in environment variables")

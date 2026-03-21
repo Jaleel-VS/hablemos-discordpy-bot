@@ -1,19 +1,10 @@
 from discord.ext.commands import command, Bot, is_owner
 from base_cog import BaseCog
+from cogs.utils.embeds import green_embed, red_embed, blue_embed
 from discord import Embed, Color
 import logging
 
-
-def green_embed(text):
-    return Embed(description=text, color=Color(int('00ff00', 16)))
-
-
-def blue_embed(text):
-    return Embed(description=text, color=Color(int('3498db', 16)))
-
-
-def red_embed(text):
-    return Embed(description=text, color=Color(int('e74c3c', 16)))
+logger = logging.getLogger(__name__)
 
 
 class DatabaseCommands(BaseCog):
@@ -39,10 +30,10 @@ class DatabaseCommands(BaseCog):
                 f"**Content:** {content}"
             )
             await ctx.send(embed=embed)
-            logging.info(f"Note {note_id} created by {username} ({user_id})")
+            logger.info(f"Note {note_id} created by {username} ({user_id})")
 
         except Exception as e:
-            logging.error(f"Error adding note: {e}")
+            logger.error(f"Error adding note: {e}")
             await ctx.send(embed=red_embed(f"Failed to save note: {str(e)}"))
 
     @command(aliases=['getnote', 'readnote'])
@@ -69,7 +60,7 @@ class DatabaseCommands(BaseCog):
             await ctx.send(embed=embed)
 
         except Exception as e:
-            logging.error(f"Error retrieving note: {e}")
+            logger.error(f"Error retrieving note: {e}")
             await ctx.send(embed=red_embed(f"Failed to retrieve note: {str(e)}"))
 
     @command(aliases=['mynotes', 'listnotes'])
@@ -105,7 +96,7 @@ class DatabaseCommands(BaseCog):
             await ctx.send(embed=embed)
 
         except Exception as e:
-            logging.error(f"Error listing notes: {e}")
+            logger.error(f"Error listing notes: {e}")
             await ctx.send(embed=red_embed(f"Failed to list notes: {str(e)}"))
 
     @command(aliases=['delnote', 'removenote'])
@@ -122,14 +113,13 @@ class DatabaseCommands(BaseCog):
 
             if deleted:
                 await ctx.send(embed=green_embed(f"Note {note_id} deleted successfully!"))
-                logging.info(f"Note {note_id} deleted by user {user_id}")
+                logger.info(f"Note {note_id} deleted by user {user_id}")
             else:
                 await ctx.send(embed=red_embed(f"Could not delete note {note_id}. Either it doesn't exist or you don't own it."))
 
         except Exception as e:
-            logging.error(f"Error deleting note: {e}")
+            logger.error(f"Error deleting note: {e}")
             await ctx.send(embed=red_embed(f"Failed to delete note: {str(e)}"))
-
 
 async def setup(bot):
     await bot.add_cog(DatabaseCommands(bot))

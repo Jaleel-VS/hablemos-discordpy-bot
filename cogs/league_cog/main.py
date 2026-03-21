@@ -9,7 +9,7 @@ from base_cog import BaseCog
 import logging
 import time
 import functools
-from typing import Optional, Callable, TypeVar, ParamSpec
+from typing import Callable, TypeVar, ParamSpec
 from pathlib import Path
 from langdetect import DetectorFactory
 from datetime import datetime, timedelta, timezone
@@ -36,7 +36,6 @@ logger = logging.getLogger(__name__)
 P = ParamSpec('P')
 T = TypeVar('T')
 
-
 def handle_interaction_errors(func: Callable[P, T]) -> Callable[P, T]:
     """
     Decorator for consistent error handling in slash commands.
@@ -59,7 +58,6 @@ def handle_interaction_errors(func: Callable[P, T]) -> Callable[P, T]:
             else:
                 await interaction.response.send_message(embed=error_embed, ephemeral=True)
     return wrapper
-
 
 class LeagueCog(BaseCog):
     """Cog for managing the opt-in Language League"""
@@ -788,7 +786,7 @@ class LeagueCog(BaseCog):
     async def league_stats(
         self,
         interaction: Interaction,
-        user: Optional[Member] = None
+        user: Member | None = None
     ):
         """View personal or another user's stats"""
         try:
@@ -992,7 +990,6 @@ class LeagueCog(BaseCog):
             # Remove user entry if no channels remain
             if not self.message_cooldowns[user_id]:
                 del self.message_cooldowns[user_id]
-
 
 async def setup(bot):
     """Setup function to add the cog to the bot"""

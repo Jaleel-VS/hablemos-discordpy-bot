@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 
 BOT_OWNER_ID = int(os.getenv('BOT_OWNER_ID', '216848576549093376'))
 
-
 def has_management_permission():
     """Check if user has permission to manage website resources"""
     async def predicate(interaction: Interaction) -> bool:
@@ -33,7 +32,6 @@ def has_management_permission():
         return False
 
     return app_commands.check(predicate)
-
 
 class WebsiteManagerCog(BaseCog):
     """Cog for managing website resources"""

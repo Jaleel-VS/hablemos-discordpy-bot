@@ -3,17 +3,12 @@ from cogs.convo_starter_cog.convo_starter_help import categories, get_random_que
 from discord.ext import commands
 from base_cog import BaseCog, COLORS as colors
 from discord import Embed
+from .config import SPA_CHANNELS
 
 # Embed Message
 ERROR_MESSAGE = "The proper format is `$topic <topic>` eg. `$topic 2`. Please see " \
                 "`$help topic` for more info"
 NOT_FOUND = "Topic not found! Please type ``$lst`` to see a list of topics"
-
-# Spa and Eng Channel IDs
-spa_channels = [809349064029241344, 243858509123289089, 388539967053496322, 477630693292113932]
-#  personal server, spa-eng, spa-eng, esp-ing
-# eng_channels = []
-
 
 def embed_question(question_1a, question_1b):
     embed = Embed(color=choice(colors))
@@ -21,7 +16,6 @@ def embed_question(question_1a, question_1b):
     embed.title = question_1a
     embed.description = f"**{question_1b}**"
     return embed
-
 
 class ConvoStarter(BaseCog):
 
@@ -51,12 +45,11 @@ class ConvoStarter(BaseCog):
 
         question_spa_eng = get_random_question(table)
 
-        if ctx.channel.id in spa_channels:
+        if ctx.channel.id in SPA_CHANNELS:
             emb = embed_question(question_spa_eng[0], question_spa_eng[1])
         else:
             emb = embed_question(question_spa_eng[1], question_spa_eng[0])
         await ctx.send(embed=emb)
-
 
 async def setup(bot):
     await bot.add_cog(ConvoStarter(bot))

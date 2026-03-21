@@ -1,46 +1,16 @@
 from discord.ext.commands import command, Bot, is_owner, has_permissions, Cog
 from base_cog import BaseCog
+from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 from discord import Embed, Color, Message, TextChannel
+from .config import (
+    INTRO_CHANNEL_ID, GENERAL_CHANNEL_ID,
+    DEFAULT_WARN_CHANNEL_ID, DEFAULT_ALERT_CHANNEL_ID,
+    SETTING_WARN_CHANNEL, SETTING_ALERT_CHANNEL,
+    EXEMPT_ROLE_IDS, EXEMPT_USER_IDS,
+)
 import logging
 
-# Channel IDs
-INTRO_CHANNEL_ID = 399713966781235200  # Channel to watch for introductions
-GENERAL_CHANNEL_ID = 296491080881537024  # General chat channel to redirect users to
-
-# Default configurable channel IDs (used if not set in DB)
-DEFAULT_WARN_CHANNEL_ID = 247135634265735168  # Channel to notify users about violations
-DEFAULT_ALERT_CHANNEL_ID = 297877202538594304  # Staff alert channel for duplicate attempts
-
-# DB setting keys
-SETTING_WARN_CHANNEL = 'intro_warn_channel'
-SETTING_ALERT_CHANNEL = 'intro_alert_channel'
-
-# Exemptions - Users and roles that can post multiple times
-EXEMPT_ROLE_IDS = (
-    643097537850376199, #Rai
-    243854949522472971, #Admin
-    1014256322436415580, # Retired Mod
-    258819531193974784, # Server Staff
-    591745589054668817, # Trail Staff Helper
-    1082402633979011082 # Retired Staff
-)
-
-EXEMPT_USER_IDS = (
-    202995638860906496, # Ryan
-)
-
-
-def green_embed(text):
-    return Embed(description=text, color=Color(int('00ff00', 16)))
-
-
-def red_embed(text):
-    return Embed(description=text, color=Color(int('e74c3c', 16)))
-
-
-def yellow_embed(text):
-    return Embed(description=text, color=Color(int('f1c40f', 16)))
-
+logger = logging.getLogger(__name__)
 
 def ordinal(n: int) -> str:
     """Return ordinal string for a number (1st, 2nd, 3rd, etc.)"""
@@ -49,7 +19,6 @@ def ordinal(n: int) -> str:
     else:
         suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')
     return f"{n}{suffix}"
-
 
 class IntroductionTracker(BaseCog):
     def __init__(self, bot: Bot):
@@ -81,14 +50,14 @@ class IntroductionTracker(BaseCog):
 
             # Check if user is exempt
             if user_id in EXEMPT_USER_IDS:
-                logging.info(f"User {message.author} ({user_id}) is exempt from intro tracking")
+                logger.info(f"User {message.author} ({user_id}) is exempt from intro tracking")
                 return
 
             # Check if user has any exempt roles
             if hasattr(message.author, 'roles'):
                 user_role_ids = [role.id for role in message.author.roles]
                 if any(role_id in EXEMPT_ROLE_IDS for role_id in user_role_ids):
-                    logging.info(f"User {message.author} ({user_id}) has exempt role, skipping intro tracking")
+                    logger.info(f"User {message.author} ({user_id}) has exempt role, skipping intro tracking")
                     return
 
             # Check if user has already posted an introduction in the last 90 days
@@ -105,9 +74,9 @@ class IntroductionTracker(BaseCog):
                 # Delete the duplicate message
                 try:
                     await message.delete()
-                    logging.info(f"Deleted duplicate introduction from {message.author} ({user_id})")
+                    logger.info(f"Deleted duplicate introduction from {message.author} ({user_id})")
                 except Exception as e:
-                    logging.error(f"Failed to delete message: {e}")
+                    logger.error(f"Failed to delete message: {e}")
                     return
 
                 # Notify the user in the warn channel
@@ -124,7 +93,7 @@ class IntroductionTracker(BaseCog):
                         content=f"Hey {message.author.mention}! 👋",
                         embed=yellow_embed(notification_text)
                     )
-                    logging.info(f"Notified {message.author} about duplicate introduction")
+                    logger.info(f"Notified {message.author} about duplicate introduction")
 
                 # Send staff alert with the message content and attempt count
                 alert_channel_id = await self._get_channel_id(SETTING_ALERT_CHANNEL, DEFAULT_ALERT_CHANNEL_ID)
@@ -152,15 +121,15 @@ class IntroductionTracker(BaseCog):
                         inline=False
                     )
                     await alert_channel.send(embed=alert_embed)
-                    logging.info(f"Sent staff alert about duplicate intro from {message.author} ({user_id})")
+                    logger.info(f"Sent staff alert about duplicate intro from {message.author} ({user_id})")
 
             else:
                 # First introduction (within window) - record it
                 await self.bot.db.record_introduction(user_id)
-                logging.info(f"Recorded introduction from {message.author} ({user_id})")
+                logger.info(f"Recorded introduction from {message.author} ({user_id})")
 
         except Exception as e:
-            logging.error(f"Error in introduction tracker: {e}")
+            logger.error(f"Error in introduction tracker: {e}")
 
     @command(aliases=['toggleintro'])
     @has_permissions(manage_messages=True)
@@ -182,12 +151,12 @@ class IntroductionTracker(BaseCog):
             if action.lower() in ['on', 'enable', 'true', '1']:
                 await self.bot.db.set_feature_setting('intro_tracker', True)
                 await ctx.send(embed=green_embed("Introduction tracker **enabled** ✅"))
-                logging.info(f"Introduction tracker enabled by {ctx.author}")
+                logger.info(f"Introduction tracker enabled by {ctx.author}")
 
             elif action.lower() in ['off', 'disable', 'false', '0']:
                 await self.bot.db.set_feature_setting('intro_tracker', False)
                 await ctx.send(embed=red_embed("Introduction tracker **disabled** ❌"))
-                logging.info(f"Introduction tracker disabled by {ctx.author}")
+                logger.info(f"Introduction tracker disabled by {ctx.author}")
 
             elif action.lower() == 'alertchannel':
                 if not ctx.message.channel_mentions:
@@ -196,7 +165,7 @@ class IntroductionTracker(BaseCog):
                 channel = ctx.message.channel_mentions[0]
                 await self.bot.db.set_bot_setting(SETTING_ALERT_CHANNEL, channel.id)
                 await ctx.send(embed=green_embed(f"Staff alert channel set to {channel.mention} ✅"))
-                logging.info(f"Intro alert channel set to {channel.id} by {ctx.author}")
+                logger.info(f"Intro alert channel set to {channel.id} by {ctx.author}")
 
             elif action.lower() == 'warnchannel':
                 if not ctx.message.channel_mentions:
@@ -205,7 +174,7 @@ class IntroductionTracker(BaseCog):
                 channel = ctx.message.channel_mentions[0]
                 await self.bot.db.set_bot_setting(SETTING_WARN_CHANNEL, channel.id)
                 await ctx.send(embed=green_embed(f"User warning channel set to {channel.mention} ✅"))
-                logging.info(f"Intro warn channel set to {channel.id} by {ctx.author}")
+                logger.info(f"Intro warn channel set to {channel.id} by {ctx.author}")
 
             else:
                 await ctx.send(embed=red_embed(
@@ -216,7 +185,7 @@ class IntroductionTracker(BaseCog):
                 ))
 
         except Exception as e:
-            logging.error(f"Error in introtracker command: {e}")
+            logger.error(f"Error in introtracker command: {e}")
             await ctx.send(embed=red_embed(f"Error: {str(e)}"))
 
     @command(aliases=['introstats'])
@@ -261,9 +230,8 @@ class IntroductionTracker(BaseCog):
             await ctx.send(embed=embed)
 
         except Exception as e:
-            logging.error(f"Error showing intro stats: {e}")
+            logger.error(f"Error showing intro stats: {e}")
             await ctx.send(embed=red_embed(f"Error: {str(e)}"))
-
 
 async def setup(bot):
     await bot.add_cog(IntroductionTracker(bot))

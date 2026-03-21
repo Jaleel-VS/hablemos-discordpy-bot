@@ -1,9 +1,11 @@
 from os import path
+import logging
 import imgkit
 from datetime import datetime
 
-dir_path = path.dirname(path.realpath(__file__))
+logger = logging.getLogger(__name__)
 
+dir_path = path.dirname(path.realpath(__file__))
 
 def _get_rank_display(rank: int) -> str:
     """Returns medal emoji for top 3, otherwise #rank format"""
@@ -16,7 +18,6 @@ def _get_rank_display(rank: int) -> str:
     else:
         return f"#{rank}"
 
-
 def _get_board_emoji(board_type: str) -> str:
     """Returns emoji for board type"""
     if board_type == 'spanish':
@@ -26,7 +27,6 @@ def _get_board_emoji(board_type: str) -> str:
     else:  # combined
         return "🌍"
 
-
 def _get_board_title(board_type: str) -> str:
     """Returns title for board type"""
     if board_type == 'spanish':
@@ -35,7 +35,6 @@ def _get_board_title(board_type: str) -> str:
         return "English League"
     else:  # combined
         return "Combined League"
-
 
 def _format_username(username: str, is_winner: bool) -> str:
     """Formats username with star indicator if previous winner, truncates if needed"""
@@ -47,7 +46,6 @@ def _format_username(username: str, is_winner: bool) -> str:
     if is_winner:
         return f"⭐ {username}"
     return username
-
 
 def _get_entry_class(rank: int, is_requester: bool = False) -> str:
     """Returns CSS class name for entry based on rank"""
@@ -68,7 +66,6 @@ def _get_entry_class(rank: int, is_requester: bool = False) -> str:
         else:
             return "entry rank-11-plus rank-even"
 
-
 def _calculate_image_height(num_entries: int) -> int:
     """Calculate dynamic height for the image"""
     # No header needed - title/round info moved to Discord embed
@@ -80,7 +77,6 @@ def _calculate_image_height(num_entries: int) -> int:
 
     total_height = padding_height + entry_heights
     return max(400, min(2400, total_height))  # Clamp between 400-2400
-
 
 def _generate_html(
     leaderboard_data: list[dict],
@@ -312,7 +308,6 @@ def _generate_html(
 
     return html, image_height
 
-
 def generate_leaderboard_image(
     leaderboard_data: list[dict],
     board_type: str,
@@ -359,7 +354,6 @@ def generate_leaderboard_image(
 
     return img_path
 
-
 if __name__ == "__main__":
     # Test with sample data
     sample_data = [
@@ -398,4 +392,4 @@ if __name__ == "__main__":
     }
 
     img_path = generate_leaderboard_image(sample_data, 'combined', round_info)
-    print(f"Generated image: {img_path}")
+    logger.info(f"Generated image: {img_path}")

@@ -8,7 +8,6 @@ import logging
 import random
 import unicodedata
 from pathlib import Path
-from typing import Dict, Optional
 
 import discord
 from discord.ext import commands
@@ -16,7 +15,6 @@ from discord.ext import commands
 from base_cog import BaseCog
 
 logger = logging.getLogger(__name__)
-
 
 def normalize_answer(text: str) -> str:
     """Normalize text for comparison - remove accents, lowercase, strip whitespace"""
@@ -29,7 +27,6 @@ def normalize_answer(text: str) -> str:
         if unicodedata.category(c) != 'Mn'
     )
 
-
 def simplify_pronoun(pronoun: str) -> str:
     """Simplify pronoun display for less confusion"""
     simplifications = {
@@ -39,7 +36,6 @@ def simplify_pronoun(pronoun: str) -> str:
         "ellos/ellas/ustedes": "ellos"
     }
     return simplifications.get(pronoun, pronoun)
-
 
 class GameSession:
     """Simple game session state"""
@@ -61,7 +57,7 @@ class GameSession:
         # Shuffle verbs for variety
         random.shuffle(self.available_verbs)
 
-    def generate_question(self) -> Optional[dict]:
+    def generate_question(self) -> dict | None:
         """Generate a new question"""
         if self.questions_answered >= self.total_questions:
             return None
@@ -119,13 +115,12 @@ class GameSession:
         """Check if session is complete"""
         return self.questions_answered >= self.total_questions
 
-
 class ConjugationCog(BaseCog):
     """Simple, UX-focused conjugation practice"""
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
-        self.active_games: Dict[int, GameSession] = {}
+        self.active_games: dict[int, GameSession] = {}
         self.verb_data = None
         self.categories = None
         self.default_category = "high-frequency"
@@ -435,7 +430,6 @@ class ConjugationCog(BaseCog):
         embed.set_footer(text=f"Use {prefix}conj to practice again!")
 
         return embed
-
 
 async def setup(bot):
     await bot.add_cog(ConjugationCog(bot))

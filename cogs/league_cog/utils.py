@@ -6,7 +6,7 @@ the main league cog and the admin cog.
 """
 import re
 import logging
-from typing import Optional
+
 from langdetect import detect, LangDetectException
 from cogs.league_cog.config import LANGUAGE, RATE_LIMITS
 
@@ -28,8 +28,7 @@ UNICODE_EMOJI_PATTERN = re.compile(
     flags=re.UNICODE
 )
 
-
-def detect_message_language(message_content: str) -> Optional[str]:
+def detect_message_language(message_content: str) -> str | None:
     """
     Detect the language of a message using langdetect.
 

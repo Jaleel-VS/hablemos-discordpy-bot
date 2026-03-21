@@ -2,15 +2,13 @@
 Practice Session State Management
 """
 from dataclasses import dataclass, field
-from typing import List, Optional
-from enum import Enum
 
+from enum import Enum
 
 class PracticeMode(Enum):
     TYPING = "typing"
     CHOICE = "choice"
     MIXED = "mixed"
-
 
 @dataclass
 class PracticeCard:
@@ -22,10 +20,9 @@ class PracticeCard:
     sentence: str
     sentence_with_blank: str
     # SRS fields (may be None for new cards)
-    interval_days: Optional[float] = None
-    ease_factor: Optional[float] = None
-    repetitions: Optional[int] = None
-
+    interval_days: float | None = None
+    ease_factor: float | None = None
+    repetitions: int | None = None
 
 @dataclass
 class PracticeSession:
@@ -33,13 +30,13 @@ class PracticeSession:
     user_id: int
     language: str
     mode: PracticeMode
-    cards: List[PracticeCard] = field(default_factory=list)
+    cards: list[PracticeCard] = field(default_factory=list)
     current_index: int = 0
     correct_count: int = 0
     total_reviewed: int = 0
 
     @property
-    def current_card(self) -> Optional[PracticeCard]:
+    def current_card(self) -> PracticeCard | None:
         """Get the current card or None if session is complete"""
         if self.current_index < len(self.cards):
             return self.cards[self.current_index]

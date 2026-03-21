@@ -44,12 +44,16 @@ class Hablemos(Bot):
         self.error_channel = None
         self.db = Database()
 
+    async def close(self):
+        await self.db.close()
+        await super().close()
+
     async def setup_hook(self):
         try:
             await self.db.connect()
-            logging.info("Database connected successfully")
+            logger.info("Database connected successfully")
         except Exception as e:
-            logging.error(f"Failed to connect to database: {e}")
+            logger.error(f"Failed to connect to database: {e}")
 
         for folder in os.listdir('./cogs'):
             if folder.endswith('_cog'):
@@ -59,35 +63,35 @@ class Hablemos(Bot):
                         if file.endswith('.py') and file.startswith('main'):
                             try:
                                 await self.load_extension(f'cogs.{folder}.{file[:-3]}')
-                                logging.info(f'Loaded extension: {file[:-3]} from folder: {folder}')
+                                logger.info(f'Loaded extension: {file[:-3]} from folder: {folder}')
                             except Exception as e:
-                                logging.error(f'Failed to load extension {file[:-3]}.', exc_info=e)
+                                logger.error(f'Failed to load extension {file[:-3]}.', exc_info=e)
 
     async def on_ready(self):
         guild_id = BOT_PLAYGROUND
         guild = self.get_guild(guild_id)
 
         if guild is None:
-            logging.warning(f"Guild with ID {guild_id} not found")
+            logger.warning(f"Guild with ID {guild_id} not found")
             return
 
         self.error_channel = guild.get_channel(ERROR_CHANNEL)
         self.online_channel = guild.get_channel(ONLINE_CHANNEL)
 
-        logging.info("BOT LOADED!")
+        logger.info("BOT LOADED!")
 
         # Sync slash commands
         try:
             # Global sync (can take up to 1 hour to propagate)
             synced = await self.tree.sync()
-            logging.info(f"Synced {len(synced)} global slash command(s)")
+            logger.info(f"Synced {len(synced)} global slash command(s)")
 
             # Guild-specific sync for Language League (instant)
             league_guild = discord.Object(id=LEAGUE_GUILD_ID)
             synced_guild = await self.tree.sync(guild=league_guild)
-            logging.info(f"Synced {len(synced_guild)} slash command(s) to Language League guild (instant)")
+            logger.info(f"Synced {len(synced_guild)} slash command(s) to Language League guild (instant)")
         except Exception as e:
-            logging.error(f"Failed to sync slash commands: {e}")
+            logger.error(f"Failed to sync slash commands: {e}")
 
         if isinstance(self.online_channel, discord.TextChannel):
             await self.online_channel.send("I'm online bra :smiling_imp:")
@@ -104,22 +108,22 @@ class Hablemos(Bot):
                     await self.error_channel.send(
                         f"------\nCommand not found:\n{ctx.author}, {ctx.author.id}, {ctx.channel}, {ctx.channel.id}, "
                         f"{ctx.guild}, {ctx.guild.id}, \n{ctx.message.content}\n{ctx.message.jump_url}\n------")
-                logging.warning(f"Command not found: {ctx.message.content}")
+                logger.warning(f"Command not found: {ctx.message.content}")
 
             elif isinstance(error, CommandOnCooldown):
                 if isinstance(ctx.channel, discord.TextChannel):
                     await ctx.send(f"This command is on cooldown. Try again in {round(error.retry_after)} seconds.")
-                logging.info(f"Command on cooldown: {ctx.message.content}")
+                logger.info(f"Command on cooldown: {ctx.message.content}")
 
             else:
-                logging.error(f'Unhandled error: {error} in command {ctx.command}')
+                logger.error(f'Unhandled error: {error} in command {ctx.command}')
                 if isinstance(ctx.channel, discord.TextChannel):
                     await ctx.send("An unexpected error occurred. Please try again later.")
         except discord.HTTPException:
             pass
 
     async def on_command_completion(self, ctx):
-        logging.info(f'Command {ctx.command} completed successfully by {ctx.author} in {ctx.guild}.')
+        logger.info(f'Command {ctx.command} completed successfully by {ctx.author} in {ctx.guild}.')
 
 # Initialize and run
 bot = Hablemos(prefix)

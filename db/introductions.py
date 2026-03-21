@@ -1,12 +1,11 @@
-from typing import Optional
+
 import logging
 from db import DatabaseMixin
 
 logger = logging.getLogger(__name__)
 
-
 class IntroductionsMixin(DatabaseMixin):
-    async def check_user_introduction(self, user_id: int) -> Optional[dict]:
+    async def check_user_introduction(self, user_id: int) -> dict | None:
         """Check if user has posted an introduction in the last 90 days"""
         row = await self._fetchrow('''
             SELECT id, user_id, posted_at

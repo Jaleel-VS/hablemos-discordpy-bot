@@ -2,12 +2,10 @@
 Message link parser for Discord message URLs
 """
 import logging
-from typing import Tuple, Optional
 
 logger = logging.getLogger(__name__)
 
-
-def parse_message_link(link: str) -> Tuple[Optional[int], Optional[int], Optional[int]]:
+def parse_message_link(link: str) -> tuple[int | None, int | None, int | None]:
     """
     Parse a Discord message link to extract guild_id, channel_id, and message_id
 
@@ -54,7 +52,6 @@ def parse_message_link(link: str) -> Tuple[Optional[int], Optional[int], Optiona
     except (ValueError, IndexError) as e:
         logger.debug(f"Error parsing message link '{link}': {e}")
         return None, None, None
-
 
 def validate_message_link(link: str) -> bool:
     """

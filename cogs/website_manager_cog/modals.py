@@ -8,7 +8,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 class AddPodcastModal(Modal, title="Add New Podcast"):
     """Modal for adding a new podcast"""
 
@@ -92,7 +91,6 @@ class AddPodcastModal(Modal, title="Add New Podcast"):
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
-
 
 class AddPodcastModalFull(Modal, title="Add New Podcast"):
     """Full modal for adding a podcast with all fields (uses 2 modals due to Discord's 5 field limit)"""
@@ -203,7 +201,6 @@ class AddPodcastModalFull(Modal, title="Add New Podcast"):
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
-
 
 class EditPodcastModal(Modal, title="Edit Podcast"):
     """Modal for editing an existing podcast"""

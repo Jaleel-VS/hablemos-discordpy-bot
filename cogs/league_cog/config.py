@@ -8,7 +8,6 @@ used throughout the league cog to make them easy to find and modify.
 from dataclasses import dataclass
 from typing import Final
 
-
 # =============================================================================
 # DISCORD SERVER CONFIGURATION
 # =============================================================================
@@ -21,7 +20,6 @@ WINNER_CHANNEL_ID: Final[int] = 247135634265735168
 
 # Role given to weekly champions (top 3 eligible per league)
 CHAMPION_ROLE_ID: Final[int] = 1062819085789970564
-
 
 # =============================================================================
 # ROLE IDS
@@ -40,10 +38,8 @@ class RoleIDs:
     LEARNING_SPANISH: int = 297415063302832128
     LEARNING_ENGLISH: int = 247021017740869632
 
-
 # Instantiate as a constant for easy access
 ROLES = RoleIDs()
-
 
 # =============================================================================
 # SCORING SYSTEM
@@ -65,10 +61,8 @@ class ScoringConfig:
     # How many users to show in leaderboard image
     LEADERBOARD_DISPLAY_LIMIT: int = 10
 
-
 # Instantiate as a constant
 SCORING = ScoringConfig()
-
 
 # =============================================================================
 # ANTI-SPAM / RATE LIMITING
@@ -87,10 +81,8 @@ class RateLimitConfig:
     # Minimum message length to count (characters)
     MIN_MESSAGE_LENGTH: int = 10
 
-
 # Instantiate as a constant
 RATE_LIMITS = RateLimitConfig()
-
 
 # =============================================================================
 # ROUND CONFIGURATION
@@ -106,10 +98,8 @@ class RoundConfig:
     # How often to check if round should end (minutes)
     ROUND_CHECK_INTERVAL_MINUTES: int = 1
 
-
 # Instantiate as a constant
 ROUNDS = RoundConfig()
-
 
 # =============================================================================
 # LEAGUE NAMES AND DISPLAY
@@ -143,10 +133,8 @@ class LeagueDisplay:
             'combined': self.COMBINED_NAME
         }.get(league_type, self.COMBINED_NAME)
 
-
 # Instantiate as a constant
 DISPLAY = LeagueDisplay()
-
 
 # =============================================================================
 # LANGUAGE DETECTION
@@ -162,7 +150,6 @@ class LanguageConfig:
 
     # Seed for consistent langdetect results
     LANGDETECT_SEED: int = 0
-
 
 # Instantiate as a constant
 LANGUAGE = LanguageConfig()

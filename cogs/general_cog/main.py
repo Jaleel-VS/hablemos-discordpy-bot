@@ -1,6 +1,7 @@
 from discord.ext.commands import command, Bot
 from discord import app_commands, Interaction, Embed, Color
 from base_cog import BaseCog
+from cogs.utils.embeds import green_embed
 try:
     from cogs.league_cog.config import ROUNDS
 except ImportError:
@@ -8,15 +9,11 @@ except ImportError:
     class ROUNDS:
         ROUND_DURATION_DAYS = 14
 
-
 SOURCE_URL = 'https://docs.google.com/spreadsheets/d/10jsNQsSG9mbLZgDoYIdVrbogVSN7eAKbOfCASA5hN0A/edit?usp=sharing'
 REPO = 'https://github.com/Jaleel-VS/hablemos-discordpy-bot'
 DPY = 'https://discordpy.readthedocs.io/en/latest/'
 PYC = 'https://github.com/Pycord-Development/pycord'
 INVITE_LINK = "https://discord.com/api/oauth2/authorize?client_id=808377026330492941&permissions=3072&scope=bot"
-
-def green_embed(text):
-    return Embed(description=text, color=Color(int('00ff00', 16)))
 
 
 class General(BaseCog):
@@ -523,7 +520,6 @@ class General(BaseCog):
         guilds = [guild.name for guild in self.bot.guilds]
         my_guilds = ''.join(f"{guild}\n" for guild in guilds)
         await ctx.send(f"The bot is in the following guilds: \n {my_guilds}")
-
 
 async def setup(bot):
     await bot.add_cog(General(bot))

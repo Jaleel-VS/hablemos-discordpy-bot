@@ -3,43 +3,15 @@ Google Gemini API client for generating language learning conversations
 """
 import os
 import logging
-import time
 import random
 import asyncio
-from typing import List, Dict, Optional
+
 from google import genai
 from google.genai import types
 from .conversation_data import LEVELS, LANGUAGES, CATEGORIES
+from cogs.utils.rate_limiter import RateLimiter
 
 logger = logging.getLogger(__name__)
-
-
-class RateLimiter:
-    """Rate limiter for Gemini API calls"""
-
-    def __init__(self, requests_per_minute: int = 15):
-        self.rpm = requests_per_minute
-        self.requests = []
-
-    async def wait_if_needed(self):
-        """Wait if we're at rate limit"""
-        now = time.time()
-
-        # Remove requests older than 1 minute
-        self.requests = [r for r in self.requests if now - r < 60]
-
-        if len(self.requests) >= self.rpm:
-            # Calculate wait time
-            oldest = self.requests[0]
-            wait_time = 60 - (now - oldest) + 0.5  # +0.5 for safety
-
-            if wait_time > 0:
-                logger.info(f"Rate limit reached, waiting {wait_time:.1f}s")
-                await asyncio.sleep(wait_time)
-
-        # Record this request
-        self.requests.append(time.time())
-
 
 class ConversationGeminiClient:
     """Wrapper for Google Gemini API for conversation generation"""
@@ -69,7 +41,7 @@ class ConversationGeminiClient:
 
     async def generate_conversation(self, language: str, level: str,
                                    category: str, scenario: str,
-                                   max_retries: int = 3) -> Optional[Dict]:
+                                   max_retries: int = 3) -> Dict | None:
         """
         Generate a conversation with retry logic
 
@@ -214,7 +186,7 @@ Generate the conversation now:"""
 
         return prompt
 
-    def _parse_conversation_response(self, response_text: str) -> Optional[Dict]:
+    def _parse_conversation_response(self, response_text: str) -> Dict | None:
         """
         Parse the structured response from Gemini
 

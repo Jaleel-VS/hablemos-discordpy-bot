@@ -7,7 +7,6 @@ import logging
 import discord
 from discord.ext import commands
 from discord import app_commands, Interaction, Embed
-from typing import Dict, Optional
 
 from base_cog import BaseCog
 from .session import PracticeSession, PracticeCard, PracticeMode
@@ -22,13 +21,12 @@ from .seed_words import SEED_WORDS
 
 logger = logging.getLogger(__name__)
 
-
 class PracticeCog(BaseCog):
     """Cog for SRS vocabulary practice"""
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
-        self.active_sessions: Dict[int, PracticeSession] = {}
+        self.active_sessions: dict[int, PracticeSession] = {}
 
         try:
             self.gemini = PracticeGeminiClient()
@@ -231,7 +229,7 @@ class PracticeCog(BaseCog):
     async def practice_stats(
         self,
         interaction: Interaction,
-        language: Optional[str] = None
+        language: str | None = None
     ):
         """View practice statistics"""
         user_id = interaction.user.id
@@ -497,7 +495,6 @@ class PracticeCog(BaseCog):
         else:
             logger.error(f"Unhandled error in practice cog: {error}", exc_info=True)
             await ctx.send("An error occurred. Please try again later.")
-
 
 async def setup(bot):
     """Required setup function for loading the cog"""

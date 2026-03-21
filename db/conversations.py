@@ -1,6 +1,5 @@
-from typing import Optional
-from db import DatabaseMixin
 
+from db import DatabaseMixin
 
 class ConversationsMixin(DatabaseMixin):
     async def add_conversation(self, language: str, level: str, category: str,
@@ -17,7 +16,7 @@ class ConversationsMixin(DatabaseMixin):
         return row['id']
 
     async def get_random_conversation(self, language: str, level: str,
-                                      category: str) -> Optional[dict]:
+                                      category: str) -> dict | None:
         """Get a random conversation, preferring less-used ones"""
         row = await self._fetchrow('''
             SELECT id, language, level, category, scenario_intro,

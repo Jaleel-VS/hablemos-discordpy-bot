@@ -3,10 +3,8 @@ Simple cache for conversation summaries with TTL
 """
 import time
 import logging
-from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
-
 
 class SummaryCache:
     """In-memory cache for conversation summaries with TTL"""
@@ -19,7 +17,7 @@ class SummaryCache:
             ttl_seconds: Time to live for cached entries in seconds (default: 1 hour)
         """
         self.ttl_seconds = ttl_seconds
-        self._cache: Dict[str, dict] = {}
+        self._cache: dict[str, dict] = {}
         self._stats = {
             'hits': 0,
             'misses': 0,
@@ -41,7 +39,7 @@ class SummaryCache:
         """
         return f"{channel_id}:{message_id}:{count}"
 
-    def get_summary(self, channel_id: int, message_id: int, count: int) -> Optional[str]:
+    def get_summary(self, channel_id: int, message_id: int, count: int) -> str | None:
         """
         Get cached summary
 
@@ -69,7 +67,7 @@ class SummaryCache:
         key = self._generate_cache_key(channel_id, message_id, count)
         self.set(key, summary)
 
-    def get(self, key: str) -> Optional[str]:
+    def get(self, key: str) -> str | None:
         """
         Get cached data for a key
 

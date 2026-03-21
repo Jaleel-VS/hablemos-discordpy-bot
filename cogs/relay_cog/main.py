@@ -1,14 +1,11 @@
 import logging
-from typing import Optional
 
 import discord
 from discord.ext import commands
 
 from base_cog import BaseCog
 
-
 logger = logging.getLogger(__name__)
-
 
 class RelayCog(BaseCog):
     def __init__(self, bot: commands.Bot):
@@ -35,7 +32,7 @@ class RelayCog(BaseCog):
         )
 
         # Validate guild
-        target_guild: Optional[discord.Guild] = self.bot.get_guild(target_guild_id)
+        target_guild: discord.Guild | None = self.bot.get_guild(target_guild_id)
         if target_guild is None:
             # The bot is not in the guild or not cached
             logger.error(
@@ -93,8 +90,6 @@ class RelayCog(BaseCog):
             )
             await ctx.send("❌ An unexpected error occurred while sending the message.")
 
-
 async def setup(bot: commands.Bot):
     await bot.add_cog(RelayCog(bot))
-
 

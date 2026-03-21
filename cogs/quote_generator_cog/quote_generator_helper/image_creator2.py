@@ -6,7 +6,6 @@ logger = logging.getLogger(__name__)
 
 dir_path = path.dirname(path.realpath(__file__))
 
-
 def _compute_phrase_font_size(message: str) -> int:
     length = len(message or "")
     if length <= 60:
@@ -19,7 +18,6 @@ def _compute_phrase_font_size(message: str) -> int:
         return 28
     return 24
 
-
 def _compute_quote_glyph_font_size(message: str) -> int:
     length = len(message or "")
     if length <= 60:
@@ -31,7 +29,6 @@ def _compute_quote_glyph_font_size(message: str) -> int:
     if length <= 180:
         return 78
     return 70
-
 
 def create_image2(user_name: str, user_avatar: str, message_content: str) -> str:
     logger.info(f"create_image2 called: user_name={user_name!r}, message_content={message_content!r}")
@@ -186,12 +183,10 @@ def create_image2(user_name: str, user_avatar: str, message_content: str) -> str
     imgkit.from_string(html, img_path, options=options)
     return img_path
 
-
 if __name__ == "__main__":
     create_image2(
         'Priúñaku',
         'https://tse1.mm.bing.net/th/id/OIP.aQvztH3rNT-QMNNeixa91QHaNK?rs=1&pid=ImgDetMain&o=7&rm=3',
         'Dolor sit amet',
     )
-
 

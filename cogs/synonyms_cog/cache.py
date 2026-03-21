@@ -3,10 +3,8 @@ Simple text-based cache for synonym/antonym lookups
 """
 import time
 import logging
-from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
-
 
 class SynonymCache:
     """In-memory cache for synonym/antonym data with TTL"""
@@ -19,7 +17,7 @@ class SynonymCache:
             ttl_seconds: Time to live for cached entries in seconds (default: 24 hours)
         """
         self.ttl_seconds = ttl_seconds
-        self._cache: Dict[str, dict] = {}
+        self._cache: dict[str, dict] = {}
         self._stats = {
             'hits': 0,
             'misses': 0,
@@ -27,7 +25,7 @@ class SynonymCache:
             'evictions': 0
         }
 
-    def get(self, word: str) -> Optional[Dict]:
+    def get(self, word: str) -> Dict | None:
         """
         Get cached data for a word
 

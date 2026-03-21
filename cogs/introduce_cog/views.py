@@ -5,7 +5,6 @@ from discord import SelectOption, Interaction, ButtonStyle, Embed
 from .config import LANGUAGES, PROFICIENCY_LEVELS, TIMEZONES, COUNTRIES, INTRO_COLOR, EXCHANGE_COLOR
 from .modals import ExchangeDetailsModal, IntroOnlyModal
 
-
 class IntroStartView(View):
     """Initial view asking if user wants to find an exchange partner."""
 
@@ -70,7 +69,6 @@ class IntroStartView(View):
             # Show simple intro modal
             modal = IntroOnlyModal(introductions_channel_id=self.introductions_channel_id)
             await interaction.response.send_modal(modal)
-
 
 class ExchangeRequestView(View):
     """Multi-step view for collecting exchange partner request data (Step 2/4)."""
@@ -233,7 +231,6 @@ class ExchangeRequestView(View):
             inline=False
         )
         return embed
-
 
 class ExchangeRequestStep3View(View):
     """Third step: timezone and DM preference (Step 3/4)."""

@@ -11,7 +11,6 @@ import random
 
 logger = logging.getLogger(__name__)
 
-
 class SynonymsCog(BaseCog):
     """Cog for looking up Spanish synonyms and antonyms"""
 
@@ -267,7 +266,6 @@ class SynonymsCog(BaseCog):
         """Clear the synonym cache (bot owner only)"""
         count = self.cache.clear()
         await ctx.send(f"✅ Caché limpiado. Se eliminaron {count} entradas.")
-
 
 async def setup(bot):
     await bot.add_cog(SynonymsCog(bot))

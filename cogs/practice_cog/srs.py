@@ -10,7 +10,6 @@ Quality ratings:
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 
-
 @dataclass
 class SRSResult:
     """Result of SM-2 calculation"""
@@ -18,7 +17,6 @@ class SRSResult:
     ease_factor: float
     repetitions: int
     next_review: datetime
-
 
 def calculate_sm2(quality: int, interval_days: float, ease_factor: float,
                   repetitions: int) -> SRSResult:
@@ -69,7 +67,6 @@ def calculate_sm2(quality: int, interval_days: float, ease_factor: float,
         repetitions=new_repetitions,
         next_review=next_review
     )
-
 
 # Quality rating constants for readability
 QUALITY_AGAIN = 1

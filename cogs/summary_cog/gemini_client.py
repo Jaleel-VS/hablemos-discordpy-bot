@@ -3,12 +3,11 @@ Google Gemini API client for generating conversation summaries
 """
 import os
 import logging
-from typing import List, Dict
+
 from google import genai
 from google.genai import types
 
 logger = logging.getLogger(__name__)
-
 
 class GeminiClient:
     """Wrapper for Google Gemini API for conversation summarization"""
@@ -34,7 +33,7 @@ class GeminiClient:
 
         logger.info("Gemini client initialized successfully")
 
-    def generate_summary(self, messages: List[Dict]) -> str:
+    def generate_summary(self, messages: list[Dict]) -> str:
         """
         Generate conversation summary from messages
 
@@ -79,7 +78,7 @@ class GeminiClient:
             logger.error(f"Error generating summary with Gemini: {e}", exc_info=True)
             raise
 
-    def _format_messages_for_prompt(self, messages: List[Dict]) -> str:
+    def _format_messages_for_prompt(self, messages: list[Dict]) -> str:
         """
         Format messages for inclusion in the prompt
 

@@ -27,7 +27,6 @@ def parse_duration(text: str) -> int | None:
     multipliers = {'m': 60, 'h': 3600, 'd': 86400}
     return value * multipliers[unit]
 
-
 class QuoteAdminCog(BaseCog):
     """Admin-only commands for quote management"""
 

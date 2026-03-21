@@ -1,6 +1,5 @@
-from typing import Optional
-from db import DatabaseMixin
 
+from db import DatabaseMixin
 
 class LeaderboardMixin(DatabaseMixin):
     async def leaderboard_join(self, user_id: int, username: str,
@@ -80,8 +79,8 @@ class LeaderboardMixin(DatabaseMixin):
         return {'learning_spanish': False, 'learning_english': False}
 
     async def record_activity(self, user_id: int, activity_type: str = 'message',
-                             channel_id: Optional[int] = None, points: int = 1,
-                             round_id: Optional[int] = None, message_id: Optional[int] = None) -> None:
+                             channel_id: int | None = None, points: int = 1,
+                             round_id: int | None = None, message_id: int | None = None) -> None:
         """Record user activity for leaderboard"""
         await self._execute('''
             INSERT INTO leaderboard_activity
@@ -97,7 +96,7 @@ class LeaderboardMixin(DatabaseMixin):
         ''', user_id)
         return count or 0
 
-    async def get_user_stats(self, user_id: int, round_id: Optional[int] = None) -> Optional[dict]:
+    async def get_user_stats(self, user_id: int, round_id: int | None = None) -> dict | None:
         """Get leaderboard stats for a specific user in a specific round"""
         if round_id is None:
             current_round = await self.get_current_round()
@@ -141,7 +140,7 @@ class LeaderboardMixin(DatabaseMixin):
                 'rank_combined': rank_combined,
             }
 
-    async def _get_user_rank(self, conn, user_id: int, board_type: str, round_id: int) -> Optional[int]:
+    async def _get_user_rank(self, conn, user_id: int, board_type: str, round_id: int) -> int | None:
         """Helper to get user rank on a specific leaderboard for a specific round"""
         where_clause = "lu.learning_spanish = TRUE" if board_type == 'spanish' else (
             "lu.learning_english = TRUE" if board_type == 'english' else "TRUE"
@@ -166,7 +165,7 @@ class LeaderboardMixin(DatabaseMixin):
         ''', user_id, round_id)
         return row['rank'] if row else None
 
-    async def get_leaderboard(self, board_type: str, limit: int = 10, round_id: Optional[int] = None) -> list[dict]:
+    async def get_leaderboard(self, board_type: str, limit: int = 10, round_id: int | None = None) -> list[dict]:
         """Get leaderboard rankings for a specific round"""
         if round_id is None:
             current_round = await self.get_current_round()
@@ -256,7 +255,7 @@ class LeaderboardMixin(DatabaseMixin):
 
     # Round management
 
-    async def get_current_round(self) -> Optional[dict]:
+    async def get_current_round(self) -> dict | None:
         """Get the currently active round"""
         row = await self._fetchrow('''
             SELECT round_id, round_number, start_date, end_date, status
@@ -310,7 +309,7 @@ class LeaderboardMixin(DatabaseMixin):
         ''', user_ids)
         return {row['user_id'] for row in rows}
 
-    async def get_round_by_id(self, round_id: int) -> Optional[dict]:
+    async def get_round_by_id(self, round_id: int) -> dict | None:
         """Get round details by ID"""
         row = await self._fetchrow('''
             SELECT round_id, round_number, start_date, end_date, status

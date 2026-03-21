@@ -1,11 +1,10 @@
-from typing import Optional
-from db import DatabaseMixin
 
+from db import DatabaseMixin
 
 class VocabMixin(DatabaseMixin):
     async def add_vocab_note(self, user_id: int, username: str, word: str,
-                            translation: Optional[str] = None,
-                            language: Optional[str] = None) -> int:
+                            translation: str | None = None,
+                            language: str | None = None) -> int:
         """Add a new vocabulary note to the database"""
         row = await self._fetchrow('''
             INSERT INTO vocab_notes (user_id, username, word, translation, language)

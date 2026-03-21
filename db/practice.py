@@ -1,13 +1,12 @@
 import logging
-from typing import Optional
+
 from db import DatabaseMixin
 
 logger = logging.getLogger(__name__)
 
-
 class PracticeMixin(DatabaseMixin):
     async def add_practice_card(self, word: str, translation: str, language: str,
-                                sentence: str, sentence_with_blank: str) -> Optional[int]:
+                                sentence: str, sentence_with_blank: str) -> int | None:
         """Add a practice card to the global card pool. Returns card ID or None if duplicate."""
         try:
             row = await self._fetchrow('''

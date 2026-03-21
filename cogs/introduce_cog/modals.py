@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
 class IntroOnlyModal(Modal, title="Introduce Yourself"):
     """Modal for simple introduction without exchange partner details."""
 
@@ -119,7 +118,6 @@ class IntroOnlyModal(Modal, title="Introduce Yourself"):
             return text.strip()
 
         return '\n'.join(f"• {item}" for item in items)
-
 
 class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
     """Modal for collecting free-text details about the exchange request."""

@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
 class AnswerModal(Modal, title="Enter Your Answer"):
     """Modal for typing an answer to a practice question"""
 

@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Dict
+
 import discord
 from discord.ext import commands
 from cogs.hangman_cog.hangman import Hangman
@@ -19,8 +19,8 @@ CATEGORIES = {
 class HangmanController(BaseCog):
     def __init__(self, bot):
         super().__init__(bot)
-        self.active_games: Dict[int, Hangman] = {}  # channel_id -> game instance
-        self._game_locks: Dict[int, asyncio.Lock] = {}  # channel_id -> lock
+        self.active_games: dict[int, Hangman] = {}  # channel_id -> game instance
+        self._game_locks: dict[int, asyncio.Lock] = {}  # channel_id -> lock
 
     def _get_channel_lock(self, channel_id: int) -> asyncio.Lock:
         """Get or create a lock for the specified channel."""
@@ -151,7 +151,6 @@ class HangmanController(BaseCog):
         self.active_games.clear()
         self._game_locks.clear()
         logger.info("Hangman cog cleanup completed")
-
 
 async def setup(bot):
     await bot.add_cog(HangmanController(bot))

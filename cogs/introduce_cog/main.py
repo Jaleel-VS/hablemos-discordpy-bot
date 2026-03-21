@@ -9,7 +9,6 @@ from .views import IntroStartView
 
 logger = logging.getLogger(__name__)
 
-
 class IntroduceCog(BaseCog):
     """Cog for member introductions and language exchange partner requests."""
 
@@ -52,7 +51,6 @@ class IntroduceCog(BaseCog):
             ephemeral=True
         )
         logger.info(f"Introduction started by {interaction.user} ({interaction.user.id})")
-
 
 async def setup(bot: commands.Bot):
     """Setup function for loading the cog."""

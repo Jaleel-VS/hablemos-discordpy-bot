@@ -8,7 +8,7 @@ from discord.ui import View, Button, button
 from discord import Interaction, ButtonStyle, Embed
 import logging
 import random
-from typing import TYPE_CHECKING, Callable, Awaitable, Optional, List
+from typing import TYPE_CHECKING, Callable, Awaitable
 
 from .modals import AnswerModal
 from .srs import QUALITY_AGAIN, QUALITY_HARD, QUALITY_GOOD, QUALITY_EASY
@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
 class PracticeView(View):
     """View for displaying a practice question"""
 
@@ -27,7 +26,7 @@ class PracticeView(View):
         session: PracticeSession,
         card: PracticeCard,
         card_mode: str,  # 'typing' or 'choice'
-        distractors: List[str],
+        distractors: list[str],
         on_answer: Callable[[Interaction, str], Awaitable[None]],
         on_skip: Callable[[Interaction], Awaitable[None]],
         on_quit: Callable[[Interaction], Awaitable[None]],
@@ -113,7 +112,6 @@ class PracticeView(View):
         """Quit the session"""
         await self.on_quit_callback(interaction)
 
-
 class QualityRatingView(View):
     """View for rating answer quality (SRS feedback)"""
 
@@ -172,7 +170,6 @@ class QualityRatingView(View):
             await self.on_rating_callback(interaction, quality)
         return callback
 
-
 def create_question_embed(session: PracticeSession, card: PracticeCard,
                           show_disclaimer: bool = False) -> Embed:
     """Create an embed for a practice question"""
@@ -194,7 +191,6 @@ def create_question_embed(session: PracticeSession, card: PracticeCard,
     embed.set_footer(text=f"{lang_emoji} {session.language.title()}")
 
     return embed
-
 
 def create_result_embed(card: PracticeCard, user_answer: str, was_correct: bool) -> Embed:
     """Create an embed showing the result of an answer"""
@@ -229,7 +225,6 @@ def create_result_embed(card: PracticeCard, user_answer: str, was_correct: bool)
 
     return embed
 
-
 def create_summary_embed(session: PracticeSession) -> Embed:
     """Create a session summary embed"""
     percentage = (session.correct_count / session.total_reviewed * 100) if session.total_reviewed > 0 else 0
@@ -251,7 +246,6 @@ def create_summary_embed(session: PracticeSession) -> Embed:
     )
 
     return embed
-
 
 def create_stats_embed(language: str, stats: dict) -> Embed:
     """Create an embed showing practice statistics"""

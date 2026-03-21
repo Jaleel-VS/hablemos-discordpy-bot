@@ -6,7 +6,6 @@ logger = logging.getLogger(__name__)
 
 dir_path = path.dirname(path.realpath(__file__))
 
-
 def create_image(user_name, user_avatar, message_content):
     logger.info(f"create_image called: user_name={user_name!r}, message_content={message_content!r}")
     options = {
@@ -77,7 +76,6 @@ def create_image(user_name, user_avatar, message_content):
             height: 256px;
             }}
 
-
             .quote {{
                 float: left;
                 width: 376px;
@@ -141,7 +139,4 @@ if __name__ == "__main__":
     create_image('Priúñaku',
                 'https://cdn.discordapp.com/avatars/166580565548466176/a106c3ab56c9c99d48b437b05a5552e4.png?size=256',
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc vel ultricies ultricies')
-
-
-
 

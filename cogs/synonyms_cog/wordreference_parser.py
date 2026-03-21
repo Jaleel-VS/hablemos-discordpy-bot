@@ -3,11 +3,10 @@ Parser for WordReference synonym/antonym pages
 """
 import requests
 from bs4 import BeautifulSoup
-from typing import Dict, List, Optional
+
 import logging
 
 logger = logging.getLogger(__name__)
-
 
 class WordReferenceParser:
     """Parser for extracting synonyms and antonyms from WordReference"""
@@ -21,7 +20,7 @@ class WordReferenceParser:
         self.session = requests.Session()
         self.session.headers.update(self.HEADERS)
 
-    def fetch_word(self, word: str, timeout: int = 10) -> Optional[Dict[str, any]]:
+    def fetch_word(self, word: str, timeout: int = 10) -> dict[str, any | None]:
         """
         Fetch synonyms and antonyms for a given word
 

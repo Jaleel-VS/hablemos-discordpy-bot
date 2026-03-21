@@ -2,9 +2,10 @@ from discord.ext import commands
 from discord import app_commands
 from base_cog import BaseCog
 from discord import Embed, Color, Member, Spotify
-from typing import Optional
+
 import logging
 
+logger = logging.getLogger(__name__)
 
 class SpotifyCog(BaseCog):
     def __init__(self, bot: commands.Bot):
@@ -12,24 +13,24 @@ class SpotifyCog(BaseCog):
 
     @commands.hybrid_command(name="nowplaying", aliases=['spoti', 'np'])
     @app_commands.describe(member="The user to check (leave empty for yourself)")
-    async def nowplaying(self, ctx: commands.Context, member: Optional[Member] = None):
+    async def nowplaying(self, ctx: commands.Context, member: Member | None = None):
         """
         Shows what song a user is currently listening to on Spotify
         Usage: !nowplaying [@user]
         If no user is mentioned, shows your current song
         """
-        logging.info(f"nowplaying command called by {ctx.author} for member: {member}")
+        logger.info(f"nowplaying command called by {ctx.author} for member: {member}")
 
         # Fetch the member from the guild to get full presence data
         if member is None:
             target = ctx.guild.get_member(ctx.author.id)
-            logging.debug(f"Fetched member from guild: {target}")
+            logger.debug(f"Fetched member from guild: {target}")
         else:
             target = member
-            logging.debug(f"Using provided member: {target}")
+            logger.debug(f"Using provided member: {target}")
 
         if target is None:
-            logging.warning(f"Could not find member in guild: {ctx.author.id}")
+            logger.warning(f"Could not find member in guild: {ctx.author.id}")
             await ctx.send(embed=Embed(
                 description="Could not find that user!",
                 color=Color.red()
@@ -37,16 +38,16 @@ class SpotifyCog(BaseCog):
             return
 
         # Find Spotify activity
-        logging.debug(f"Checking activities for {target.display_name}: {[type(a).__name__ for a in target.activities]}")
+        logger.debug(f"Checking activities for {target.display_name}: {[type(a).__name__ for a in target.activities]}")
         spotify_activity = None
         for activity in target.activities:
             if isinstance(activity, Spotify):
                 spotify_activity = activity
-                logging.info(f"Found Spotify activity for {target.display_name}: {activity.title} by {activity.artist}")
+                logger.info(f"Found Spotify activity for {target.display_name}: {activity.title} by {activity.artist}")
                 break
 
         if not spotify_activity:
-            logging.info(f"No Spotify activity found for {target.display_name}")
+            logger.info(f"No Spotify activity found for {target.display_name}")
             if target == ctx.author:
                 await ctx.send(embed=Embed(
                     description="You're not listening to Spotify right now!",
@@ -79,9 +80,8 @@ class SpotifyCog(BaseCog):
         # Add track URL
         embed.add_field(name="Listen on Spotify", value=f"[Click here]({spotify_activity.track_url})", inline=False)
 
-        logging.info(f"Successfully sending Spotify embed for {target.display_name}")
+        logger.info(f"Successfully sending Spotify embed for {target.display_name}")
         await ctx.send(embed=embed)
-
 
 async def setup(bot):
     await bot.add_cog(SpotifyCog(bot))

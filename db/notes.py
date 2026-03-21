@@ -1,6 +1,5 @@
-from typing import Optional
-from db import DatabaseMixin
 
+from db import DatabaseMixin
 
 class NotesMixin(DatabaseMixin):
     async def add_note(self, user_id: int, username: str, content: str) -> int:
@@ -11,7 +10,7 @@ class NotesMixin(DatabaseMixin):
         )
         return row['id']
 
-    async def get_note(self, note_id: int) -> Optional[dict]:
+    async def get_note(self, note_id: int) -> dict | None:
         """Get a note by its ID"""
         row = await self._fetchrow(
             'SELECT id, user_id, username, content, created_at FROM notes WHERE id = $1',

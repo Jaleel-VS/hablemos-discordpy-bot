@@ -13,22 +13,18 @@ from discord.ext.commands import command, cooldown, BucketType
 from discord import File
 import demoji
 
-
 def get_img_url(url_identifier: str):
     if url_identifier is None:  # user doesn't have a profile picture
         return "https://i.imgur.com/z9tOsSz.png"
     return str(url_identifier)[:-4] + '4096'
 
-
 def remove_emoji_from_message(message):  # for custom emojis
     return sub("<:[A-Za-z0-9_]+:([0-9]+)>", '', message).replace("  ", " ")
-
 
 def give_emoji_free_text(text: str) -> str:  # for standard emojis
     result = demoji.replace(text, '')[:28]
     logger.info(f"give_emoji_free_text: input={text!r}, output={result!r}")
     return result
-
 
 def has_font_safe_characters(text: str) -> bool:
     """
@@ -48,7 +44,6 @@ def has_font_safe_characters(text: str) -> bool:
             logger.info(f"Unsupported character found: {char!r} (U+{code:04X})")
             return False
     return True
-
 
 def get_safe_username(user, server=None):
     """
@@ -83,7 +78,6 @@ def get_safe_username(user, server=None):
     logger.info(f"Final username: {username!r}")
     return username
 
-
 def resolve_mentions(content: str, mentions, role_mentions, channel_mentions, server=None) -> str:
     """Replace raw Discord mention markup with human-readable names."""
     for user in mentions:
@@ -96,7 +90,6 @@ def resolve_mentions(content: str, mentions, role_mentions, channel_mentions, se
     for ch in channel_mentions:
         content = content.replace(f'<#{ch.id}>', f'#{ch.name}')
     return content
-
 
 async def get_html_css_info(channel, message_id, server, message=None):
     if message is None:
@@ -114,7 +107,6 @@ async def get_html_css_info(channel, message_id, server, message=None):
     user_avatar = get_img_url(user.avatar)
 
     return user_nick, user_avatar, message_content
-
 
 class QuoteGenerator(BaseCog):
     def __init__(self, bot) -> None:
@@ -255,7 +247,6 @@ class QuoteGenerator(BaseCog):
         await ctx.send(file=File(generated_url))
         remove(f"{dir_path2}/picture2.png")
 
-
     @command()
     async def quoteme(self, ctx, toggle: str = None):
         """
@@ -290,7 +281,6 @@ class QuoteGenerator(BaseCog):
                 await ctx.send("You were already opted in.")
         else:
             await ctx.send("Usage: `$quoteme [on|off]`")
-
 
 async def setup(bot):
     await bot.add_cog(QuoteGenerator(bot))

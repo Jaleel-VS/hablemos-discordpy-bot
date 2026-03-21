@@ -6,7 +6,7 @@ import logging
 import discord
 import random
 import asyncio
-from typing import Optional
+
 from discord.ext import commands
 from base_cog import BaseCog, COLORS
 from .gemini_client import ConversationGeminiClient
@@ -16,7 +16,6 @@ from .conversation_data import (
 )
 
 logger = logging.getLogger(__name__)
-
 
 class ConversationCog(BaseCog):
     """Cog for AI-powered language learning conversations"""
@@ -30,7 +29,7 @@ class ConversationCog(BaseCog):
             logger.error(f"Failed to initialize ConversationCog: {e}")
             raise
 
-    async def parse_convo_args(self, args: tuple) -> Optional[dict]:
+    async def parse_convo_args(self, args: tuple) -> dict | None:
         """
         Parse flexible arguments for $convo command
 
@@ -510,7 +509,6 @@ class ConversationCog(BaseCog):
         else:
             logger.error(f"Unhandled error in conversation cog: {error}", exc_info=True)
             await ctx.send("❌ An error occurred. Please try again later.")
-
 
 async def setup(bot):
     """Required setup function for loading the cog"""

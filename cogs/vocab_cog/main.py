@@ -14,7 +14,6 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-
 class VocabNoteModal(Modal, title="Add Vocabulary Note"):
     """Modal for adding a vocabulary note"""
 
@@ -94,7 +93,6 @@ class VocabNoteModal(Modal, title="Add Vocabulary Note"):
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
-
 
 class VocabCog(BaseCog):
     """Cog for managing vocabulary notes with ephemeral messages"""
@@ -360,7 +358,6 @@ class VocabCog(BaseCog):
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
-
 
 async def setup(bot):
     """Setup function to add the cog to the bot"""
