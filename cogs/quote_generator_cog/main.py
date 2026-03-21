@@ -84,31 +84,30 @@ def get_safe_username(user, server=None):
     return username
 
 
+def resolve_mentions(content: str, mentions, role_mentions, channel_mentions, server=None) -> str:
+    """Replace raw Discord mention markup with human-readable names."""
+    for user in mentions:
+        member = server.get_member(user.id) if server else None
+        display = '@' + (member.display_name if member else user.name)
+        for pattern in (f'<@!{user.id}>', f'<@{user.id}>'):
+            content = content.replace(pattern, display)
+    for role in role_mentions:
+        content = content.replace(f'<@&{role.id}>', f'@{role.name}')
+    for ch in channel_mentions:
+        content = content.replace(f'<#{ch.id}>', f'#{ch.name}')
+    return content
+
+
 async def get_html_css_info(channel, message_id, server, message=None):
     if message is None:
         message = await channel.fetch_message(message_id)
     user = message.author
     message_content = remove_emoji_from_message(message.content)
 
-    # Replace mentions (<@id>, <@!id>), role mentions (<@&id>) and channel mentions (<#id>)
-    # with human readable forms so the generated image shows names instead of raw IDs.
-    # Users
-    for mentioned_user in message.mentions:
-        member = server.get_member(mentioned_user.id) if server else None
-        display = '@' + (member.display_name if member else mentioned_user.name)
-        for pattern in (f'<@!{mentioned_user.id}>', f'<@{mentioned_user.id}>'):
-            if pattern in message_content:
-                message_content = message_content.replace(pattern, display)
-    # Roles
-    for role in message.role_mentions:
-        pattern = f'<@&{role.id}>'
-        if pattern in message_content:
-            message_content = message_content.replace(pattern, f'@{role.name}')
-    # Channels
-    for ch in message.channel_mentions:
-        pattern = f'<#{ch.id}>'
-        if pattern in message_content:
-            message_content = message_content.replace(pattern, f'#{ch.name}')
+    message_content = resolve_mentions(
+        message_content, message.mentions, message.role_mentions,
+        message.channel_mentions, server
+    )
 
     user_nick = get_safe_username(user, server)
 
@@ -202,20 +201,10 @@ class QuoteGenerator(BaseCog):
 
         else:
             message_content = remove_emoji_from_message(' '.join(user_input))
-            for mentioned_user in ctx.message.mentions:
-                member = ctx.guild.get_member(mentioned_user.id) if ctx.guild else None
-                display = '@' + (member.display_name if member else mentioned_user.name)
-                for pattern in (f'<@!{mentioned_user.id}>', f'<@{mentioned_user.id}>'):
-                    if pattern in message_content:
-                        message_content = message_content.replace(pattern, display)
-            for role in ctx.message.role_mentions:
-                pattern = f'<@&{role.id}>'
-                if pattern in message_content:
-                    message_content = message_content.replace(pattern, f'@{role.name}')
-            for ch in ctx.message.channel_mentions:
-                pattern = f'<#{ch.id}>'
-                if pattern in message_content:
-                    message_content = message_content.replace(pattern, f'#{ch.name}')
+            message_content = resolve_mentions(
+                message_content, ctx.message.mentions, ctx.message.role_mentions,
+                ctx.message.channel_mentions, ctx.guild
+            )
             user_nick = get_safe_username(ctx.author, ctx.guild)
             user_avatar = get_img_url(ctx.author.avatar)
             return user_nick, user_avatar, message_content

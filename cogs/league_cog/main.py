@@ -73,11 +73,35 @@ class LeagueCog(BaseCog):
         self.message_cooldowns = {}
         # Leaderboard cache: {cache_key: (data, timestamp)}
         self._leaderboard_cache: dict[str, tuple[list, datetime]] = {}
+        # In-memory caches to avoid DB hits on every message
+        self._opted_in_users: set[int] = set()
+        self._banned_users: set[int] = set()
+        self._excluded_channels: set[int] = set()
         self.check_round_end.start()  # Start scheduled task
 
     async def cog_load(self):
-        """Called when cog is loaded - ensure we have an active round"""
+        """Called when cog is loaded - ensure we have an active round and warm caches"""
         await self.ensure_round_exists()
+        await self._warm_caches()
+
+    async def _warm_caches(self):
+        """Load opt-in, ban, and excluded channel data into memory"""
+        try:
+            opted = await self.bot.db.get_all_opted_in_users()
+            self._opted_in_users = {r['user_id'] for r in opted}
+
+            banned = await self.bot.db.get_all_banned_users()
+            self._banned_users = {r['user_id'] for r in banned}
+
+            excluded = await self.bot.db.get_excluded_channels()
+            self._excluded_channels = {r['channel_id'] for r in excluded}
+
+            logger.info(
+                f"League caches warmed: {len(self._opted_in_users)} opted-in, "
+                f"{len(self._banned_users)} banned, {len(self._excluded_channels)} excluded channels"
+            )
+        except Exception as e:
+            logger.error(f"Failed to warm league caches: {e}", exc_info=True)
 
     def cog_unload(self):
         """Called when cog is unloaded"""
@@ -537,6 +561,9 @@ class LeagueCog(BaseCog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
             logger.info(f"User {interaction.user} ({interaction.user.id}) joined Language League")
 
+            # Update in-memory cache
+            self._opted_in_users.add(interaction.user.id)
+
         except Exception as e:
             logger.error(f"Error in league join: {e}", exc_info=True)
             embed = Embed(
@@ -571,6 +598,9 @@ class LeagueCog(BaseCog):
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
             logger.info(f"User {interaction.user} ({interaction.user.id}) left Language League")
+
+            # Update in-memory cache
+            self._opted_in_users.discard(interaction.user.id)
 
         except Exception as e:
             logger.error(f"Error in league leave: {e}", exc_info=True)
@@ -871,16 +901,12 @@ class LeagueCog(BaseCog):
             if message.guild.id != LEAGUE_GUILD_ID:
                 return
 
-            # Check if user is opted in
-            if not await self.bot.db.is_user_opted_in(message.author.id):
+            # Check caches (no DB hit)
+            if message.author.id not in self._opted_in_users:
                 return
-
-            # Check if user is banned
-            if await self.bot.db.is_user_banned(message.author.id):
+            if message.author.id in self._banned_users:
                 return
-
-            # Check if channel is excluded
-            if await self.bot.db.is_channel_excluded(message.channel.id):
+            if message.channel.id in self._excluded_channels:
                 return
 
             # Anti-spam: Check message cooldown

@@ -7,14 +7,15 @@ from discord.ext import commands
 from discord import app_commands, Interaction, Embed
 import logging
 
+import os
+
 from base_cog import BaseCog
 from .api import WebsiteAPIClient
 from .views import MainManageView
 
 logger = logging.getLogger(__name__)
 
-# Bot owner ID (from hablemos.py)
-BOT_OWNER_ID = 216848576549093376
+BOT_OWNER_ID = int(os.getenv('BOT_OWNER_ID', '216848576549093376'))
 
 
 def has_management_permission():

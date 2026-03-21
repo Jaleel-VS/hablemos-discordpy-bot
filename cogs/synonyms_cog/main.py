@@ -147,7 +147,7 @@ class SynonymsCog(BaseCog):
             )
             try:
                 await searching_msg.edit(content=f"{ctx.author.mention}", embed=embed)
-            except:
+            except Exception:
                 # If editing fails, send a new message
                 await ctx.send(embed=embed)
 

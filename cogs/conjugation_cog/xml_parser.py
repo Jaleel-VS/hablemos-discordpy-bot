@@ -5,7 +5,10 @@ Converts the XML data into Python dictionaries for use in the Discord bot
 
 import xml.etree.ElementTree as ET
 import json
+import logging
 from typing import Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 def _first_i_text(person_element: ET.Element) -> str:
     """Return only the first <i> child text for a <p> element.
@@ -31,7 +34,7 @@ class SpanishVerbParser:
         
     def parse_conjugation_templates(self):
         """Parse the conjugation templates XML file"""
-        print("Parsing conjugation templates...")
+        logger.info("Parsing conjugation templates...")
         tree = ET.parse(self.conjugations_xml_path)
         root = tree.getroot()
         
@@ -101,11 +104,11 @@ class SpanishVerbParser:
             
             self.conjugation_templates[template_name] = template_data
             
-        print(f"Loaded {len(self.conjugation_templates)} conjugation templates")
+        logger.info(f"Loaded {len(self.conjugation_templates)} conjugation templates")
     
     def parse_verbs(self):
         """Parse the verbs XML file"""
-        print("Parsing verbs...")
+        logger.info("Parsing verbs...")
         tree = ET.parse(self.verbs_xml_path)
         root = tree.getroot()
         
@@ -122,7 +125,7 @@ class SpanishVerbParser:
                     'template': template
                 }
             
-        print(f"Loaded {len(self.verbs)} verbs")
+        logger.info(f"Loaded {len(self.verbs)} verbs")
     
     def conjugate_verb(self, infinitive: str, template_name: str, tense: str = 'presente', mood: str = 'indicativo') -> Optional[Dict]:
         """Conjugate a verb using its template"""
@@ -215,7 +218,7 @@ class SpanishVerbParser:
             with open(json_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except FileNotFoundError:
-            print(f"Warning: {json_path} not found. Using fallback list.")
+            logger.warning(f"{json_path} not found. Using fallback list.")
             # Fallback to a minimal set if file missing
             return [
                 {'infinitive': 'ser', 'english': 'to be', 'frequency_rank': 1},

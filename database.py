@@ -378,17 +378,6 @@ class Database:
                 )
             ''')
 
-            # Nickname rotation table
-            await conn.execute('''
-                CREATE TABLE IF NOT EXISTS nickname_rotation (
-                    guild_id BIGINT NOT NULL,
-                    user_id BIGINT NOT NULL,
-                    nicknames TEXT[] NOT NULL DEFAULT '{}',
-                    current_index INTEGER NOT NULL DEFAULT 0,
-                    PRIMARY KEY (guild_id, user_id)
-                )
-            ''')
-
             logging.info("Database schema initialized")
 
     async def add_note(self, user_id: int, username: str, content: str) -> int:
@@ -1559,80 +1548,3 @@ class Database:
                 SELECT user_id FROM quote_optouts WHERE user_id = $1
             ''', user_id)
             return row is not None
-
-    # ── Nickname Rotation ────────────────────────────────────────────
-
-    async def get_nicknames(self, guild_id: int, user_id: int) -> list:
-        """Get a user's nickname rotation list"""
-        if self.pool is None:
-            raise RuntimeError("Database pool not initialized. Call connect() first.")
-        async with self.pool.acquire() as conn:
-            row = await conn.fetchrow(
-                'SELECT nicknames FROM nickname_rotation WHERE guild_id = $1 AND user_id = $2',
-                guild_id, user_id
-            )
-            return list(row['nicknames']) if row else []
-
-    async def get_nickname_index(self, guild_id: int, user_id: int) -> int:
-        """Get a user's current rotation index"""
-        if self.pool is None:
-            raise RuntimeError("Database pool not initialized. Call connect() first.")
-        async with self.pool.acquire() as conn:
-            row = await conn.fetchrow(
-                'SELECT current_index FROM nickname_rotation WHERE guild_id = $1 AND user_id = $2',
-                guild_id, user_id
-            )
-            return row['current_index'] if row else 0
-
-    async def add_nickname(self, guild_id: int, user_id: int, name: str):
-        """Add a nickname to a user's rotation list"""
-        if self.pool is None:
-            raise RuntimeError("Database pool not initialized. Call connect() first.")
-        async with self.pool.acquire() as conn:
-            await conn.execute('''
-                INSERT INTO nickname_rotation (guild_id, user_id, nicknames)
-                VALUES ($1, $2, ARRAY[$3]::TEXT[])
-                ON CONFLICT (guild_id, user_id)
-                DO UPDATE SET nicknames = array_append(nickname_rotation.nicknames, $3)
-            ''', guild_id, user_id, name)
-
-    async def remove_nickname(self, guild_id: int, user_id: int, name: str):
-        """Remove a nickname from a user's rotation list and fix index"""
-        if self.pool is None:
-            raise RuntimeError("Database pool not initialized. Call connect() first.")
-        async with self.pool.acquire() as conn:
-            await conn.execute('''
-                UPDATE nickname_rotation
-                SET nicknames = array_remove(nicknames, $3),
-                    current_index = LEAST(current_index, GREATEST(array_length(array_remove(nicknames, $3), 1) - 1, 0))
-                WHERE guild_id = $1 AND user_id = $2
-            ''', guild_id, user_id, name)
-
-    async def clear_nicknames(self, guild_id: int, user_id: int):
-        """Remove a user's nickname rotation entry entirely"""
-        if self.pool is None:
-            raise RuntimeError("Database pool not initialized. Call connect() first.")
-        async with self.pool.acquire() as conn:
-            await conn.execute(
-                'DELETE FROM nickname_rotation WHERE guild_id = $1 AND user_id = $2',
-                guild_id, user_id
-            )
-
-    async def get_all_nickname_rotations(self) -> list:
-        """Get all active nickname rotations (users with at least one nickname)"""
-        if self.pool is None:
-            raise RuntimeError("Database pool not initialized. Call connect() first.")
-        async with self.pool.acquire() as conn:
-            return await conn.fetch(
-                'SELECT guild_id, user_id, nicknames, current_index FROM nickname_rotation WHERE array_length(nicknames, 1) > 0'
-            )
-
-    async def advance_nickname_index(self, guild_id: int, user_id: int, new_index: int):
-        """Update the current rotation index"""
-        if self.pool is None:
-            raise RuntimeError("Database pool not initialized. Call connect() first.")
-        async with self.pool.acquire() as conn:
-            await conn.execute(
-                'UPDATE nickname_rotation SET current_index = $3 WHERE guild_id = $1 AND user_id = $2',
-                guild_id, user_id, new_index
-            )

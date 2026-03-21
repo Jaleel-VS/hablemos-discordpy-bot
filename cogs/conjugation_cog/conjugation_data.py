@@ -3,8 +3,11 @@ Conjugation data for Spanish verbs - loaded from parsed XML data
 """
 
 import json
+import logging
 import random
 import os
+
+logger = logging.getLogger(__name__)
 
 # Load the parsed verb data
 def load_verbs_data():
@@ -26,7 +29,7 @@ def load_verbs_data():
         parser.parse_verbs()
         return parser.get_common_verbs(200)
     except Exception as e:
-        print(f"Warning: Failed to load verb data from XML: {e}. Using fallback data.")
+        logger.warning(f"Failed to load verb data from XML: {e}. Using fallback data.")
         return FALLBACK_VERBS
 
 # Fallback data in case JSON file is not available

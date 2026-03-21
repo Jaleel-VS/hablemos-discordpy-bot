@@ -97,6 +97,10 @@ class LeagueAdminCog(BaseCog):
 
             success = await self.bot.db.leaderboard_ban_user(user_id)
             if success:
+                # Invalidate league cog caches
+                league_cog = self.bot.get_cog("LeagueCog")
+                if league_cog:
+                    league_cog._banned_users.add(user_id)
                 await ctx.send(f"✅ Banned user `{user_id}` from league.")
                 logger.info(f"Admin {ctx.author} banned user {user_id} from league")
             else:
@@ -118,6 +122,10 @@ class LeagueAdminCog(BaseCog):
 
             success = await self.bot.db.leaderboard_unban_user(user_id)
             if success:
+                # Invalidate league cog caches
+                league_cog = self.bot.get_cog("LeagueCog")
+                if league_cog:
+                    league_cog._banned_users.discard(user_id)
                 await ctx.send(f"✅ Unbanned user `{user_id}` from league.")
                 logger.info(f"Admin {ctx.author} unbanned user {user_id} from league")
             else:
@@ -134,6 +142,10 @@ class LeagueAdminCog(BaseCog):
         channel = ctx.message.channel_mentions[0]
         success = await self.bot.db.exclude_channel(channel.id, channel.name, ctx.author.id)
         if success:
+            # Invalidate league cog caches
+            league_cog = self.bot.get_cog("LeagueCog")
+            if league_cog:
+                league_cog._excluded_channels.add(channel.id)
             await ctx.send(f"✅ Excluded {channel.mention} from league tracking.")
             logger.info(f"Admin {ctx.author} excluded channel {channel.name} ({channel.id}) from league")
         else:
@@ -148,6 +160,10 @@ class LeagueAdminCog(BaseCog):
         channel = ctx.message.channel_mentions[0]
         success = await self.bot.db.include_channel(channel.id)
         if success:
+            # Invalidate league cog caches
+            league_cog = self.bot.get_cog("LeagueCog")
+            if league_cog:
+                league_cog._excluded_channels.discard(channel.id)
             await ctx.send(f"✅ Re-included {channel.mention} in league tracking.")
             logger.info(f"Admin {ctx.author} re-included channel {channel.name} ({channel.id}) in league")
         else:

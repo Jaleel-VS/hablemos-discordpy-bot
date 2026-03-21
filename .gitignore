@@ -9,5 +9,4 @@ database/
 bot_config.py
 *.log
 .python-version
-test_*.py
 *.sql
