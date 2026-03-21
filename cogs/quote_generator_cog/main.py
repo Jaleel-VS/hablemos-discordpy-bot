@@ -1,3 +1,4 @@
+from cogs.quote_generator_cog.markdown import remove_markdown_from_message
 from cogs.quote_generator_cog.quote_generator_helper.image_creator import dir_path, create_image
 from cogs.quote_generator_cog.quote_generator_helper.image_creator2 import dir_path as dir_path2, create_image2
 from base_cog import BaseCog
@@ -89,6 +90,7 @@ async def get_html_css_info(channel, message_id, server, message=None):
         message = await channel.fetch_message(message_id)
     user = message.author
     message_content = remove_emoji_from_message(message.content)
+    message_content = remove_markdown_from_message(message_content)
 
     # Replace mentions (<@id>, <@!id>), role mentions (<@&id>) and channel mentions (<#id>)
     # with human readable forms so the generated image shows names instead of raw IDs.
