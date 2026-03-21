@@ -1,6 +1,5 @@
 """Database mixin for command metrics and cog management."""
 import logging
-from datetime import datetime, timezone
 
 from db import DatabaseMixin
 
@@ -41,13 +40,22 @@ class MetricsMixin(DatabaseMixin):
         ''', command_name, cog_name, user_id, guild_id, channel_id, is_slash, failed)
 
     async def get_command_counts(self, days: int = 7, limit: int = 15) -> list[dict]:
-        """Top commands by usage in the last N days."""
+        """Top commands by usage in the last N days (raw + rolled-up)."""
         rows = await self._fetch('''
-            SELECT command_name, COUNT(*) as uses,
-                   COUNT(DISTINCT user_id) as unique_users
-            FROM command_metrics
-            WHERE invoked_at > NOW() - MAKE_INTERVAL(days => $1)
-              AND failed = FALSE
+            SELECT command_name, SUM(uses) AS uses, SUM(unique_users) AS unique_users
+            FROM (
+                SELECT command_name, COUNT(*) AS uses,
+                       COUNT(DISTINCT user_id) AS unique_users
+                FROM command_metrics
+                WHERE invoked_at > NOW() - MAKE_INTERVAL(days => $1)
+                  AND failed = FALSE
+                GROUP BY command_name
+                UNION ALL
+                SELECT command_name, uses, unique_users
+                FROM metrics_daily
+                WHERE date > CURRENT_DATE - $1
+                  AND date <= CURRENT_DATE - 30
+            ) combined
             GROUP BY command_name
             ORDER BY uses DESC
             LIMIT $2
@@ -92,4 +100,75 @@ class MetricsMixin(DatabaseMixin):
             ORDER BY uses DESC
             LIMIT $3
         ''', user_id, days, limit)
+        return [dict(r) for r in rows]
+
+    # ── Retention / rollup ──
+
+    async def rollup_and_purge_metrics(self, retention_days: int = 30) -> dict:
+        """
+        Roll up command_metrics older than retention_days into metrics_daily,
+        then delete the raw rows. Returns counts of rows rolled up and deleted.
+        """
+        self._check_pool()
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                # Roll up into daily summary
+                rolled = await conn.execute('''
+                    INSERT INTO metrics_daily (date, command_name, cog_name, uses, unique_users, failures)
+                    SELECT invoked_at::date AS date,
+                           command_name,
+                           cog_name,
+                           COUNT(*) AS uses,
+                           COUNT(DISTINCT user_id) AS unique_users,
+                           COUNT(*) FILTER (WHERE failed) AS failures
+                    FROM command_metrics
+                    WHERE invoked_at < NOW() - MAKE_INTERVAL(days => $1)
+                    GROUP BY invoked_at::date, command_name, cog_name
+                    ON CONFLICT (date, command_name) DO UPDATE
+                    SET uses = metrics_daily.uses + EXCLUDED.uses,
+                        unique_users = GREATEST(metrics_daily.unique_users, EXCLUDED.unique_users),
+                        failures = metrics_daily.failures + EXCLUDED.failures
+                ''', retention_days)
+
+                # Delete raw rows that were rolled up
+                deleted = await conn.execute('''
+                    DELETE FROM command_metrics
+                    WHERE invoked_at < NOW() - MAKE_INTERVAL(days => $1)
+                ''', retention_days)
+
+        rolled_count = int(rolled.split()[-1]) if rolled else 0
+        deleted_count = int(deleted.split()[-1]) if deleted else 0
+        logger.info(f"Metrics rollup: {rolled_count} summaries upserted, {deleted_count} raw rows purged")
+        return {'rolled_up': rolled_count, 'purged': deleted_count}
+
+    async def purge_old_league_activity(self) -> int:
+        """
+        Delete leaderboard_activity rows from rounds that are 2+ rounds
+        behind the current active round. Keeps current + previous round.
+        """
+        result = await self._execute('''
+            DELETE FROM leaderboard_activity
+            WHERE round_id IS NOT NULL
+              AND round_id < (
+                  SELECT COALESCE(MAX(round_id), 0) - 1
+                  FROM league_rounds
+              )
+        ''')
+        count = int(result.split()[-1]) if result else 0
+        if count:
+            logger.info(f"Purged {count} old leaderboard_activity rows")
+        return count
+
+    async def get_table_sizes(self) -> list[dict]:
+        """Get row counts for high-volume tables."""
+        rows = await self._fetch('''
+            SELECT relname AS table_name,
+                   n_live_tup AS row_count
+            FROM pg_stat_user_tables
+            WHERE relname IN (
+                'command_metrics', 'metrics_daily',
+                'leaderboard_activity', 'conversations'
+            )
+            ORDER BY n_live_tup DESC
+        ''')
         return [dict(r) for r in rows]

@@ -378,4 +378,23 @@ async def initialize_schema(pool):
             ON command_metrics(command_name, invoked_at)
         ''')
 
+        # Daily rollup table for long-term metrics retention
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS metrics_daily (
+                id SERIAL PRIMARY KEY,
+                date DATE NOT NULL,
+                command_name VARCHAR(100) NOT NULL,
+                cog_name VARCHAR(100),
+                uses INTEGER NOT NULL DEFAULT 0,
+                unique_users INTEGER NOT NULL DEFAULT 0,
+                failures INTEGER NOT NULL DEFAULT 0,
+                UNIQUE(date, command_name)
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_metrics_daily_date
+            ON metrics_daily(date)
+        ''')
+
         logger.info("Database schema initialized")

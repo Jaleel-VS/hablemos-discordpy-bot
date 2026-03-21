@@ -5,7 +5,7 @@ import logging
 import os
 
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import Embed, Color
 
 from base_cog import BaseCog
@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 
 # Extensions that cannot be disabled (would lock you out)
 PROTECTED_EXTENSIONS = {'cogs.admin_cog.main'}
+
+# How many days of raw command_metrics to keep before rolling up
+METRICS_RETENTION_DAYS = 30
 
 
 def _discover_extensions() -> list[str]:
@@ -34,6 +37,29 @@ class AdminCog(BaseCog):
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
+        self.daily_cleanup.start()
+
+    def cog_unload(self):
+        self.daily_cleanup.cancel()
+
+    # ── Daily cleanup task ──
+
+    @tasks.loop(hours=24)
+    async def daily_cleanup(self):
+        """Roll up old metrics and purge stale leaderboard activity."""
+        try:
+            result = await self.bot.db.rollup_and_purge_metrics(METRICS_RETENTION_DAYS)
+            league_purged = await self.bot.db.purge_old_league_activity()
+            logger.info(
+                f"Daily cleanup: metrics rolled={result['rolled_up']} "
+                f"purged={result['purged']}, league_activity purged={league_purged}"
+            )
+        except Exception as e:
+            logger.error(f"Daily cleanup failed: {e}", exc_info=True)
+
+    @daily_cleanup.before_loop
+    async def before_daily_cleanup(self):
+        await self.bot.wait_until_ready()
 
     # ── Cog management ──
 
@@ -221,6 +247,49 @@ class AdminCog(BaseCog):
             color=Color.blurple(),
         )
         await ctx.send(embed=embed)
+
+    @metrics.command(name='retention')
+    @commands.is_owner()
+    async def metrics_retention(self, ctx: commands.Context):
+        """Show table sizes and retention info."""
+        sizes = await self.bot.db.get_table_sizes()
+
+        embed = Embed(
+            title="Data Retention",
+            color=Color.blurple(),
+        )
+
+        if sizes:
+            lines = [f"`{t['table_name']}` — {t['row_count']:,} rows" for t in sizes]
+            embed.add_field(name="Table Sizes", value='\n'.join(lines), inline=False)
+        else:
+            embed.add_field(name="Table Sizes", value="No data available (stats may need a vacuum).", inline=False)
+
+        embed.add_field(
+            name="Policy",
+            value=(
+                f"**command_metrics:** raw rows kept {METRICS_RETENTION_DAYS} days, then rolled up to metrics_daily\n"
+                f"**leaderboard_activity:** purged for rounds older than current - 1\n"
+                f"**Cleanup runs:** every 24 hours"
+            ),
+            inline=False,
+        )
+
+        await ctx.send(embed=embed)
+
+    @metrics.command(name='cleanup')
+    @commands.is_owner()
+    async def metrics_cleanup(self, ctx: commands.Context):
+        """Manually trigger the daily cleanup."""
+        msg = await ctx.send("Running cleanup...")
+        result = await self.bot.db.rollup_and_purge_metrics(METRICS_RETENTION_DAYS)
+        league_purged = await self.bot.db.purge_old_league_activity()
+        await msg.edit(
+            content=(
+                f"Done. Metrics: {result['rolled_up']} rolled up, {result['purged']} purged. "
+                f"League activity: {league_purged} purged."
+            )
+        )
 
 
 async def setup(bot: commands.Bot):
