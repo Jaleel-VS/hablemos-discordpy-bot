@@ -318,7 +318,7 @@ class AdminCog(BaseCog):
             return
 
         after = datetime.now(timezone.utc) - timedelta(days=days)
-        processing = await ctx.send(f"Scanning #{channel.name} for the last {days} days...")
+        processing = await ctx.send(f"Scanning #{channel.name} for the last {days} days (max 5,000 messages)...")
 
         reply_pairs: Counter[tuple[int, int]] = Counter()
         mention_pairs: Counter[tuple[int, int]] = Counter()
@@ -326,7 +326,7 @@ class AdminCog(BaseCog):
         msg_count = 0
 
         try:
-            async for msg in channel.history(limit=None, after=after, oldest_first=False):
+            async for msg in channel.history(limit=5000, after=after, oldest_first=False):
                 if msg.author.bot:
                     continue
 
