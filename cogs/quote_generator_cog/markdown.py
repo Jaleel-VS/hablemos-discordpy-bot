@@ -126,6 +126,12 @@ def remove_markdown_from_message(message: str, current_recursion_size: int = 0) 
                 elif message[new_index] == ")":
                     is_nesting = False
 
+                # Discord doesn't support escaped characters in nested parentheses, ironically.
+                if not is_nesting and message[new_index] == "\\" and new_index + 1 < len(message) and not message[new_index + 1].isalnum():
+                    url.write(message[new_index + 1])
+                    new_index += 2
+                    continue
+
                 url.write(message[new_index])
                 new_index += 1
 
