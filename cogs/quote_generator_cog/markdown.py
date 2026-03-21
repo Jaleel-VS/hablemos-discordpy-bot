@@ -40,6 +40,8 @@ def remove_markdown_from_message(message: str) -> str:
 
         # Strip headers, subtext, and quotes
         if is_new_line and not is_in_code_block:
+            next_four = message[index:index+4]
+
             if next_two == "> " or next_two == "# ":
                 index += 2
                 is_new_line = False
@@ -50,7 +52,7 @@ def remove_markdown_from_message(message: str) -> str:
                 is_new_line = False
                 continue
 
-            if message[index:index+4] == "### ":
+            if next_four == "### " or next_four == ">>> ":
                 index += 4
                 is_new_line = False
                 continue
