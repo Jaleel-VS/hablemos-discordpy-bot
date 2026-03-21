@@ -83,14 +83,14 @@ class VisibilityView(discord.ui.View):
 
     @discord.ui.button(label='Send Private', style=discord.ButtonStyle.secondary)
     async def send_private(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # Delete the prompt message with buttons
-        await interaction.message.delete()
-
+        # Respond with ephemeral first, then delete the prompt
         if len(self.pages) == 1:
-            await interaction.followup.send(embed=self._build_embed(), ephemeral=True)
+            await interaction.response.send_message(embed=self._build_embed(), ephemeral=True)
         else:
             view = PageView(self.pages, self.question, self.author_id)
-            await interaction.followup.send(embed=view.build_embed(), view=view, ephemeral=True)
+            await interaction.response.send_message(embed=view.build_embed(), view=view, ephemeral=True)
+
+        await interaction.message.delete()
 
     @discord.ui.button(label='Discard', style=discord.ButtonStyle.danger)
     async def discard(self, interaction: discord.Interaction, button: discord.ui.Button):
