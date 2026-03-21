@@ -334,16 +334,18 @@ class AdminCog(BaseCog):
                 user_names[msg.author.id] = msg.author.display_name
 
                 # Count replies
+                replied_to_id = None
                 if msg.reference and msg.reference.resolved and not isinstance(msg.reference.resolved, discord.DeletedReferencedMessage):
                     target = msg.reference.resolved.author
                     if not target.bot and target.id != msg.author.id:
                         user_names[target.id] = target.display_name
                         pair = tuple(sorted((msg.author.id, target.id)))
                         reply_pairs[pair] += 1
+                        replied_to_id = target.id
 
-                # Count mentions
+                # Count mentions (skip the person being replied to — Discord auto-mentions them)
                 for mentioned in msg.mentions:
-                    if not mentioned.bot and mentioned.id != msg.author.id:
+                    if not mentioned.bot and mentioned.id != msg.author.id and mentioned.id != replied_to_id:
                         user_names[mentioned.id] = mentioned.display_name
                         pair = tuple(sorted((msg.author.id, mentioned.id)))
                         mention_pairs[pair] += 1
