@@ -40,6 +40,7 @@ from db.vocab import VocabMixin
 from db.leaderboard import LeaderboardMixin
 from db.quotes import QuotesMixin
 from db.practice import PracticeMixin
+from db.metrics import MetricsMixin
 from db.schema import initialize_schema
 
 class Database(
@@ -51,6 +52,7 @@ class Database(
     LeaderboardMixin,
     QuotesMixin,
     PracticeMixin,
+    MetricsMixin,
 ):
     def __init__(self):
         self.pool: asyncpg.Pool | None = None

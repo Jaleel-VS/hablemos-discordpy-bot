@@ -345,4 +345,37 @@ async def initialize_schema(pool):
             )
         ''')
 
+        # Cog toggle settings
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS cog_settings (
+                cog_name VARCHAR(100) PRIMARY KEY,
+                enabled BOOLEAN NOT NULL DEFAULT TRUE
+            )
+        ''')
+
+        # Command usage metrics
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS command_metrics (
+                id SERIAL PRIMARY KEY,
+                command_name VARCHAR(100) NOT NULL,
+                cog_name VARCHAR(100),
+                user_id BIGINT NOT NULL,
+                guild_id BIGINT,
+                channel_id BIGINT,
+                is_slash BOOLEAN DEFAULT FALSE,
+                failed BOOLEAN DEFAULT FALSE,
+                invoked_at TIMESTAMPTZ DEFAULT NOW()
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_metrics_invoked
+            ON command_metrics(invoked_at)
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_metrics_command
+            ON command_metrics(command_name, invoked_at)
+        ''')
+
         logger.info("Database schema initialized")

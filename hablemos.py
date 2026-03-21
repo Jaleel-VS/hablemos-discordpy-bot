@@ -54,6 +54,13 @@ class Hablemos(Bot):
             logger.info("Database connected successfully")
         except Exception as e:
             logger.error(f"Failed to connect to database: {e}")
+            return
+
+        # Load disabled cogs set for filtering
+        try:
+            disabled = await self.db.get_disabled_cogs()
+        except Exception:
+            disabled = set()
 
         for folder in os.listdir('./cogs'):
             if folder.endswith('_cog'):
@@ -61,8 +68,12 @@ class Hablemos(Bot):
                 if os.path.isdir(cog_path):
                     for file in os.listdir(cog_path):
                         if file.endswith('.py') and file.startswith('main'):
+                            ext = f'cogs.{folder}.{file[:-3]}'
+                            if ext in disabled:
+                                logger.info(f'Skipping disabled extension: {ext}')
+                                continue
                             try:
-                                await self.load_extension(f'cogs.{folder}.{file[:-3]}')
+                                await self.load_extension(ext)
                                 logger.info(f'Loaded extension: {file[:-3]} from folder: {folder}')
                             except Exception as e:
                                 logger.error(f'Failed to load extension {file[:-3]}.', exc_info=e)
@@ -102,6 +113,21 @@ class Hablemos(Bot):
         if len(ctx.message.content) > 1 and (ctx.message.content[1].isdigit() or ctx.message.content[-1] == self.command_prefix):
             return
 
+        # Record failed command metric
+        try:
+            cog_name = type(ctx.cog).__name__ if ctx.cog else None
+            await self.db.record_command(
+                command_name=str(ctx.command),
+                cog_name=cog_name,
+                user_id=ctx.author.id,
+                guild_id=ctx.guild.id if ctx.guild else None,
+                channel_id=ctx.channel.id,
+                is_slash=False,
+                failed=True,
+            )
+        except Exception:
+            pass
+
         try:
             if isinstance(error, CommandNotFound):
                 if isinstance(self.error_channel, discord.TextChannel):
@@ -124,6 +150,18 @@ class Hablemos(Bot):
 
     async def on_command_completion(self, ctx):
         logger.info(f'Command {ctx.command} completed successfully by {ctx.author} in {ctx.guild}.')
+        try:
+            cog_name = type(ctx.cog).__name__ if ctx.cog else None
+            await self.db.record_command(
+                command_name=str(ctx.command),
+                cog_name=cog_name,
+                user_id=ctx.author.id,
+                guild_id=ctx.guild.id if ctx.guild else None,
+                channel_id=ctx.channel.id,
+                is_slash=False,
+            )
+        except Exception as e:
+            logger.debug(f"Failed to record command metric: {e}")
 
 # Initialize and run
 bot = Hablemos(prefix)

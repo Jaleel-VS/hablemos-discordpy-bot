@@ -1,5 +1,6 @@
 from discord.ext.commands import Cog, CommandOnCooldown, CommandError
 from discord.ext.commands import Bot
+from discord import Interaction
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,6 +13,20 @@ class BaseCog(Cog):
     """Base class for all cogs"""
     def __init__(self, bot):
         self.bot: Bot = bot
+
+    async def cog_app_command_after_invoke(self, interaction: Interaction) -> None:
+        """Track slash command usage for metrics."""
+        try:
+            await self.bot.db.record_command(
+                command_name=interaction.command.qualified_name if interaction.command else "unknown",
+                cog_name=type(self).__name__,
+                user_id=interaction.user.id,
+                guild_id=interaction.guild_id,
+                channel_id=interaction.channel_id,
+                is_slash=True,
+            )
+        except Exception as e:
+            logger.debug(f"Failed to record slash command metric: {e}")
 
     async def cog_command_error(self, ctx, error):
         """Handle errors for commands in this cog"""
