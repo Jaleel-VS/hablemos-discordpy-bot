@@ -79,7 +79,7 @@ def remove_markdown_from_message(message: str, current_recursion_size: int = 0) 
                 if template == "```" and not want_to_close:
                     end = message.index(template, index)
                     
-                    if "\n" in message[index + length:end]:
+                    if "\n" in message[index:end]:
                         while message[index].isalnum():
                             index += 1
 
