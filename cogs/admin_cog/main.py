@@ -379,9 +379,9 @@ class AdminCog(BaseCog):
             mentions = mention_pairs.get(pair, 0)
             parts = []
             if replies:
-                parts.append(f"{replies} replies")
+                parts.append(f"{replies} {'reply' if replies == 1 else 'replies'}")
             if mentions:
-                parts.append(f"{mentions} mentions")
+                parts.append(f"{mentions} {'mention' if mentions == 1 else 'mentions'}")
             lines.append(
                 f"`{i:>2}.` **{user_names.get(a, '?')}** & **{user_names.get(b, '?')}** — {', '.join(parts)}"
             )
