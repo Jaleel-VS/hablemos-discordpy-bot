@@ -1,11 +1,12 @@
-import os
 import logging
+import os
 import random
 
 import discord
 from discord import Game
 from discord.ext.commands import Bot, CommandNotFound, CommandOnCooldown, MissingPermissions, NotOwner
 
+from config import load_settings
 from logger import setup_logging
 from db import Database
 
@@ -13,34 +14,22 @@ from db import Database
 setup_logging()
 logger = logging.getLogger(__name__)
 
-# Configuration from environment
-bot_token = os.getenv('BOT_TOKEN')
-if not bot_token:
-    raise ValueError("BOT_TOKEN environment variable is required")
-
-prefix = os.getenv('PREFIX', '$')
-
-# Channel/guild IDs from environment with existing defaults for backwards compatibility
-BOT_PLAYGROUND = int(os.getenv('BOT_PLAYGROUND_GUILD_ID', '731403448502845501'))
-ERROR_CHANNEL = int(os.getenv('ERROR_CHANNEL_ID', '811669166883995690'))
-ONLINE_CHANNEL = int(os.getenv('ONLINE_CHANNEL_ID', '808679873837137940'))
-LEAGUE_GUILD_ID = int(os.getenv('LEAGUE_GUILD_ID', '243838819743432704'))
-OWNER_ID = int(os.getenv('BOT_OWNER_ID', '216848576549093376'))
-
-logger.info(f"Environment: {os.getenv('ENVIRONMENT', 'development')}")
+settings = load_settings()
+logger.info(f"Environment: {settings.environment}")
 
 
 
 class Hablemos(Bot):
 
-    def __init__(self, prefix):
+    def __init__(self, prefix, settings):
         super().__init__(description="Bot by Jaleel#6408",
-                         command_prefix=prefix,
-                         owner_id=OWNER_ID,
-                         help_command=None,
-                         intents=discord.Intents.all()
-                         )
+                          command_prefix=prefix,
+                          owner_id=settings.owner_id,
+                          help_command=None,
+                          intents=discord.Intents.all()
+                          )
 
+        self.settings = settings
         self.online_channel = None
         self.error_channel = None
         self.db = Database()
@@ -80,15 +69,15 @@ class Hablemos(Bot):
                                 logger.error(f'Failed to load extension {ext}: {e}', exc_info=True)
 
     async def on_ready(self):
-        guild_id = BOT_PLAYGROUND
+        guild_id = self.settings.bot_playground_guild_id
         guild = self.get_guild(guild_id)
 
         if guild is None:
             logger.warning(f"Guild with ID {guild_id} not found")
             return
 
-        self.error_channel = guild.get_channel(ERROR_CHANNEL)
-        self.online_channel = guild.get_channel(ONLINE_CHANNEL)
+        self.error_channel = guild.get_channel(self.settings.error_channel_id)
+        self.online_channel = guild.get_channel(self.settings.online_channel_id)
 
         logger.info("BOT LOADED!")
 
@@ -99,7 +88,7 @@ class Hablemos(Bot):
             logger.info(f"Synced {len(synced)} global slash command(s)")
 
             # Guild-specific sync for Language League (instant)
-            league_guild = discord.Object(id=LEAGUE_GUILD_ID)
+            league_guild = discord.Object(id=self.settings.league_guild_id)
             synced_guild = await self.tree.sync(guild=league_guild)
             logger.info(f"Synced {len(synced_guild)} slash command(s) to Language League guild (instant)")
         except Exception as e:
@@ -178,7 +167,7 @@ class Hablemos(Bot):
                 quote = random.choice(quotes)
                 await ctx.send(
                     f"You don't have permission to use that command. "
-                    f"Please contact <@{OWNER_ID}> for any trouble.\n\n*{quote}*"
+                        f"Please contact <@{self.settings.owner_id}> for any trouble.\n\n*{quote}*"
                 )
 
             else:
@@ -204,6 +193,5 @@ class Hablemos(Bot):
             logger.debug(f"Failed to record command metric: {e}")
 
 # Initialize and run
-bot = Hablemos(prefix)
-bot.run(bot_token)
-
+bot = Hablemos(settings.prefix, settings)
+bot.run(settings.bot_token)

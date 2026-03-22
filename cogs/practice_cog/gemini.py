@@ -1,7 +1,6 @@
 """
 Gemini API client for generating practice sentences.
 """
-import os
 import re
 import logging
 import random
@@ -30,12 +29,8 @@ Return ONLY the sentence in {language}, nothing else.
 Example for Spanish word "hablar" (to speak):
 Mi hermana puede hablar tres idiomas diferentes."""
 
-    def __init__(self):
+    def __init__(self, api_key: str):
         """Initialize Gemini client for sentence generation"""
-        api_key = os.getenv('GEMINI_API_KEY')
-        if not api_key:
-            raise ValueError("GEMINI_API_KEY environment variable is required")
-
         self.client = genai.Client(api_key=api_key)
         self.model_name = 'gemini-2.0-flash-lite'
         self.rate_limiter = RateLimiter(requests_per_minute=15)
@@ -43,7 +38,7 @@ Mi hermana puede hablar tres idiomas diferentes."""
         logger.info("Practice Gemini client initialized successfully")
 
     async def generate_sentence(self, word: str, translation: str,
-                                language: str, max_retries: int = 3) -> tuple[str, str | None]:
+                                language: str, max_retries: int = 3) -> tuple[str, str] | None:
         """
         Generate a sentence containing the target word.
 

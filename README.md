@@ -171,6 +171,12 @@ BOT_TOKEN=           # Discord bot token (required)
 DATABASE_URL=        # PostgreSQL connection string (required)
 GEMINI_API_KEY=      # Google Gemini API key (required for AI features)
 PREFIX=$             # Command prefix (default: $)
+WEBSITE_API_URL=     # Website API base URL (optional)
+CONVO_SPA_CHANNELS=  # Comma-delimited Spanish-first channel IDs (optional)
+INTRO_CHANNEL_ID=    # Intro channel ID (optional)
+GENERAL_CHANNEL_ID=  # General channel ID (optional)
+INTRO_WARN_CHANNEL_ID=  # Intro warning channel ID (optional)
+INTRO_ALERT_CHANNEL_ID= # Intro alert channel ID (optional)
 ```
 
 ### Run Locally
@@ -223,6 +229,14 @@ Cogs are auto-discovered at startup. Database access is via `self.bot.db` (async
 - [ ] Practice reminders — opt-in daily DM when SRS cards are due
 - [ ] Listening comprehension — TTS audio of generated dialogues
 - [ ] Error pattern analysis — track weak spots in conjugation practice
+
+## To-fix
+
+- [ ] Centralize env var validation to avoid per-cog duplication
+- [ ] Align cog error handling so failures log once and user feedback is consistent
+- [ ] Harden on_ready channel/guild fetch handling with safe fallbacks
+- [ ] Prefer asyncio.get_running_loop() over get_event_loop() in async code
+- [ ] Guard against double-including boundary messages in summaries
 
 ---
 

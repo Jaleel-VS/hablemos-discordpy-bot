@@ -1,7 +1,8 @@
-import asyncpg
-import os
 import logging
 
+import asyncpg
+
+from config import get_required_env
 logger = logging.getLogger(__name__)
 
 class DatabaseMixin:
@@ -56,9 +57,7 @@ class Database(
 ):
     def __init__(self):
         self.pool: asyncpg.Pool | None = None
-        self.database_url = os.getenv('DATABASE_URL')
-        if not self.database_url:
-            raise ValueError("DATABASE_URL not found in environment variables")
+        self.database_url = get_required_env("DATABASE_URL")
 
     async def connect(self):
         """Create a connection pool to the database"""

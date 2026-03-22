@@ -29,7 +29,7 @@ class PracticeCog(BaseCog):
         self.active_sessions: dict[int, PracticeSession] = {}
 
         try:
-            self.gemini = PracticeGeminiClient()
+            self.gemini = PracticeGeminiClient(api_key=bot.settings.gemini_api_key)
             logger.info("PracticeCog initialized successfully")
         except ValueError as e:
             logger.error(f"Failed to initialize PracticeCog: {e}")
@@ -78,6 +78,8 @@ class PracticeCog(BaseCog):
             await ctx.send(f"Unknown language: {language}. Use `spanish` or `english`.")
             return
 
+        existing_cards = await self.bot.db.get_cards_for_language(language)
+        existing_words = {card['word'] for card in existing_cards}
         words = SEED_WORDS[language][:count]
 
         embed = Embed(
@@ -95,8 +97,7 @@ class PracticeCog(BaseCog):
             translation = word_data['translation']
 
             # Check if card already exists
-            existing = await self.bot.db.get_cards_for_language(language)
-            if any(c['word'] == word for c in existing):
+            if word in existing_words:
                 skip_count += 1
                 continue
 
@@ -117,6 +118,7 @@ class PracticeCog(BaseCog):
 
                 if card_id:
                     success_count += 1
+                    existing_words.add(word)
                     logger.info(f"Created practice card for '{word}' ({language})")
 
             # Update progress

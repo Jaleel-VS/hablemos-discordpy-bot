@@ -23,7 +23,7 @@ class ConversationCog(BaseCog):
     def __init__(self, bot):
         super().__init__(bot)
         try:
-            self.gemini = ConversationGeminiClient()
+            self.gemini = ConversationGeminiClient(api_key=bot.settings.gemini_api_key)
             logger.info("ConversationCog initialized successfully")
         except ValueError as e:
             logger.error(f"Failed to initialize ConversationCog: {e}")

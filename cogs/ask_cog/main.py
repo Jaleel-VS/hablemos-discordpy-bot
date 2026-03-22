@@ -3,7 +3,6 @@ Ask cog — owner-only Gemini Q&A with paginated responses.
 """
 import asyncio
 import logging
-import os
 
 import discord
 from discord.ext import commands
@@ -144,10 +143,7 @@ class AskCog(BaseCog):
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
-        api_key = os.getenv('GEMINI_API_KEY')
-        if not api_key:
-            raise ValueError("GEMINI_API_KEY environment variable is required")
-        self.client = genai.Client(api_key=api_key)
+        self.client = genai.Client(api_key=bot.settings.gemini_api_key)
         self.model_name = 'gemini-2.0-flash-lite'
 
     def _call_gemini(self, question: str):
@@ -173,7 +169,7 @@ class AskCog(BaseCog):
 
         try:
             # Wrap sync Gemini call in executor with timeout
-            loop = asyncio.get_event_loop()
+            loop = asyncio.get_running_loop()
             try:
                 response = await asyncio.wait_for(
                     loop.run_in_executor(None, self._call_gemini, question),

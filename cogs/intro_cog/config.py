@@ -1,13 +1,15 @@
 """Configuration for the Introduction Tracker cog."""
-import os
+from config import load_settings
+
+settings = load_settings()
 
 # Channel IDs
-INTRO_CHANNEL_ID = int(os.getenv('INTRO_CHANNEL_ID', '399713966781235200'))
-GENERAL_CHANNEL_ID = int(os.getenv('GENERAL_CHANNEL_ID', '296491080881537024'))
+INTRO_CHANNEL_ID = settings.intro_channel_id
+GENERAL_CHANNEL_ID = settings.general_channel_id
 
 # Default configurable channel IDs (used if not set in DB)
-DEFAULT_WARN_CHANNEL_ID = int(os.getenv('INTRO_WARN_CHANNEL_ID', '247135634265735168'))
-DEFAULT_ALERT_CHANNEL_ID = int(os.getenv('INTRO_ALERT_CHANNEL_ID', '297877202538594304'))
+DEFAULT_WARN_CHANNEL_ID = settings.intro_warn_channel_id
+DEFAULT_ALERT_CHANNEL_ID = settings.intro_alert_channel_id
 
 # DB setting keys
 SETTING_WARN_CHANNEL = 'intro_warn_channel'

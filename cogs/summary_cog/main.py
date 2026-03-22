@@ -22,7 +22,7 @@ class SummaryCog(BaseCog):
 
     def __init__(self, bot):
         super().__init__(bot)
-        self.gemini = GeminiClient()
+        self.gemini = GeminiClient(api_key=bot.settings.gemini_api_key)
         self.cache = SummaryCache(ttl_seconds=3600)
         logger.info("SummaryCog initialized successfully")
 

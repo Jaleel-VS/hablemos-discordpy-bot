@@ -1,7 +1,6 @@
 """
 Google Gemini API client for generating language learning conversations
 """
-import os
 import logging
 import random
 import asyncio
@@ -16,18 +15,13 @@ logger = logging.getLogger(__name__)
 class ConversationGeminiClient:
     """Wrapper for Google Gemini API for conversation generation"""
 
-    def __init__(self):
+    def __init__(self, api_key: str):
         """
         Initialize Gemini client for conversations
 
-        Raises:
-            ValueError: If GEMINI_API_KEY environment variable is not set
+        Args:
+            api_key: Gemini API key
         """
-        # Get API key from environment
-        api_key = os.getenv('GEMINI_API_KEY')
-        if not api_key:
-            raise ValueError("GEMINI_API_KEY environment variable is required")
-
         # Initialize the client with API key
         self.client = genai.Client(api_key=api_key)
 

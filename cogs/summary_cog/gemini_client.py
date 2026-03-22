@@ -1,7 +1,6 @@
 """
 Google Gemini API client for generating conversation summaries.
 """
-import os
 import logging
 
 from google import genai
@@ -27,11 +26,7 @@ Rules:
 class GeminiClient:
     """Wrapper for Google Gemini API for conversation summarization."""
 
-    def __init__(self):
-        api_key = os.getenv('GEMINI_API_KEY')
-        if not api_key:
-            raise ValueError("GEMINI_API_KEY environment variable is required")
-
+    def __init__(self, api_key: str):
         self.client = genai.Client(api_key=api_key)
         self.model_name = 'gemini-2.0-flash-lite'
         logger.info("Gemini client initialized successfully")

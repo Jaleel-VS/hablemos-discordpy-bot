@@ -3,16 +3,11 @@ API client for the Spanish-English Discord website backend
 """
 import aiohttp
 import logging
-import os
 
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
-API_BASE_URL = os.getenv(
-    'WEBSITE_API_URL',
-    'https://spa-eng-discord-website-backend-production.up.railway.app/api'
-)
 
 @dataclass
 class Podcast:
@@ -61,8 +56,8 @@ class LinkReportCount:
 class WebsiteAPIClient:
     """Async HTTP client for the website backend API"""
 
-    def __init__(self):
-        self.base_url = API_BASE_URL
+    def __init__(self, base_url: str):
+        self.base_url = base_url
         self._session: aiohttp.ClientSession | None = None
 
     async def _get_session(self) -> aiohttp.ClientSession:
