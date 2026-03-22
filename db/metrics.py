@@ -109,8 +109,7 @@ class MetricsMixin(DatabaseMixin):
         Roll up command_metrics older than retention_days into metrics_daily,
         then delete the raw rows. Returns counts of rows rolled up and deleted.
         """
-        self._check_pool()
-        async with self.pool.acquire() as conn:
+        async with self._pool().acquire() as conn:
             async with conn.transaction():
                 # Roll up into daily summary
                 rolled = await conn.execute('''

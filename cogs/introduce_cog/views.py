@@ -1,8 +1,7 @@
-import discord
-from discord.ui import View, Select, Button, select, button
+from discord.ui import View, Select, Button, button
 from discord import SelectOption, Interaction, ButtonStyle, Embed
 
-from .config import LANGUAGES, PROFICIENCY_LEVELS, TIMEZONES, COUNTRIES, INTRO_COLOR, EXCHANGE_COLOR
+from .config import LANGUAGES, PROFICIENCY_LEVELS, TIMEZONES, COUNTRIES, EXCHANGE_COLOR
 from .modals import ExchangeDetailsModal, IntroOnlyModal
 
 class IntroStartView(View):

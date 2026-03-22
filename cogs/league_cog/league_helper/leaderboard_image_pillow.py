@@ -2,7 +2,7 @@
 Leaderboard image generation using Pillow (PIL)
 Pure Python implementation - no external dependencies like wkhtmltopdf
 """
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import logging
 import requests

@@ -1,9 +1,8 @@
-from discord.ext.commands import command, Bot, is_owner, has_permissions, Cog
+from discord.ext.commands import command, Bot, has_permissions, Cog
 from base_cog import BaseCog
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
-from discord import Embed, Color, Message, TextChannel
+from discord import Embed, Color, Message
 from .config import (
-    INTRO_CHANNEL_ID, GENERAL_CHANNEL_ID,
     DEFAULT_WARN_CHANNEL_ID, DEFAULT_ALERT_CHANNEL_ID,
     SETTING_WARN_CHANNEL, SETTING_ALERT_CHANNEL,
     EXEMPT_ROLE_IDS, EXEMPT_USER_IDS,
@@ -23,6 +22,8 @@ def ordinal(n: int) -> str:
 class IntroductionTracker(BaseCog):
     def __init__(self, bot: Bot):
         super().__init__(bot)
+        self.intro_channel_id = bot.settings.intro_channel_id
+        self.general_channel_id = bot.settings.general_channel_id
 
     async def _get_channel_id(self, setting_key: str, default: int) -> int:
         """Get a configurable channel ID from DB, falling back to default"""
@@ -37,7 +38,7 @@ class IntroductionTracker(BaseCog):
             return
 
         # Only process messages in the intro channel
-        if message.channel.id != INTRO_CHANNEL_ID:
+        if message.channel.id != self.intro_channel_id:
             return
 
         # Check if feature is enabled
@@ -86,7 +87,7 @@ class IntroductionTracker(BaseCog):
                     notification_text = (
                         f"We noticed you tried to post another introduction. "
                         f"You've already introduced yourself recently, so we removed your duplicate message.\n\n"
-                        f"Feel free to chat with everyone in <#{GENERAL_CHANNEL_ID}> instead! "
+                        f"Feel free to chat with everyone in <#{self.general_channel_id}> instead! "
                         f"We'd love to hear from you there. 😊"
                     )
                     await warn_channel.send(
@@ -133,7 +134,7 @@ class IntroductionTracker(BaseCog):
 
     @command(aliases=['toggleintro'])
     @has_permissions(manage_messages=True)
-    async def introtracker(self, ctx, action: str = None, *, argument: str = None):
+    async def introtracker(self, ctx, action: str | None = None):
         """
         Toggle the introduction tracker on/off or configure channels
         Usage:
@@ -219,10 +220,10 @@ class IntroductionTracker(BaseCog):
                 color=Color(int('3498db', 16))
             )
             embed.add_field(name="Status", value=status, inline=False)
-            embed.add_field(name="Watched Channel", value=f"<#{INTRO_CHANNEL_ID}>", inline=True)
+            embed.add_field(name="Watched Channel", value=f"<#{self.intro_channel_id}>", inline=True)
             embed.add_field(name="Warn Channel", value=f"<#{warn_channel_id}>", inline=True)
             embed.add_field(name="Alert Channel", value=f"<#{alert_channel_id}>", inline=True)
-            embed.add_field(name="Redirect Channel", value=f"<#{GENERAL_CHANNEL_ID}>", inline=True)
+            embed.add_field(name="Redirect Channel", value=f"<#{self.general_channel_id}>", inline=True)
             embed.add_field(name="Total Introductions", value=str(total_count), inline=True)
             embed.add_field(name="Unique Users", value=str(unique_users), inline=True)
             embed.add_field(name="Recent (90d)", value=str(recent_count), inline=True)

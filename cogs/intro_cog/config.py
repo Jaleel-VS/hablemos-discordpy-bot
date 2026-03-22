@@ -3,10 +3,6 @@ from config import load_settings
 
 settings = load_settings()
 
-# Channel IDs
-INTRO_CHANNEL_ID = settings.intro_channel_id
-GENERAL_CHANNEL_ID = settings.general_channel_id
-
 # Default configurable channel IDs (used if not set in DB)
 DEFAULT_WARN_CHANNEL_ID = settings.intro_warn_channel_id
 DEFAULT_ALERT_CHANNEL_ID = settings.intro_alert_channel_id

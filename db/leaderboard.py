@@ -102,10 +102,11 @@ class LeaderboardMixin(DatabaseMixin):
             current_round = await self.get_current_round()
             if not current_round:
                 return None
-            round_id = current_round['round_id']
+            round_id_value = int(current_round['round_id'])
+        else:
+            round_id_value = int(round_id)
 
-        self._check_pool()
-        async with self.pool.acquire() as conn:
+        async with self._pool().acquire() as conn:
             user_row = await conn.fetchrow('''
                 SELECT username, learning_spanish, learning_english
                 FROM leaderboard_users
@@ -119,7 +120,7 @@ class LeaderboardMixin(DatabaseMixin):
                        COUNT(DISTINCT DATE(created_at)) as active_days
                 FROM leaderboard_activity
                 WHERE user_id = $1 AND round_id = $2
-            ''', user_id, round_id)
+            ''', user_id, round_id_value)
 
             total_points = stats_row['total_points'] or 0
             active_days = stats_row['active_days'] or 0
@@ -127,10 +128,10 @@ class LeaderboardMixin(DatabaseMixin):
 
             rank_spanish = rank_english = None
             if user_row['learning_spanish']:
-                rank_spanish = await self._get_user_rank(conn, user_id, 'spanish', round_id)
+                rank_spanish = await self._get_user_rank(conn, user_id, 'spanish', round_id_value)
             if user_row['learning_english']:
-                rank_english = await self._get_user_rank(conn, user_id, 'english', round_id)
-            rank_combined = await self._get_user_rank(conn, user_id, 'combined', round_id)
+                rank_english = await self._get_user_rank(conn, user_id, 'english', round_id_value)
+            rank_combined = await self._get_user_rank(conn, user_id, 'combined', round_id_value)
 
             return {
                 'username': user_row['username'],
@@ -171,7 +172,9 @@ class LeaderboardMixin(DatabaseMixin):
             current_round = await self.get_current_round()
             if not current_round:
                 return []
-            round_id = current_round['round_id']
+            round_id_value = int(current_round['round_id'])
+        else:
+            round_id_value = int(round_id)
 
         where_clause = "lu.learning_spanish = TRUE" if board_type == 'spanish' else (
             "lu.learning_english = TRUE" if board_type == 'english' else "TRUE"
@@ -190,7 +193,7 @@ class LeaderboardMixin(DatabaseMixin):
                    (total_points + (active_days * 5)) as total_score,
                    RANK() OVER (ORDER BY (total_points + (active_days * 5)) DESC) as rank
             FROM user_stats ORDER BY total_score DESC LIMIT $1
-        ''', limit, round_id)
+        ''', limit, round_id_value)
         return [dict(row) for row in rows]
 
     async def exclude_channel(self, channel_id: int, channel_name: str, admin_id: int) -> bool:
@@ -227,8 +230,7 @@ class LeaderboardMixin(DatabaseMixin):
 
     async def get_league_admin_stats(self) -> dict:
         """Get admin statistics for the Language League"""
-        self._check_pool()
-        async with self.pool.acquire() as conn:
+        async with self._pool().acquire() as conn:
             total = await conn.fetchval('''
                 SELECT COUNT(*) FROM leaderboard_users WHERE opted_in = TRUE AND banned = FALSE
             ''')
@@ -281,8 +283,7 @@ class LeaderboardMixin(DatabaseMixin):
 
     async def save_round_winners(self, round_id: int, winners_data: list) -> None:
         """Save round winners to database"""
-        self._check_pool()
-        async with self.pool.acquire() as conn:
+        async with self._pool().acquire() as conn:
             for winner in winners_data:
                 await conn.execute('''
                     INSERT INTO league_round_winners
@@ -319,8 +320,7 @@ class LeaderboardMixin(DatabaseMixin):
 
     async def get_last_round_role_recipients(self) -> set[int]:
         """Get user IDs who received the champion role in the previous completed round"""
-        self._check_pool()
-        async with self.pool.acquire() as conn:
+        async with self._pool().acquire() as conn:
             last_round = await conn.fetchrow('''
                 SELECT round_id FROM league_rounds
                 WHERE status = 'completed' ORDER BY round_number DESC LIMIT 1
@@ -336,8 +336,7 @@ class LeaderboardMixin(DatabaseMixin):
         """Mark which users received the champion role for a round"""
         if not user_ids:
             return
-        self._check_pool()
-        async with self.pool.acquire() as conn:
+        async with self._pool().acquire() as conn:
             for user_id in user_ids:
                 await conn.execute('''
                     INSERT INTO league_role_recipients (round_id, user_id)
@@ -346,8 +345,7 @@ class LeaderboardMixin(DatabaseMixin):
 
     async def seed_role_recipients(self, user_ids: list[int]) -> None:
         """Seed role recipients for the most recent completed round."""
-        self._check_pool()
-        async with self.pool.acquire() as conn:
+        async with self._pool().acquire() as conn:
             last_round = await conn.fetchrow('''
                 SELECT round_id FROM league_rounds
                 WHERE status = 'completed' ORDER BY round_number DESC LIMIT 1

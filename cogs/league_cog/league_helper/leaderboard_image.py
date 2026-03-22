@@ -85,16 +85,16 @@ def _generate_html(
 ) -> tuple[str, int]:
     """Generate HTML string for leaderboard"""
 
-    board_emoji = _get_board_emoji(board_type)
-    board_title = _get_board_title(board_type)
-    round_number = round_info['round_number']
+    _get_board_emoji(board_type)
+    _get_board_title(board_type)
+    round_info['round_number']
     end_date = round_info['end_date']
 
     # Format end date
     if isinstance(end_date, datetime):
-        end_date_str = end_date.strftime('%Y-%m-%d %H:%M UTC')
+        end_date.strftime('%Y-%m-%d %H:%M UTC')
     else:
-        end_date_str = str(end_date)
+        str(end_date)
 
     # Calculate image height
     image_height = _calculate_image_height(len(leaderboard_data))

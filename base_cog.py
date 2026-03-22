@@ -1,4 +1,4 @@
-from discord.ext.commands import Cog, CommandOnCooldown, CommandError
+from discord.ext.commands import Cog, CommandOnCooldown
 from discord.ext.commands import Bot
 from discord import Interaction
 import logging

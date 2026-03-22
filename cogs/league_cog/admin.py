@@ -13,8 +13,7 @@ import re
 import time
 from cogs.league_cog.config import (
     LEAGUE_GUILD_ID,
-    RATE_LIMITS,
-    SCORING
+    RATE_LIMITS
 )
 from cogs.league_cog.utils import (
     detect_message_language,

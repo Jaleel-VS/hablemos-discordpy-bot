@@ -32,7 +32,7 @@ class Hablemos(Bot):
         self.settings = settings
         self.online_channel = None
         self.error_channel = None
-        self.db = Database()
+        self.db = Database(settings.database_url)
 
     async def close(self):
         await self.db.close()

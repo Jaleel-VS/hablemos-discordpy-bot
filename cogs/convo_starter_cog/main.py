@@ -1,9 +1,10 @@
 from random import choice
+
 from cogs.convo_starter_cog.convo_starter_help import categories, get_random_question
 from discord.ext import commands
-from base_cog import BaseCog, COLORS as colors
 from discord import Embed
-from .config import SPA_CHANNELS
+
+from base_cog import BaseCog, COLORS as colors
 
 # Embed Message
 ERROR_MESSAGE = "The proper format is `$topic <topic>` eg. `$topic 2`. Please see " \
@@ -21,6 +22,7 @@ class ConvoStarter(BaseCog):
 
     def __init__(self, bot):
         super().__init__(bot)
+        self.spa_channels = set(bot.settings.convo_spa_channels)
 
     @commands.command(aliases=['top', ])
     async def topic(self, ctx, *category):
@@ -45,7 +47,7 @@ class ConvoStarter(BaseCog):
 
         question_spa_eng = get_random_question(table)
 
-        if ctx.channel.id in SPA_CHANNELS:
+        if ctx.channel.id in self.spa_channels:
             emb = embed_question(question_spa_eng[0], question_spa_eng[1])
         else:
             emb = embed_question(question_spa_eng[1], question_spa_eng[0])

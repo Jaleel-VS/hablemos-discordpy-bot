@@ -10,7 +10,7 @@ from discord import app_commands, Interaction, Embed
 
 from base_cog import BaseCog
 from .session import PracticeSession, PracticeCard, PracticeMode
-from .srs import calculate_sm2, QUALITY_AGAIN
+from .srs import calculate_sm2
 from .views import (
     PracticeView, QualityRatingView,
     create_question_embed, create_result_embed,

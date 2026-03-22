@@ -3,9 +3,8 @@ Discord views (buttons, selects) for website management
 """
 import discord
 from discord import Interaction, Embed, ButtonStyle
-from discord.ui import View, Button, Select, button, select
+from discord.ui import View, Button, Select, button
 import logging
-from typing import Callable, Awaitable
 
 from .modals import AddPodcastModalFull, EditPodcastModal
 

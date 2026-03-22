@@ -116,7 +116,6 @@ class ConversationCog(BaseCog):
             if not is_moderator:
                 daily_limit = 2
                 usage = await self.bot.db.check_daily_limit(ctx.author.id, daily_limit)
-                remaining = await self.bot.db.get_daily_usage_remaining(ctx.author.id, daily_limit)
 
                 if usage >= daily_limit:
                     embed = discord.Embed(

@@ -1,8 +1,6 @@
 import sqlite3
 
 # Sqlite3 tables dictionary
-import timeit
-
 tables = {'general': 'generales', 'personal': 'personales', 'tv': 'televisión', 'movies': 'películas',
           'books': 'libros', "music": 'música',
           'tech': 'tecnología', 'sport': 'deportes', 'food': 'comida_cocina', 'travel': 'viajes', 'fashion': 'ropa',
@@ -34,4 +32,3 @@ def random_question(table):
             cursor.execute(SELECT_RANDOM_QUESTION.format(table))
         return cursor.fetchone()
     return
-

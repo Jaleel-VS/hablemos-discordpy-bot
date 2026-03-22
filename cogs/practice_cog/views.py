@@ -4,7 +4,7 @@ Discord UI Views for practice sessions.
 from __future__ import annotations
 
 import discord
-from discord.ui import View, Button, button
+from discord.ui import View, Button
 from discord import Interaction, ButtonStyle, Embed
 import logging
 import random

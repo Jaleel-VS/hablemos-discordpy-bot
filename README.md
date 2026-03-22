@@ -186,6 +186,13 @@ pip install -r requirements.txt
 python hablemos.py
 ```
 
+### Dead Code Checks
+
+```bash
+pip install -r requirements-dev.txt
+./scripts/check_deadcode.sh
+```
+
 ### Docker
 
 ```bash

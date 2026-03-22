@@ -3,7 +3,7 @@ Discord modals (forms) for website management
 """
 import discord
 from discord import Interaction, Embed
-from discord.ui import Modal, TextInput, Select
+from discord.ui import Modal, TextInput
 import logging
 
 logger = logging.getLogger(__name__)

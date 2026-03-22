@@ -2,35 +2,32 @@ import logging
 
 import asyncpg
 
-from config import get_required_env
 logger = logging.getLogger(__name__)
 
 class DatabaseMixin:
     """Base mixin providing pool access helpers."""
     pool: asyncpg.Pool | None
 
-    def _check_pool(self):
+    def _pool(self) -> asyncpg.Pool:
+        """Return an initialized connection pool."""
         if self.pool is None:
             raise RuntimeError("Database pool not initialized. Call connect() first.")
+        return self.pool
 
     async def _fetchrow(self, query: str, *args):
-        self._check_pool()
-        async with self.pool.acquire() as conn:
+        async with self._pool().acquire() as conn:
             return await conn.fetchrow(query, *args)
 
     async def _fetchval(self, query: str, *args):
-        self._check_pool()
-        async with self.pool.acquire() as conn:
+        async with self._pool().acquire() as conn:
             return await conn.fetchval(query, *args)
 
     async def _fetch(self, query: str, *args) -> list:
-        self._check_pool()
-        async with self.pool.acquire() as conn:
+        async with self._pool().acquire() as conn:
             return await conn.fetch(query, *args)
 
     async def _execute(self, query: str, *args) -> str:
-        self._check_pool()
-        async with self.pool.acquire() as conn:
+        async with self._pool().acquire() as conn:
             return await conn.execute(query, *args)
 
 from db.notes import NotesMixin
@@ -55,9 +52,9 @@ class Database(
     PracticeMixin,
     MetricsMixin,
 ):
-    def __init__(self):
+    def __init__(self, database_url: str):
         self.pool: asyncpg.Pool | None = None
-        self.database_url = get_required_env("DATABASE_URL")
+        self.database_url = database_url
 
     async def connect(self):
         """Create a connection pool to the database"""
