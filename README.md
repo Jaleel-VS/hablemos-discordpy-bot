@@ -7,10 +7,12 @@ Built with discord.py 2.x, PostgreSQL (asyncpg), and Google Gemini. Deployed on 
 ## Features
 
 - **AI Conversations** — Practice with realistic dialogues powered by Google Gemini
+- **AI Ask** — Owner-only freeform Gemini Q&A with paginated, public/private responses
 - **Language League** — Competitive leaderboard system with biweekly rounds and consistency rewards
-- **Vocabulary Tools** — Personal vocab notes with search, export, and synonyms/antonyms lookup
+- **Vocabulary Tools** — Personal vocab notes with search, export, and SRS practice
 - **Interactive Games** — Conjugation practice, Hangman, conversation starters
-- **Moderation Tools** — AI-powered conversation summaries, introduction tracking
+- **Moderation Tools** — AI-powered conversation summaries, introduction tracking, ticket overview
+- **Bot Administration** — Cog toggle system, command metrics, data retention, interaction analysis
 - **Quote Generator** — Create shareable quote images from messages
 - **Spotify Integration** — See what users are listening to
 
@@ -40,6 +42,14 @@ Languages: `spanish`, `english` — Levels: `beginner`, `intermediate`, `advance
 
 Daily limit of 2 per user (unlimited for moderators). Conversations regenerate automatically when exhausted.
 
+### AI Ask
+
+| Command | Description |
+|---------|-------------|
+| `$ask <question>` | Ask Gemini anything (Owner) |
+
+Responses are generated with a 30-second timeout. After generation, choose to send publicly, send privately (ephemeral), or discard. Long responses are automatically paginated.
+
 ### Conjugation Practice
 
 | Command | Description |
@@ -48,7 +58,7 @@ Daily limit of 2 per user (unlimited for moderators). Conversations regenerate a
 | `$conj_categories` | List available verb categories |
 | `$conj_stop` | Stop your current session |
 
-Categories: `high-frequency`, `regular-ar`, `regular-er-ir`, `irregulars`. Supports present, preterite, and future tenses with lenient answer checking (accent-insensitive, pronoun-optional).
+Categories: `high-frequency`, `regular-ar`, `regular-er-ir`, `irregulars`. Supports present, preterite, and future tenses with lenient answer checking (accent-insensitive, pronoun-optional). 59 verbs, 1,062 combinations.
 
 ### Vocabulary Notes
 
@@ -61,6 +71,14 @@ All responses are ephemeral (private to the user).
 | `/vocab search <query>` | Search by word or translation |
 | `/vocab delete <note_id>` | Delete a note |
 | `/vocab export` | Export all notes to CSV |
+
+### Vocabulary Practice (SRS)
+
+Clozemaster-style spaced repetition using your saved vocab notes.
+
+| Command | Description |
+|---------|-------------|
+| `$practice` | Start a practice session with due cards |
 
 ### Language League
 
@@ -78,15 +96,6 @@ Opt-in competitive system that tracks language practice activity across biweekly
 **Requirements:** Must have exactly one Learning role (Spanish or English). Cannot be native in the language you're learning.
 
 Admin commands (`$league ban/unban/exclude/include/endround/preview`) are owner-only.
-
-### Synonyms & Antonyms
-
-| Command | Description |
-|---------|-------------|
-| `$sinonimos <word>` | Find Spanish synonyms |
-| `$antonimos <word>` | Find Spanish antonyms |
-
-Sourced from WordReference with a 24-hour cache. 15-second cooldown.
 
 ### Hangman
 
@@ -126,12 +135,30 @@ Reply to a message, provide a link, or type custom text. 150-character limit, 10
 
 | Command | Description |
 |---------|-------------|
-| `$summarize <message_link> [count]` | AI-summarize a conversation (Moderator) |
+| `$summarize <start_link> <end_link>` | AI-summarize a message range (Moderator) |
+| `$tickets` | Show open mod tickets across forum channels (Moderator) |
 | `$introtracker [on\|off\|status]` | Toggle introduction tracking (Moderator) |
 | `$introstatus` | Introduction tracker statistics (Moderator) |
 | `$parrot <guild_id> <channel_id> <message>` | Relay a message to another channel (Owner) |
 
-Summaries analyze 1–500 messages with a 1-hour cache. Introduction tracking prevents duplicate posts within a 90-day window.
+Summaries analyze the range between two message links with a 1-hour cache. Ticket overview shows open threads from staff and admin modbot forums with response status.
+
+### Administration
+
+| Command | Description |
+|---------|-------------|
+| `$cog list` | List all cogs and their status (Owner) |
+| `$cog enable <name>` | Enable a disabled cog (Owner) |
+| `$cog disable <name>` | Disable a cog at next restart (Owner) |
+| `$cog reload <name>` | Hot-reload a cog (Owner) |
+| `$metrics [days]` | Command usage stats (Owner) |
+| `$metrics hours [days]` | Usage by hour of day (Owner) |
+| `$metrics user @member [days]` | Per-user command stats (Owner) |
+| `$metrics retention` | Table sizes and row counts (Owner) |
+| `$metrics cleanup` | Manually trigger data retention cleanup (Owner) |
+| `$interactions [#channel] [days]` | Analyze reply/mention pairs in a channel (Owner) |
+
+Data retention runs daily: rolls up command metrics older than 30 days, purges stale league activity.
 
 ---
 
@@ -182,6 +209,20 @@ cogs/utils/
 ```
 
 Cogs are auto-discovered at startup. Database access is via `self.bot.db` (asyncpg connection pool). See [AGENTS.md](AGENTS.md) for full development guidelines.
+
+---
+
+## TODO
+
+- [ ] AI ticket triage — priority suggestions and action steps for open mod tickets
+- [ ] Daily word of the day — scheduled post with conjugation/usage examples
+- [ ] Practice streak tracking — consecutive day counter for active learners
+- [ ] Vocab quiz — self-test on saved vocabulary notes
+- [ ] Interactive AI conversations — user plays one speaker, Gemini plays the other
+- [ ] Leaderboard history — past round winners and rank progression
+- [ ] Practice reminders — opt-in daily DM when SRS cards are due
+- [ ] Listening comprehension — TTS audio of generated dialogues
+- [ ] Error pattern analysis — track weak spots in conjugation practice
 
 ---
 
