@@ -20,8 +20,7 @@ def _is_open(thread: discord.Thread, open_tag_names: set[str]) -> bool:
 def _format_thread(thread: discord.Thread) -> str:
     """Format a single thread as a line item."""
     responded = "✅" if thread.message_count > 1 else "⏳"
-    owner_mention = f"<@{thread.owner_id}>"
-    return f"{responded} [{thread.name}]({thread.jump_url}) — {owner_mention}"
+    return f"{responded} [{thread.name}]({thread.jump_url})"
 
 
 class TicketsCog(BaseCog):
