@@ -1,87 +1,59 @@
+"""Spotify now-playing command — shows what a user is listening to."""
 from discord.ext import commands
-from discord import app_commands
+from discord import app_commands, Embed, Color, HTTPException, Member, Spotify
 from base_cog import BaseCog
-from discord import Embed, Color, Member, Spotify
-
+from cogs.utils.embeds import red_embed
 import logging
 
 logger = logging.getLogger(__name__)
 
+
 class SpotifyCog(BaseCog):
-    def __init__(self, bot: commands.Bot):
-        super().__init__(bot)
 
     @commands.hybrid_command(name="nowplaying", aliases=['spoti', 'np'])
     @app_commands.describe(member="The user to check (leave empty for yourself)")
     async def nowplaying(self, ctx: commands.Context, member: Member | None = None):
-        """
-        Shows what song a user is currently listening to on Spotify
-        Usage: !nowplaying [@user]
-        If no user is mentioned, shows your current song
-        """
-        logger.info(f"nowplaying command called by {ctx.author} for member: {member}")
+        """Shows what song a user is currently listening to on Spotify."""
+        if ctx.guild is None:
+            await ctx.send(embed=red_embed("This command can only be used in a server."))
+            return
 
-        # Fetch the member from the guild to get full presence data
-        if member is None:
-            target = ctx.guild.get_member(ctx.author.id)
-            logger.debug(f"Fetched member from guild: {target}")
-        else:
-            target = member
-            logger.debug(f"Using provided member: {target}")
-
+        target = ctx.guild.get_member((member or ctx.author).id)
         if target is None:
-            logger.warning(f"Could not find member in guild: {ctx.author.id}")
-            await ctx.send(embed=Embed(
-                description="Could not find that user!",
-                color=Color.red()
-            ))
+            await ctx.send(embed=red_embed("Could not find that user!"))
             return
 
         # Find Spotify activity
-        logger.debug(f"Checking activities for {target.display_name}: {[type(a).__name__ for a in target.activities]}")
-        spotify_activity = None
-        for activity in target.activities:
-            if isinstance(activity, Spotify):
-                spotify_activity = activity
-                logger.info(f"Found Spotify activity for {target.display_name}: {activity.title} by {activity.artist}")
-                break
+        spotify = next((a for a in target.activities if isinstance(a, Spotify)), None)
 
-        if not spotify_activity:
-            logger.info(f"No Spotify activity found for {target.display_name}")
-            if target == ctx.author:
-                await ctx.send(embed=Embed(
-                    description="You're not listening to Spotify right now!",
-                    color=Color.red()
-                ))
-            else:
-                await ctx.send(embed=Embed(
-                    description=f"{target.display_name} is not listening to Spotify right now!",
-                    color=Color.red()
-                ))
+        if not spotify:
+            name = "You're" if target.id == ctx.author.id else f"{target.display_name} is"
+            await ctx.send(embed=red_embed(
+                f"{name} not listening to Spotify right now!\n\n"
+                "Make sure you're set to Online and have Spotify linked in "
+                "**Settings → Connections**."
+            ))
             return
 
-        # Create embed with song information
         embed = Embed(
             title=f"{target.display_name} is currently listening to",
-            description=f"# {spotify_activity.title}\n**Artist**\n{spotify_activity.artist}",
-            color=Color.green()
+            description=f"# {spotify.title}\n**Artist**\n{spotify.artist}",
+            color=Color.green(),
         )
-
-        # Add song details
-        embed.add_field(name="Album", value=spotify_activity.album, inline=True)
-
-        # Add album artwork as thumbnail
-        if spotify_activity.album_cover_url:
-            embed.set_thumbnail(url=spotify_activity.album_cover_url)
-
-        # Add user info
+        embed.add_field(name="Album", value=spotify.album, inline=True)
         embed.set_author(name=target.display_name, icon_url=target.display_avatar.url)
 
-        # Add track URL
-        embed.add_field(name="Listen on Spotify", value=f"[Click here]({spotify_activity.track_url})", inline=False)
+        if spotify.album_cover_url:
+            embed.set_thumbnail(url=spotify.album_cover_url)
+        if spotify.track_url:
+            embed.add_field(name="Listen on Spotify", value=f"[Click here]({spotify.track_url})", inline=False)
 
-        logger.info(f"Successfully sending Spotify embed for {target.display_name}")
-        await ctx.send(embed=embed)
+        try:
+            await ctx.send(embed=embed)
+        except HTTPException:
+            logger.exception(f"Failed to send Spotify embed for {target}")
+            await ctx.send(embed=red_embed("Something went wrong sending the embed."))
+
 
 async def setup(bot):
     await bot.add_cog(SpotifyCog(bot))
