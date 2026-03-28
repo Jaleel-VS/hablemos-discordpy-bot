@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord.ext.commands import Bot, has_permissions, Cog
 from base_cog import BaseCog
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
-from discord import Embed, Color, Member, Message
+from discord import Embed, Color, HTTPException, Forbidden, NotFound, Member, Message
 from .config import (
     INTRO_COOLDOWN_DAYS,
     DEFAULT_WARN_CHANNEL_ID, DEFAULT_ALERT_CHANNEL_ID,
@@ -24,9 +24,12 @@ def ordinal(n: int) -> str:
     return f"{n}{suffix}"
 
 
-def _build_alert_embed(author: Member, user_id: int, attempt_count: int, content: str) -> Embed:
+def _build_alert_embed(
+    author: Member, user_id: int, attempt_count: int, content: str, *, deleted: bool = True,
+) -> Embed:
     """Build the staff alert embed for a duplicate introduction."""
-    embed = Embed(title="Duplicate Introduction Removed", color=Color(0xE67E22))
+    title = "Duplicate Introduction Removed" if deleted else "Duplicate Introduction (delete failed)"
+    embed = Embed(title=title, color=Color(0xE67E22))
     embed.add_field(name="User", value=f"{author.mention} (`{user_id}`)", inline=True)
     embed.add_field(
         name="Attempt",
@@ -65,33 +68,46 @@ class IntroductionTracker(BaseCog):
         """Delete a duplicate intro, warn the user, and alert staff."""
         saved_content = message.content or "(no text content)"
 
+        # Attempt to delete — continue to warn/alert even on failure
+        deleted = True
         try:
             await message.delete()
             logger.info(f"Deleted duplicate introduction from {message.author} ({message.author.id})")
-        except Exception as e:
-            logger.error(f"Failed to delete message: {e}")
-            return
+        except (Forbidden, NotFound) as e:
+            deleted = False
+            logger.warning(f"Could not delete duplicate intro from {message.author}: {e}")
+        except HTTPException:
+            deleted = False
+            logger.exception(f"HTTP error deleting duplicate intro from {message.author}")
 
         # Warn the user
         warn_channel_id = await self._get_channel_id(SETTING_WARN_CHANNEL, DEFAULT_WARN_CHANNEL_ID)
         warn_channel = self.bot.get_channel(warn_channel_id)
         if warn_channel:
-            await warn_channel.send(
-                content=f"Hey {message.author.mention}! 👋",
-                embed=yellow_embed(
-                    f"We noticed you tried to post another introduction. "
-                    f"You've already introduced yourself recently, so we removed your duplicate message.\n\n"
-                    f"Feel free to chat with everyone in <#{self.general_channel_id}> instead! "
-                    f"We'd love to hear from you there. 😊"
-                ),
-            )
+            try:
+                await warn_channel.send(
+                    content=f"Hey {message.author.mention}! 👋",
+                    embed=yellow_embed(
+                        f"We noticed you tried to post another introduction. "
+                        f"You've already introduced yourself recently, so we removed your duplicate message.\n\n"
+                        f"Feel free to chat with everyone in <#{self.general_channel_id}> instead! "
+                        f"We'd love to hear from you there. 😊"
+                    ),
+                )
+            except HTTPException:
+                logger.exception("Failed to send intro warning to warn channel")
 
         # Alert staff
         alert_channel_id = await self._get_channel_id(SETTING_ALERT_CHANNEL, DEFAULT_ALERT_CHANNEL_ID)
         alert_channel = self.bot.get_channel(alert_channel_id)
         if alert_channel:
-            embed = _build_alert_embed(message.author, message.author.id, attempt_count, saved_content)
-            await alert_channel.send(embed=embed)
+            try:
+                embed = _build_alert_embed(
+                    message.author, message.author.id, attempt_count, saved_content, deleted=deleted,
+                )
+                await alert_channel.send(embed=embed)
+            except HTTPException:
+                logger.exception("Failed to send intro alert to staff channel")
 
     # ── Listener ──
 
@@ -107,7 +123,7 @@ class IntroductionTracker(BaseCog):
                 return
 
             if self._is_exempt(message.author):
-                logger.info(f"User {message.author} ({message.author.id}) is exempt from intro tracking")
+                logger.debug(f"User {message.author} ({message.author.id}) is exempt from intro tracking")
                 return
 
             existing = await self.bot.db.check_user_introduction(message.author.id, INTRO_COOLDOWN_DAYS)
@@ -120,8 +136,8 @@ class IntroductionTracker(BaseCog):
                 await self.bot.db.record_introduction(message.author.id)
                 logger.info(f"Recorded introduction from {message.author} ({message.author.id})")
 
-        except Exception as e:
-            logger.error(f"Error in introduction tracker: {e}")
+        except Exception:
+            logger.exception(f"Unhandled error in introduction tracker for {message.author}")
 
     # ── Commands ──
 
@@ -209,9 +225,9 @@ class IntroductionTracker(BaseCog):
                 logger.info(f"{ctx.author} cleared {count} intro records for user {user_id}")
             else:
                 await ctx.send(embed=yellow_embed(f"No introduction records found for user `{user_id}`."))
-        except Exception as e:
-            logger.error(f"Error clearing introductions: {e}")
-            await ctx.send(embed=red_embed(f"Error: {str(e)}"))
+        except Exception:
+            logger.exception(f"Error clearing introductions for user {user_id}")
+            await ctx.send(embed=red_embed("Something went wrong. Check logs for details."))
 
     @commands.command()
     @has_permissions(manage_messages=True)
@@ -220,13 +236,17 @@ class IntroductionTracker(BaseCog):
         if user_id is None:
             await ctx.send(embed=red_embed("Usage: `$introexempt <user_id>`"))
             return
-        added = await self.bot.db.add_intro_exempt_user(user_id, ctx.author.id)
-        if added:
-            self._exempt_users.add(user_id)
-            await ctx.send(embed=green_embed(f"User `{user_id}` is now exempt from intro tracking."))
-            logger.info(f"{ctx.author} exempted user {user_id} from intro tracking")
-        else:
-            await ctx.send(embed=yellow_embed(f"User `{user_id}` is already exempt."))
+        try:
+            added = await self.bot.db.add_intro_exempt_user(user_id, ctx.author.id)
+            if added:
+                self._exempt_users.add(user_id)
+                await ctx.send(embed=green_embed(f"User `{user_id}` is now exempt from intro tracking."))
+                logger.info(f"{ctx.author} exempted user {user_id} from intro tracking")
+            else:
+                await ctx.send(embed=yellow_embed(f"User `{user_id}` is already exempt."))
+        except Exception:
+            logger.exception(f"Error exempting user {user_id}")
+            await ctx.send(embed=red_embed("Something went wrong. Check logs for details."))
 
     @commands.command()
     @has_permissions(manage_messages=True)
@@ -235,13 +255,17 @@ class IntroductionTracker(BaseCog):
         if user_id is None:
             await ctx.send(embed=red_embed("Usage: `$introunexempt <user_id>`"))
             return
-        removed = await self.bot.db.remove_intro_exempt_user(user_id)
-        if removed:
-            self._exempt_users.discard(user_id)
-            await ctx.send(embed=green_embed(f"User `{user_id}` is no longer exempt from intro tracking."))
-            logger.info(f"{ctx.author} removed intro exemption for user {user_id}")
-        else:
-            await ctx.send(embed=yellow_embed(f"User `{user_id}` was not exempt."))
+        try:
+            removed = await self.bot.db.remove_intro_exempt_user(user_id)
+            if removed:
+                self._exempt_users.discard(user_id)
+                await ctx.send(embed=green_embed(f"User `{user_id}` is no longer exempt from intro tracking."))
+                logger.info(f"{ctx.author} removed intro exemption for user {user_id}")
+            else:
+                await ctx.send(embed=yellow_embed(f"User `{user_id}` was not exempt."))
+        except Exception:
+            logger.exception(f"Error removing exemption for user {user_id}")
+            await ctx.send(embed=red_embed("Something went wrong. Check logs for details."))
 
 
 async def setup(bot):
