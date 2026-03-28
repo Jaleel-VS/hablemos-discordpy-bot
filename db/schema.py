@@ -43,6 +43,15 @@ async def initialize_schema(pool):
             ON introductions(user_id)
         ''')
 
+        # Intro exempt users table
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS intro_exempt_users (
+                user_id BIGINT PRIMARY KEY,
+                added_by BIGINT NOT NULL,
+                added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+
         # Bot settings table (general key-value store for channel IDs, etc.)
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS bot_settings (
