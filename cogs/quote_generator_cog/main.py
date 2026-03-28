@@ -1,88 +1,77 @@
+"""Quote generator — creates styled quote images from Discord messages."""
 from cogs.quote_generator_cog.markdown import remove_markdown_from_message
-from cogs.quote_generator_cog.quote_generator_helper.image_creator import dir_path, create_image
-from cogs.quote_generator_cog.quote_generator_helper.image_creator2 import dir_path as dir_path2, create_image2
+from cogs.quote_generator_cog.quote_generator_helper.image_creator import create_image
+from cogs.quote_generator_cog.quote_generator_helper.image_creator2 import create_image2
 from base_cog import BaseCog
+from cogs.utils.embeds import red_embed, green_embed, yellow_embed
 
 from re import sub
-from os import remove
 import logging
 import time
+import tempfile
+import os
+
+from discord.ext.commands import command, cooldown, BucketType
+from discord import File, HTTPException, NotFound, Forbidden
+import demoji
 
 logger = logging.getLogger(__name__)
 
-from discord.ext.commands import command, cooldown, BucketType
-from discord import File
-import demoji
+MAX_QUOTE_LENGTH = 250
+DEFAULT_AVATAR = "https://i.imgur.com/z9tOsSz.png"
 
-def get_img_url(url_identifier: str):
-    if url_identifier is None:  # user doesn't have a profile picture
-        return "https://i.imgur.com/z9tOsSz.png"
+
+def _get_img_url(url_identifier: str | None) -> str:
+    """Get a high-res avatar URL, falling back to a default."""
+    if url_identifier is None:
+        return DEFAULT_AVATAR
     return str(url_identifier)[:-4] + '4096'
 
-def remove_emoji_from_message(message):  # for custom emojis
-    return sub("<:[A-Za-z0-9_]+:([0-9]+)>", '', message).replace("  ", " ")
 
-def give_emoji_free_text(text: str) -> str:  # for standard emojis
-    result = demoji.replace(text, '')[:28]
-    logger.info(f"give_emoji_free_text: input={text!r}, output={result!r}")
-    return result
+def _remove_custom_emoji(text: str) -> str:
+    """Strip custom Discord emoji markup from text."""
+    return sub(r"<:[A-Za-z0-9_]+:([0-9]+)>", '', text).replace("  ", " ")
 
-def has_font_safe_characters(text: str) -> bool:
-    """
-    Check if text contains only characters likely supported by common fonts.
-    Covers Basic Latin, Latin Extended, common punctuation, and accented characters.
-    """
+
+def _strip_standard_emoji(text: str) -> str:
+    """Strip standard Unicode emoji, truncate to 28 chars."""
+    return demoji.replace(text, '')[:28]
+
+
+def _has_font_safe_characters(text: str) -> bool:
+    """Check if text contains only characters likely supported by common fonts."""
     for char in text:
         code = ord(char)
-        # Allow: Basic Latin, Latin-1 Supplement, Latin Extended-A/B, spacing/punctuation
         if not (
-            0x0020 <= code <= 0x007F or  # Basic Latin (ASCII printable)
-            0x00A0 <= code <= 0x00FF or  # Latin-1 Supplement (accents like é, ñ, ü)
+            0x0020 <= code <= 0x007F or  # Basic Latin
+            0x00A0 <= code <= 0x00FF or  # Latin-1 Supplement
             0x0100 <= code <= 0x017F or  # Latin Extended-A
             0x0180 <= code <= 0x024F or  # Latin Extended-B
             0x0300 <= code <= 0x036F     # Combining Diacritical Marks
         ):
-            logger.info(f"Unsupported character found: {char!r} (U+{code:04X})")
+            logger.debug(f"Unsupported character: {char!r} (U+{code:04X})")
             return False
     return True
 
-def get_safe_username(user, server=None):
-    """
-    Get a safe username that handles special characters and emojis.
-    Falls back to Discord username if stripped nickname is <= 1 character.
-    """
-    logger.info(
-        f"get_safe_username called: user.id={user.id}, user.name={user.name!r}, "
-        f"user.display_name={user.display_name!r}, user.nick={getattr(user, 'nick', None)!r}, "
-        f"server={server}"
-    )
 
-    # If user has no nickname or not in server, use display_name
+def _get_safe_username(user, guild=None) -> str:
+    """Get a font-safe display name, falling back to the Discord username."""
     nick = getattr(user, 'nick', None)
-    if server is None or server.get_member(user.id) is None or nick is None:
+    if guild is None or guild.get_member(user.id) is None or nick is None:
         username = user.display_name
-        logger.info(f"Using display_name path: username={username!r}")
     else:
-        username = give_emoji_free_text(nick)
-        logger.info(f"Using nick path: raw nick={nick!r}, after emoji strip={username!r}")
+        username = _strip_standard_emoji(nick)
 
-    # If stripped username is too short (1 char or less), use Discord username
-    if len(username.strip()) <= 1:
-        logger.info(f"Username too short ({len(username.strip())} chars), falling back to user.name={user.name!r}")
+    if len(username.strip()) <= 1 or not _has_font_safe_characters(username):
         username = user.name
 
-    # If username contains characters unsupported by fonts, fall back to Discord username
-    if not has_font_safe_characters(username):
-        logger.info(f"Username contains unsupported characters, falling back to user.name={user.name!r}")
-        username = user.name
-
-    logger.info(f"Final username: {username!r}")
     return username
 
-def resolve_mentions(content: str, mentions, role_mentions, channel_mentions, server=None) -> str:
+
+def _resolve_mentions(content: str, mentions, role_mentions, channel_mentions, guild=None) -> str:
     """Replace raw Discord mention markup with human-readable names."""
     for user in mentions:
-        member = server.get_member(user.id) if server else None
+        member = guild.get_member(user.id) if guild else None
         display = '@' + (member.display_name if member else user.name)
         for pattern in (f'<@!{user.id}>', f'<@{user.id}>'):
             content = content.replace(pattern, display)
@@ -92,197 +81,223 @@ def resolve_mentions(content: str, mentions, role_mentions, channel_mentions, se
         content = content.replace(f'<#{ch.id}>', f'#{ch.name}')
     return content
 
-async def get_html_css_info(channel, message_id, server, message=None):
-    if message is None:
-        message = await channel.fetch_message(message_id)
-    user = message.author
-    message_content = remove_emoji_from_message(message.content)
-    message_content = remove_markdown_from_message(message_content)
 
-    message_content = resolve_mentions(
-        message_content, message.mentions, message.role_mentions,
-        message.channel_mentions, server
-    )
+def _clean_message_content(content: str, mentions, role_mentions, channel_mentions, guild=None) -> str:
+    """Strip emoji, markdown, and resolve mentions from message content."""
+    content = _remove_custom_emoji(content)
+    content = remove_markdown_from_message(content)
+    return _resolve_mentions(content, mentions, role_mentions, channel_mentions, guild)
 
-    user_nick = get_safe_username(user, server)
 
-    user_avatar = get_img_url(user.avatar)
+def _parse_message_link(link: str) -> tuple[int, int, int] | None:
+    """Parse a Discord message link into (guild_id, channel_id, message_id). Returns None if invalid."""
+    parts = link.split('/')
+    try:
+        return int(parts[4]), int(parts[5]), int(parts[6])
+    except (IndexError, ValueError):
+        return None
 
-    return user_nick, user_avatar, message_content
 
 class QuoteGenerator(BaseCog):
-    def __init__(self, bot) -> None:
-        super().__init__(bot)
 
-    async def _parse_quote_input(self, ctx, user_input, command_name):
+    async def _check_permissions(self, ctx) -> bool:
+        """Check pause state, user ban, and channel ban. Sends error and returns False if blocked."""
+        paused_until = await self.bot.db.get_bot_setting('quote_paused_until')
+        if paused_until and paused_until > int(time.time()):
+            await ctx.send(embed=yellow_embed("Quotes are temporarily paused. Try again later."))
+            return False
+
+        if await self.bot.db.is_quote_banned(ctx.author.id):
+            await ctx.send(embed=red_embed("You are not allowed to use quote commands."))
+            return False
+
+        if await self.bot.db.is_quote_channel_banned(ctx.channel.id):
+            await ctx.send(embed=red_embed("Quotes are not allowed in this channel."))
+            return False
+
+        return True
+
+    async def _extract_quote_data(self, ctx, message) -> tuple[str, str, str] | None:
+        """Extract (username, avatar_url, content) from a fetched message. Returns None if opted out."""
+        if await self.bot.db.is_quote_opted_out(message.author.id):
+            await ctx.send(embed=red_embed("This user has opted out of being quoted."))
+            return None
+
+        content = _clean_message_content(
+            message.content, message.mentions, message.role_mentions,
+            message.channel_mentions, ctx.guild,
+        )
+        username = _get_safe_username(message.author, ctx.guild)
+        avatar = _get_img_url(message.author.avatar)
+        return username, avatar, content
+
+    async def _fetch_message_safe(self, ctx, channel, message_id):
+        """Fetch a message, sending an error embed on failure. Returns the message or None."""
+        try:
+            return await channel.fetch_message(message_id)
+        except NotFound:
+            await ctx.send(embed=red_embed("That message was not found."))
+        except Forbidden:
+            await ctx.send(embed=red_embed("I don't have permission to read that message."))
+        except HTTPException:
+            logger.exception(f"Failed to fetch message {message_id}")
+            await ctx.send(embed=red_embed("Something went wrong fetching that message."))
+        return None
+
+    async def _parse_quote_input(self, ctx, user_input: tuple, command_name: str):
         """
         Parse quote input from a reply, message link, or freetext.
         Returns (user_nick, user_avatar, message_content) or None if an error was sent.
         """
-        # Check if quotes are paused
-        paused_until = await self.bot.db.get_bot_setting('quote_paused_until')
-        if paused_until and paused_until > int(time.time()):
-            await ctx.send("Quotes are temporarily paused. Try again later.")
+        if not await self._check_permissions(ctx):
             return None
 
-        # Check if the invoking user is banned
-        if await self.bot.db.is_quote_banned(ctx.author.id):
-            await ctx.send("You are not allowed to use quote commands.")
+        is_reply = ctx.message.reference is not None
+
+        if not user_input and not is_reply:
+            await ctx.send(embed=red_embed(f"Please type `$help {command_name}` for info on correct usage."))
             return None
 
-        # Check if the channel is banned
-        if await self.bot.db.is_quote_channel_banned(ctx.channel.id):
-            await ctx.send("Quotes are not allowed in this channel.")
+        # Detect bare message IDs (common mistake)
+        if len(user_input) == 1 and user_input[0].isdigit() and not is_reply:
+            await ctx.send(embed=red_embed(
+                "That looks like a message ID. Please use a message link or reply instead. "
+                f"See `$help {command_name}` for correct usage."
+            ))
             return None
 
-        is_message_reply = ctx.message.reference is not None
+        # Reply to a message
+        if is_reply:
+            ref = ctx.message.reference
+            channel = self.bot.get_channel(ref.channel_id)
+            if channel is None:
+                await ctx.send(embed=red_embed("I can't access that channel."))
+                return None
 
-        if len(user_input) == 0 and not is_message_reply:
-            await ctx.send(f"Please type `$help {command_name}` for info on correct usage")
-            return None
+            msg = await self._fetch_message_safe(ctx, channel, ref.message_id)
+            if msg is None:
+                return None
+            return await self._extract_quote_data(ctx, msg)
 
-        if len(user_input) == 1 and len(user_input[0]) == 18 and user_input[0].isdigit() and not is_message_reply:
-            await ctx.send(
-                f"You tried to use a message_id. Please use a link or just a regular message. "
-                f"See `$help {command_name}` for correct usage")
-            return None
+        # Message link
+        if len(user_input) == 1 and user_input[0].startswith("https://discord.com/channels/"):
+            parsed = _parse_message_link(user_input[0])
+            if parsed is None:
+                await ctx.send(embed=red_embed("That doesn't look like a valid message link."))
+                return None
 
-        if is_message_reply:
-            message_id = ctx.message.reference.message_id
-            guild_id = ctx.message.reference.guild_id
-            channel_id = ctx.message.reference.channel_id
-            server = self.bot.get_guild(guild_id)
-            if server is None:
-                logger.warning(f"Could not find server with ID {guild_id}")
-            channel = self.bot.get_channel(channel_id)
-
-            # Check if the quoted message's author has opted out
-            try:
-                target_msg = await channel.fetch_message(message_id)
-                if await self.bot.db.is_quote_opted_out(target_msg.author.id):
-                    await ctx.send("This user has opted out of being quoted.")
-                    return None
-            except Exception:
-                target_msg = None  # Let get_html_css_info handle fetch errors
-
-            return await get_html_css_info(channel, message_id, server, message=target_msg)
-
-        elif len(user_input) == 1 and user_input[0].startswith("https://discord.com/channels/"):
-            link = user_input[0].split('/')
-            server_id = int(link[4])
-            channel_id = int(link[5])
-            msg_id = int(link[6])
-
-            server = self.bot.get_guild(server_id)
-            if server is None:
-                await ctx.send("I can't access this server")
+            guild_id, channel_id, msg_id = parsed
+            guild = self.bot.get_guild(guild_id)
+            if guild is None:
+                await ctx.send(embed=red_embed("I can't access that server."))
                 return None
             channel = self.bot.get_channel(channel_id)
             if channel is None:
-                await ctx.send("I can't access this channel")
+                await ctx.send(embed=red_embed("I can't access that channel."))
                 return None
 
-            # Check if the quoted message's author has opted out
-            try:
-                target_msg = await channel.fetch_message(msg_id)
-                if await self.bot.db.is_quote_opted_out(target_msg.author.id):
-                    await ctx.send("This user has opted out of being quoted.")
-                    return None
-            except Exception:
-                target_msg = None  # Let get_html_css_info handle fetch errors
+            msg = await self._fetch_message_safe(ctx, channel, msg_id)
+            if msg is None:
+                return None
+            return await self._extract_quote_data(ctx, msg)
 
-            return await get_html_css_info(channel, msg_id, server, message=target_msg)
+        # Freetext — user is quoting themselves
+        content = _clean_message_content(
+            ' '.join(user_input), ctx.message.mentions, ctx.message.role_mentions,
+            ctx.message.channel_mentions, ctx.guild,
+        )
+        username = _get_safe_username(ctx.author, ctx.guild)
+        avatar = _get_img_url(ctx.author.avatar)
+        return username, avatar, content
 
-        else:
-            message_content = remove_emoji_from_message(' '.join(user_input))
-            message_content = resolve_mentions(
-                message_content, ctx.message.mentions, ctx.message.role_mentions,
-                ctx.message.channel_mentions, ctx.guild
-            )
-            user_nick = get_safe_username(ctx.author, ctx.guild)
-            user_avatar = get_img_url(ctx.author.avatar)
-            return user_nick, user_avatar, message_content
+    async def _generate_and_send(self, ctx, user_input: tuple, command_name: str, creator_fn) -> None:
+        """Shared logic for quote and quote2 commands."""
+        result = await self._parse_quote_input(ctx, user_input, command_name)
+        if result is None:
+            return
 
-    @command(aliases=['q', ])
+        user_nick, user_avatar, message_content = result
+
+        if len(message_content) > MAX_QUOTE_LENGTH:
+            await ctx.send(embed=red_embed(
+                f"Beep boop, I can't create an image. I'm limited to {MAX_QUOTE_LENGTH} characters."
+            ))
+            return
+
+        # Generate image to a temp file to avoid race conditions
+        img_path = None
+        try:
+            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
+                img_path = tmp.name
+            creator_fn(user_nick, user_avatar, message_content, output_path=img_path)
+            await ctx.send(file=File(img_path))
+        except HTTPException:
+            logger.exception("Failed to send quote image")
+            await ctx.send(embed=red_embed("Something went wrong sending the image."))
+        except Exception:
+            logger.exception("Failed to generate quote image")
+            await ctx.send(embed=red_embed("Something went wrong generating the image."))
+        finally:
+            if img_path and os.path.exists(img_path):
+                os.remove(img_path)
+
+    @command(aliases=['q'])
     @cooldown(1, 10, type=BucketType.user)
     async def quote(self, ctx, *user_input):
         """
-        (still testing, please report any errors or suggestions)
-        Creates a quote using a **message url**, **your own message** or **replying to a message**.
-        Images and custom emojis won't show up and there's a limit to 250 characters.
+        Creates a quote image from a message link, reply, or your own text.
 
         Example usage:
-        `$quote https://discord.com/channels/731403448502845501/808679873837137940/916938526329798718`
-        (creates a quote using a specific message)
+        `$quote https://discord.com/channels/.../.../.../`
         `$quote todo es bronca y dolor`
-        (creates a quote using your own message)
+        Or reply to a message with `$quote`
         """
-        result = await self._parse_quote_input(ctx, user_input, "quote")
-        if result is None:
-            return
+        await self._generate_and_send(ctx, user_input, "quote", create_image)
 
-        user_nick, user_avatar, message_content = result
-
-        if len(message_content) > 250:
-            return await ctx.send("Beep boop, I can't create an image. I'm limited to 250 characters")
-
-        generated_url = create_image(user_nick, user_avatar, message_content)
-        await ctx.send(file=File(generated_url))
-        remove(f"{dir_path}/picture.png")
-
-    @command(aliases=['q2', ])
+    @command(aliases=['q2'])
     @cooldown(1, 10, type=BucketType.user)
     async def quote2(self, ctx, *user_input):
-        """
-        Creates a quote using the new card style. Usage mirrors `$quote`.
-        """
-        result = await self._parse_quote_input(ctx, user_input, "quote2")
-        if result is None:
-            return
-
-        user_nick, user_avatar, message_content = result
-
-        if len(message_content) > 250:
-            return await ctx.send("Beep boop, I can't create an image. I'm limited to 250 characters")
-
-        generated_url = create_image2(user_nick, user_avatar, message_content)
-        await ctx.send(file=File(generated_url))
-        remove(f"{dir_path2}/picture2.png")
+        """Creates a quote using the card style. Usage mirrors `$quote`."""
+        await self._generate_and_send(ctx, user_input, "quote2", create_image2)
 
     @command()
-    async def quoteme(self, ctx, toggle: str = None):
+    async def quoteme(self, ctx, toggle: str | None = None):
         """
         Manage your quote opt-out status.
 
         `$quoteme off` — opt out of being quoted by others
         `$quoteme on` — opt back in
         `$quoteme` — show current status
-
-        This only affects others quoting your messages (via reply or link).
-        You can always quote your own text with `$quote <text>`.
         """
         db = self.bot.db
 
         if toggle is None:
             opted_out = await db.is_quote_opted_out(ctx.author.id)
             if opted_out:
-                await ctx.send("You are currently **opted out** of being quoted. Use `$quoteme on` to opt back in.")
+                await ctx.send(embed=yellow_embed(
+                    "You are currently **opted out** of being quoted. Use `$quoteme on` to opt back in."
+                ))
             else:
-                await ctx.send("You are currently **opted in** to being quoted. Use `$quoteme off` to opt out.")
+                await ctx.send(embed=green_embed(
+                    "You are currently **opted in** to being quoted. Use `$quoteme off` to opt out."
+                ))
             return
 
         toggle = toggle.lower()
         if toggle == "off":
             await db.quote_optout(ctx.author.id)
-            await ctx.send("You have opted out of being quoted. Others can no longer quote your messages.")
+            await ctx.send(embed=green_embed(
+                "You have opted out of being quoted. Others can no longer quote your messages."
+            ))
         elif toggle == "on":
             success = await db.quote_optin(ctx.author.id)
             if success:
-                await ctx.send("You have opted back in. Others can quote your messages again.")
+                await ctx.send(embed=green_embed("You have opted back in. Others can quote your messages again."))
             else:
-                await ctx.send("You were already opted in.")
+                await ctx.send(embed=yellow_embed("You were already opted in."))
         else:
-            await ctx.send("Usage: `$quoteme [on|off]`")
+            await ctx.send(embed=red_embed("Usage: `$quoteme [on|off]`"))
+
 
 async def setup(bot):
     await bot.add_cog(QuoteGenerator(bot))

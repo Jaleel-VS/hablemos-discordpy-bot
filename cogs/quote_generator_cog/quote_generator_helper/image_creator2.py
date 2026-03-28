@@ -30,8 +30,8 @@ def _compute_quote_glyph_font_size(message: str) -> int:
         return 78
     return 70
 
-def create_image2(user_name: str, user_avatar: str, message_content: str) -> str:
-    logger.info(f"create_image2 called: user_name={user_name!r}, message_content={message_content!r}")
+def create_image2(user_name: str, user_avatar: str, message_content: str, *, output_path: str | None = None) -> str:
+    """Generate a card-style quote image. Returns the output file path."""
     options = {
         'format': 'png',
         'encoding': 'UTF-8',
@@ -179,7 +179,7 @@ def create_image2(user_name: str, user_avatar: str, message_content: str) -> str
   </html>
     '''
 
-    img_path = f"{dir_path}/picture2.png"
+    img_path = output_path or f"{dir_path}/picture2.png"
     imgkit.from_string(html, img_path, options=options)
     return img_path
 

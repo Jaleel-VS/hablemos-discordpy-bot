@@ -45,6 +45,14 @@ class QuotesMixin(DatabaseMixin):
         )
         return row is not None
 
+    async def get_quote_banned_users(self) -> list[dict]:
+        """Get all quote-banned users."""
+        rows = await self._fetch('''
+            SELECT user_id, banned_by, banned_at
+            FROM quote_banned_users ORDER BY banned_at DESC
+        ''')
+        return [dict(row) for row in rows]
+
     async def get_quote_banned_channels(self) -> list[dict]:
         """Get all quote-banned channels"""
         rows = await self._fetch('''

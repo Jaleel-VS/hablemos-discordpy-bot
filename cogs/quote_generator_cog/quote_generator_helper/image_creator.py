@@ -6,8 +6,8 @@ logger = logging.getLogger(__name__)
 
 dir_path = path.dirname(path.realpath(__file__))
 
-def create_image(user_name, user_avatar, message_content):
-    logger.info(f"create_image called: user_name={user_name!r}, message_content={message_content!r}")
+def create_image(user_name: str, user_avatar: str, message_content: str, *, output_path: str | None = None) -> str:
+    """Generate a grayscale quote image. Returns the output file path."""
     options = {
         'format': 'png',
         'crop-w': '644',
@@ -130,12 +130,12 @@ def create_image(user_name, user_avatar, message_content):
             </html>
         '''
 
-    img_path = f"{dir_path}/picture.png"
+    img_path = output_path or f"{dir_path}/picture.png"
     imgkit.from_string(html, img_path, options=options)
     return img_path
 
 # for testing
-if __name__ == "__main__":  
+if __name__ == "__main__":
     create_image('Priúñaku',
                 'https://cdn.discordapp.com/avatars/166580565548466176/a106c3ab56c9c99d48b437b05a5552e4.png?size=256',
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc vel ultricies ultricies')
