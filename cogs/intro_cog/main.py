@@ -189,6 +189,30 @@ class IntroductionTracker(BaseCog):
             logger.error(f"Error in introtracker command: {e}")
             await ctx.send(embed=red_embed(f"Error: {str(e)}"))
 
+    @command(aliases=['clearintro'])
+    @has_permissions(manage_messages=True)
+    async def resetintro(self, ctx, user_id: int | None = None):
+        """
+        Clear a user's introduction history so they can post again.
+        Usage: $resetintro <user_id>
+        """
+        if user_id is None:
+            await ctx.send(embed=red_embed("Usage: `$resetintro <user_id>`"))
+            return
+        try:
+            result = await self.bot.db.clear_introductions(user_id)
+            count = int(result.split()[-1]) if result else 0
+            if count:
+                await ctx.send(embed=green_embed(
+                    f"Cleared **{count}** introduction record(s) for user `{user_id}`. They can post again."
+                ))
+                logger.info(f"{ctx.author} cleared {count} intro records for user {user_id}")
+            else:
+                await ctx.send(embed=yellow_embed(f"No introduction records found for user `{user_id}`."))
+        except Exception as e:
+            logger.error(f"Error clearing introductions: {e}")
+            await ctx.send(embed=red_embed(f"Error: {str(e)}"))
+
     @command(aliases=['introstats'])
     @has_permissions(manage_messages=True)
     async def introstatus(self, ctx):

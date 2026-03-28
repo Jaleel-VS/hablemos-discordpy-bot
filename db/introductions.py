@@ -24,6 +24,12 @@ class IntroductionsMixin(DatabaseMixin):
         )
         return count or 0
 
+    async def clear_introductions(self, user_id: int) -> str:
+        """Delete all introduction records for a user. Returns status string."""
+        return await self._execute(
+            'DELETE FROM introductions WHERE user_id = $1', user_id,
+        )
+
     async def record_introduction(self, user_id: int) -> bool:
         """Record a user's introduction attempt"""
         try:
