@@ -7,7 +7,8 @@ import discord
 from discord.ext import commands
 
 from base_cog import BaseCog
-from .config import STAFF_FORUM_ID, ADMIN_FORUM_ID, OPEN_TAGS
+
+from .config import ADMIN_FORUM_ID, OPEN_TAGS, STAFF_FORUM_ID
 
 logger = logging.getLogger(__name__)
 

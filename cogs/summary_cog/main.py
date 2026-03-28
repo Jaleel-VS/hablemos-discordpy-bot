@@ -7,9 +7,10 @@ import random
 import discord
 from discord.ext import commands
 
-from base_cog import BaseCog, COLORS
-from .gemini_client import GeminiClient
+from base_cog import COLORS, BaseCog
+
 from .cache import SummaryCache
+from .gemini_client import GeminiClient
 from .message_parser import parse_message_link
 
 logger = logging.getLogger(__name__)

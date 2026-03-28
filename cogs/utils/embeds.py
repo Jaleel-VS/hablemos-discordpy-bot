@@ -1,5 +1,5 @@
 """Shared embed helper functions."""
-from discord import Embed, Color
+from discord import Color, Embed
 
 
 def green_embed(text: str) -> Embed:

@@ -3,18 +3,20 @@ Discord UI Views for practice sessions.
 """
 from __future__ import annotations
 
-import discord
-from discord.ui import View, Button
-from discord import Interaction, ButtonStyle, Embed
 import logging
 import random
-from typing import TYPE_CHECKING, Callable, Awaitable
+from collections.abc import Awaitable, Callable
+from typing import TYPE_CHECKING
+
+import discord
+from discord import ButtonStyle, Embed, Interaction
+from discord.ui import Button, View
 
 from .modals import AnswerModal
-from .srs import QUALITY_AGAIN, QUALITY_HARD, QUALITY_GOOD, QUALITY_EASY
+from .srs import QUALITY_AGAIN, QUALITY_EASY, QUALITY_GOOD, QUALITY_HARD
 
 if TYPE_CHECKING:
-    from .session import PracticeSession, PracticeCard
+    from .session import PracticeCard, PracticeSession
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +49,7 @@ class PracticeView(View):
         """Build the view buttons based on mode"""
         if self.card_mode == "choice" and len(self.distractors) >= 3:
             # Multiple choice mode - create choice buttons
-            choices = self.distractors[:3] + [self.card.word]
+            choices = [*self.distractors[:3], self.card.word]
             random.shuffle(choices)
 
             for choice in choices:

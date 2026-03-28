@@ -1,0 +1,37 @@
+target-version = "py312"
+line-length = 79
+
+[lint]
+select = [
+    "F",     # pyflakes
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "I",     # isort
+    "B",     # flake8-bugbear
+    "UP",    # pyupgrade
+    "SIM",   # flake8-simplify
+    "RUF",   # ruff-specific rules
+]
+ignore = [
+    "E501",    # line too long — handled by formatter
+    "RUF001",  # ambiguous unicode — we use emoji intentionally
+    "RUF002",  # ambiguous unicode in docstrings
+]
+
+[lint.isort]
+known-first-party = ["db", "cogs", "base_cog", "logger", "config"]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+
+[lint.per-file-ignores]
+"cogs/quote_generator_cog/quote_generator_helper/image_creator*.py" = [
+    "E501",  # HTML templates have long lines by nature
+]
+"db/schema.py" = [
+    "E501",  # SQL DDL statements
+]
+"db/__init__.py" = [
+    "E402",  # imports after DatabaseMixin class (circular import avoidance)
+]

@@ -1,10 +1,10 @@
 """
 API client for the Spanish-English Discord website backend
 """
-import aiohttp
 import logging
-
 from dataclasses import dataclass
+
+import aiohttp
 
 logger = logging.getLogger(__name__)
 

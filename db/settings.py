@@ -1,6 +1,7 @@
 
 from db import DatabaseMixin
 
+
 class SettingsMixin(DatabaseMixin):
     async def get_bot_setting(self, setting_key: str) -> int | None:
         """Get a bot setting value by key"""

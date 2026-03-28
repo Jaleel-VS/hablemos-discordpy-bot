@@ -2,8 +2,8 @@
 Practice Session State Management
 """
 from dataclasses import dataclass, field
-
 from enum import Enum
+
 
 class PracticeMode(Enum):
     TYPING = "typing"

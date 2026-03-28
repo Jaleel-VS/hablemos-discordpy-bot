@@ -1,7 +1,9 @@
-from discord.ext.commands import command, Bot
-from discord import app_commands, Interaction, Embed, Color
+from discord import Color, Embed, Interaction, app_commands
+from discord.ext.commands import Bot, command
+
 from base_cog import BaseCog
 from cogs.utils.embeds import green_embed
+
 try:
     from cogs.league_cog.config import ROUNDS
 except ImportError:
@@ -466,17 +468,17 @@ class General(BaseCog):
         """
         Lists available categories
         """
-        categories = f"""    
-        To use any one of the undermentioned topics type `$topic <category>`. 
+        categories = f"""
+        To use any one of the undermentioned topics type `$topic <category>`.
         `$topic` or `$top` defaults to `general`
-        
+
         command(category) - description:
         `general`, `1` - General questions
         `phil`, `2` - Philosophical questions
         `would`, `3` - *'Would you rather'* questions
         `other`, `4` -  Random questions
 
-        [Full list of questions]({SOURCE_URL})        
+        [Full list of questions]({SOURCE_URL})
         """
         await ctx.send(embed=green_embed(categories))
 
@@ -488,7 +490,7 @@ class General(BaseCog):
 
         text = f"""
         The bot was coded in Python using the [discord.py]({DPY}) framework. Possible future migration to a C# or Rust framework
-        
+
         To report an error or make a suggestion please message <@216848576549093376>
         [Github Repository]({REPO})
         """

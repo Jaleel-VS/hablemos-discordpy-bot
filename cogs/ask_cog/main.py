@@ -35,9 +35,7 @@ def split_response(text: str) -> list[str]:
         split_idx = chunk.rfind('\n```')
         if split_idx > PAGE_CONTENT_LIMIT // 2:
             split_idx += 1
-        elif (idx := chunk.rfind('\n\n')) > PAGE_CONTENT_LIMIT // 2:
-            split_idx = idx
-        elif (idx := chunk.rfind('\n')) > PAGE_CONTENT_LIMIT // 2:
+        elif (idx := chunk.rfind('\n\n')) > PAGE_CONTENT_LIMIT // 2 or (idx := chunk.rfind('\n')) > PAGE_CONTENT_LIMIT // 2:
             split_idx = idx
         else:
             split_idx = PAGE_CONTENT_LIMIT
@@ -175,7 +173,7 @@ class AskCog(BaseCog):
                     loop.run_in_executor(None, self._call_gemini, question),
                     timeout=GEMINI_TIMEOUT,
                 )
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 await processing.edit(content=f"Gemini didn't respond within {GEMINI_TIMEOUT}s. Try again.")
                 return
 

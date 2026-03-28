@@ -1,6 +1,7 @@
 
 from db import DatabaseMixin
 
+
 class LeaderboardMixin(DatabaseMixin):
     async def leaderboard_join(self, user_id: int, username: str,
                               learning_spanish: bool, learning_english: bool) -> bool:

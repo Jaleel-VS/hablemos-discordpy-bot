@@ -1,7 +1,7 @@
 """Shared rate limiter for API calls."""
-import time
 import asyncio
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 

@@ -2,15 +2,17 @@
 Vocabulary Notes Cog
 Provides slash commands for managing vocabulary notes privately
 """
-import discord
-from discord.ext import commands
-from discord import app_commands, Interaction, Embed
-from discord.ui import Modal, TextInput
-from base_cog import BaseCog
-import logging
 import csv
 import io
+import logging
 from datetime import datetime
+
+import discord
+from discord import Embed, Interaction, app_commands
+from discord.ext import commands
+from discord.ui import Modal, TextInput
+
+from base_cog import BaseCog
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +91,7 @@ class VocabNoteModal(Modal, title="Add Vocabulary Note"):
             logger.error(f"Error adding vocab note: {e}", exc_info=True)
             embed = Embed(
                 title="❌ Error",
-                description=f"Failed to add vocabulary note: {str(e)}",
+                description=f"Failed to add vocabulary note: {e!s}",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -176,7 +178,7 @@ class VocabCog(BaseCog):
             logger.error(f"Error listing vocab notes: {e}", exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"Failed to list vocabulary notes: {str(e)}",
+                description=f"Failed to list vocabulary notes: {e!s}",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -227,7 +229,7 @@ class VocabCog(BaseCog):
                     inline=False
                 )
 
-            embed.set_footer(text=f"Use /vocab delete <id> to remove a note")
+            embed.set_footer(text="Use /vocab delete <id> to remove a note")
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
             logger.info(f"User {interaction.user} ({user_id}) searched vocab notes for: {query}")
@@ -236,7 +238,7 @@ class VocabCog(BaseCog):
             logger.error(f"Error searching vocab notes: {e}", exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"Failed to search vocabulary notes: {str(e)}",
+                description=f"Failed to search vocabulary notes: {e!s}",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -277,7 +279,7 @@ class VocabCog(BaseCog):
             logger.error(f"Error deleting vocab note: {e}", exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"Failed to delete vocabulary note: {str(e)}",
+                description=f"Failed to delete vocabulary note: {e!s}",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -354,7 +356,7 @@ class VocabCog(BaseCog):
             logger.error(f"Error exporting vocab notes: {e}", exc_info=True)
             embed = Embed(
                 title="❌ Export Failed",
-                description=f"Failed to export vocabulary notes: {str(e)}",
+                description=f"Failed to export vocabulary notes: {e!s}",
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)

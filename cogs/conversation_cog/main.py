@@ -2,18 +2,24 @@
 Language Learning Conversation Cog
 Provides AI-generated conversations for Spanish-English language learning
 """
-import logging
-import discord
-import random
 import asyncio
+import logging
+import random
 
+import discord
 from discord.ext import commands
-from base_cog import BaseCog, COLORS
-from .gemini_client import ConversationGeminiClient
+
+from base_cog import COLORS, BaseCog
+
 from .conversation_data import (
-    CATEGORIES, LEVELS, LANGUAGES,
-    LANGUAGE_ALIASES, LEVEL_ALIASES, CATEGORY_ALIASES
+    CATEGORIES,
+    CATEGORY_ALIASES,
+    LANGUAGE_ALIASES,
+    LANGUAGES,
+    LEVEL_ALIASES,
+    LEVELS,
 )
+from .gemini_client import ConversationGeminiClient
 
 logger = logging.getLogger(__name__)
 
@@ -266,7 +272,7 @@ class ConversationCog(BaseCog):
         except Exception as e:
             logger.error(f"Error in background regeneration: {e}", exc_info=True)
 
-    def format_conversation_embed(self, conversation: dict, remaining_uses: int = None) -> discord.Embed:
+    def format_conversation_embed(self, conversation: dict, remaining_uses: int | None = None) -> discord.Embed:
         """
         Format conversation as a Discord embed
 
@@ -373,8 +379,8 @@ class ConversationCog(BaseCog):
             return user == ctx.author and str(reaction.emoji) in ['✅', '❌'] and reaction.message.id == confirm_msg.id
 
         try:
-            reaction, user = await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
-        except asyncio.TimeoutError:
+            reaction, _user = await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
+        except TimeoutError:
             await confirm_msg.edit(embed=discord.Embed(
                 title="❌ Setup Cancelled",
                 description="Setup cancelled (timeout)",
@@ -403,9 +409,9 @@ class ConversationCog(BaseCog):
         start_time = asyncio.get_event_loop().time()
 
         # Generate for each combination
-        for language in LANGUAGES.keys():
-            for level in LEVELS.keys():
-                for category in CATEGORIES.keys():
+        for language in LANGUAGES:
+            for level in LEVELS:
+                for category in CATEGORIES:
                     # Update progress
                     elapsed = int(asyncio.get_event_loop().time() - start_time)
                     progress_embed.description = (
@@ -471,7 +477,7 @@ class ConversationCog(BaseCog):
         )
 
         # Group by language
-        for language in LANGUAGES.keys():
+        for language in LANGUAGES:
             lang_stats = [s for s in stats_by_combo if s['language'] == language]
 
             if lang_stats:

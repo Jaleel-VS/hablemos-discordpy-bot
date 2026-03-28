@@ -1,5 +1,6 @@
 
 import logging
+
 from db import DatabaseMixin
 
 logger = logging.getLogger(__name__)

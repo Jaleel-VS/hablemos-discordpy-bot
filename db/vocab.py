@@ -1,6 +1,7 @@
 
 from db import DatabaseMixin
 
+
 class VocabMixin(DatabaseMixin):
     async def add_vocab_note(self, user_id: int, username: str, word: str,
                             translation: str | None = None,

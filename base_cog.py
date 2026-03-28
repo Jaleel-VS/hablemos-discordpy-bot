@@ -1,7 +1,7 @@
-from discord.ext.commands import Cog, CommandOnCooldown
-from discord.ext.commands import Bot
-from discord import Interaction
 import logging
+
+from discord import Interaction
+from discord.ext.commands import Bot, Cog, CommandOnCooldown
 
 logger = logging.getLogger(__name__)
 

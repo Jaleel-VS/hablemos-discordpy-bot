@@ -1,12 +1,14 @@
 """Quote admin commands — ban/unban users, pause quotes, block channels."""
-import discord
-from discord.ext import commands
-from discord import Embed
-from base_cog import BaseCog
-from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 import logging
 import re
 import time
+
+import discord
+from discord import Embed
+from discord.ext import commands
+
+from base_cog import BaseCog
+from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +49,7 @@ class QuoteAdminCog(BaseCog):
 
     @quoteadmin.command(name='ban')
     @commands.has_permissions(manage_messages=True)
-    async def ban(self, ctx: commands.Context, *, target: str = None):
+    async def ban(self, ctx: commands.Context, *, target: str | None = None):
         """Ban a user from using quote commands."""
         user_id = _resolve_user_id(ctx, target)
         if user_id is None:
@@ -59,7 +61,7 @@ class QuoteAdminCog(BaseCog):
 
     @quoteadmin.command(name='unban')
     @commands.has_permissions(manage_messages=True)
-    async def unban(self, ctx: commands.Context, *, target: str = None):
+    async def unban(self, ctx: commands.Context, *, target: str | None = None):
         """Unban a user from quote commands."""
         user_id = _resolve_user_id(ctx, target)
         if user_id is None:
@@ -74,7 +76,7 @@ class QuoteAdminCog(BaseCog):
 
     @quoteadmin.command(name='pause')
     @commands.has_permissions(manage_messages=True)
-    async def pause(self, ctx: commands.Context, duration: str = None):
+    async def pause(self, ctx: commands.Context, duration: str | None = None):
         """Pause all quote usage for a duration (e.g. 30m, 2h, 1d)."""
         if not duration:
             await ctx.send(embed=red_embed("Usage: `$quoteadmin pause <duration>` (e.g. `30m`, `2h`, `1d`)"))

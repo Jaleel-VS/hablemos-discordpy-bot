@@ -5,10 +5,11 @@ Provides slash commands for managing website resources (podcasts, videos, etc.)
 import logging
 
 import discord
+from discord import Embed, Interaction, app_commands
 from discord.ext import commands
-from discord import app_commands, Interaction, Embed
 
 from base_cog import BaseCog
+
 from .api import WebsiteAPIClient
 from .views import MainManageView
 
@@ -71,7 +72,7 @@ class WebsiteManagerCog(BaseCog):
             logger.error(f"Error in manage command: {error}", exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"An error occurred: {str(error)}",
+                description=f"An error occurred: {error!s}",
                 color=discord.Color.red()
             )
             if not interaction.response.is_done():

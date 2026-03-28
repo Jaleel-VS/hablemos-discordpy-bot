@@ -4,11 +4,17 @@ import random
 
 import discord
 from discord import Game
-from discord.ext.commands import Bot, CommandNotFound, CommandOnCooldown, MissingPermissions, NotOwner
+from discord.ext.commands import (
+    Bot,
+    CommandNotFound,
+    CommandOnCooldown,
+    MissingPermissions,
+    NotOwner,
+)
 
 from config import load_settings
-from logger import setup_logging
 from db import Database
+from logger import setup_logging
 
 # Configure logging before anything else
 setup_logging()

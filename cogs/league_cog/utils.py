@@ -4,10 +4,11 @@ Shared utilities for the Language League system.
 This module contains helper functions and constants used by both
 the main league cog and the admin cog.
 """
-import re
 import logging
+import re
 
-from langdetect import detect, LangDetectException
+from langdetect import LangDetectException, detect
+
 from cogs.league_cog.config import LANGUAGE, RATE_LIMITS
 
 logger = logging.getLogger(__name__)

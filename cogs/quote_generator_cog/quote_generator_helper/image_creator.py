@@ -1,6 +1,7 @@
-from os import path
-import imgkit
 import logging
+from os import path
+
+import imgkit
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ def create_image(user_name: str, user_avatar: str, message_content: str, *, outp
     html = f'''
             <html>
             <head>
-            <style>   
+            <style>
         @font-face {{
         font-family: 'Satisfy Pro';
         src: url('{dir_path}/fonts/SatisfyPro.eot');
@@ -43,7 +44,7 @@ def create_image(user_name: str, user_avatar: str, message_content: str, *, outp
         font-style: normal;
         font-display: swap;
     }}
-    
+
     @font-face {{
         font-family: 'Helvetica Neue';
         src: url('{dir_path}/fonts/HelveticaNeue-Roman.eot');
@@ -65,10 +66,10 @@ def create_image(user_name: str, user_avatar: str, message_content: str, *, outp
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
     }}
-    
+
         .myImage {{
             float: left;
-            
+
             border-right: 0;
             border-top-left-radius: 8px;
             border-bottom-left-radius: 8px;
@@ -97,7 +98,7 @@ def create_image(user_name: str, user_avatar: str, message_content: str, *, outp
             padding: 10% 5% 5%;
             }}
 
-            
+
 
             .author {{
                 color: white;

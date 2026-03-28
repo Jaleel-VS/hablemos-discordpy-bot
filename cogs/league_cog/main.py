@@ -2,28 +2,33 @@
 Language League Cog
 Tracks user activity and maintains league rankings for language learners
 """
-import discord
-from discord.ext import commands, tasks
-from discord import app_commands, Interaction, Embed, Member, File
-from base_cog import BaseCog
+import functools
 import logging
 import time
-import functools
-from typing import Callable, TypeVar, ParamSpec
+from collections.abc import Callable
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import ParamSpec, TypeVar
+
+import discord
+from discord import Embed, File, Interaction, Member, app_commands
+from discord.ext import commands, tasks
 from langdetect import DetectorFactory
-from datetime import datetime, timedelta, timezone
-from cogs.league_cog.league_helper.leaderboard_image_pillow import generate_leaderboard_image
+
+from base_cog import BaseCog
 from cogs.league_cog.config import (
-    LEAGUE_GUILD_ID,
-    WINNER_CHANNEL_ID,
     CHAMPION_ROLE_ID,
-    ROLES,
-    SCORING,
-    RATE_LIMITS,
-    ROUNDS,
     DISPLAY,
-    LANGUAGE
+    LANGUAGE,
+    LEAGUE_GUILD_ID,
+    RATE_LIMITS,
+    ROLES,
+    ROUNDS,
+    SCORING,
+    WINNER_CHANNEL_ID,
+)
+from cogs.league_cog.league_helper.leaderboard_image_pillow import (
+    generate_leaderboard_image,
 )
 from cogs.league_cog.utils import detect_message_language
 
@@ -36,7 +41,7 @@ logger = logging.getLogger(__name__)
 P = ParamSpec('P')
 T = TypeVar('T')
 
-def handle_interaction_errors(func: Callable[P, T]) -> Callable[P, T]:
+def handle_interaction_errors[**P, T](func: Callable[P, T]) -> Callable[P, T]:
     """
     Decorator for consistent error handling in slash commands.
     Automatically handles exceptions and sends user-friendly error messages.
@@ -49,7 +54,7 @@ def handle_interaction_errors(func: Callable[P, T]) -> Callable[P, T]:
             logger.error(f"Error in {func.__name__}: {e}", exc_info=True)
             error_embed = Embed(
                 title="❌ Error",
-                description=f"Something went wrong: {str(e)}",
+                description=f"Something went wrong: {e!s}",
                 color=discord.Color.red()
             )
             # Check if we've already responded/deferred
@@ -108,7 +113,7 @@ class LeagueCog(BaseCog):
     async def get_cached_leaderboard(self, board: str, limit: int) -> list[dict]:
         """Get leaderboard data with caching to reduce DB load"""
         cache_key = f"{board}:{limit}"
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         # Check if we have valid cached data
         if cache_key in self._leaderboard_cache:
@@ -134,7 +139,7 @@ class LeagueCog(BaseCog):
             current_round = await self.bot.db.get_current_round()
             if not current_round:
                 # Start today, end next Sunday midnight UTC
-                start_date = datetime.now(timezone.utc)
+                start_date = datetime.now(UTC)
                 # Calculate next Sunday
                 days_until_sunday = (6 - start_date.weekday()) % 7
                 if days_until_sunday == 0:
@@ -155,12 +160,12 @@ class LeagueCog(BaseCog):
             if not current_round:
                 return
 
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             end_date = current_round['end_date']
 
             # Make end_date timezone-aware if it isn't
             if end_date.tzinfo is None:
-                end_date = end_date.replace(tzinfo=timezone.utc)
+                end_date = end_date.replace(tzinfo=UTC)
 
             # Check if round has ended
             if now >= end_date:
@@ -290,7 +295,7 @@ class LeagueCog(BaseCog):
         )
 
         # Create next round ending next Sunday at 12:00 UTC
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         days_until_sunday = (6 - now.weekday()) % 7
         if days_until_sunday == 0:
             days_until_sunday = 7
@@ -566,7 +571,7 @@ class LeagueCog(BaseCog):
             logger.error(f"Error in league join: {e}", exc_info=True)
             embed = Embed(
                 title="❌ Error",
-                description=f"Failed to join Language League: {str(e)}",
+                description=f"Failed to join Language League: {e!s}",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -604,7 +609,7 @@ class LeagueCog(BaseCog):
             logger.error(f"Error in league leave: {e}", exc_info=True)
             embed = Embed(
                 title="❌ Error",
-                description=f"Failed to leave Language League: {str(e)}",
+                description=f"Failed to leave Language League: {e!s}",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -758,7 +763,7 @@ class LeagueCog(BaseCog):
             # Show round end date in footer
             end_date = current_round['end_date']
             if end_date.tzinfo is None:
-                end_date = end_date.replace(tzinfo=timezone.utc)
+                end_date = end_date.replace(tzinfo=UTC)
 
             embed.set_footer(text=f"Round {current_round['round_number']} • Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
 
@@ -774,7 +779,7 @@ class LeagueCog(BaseCog):
             logger.error(f"Error viewing league: {e}", exc_info=True)
             embed = Embed(
                 title="❌ Error",
-                description=f"Failed to load league: {str(e)}",
+                description=f"Failed to load league: {e!s}",
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
@@ -861,7 +866,7 @@ class LeagueCog(BaseCog):
             # Show round end date in footer
             end_date = current_round['end_date']
             if end_date.tzinfo is None:
-                end_date = end_date.replace(tzinfo=timezone.utc)
+                end_date = end_date.replace(tzinfo=UTC)
 
             footer_text = f"Round ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC"
             if is_self and stats['active_days'] > 0:
@@ -876,7 +881,7 @@ class LeagueCog(BaseCog):
             logger.error(f"Error viewing stats: {e}", exc_info=True)
             embed = Embed(
                 title="❌ Error",
-                description=f"Failed to load stats: {str(e)}",
+                description=f"Failed to load stats: {e!s}",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -926,9 +931,7 @@ class LeagueCog(BaseCog):
 
             # Check if message is in the language they're learning
             is_valid_message = False
-            if detected_lang == LANGUAGE.SPANISH_CODE and learning['learning_spanish']:
-                is_valid_message = True
-            elif detected_lang == LANGUAGE.ENGLISH_CODE and learning['learning_english']:
+            if (detected_lang == LANGUAGE.SPANISH_CODE and learning['learning_spanish']) or (detected_lang == LANGUAGE.ENGLISH_CODE and learning['learning_english']):
                 is_valid_message = True
 
             if not is_valid_message:

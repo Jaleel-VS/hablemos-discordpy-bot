@@ -1,10 +1,11 @@
 """
 Discord modals (forms) for website management
 """
-import discord
-from discord import Interaction, Embed
-from discord.ui import Modal, TextInput
 import logging
+
+import discord
+from discord import Embed, Interaction
+from discord.ui import Modal, TextInput
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +88,7 @@ class AddPodcastModal(Modal, title="Add New Podcast"):
             logger.error(f"Error adding podcast: {e}", exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"Failed to add podcast: {str(e)}",
+                description=f"Failed to add podcast: {e!s}",
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
@@ -197,7 +198,7 @@ class AddPodcastModalFull(Modal, title="Add New Podcast"):
             logger.error(f"Error adding podcast: {e}", exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"Failed to add podcast: {str(e)}",
+                description=f"Failed to add podcast: {e!s}",
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
@@ -307,7 +308,7 @@ class EditPodcastModal(Modal, title="Edit Podcast"):
             logger.error(f"Error updating podcast: {e}", exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"Failed to update podcast: {str(e)}",
+                description=f"Failed to update podcast: {e!s}",
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)

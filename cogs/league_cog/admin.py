@@ -4,21 +4,20 @@ Language League Admin Cog
 This module contains all admin-only commands for managing and auditing
 the Language League system. All commands require bot owner permissions.
 """
-import discord
-from discord.ext import commands
-from discord import Embed
-from base_cog import BaseCog
 import logging
 import re
 import time
-from cogs.league_cog.config import (
-    LEAGUE_GUILD_ID,
-    RATE_LIMITS
-)
+
+import discord
+from discord import Embed
+from discord.ext import commands
+
+from base_cog import BaseCog
+from cogs.league_cog.config import LEAGUE_GUILD_ID, RATE_LIMITS
 from cogs.league_cog.utils import (
-    detect_message_language,
     CUSTOM_EMOJI_PATTERN,
-    UNICODE_EMOJI_PATTERN
+    UNICODE_EMOJI_PATTERN,
+    detect_message_language,
 )
 
 logger = logging.getLogger(__name__)
@@ -31,7 +30,7 @@ class LeagueAdminCog(BaseCog):
 
     @commands.command(name="league")
     @commands.is_owner()
-    async def league_admin(self, ctx, action: str = None, target=None):
+    async def league_admin(self, ctx, action: str | None = None, target=None):
         """
         Admin league management (Owner only)
 
@@ -330,7 +329,7 @@ class LeagueAdminCog(BaseCog):
         except discord.Forbidden:
             await ctx.send("❌ No permission to access that message")
         except Exception as e:
-            await ctx.send(f"❌ Error: {str(e)}")
+            await ctx.send(f"❌ Error: {e!s}")
             logger.error(f"Error in validatemessage: {e}", exc_info=True)
 
     async def _handle_audit(self, ctx, target):
@@ -431,7 +430,7 @@ class LeagueAdminCog(BaseCog):
                 except Exception as e:
                     embed.add_field(
                         name=f"Message {i}",
-                        value=f"❌ Error: {str(e)}",
+                        value=f"❌ Error: {e!s}",
                         inline=False
                     )
 
@@ -441,7 +440,7 @@ class LeagueAdminCog(BaseCog):
         except ValueError:
             await ctx.send("❌ Invalid user ID.")
         except Exception as e:
-            await ctx.send(f"❌ Error: {str(e)}")
+            await ctx.send(f"❌ Error: {e!s}")
             logger.error(f"Error in audit command: {e}", exc_info=True)
 
     async def _handle_endround(self, ctx):
@@ -500,7 +499,7 @@ class LeagueAdminCog(BaseCog):
             logger.info(f"Admin {ctx.author} manually ended round {round_number}, created round {result['next_round_number']}")
 
         except Exception as e:
-            await ctx.send(f"❌ Error ending round: {str(e)}")
+            await ctx.send(f"❌ Error ending round: {e!s}")
             logger.error(f"Error in endround command: {e}", exc_info=True)
 
     async def _handle_seedrole(self, ctx, target):
@@ -526,7 +525,7 @@ class LeagueAdminCog(BaseCog):
         except ValueError:
             await ctx.send("❌ Invalid format. Use comma-separated user IDs: `$league seedrole 123,456,789`")
         except Exception as e:
-            await ctx.send(f"❌ Error: {str(e)}")
+            await ctx.send(f"❌ Error: {e!s}")
             logger.error(f"Error in seedrole command: {e}", exc_info=True)
 
     async def _handle_preview(self, ctx):
@@ -580,12 +579,12 @@ class LeagueAdminCog(BaseCog):
             logger.info(f"Admin {ctx.author} previewed round {round_number} announcement")
 
         except Exception as e:
-            await ctx.send(f"❌ Error: {str(e)}")
+            await ctx.send(f"❌ Error: {e!s}")
             logger.error(f"Error in preview command: {e}", exc_info=True)
 
     @commands.command(name="langa", aliases=["lng"])
     @commands.is_owner()
-    async def langa(self, ctx, *, message_or_id: str = None):
+    async def langa(self, ctx, *, message_or_id: str | None = None):
         """
         Detect the language of a message (Owner only)
 

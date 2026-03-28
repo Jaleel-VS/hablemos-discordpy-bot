@@ -1,16 +1,29 @@
 """Introduction tracker — enforces a cooldown on the introductions channel."""
+import logging
+
+from discord import (
+    Color,
+    Embed,
+    Forbidden,
+    HTTPException,
+    Member,
+    Message,
+    NotFound,
+)
 from discord.ext import commands
-from discord.ext.commands import Bot, has_permissions, Cog
+from discord.ext.commands import Bot, Cog, has_permissions
+
 from base_cog import BaseCog
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
-from discord import Embed, Color, HTTPException, Forbidden, NotFound, Member, Message
+
 from .config import (
-    INTRO_COOLDOWN_DAYS,
-    DEFAULT_WARN_CHANNEL_ID, DEFAULT_ALERT_CHANNEL_ID,
-    SETTING_WARN_CHANNEL, SETTING_ALERT_CHANNEL,
+    DEFAULT_ALERT_CHANNEL_ID,
+    DEFAULT_WARN_CHANNEL_ID,
     EXEMPT_ROLE_IDS,
+    INTRO_COOLDOWN_DAYS,
+    SETTING_ALERT_CHANNEL,
+    SETTING_WARN_CHANNEL,
 )
-import logging
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,7 @@
 
 from db import DatabaseMixin
 
+
 class ConversationsMixin(DatabaseMixin):
     async def add_conversation(self, language: str, level: str, category: str,
                               scenario_intro: str, speaker1_name: str,
@@ -47,8 +48,8 @@ class ConversationsMixin(DatabaseMixin):
             return False
         return result['min_usage'] > 0
 
-    async def get_conversation_count(self, language: str = None, level: str = None,
-                                    category: str = None) -> int:
+    async def get_conversation_count(self, language: str | None = None, level: str | None = None,
+                                    category: str | None = None) -> int:
         """Get count of conversations matching criteria"""
         if language and level and category:
             count = await self._fetchval('''

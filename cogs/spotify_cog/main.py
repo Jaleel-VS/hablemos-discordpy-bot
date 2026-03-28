@@ -1,9 +1,11 @@
 """Spotify now-playing command — shows what a user is listening to."""
+import logging
+
+from discord import Color, Embed, HTTPException, Member, Spotify, app_commands
 from discord.ext import commands
-from discord import app_commands, Embed, Color, HTTPException, Member, Spotify
+
 from base_cog import BaseCog
 from cogs.utils.embeds import red_embed
-import logging
 
 logger = logging.getLogger(__name__)
 

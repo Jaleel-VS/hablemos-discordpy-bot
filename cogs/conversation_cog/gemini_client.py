@@ -1,14 +1,16 @@
 """
 Google Gemini API client for generating language learning conversations
 """
+import asyncio
 import logging
 import random
-import asyncio
 
 from google import genai
 from google.genai import types
-from .conversation_data import LEVELS, LANGUAGES, CATEGORIES
+
 from cogs.utils.rate_limiter import RateLimiter
+
+from .conversation_data import CATEGORIES, LANGUAGES, LEVELS
 
 logger = logging.getLogger(__name__)
 

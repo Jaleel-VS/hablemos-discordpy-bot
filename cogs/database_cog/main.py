@@ -1,8 +1,10 @@
-from discord.ext.commands import command, Bot, is_owner
-from base_cog import BaseCog
-from cogs.utils.embeds import green_embed, red_embed, blue_embed
-from discord import Embed, Color
 import logging
+
+from discord import Color, Embed
+from discord.ext.commands import Bot, command, is_owner
+
+from base_cog import BaseCog
+from cogs.utils.embeds import blue_embed, green_embed, red_embed
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +36,7 @@ class DatabaseCommands(BaseCog):
 
         except Exception as e:
             logger.error(f"Error adding note: {e}")
-            await ctx.send(embed=red_embed(f"Failed to save note: {str(e)}"))
+            await ctx.send(embed=red_embed(f"Failed to save note: {e!s}"))
 
     @command(aliases=['getnote', 'readnote'])
     @is_owner()
@@ -61,7 +63,7 @@ class DatabaseCommands(BaseCog):
 
         except Exception as e:
             logger.error(f"Error retrieving note: {e}")
-            await ctx.send(embed=red_embed(f"Failed to retrieve note: {str(e)}"))
+            await ctx.send(embed=red_embed(f"Failed to retrieve note: {e!s}"))
 
     @command(aliases=['mynotes', 'listnotes'])
     @is_owner()
@@ -92,12 +94,12 @@ class DatabaseCommands(BaseCog):
                 description=description,
                 color=Color(int('3498db', 16))
             )
-            embed.set_footer(text=f"Use !shownote <id> to view full note")
+            embed.set_footer(text="Use !shownote <id> to view full note")
             await ctx.send(embed=embed)
 
         except Exception as e:
             logger.error(f"Error listing notes: {e}")
-            await ctx.send(embed=red_embed(f"Failed to list notes: {str(e)}"))
+            await ctx.send(embed=red_embed(f"Failed to list notes: {e!s}"))
 
     @command(aliases=['delnote', 'removenote'])
     @is_owner()
@@ -119,7 +121,7 @@ class DatabaseCommands(BaseCog):
 
         except Exception as e:
             logger.error(f"Error deleting note: {e}")
-            await ctx.send(embed=red_embed(f"Failed to delete note: {str(e)}"))
+            await ctx.send(embed=red_embed(f"Failed to delete note: {e!s}"))
 
 async def setup(bot):
     await bot.add_cog(DatabaseCommands(bot))

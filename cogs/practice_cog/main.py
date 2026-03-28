@@ -4,20 +4,25 @@ Vocab Practice Cog with SRS (Clozemaster-style)
 Provides spaced repetition practice with cloze sentences.
 """
 import logging
+
 import discord
+from discord import Embed, Interaction, app_commands
 from discord.ext import commands
-from discord import app_commands, Interaction, Embed
 
 from base_cog import BaseCog
-from .session import PracticeSession, PracticeCard, PracticeMode
-from .srs import calculate_sm2
-from .views import (
-    PracticeView, QualityRatingView,
-    create_question_embed, create_result_embed,
-    create_summary_embed, create_stats_embed
-)
+
 from .gemini import PracticeGeminiClient
 from .seed_words import SEED_WORDS
+from .session import PracticeCard, PracticeMode, PracticeSession
+from .srs import calculate_sm2
+from .views import (
+    PracticeView,
+    QualityRatingView,
+    create_question_embed,
+    create_result_embed,
+    create_stats_embed,
+    create_summary_embed,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +46,7 @@ class PracticeCog(BaseCog):
 
     @commands.command(name='practice')
     @commands.has_permissions(manage_messages=True)
-    async def practice_admin(self, ctx, action: str = None, language: str = None, count: int = 10):
+    async def practice_admin(self, ctx, action: str | None = None, language: str | None = None, count: int = 10):
         """
         Admin command for managing practice cards.
 

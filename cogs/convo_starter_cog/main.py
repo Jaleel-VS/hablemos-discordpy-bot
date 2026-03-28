@@ -1,10 +1,14 @@
 from random import choice
 
-from cogs.convo_starter_cog.convo_starter_help import categories, get_random_question
-from discord.ext import commands
 from discord import Embed
+from discord.ext import commands
 
-from base_cog import BaseCog, COLORS as colors
+from base_cog import COLORS as colors
+from base_cog import BaseCog
+from cogs.convo_starter_cog.convo_starter_help import (
+    categories,
+    get_random_question,
+)
 
 # Embed Message
 ERROR_MESSAGE = "The proper format is `$topic <topic>` eg. `$topic 2`. Please see " \

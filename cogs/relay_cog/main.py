@@ -13,7 +13,7 @@ class RelayCog(BaseCog):
 
     @commands.is_owner()
     @commands.command(name="parrot", help="Parrot a message to a target guild/channel by ID. Usage: $parrot <guild_id> <channel_id> <message>")
-    async def parrot(self, ctx: commands.Context, target_guild_id: int, target_channel_id: int, *, message: str = None):
+    async def parrot(self, ctx: commands.Context, target_guild_id: int, target_channel_id: int, *, message: str | None = None):
         """
         Relays the provided message to the specified guild and channel.
 

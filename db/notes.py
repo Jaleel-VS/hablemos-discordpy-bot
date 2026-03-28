@@ -1,6 +1,7 @@
 
 from db import DatabaseMixin
 
+
 class NotesMixin(DatabaseMixin):
     async def add_note(self, user_id: int, username: str, content: str) -> int:
         """Add a new note to the database"""

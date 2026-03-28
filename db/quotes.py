@@ -1,5 +1,6 @@
 from db import DatabaseMixin
 
+
 class QuotesMixin(DatabaseMixin):
     async def quote_ban_user(self, user_id: int, banned_by: int) -> bool:
         """Ban a user from using quote commands"""

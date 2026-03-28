@@ -1,8 +1,15 @@
-from discord.ui import View, Select, Button, button
-from discord import SelectOption, Interaction, ButtonStyle, Embed
+from discord import ButtonStyle, Embed, Interaction, SelectOption
+from discord.ui import Button, Select, View, button
 
-from .config import LANGUAGES, PROFICIENCY_LEVELS, TIMEZONES, COUNTRIES, EXCHANGE_COLOR
+from .config import (
+    COUNTRIES,
+    EXCHANGE_COLOR,
+    LANGUAGES,
+    PROFICIENCY_LEVELS,
+    TIMEZONES,
+)
 from .modals import ExchangeDetailsModal, IntroOnlyModal
+
 
 class IntroStartView(View):
     """Initial view asking if user wants to find an exchange partner."""

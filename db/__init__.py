@@ -30,16 +30,17 @@ class DatabaseMixin:
         async with self._pool().acquire() as conn:
             return await conn.execute(query, *args)
 
-from db.notes import NotesMixin
-from db.introductions import IntroductionsMixin
-from db.settings import SettingsMixin
 from db.conversations import ConversationsMixin
-from db.vocab import VocabMixin
+from db.introductions import IntroductionsMixin
 from db.leaderboard import LeaderboardMixin
-from db.quotes import QuotesMixin
-from db.practice import PracticeMixin
 from db.metrics import MetricsMixin
+from db.notes import NotesMixin
+from db.practice import PracticeMixin
+from db.quotes import QuotesMixin
 from db.schema import initialize_schema
+from db.settings import SettingsMixin
+from db.vocab import VocabMixin
+
 
 class Database(
     NotesMixin,

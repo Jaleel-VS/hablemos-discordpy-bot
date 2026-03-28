@@ -1,19 +1,23 @@
 """Quote generator — creates styled quote images from Discord messages."""
-from cogs.quote_generator_cog.markdown import remove_markdown_from_message
-from cogs.quote_generator_cog.quote_generator_helper.image_creator import create_image
-from cogs.quote_generator_cog.quote_generator_helper.image_creator2 import create_image2
-from base_cog import BaseCog
-from cogs.utils.embeds import red_embed, green_embed, yellow_embed
-
-from re import sub
 import logging
-import time
-import tempfile
 import os
+import tempfile
+import time
+from re import sub
 
-from discord.ext.commands import command, cooldown, BucketType
-from discord import File, HTTPException, NotFound, Forbidden
 import demoji
+from discord import File, Forbidden, HTTPException, NotFound
+from discord.ext.commands import BucketType, command, cooldown
+
+from base_cog import BaseCog
+from cogs.quote_generator_cog.markdown import remove_markdown_from_message
+from cogs.quote_generator_cog.quote_generator_helper.image_creator import (
+    create_image,
+)
+from cogs.quote_generator_cog.quote_generator_helper.image_creator2 import (
+    create_image2,
+)
+from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
 logger = logging.getLogger(__name__)
 

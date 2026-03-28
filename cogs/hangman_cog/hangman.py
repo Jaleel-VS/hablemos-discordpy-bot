@@ -1,17 +1,17 @@
-import asyncio
-from re import sub
 import logging
+from re import sub
 
 from discord.ext.commands import Cog
 
-from cogs.hangman_cog.hangman_help import (get_unaccented_letter,
-                                                get_unaccented_word,
-                                                get_hidden_word,
-                                                get_hangman_string,
-                                                embed_quote,
-                                                create_final_embed,
-                                                start_game
-                                                )
+from cogs.hangman_cog.hangman_help import (
+    create_final_embed,
+    embed_quote,
+    get_hangman_string,
+    get_hidden_word,
+    get_unaccented_letter,
+    get_unaccented_word,
+    start_game,
+)
 
 # Set up logger for this module
 logger = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ class Hangman(Cog):
         self.correctly_guessed = None
         self.embed_quote = embed_quote
         self.embedded_message = ""
-        
+
         logger.debug(f"Hangman game initialized: word='{self.original_word}', category='{category}', definition='{words[1] if len(words) > 1 else 'N/A'}'")
 
     async def game_loop(self, ctx):
@@ -65,7 +65,7 @@ class Hangman(Cog):
         while self.game_in_progress():
             turn_count += 1
             logger.debug(f"Turn {turn_count} starting - Errors: {self.errors}/{MAX_ERRORS}, Progress: {''.join(self.hidden_word_list)}")
-            
+
             user_guess: tuple = await self.get_user_guess(ctx)
 
             if not user_guess[0]:  # if it returns False the input timed out
@@ -73,14 +73,14 @@ class Hangman(Cog):
                 break
 
             user_id, player_name, player_input = self.get_input_info(user_guess[1])
-            
+
             # Track player participation
             if user_id not in self.players:
                 self.players[user_id] = {"name": str(player_name), "guesses": 0}
                 logger.info(f"New player joined: {player_name} ({user_id})")
-            
+
             self.players[user_id]["guesses"] += 1
-            
+
             logger.debug(f"Turn {turn_count}: {player_name} ({user_id}) guessed '{player_input}'")
 
             if await self.did_user_quit(player_input, ctx, user_id):
@@ -94,7 +94,7 @@ class Hangman(Cog):
                 self.hidden_word_list = self.original_word_list
 
             await self.send_embed(ctx, player_name, player_input)
-            
+
             # Log game state after each turn
             if self.word_found():
                 logger.info(f"Game won by {player_name} after {turn_count} turns!")
@@ -102,7 +102,7 @@ class Hangman(Cog):
             elif self.max_errors_reached():
                 logger.info(f"Game lost after {turn_count} turns - max errors reached")
                 break
-        
+
         # Log final game statistics
         total_players = len(self.players)
         total_guesses = sum(p["guesses"] for p in self.players.values())
@@ -134,7 +134,7 @@ class Hangman(Cog):
             user_input = await self.bot.wait_for('message',
                                                  check=is_input_valid,
                                                  timeout=45)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             await context.send(TIME_OUT)
             return False, ""
 
@@ -212,7 +212,7 @@ class Hangman(Cog):
 
     def extend_found_set(self, letter):
         before_size = len(self.letters_found)
-        self.letters_found.update(VOWELS[letter] if letter in VOWELS else letter)
+        self.letters_found.update(VOWELS.get(letter, letter))
         after_size = len(self.letters_found)
         logger.debug(f"Letters found updated: {before_size} -> {after_size} letters")
 

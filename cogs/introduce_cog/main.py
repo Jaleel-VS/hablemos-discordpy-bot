@@ -1,8 +1,10 @@
-import discord
-from discord.ext import commands
-from discord import app_commands, Interaction, Embed
-from base_cog import BaseCog
 import logging
+
+import discord
+from discord import Embed, Interaction, app_commands
+from discord.ext import commands
+
+from base_cog import BaseCog
 
 from .config import CHANNELS
 from .views import IntroStartView

@@ -1,6 +1,7 @@
 from io import StringIO
 from urllib.parse import urlparse
 
+
 def remove_markdown_from_message(message: str, current_recursion_size: int = 0, allow_escapes: bool = True) -> str:
     """
     Parses text and removes all markdown from it.
@@ -86,7 +87,7 @@ def remove_markdown_from_message(message: str, current_recursion_size: int = 0, 
 
                 if template == "```" and not want_to_close:
                     end = message.index(template, index)
-                    
+
                     if "\n" in message[index:end]:
                         while message[index].isalnum():
                             index += 1

@@ -5,11 +5,11 @@ import logging
 import os
 import time
 from collections import Counter
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import discord
+from discord import Color, Embed
 from discord.ext import commands, tasks
-from discord import Embed, Color
 
 from base_cog import BaseCog
 
@@ -317,7 +317,7 @@ class AdminCog(BaseCog):
                 await ctx.send(embed=embed)
             return
 
-        after = datetime.now(timezone.utc) - timedelta(days=days)
+        after = datetime.now(UTC) - timedelta(days=days)
         processing = await ctx.send(f"Scanning #{channel.name} for the last {days} days (max 5,000 messages)...")
 
         reply_pairs: Counter[tuple[int, int]] = Counter()
@@ -375,7 +375,7 @@ class AdminCog(BaseCog):
         # Top pairs by combined score
         top = combined.most_common(15)
         lines = []
-        for i, (pair, score) in enumerate(top, 1):
+        for i, (pair, _score) in enumerate(top, 1):
             a, b = pair
             replies = reply_pairs.get(pair, 0)
             mentions = mention_pairs.get(pair, 0)

@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-import discord
-from discord.ui import Modal, TextInput
-from discord import Interaction, Embed, TextStyle
 import logging
 import time
 from typing import TYPE_CHECKING
 
-from .config import INTRO_COLOR, EXCHANGE_COLOR
+import discord
+from discord import Embed, Interaction, TextStyle
+from discord.ui import Modal, TextInput
+
+from .config import EXCHANGE_COLOR, INTRO_COLOR
 
 if TYPE_CHECKING:
     from .views import ExchangeRequestView
@@ -75,7 +76,7 @@ class IntroOnlyModal(Modal, title="Introduce Yourself"):
         except Exception as e:
             logger.error(f"Error posting introduction: {e}", exc_info=True)
             await interaction.followup.send(
-                f"An error occurred while posting your introduction: {str(e)}",
+                f"An error occurred while posting your introduction: {e!s}",
                 ephemeral=True
             )
 
@@ -189,7 +190,7 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
         except Exception as e:
             logger.error(f"Error posting introduction: {e}", exc_info=True)
             await interaction.followup.send(
-                f"An error occurred while posting your introduction: {str(e)}",
+                f"An error occurred while posting your introduction: {e!s}",
                 ephemeral=True
             )
 

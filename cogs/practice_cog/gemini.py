@@ -1,13 +1,14 @@
 """
 Gemini API client for generating practice sentences.
 """
-import re
+import asyncio
 import logging
 import random
-import asyncio
+import re
 
 from google import genai
 from google.genai import types
+
 from cogs.utils.rate_limiter import RateLimiter
 
 logger = logging.getLogger(__name__)

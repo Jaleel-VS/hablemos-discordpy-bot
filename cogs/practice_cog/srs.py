@@ -8,7 +8,8 @@ Quality ratings:
 - 5 (Easy): Perfect recall
 """
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+
 
 @dataclass
 class SRSResult:
@@ -58,7 +59,7 @@ def calculate_sm2(quality: int, interval_days: float, ease_factor: float,
         new_ease = max(1.3, new_ease)  # Minimum 1.3
 
     # Calculate next review datetime
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     next_review = now + timedelta(days=new_interval)
 
     return SRSResult(

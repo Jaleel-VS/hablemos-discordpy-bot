@@ -1,7 +1,8 @@
-from os import path
 import logging
-import imgkit
 from datetime import datetime
+from os import path
+
+import imgkit
 
 logger = logging.getLogger(__name__)
 

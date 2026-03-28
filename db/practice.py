@@ -1,4 +1,5 @@
 import logging
+from datetime import UTC
 
 from db import DatabaseMixin
 
@@ -91,8 +92,8 @@ class PracticeMixin(DatabaseMixin):
         new_count = (total or 0) - len(user_cards)
         due_count = learning_count = mastered_count = 0
 
-        from datetime import datetime, timezone
-        now = datetime.now(timezone.utc)
+        from datetime import datetime
+        now = datetime.now(UTC)
         for card in user_cards:
             if card['next_review'] and card['next_review'] <= now:
                 due_count += 1

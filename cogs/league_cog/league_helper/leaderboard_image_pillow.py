@@ -2,12 +2,13 @@
 Leaderboard image generation using Pillow (PIL)
 Pure Python implementation - no external dependencies like wkhtmltopdf
 """
-from PIL import Image, ImageDraw, ImageFont
-from io import BytesIO
 import logging
-import requests
-from pathlib import Path
 from datetime import datetime
+from io import BytesIO
+from pathlib import Path
+
+import requests
+from PIL import Image, ImageDraw, ImageFont
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +133,7 @@ def get_rank_emoji(rank: int) -> str:
     """Get rank number"""
     return f"#{rank}"
 
-def draw_star(draw: ImageDraw.ImageDraw, center: tuple[int, int], size: int, color: tuple, outline_color: tuple = None):
+def draw_star(draw: ImageDraw.ImageDraw, center: tuple[int, int], size: int, color: tuple, outline_color: tuple | None = None):
     """Draw a 5-pointed star at the given center position"""
     import math
     cx, cy = center

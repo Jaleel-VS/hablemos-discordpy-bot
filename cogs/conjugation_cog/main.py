@@ -1,7 +1,6 @@
 """
 Conjugation practice cog — interactive Spanish verb conjugation game.
 """
-import asyncio
 import json
 import logging
 import random
@@ -55,14 +54,14 @@ class ConjugationCog(BaseCog):
     async def cog_load(self):
         logger.info("Loading verb data...")
         data_file = Path(__file__).parent / 'verb_data.json'
-        with open(data_file, 'r', encoding='utf-8') as f:
+        with open(data_file, encoding='utf-8') as f:
             data = json.load(f)
         self.categories = data['categories']
         self.verb_data = data['verbs']
         logger.info(f"Loaded {len(self.verb_data)} verbs across {len(self.categories)} categories")
 
     @commands.command(name='conj', aliases=['conjugate'])
-    async def start_game(self, ctx, category: str = None, questions: int = 10):
+    async def start_game(self, ctx, category: str | None = None, questions: int = 10):
         """
         Start a conjugation practice session.
 
@@ -141,7 +140,7 @@ class ConjugationCog(BaseCog):
 
             try:
                 msg = await self.bot.wait_for('message', check=check, timeout=TIMEOUT_SECONDS)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 await ctx.send(f"Session timed out. Final score: **{score}/{i}**")
                 return
 

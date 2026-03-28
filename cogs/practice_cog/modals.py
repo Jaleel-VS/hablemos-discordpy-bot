@@ -3,11 +3,14 @@ Modal for typing answers in practice sessions.
 """
 from __future__ import annotations
 
-import discord
-from discord.ui import Modal, TextInput
-from discord import Interaction, TextStyle
+import contextlib
 import logging
-from typing import TYPE_CHECKING, Callable, Awaitable
+from collections.abc import Awaitable, Callable
+from typing import TYPE_CHECKING
+
+import discord
+from discord import Interaction, TextStyle
+from discord.ui import Modal, TextInput
 
 if TYPE_CHECKING:
     from .session import PracticeCard
@@ -38,10 +41,8 @@ class AnswerModal(Modal, title="Enter Your Answer"):
             await self.on_answer_callback(interaction, user_answer)
         except Exception as e:
             logger.error(f"Error in answer modal: {e}", exc_info=True)
-            try:
+            with contextlib.suppress(discord.InteractionResponded):
                 await interaction.response.send_message(
                     "An error occurred. Please try again.",
                     ephemeral=True
                 )
-            except discord.InteractionResponded:
-                pass

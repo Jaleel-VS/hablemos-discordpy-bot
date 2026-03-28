@@ -3,6 +3,7 @@ from typing import Final
 
 import discord
 
+
 @dataclass(frozen=True)
 class ChannelIDs:
     COMMAND_CHANNEL: int = 1437832952028467251

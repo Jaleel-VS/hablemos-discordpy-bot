@@ -1,6 +1,7 @@
-from os import path
-import imgkit
 import logging
+from os import path
+
+import imgkit
 
 logger = logging.getLogger(__name__)
 
