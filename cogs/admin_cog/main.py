@@ -3,8 +3,6 @@ Admin cog — owner-only commands for cog management and bot metrics.
 """
 import logging
 import os
-import time
-from collections import Counter
 from datetime import UTC, datetime, timedelta
 
 import discord
@@ -20,6 +18,9 @@ PROTECTED_EXTENSIONS = {'cogs.admin_cog.main'}
 
 # How many days of raw command_metrics to keep before rolling up
 METRICS_RETENTION_DAYS = 30
+
+# How many days of interaction rows to keep
+INTERACTIONS_RETENTION_DAYS = 90
 
 
 def _discover_extensions() -> list[str]:
@@ -41,27 +42,66 @@ class AdminCog(BaseCog):
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
         self.daily_cleanup.start()
-        # Cache for interaction analysis: {channel_id: (timestamp, result_embed)}
-        self._interaction_cache: dict[int, tuple[float, list[Embed]]] = {}
-        self._interaction_cache_ttl = 3600  # 1 hour
+        self._interaction_errors = 0
 
     async def cog_unload(self):
         self.daily_cleanup.cancel()
+
+    # ── Interaction tracking (on_message) ──
+
+    async def _record(self, channel_id: int, guild_id: int, author_id: int, target_id: int, kind: str) -> None:
+        """Record an interaction, suppressing repeated DB errors to avoid log spam."""
+        try:
+            await self.bot.db.record_interaction(channel_id, guild_id, author_id, target_id, kind)
+            self._interaction_errors = 0
+        except Exception:
+            self._interaction_errors += 1
+            if self._interaction_errors <= 3:
+                logger.exception("Failed to record %s interaction", kind)
+            elif self._interaction_errors == 4:
+                logger.error("Suppressing further interaction recording errors")
+
+    @commands.Cog.listener()
+    async def on_message(self, message: discord.Message):
+        """Track reply and mention interactions to the database."""
+        if message.author.bot or not message.guild:
+            return
+
+        author_id = message.author.id
+        channel_id = message.channel.id
+        guild_id = message.guild.id
+
+        # Track replies
+        replied_to_id = None
+        ref = message.reference
+        if ref and ref.resolved and not isinstance(ref.resolved, discord.DeletedReferencedMessage):
+            target = ref.resolved.author
+            if not target.bot and target.id != author_id:
+                replied_to_id = target.id
+                await self._record(channel_id, guild_id, author_id, target.id, "reply")
+
+        # Track mentions (skip the reply target — Discord auto-mentions them)
+        for mentioned in message.mentions:
+            if not mentioned.bot and mentioned.id != author_id and mentioned.id != replied_to_id:
+                await self._record(channel_id, guild_id, author_id, mentioned.id, "mention")
 
     # ── Daily cleanup task ──
 
     @tasks.loop(hours=24)
     async def daily_cleanup(self):
-        """Roll up old metrics and purge stale leaderboard activity."""
+        """Roll up old metrics and purge stale data."""
         try:
             result = await self.bot.db.rollup_and_purge_metrics(METRICS_RETENTION_DAYS)
             league_purged = await self.bot.db.purge_old_league_activity()
+            interactions_purged = await self.bot.db.purge_old_interactions(INTERACTIONS_RETENTION_DAYS)
             logger.info(
-                f"Daily cleanup: metrics rolled={result['rolled_up']} "
-                f"purged={result['purged']}, league_activity purged={league_purged}"
+                "Daily cleanup: metrics rolled=%s purged=%s, "
+                "league_activity purged=%s, interactions purged=%s",
+                result['rolled_up'], result['purged'],
+                league_purged, interactions_purged,
             )
-        except Exception as e:
-            logger.error(f"Daily cleanup failed: {e}", exc_info=True)
+        except Exception:
+            logger.exception("Daily cleanup failed")
 
     @daily_cleanup.before_loop
     async def before_daily_cleanup(self):
@@ -119,7 +159,7 @@ class AdminCog(BaseCog):
                 return
 
         await ctx.send(f"Enabled and loaded `{name}`.")
-        logger.info(f"Cog enabled: {ext} by {ctx.author}")
+        logger.info("Cog enabled: %s by %s", ext, ctx.author.id)
 
     @cog.command(name='disable')
     @commands.is_owner()
@@ -141,7 +181,7 @@ class AdminCog(BaseCog):
                 return
 
         await ctx.send(f"Disabled and unloaded `{name}`.")
-        logger.info(f"Cog disabled: {ext} by {ctx.author}")
+        logger.info("Cog disabled: %s by %s", ext, ctx.author.id)
 
     @cog.command(name='reload')
     @commands.is_owner()
@@ -152,7 +192,7 @@ class AdminCog(BaseCog):
         try:
             await self.bot.reload_extension(ext)
             await ctx.send(f"Reloaded `{name}`.")
-            logger.info(f"Cog reloaded: {ext} by {ctx.author}")
+            logger.info("Cog reloaded: %s by %s", ext, ctx.author.id)
         except Exception as e:
             await ctx.send(f"Failed to reload: {e}")
 
@@ -276,6 +316,7 @@ class AdminCog(BaseCog):
             value=(
                 f"**command_metrics:** raw rows kept {METRICS_RETENTION_DAYS} days, then rolled up to metrics_daily\n"
                 f"**leaderboard_activity:** purged for rounds older than current - 1\n"
+                f"**interactions:** raw rows kept {INTERACTIONS_RETENTION_DAYS} days\n"
                 f"**Cleanup runs:** every 24 hours"
             ),
             inline=False,
@@ -290,10 +331,12 @@ class AdminCog(BaseCog):
         msg = await ctx.send("Running cleanup...")
         result = await self.bot.db.rollup_and_purge_metrics(METRICS_RETENTION_DAYS)
         league_purged = await self.bot.db.purge_old_league_activity()
+        interactions_purged = await self.bot.db.purge_old_interactions(INTERACTIONS_RETENTION_DAYS)
         await msg.edit(
             content=(
                 f"Done. Metrics: {result['rolled_up']} rolled up, {result['purged']} purged. "
-                f"League activity: {league_purged} purged."
+                f"League activity: {league_purged} purged. "
+                f"Interactions: {interactions_purged} purged."
             )
         )
 
@@ -303,106 +346,64 @@ class AdminCog(BaseCog):
     @commands.is_owner()
     async def interactions(self, ctx: commands.Context, channel: discord.TextChannel = None, days: int = 7):
         """
-        Analyze reply and mention pairs in a channel.
+        Show top reply/mention pairs in a channel (from tracked data).
 
         Usage: $interactions [#channel] [days]
         """
         channel = channel or ctx.channel
-        days = max(1, min(days, 30))
-
-        # Check cache
-        cached = self._interaction_cache.get(channel.id)
-        if cached and time.time() - cached[0] < self._interaction_cache_ttl:
-            for embed in cached[1]:
-                await ctx.send(embed=embed)
-            return
-
+        days = max(1, min(days, 90))
         after = datetime.now(UTC) - timedelta(days=days)
-        processing = await ctx.send(f"Scanning #{channel.name} for the last {days} days (max 5,000 messages)...")
 
-        reply_pairs: Counter[tuple[int, int]] = Counter()
-        mention_pairs: Counter[tuple[int, int]] = Counter()
-        user_names: dict[int, str] = {}
-        msg_count = 0
+        top_pairs = await self.bot.db.get_top_pairs(channel.id, after)
+        stats = await self.bot.db.get_interaction_stats(channel.id, after)
 
-        try:
-            async for msg in channel.history(limit=5000, after=after, oldest_first=False):
-                if msg.author.bot:
-                    continue
-
-                msg_count += 1
-                user_names[msg.author.id] = msg.author.display_name
-
-                # Count replies
-                replied_to_id = None
-                if msg.reference and msg.reference.resolved and not isinstance(msg.reference.resolved, discord.DeletedReferencedMessage):
-                    target = msg.reference.resolved.author
-                    if not target.bot and target.id != msg.author.id:
-                        user_names[target.id] = target.display_name
-                        pair = tuple(sorted((msg.author.id, target.id)))
-                        reply_pairs[pair] += 1
-                        replied_to_id = target.id
-
-                # Count mentions (skip the person being replied to — Discord auto-mentions them)
-                for mentioned in msg.mentions:
-                    if not mentioned.bot and mentioned.id != msg.author.id and mentioned.id != replied_to_id:
-                        user_names[mentioned.id] = mentioned.display_name
-                        pair = tuple(sorted((msg.author.id, mentioned.id)))
-                        mention_pairs[pair] += 1
-
-        except discord.Forbidden:
-            await processing.edit(content="I don't have permission to read that channel.")
+        if not top_pairs:
+            await ctx.send(f"No interactions recorded in #{channel.name} over the last {days} days.")
             return
 
-        if not reply_pairs and not mention_pairs:
-            await processing.edit(content=f"No interactions found in #{channel.name} over the last {days} days ({msg_count:,} messages scanned).")
-            return
+        # Resolve display names for all user IDs in the results
+        user_ids: set[int] = set()
+        for pair in top_pairs:
+            user_ids.add(pair['user_a'])
+            user_ids.add(pair['user_b'])
 
-        # Combined score: replies weighted 2x
-        combined: Counter[tuple[int, int]] = Counter()
-        for pair, count in reply_pairs.items():
-            combined[pair] += count * 2
-        for pair, count in mention_pairs.items():
-            combined[pair] += count
+        names: dict[int, str] = {}
+        guild = ctx.guild
+        for uid in user_ids:
+            member = guild.get_member(uid) if guild else None
+            names[uid] = member.display_name if member else f"User {uid}"
 
         # Build embed
-        embed = Embed(
-            title=f"Interactions in #{channel.name}",
-            description=f"Last {days} days — {msg_count:,} messages scanned",
-            color=Color.blurple(),
-        )
-
-        # Top pairs by combined score
-        top = combined.most_common(15)
         lines = []
-        for i, (pair, _score) in enumerate(top, 1):
-            a, b = pair
-            replies = reply_pairs.get(pair, 0)
-            mentions = mention_pairs.get(pair, 0)
+        for i, pair in enumerate(top_pairs, 1):
             parts = []
-            if replies:
-                parts.append(f"{replies} {'reply' if replies == 1 else 'replies'}")
-            if mentions:
-                parts.append(f"{mentions} {'mention' if mentions == 1 else 'mentions'}")
+            if pair['replies']:
+                r = pair['replies']
+                parts.append(f"{r} {'reply' if r == 1 else 'replies'}")
+            if pair['mentions']:
+                m = pair['mentions']
+                parts.append(f"{m} {'mention' if m == 1 else 'mentions'}")
             lines.append(
-                f"`{i:>2}.` **{user_names.get(a, '?')}** & **{user_names.get(b, '?')}** — {', '.join(parts)}"
+                f"`{i:>2}.` **{names[pair['user_a']]}** & **{names[pair['user_b']]}** — {', '.join(parts)}"
             )
 
+        embed = Embed(
+            title=f"Interactions in #{channel.name}",
+            description=f"Last {days} days",
+            color=Color.blurple(),
+        )
         embed.add_field(name="Top Pairs", value='\n'.join(lines), inline=False)
-
-        # Quick stats
-        unique_pairs = len(combined)
-        total_replies = sum(reply_pairs.values())
-        total_mentions = sum(mention_pairs.values())
         embed.add_field(
             name="Stats",
-            value=f"**{unique_pairs}** unique pairs — **{total_replies}** replies, **{total_mentions}** mentions",
+            value=(
+                f"**{stats['unique_pairs']}** unique pairs — "
+                f"**{stats['total_replies']}** replies, "
+                f"**{stats['total_mentions']}** mentions"
+            ),
             inline=False,
         )
 
-        embeds = [embed]
-        self._interaction_cache[channel.id] = (time.time(), embeds)
-        await processing.edit(content=None, embed=embed)
+        await ctx.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):

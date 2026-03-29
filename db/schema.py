@@ -406,4 +406,27 @@ async def initialize_schema(pool):
             ON metrics_daily(date)
         ''')
 
+        # Channel interaction tracking (replies and mentions between user pairs)
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS interactions (
+                id SERIAL PRIMARY KEY,
+                channel_id BIGINT NOT NULL,
+                guild_id BIGINT NOT NULL,
+                user_a BIGINT NOT NULL,
+                user_b BIGINT NOT NULL,
+                interaction_type VARCHAR(10) NOT NULL,
+                created_at TIMESTAMPTZ DEFAULT NOW()
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_interactions_channel_date
+            ON interactions(channel_id, created_at)
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_interactions_pair
+            ON interactions(user_a, user_b)
+        ''')
+
         logger.info("Database schema initialized")
