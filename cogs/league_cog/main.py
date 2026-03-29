@@ -8,7 +8,6 @@ import time
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import ParamSpec, TypeVar
 
 import discord
 from discord import Embed, File, Interaction, Member, app_commands
@@ -36,10 +35,6 @@ from cogs.league_cog.utils import detect_message_language
 DetectorFactory.seed = LANGUAGE.LANGDETECT_SEED
 
 logger = logging.getLogger(__name__)
-
-# Type variables for decorator
-P = ParamSpec('P')
-T = TypeVar('T')
 
 def handle_interaction_errors[**P, T](func: Callable[P, T]) -> Callable[P, T]:
     """

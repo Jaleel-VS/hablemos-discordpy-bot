@@ -10,7 +10,7 @@ Tracked improvements identified during code review. Work through one at a time.
 
 ## Pending
 
-- [ ] **Remove dead `ParamSpec`/`TypeVar` imports in league_cog** · effort: 1
+- [x] **Remove dead `ParamSpec`/`TypeVar` imports in league_cog** · effort: 1
   `cogs/league_cog/main.py` — Lines 11-12 import `ParamSpec` and `TypeVar` from
   `typing`, and lines 41-42 assign `P`/`T`, but line 44 uses the Python 3.12
   inline generic syntax `def handle_interaction_errors[**P, T]` which shadows
