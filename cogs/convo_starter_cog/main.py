@@ -34,6 +34,7 @@ class ConvoStarter(BaseCog):
         self.spa_channels = set(bot.settings.convo_spa_channels)
 
     @commands.command(aliases=['top', ])
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def topic(self, ctx, *category):
         """
         Suggest a random conversation topic.

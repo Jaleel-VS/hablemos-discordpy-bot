@@ -37,6 +37,7 @@ class HangmanController(BaseCog):
         return channel_id in self.active_games
 
     @commands.command(aliases=['hm', 'hang'])
+    @commands.cooldown(1, 30, commands.BucketType.channel)
     async def hangman(self, ctx, category: str = 'animales'):
         """
         Start a hangman game in Spanish!

@@ -14,6 +14,7 @@ class SpotifyCog(BaseCog):
     """Share what you're listening to on Spotify."""
 
     @commands.hybrid_command(name="nowplaying", aliases=['spoti', 'np'])
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @app_commands.describe(member="The user to check (leave empty for yourself)")
     async def nowplaying(self, ctx: commands.Context, member: Member | None = None):
         """Shows what song a user is currently listening to on Spotify."""

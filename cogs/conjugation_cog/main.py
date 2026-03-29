@@ -61,6 +61,7 @@ class ConjugationCog(BaseCog):
         logger.info("Loaded %s verbs across %s categories", len(self.verb_data), len(self.categories))
 
     @commands.command(name='conj', aliases=['conjugate'])
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def start_game(self, ctx, category: str | None = None, questions: int = 10):
         """
         Start a conjugation practice session.
