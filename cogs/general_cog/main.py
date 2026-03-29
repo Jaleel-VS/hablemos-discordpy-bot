@@ -1,3 +1,5 @@
+import time
+
 from discord import Color, Embed, Interaction, app_commands
 from discord.ext import commands
 from discord.ext.commands import Bot, command
@@ -513,10 +515,25 @@ class General(BaseCog):
 
     @command()
     async def ping(self, ctx):
-        """
-        Ping the bot to see if there are latency issues
-        """
-        await ctx.send(embed=green_embed(f"**Command processing time**: {round(self.bot.latency * 1000, 2)}ms"))
+        """Check bot latency: WebSocket, API round-trip, and database."""
+        # WebSocket heartbeat
+        ws = round(self.bot.latency * 1000, 2)
+
+        # API round-trip: time a message edit
+        start = time.perf_counter()
+        msg = await ctx.send(embed=green_embed("Pinging..."))
+        api = round((time.perf_counter() - start) * 1000, 2)
+
+        # Database: time a simple query
+        start = time.perf_counter()
+        await self.bot.db._fetchval("SELECT 1")
+        db = round((time.perf_counter() - start) * 1000, 2)
+
+        embed = Embed(title="🏓 Pong!", color=Color.blurple())
+        embed.add_field(name="WebSocket", value=f"`{ws}ms`", inline=True)
+        embed.add_field(name="API", value=f"`{api}ms`", inline=True)
+        embed.add_field(name="Database", value=f"`{db}ms`", inline=True)
+        await msg.edit(embed=embed)
 
     @command()
     @commands.is_owner()
