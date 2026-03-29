@@ -10,6 +10,37 @@ Tracked improvements identified during code review. Work through one at a time.
 
 ## Pending
 
+- [ ] **Remove dead `ParamSpec`/`TypeVar` imports in league_cog** · effort: 1
+  `cogs/league_cog/main.py` — Lines 11-12 import `ParamSpec` and `TypeVar` from
+  `typing`, and lines 41-42 assign `P`/`T`, but line 44 uses the Python 3.12
+  inline generic syntax `def handle_interaction_errors[**P, T]` which shadows
+  them. The `typing` imports and module-level assignments are dead code.
+
+- [ ] **Use `pathlib.Path` for cog discovery instead of `os.listdir`/`os.path`** · effort: 1
+  `hablemos.py` (`setup_hook`) and `cogs/admin_cog/main.py`
+  (`_discover_extensions`) both use `os.listdir` + `os.path.isdir` for cog
+  discovery. Replace with `pathlib.Path.glob()` or `iterdir()` for modern Python.
+  Also deduplicate — both files have the same discovery logic.
+
+- [ ] **Use `pathlib.Path` in `convo_starter_help.py`** · effort: 1
+  `cogs/convo_starter_cog/convo_starter_help.py` — Uses `os.path.dirname` chain
+  to build file paths. Replace with `pathlib.Path(__file__).parent`.
+
+- [ ] **Add env var fallback for hardcoded IDs in `tickets_cog/config.py`** · effort: 1
+  `cogs/tickets_cog/config.py` — `STAFF_FORUM_ID` and `ADMIN_FORUM_ID` are
+  hardcoded without `get_int_env()` fallback, unlike other cog configs. Also
+  missing type annotations.
+
+- [ ] **Add env var fallback for hardcoded IDs in `general_cog/main.py`** · effort: 1
+  `cogs/general_cog/main.py` — `INVITE_LINK` contains a hardcoded client ID, and
+  the `info` command has a hardcoded user mention `<@216848576549093376>`. Move
+  these to config with env var fallback.
+
+- [ ] **Add env var fallback for hardcoded IDs in `league_cog/config.py`** · effort: 2
+  `cogs/league_cog/config.py` — All guild/channel/role IDs are hardcoded `Final`
+  constants without `get_int_env()` fallback. This makes it impossible to run the
+  bot against a test server without code changes.
+
 - [ ] **Convert `$convo` to a slash/hybrid command** · effort: 4
   `cogs/conversation_cog/main.py` — Main user-facing feature is prefix-only with
   manual arg parsing. Convert to hybrid or slash command with `app_commands.choices`

@@ -71,10 +71,13 @@ Always use `self.bot.db` (the shared `Database` instance). All queries go throug
 - Cog-specific IDs and constants → `config.py` within the cog directory, using centralized env helpers with defaults
 - Shared utilities → `cogs/utils/` (check for existing helpers before creating new ones)
 - Admin commands → separate class in `admin.py`, loaded from `setup()`
+- Admin command groups → use `@commands.group()` with subcommands (see `$league`, `$quoteadmin`, `$introtracker`, `$cog`)
 - Cooldowns on user-facing commands to prevent spam
 - Permission checks on admin/mod commands
 - Real-time data tracking via `on_message` listeners with DB persistence (prefer over on-demand API scanning)
 - Deduplicate shared logic into module-level helper functions or shared utilities
+- Use `pathlib.Path` for file system operations — not `os.path` or `os.listdir`
+- Slash command syncing is manual via `$sync` — never auto-sync in `on_ready`
 
 ### Patterns to Avoid
 - Don't put business logic in `hablemos.py` — it's just the entrypoint
@@ -84,6 +87,9 @@ Always use `self.bot.db` (the shared `Database` instance). All queries go throug
 - Don't duplicate utility classes across cogs — extract to `cogs/utils/`
 - Don't define embed helpers locally in cog files — use `cogs/utils/embeds.py`
 - Don't import from `typing` for types available as builtins (`list`, `dict`, `tuple`, `set`, `type | None`)
+- Don't import `ParamSpec`/`TypeVar` when using Python 3.12 inline generic syntax (`def foo[T](x: T)`)
 - Don't scan Discord message history for data that can be tracked incrementally via listeners
 - Don't use f-strings in log calls
 - Don't use in-memory caches for data that belongs in the database
+- Don't use raw `pool.acquire()` + inline SQL in cog files — add query methods to DB mixins
+- Don't call `tree.sync()` in `on_ready` — use the `$sync` owner command instead
