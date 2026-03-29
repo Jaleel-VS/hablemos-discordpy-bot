@@ -1,3 +1,4 @@
+"""Hangman game logic — word tracking, guessing, and embed rendering."""
 import logging
 from re import sub
 

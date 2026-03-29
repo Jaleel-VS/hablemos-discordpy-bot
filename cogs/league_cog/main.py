@@ -49,7 +49,7 @@ def handle_interaction_errors[**P, T](func: Callable[P, T]) -> Callable[P, T]:
             logger.error("Error in %s: %s", func.__name__, e, exc_info=True)
             error_embed = Embed(
                 title="❌ Error",
-                description=f"Something went wrong: {e!s}",
+                description="Something went wrong. Please try again later.",
                 color=discord.Color.red()
             )
             # Check if we've already responded/deferred
@@ -95,8 +95,8 @@ class LeagueCog(BaseCog):
             self._excluded_channels = {r['channel_id'] for r in excluded}
 
             logger.info(
-                f"League caches warmed: {len(self._opted_in_users)} opted-in, "
-                f"{len(self._banned_users)} banned, {len(self._excluded_channels)} excluded channels"
+                "League caches warmed: %s opted-in, %s banned, %s excluded channels",
+                len(self._opted_in_users), len(self._banned_users), len(self._excluded_channels),
             )
         except Exception as e:
             logger.error("Failed to warm league caches: %s", e, exc_info=True)

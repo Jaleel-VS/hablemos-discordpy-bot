@@ -1,4 +1,5 @@
 
+"""Database mixin for vocabulary notes."""
 from db import DatabaseMixin
 
 

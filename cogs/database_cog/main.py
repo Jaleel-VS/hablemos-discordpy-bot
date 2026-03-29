@@ -1,3 +1,4 @@
+"""Database commands cog — owner-only note management."""
 import logging
 
 from discord import Color, Embed
@@ -18,7 +19,7 @@ class DatabaseCommands(BaseCog):
     async def note(self, ctx, *, content: str):
         """
         Add a note to the database
-        Usage: !note <your note content>
+        Usage: $note <your note content>
         """
         try:
             user_id = ctx.author.id
@@ -70,7 +71,7 @@ class DatabaseCommands(BaseCog):
     async def notes(self, ctx, limit: int = 5):
         """
         List your recent notes
-        Usage: !notes [limit]
+        Usage: $notes [limit]
         """
         try:
             user_id = ctx.author.id
@@ -82,7 +83,7 @@ class DatabaseCommands(BaseCog):
             notes = await self.bot.db.get_user_notes(user_id, limit)
 
             if not notes:
-                await ctx.send(embed=blue_embed("You don't have any notes yet. Use `!note <content>` to create one!"))
+                await ctx.send(embed=blue_embed("You don't have any notes yet. Use `$note <content>` to create one!"))
                 return
 
             description = ""

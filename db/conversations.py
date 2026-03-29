@@ -1,4 +1,5 @@
 
+"""Database mixin for AI-generated conversation storage and daily limits."""
 from db import DatabaseMixin
 
 

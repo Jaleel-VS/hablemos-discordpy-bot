@@ -1,3 +1,4 @@
+"""Database module — connection pool, mixin composition, and query helpers."""
 import logging
 
 import asyncpg

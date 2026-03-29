@@ -1,3 +1,4 @@
+"""Database mixin for SRS practice cards and user progress."""
 import logging
 from datetime import UTC
 

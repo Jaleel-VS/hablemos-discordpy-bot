@@ -1,3 +1,4 @@
+"""Hangman cog — manages game sessions per channel."""
 import asyncio
 import logging
 

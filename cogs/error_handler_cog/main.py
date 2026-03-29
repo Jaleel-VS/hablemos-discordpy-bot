@@ -72,7 +72,7 @@ class ErrorHandler(BaseCog):
         try:
             if isinstance(error, commands.CommandNotFound):
                 error_channel = self.bot.error_channel
-                if isinstance(error_channel, discord.TextChannel):
+                if isinstance(error_channel, discord.TextChannel) and ctx.guild:
                     await error_channel.send(
                         f"------\nCommand not found:\n{ctx.author}, {ctx.author.id}, {ctx.channel}, {ctx.channel.id}, "
                         f"{ctx.guild}, {ctx.guild.id}, \n{ctx.message.content}\n{ctx.message.jump_url}\n------"

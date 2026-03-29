@@ -1,3 +1,4 @@
+"""Database mixin for quote bans and opt-outs."""
 from db import DatabaseMixin
 
 

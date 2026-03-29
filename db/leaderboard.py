@@ -1,4 +1,5 @@
 
+"""Database mixin for Language League leaderboard queries."""
 from db import DatabaseMixin
 
 

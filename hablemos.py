@@ -1,3 +1,4 @@
+"""Bot entrypoint — Hablemos subclass of discord.py Bot."""
 import logging
 
 import discord

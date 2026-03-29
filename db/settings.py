@@ -1,4 +1,5 @@
 
+"""Database mixin for bot and feature settings."""
 from db import DatabaseMixin
 
 

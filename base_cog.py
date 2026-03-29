@@ -1,7 +1,14 @@
+"""Base cog class shared by all cogs."""
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 from discord import Interaction
-from discord.ext.commands import Bot, Cog, CommandOnCooldown
+from discord.ext.commands import Cog, CommandOnCooldown
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -11,8 +18,8 @@ COLORS = [0x57F287, 0xED4245, 0xEB459E, 0xFEE75C, 0xf47fff, 0x7289da, 0xe74c3c,
 
 class BaseCog(Cog):
     """Base class for all cogs"""
-    def __init__(self, bot):
-        self.bot: Bot = bot
+    def __init__(self, bot: Hablemos):
+        self.bot = bot
 
     async def cog_app_command_after_invoke(self, interaction: Interaction) -> None:
         """Track slash command usage for metrics."""

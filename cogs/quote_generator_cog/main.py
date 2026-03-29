@@ -1,8 +1,8 @@
 """Quote generator — creates styled quote images from Discord messages."""
 import logging
-import os
 import tempfile
 import time
+from pathlib import Path
 from re import sub
 
 import demoji
@@ -243,8 +243,8 @@ class QuoteGenerator(BaseCog):
             logger.exception("Failed to generate quote image")
             await ctx.send(embed=red_embed("Something went wrong generating the image."))
         finally:
-            if img_path and os.path.exists(img_path):
-                os.remove(img_path)
+            if img_path:
+                Path(img_path).unlink(missing_ok=True)
 
     @command(aliases=['q'])
     @cooldown(1, 10, type=BucketType.user)

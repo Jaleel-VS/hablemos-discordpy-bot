@@ -1,13 +1,14 @@
+"""Hangman helpers — word loading, image lookup, and embed builders."""
 from csv import reader
 from dataclasses import dataclass
-from os import path, walk
+from pathlib import Path
 from random import choice
 
 from discord import Embed, File
 
 from base_cog import COLORS as colors
 
-dir_path = path.dirname(path.dirname(path.realpath(__file__)))
+_COG_DIR = Path(__file__).resolve().parent
 
 ENDED = "Ahorcado (Hangman) - {} - Partida terminada"
 WINNER = "¡Ganaste, **{}**! La palabra correcta era **{}** ({})"
@@ -49,9 +50,9 @@ def get_unaccented_letter(letter: str) -> str:
     return letter
 
 def get_word(category):
-    with open(f"{dir_path}/hangman_cog/data/{category}.csv", encoding='utf 8') as animals_csv:
-        result = reader(animals_csv)
-        words = (choice(list(result)))
+    csv_path = _COG_DIR / "data" / f"{category}.csv"
+    with csv_path.open(encoding='utf-8') as f:
+        words = choice(list(reader(f)))
     return words[0], words[1]
 
 def get_image(img: str, category: str) -> tuple[str, str | None]:
@@ -65,16 +66,16 @@ def get_image(img: str, category: str) -> tuple[str, str | None]:
     Returns:
         Tuple of (file_path, filename) or None if not found
     """
-    image_dir = f"{dir_path}/hangman_cog/data/{category}_images/{img}"
+    image_dir = _COG_DIR / "data" / f"{category}_images" / img
 
-    if not path.exists(image_dir):
+    if not image_dir.exists():
         return None
 
     try:
-        for root, _, files in walk(image_dir):
-            if files:
-                file_paths = [(f"{root}/{file}", file) for file in files]
-                return choice(file_paths)
+        files = [f for f in image_dir.rglob("*") if f.is_file()]
+        if files:
+            picked = choice(files)
+            return str(picked), picked.name
     except (OSError, IndexError):
         pass
 

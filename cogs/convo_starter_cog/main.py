@@ -1,3 +1,4 @@
+"""Conversation starter cog — random bilingual discussion topics."""
 from random import choice
 
 from discord import Embed
