@@ -20,7 +20,7 @@ from cogs.quote_generator_cog.quote_generator_helper.image_creator2 import (
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
 from .config import FEATURE_KEY_EMOJI
-from .emoji import replace_emoji_with_images
+from .emoji import replace_emoji_with_images, visual_length
 
 logger = logging.getLogger(__name__)
 
@@ -230,7 +230,7 @@ class QuoteGenerator(BaseCog):
 
         user_nick, user_avatar, message_content = result
 
-        if len(message_content) > MAX_QUOTE_LENGTH:
+        if visual_length(message_content) > MAX_QUOTE_LENGTH:
             await ctx.send(embed=red_embed(
                 f"Beep boop, I can't create an image. I'm limited to {MAX_QUOTE_LENGTH} characters."
             ))

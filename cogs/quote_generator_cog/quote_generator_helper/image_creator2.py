@@ -3,12 +3,14 @@ from os import path
 
 import imgkit
 
+from cogs.quote_generator_cog.emoji import visual_length
+
 logger = logging.getLogger(__name__)
 
 dir_path = path.dirname(path.realpath(__file__))
 
 def _compute_phrase_font_size(message: str) -> int:
-    length = len(message or "")
+    length = visual_length(message or "")
     if length <= 60:
         return 38
     if length <= 90:
@@ -20,7 +22,7 @@ def _compute_phrase_font_size(message: str) -> int:
     return 24
 
 def _compute_quote_glyph_font_size(message: str) -> int:
-    length = len(message or "")
+    length = visual_length(message or "")
     if length <= 60:
         return 116
     if length <= 90:

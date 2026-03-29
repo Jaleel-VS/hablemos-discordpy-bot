@@ -3,6 +3,8 @@ from os import path
 
 import imgkit
 
+from cogs.quote_generator_cog.emoji import visual_length
+
 logger = logging.getLogger(__name__)
 
 dir_path = path.dirname(path.realpath(__file__))
@@ -25,7 +27,7 @@ def create_image(user_name: str, user_avatar: str, message_content: str, *, outp
     }
 
     for fs in font_sizes:
-        if len(message_content) <= fs:
+        if visual_length(message_content) <= fs:
             font_size = font_sizes[fs]
             break
 

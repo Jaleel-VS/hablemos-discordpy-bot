@@ -53,6 +53,14 @@ def _unicode_to_img(match: re.Match) -> str:
     )
 
 
+_IMG_TAG_RE = re.compile(r"<img[^>]*>")
+
+
+def visual_length(text: str) -> int:
+    """Return the visual length of text, counting each <img> tag as 1 character."""
+    return len(_IMG_TAG_RE.sub("X", text))
+
+
 def replace_emoji_with_images(text: str) -> str:
     """Replace both custom Discord and Unicode emoji with inline <img> tags."""
     text = _CUSTOM_EMOJI_RE.sub(_custom_to_img, text)
