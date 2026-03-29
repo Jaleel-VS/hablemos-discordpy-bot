@@ -13,7 +13,6 @@ except ImportError:
     class ROUNDS:
         ROUND_DURATION_DAYS = 14
 
-SOURCE_URL = 'https://docs.google.com/spreadsheets/d/10jsNQsSG9mbLZgDoYIdVrbogVSN7eAKbOfCASA5hN0A/edit?usp=sharing'
 REPO = 'https://github.com/Jaleel-VS/hablemos-discordpy-bot'
 DPY = 'https://discordpy.readthedocs.io/en/latest/'
 PYC = 'https://github.com/Pycord-Development/pycord'
@@ -464,25 +463,6 @@ class General(BaseCog):
             ⚠️ If something doesn't work as expected, it's expected lol. I'm currently refactoring the bot, please be patient.
             """
             await ctx.send(embed=green_embed(to_send))
-
-    @command(aliases=['list', ])
-    async def lst(self, ctx):
-        """
-        Lists available categories
-        """
-        categories = f"""
-        To use any one of the undermentioned topics type `$topic <category>`.
-        `$topic` or `$top` defaults to `general`
-
-        command(category) - description:
-        `general`, `1` - General questions
-        `phil`, `2` - Philosophical questions
-        `would`, `3` - *'Would you rather'* questions
-        `other`, `4` -  Random questions
-
-        [Full list of questions]({SOURCE_URL})
-        """
-        await ctx.send(embed=green_embed(categories))
 
     @command()
     async def info(self, ctx):

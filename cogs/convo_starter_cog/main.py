@@ -9,6 +9,9 @@ from cogs.convo_starter_cog.convo_starter_help import (
     categories,
     get_random_question,
 )
+from cogs.utils.embeds import green_embed
+
+SOURCE_URL = 'https://docs.google.com/spreadsheets/d/10jsNQsSG9mbLZgDoYIdVrbogVSN7eAKbOfCASA5hN0A/edit?usp=sharing'
 
 # Embed Message
 ERROR_MESSAGE = "The proper format is `$topic <topic>` eg. `$topic 2`. Please see " \
@@ -56,6 +59,22 @@ class ConvoStarter(BaseCog):
         else:
             emb = embed_question(question_spa_eng[1], question_spa_eng[0])
         await ctx.send(embed=emb)
+
+    @commands.command(aliases=['list'])
+    async def lst(self, ctx):
+        """Lists available topic categories."""
+        text = (
+            "To use any one of the undermentioned topics type `$topic <category>`.\n"
+            "`$topic` or `$top` defaults to `general`\n\n"
+            "command(category) - description:\n"
+            "`general`, `1` - General questions\n"
+            "`phil`, `2` - Philosophical questions\n"
+            "`would`, `3` - *'Would you rather'* questions\n"
+            "`other`, `4` -  Random questions\n\n"
+            f"[Full list of questions]({SOURCE_URL})"
+        )
+        await ctx.send(embed=green_embed(text))
+
 
 async def setup(bot):
     await bot.add_cog(ConvoStarter(bot))
