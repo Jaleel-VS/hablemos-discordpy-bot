@@ -1,19 +1,17 @@
-from dataclasses import dataclass
+"""Configuration for the Introduce cog."""
 from typing import Final
 
 import discord
 
+from config import get_int_env
 
-@dataclass(frozen=True)
-class ChannelIDs:
-    COMMAND_CHANNEL: int = 1437832952028467251
-    INTRODUCTIONS_CHANNEL: int = 1464254572204916969
-
-CHANNELS = ChannelIDs()
+# Channel IDs — loaded from env with hardcoded defaults
+COMMAND_CHANNEL_ID: Final[int] = get_int_env("INTRODUCE_COMMAND_CHANNEL_ID", 1437832952028467251)
+INTRODUCTIONS_CHANNEL_ID: Final[int] = get_int_env("INTRODUCE_CHANNEL_ID", 1464254572204916969)
 
 # Embed colors
-INTRO_COLOR = discord.Color.greyple()  # Gray/neutral for intro-only
-EXCHANGE_COLOR = discord.Color.teal()  # Green/teal for seeking exchange partner
+INTRO_COLOR: Final[discord.Color] = discord.Color.greyple()
+EXCHANGE_COLOR: Final[discord.Color] = discord.Color.teal()
 
 # Language options for select menus
 LANGUAGES: Final[list[tuple[str, str]]] = [

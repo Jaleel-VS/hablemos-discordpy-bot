@@ -1,3 +1,6 @@
+"""Views for the Introduce cog — multi-step selection UI."""
+import logging
+
 from discord import ButtonStyle, Embed, Interaction, SelectOption
 from discord.ui import Button, Select, View, button
 
@@ -10,6 +13,13 @@ from .config import (
 )
 from .modals import ExchangeDetailsModal, IntroOnlyModal
 
+logger = logging.getLogger(__name__)
+
+
+def _lookup_display(options: list[tuple[str, str]], value: str) -> str:
+    """Return the display label for a value from a (label, value) option list."""
+    return next((label for label, v in options if v == value), value)
+
 
 class IntroStartView(View):
     """Initial view asking if user wants to find an exchange partner."""
@@ -19,32 +29,19 @@ class IntroStartView(View):
         self.introductions_channel_id = introductions_channel_id
         self.seeking_exchange: bool | None = None
 
-        self._build_select()
-
-    def _build_select(self):
-        """Build the yes/no select menu."""
-        options = [
-            SelectOption(
-                label="Yes",
-                value="yes",
-                description="I want to find a language exchange partner"
-            ),
-            SelectOption(
-                label="No",
-                value="no",
-                description="I just want to introduce myself"
-            ),
-        ]
-        self.exchange_select = Select(
+        select = Select(
             placeholder="Looking for an exchange partner?",
-            options=options,
+            options=[
+                SelectOption(label="Yes", value="yes", description="I want to find a language exchange partner"),
+                SelectOption(label="No", value="no", description="I just want to introduce myself"),
+            ],
             custom_id="seeking_exchange",
-            row=0
+            row=0,
         )
-        self.exchange_select.callback = self.exchange_select_callback
-        self.add_item(self.exchange_select)
+        select.callback = self._exchange_select_callback
+        self.add_item(select)
 
-    async def exchange_select_callback(self, interaction: Interaction):
+    async def _exchange_select_callback(self, interaction: Interaction):
         self.seeking_exchange = interaction.data["values"][0] == "yes"
         await interaction.response.defer()
 
@@ -54,12 +51,11 @@ class IntroStartView(View):
         if self.seeking_exchange is None:
             await interaction.response.send_message(
                 "Please select whether you're looking for an exchange partner.",
-                ephemeral=True
+                ephemeral=True,
             )
             return
 
         if self.seeking_exchange:
-            # Show language selection view (Step 2/4)
             view = ExchangeRequestView(introductions_channel_id=self.introductions_channel_id)
             embed = Embed(
                 title="Introduction (Step 2/4)",
@@ -67,23 +63,26 @@ class IntroStartView(View):
                     "Great! Let's find you a language exchange partner.\n\n"
                     "**Step 2:** Select the languages you offer and are looking for."
                 ),
-                color=EXCHANGE_COLOR
+                color=EXCHANGE_COLOR,
             )
             embed.set_footer(text="This form will expire in 5 minutes")
             await interaction.response.edit_message(embed=embed, view=view)
         else:
-            # Show simple intro modal
             modal = IntroOnlyModal(introductions_channel_id=self.introductions_channel_id)
             await interaction.response.send_modal(modal)
 
+    async def on_timeout(self):
+        logger.debug("IntroStartView timed out")
+
+
 class ExchangeRequestView(View):
-    """Multi-step view for collecting exchange partner request data (Step 2/4)."""
+    """Step 2/4: language and proficiency selection."""
 
     def __init__(self, introductions_channel_id: int, timeout: float = 300):
         super().__init__(timeout=timeout)
         self.introductions_channel_id = introductions_channel_id
 
-        # Store user selections
+        # Selection state
         self.language_offering: str | None = None
         self.offering_level: str | None = None
         self.language_seeking: str | None = None
@@ -92,110 +91,65 @@ class ExchangeRequestView(View):
         self.prefer_dm: bool = False
         self.country: str | None = None
 
-        # Display values for the final embed
+        # Display labels
         self.language_offering_display: str | None = None
         self.offering_level_display: str | None = None
         self.language_seeking_display: str | None = None
         self.seeking_level_display: str | None = None
-        self.timezone_display: str | None = None
         self.country_display: str | None = None
 
         self._build_selects()
 
+    def _add_select(
+        self, options_list: list[tuple[str, str]], placeholder: str, custom_id: str, row: int,
+    ) -> Select:
+        """Create a Select from a (label, value) list and add it to the view."""
+        select = Select(
+            placeholder=placeholder,
+            options=[SelectOption(label=lbl, value=v) for lbl, v in options_list],
+            custom_id=custom_id,
+            row=row,
+        )
+        self.add_item(select)
+        return select
+
     def _build_selects(self):
-        """Build all select menus."""
-        # Language offering select
-        lang_offer_options = [
-            SelectOption(label=label, value=value)
-            for label, value in LANGUAGES
-        ]
-        self.lang_offer_select = Select(
-            placeholder="Language you offer...",
-            options=lang_offer_options,
-            custom_id="lang_offer",
-            row=0
-        )
-        self.lang_offer_select.callback = self.lang_offer_callback
-        self.add_item(self.lang_offer_select)
+        """Build all select menus for step 2."""
+        s = self._add_select(LANGUAGES, "Language you offer...", "lang_offer", 0)
+        s.callback = self._lang_offer_cb
 
-        # Offering proficiency level select
-        offer_level_options = [
-            SelectOption(label=label, value=value)
-            for label, value in PROFICIENCY_LEVELS
-        ]
-        self.offer_level_select = Select(
-            placeholder="Your level in that language...",
-            options=offer_level_options,
-            custom_id="offer_level",
-            row=1
-        )
-        self.offer_level_select.callback = self.offer_level_callback
-        self.add_item(self.offer_level_select)
+        s = self._add_select(PROFICIENCY_LEVELS, "Your level in that language...", "offer_level", 1)
+        s.callback = self._offer_level_cb
 
-        # Language seeking select
-        lang_seek_options = [
-            SelectOption(label=label, value=value)
-            for label, value in LANGUAGES
-        ]
-        self.lang_seek_select = Select(
-            placeholder="Language you're looking for...",
-            options=lang_seek_options,
-            custom_id="lang_seek",
-            row=2
-        )
-        self.lang_seek_select.callback = self.lang_seek_callback
-        self.add_item(self.lang_seek_select)
+        s = self._add_select(LANGUAGES, "Language you're looking for...", "lang_seek", 2)
+        s.callback = self._lang_seek_cb
 
-        # Seeking proficiency level select
-        seek_level_options = [
-            SelectOption(label=label, value=value)
-            for label, value in PROFICIENCY_LEVELS
-        ]
-        self.seek_level_select = Select(
-            placeholder="Partner's minimum level...",
-            options=seek_level_options,
-            custom_id="seek_level",
-            row=3
-        )
-        self.seek_level_select.callback = self.seek_level_callback
-        self.add_item(self.seek_level_select)
+        s = self._add_select(PROFICIENCY_LEVELS, "Partner's minimum level...", "seek_level", 3)
+        s.callback = self._seek_level_cb
 
-    async def lang_offer_callback(self, interaction: Interaction):
+    async def _lang_offer_cb(self, interaction: Interaction):
         self.language_offering = interaction.data["values"][0]
-        self.language_offering_display = next(
-            (label for label, value in LANGUAGES if value == self.language_offering),
-            self.language_offering
-        )
+        self.language_offering_display = _lookup_display(LANGUAGES, self.language_offering)
         await interaction.response.defer()
 
-    async def offer_level_callback(self, interaction: Interaction):
+    async def _offer_level_cb(self, interaction: Interaction):
         self.offering_level = interaction.data["values"][0]
-        self.offering_level_display = next(
-            (label for label, value in PROFICIENCY_LEVELS if value == self.offering_level),
-            self.offering_level
-        )
+        self.offering_level_display = _lookup_display(PROFICIENCY_LEVELS, self.offering_level)
         await interaction.response.defer()
 
-    async def lang_seek_callback(self, interaction: Interaction):
+    async def _lang_seek_cb(self, interaction: Interaction):
         self.language_seeking = interaction.data["values"][0]
-        self.language_seeking_display = next(
-            (label for label, value in LANGUAGES if value == self.language_seeking),
-            self.language_seeking
-        )
+        self.language_seeking_display = _lookup_display(LANGUAGES, self.language_seeking)
         await interaction.response.defer()
 
-    async def seek_level_callback(self, interaction: Interaction):
+    async def _seek_level_cb(self, interaction: Interaction):
         self.seeking_level = interaction.data["values"][0]
-        self.seeking_level_display = next(
-            (label for label, value in PROFICIENCY_LEVELS if value == self.seeking_level),
-            self.seeking_level
-        )
+        self.seeking_level_display = _lookup_display(PROFICIENCY_LEVELS, self.seeking_level)
         await interaction.response.defer()
 
     @button(label="Next: Timezone & Details", style=ButtonStyle.primary, row=4)
     async def continue_button(self, interaction: Interaction, btn: Button):
-        """Move to third step with timezone and DM preference."""
-        # Validate required fields
+        """Validate selections and move to step 3."""
         missing = []
         if not self.language_offering:
             missing.append("language you offer")
@@ -208,25 +162,15 @@ class ExchangeRequestView(View):
 
         if missing:
             await interaction.response.send_message(
-                f"Please select: {', '.join(missing)}",
-                ephemeral=True
+                f"Please select: {', '.join(missing)}", ephemeral=True,
             )
             return
 
-        # Show third step view
-        step3_view = ExchangeRequestStep3View(
-            parent_view=self,
-            introductions_channel_id=self.introductions_channel_id
-        )
-        embed = self._create_step3_embed()
-        await interaction.response.edit_message(embed=embed, view=step3_view)
-
-    def _create_step3_embed(self) -> Embed:
-        """Create embed for step 3."""
+        step3_view = ExchangeStep3View(parent_view=self, introductions_channel_id=self.introductions_channel_id)
         embed = Embed(
             title="Introduction (Step 3/4)",
             description="Select your timezone and contact preference.",
-            color=EXCHANGE_COLOR
+            color=EXCHANGE_COLOR,
         )
         embed.add_field(
             name="Your Selection",
@@ -234,83 +178,67 @@ class ExchangeRequestView(View):
                 f"**Offering:** {self.language_offering_display} ({self.offering_level_display})\n"
                 f"**Seeking:** {self.language_seeking_display} ({self.seeking_level_display})"
             ),
-            inline=False
+            inline=False,
         )
-        return embed
+        await interaction.response.edit_message(embed=embed, view=step3_view)
 
-class ExchangeRequestStep3View(View):
-    """Third step: timezone and DM preference (Step 3/4)."""
+    async def on_timeout(self):
+        logger.debug("ExchangeRequestView timed out")
+
+
+class ExchangeStep3View(View):
+    """Step 3/4: timezone, DM preference, country."""
 
     def __init__(self, parent_view: ExchangeRequestView, introductions_channel_id: int, timeout: float = 300):
         super().__init__(timeout=timeout)
         self.parent_view = parent_view
         self.introductions_channel_id = introductions_channel_id
-        self.prefer_dm = False
 
         self._build_selects()
 
     def _build_selects(self):
-        """Build timezone and DM preference selects."""
-        # Timezone select
-        tz_options = [
-            SelectOption(label=label, value=value)
-            for label, value in TIMEZONES
-        ]
-        self.tz_select = Select(
+        """Build timezone, DM preference, and country selects."""
+        tz = Select(
             placeholder="Select your timezone...",
-            options=tz_options,
+            options=[SelectOption(label=lbl, value=v) for lbl, v in TIMEZONES],
             custom_id="timezone",
-            row=0
+            row=0,
         )
-        self.tz_select.callback = self.tz_callback
-        self.add_item(self.tz_select)
+        tz.callback = self._tz_cb
+        self.add_item(tz)
 
-        # DM preference select
-        dm_options = [
-            SelectOption(label="Yes", value="yes", description="Others should contact you via DM"),
-            SelectOption(label="No", value="no", description="Others can mention you in the channel"),
-        ]
-        self.dm_select = Select(
+        dm = Select(
             placeholder="Prefer DM contact?",
-            options=dm_options,
+            options=[
+                SelectOption(label="Yes", value="yes", description="Others should contact you via DM"),
+                SelectOption(label="No", value="no", description="Others can mention you in the channel"),
+            ],
             custom_id="prefer_dm",
-            row=1
+            row=1,
         )
-        self.dm_select.callback = self.dm_callback
-        self.add_item(self.dm_select)
+        dm.callback = self._dm_cb
+        self.add_item(dm)
 
-        # Country preference select
-        country_options = [
-            SelectOption(label=label, value=value)
-            for label, value in COUNTRIES
-        ]
-        self.country_select = Select(
+        country = Select(
             placeholder="Partner's country preference...",
-            options=country_options,
+            options=[SelectOption(label=lbl, value=v) for lbl, v in COUNTRIES],
             custom_id="country",
-            row=2
+            row=2,
         )
-        self.country_select.callback = self.country_callback
-        self.add_item(self.country_select)
+        country.callback = self._country_cb
+        self.add_item(country)
 
-    async def tz_callback(self, interaction: Interaction):
+    async def _tz_cb(self, interaction: Interaction):
         self.parent_view.timezone = interaction.data["values"][0]
-        self.parent_view.timezone_display = next(
-            (label for label, value in TIMEZONES if value == self.parent_view.timezone),
-            self.parent_view.timezone
-        )
         await interaction.response.defer()
 
-    async def dm_callback(self, interaction: Interaction):
+    async def _dm_cb(self, interaction: Interaction):
         self.parent_view.prefer_dm = interaction.data["values"][0] == "yes"
         await interaction.response.defer()
 
-    async def country_callback(self, interaction: Interaction):
+    async def _country_cb(self, interaction: Interaction):
         self.parent_view.country = interaction.data["values"][0]
-        self.parent_view.country_display = next(
-            (label for label, value in COUNTRIES if value == self.parent_view.country),
-            self.parent_view.country
-        )
+        self.parent_view.country_display = _lookup_display(COUNTRIES, self.parent_view.country)
         await interaction.response.defer()
 
     @button(label="◀ Back", style=ButtonStyle.secondary, row=4)
@@ -319,22 +247,22 @@ class ExchangeRequestStep3View(View):
         embed = Embed(
             title="Introduction (Step 2/4)",
             description="Select the languages you offer and are looking for.",
-            color=EXCHANGE_COLOR
+            color=EXCHANGE_COLOR,
         )
         await interaction.response.edit_message(embed=embed, view=self.parent_view)
 
     @button(label="Next: Add Details", style=ButtonStyle.primary, row=4)
     async def continue_button(self, interaction: Interaction, btn: Button):
-        """Open modal for free-text details."""
+        """Validate timezone and open the details modal."""
         if not self.parent_view.timezone:
-            await interaction.response.send_message(
-                "Please select your timezone.",
-                ephemeral=True
-            )
+            await interaction.response.send_message("Please select your timezone.", ephemeral=True)
             return
 
         modal = ExchangeDetailsModal(
             parent_view=self.parent_view,
-            introductions_channel_id=self.introductions_channel_id
+            introductions_channel_id=self.introductions_channel_id,
         )
         await interaction.response.send_modal(modal)
+
+    async def on_timeout(self):
+        logger.debug("ExchangeStep3View timed out")
