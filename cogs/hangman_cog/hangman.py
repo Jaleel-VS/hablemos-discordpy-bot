@@ -1,8 +1,6 @@
 import logging
 from re import sub
 
-from discord.ext.commands import Cog
-
 from cogs.hangman_cog.hangman_help import (
     create_final_embed,
     embed_quote,
@@ -31,7 +29,7 @@ VOWELS = {'a': ['a', 'á'],
           'u': ['u', 'ú', 'ü'], }
 MAX_ERRORS = 8
 
-class Hangman(Cog):
+class Hangman:
     def __init__(self, bot, words, category):
         self.bot = bot
         self.category = category
