@@ -10,11 +10,6 @@ Tracked improvements identified during code review. Work through one at a time.
 
 ## Pending
 
-- [ ] **Narrow `Intents.all()` to only what's needed** · effort: 2
-  `hablemos.py` — Explicitly declare required intents (members, message_content,
-  presences, etc.) instead of requesting all. Documents actual needs and is more
-  secure.
-
 - [ ] **Extract error handler from `hablemos.py`** · effort: 3
   The `on_command_error` handler has a 30-item quotes list and mixed
   responsibilities (logging, metrics, user messages). Extract the quotes to a
@@ -43,5 +38,6 @@ Tracked improvements identified during code review. Work through one at a time.
 - [x] **Replace `asyncio.get_event_loop().time()`** — `cogs/conversation_cog/main.py`
 - [x] **Move inline SQL into DB mixins** — `db/conversations.py`, `db/leaderboard.py`
 - [x] **Stop syncing slash commands on every `on_ready`** — `hablemos.py`, `cogs/admin_cog/main.py`
+- [x] **Narrow `Intents.all()` to only what's needed** — `hablemos.py`
 - [x] **Auto-generate `/help` from cog metadata** — `cogs/general_cog/main.py`
 - [x] **Fix cog docstrings for user-facing help** — 12 cog files
