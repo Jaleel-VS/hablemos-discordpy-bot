@@ -1,7 +1,6 @@
 import time
 
 from discord import Color, Embed, Interaction, app_commands
-from discord.ext import commands
 from discord.ext.commands import Bot, command
 
 from base_cog import BaseCog
@@ -534,24 +533,6 @@ class General(BaseCog):
         embed.add_field(name="API", value=f"`{api}ms`", inline=True)
         embed.add_field(name="Database", value=f"`{db}ms`", inline=True)
         await msg.edit(embed=embed)
-
-    @command()
-    @commands.is_owner()
-    async def mystats(self, ctx):
-        """Show servers the bot is in. Owner only."""
-        guilds = sorted(self.bot.guilds, key=lambda g: g.member_count or 0, reverse=True)
-        lines = []
-        for g in guilds:
-            joined = g.me.joined_at
-            joined_str = f"<t:{int(joined.timestamp())}:R>" if joined else "?"
-            lines.append(f"**{g.name}** — {g.member_count:,} members, joined {joined_str}")
-
-        embed = Embed(
-            title=f"Servers ({len(guilds)})",
-            description='\n'.join(lines) or "Not in any servers.",
-            color=Color.blurple(),
-        )
-        await ctx.send(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(General(bot))

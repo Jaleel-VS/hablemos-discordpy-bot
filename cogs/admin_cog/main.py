@@ -340,6 +340,26 @@ class AdminCog(BaseCog):
             )
         )
 
+    # ── Server info ──
+
+    @commands.command(name='mystats')
+    @commands.is_owner()
+    async def mystats(self, ctx: commands.Context):
+        """Show servers the bot is in."""
+        guilds = sorted(self.bot.guilds, key=lambda g: g.member_count or 0, reverse=True)
+        lines = []
+        for g in guilds:
+            joined = g.me.joined_at
+            joined_str = f"<t:{int(joined.timestamp())}:R>" if joined else "?"
+            lines.append(f"**{g.name}** — {g.member_count:,} members, joined {joined_str}")
+
+        embed = Embed(
+            title=f"Servers ({len(guilds)})",
+            description='\n'.join(lines) or "Not in any servers.",
+            color=Color.blurple(),
+        )
+        await ctx.send(embed=embed)
+
     # ── Interaction analysis ──
 
     @commands.command(name='interactions')
