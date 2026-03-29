@@ -1,13 +1,16 @@
+"""Conversation starter question helpers."""
 import csv
-import os
 import random
+from pathlib import Path
 
 categories = ['general', 'phil', 'would', 'other']
 
-dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+DATA_DIR = Path(__file__).resolve().parent / "convo_starter_data"
+
 
 def get_random_question(category: str) -> tuple:
-    with open(f"{dir_path}/convo_starter_cog/convo_starter_data/{category}.csv") as csv_file:
+    """Return a random (spanish, english) question pair from the given category."""
+    with open(DATA_DIR / f"{category}.csv") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         rows = [(row[0], row[1]) for row in csv_reader]
     spa, eng = random.choice(rows)

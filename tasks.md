@@ -22,7 +22,7 @@ Tracked improvements identified during code review. Work through one at a time.
   discovery. Replace with `pathlib.Path.glob()` or `iterdir()` for modern Python.
   Also deduplicate — both files have the same discovery logic.
 
-- [ ] **Use `pathlib.Path` in `convo_starter_help.py`** · effort: 1
+- [x] **Use `pathlib.Path` in `convo_starter_help.py`** · effort: 1
   `cogs/convo_starter_cog/convo_starter_help.py` — Uses `os.path.dirname` chain
   to build file paths. Replace with `pathlib.Path(__file__).parent`.
 
