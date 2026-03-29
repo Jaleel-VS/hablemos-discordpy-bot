@@ -1,4 +1,5 @@
 from discord import Color, Embed, Interaction, app_commands
+from discord.ext import commands
 from discord.ext.commands import Bot, command
 
 from base_cog import BaseCog
@@ -518,10 +519,22 @@ class General(BaseCog):
         await ctx.send(embed=green_embed(f"**Command processing time**: {round(self.bot.latency * 1000, 2)}ms"))
 
     @command()
+    @commands.is_owner()
     async def mystats(self, ctx):
-        guilds = [guild.name for guild in self.bot.guilds]
-        my_guilds = ''.join(f"{guild}\n" for guild in guilds)
-        await ctx.send(f"The bot is in the following guilds: \n {my_guilds}")
+        """Show servers the bot is in. Owner only."""
+        guilds = sorted(self.bot.guilds, key=lambda g: g.member_count or 0, reverse=True)
+        lines = []
+        for g in guilds:
+            joined = g.me.joined_at
+            joined_str = f"<t:{int(joined.timestamp())}:R>" if joined else "?"
+            lines.append(f"**{g.name}** — {g.member_count:,} members, joined {joined_str}")
+
+        embed = Embed(
+            title=f"Servers ({len(guilds)})",
+            description='\n'.join(lines) or "Not in any servers.",
+            color=Color.blurple(),
+        )
+        await ctx.send(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(General(bot))
