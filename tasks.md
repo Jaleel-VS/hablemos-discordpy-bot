@@ -36,7 +36,7 @@ Tracked improvements identified during code review. Work through one at a time.
   the `info` command has a hardcoded user mention `<@216848576549093376>`. Move
   these to config with env var fallback.
 
-- [ ] **Add env var fallback for hardcoded IDs in `league_cog/config.py`** · effort: 2
+- [x] **Add env var fallback for hardcoded IDs in `league_cog/config.py`** · effort: 2
   `cogs/league_cog/config.py` — All guild/channel/role IDs are hardcoded `Final`
   constants without `get_int_env()` fallback. This makes it impossible to run the
   bot against a test server without code changes.

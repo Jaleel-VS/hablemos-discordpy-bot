@@ -8,18 +8,20 @@ used throughout the league cog to make them easy to find and modify.
 from dataclasses import dataclass
 from typing import Final
 
+from config import get_int_env
+
 # =============================================================================
 # DISCORD SERVER CONFIGURATION
 # =============================================================================
 
 # Guild ID - Language League is only available in this server
-LEAGUE_GUILD_ID: Final[int] = 243838819743432704
+LEAGUE_GUILD_ID: Final[int] = get_int_env("LEAGUE_GUILD_ID", 243838819743432704)
 
 # Channel where round winners are announced
-WINNER_CHANNEL_ID: Final[int] = 247135634265735168
+WINNER_CHANNEL_ID: Final[int] = get_int_env("LEAGUE_WINNER_CHANNEL_ID", 247135634265735168)
 
 # Role given to weekly champions (top 3 eligible per league)
-CHAMPION_ROLE_ID: Final[int] = 1062819085789970564
+CHAMPION_ROLE_ID: Final[int] = get_int_env("LEAGUE_CHAMPION_ROLE_ID", 1062819085789970564)
 
 # =============================================================================
 # ROLE IDS
@@ -30,13 +32,13 @@ class RoleIDs:
     """Discord role IDs for language learning roles."""
 
     # Native speaker roles
-    ENGLISH_NATIVE: int = 243853718758359040
-    SPANISH_NATIVE: int = 243854128424550401
-    OTHER_NATIVE: int = 247020385730691073
+    ENGLISH_NATIVE: int = get_int_env("LEAGUE_ROLE_ENGLISH_NATIVE", 243853718758359040)
+    SPANISH_NATIVE: int = get_int_env("LEAGUE_ROLE_SPANISH_NATIVE", 243854128424550401)
+    OTHER_NATIVE: int = get_int_env("LEAGUE_ROLE_OTHER_NATIVE", 247020385730691073)
 
     # Language learner roles
-    LEARNING_SPANISH: int = 297415063302832128
-    LEARNING_ENGLISH: int = 247021017740869632
+    LEARNING_SPANISH: int = get_int_env("LEAGUE_ROLE_LEARNING_SPANISH", 297415063302832128)
+    LEARNING_ENGLISH: int = get_int_env("LEAGUE_ROLE_LEARNING_ENGLISH", 247021017740869632)
 
 # Instantiate as a constant for easy access
 ROLES = RoleIDs()
