@@ -10,11 +10,6 @@ Tracked improvements identified during code review. Work through one at a time.
 
 ## Pending
 
-- [ ] **Move inline SQL into DB mixins** · effort: 2
-  `cogs/conversation_cog/main.py` (`conversation_stats`) and
-  `cogs/league_cog/admin.py` (`_handle_audit`) use raw `pool.acquire()` with
-  inline SQL. Move these queries into the appropriate DB mixin methods.
-
 - [ ] **Stop syncing slash commands on every `on_ready`** · effort: 2
   `hablemos.py` — `tree.sync()` on every restart hits rate limits. Move to an
   owner-only `$sync` command that's run manually when commands change.
@@ -50,5 +45,6 @@ Tracked improvements identified during code review. Work through one at a time.
 
 - [x] **Fix `Hangman` inheriting from `Cog`** — `cogs/hangman_cog/hangman.py`
 - [x] **Replace `asyncio.get_event_loop().time()`** — `cogs/conversation_cog/main.py`
+- [x] **Move inline SQL into DB mixins** — `db/conversations.py`, `db/leaderboard.py`
 - [x] **Auto-generate `/help` from cog metadata** — `cogs/general_cog/main.py`
 - [x] **Fix cog docstrings for user-facing help** — 12 cog files

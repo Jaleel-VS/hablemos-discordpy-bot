@@ -358,3 +358,13 @@ class LeaderboardMixin(DatabaseMixin):
                     INSERT INTO league_role_recipients (round_id, user_id)
                     VALUES ($1, $2) ON CONFLICT (round_id, user_id) DO NOTHING
                 ''', last_round['round_id'], user_id)
+
+    async def get_recent_user_activity(self, user_id: int, limit: int = 3) -> list:
+        """Get a user's most recent counted messages from leaderboard_activity."""
+        return await self._fetch('''
+            SELECT message_id, channel_id, points, created_at, round_id
+            FROM leaderboard_activity
+            WHERE user_id = $1 AND message_id IS NOT NULL
+            ORDER BY created_at DESC
+            LIMIT $2
+        ''', user_id, limit)

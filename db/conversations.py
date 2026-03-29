@@ -95,3 +95,16 @@ class ConversationsMixin(DatabaseMixin):
         """Get how many conversations a user has remaining today"""
         used = await self.check_daily_limit(user_id, limit)
         return max(0, limit - used)
+
+    async def get_conversation_stats_by_combo(self) -> list:
+        """Get conversation count and usage stats grouped by language/level/category."""
+        return await self._fetch('''
+            SELECT language, level, category,
+                   COUNT(*) as count,
+                   AVG(usage_count) as avg_usage,
+                   MIN(usage_count) as min_usage,
+                   MAX(usage_count) as max_usage
+            FROM conversations
+            GROUP BY language, level, category
+            ORDER BY language, level, category
+        ''')

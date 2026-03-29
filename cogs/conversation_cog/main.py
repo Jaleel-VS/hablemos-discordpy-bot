@@ -461,17 +461,7 @@ class ConversationCog(BaseCog):
         total_convos = await self.bot.db.get_conversation_count()
 
         # Get breakdown by combo
-        async with self.bot.db.pool.acquire() as conn:
-            stats_by_combo = await conn.fetch('''
-                SELECT language, level, category,
-                       COUNT(*) as count,
-                       AVG(usage_count) as avg_usage,
-                       MIN(usage_count) as min_usage,
-                       MAX(usage_count) as max_usage
-                FROM conversations
-                GROUP BY language, level, category
-                ORDER BY language, level, category
-            ''')
+        stats_by_combo = await self.bot.db.get_conversation_stats_by_combo()
 
         embed = discord.Embed(
             title="📊 Conversation Statistics",

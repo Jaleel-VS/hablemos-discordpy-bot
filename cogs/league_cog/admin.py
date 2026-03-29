@@ -358,14 +358,7 @@ class LeagueAdminCog(BaseCog):
                 return
 
             # Get last 3 counted messages from database
-            async with self.bot.db.pool.acquire() as conn:
-                rows = await conn.fetch('''
-                    SELECT message_id, channel_id, points, created_at, round_id
-                    FROM leaderboard_activity
-                    WHERE user_id = $1 AND message_id IS NOT NULL
-                    ORDER BY created_at DESC
-                    LIMIT 3
-                ''', user_id)
+            rows = await self.bot.db.get_recent_user_activity(user_id)
 
             if not rows:
                 await ctx.send(f"ℹ️ No counted messages found for user `{user_id}`.")
