@@ -413,6 +413,10 @@ class LeagueCog(BaseCog):
             await channel.send(message)
             logger.info("Announced round %s winners in channel %s", round_number, WINNER_CHANNEL_ID)
 
+        except discord.Forbidden:
+            logger.error("No permission to send to winner channel %s", WINNER_CHANNEL_ID)
+        except discord.HTTPException as e:
+            logger.error("HTTP error announcing winners: %s", e, exc_info=True)
         except Exception as e:
             logger.error("Error announcing winners: %s", e, exc_info=True)
 
@@ -733,42 +737,43 @@ class LeagueCog(BaseCog):
                 }
             )
 
-            # Create embed
-            board_emoji = DISPLAY.get_emoji(board)
-            board_title = DISPLAY.get_name(board)
-            embed = Embed(
-                title=f"{board_emoji} {board_title}",
-                color=discord.Color.gold()
-            )
-
-            # Set the leaderboard image in the embed
-            file = File(image_path, filename="leaderboard.png")
-            embed.set_image(url="attachment://leaderboard.png")
-
-            # Add requester's rank if outside top rankings
-            if requester_stats and requester_stats['rank'] > SCORING.LEADERBOARD_DISPLAY_LIMIT:
-                requester_has_won = requester_stats['user_id'] in previous_winners or await self.bot.db.has_user_won_before(requester_stats['user_id'])
-                star = "⭐ " if requester_has_won else ""
-                embed.add_field(
-                    name="📍 Your Rank",
-                    value=f"{star}**#{requester_stats['rank']}** • {requester_stats['total_score']} pts • {requester_stats['active_days']} active days",
-                    inline=False
+            try:
+                # Create embed
+                board_emoji = DISPLAY.get_emoji(board)
+                board_title = DISPLAY.get_name(board)
+                embed = Embed(
+                    title=f"{board_emoji} {board_title}",
+                    color=discord.Color.gold()
                 )
 
-            # Show round end date in footer
-            end_date = current_round['end_date']
-            if end_date.tzinfo is None:
-                end_date = end_date.replace(tzinfo=UTC)
+                # Set the leaderboard image in the embed
+                file = File(image_path, filename="leaderboard.png")
+                embed.set_image(url="attachment://leaderboard.png")
 
-            embed.set_footer(text=f"Round {current_round['round_number']} • Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
+                # Add requester's rank if outside top rankings
+                if requester_stats and requester_stats['rank'] > SCORING.LEADERBOARD_DISPLAY_LIMIT:
+                    requester_has_won = requester_stats['user_id'] in previous_winners or await self.bot.db.has_user_won_before(requester_stats['user_id'])
+                    star = "⭐ " if requester_has_won else ""
+                    embed.add_field(
+                        name="📍 Your Rank",
+                        value=f"{star}**#{requester_stats['rank']}** • {requester_stats['total_score']} pts • {requester_stats['active_days']} active days",
+                        inline=False
+                    )
 
-            # Send embed with image attached
-            await interaction.followup.send(file=file, embed=embed)
+                # Show round end date in footer
+                end_date = current_round['end_date']
+                if end_date.tzinfo is None:
+                    end_date = end_date.replace(tzinfo=UTC)
 
-            # Clean up temp file
-            Path(image_path).unlink(missing_ok=True)
+                embed.set_footer(text=f"Round {current_round['round_number']} • Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
 
-            logger.info("User %s viewed %s league (Pillow image)", interaction.user, board)
+                # Send embed with image attached
+                await interaction.followup.send(file=file, embed=embed)
+
+                logger.info("User %s viewed %s league (Pillow image)", interaction.user, board)
+            finally:
+                # Clean up temp file
+                Path(image_path).unlink(missing_ok=True)
 
         except Exception as e:
             logger.error("Error viewing league: %s", e, exc_info=True)
