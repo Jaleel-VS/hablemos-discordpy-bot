@@ -1,6 +1,7 @@
 """
 Practice Session State Management
 """
+import time
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -34,6 +35,7 @@ class PracticeSession:
     current_index: int = 0
     correct_count: int = 0
     total_reviewed: int = 0
+    created_at: float = field(default_factory=time.time)
 
     @property
     def current_card(self) -> PracticeCard | None:

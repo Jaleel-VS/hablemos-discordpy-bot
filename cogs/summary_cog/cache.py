@@ -8,8 +8,9 @@ logger = logging.getLogger(__name__)
 class SummaryCache:
     """In-memory cache for conversation summaries with TTL."""
 
-    def __init__(self, ttl_seconds: int = 3600):
+    def __init__(self, ttl_seconds: int = 3600, max_size: int = 100):
         self.ttl_seconds = ttl_seconds
+        self.max_size = max_size
         self._cache: dict[str, dict] = {}
         self._stats = {'hits': 0, 'misses': 0, 'stores': 0, 'evictions': 0}
 
@@ -37,6 +38,11 @@ class SummaryCache:
     def set(self, channel_id: int, start_id: int, end_id: int, summary: str) -> None:
         """Cache a summary."""
         key = self._key(channel_id, start_id, end_id)
+        # Evict oldest entries if at capacity
+        while len(self._cache) >= self.max_size and key not in self._cache:
+            oldest = min(self._cache, key=lambda k: self._cache[k]['ts'])
+            del self._cache[oldest]
+            self._stats['evictions'] += 1
         self._cache[key] = {'data': summary, 'ts': time.time()}
         self._stats['stores'] += 1
 

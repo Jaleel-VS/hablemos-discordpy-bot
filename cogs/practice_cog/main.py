@@ -29,6 +29,9 @@ logger = logging.getLogger(__name__)
 class PracticeCog(BaseCog):
     """Vocabulary practice with spaced repetition."""
 
+    SESSION_TTL = 1800  # 30 minutes
+    MAX_SESSIONS = 50
+
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
         self.active_sessions: dict[int, PracticeSession] = {}
@@ -39,6 +42,16 @@ class PracticeCog(BaseCog):
         except ValueError as e:
             logger.error("Failed to initialize PracticeCog: %s", e)
             raise
+
+    def _purge_stale_sessions(self) -> None:
+        """Remove sessions older than SESSION_TTL."""
+        import time
+        now = time.time()
+        stale = [uid for uid, s in self.active_sessions.items() if now - s.created_at > self.SESSION_TTL]
+        for uid in stale:
+            del self.active_sessions[uid]
+        if stale:
+            logger.info("Purged %s stale practice sessions", len(stale))
 
     # ========================
     # Admin Commands
@@ -187,6 +200,9 @@ class PracticeCog(BaseCog):
     ):
         """Start a practice session"""
         user_id = interaction.user.id
+
+        # Clean up stale sessions
+        self._purge_stale_sessions()
 
         # Check for existing session
         if user_id in self.active_sessions:
