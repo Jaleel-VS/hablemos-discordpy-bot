@@ -10,6 +10,8 @@ from discord.ext import commands
 from base_cog import BaseCog
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
+from .config import FEATURE_KEY_EMOJI
+
 logger = logging.getLogger(__name__)
 
 DURATION_PATTERN = re.compile(r'^(\d+)([mhd])$')
@@ -125,6 +127,17 @@ class QuoteAdminCog(BaseCog):
         else:
             await ctx.send(embed=yellow_embed(f"{channel.mention} was not blocked."))
 
+    @quoteadmin.command(name='emoji')
+    @commands.has_permissions(manage_messages=True)
+    async def emoji_toggle(self, ctx: commands.Context):
+        """Toggle emoji rendering in quote images."""
+        db = self.bot.db
+        current = await db.get_feature_setting(FEATURE_KEY_EMOJI)
+        await db.set_feature_setting(FEATURE_KEY_EMOJI, not current)
+        state = "enabled" if not current else "disabled"
+        await ctx.send(embed=green_embed(f"Emoji rendering in quotes is now **{state}**."))
+        logger.info("%s %s quote emoji rendering", ctx.author, state)
+
     @quoteadmin.command(name='status')
     @commands.has_permissions(manage_messages=True)
     async def status(self, ctx: commands.Context):
@@ -153,6 +166,8 @@ class QuoteAdminCog(BaseCog):
             channels_text = "None"
 
         embed = Embed(title="Quote Admin Status", color=discord.Color.blue())
+        emoji_enabled = await db.get_feature_setting(FEATURE_KEY_EMOJI)
+        embed.add_field(name="Emoji Rendering", value="Enabled ✅" if emoji_enabled else "Disabled ❌", inline=False)
         embed.add_field(name="Pause State", value=pause_text, inline=False)
         embed.add_field(name=f"Banned Users ({len(banned_users)})", value=banned_text, inline=False)
         embed.add_field(name=f"Blocked Channels ({len(banned_channels)})", value=channels_text, inline=False)

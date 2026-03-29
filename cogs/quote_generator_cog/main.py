@@ -19,6 +19,9 @@ from cogs.quote_generator_cog.quote_generator_helper.image_creator2 import (
 )
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
+from .config import FEATURE_KEY_EMOJI
+from .emoji import replace_emoji_with_images
+
 logger = logging.getLogger(__name__)
 
 MAX_QUOTE_LENGTH = 250
@@ -86,9 +89,13 @@ def _resolve_mentions(content: str, mentions, role_mentions, channel_mentions, g
     return content
 
 
-def _clean_message_content(content: str, mentions, role_mentions, channel_mentions, guild=None) -> str:
+async def _clean_message_content(content: str, mentions, role_mentions, channel_mentions, guild=None, *, db=None) -> str:
     """Strip emoji, markdown, and resolve mentions from message content."""
-    content = _remove_custom_emoji(content)
+    emoji_enabled = await db.get_feature_setting(FEATURE_KEY_EMOJI) if db else False
+    if emoji_enabled:
+        content = replace_emoji_with_images(content)
+    else:
+        content = _remove_custom_emoji(content)
     content = remove_markdown_from_message(content)
     return _resolve_mentions(content, mentions, role_mentions, channel_mentions, guild)
 
@@ -128,9 +135,9 @@ class QuoteGenerator(BaseCog):
             await ctx.send(embed=red_embed("This user has opted out of being quoted."))
             return None
 
-        content = _clean_message_content(
+        content = await _clean_message_content(
             message.content, message.mentions, message.role_mentions,
-            message.channel_mentions, ctx.guild,
+            message.channel_mentions, ctx.guild, db=self.bot.db,
         )
         username = _get_safe_username(message.author, ctx.guild)
         avatar = _get_img_url(message.author.avatar)
@@ -207,9 +214,9 @@ class QuoteGenerator(BaseCog):
             return await self._extract_quote_data(ctx, msg)
 
         # Freetext — user is quoting themselves
-        content = _clean_message_content(
+        content = await _clean_message_content(
             ' '.join(user_input), ctx.message.mentions, ctx.message.role_mentions,
-            ctx.message.channel_mentions, ctx.guild,
+            ctx.message.channel_mentions, ctx.guild, db=self.bot.db,
         )
         username = _get_safe_username(ctx.author, ctx.guild)
         avatar = _get_img_url(ctx.author.avatar)
