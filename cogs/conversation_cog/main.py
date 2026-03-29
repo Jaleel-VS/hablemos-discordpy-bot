@@ -5,6 +5,7 @@ Provides AI-generated conversations for Spanish-English language learning
 import asyncio
 import logging
 import random
+import time
 
 import discord
 from discord.ext import commands
@@ -408,14 +409,14 @@ class ConversationCog(BaseCog):
 
         total = 0
         failed = 0
-        start_time = asyncio.get_event_loop().time()
+        start_time = time.monotonic()
 
         # Generate for each combination
         for language in LANGUAGES:
             for level in LEVELS:
                 for category in CATEGORIES:
                     # Update progress
-                    elapsed = int(asyncio.get_event_loop().time() - start_time)
+                    elapsed = int(time.monotonic() - start_time)
                     progress_embed.description = (
                         f"**Progress:** {total}/300 conversations generated\n"
                         f"**Current:** {language} - {level} - {category}\n"
@@ -436,7 +437,7 @@ class ConversationCog(BaseCog):
                     await asyncio.sleep(2)
 
         # Final report
-        elapsed_time = int(asyncio.get_event_loop().time() - start_time)
+        elapsed_time = int(time.monotonic() - start_time)
         final_embed = discord.Embed(
             title="✅ Conversation Generation Complete",
             description=(

@@ -10,10 +10,6 @@ Tracked improvements identified during code review. Work through one at a time.
 
 ## Pending
 
-- [ ] **Replace `asyncio.get_event_loop().time()`** · effort: 1
-  `cogs/conversation_cog/main.py` — Deprecated in Python 3.12+. Replace with
-  `time.monotonic()`.
-
 - [ ] **Move inline SQL into DB mixins** · effort: 2
   `cogs/conversation_cog/main.py` (`conversation_stats`) and
   `cogs/league_cog/admin.py` (`_handle_audit`) use raw `pool.acquire()` with
@@ -53,5 +49,6 @@ Tracked improvements identified during code review. Work through one at a time.
 ## Done
 
 - [x] **Fix `Hangman` inheriting from `Cog`** — `cogs/hangman_cog/hangman.py`
+- [x] **Replace `asyncio.get_event_loop().time()`** — `cogs/conversation_cog/main.py`
 - [x] **Auto-generate `/help` from cog metadata** — `cogs/general_cog/main.py`
 - [x] **Fix cog docstrings for user-facing help** — 12 cog files
