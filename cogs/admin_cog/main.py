@@ -426,5 +426,23 @@ class AdminCog(BaseCog):
         await ctx.send(embed=embed)
 
 
+    @commands.command(name='sync')
+    @commands.is_owner()
+    async def sync_commands(self, ctx: commands.Context, guild_id: int | None = None):
+        """Sync slash commands globally or to a specific guild.
+
+        Usage:
+          $sync          — global sync (up to 1 hour to propagate)
+          $sync <id>     — guild-specific sync (instant)
+        """
+        try:
+            guild = discord.Object(id=guild_id) if guild_id else None
+            synced = await self.bot.tree.sync(guild=guild)
+            scope = f"guild {guild_id}" if guild_id else "globally"
+            await ctx.send(f"✅ Synced {len(synced)} command(s) {scope}.")
+        except Exception as e:
+            await ctx.send(f"❌ Sync failed: {e}")
+
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(AdminCog(bot))

@@ -87,19 +87,6 @@ class Hablemos(Bot):
 
         logger.info("BOT LOADED!")
 
-        # Sync slash commands
-        try:
-            # Global sync (can take up to 1 hour to propagate)
-            synced = await self.tree.sync()
-            logger.info(f"Synced {len(synced)} global slash command(s)")
-
-            # Guild-specific sync for Language League (instant)
-            league_guild = discord.Object(id=self.settings.league_guild_id)
-            synced_guild = await self.tree.sync(guild=league_guild)
-            logger.info(f"Synced {len(synced_guild)} slash command(s) to Language League guild (instant)")
-        except Exception as e:
-            logger.error(f"Failed to sync slash commands: {e}")
-
         if isinstance(self.online_channel, discord.TextChannel):
             await self.online_channel.send("I'm online bra :smiling_imp:")
 

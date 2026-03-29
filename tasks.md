@@ -10,10 +10,6 @@ Tracked improvements identified during code review. Work through one at a time.
 
 ## Pending
 
-- [ ] **Stop syncing slash commands on every `on_ready`** · effort: 2
-  `hablemos.py` — `tree.sync()` on every restart hits rate limits. Move to an
-  owner-only `$sync` command that's run manually when commands change.
-
 - [ ] **Narrow `Intents.all()` to only what's needed** · effort: 2
   `hablemos.py` — Explicitly declare required intents (members, message_content,
   presences, etc.) instead of requesting all. Documents actual needs and is more
@@ -46,5 +42,6 @@ Tracked improvements identified during code review. Work through one at a time.
 - [x] **Fix `Hangman` inheriting from `Cog`** — `cogs/hangman_cog/hangman.py`
 - [x] **Replace `asyncio.get_event_loop().time()`** — `cogs/conversation_cog/main.py`
 - [x] **Move inline SQL into DB mixins** — `db/conversations.py`, `db/leaderboard.py`
+- [x] **Stop syncing slash commands on every `on_ready`** — `hablemos.py`, `cogs/admin_cog/main.py`
 - [x] **Auto-generate `/help` from cog metadata** — `cogs/general_cog/main.py`
 - [x] **Fix cog docstrings for user-facing help** — 12 cog files
