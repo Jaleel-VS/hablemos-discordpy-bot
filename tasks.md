@@ -26,7 +26,7 @@ Tracked improvements identified during code review. Work through one at a time.
   `cogs/convo_starter_cog/convo_starter_help.py` — Uses `os.path.dirname` chain
   to build file paths. Replace with `pathlib.Path(__file__).parent`.
 
-- [ ] **Add env var fallback for hardcoded IDs in `tickets_cog/config.py`** · effort: 1
+- [x] **Add env var fallback for hardcoded IDs in `tickets_cog/config.py`** · effort: 1
   `cogs/tickets_cog/config.py` — `STAFF_FORUM_ID` and `ADMIN_FORUM_ID` are
   hardcoded without `get_int_env()` fallback, unlike other cog configs. Also
   missing type annotations.
