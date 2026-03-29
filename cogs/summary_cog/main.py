@@ -125,7 +125,7 @@ class SummaryCog(BaseCog):
             await processing.edit(content=f"Summarizing {len(messages)} messages...")
 
             try:
-                summary = self.gemini.generate_summary(messages)
+                summary = await self.gemini.generate_summary(messages)
             except Exception as e:
                 logger.error(f"Gemini API error: {e}", exc_info=True)
                 error_str = str(e).lower()

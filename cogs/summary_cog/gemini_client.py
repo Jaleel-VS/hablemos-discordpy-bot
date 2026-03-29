@@ -1,10 +1,7 @@
-"""
-Google Gemini API client for generating conversation summaries.
-"""
+"""Gemini client for generating conversation summaries."""
 import logging
 
-from google import genai
-from google.genai import types
+from cogs.utils.gemini_base import BaseGeminiClient
 
 logger = logging.getLogger(__name__)
 
@@ -23,24 +20,11 @@ Rules:
 {messages}"""
 
 
-class GeminiClient:
-    """Wrapper for Google Gemini API for conversation summarization."""
+class GeminiClient(BaseGeminiClient):
+    """Generates conversation summaries via Gemini."""
 
-    def __init__(self, api_key: str):
-        self.client = genai.Client(api_key=api_key)
-        self.model_name = 'gemini-2.0-flash-lite'
-        logger.info("Gemini client initialized successfully")
-
-    def generate_summary(self, messages: list[dict]) -> str:
-        """
-        Generate conversation summary from messages.
-
-        Args:
-            messages: list of dicts with 'author', 'content', 'timestamp'
-
-        Returns:
-            Summary text.
-        """
+    async def generate_summary(self, messages: list[dict]) -> str:
+        """Generate a summary from a list of message dicts."""
         if not messages:
             return "No messages to summarize."
 
@@ -59,14 +43,6 @@ class GeminiClient:
             messages='\n'.join(formatted),
         )
 
-        response = self.client.models.generate_content(
-            model=self.model_name,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=0.2,
-                max_output_tokens=1024,
-            ),
-        )
-
-        logger.info(f"Generated summary for {len(messages)} messages")
-        return response.text
+        text = await self._generate(prompt, temperature=0.2, max_output_tokens=1024)
+        logger.info("Generated summary for %s messages", len(messages))
+        return text or "Failed to generate summary."

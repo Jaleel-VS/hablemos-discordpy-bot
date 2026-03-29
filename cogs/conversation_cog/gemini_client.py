@@ -1,115 +1,44 @@
-"""
-Google Gemini API client for generating language learning conversations
-"""
-import asyncio
+"""Gemini client for generating language learning conversations."""
 import logging
-import random
 
-from google import genai
-from google.genai import types
-
-from cogs.utils.rate_limiter import RateLimiter
+from cogs.utils.gemini_base import BaseGeminiClient
 
 from .conversation_data import CATEGORIES, LANGUAGES, LEVELS
 
 logger = logging.getLogger(__name__)
 
-class ConversationGeminiClient:
-    """Wrapper for Google Gemini API for conversation generation"""
 
-    def __init__(self, api_key: str):
-        """
-        Initialize Gemini client for conversations
+class ConversationGeminiClient(BaseGeminiClient):
+    """Generates structured language learning conversations via Gemini."""
 
-        Args:
-            api_key: Gemini API key
-        """
-        # Initialize the client with API key
-        self.client = genai.Client(api_key=api_key)
+    async def generate_conversation(
+        self, language: str, level: str, category: str, scenario: str,
+    ) -> dict | None:
+        """Generate a conversation. Returns parsed dict or None."""
+        level_data = LEVELS[level]
+        prompt = self._create_conversation_prompt(language, level, category, scenario)
 
-        # Model to use - gemini-2.0-flash-lite is free tier compatible
-        self.model_name = 'gemini-2.0-flash-lite'
+        text = await self._generate_with_retry(
+            prompt, temperature=level_data['temperature'],
+        )
+        if not text:
+            return None
 
-        # Rate limiter for API calls
-        self.rate_limiter = RateLimiter(requests_per_minute=15)
+        result = self._parse_response(text)
+        if result:
+            logger.info("Generated %s %s %s conversation", language, level, category)
+        else:
+            logger.warning("Failed to parse conversation response")
+        return result
 
-        logger.info("Conversation Gemini client initialized successfully")
-
-    async def generate_conversation(self, language: str, level: str,
-                                   category: str, scenario: str,
-                                   max_retries: int = 3) -> dict | None:
-        """
-        Generate a conversation with retry logic
-
-        Args:
-            language: Target language (spanish/english)
-            level: Difficulty level (beginner/intermediate/advanced)
-            category: Conversation category (restaurant/travel/etc)
-            scenario: Specific scenario description
-            max_retries: Maximum retry attempts
-
-        Returns:
-            dict with keys: scenario, speaker1, speaker2, conversation
-            or None if generation fails
-        """
-        for attempt in range(max_retries):
-            try:
-                # Wait if needed for rate limiting
-                await self.rate_limiter.wait_if_needed()
-
-                # Create the prompt
-                prompt = self._create_conversation_prompt(
-                    language, level, category, scenario
-                )
-
-                # Set temperature based on level
-                level_data = LEVELS[level]
-                temperature = level_data['temperature']
-
-                # Generate conversation
-                response = self.client.models.generate_content(
-                    model=self.model_name,
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        temperature=temperature,
-                        top_p=0.9,
-                        top_k=40,
-                        max_output_tokens=2048,
-                    )
-                )
-
-                # Parse response
-                conversation_data = self._parse_conversation_response(response.text)
-
-                if conversation_data:
-                    logger.info(f"Successfully generated {language} {level} {category} conversation")
-                    return conversation_data
-                else:
-                    logger.warning(f"Failed to parse conversation (attempt {attempt+1})")
-
-            except Exception as e:
-                logger.error(f"Gemini API error (attempt {attempt+1}): {e}")
-
-                # Exponential backoff
-                if attempt < max_retries - 1:
-                    wait_time = (2 ** attempt) + random.uniform(0, 1)
-                    await asyncio.sleep(wait_time)
-
-        return None
-
-    def _create_conversation_prompt(self, language: str, level: str,
-                                   category: str, scenario: str) -> str:
-        """
-        Create prompt for generating a conversation
-
-        Returns a structured prompt that guides Gemini to create
-        an appropriate language learning conversation.
-        """
+    def _create_conversation_prompt(
+        self, language: str, level: str, category: str, scenario: str,
+    ) -> str:
         level_data = LEVELS[level]
         lang_data = LANGUAGES[language]
         category_data = CATEGORIES[category]
 
-        prompt = f"""You are a language learning conversation generator. Generate a realistic, natural conversation in {lang_data['name']} for language learners at the {level_data['name']} level ({level_data['description']}).
+        return f"""You are a language learning conversation generator. Generate a realistic, natural conversation in {lang_data['name']} for language learners at the {level_data['name']} level ({level_data['description']}).
 
 **Scenario Category:** {category_data['name']} {category_data['emoji']}
 **Specific Situation:** {scenario}
@@ -180,38 +109,17 @@ Lisa: Perfect, thank you!
 
 Generate the conversation now:"""
 
-        return prompt
-
-    def _parse_conversation_response(self, response_text: str) -> dict | None:
-        """
-        Parse the structured response from Gemini
-
-        Expected format:
-        SCENARIO: [text]
-        SPEAKER1: [name]
-        SPEAKER2: [name]
-        CONVERSATION:
-        [Speaker]: [message]
-        ...
-
-        Returns:
-            dict with scenario, speaker1, speaker2, conversation keys
-            or None if parsing fails
-        """
+    def _parse_response(self, text: str) -> dict | None:
+        """Parse structured SCENARIO/SPEAKER/CONVERSATION response."""
         try:
-            lines = response_text.strip().split('\n')
-
-            scenario = None
-            speaker1 = None
-            speaker2 = None
+            scenario = speaker1 = speaker2 = None
             conversation_lines = []
             in_conversation = False
 
-            for line in lines:
+            for line in text.strip().split('\n'):
                 line = line.strip()
                 if not line:
                     continue
-
                 if line.startswith('SCENARIO:'):
                     scenario = line.replace('SCENARIO:', '').strip()
                 elif line.startswith('SPEAKER1:'):
@@ -223,28 +131,22 @@ Generate the conversation now:"""
                 elif in_conversation and ':' in line:
                     conversation_lines.append(line)
 
-            # Validate we got everything
             if not all([scenario, speaker1, speaker2, conversation_lines]):
-                logger.error(f"Missing required fields. Scenario: {scenario}, Speaker1: {speaker1}, Speaker2: {speaker2}, Lines: {len(conversation_lines)}")
-                logger.debug(f"Raw response: {response_text[:500]}")
+                logger.warning(
+                    "Missing fields — scenario=%s speaker1=%s speaker2=%s lines=%s",
+                    bool(scenario), bool(speaker1), bool(speaker2), len(conversation_lines),
+                )
                 return None
 
-            # Validate we have enough exchanges
             if len(conversation_lines) < 6:
-                logger.warning(f"Conversation too short: only {len(conversation_lines)} exchanges")
-                # Still return it, might be acceptable
-
-            # Join conversation lines
-            conversation_text = '\n'.join(conversation_lines)
+                logger.warning("Short conversation: %s exchanges", len(conversation_lines))
 
             return {
                 'scenario': scenario,
                 'speaker1': speaker1,
                 'speaker2': speaker2,
-                'conversation': conversation_text
+                'conversation': '\n'.join(conversation_lines),
             }
-
-        except Exception as e:
-            logger.error(f"Error parsing conversation response: {e}")
-            logger.debug(f"Response text: {response_text[:500]}")
+        except Exception:
+            logger.exception("Error parsing conversation response")
             return None
