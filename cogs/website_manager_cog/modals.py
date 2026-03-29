@@ -79,13 +79,13 @@ class AddPodcastModal(Modal, title="Add New Podcast"):
             embed.set_thumbnail(url=podcast.image_url)
 
             await interaction.followup.send(embed=embed, ephemeral=True)
-            logger.info(f"User {interaction.user} added podcast: {podcast.title}")
+            logger.info("User %s added podcast: %s", interaction.user, podcast.title)
 
             if self.on_success_callback:
                 await self.on_success_callback()
 
         except Exception as e:
-            logger.error(f"Error adding podcast: {e}", exc_info=True)
+            logger.error("Error adding podcast: %s", e, exc_info=True)
             embed = Embed(
                 title="Error",
                 description=f"Failed to add podcast: {e!s}",
@@ -182,7 +182,7 @@ class AddPodcastModalFull(Modal, title="Add New Podcast"):
                 embed.set_thumbnail(url=podcast.image_url)
 
             await interaction.followup.send(embed=embed, ephemeral=True)
-            logger.info(f"User {interaction.user} added podcast: {podcast.title}")
+            logger.info("User %s added podcast: %s", interaction.user, podcast.title)
 
             if self.on_success_callback:
                 await self.on_success_callback()
@@ -195,7 +195,7 @@ class AddPodcastModalFull(Modal, title="Add New Podcast"):
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
         except Exception as e:
-            logger.error(f"Error adding podcast: {e}", exc_info=True)
+            logger.error("Error adding podcast: %s", e, exc_info=True)
             embed = Embed(
                 title="Error",
                 description=f"Failed to add podcast: {e!s}",
@@ -292,7 +292,7 @@ class EditPodcastModal(Modal, title="Edit Podcast"):
                 embed.set_thumbnail(url=podcast.image_url)
 
             await interaction.followup.send(embed=embed, ephemeral=True)
-            logger.info(f"User {interaction.user} updated podcast: {podcast.title}")
+            logger.info("User %s updated podcast: %s", interaction.user, podcast.title)
 
             if self.on_success_callback:
                 await self.on_success_callback()
@@ -305,7 +305,7 @@ class EditPodcastModal(Modal, title="Edit Podcast"):
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
         except Exception as e:
-            logger.error(f"Error updating podcast: {e}", exc_info=True)
+            logger.error("Error updating podcast: %s", e, exc_info=True)
             embed = Embed(
                 title="Error",
                 description=f"Failed to update podcast: {e!s}",

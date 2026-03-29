@@ -18,7 +18,7 @@ class PracticeMixin(DatabaseMixin):
             ''', word, translation, language, sentence, sentence_with_blank)
             return row['id'] if row else None
         except Exception as e:
-            logger.error(f"Error adding practice card: {e}")
+            logger.error("Error adding practice card: %s", e)
             return None
 
     async def get_cards_for_language(self, language: str) -> list[dict]:

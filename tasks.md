@@ -41,12 +41,12 @@ Tracked improvements identified during code review. Work through one at a time.
   constants without `get_int_env()` fallback. This makes it impossible to run the
   bot against a test server without code changes.
 
-- [ ] **Convert `$convo` to a slash/hybrid command** · effort: 4
+- [x] **Convert `$convo` to a slash/hybrid command** · effort: 4
   `cogs/conversation_cog/main.py` — Main user-facing feature is prefix-only with
   manual arg parsing. Convert to hybrid or slash command with `app_commands.choices`
   for language/level/category autocomplete.
 
-- [ ] **Replace f-strings in log calls with `%s`-style formatting** · effort: 4
+- [x] **Replace f-strings in log calls with `%s`-style formatting** · effort: 4
   31 files use `logger.xxx(f"...")` instead of `logger.xxx("...", arg)`. This
   violates the project code standard — f-strings are interpolated even when the
   log level is disabled, wasting CPU. Sweep all files under `cogs/`, `db/`, and

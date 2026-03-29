@@ -58,7 +58,7 @@ class ConjugationCog(BaseCog):
             data = json.load(f)
         self.categories = data['categories']
         self.verb_data = data['verbs']
-        logger.info(f"Loaded {len(self.verb_data)} verbs across {len(self.categories)} categories")
+        logger.info("Loaded %s verbs across %s categories", len(self.verb_data), len(self.categories))
 
     @commands.command(name='conj', aliases=['conjugate'])
     async def start_game(self, ctx, category: str | None = None, questions: int = 10):

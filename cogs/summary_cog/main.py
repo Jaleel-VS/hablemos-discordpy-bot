@@ -127,7 +127,7 @@ class SummaryCog(BaseCog):
             try:
                 summary = await self.gemini.generate_summary(messages)
             except Exception as e:
-                logger.error(f"Gemini API error: {e}", exc_info=True)
+                logger.error("Gemini API error: %s", e, exc_info=True)
                 error_str = str(e).lower()
                 if any(k in error_str for k in ('rate', 'quota', '429')):
                     await processing.edit(content="API rate limit reached. Try again in a few minutes.")
@@ -147,7 +147,7 @@ class SummaryCog(BaseCog):
         except discord.Forbidden:
             await processing.edit(content="I don't have permission to access that channel.")
         except Exception as e:
-            logger.error(f"Unexpected error in summarize: {e}", exc_info=True)
+            logger.error("Unexpected error in summarize: %s", e, exc_info=True)
             await processing.edit(content="An unexpected error occurred.")
 
     def _build_embed(self, summary: str, count: int,

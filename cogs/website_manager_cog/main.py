@@ -52,7 +52,7 @@ class WebsiteManagerCog(BaseCog):
 
         view = MainManageView(self.api_client)
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
-        logger.info(f"User {interaction.user} opened website management panel")
+        logger.info("User %s opened website management panel", interaction.user)
 
     @manage.error
     async def manage_error(self, interaction: Interaction, error: app_commands.AppCommandError):
@@ -65,7 +65,7 @@ class WebsiteManagerCog(BaseCog):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
-            logger.error(f"Error in manage command: {error}", exc_info=True)
+            logger.error("Error in manage command: %s", error, exc_info=True)
             embed = Embed(
                 title="Error",
                 description=f"An error occurred: {error!s}",

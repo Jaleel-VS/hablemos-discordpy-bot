@@ -53,7 +53,7 @@ def _has_font_safe_characters(text: str) -> bool:
             0x0180 <= code <= 0x024F or  # Latin Extended-B
             0x0300 <= code <= 0x036F     # Combining Diacritical Marks
         ):
-            logger.debug(f"Unsupported character: {char!r} (U+{code:04X})")
+            logger.debug("Unsupported character: %r (U+%04X)", char, code)
             return False
     return True
 
@@ -145,7 +145,7 @@ class QuoteGenerator(BaseCog):
         except Forbidden:
             await ctx.send(embed=red_embed("I don't have permission to read that message."))
         except HTTPException:
-            logger.exception(f"Failed to fetch message {message_id}")
+            logger.exception("Failed to fetch message %s", message_id)
             await ctx.send(embed=red_embed("Something went wrong fetching that message."))
         return None
 

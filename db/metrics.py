@@ -136,7 +136,7 @@ class MetricsMixin(DatabaseMixin):
 
         rolled_count = int(rolled.split()[-1]) if rolled else 0
         deleted_count = int(deleted.split()[-1]) if deleted else 0
-        logger.info(f"Metrics rollup: {rolled_count} summaries upserted, {deleted_count} raw rows purged")
+        logger.info("Metrics rollup: %s summaries upserted, %s raw rows purged", rolled_count, deleted_count)
         return {'rolled_up': rolled_count, 'purged': deleted_count}
 
     async def purge_old_league_activity(self) -> int:
@@ -154,7 +154,7 @@ class MetricsMixin(DatabaseMixin):
         ''')
         count = int(result.split()[-1]) if result else 0
         if count:
-            logger.info(f"Purged {count} old leaderboard_activity rows")
+            logger.info("Purged %s old leaderboard_activity rows", count)
         return count
 
     async def get_table_sizes(self) -> list[dict]:

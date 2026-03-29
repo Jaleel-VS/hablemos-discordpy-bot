@@ -40,7 +40,7 @@ class AnswerModal(Modal, title="Enter Your Answer"):
             user_answer = self.answer.value.strip()
             await self.on_answer_callback(interaction, user_answer)
         except Exception as e:
-            logger.error(f"Error in answer modal: {e}", exc_info=True)
+            logger.error("Error in answer modal: %s", e, exc_info=True)
             with contextlib.suppress(discord.InteractionResponded):
                 await interaction.response.send_message(
                     "An error occurred. Please try again.",

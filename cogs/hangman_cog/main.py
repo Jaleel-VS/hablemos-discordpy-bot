@@ -56,28 +56,28 @@ class HangmanController(BaseCog):
         channel_id = ctx.channel.id
         user_id = ctx.author.id
 
-        logger.info(f"Hangman command invoked by {ctx.author} ({user_id}) in channel {ctx.channel} ({channel_id}) with category '{category}'")
+        logger.info("Hangman command invoked by %s (%s) in channel %s (%s) with category '%s'", ctx.author, user_id, ctx.channel, channel_id, category)
 
         # Validate category
         if category not in CATEGORIES:
-            logger.warning(f"Invalid category '{category}' requested by {ctx.author} ({user_id})")
+            logger.warning("Invalid category '%s' requested by %s (%s)", category, ctx.author, user_id)
             available = ', '.join(f'`{cat}` ({count})' for cat, count in CATEGORIES.items())
             return await ctx.send(f"❌ Category not found!\n\n**Available categories:**\n{available}")
 
         # Use lock to prevent race conditions
         async with self._get_channel_lock(channel_id):
             if self._is_game_active(channel_id):
-                logger.info(f"Game start denied - game already active in channel {channel_id}")
+                logger.info("Game start denied - game already active in channel %s", channel_id)
                 return await ctx.send("🎮 There's already a hangman game running in this channel!")
 
             try:
-                logger.info(f"Starting new hangman game in channel {channel_id} with category '{category}'")
+                logger.info("Starting new hangman game in channel %s with category '%s'", channel_id, category)
                 await self._start_new_game(ctx, channel_id, category)
-                logger.info(f"Hangman game successfully started in channel {channel_id}")
+                logger.info("Hangman game successfully started in channel %s", channel_id)
             except Exception as e:
                 # Ensure cleanup on any error
                 self.active_games.pop(channel_id, None)
-                logger.error(f"Failed to start hangman game in channel {channel_id}: {e}", exc_info=True)
+                logger.error("Failed to start hangman game in channel %s: %s", channel_id, e, exc_info=True)
                 await ctx.send(f"❌ Failed to start game: {e!s}")
                 raise
             # Successfully started; nothing else to send here
@@ -86,47 +86,47 @@ class HangmanController(BaseCog):
         """Start a new hangman game with proper cleanup."""
         try:
             # Get words for the category
-            logger.debug(f"Getting words for category '{category}'")
+            logger.debug("Getting words for category '%s'", category)
             words = get_word(category)
             if not words:
-                logger.error(f"No words found for category: {category}")
+                logger.error("No words found for category: %s", category)
                 return await ctx.send(f"❌ No words found for category: {category}")
 
-            logger.debug(f"Selected word for game: {words[0]} ({words[1] if len(words) > 1 else 'no definition'})")
+            logger.debug("Selected word for game: %s (%s)", words[0], words[1] if len(words) > 1 else 'no definition')
 
             # Create and register the game
             game = Hangman(self.bot, words, category)
             self.active_games[channel_id] = game
 
-            logger.info(f"Game registered for channel {channel_id}, starting game loop")
+            logger.info("Game registered for channel %s, starting game loop", channel_id)
 
             # Start the game
             await game.game_loop(ctx)
 
         except Exception as e:
-            logger.error(f"Error during game execution in channel {channel_id}: {e}", exc_info=True)
+            logger.error("Error during game execution in channel %s: %s", channel_id, e, exc_info=True)
             raise
         finally:
             # Always cleanup, even if game crashes
             if channel_id in self.active_games:
-                logger.info(f"Cleaning up game for channel {channel_id}")
+                logger.info("Cleaning up game for channel %s", channel_id)
                 self.active_games.pop(channel_id, None)
 
             # Clean up old locks periodically to prevent memory leaks
             if channel_id in self._game_locks and not self._is_game_active(channel_id):
-                logger.debug(f"Cleaning up lock for channel {channel_id}")
+                logger.debug("Cleaning up lock for channel %s", channel_id)
                 del self._game_locks[channel_id]
 
     @commands.command(name='hangman_status', aliases=['hm_status'])
     async def hangman_status(self, ctx):
         """Show active hangman games."""
-        logger.info(f"Hangman status requested by {ctx.author} in channel {ctx.channel}")
+        logger.info("Hangman status requested by %s in channel %s", ctx.author, ctx.channel)
 
         if not self.active_games:
             logger.debug("No active games found")
             return await ctx.send("🎮 No active hangman games!")
 
-        logger.debug(f"Found {len(self.active_games)} active games")
+        logger.debug("Found %s active games", len(self.active_games))
         status_lines = []
         for channel_id in self.active_games:
             channel = self.bot.get_channel(channel_id)
@@ -145,11 +145,11 @@ class HangmanController(BaseCog):
 
         status = '\n'.join(status_lines)
         await ctx.send(f"🎮 **Active Games:**\n{status}")
-        logger.debug(f"Status response sent with {len(status_lines)} games listed")
+        logger.debug("Status response sent with %s games listed", len(status_lines))
 
     async def cog_unload(self):
         """Cleanup when cog is unloaded."""
-        logger.info(f"Hangman cog unloading, cleaning up {len(self.active_games)} active games")
+        logger.info("Hangman cog unloading, cleaning up %s active games", len(self.active_games))
         # Clear all active games - the games will naturally timeout
         self.active_games.clear()
         self._game_locks.clear()

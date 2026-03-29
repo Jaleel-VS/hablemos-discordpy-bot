@@ -70,5 +70,5 @@ def detect_message_language(message_content: str) -> str | None:
         # Detection failed (empty string, etc.)
         return None
     except Exception as e:
-        logger.error(f"Language detection error: {e}")
+        logger.error("Language detection error: %s", e)
         return None

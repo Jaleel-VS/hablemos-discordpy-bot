@@ -32,10 +32,10 @@ class DatabaseCommands(BaseCog):
                 f"**Content:** {content}"
             )
             await ctx.send(embed=embed)
-            logger.info(f"Note {note_id} created by {username} ({user_id})")
+            logger.info("Note %s created by %s (%s)", note_id, username, user_id)
 
         except Exception as e:
-            logger.error(f"Error adding note: {e}")
+            logger.error("Error adding note: %s", e)
             await ctx.send(embed=red_embed(f"Failed to save note: {e!s}"))
 
     @command(aliases=['getnote', 'readnote'])
@@ -62,7 +62,7 @@ class DatabaseCommands(BaseCog):
             await ctx.send(embed=embed)
 
         except Exception as e:
-            logger.error(f"Error retrieving note: {e}")
+            logger.error("Error retrieving note: %s", e)
             await ctx.send(embed=red_embed(f"Failed to retrieve note: {e!s}"))
 
     @command(aliases=['mynotes', 'listnotes'])
@@ -98,7 +98,7 @@ class DatabaseCommands(BaseCog):
             await ctx.send(embed=embed)
 
         except Exception as e:
-            logger.error(f"Error listing notes: {e}")
+            logger.error("Error listing notes: %s", e)
             await ctx.send(embed=red_embed(f"Failed to list notes: {e!s}"))
 
     @command(aliases=['delnote', 'removenote'])
@@ -115,12 +115,12 @@ class DatabaseCommands(BaseCog):
 
             if deleted:
                 await ctx.send(embed=green_embed(f"Note {note_id} deleted successfully!"))
-                logger.info(f"Note {note_id} deleted by user {user_id}")
+                logger.info("Note %s deleted by user %s", note_id, user_id)
             else:
                 await ctx.send(embed=red_embed(f"Could not delete note {note_id}. Either it doesn't exist or you don't own it."))
 
         except Exception as e:
-            logger.error(f"Error deleting note: {e}")
+            logger.error("Error deleting note: %s", e)
             await ctx.send(embed=red_embed(f"Failed to delete note: {e!s}"))
 
 async def setup(bot):

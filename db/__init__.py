@@ -72,7 +72,7 @@ class Database(
             logger.info("Database connection pool created successfully")
             await initialize_schema(self.pool)
         except Exception as e:
-            logger.error(f"Failed to connect to database: {e}")
+            logger.error("Failed to connect to database: %s", e)
             raise
 
     async def close(self):

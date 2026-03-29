@@ -79,11 +79,11 @@ class WebsiteAPIClient:
                     return None
                 if not response.ok:
                     error_text = await response.text()
-                    logger.error(f"API error {response.status}: {error_text}")
+                    logger.error("API error %s: %s", response.status, error_text)
                     raise Exception(f"API error: {response.status}")
                 return await response.json()
         except aiohttp.ClientError as e:
-            logger.error(f"HTTP client error: {e}")
+            logger.error("HTTP client error: %s", e)
             raise
 
     # ==================== Podcasts ====================

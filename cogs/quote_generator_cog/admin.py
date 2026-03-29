@@ -57,7 +57,7 @@ class QuoteAdminCog(BaseCog):
             return
         await self.bot.db.quote_ban_user(user_id, ctx.author.id)
         await ctx.send(embed=green_embed(f"Banned user `{user_id}` from quote commands."))
-        logger.info(f"{ctx.author} quote-banned user {user_id}")
+        logger.info("%s quote-banned user %s", ctx.author, user_id)
 
     @quoteadmin.command(name='unban')
     @commands.has_permissions(manage_messages=True)
@@ -70,7 +70,7 @@ class QuoteAdminCog(BaseCog):
         success = await self.bot.db.quote_unban_user(user_id)
         if success:
             await ctx.send(embed=green_embed(f"Unbanned user `{user_id}` from quote commands."))
-            logger.info(f"{ctx.author} quote-unbanned user {user_id}")
+            logger.info("%s quote-unbanned user %s", ctx.author, user_id)
         else:
             await ctx.send(embed=yellow_embed(f"User `{user_id}` was not banned."))
 
@@ -88,7 +88,7 @@ class QuoteAdminCog(BaseCog):
         paused_until = int(time.time()) + seconds
         await self.bot.db.set_bot_setting('quote_paused_until', paused_until)
         await ctx.send(embed=green_embed(f"Quotes paused until <t:{paused_until}:F> (<t:{paused_until}:R>)."))
-        logger.info(f"{ctx.author} paused quotes until {paused_until}")
+        logger.info("%s paused quotes until %s", ctx.author, paused_until)
 
     @quoteadmin.command(name='unpause')
     @commands.has_permissions(manage_messages=True)
@@ -96,7 +96,7 @@ class QuoteAdminCog(BaseCog):
         """Unpause quotes immediately."""
         await self.bot.db.set_bot_setting('quote_paused_until', 0)
         await ctx.send(embed=green_embed("Quotes have been unpaused."))
-        logger.info(f"{ctx.author} unpaused quotes")
+        logger.info("%s unpaused quotes", ctx.author)
 
     @quoteadmin.command(name='blockchannel')
     @commands.has_permissions(manage_messages=True)
@@ -108,7 +108,7 @@ class QuoteAdminCog(BaseCog):
         channel = ctx.message.channel_mentions[0]
         await self.bot.db.quote_ban_channel(channel.id, ctx.author.id)
         await ctx.send(embed=green_embed(f"Blocked quotes in {channel.mention}."))
-        logger.info(f"{ctx.author} blocked quotes in {channel.name} ({channel.id})")
+        logger.info("%s blocked quotes in %s (%s)", ctx.author, channel.name, channel.id)
 
     @quoteadmin.command(name='unblockchannel')
     @commands.has_permissions(manage_messages=True)
@@ -121,7 +121,7 @@ class QuoteAdminCog(BaseCog):
         success = await self.bot.db.quote_unban_channel(channel.id)
         if success:
             await ctx.send(embed=green_embed(f"Unblocked quotes in {channel.mention}."))
-            logger.info(f"{ctx.author} unblocked quotes in {channel.name} ({channel.id})")
+            logger.info("%s unblocked quotes in %s (%s)", ctx.author, channel.name, channel.id)
         else:
             await ctx.send(embed=yellow_embed(f"{channel.mention} was not blocked."))
 

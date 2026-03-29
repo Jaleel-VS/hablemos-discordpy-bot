@@ -188,7 +188,7 @@ class AskCog(BaseCog):
             view.message = msg or processing  # edit returns None in some versions
 
         except Exception as e:
-            logger.error(f"Ask command error: {e}", exc_info=True)
+            logger.error("Ask command error: %s", e, exc_info=True)
             error_str = str(e).lower()
             if any(k in error_str for k in ('safety', 'blocked')):
                 await processing.edit(content="Response blocked by content policy.")

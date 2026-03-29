@@ -87,13 +87,13 @@ class IntroductionTracker(BaseCog):
         deleted = True
         try:
             await message.delete()
-            logger.info(f"Deleted duplicate introduction from {message.author} ({message.author.id})")
+            logger.info("Deleted duplicate introduction from %s (%s)", message.author, message.author.id)
         except (Forbidden, NotFound) as e:
             deleted = False
-            logger.warning(f"Could not delete duplicate intro from {message.author}: {e}")
+            logger.warning("Could not delete duplicate intro from %s: %s", message.author, e)
         except HTTPException:
             deleted = False
-            logger.exception(f"HTTP error deleting duplicate intro from {message.author}")
+            logger.exception("HTTP error deleting duplicate intro from %s", message.author)
 
         # Warn the user
         warn_channel_id = await self._get_channel_id(SETTING_WARN_CHANNEL, DEFAULT_WARN_CHANNEL_ID)
@@ -138,7 +138,7 @@ class IntroductionTracker(BaseCog):
                 return
 
             if self._is_exempt(message.author):
-                logger.debug(f"User {message.author} ({message.author.id}) is exempt from intro tracking")
+                logger.debug("User %s (%s) is exempt from intro tracking", message.author, message.author.id)
                 return
 
             existing = await self.bot.db.check_user_introduction(message.author.id, INTRO_COOLDOWN_DAYS)
@@ -149,10 +149,10 @@ class IntroductionTracker(BaseCog):
                 await self._handle_duplicate_intro(message, attempt_count)
             else:
                 await self.bot.db.record_introduction(message.author.id)
-                logger.info(f"Recorded introduction from {message.author} ({message.author.id})")
+                logger.info("Recorded introduction from %s (%s)", message.author, message.author.id)
 
         except Exception:
-            logger.exception(f"Unhandled error in introduction tracker for {message.author}")
+            logger.exception("Unhandled error in introduction tracker for %s", message.author)
 
     # ── Commands ──
 
@@ -168,7 +168,7 @@ class IntroductionTracker(BaseCog):
         """Enable the introduction tracker."""
         await self.bot.db.set_feature_setting('intro_tracker', True)
         await ctx.send(embed=green_embed("Introduction tracker **enabled** ✅"))
-        logger.info(f"Introduction tracker enabled by {ctx.author}")
+        logger.info("Introduction tracker enabled by %s", ctx.author)
 
     @introtracker.command(name='off', aliases=['disable'])
     @has_permissions(manage_messages=True)
@@ -176,7 +176,7 @@ class IntroductionTracker(BaseCog):
         """Disable the introduction tracker."""
         await self.bot.db.set_feature_setting('intro_tracker', False)
         await ctx.send(embed=red_embed("Introduction tracker **disabled** ❌"))
-        logger.info(f"Introduction tracker disabled by {ctx.author}")
+        logger.info("Introduction tracker disabled by %s", ctx.author)
 
     @introtracker.command(name='status')
     @has_permissions(manage_messages=True)
@@ -209,7 +209,7 @@ class IntroductionTracker(BaseCog):
         channel = ctx.message.channel_mentions[0]
         await self.bot.db.set_bot_setting(SETTING_ALERT_CHANNEL, channel.id)
         await ctx.send(embed=green_embed(f"Staff alert channel set to {channel.mention} ✅"))
-        logger.info(f"Intro alert channel set to {channel.id} by {ctx.author}")
+        logger.info("Intro alert channel set to %s by %s", channel.id, ctx.author)
 
     @introtracker.command(name='warnchannel')
     @has_permissions(manage_messages=True)
@@ -221,7 +221,7 @@ class IntroductionTracker(BaseCog):
         channel = ctx.message.channel_mentions[0]
         await self.bot.db.set_bot_setting(SETTING_WARN_CHANNEL, channel.id)
         await ctx.send(embed=green_embed(f"User warning channel set to {channel.mention} ✅"))
-        logger.info(f"Intro warn channel set to {channel.id} by {ctx.author}")
+        logger.info("Intro warn channel set to %s by %s", channel.id, ctx.author)
 
     @commands.command(aliases=['clearintro'])
     @has_permissions(manage_messages=True)
@@ -237,11 +237,11 @@ class IntroductionTracker(BaseCog):
                 await ctx.send(embed=green_embed(
                     f"Cleared **{count}** introduction record(s) for user `{user_id}`. They can post again."
                 ))
-                logger.info(f"{ctx.author} cleared {count} intro records for user {user_id}")
+                logger.info("%s cleared %s intro records for user %s", ctx.author, count, user_id)
             else:
                 await ctx.send(embed=yellow_embed(f"No introduction records found for user `{user_id}`."))
         except Exception:
-            logger.exception(f"Error clearing introductions for user {user_id}")
+            logger.exception("Error clearing introductions for user %s", user_id)
             await ctx.send(embed=red_embed("Something went wrong. Check logs for details."))
 
     @commands.command()
@@ -256,11 +256,11 @@ class IntroductionTracker(BaseCog):
             if added:
                 self._exempt_users.add(user_id)
                 await ctx.send(embed=green_embed(f"User `{user_id}` is now exempt from intro tracking."))
-                logger.info(f"{ctx.author} exempted user {user_id} from intro tracking")
+                logger.info("%s exempted user %s from intro tracking", ctx.author, user_id)
             else:
                 await ctx.send(embed=yellow_embed(f"User `{user_id}` is already exempt."))
         except Exception:
-            logger.exception(f"Error exempting user {user_id}")
+            logger.exception("Error exempting user %s", user_id)
             await ctx.send(embed=red_embed("Something went wrong. Check logs for details."))
 
     @commands.command()
@@ -275,11 +275,11 @@ class IntroductionTracker(BaseCog):
             if removed:
                 self._exempt_users.discard(user_id)
                 await ctx.send(embed=green_embed(f"User `{user_id}` is no longer exempt from intro tracking."))
-                logger.info(f"{ctx.author} removed intro exemption for user {user_id}")
+                logger.info("%s removed intro exemption for user %s", ctx.author, user_id)
             else:
                 await ctx.send(embed=yellow_embed(f"User `{user_id}` was not exempt."))
         except Exception:
-            logger.exception(f"Error removing exemption for user {user_id}")
+            logger.exception("Error removing exemption for user %s", user_id)
             await ctx.send(embed=red_embed("Something went wrong. Check logs for details."))
 
 

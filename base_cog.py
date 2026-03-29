@@ -26,13 +26,13 @@ class BaseCog(Cog):
                 is_slash=True,
             )
         except Exception as e:
-            logger.debug(f"Failed to record slash command metric: {e}")
+            logger.debug("Failed to record slash command metric: %s", e)
 
     async def cog_command_error(self, ctx, error):
         """Handle errors for commands in this cog"""
         if isinstance(error, CommandOnCooldown):
             await ctx.send(f"⏱️ Command is on cooldown. Try again in {error.retry_after:.1f} seconds.")
         else:
-            logger.error(f'An error occurred: {error} in {ctx.channel}')
+            logger.error('An error occurred: %s in %s', error, ctx.channel)
             # Re-raise other errors so they can be handled by global error handlers
             raise error

@@ -54,7 +54,7 @@ class SpotifyCog(BaseCog):
         try:
             await ctx.send(embed=embed)
         except HTTPException:
-            logger.exception(f"Failed to send Spotify embed for {target}")
+            logger.exception("Failed to send Spotify embed for %s", target)
             await ctx.send(embed=red_embed("Something went wrong sending the embed."))
 
 

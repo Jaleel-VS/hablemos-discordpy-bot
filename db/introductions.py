@@ -40,7 +40,7 @@ class IntroductionsMixin(DatabaseMixin):
             )
             return True
         except Exception as e:
-            logger.error(f"Error recording introduction: {e}")
+            logger.error("Error recording introduction: %s", e)
             return False
 
     async def get_introduction_stats(self, cooldown_days: int = 90) -> dict:

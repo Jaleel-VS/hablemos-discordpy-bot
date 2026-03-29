@@ -334,4 +334,4 @@ if __name__ == "__main__":
     }
 
     img_path = generate_leaderboard_image(sample_data, 'combined', round_info)
-    logger.info(f"Generated image: {img_path}")
+    logger.info("Generated image: %s", img_path)

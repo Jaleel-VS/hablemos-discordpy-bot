@@ -26,7 +26,7 @@ def parse_message_link(link: str) -> tuple[int | None, int | None, int | None]:
 
     # Check if it starts with the Discord domain
     if not link.startswith("https://discord.com/channels/") and not link.startswith("http://discord.com/channels/"):
-        logger.debug(f"Invalid message link format: {link}")
+        logger.debug("Invalid message link format: %s", link)
         return None, None, None
 
     # Split the URL and extract parts
@@ -39,18 +39,18 @@ def parse_message_link(link: str) -> tuple[int | None, int | None, int | None]:
 
         # Expected format: ['https:', '', 'discord.com', 'channels', guild_id, channel_id, message_id]
         if len(parts) < 7:
-            logger.debug(f"Message link has insufficient parts: {link}")
+            logger.debug("Message link has insufficient parts: %s", link)
             return None, None, None
 
         guild_id = int(parts[4])
         channel_id = int(parts[5])
         message_id = int(parts[6])
 
-        logger.debug(f"Parsed message link: guild={guild_id}, channel={channel_id}, message={message_id}")
+        logger.debug("Parsed message link: guild=%s, channel=%s, message=%s", guild_id, channel_id, message_id)
         return guild_id, channel_id, message_id
 
     except (ValueError, IndexError) as e:
-        logger.debug(f"Error parsing message link '{link}': {e}")
+        logger.debug("Error parsing message link '%s': %s", link, e)
         return None, None, None
 
 def validate_message_link(link: str) -> bool:

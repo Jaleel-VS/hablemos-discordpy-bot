@@ -24,7 +24,7 @@ class RelayCog(BaseCog):
 
         if not message or not message.strip():
             await ctx.send("❌ Usage: $parrot <guild_id> <channel_id> <message>")
-            logger.warning(f"Parrot: missing message text from {invoker} at {source_loc}")
+            logger.warning("Parrot: missing message text from %s at %s", invoker, source_loc)
             return
 
         logger.info(

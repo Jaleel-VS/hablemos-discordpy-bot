@@ -46,7 +46,7 @@ def handle_interaction_errors[**P, T](func: Callable[P, T]) -> Callable[P, T]:
         try:
             return await func(self, interaction, *args, **kwargs)
         except Exception as e:
-            logger.error(f"Error in {func.__name__}: {e}", exc_info=True)
+            logger.error("Error in %s: %s", func.__name__, e, exc_info=True)
             error_embed = Embed(
                 title="❌ Error",
                 description=f"Something went wrong: {e!s}",
@@ -99,7 +99,7 @@ class LeagueCog(BaseCog):
                 f"{len(self._banned_users)} banned, {len(self._excluded_channels)} excluded channels"
             )
         except Exception as e:
-            logger.error(f"Failed to warm league caches: {e}", exc_info=True)
+            logger.error("Failed to warm league caches: %s", e, exc_info=True)
 
     def cog_unload(self):
         """Called when cog is unloaded"""
@@ -115,13 +115,13 @@ class LeagueCog(BaseCog):
             data, cached_at = self._leaderboard_cache[cache_key]
             age_seconds = (now - cached_at).total_seconds()
             if age_seconds < self.LEADERBOARD_CACHE_TTL:
-                logger.debug(f"Leaderboard cache hit for {cache_key} (age: {age_seconds:.1f}s)")
+                logger.debug("Leaderboard cache hit for %s (age: %.1fs)", cache_key, age_seconds)
                 return data
 
         # Cache miss or expired - fetch fresh data
         data = await self.bot.db.get_leaderboard(board, limit)
         self._leaderboard_cache[cache_key] = (data, now)
-        logger.debug(f"Leaderboard cache miss for {cache_key}, fetched fresh data")
+        logger.debug("Leaderboard cache miss for %s, fetched fresh data", cache_key)
         return data
 
     def invalidate_leaderboard_cache(self):
@@ -143,9 +143,9 @@ class LeagueCog(BaseCog):
                 end_date = end_date.replace(hour=23, minute=59, second=59)
 
                 round_id = await self.bot.db.create_round(1, start_date, end_date)
-                logger.info(f"Created initial round {round_id}: {start_date} to {end_date}")
+                logger.info("Created initial round %s: %s to %s", round_id, start_date, end_date)
         except Exception as e:
-            logger.error(f"Error ensuring round exists: {e}", exc_info=True)
+            logger.error("Error ensuring round exists: %s", e, exc_info=True)
 
     @tasks.loop(minutes=ROUNDS.ROUND_CHECK_INTERVAL_MINUTES)
     async def check_round_end(self):
@@ -164,14 +164,14 @@ class LeagueCog(BaseCog):
 
             # Check if round has ended
             if now >= end_date:
-                logger.info(f"Round {current_round['round_id']} has ended, processing...")
+                logger.info("Round %s has ended, processing...", current_round['round_id'])
                 await self.process_round_end(current_round)
 
             # Periodic cleanup of old cooldown entries (prevent memory leak)
             self.cleanup_old_cooldowns()
 
         except Exception as e:
-            logger.error(f"Error in check_round_end task: {e}", exc_info=True)
+            logger.error("Error in check_round_end task: %s", e, exc_info=True)
 
     @check_round_end.before_loop
     async def before_check_round_end(self):
@@ -193,7 +193,7 @@ class LeagueCog(BaseCog):
         round_id = current_round['round_id']
         round_number = current_round['round_number']
 
-        logger.info(f"Ending round {round_number} (ID: {round_id})")
+        logger.info("Ending round %s (ID: %s)", round_number, round_id)
 
         # Get guild and champion role
         guild = self.bot.get_guild(LEAGUE_GUILD_ID)
@@ -202,7 +202,7 @@ class LeagueCog(BaseCog):
         if not guild:
             logger.error("Could not find league guild during round end")
         if guild and not champion_role:
-            logger.warning(f"Champion role {CHAMPION_ROLE_ID} not found. Continuing without role assignment.")
+            logger.warning("Champion role %s not found. Continuing without role assignment.", CHAMPION_ROLE_ID)
 
         # Get users who had the role last round (they're on cooldown)
         last_round_recipients = await self.bot.db.get_last_round_role_recipients()
@@ -263,7 +263,7 @@ class LeagueCog(BaseCog):
                         await member.remove_roles(champion_role, reason=f"Round {round_number} ended - champion cooldown")
                         roles_removed.append(user_id)
                 except Exception as e:
-                    logger.error(f"Failed to remove champion role from {user_id}: {e}")
+                    logger.error("Failed to remove champion role from %s: %s", user_id, e)
 
             # Add role to new champions
             for user_id in new_role_recipient_ids:
@@ -273,7 +273,7 @@ class LeagueCog(BaseCog):
                         await member.add_roles(champion_role, reason=f"Round {round_number} champion")
                         roles_added.append(user_id)
                 except Exception as e:
-                    logger.error(f"Failed to add champion role to {user_id}: {e}")
+                    logger.error("Failed to add champion role to %s: %s", user_id, e)
 
         # Track role recipients in database
         if new_role_recipient_ids:
@@ -299,7 +299,7 @@ class LeagueCog(BaseCog):
         next_start = now
 
         next_round_id = await self.bot.db.create_round(round_number + 1, next_start, next_end)
-        logger.info(f"Created next round {round_number + 1} (ID: {next_round_id}): {next_start} to {next_end}")
+        logger.info("Created next round %s (ID: %s): %s to %s", round_number + 1, next_round_id, next_start, next_end)
 
         # Invalidate leaderboard cache
         self.invalidate_leaderboard_cache()
@@ -399,7 +399,7 @@ class LeagueCog(BaseCog):
         try:
             channel = self.bot.get_channel(WINNER_CHANNEL_ID)
             if not channel:
-                logger.error(f"Could not find winner announcement channel {WINNER_CHANNEL_ID}")
+                logger.error("Could not find winner announcement channel %s", WINNER_CHANNEL_ID)
                 return
 
             message = self.build_round_end_announcement(
@@ -411,10 +411,10 @@ class LeagueCog(BaseCog):
                 last_round_recipients=last_round_recipients
             )
             await channel.send(message)
-            logger.info(f"Announced round {round_number} winners in channel {WINNER_CHANNEL_ID}")
+            logger.info("Announced round %s winners in channel %s", round_number, WINNER_CHANNEL_ID)
 
         except Exception as e:
-            logger.error(f"Error announcing winners: {e}", exc_info=True)
+            logger.error("Error announcing winners: %s", e, exc_info=True)
 
     league_group = app_commands.Group(
         name="league",
@@ -557,13 +557,13 @@ class LeagueCog(BaseCog):
             )
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
-            logger.info(f"User {interaction.user} ({interaction.user.id}) joined Language League")
+            logger.info("User %s (%s) joined Language League", interaction.user, interaction.user.id)
 
             # Update in-memory cache
             self._opted_in_users.add(interaction.user.id)
 
         except Exception as e:
-            logger.error(f"Error in league join: {e}", exc_info=True)
+            logger.error("Error in league join: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Error",
                 description=f"Failed to join Language League: {e!s}",
@@ -595,13 +595,13 @@ class LeagueCog(BaseCog):
                 )
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
-            logger.info(f"User {interaction.user} ({interaction.user.id}) left Language League")
+            logger.info("User %s (%s) left Language League", interaction.user, interaction.user.id)
 
             # Update in-memory cache
             self._opted_in_users.discard(interaction.user.id)
 
         except Exception as e:
-            logger.error(f"Error in league leave: {e}", exc_info=True)
+            logger.error("Error in league leave: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Error",
                 description=f"Failed to leave Language League: {e!s}",
@@ -676,7 +676,7 @@ class LeagueCog(BaseCog):
                         'is_previous_winner': entry['user_id'] in previous_winners
                     })
                 except Exception as e:
-                    logger.error(f"Error enriching user {entry['user_id']}: {e}")
+                    logger.error("Error enriching user %s: %s", entry['user_id'], e)
                     # Add entry with default avatar on error
                     default_num = entry['user_id'] % 5
                     enriched_data.append({
@@ -768,10 +768,10 @@ class LeagueCog(BaseCog):
             # Clean up temp file
             Path(image_path).unlink(missing_ok=True)
 
-            logger.info(f"User {interaction.user} viewed {board} league (Pillow image)")
+            logger.info("User %s viewed %s league (Pillow image)", interaction.user, board)
 
         except Exception as e:
-            logger.error(f"Error viewing league: {e}", exc_info=True)
+            logger.error("Error viewing league: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Error",
                 description=f"Failed to load league: {e!s}",
@@ -870,10 +870,10 @@ class LeagueCog(BaseCog):
             embed.set_footer(text=footer_text)
 
             await interaction.response.send_message(embed=embed)
-            logger.info(f"User {interaction.user} viewed stats for {target}")
+            logger.info("User %s viewed stats for %s", interaction.user, target)
 
         except Exception as e:
-            logger.error(f"Error viewing stats: {e}", exc_info=True)
+            logger.error("Error viewing stats: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Error",
                 description=f"Failed to load stats: {e!s}",
@@ -952,7 +952,7 @@ class LeagueCog(BaseCog):
             self.update_message_cooldown(message.author.id, message.channel.id)
 
         except Exception as e:
-            logger.error(f"Error in league message tracking: {e}", exc_info=True)
+            logger.error("Error in league message tracking: %s", e, exc_info=True)
 
     def check_message_cooldown(self, user_id: int, channel_id: int) -> bool:
         """Check if enough time has passed since last counted message"""

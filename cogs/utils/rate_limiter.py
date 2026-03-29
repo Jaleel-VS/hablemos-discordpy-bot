@@ -22,7 +22,7 @@ class RateLimiter:
             oldest = self.requests[0]
             wait_time = 60 - (now - oldest) + 0.5
             if wait_time > 0:
-                logger.info(f"Rate limit reached, waiting {wait_time:.1f}s")
+                logger.info("Rate limit reached, waiting %.1fs", wait_time)
                 await asyncio.sleep(wait_time)
 
         self.requests.append(time.time())

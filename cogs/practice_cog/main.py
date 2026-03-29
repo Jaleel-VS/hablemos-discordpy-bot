@@ -37,7 +37,7 @@ class PracticeCog(BaseCog):
             self.gemini = PracticeGeminiClient(api_key=bot.settings.gemini_api_key)
             logger.info("PracticeCog initialized successfully")
         except ValueError as e:
-            logger.error(f"Failed to initialize PracticeCog: {e}")
+            logger.error("Failed to initialize PracticeCog: %s", e)
             raise
 
     # ========================
@@ -124,7 +124,7 @@ class PracticeCog(BaseCog):
                 if card_id:
                     success_count += 1
                     existing_words.add(word)
-                    logger.info(f"Created practice card for '{word}' ({language})")
+                    logger.info("Created practice card for '%s' (%s)", word, language)
 
             # Update progress
             if (i + 1) % 5 == 0 or i == len(words) - 1:
@@ -500,7 +500,7 @@ class PracticeCog(BaseCog):
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.send(f"Command on cooldown. Try again in {error.retry_after:.1f}s.")
         else:
-            logger.error(f"Unhandled error in practice cog: {error}", exc_info=True)
+            logger.error("Unhandled error in practice cog: %s", error, exc_info=True)
             await ctx.send("An error occurred. Please try again later.")
 
 async def setup(bot):

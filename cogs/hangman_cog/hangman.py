@@ -49,10 +49,10 @@ class Hangman:
         self.embed_quote = embed_quote
         self.embedded_message = ""
 
-        logger.debug(f"Hangman game initialized: word='{self.original_word}', category='{category}', definition='{words[1] if len(words) > 1 else 'N/A'}'")
+        logger.debug("Hangman game initialized: word='%s', category='%s', definition='%s'", self.original_word, category, words[1] if len(words) > 1 else 'N/A')
 
     async def game_loop(self, ctx):
-        logger.info(f"Game loop starting for word '{self.original_word}' in category '{self.category}' in channel {ctx.channel.id}")
+        logger.info("Game loop starting for word '%s' in category '%s' in channel %s", self.original_word, self.category, ctx.channel.id)
         self.game_starter = ctx.author.id  # Remember who started the game
         self.create_dict_indices()
 
@@ -62,12 +62,12 @@ class Hangman:
         turn_count = 0
         while self.game_in_progress():
             turn_count += 1
-            logger.debug(f"Turn {turn_count} starting - Errors: {self.errors}/{MAX_ERRORS}, Progress: {''.join(self.hidden_word_list)}")
+            logger.debug("Turn %s starting - Errors: %s/%s, Progress: %s", turn_count, self.errors, MAX_ERRORS, ''.join(self.hidden_word_list))
 
             user_guess: tuple = await self.get_user_guess(ctx)
 
             if not user_guess[0]:  # if it returns False the input timed out
-                logger.info(f"Game timed out after {turn_count} turns")
+                logger.info("Game timed out after %s turns", turn_count)
                 break
 
             user_id, player_name, player_input = self.get_input_info(user_guess[1])
@@ -75,36 +75,36 @@ class Hangman:
             # Track player participation
             if user_id not in self.players:
                 self.players[user_id] = {"name": str(player_name), "guesses": 0}
-                logger.info(f"New player joined: {player_name} ({user_id})")
+                logger.info("New player joined: %s (%s)", player_name, user_id)
 
             self.players[user_id]["guesses"] += 1
 
-            logger.debug(f"Turn {turn_count}: {player_name} ({user_id}) guessed '{player_input}'")
+            logger.debug("Turn %s: %s (%s) guessed '%s'", turn_count, player_name, user_id, player_input)
 
             if await self.did_user_quit(player_input, ctx, user_id):
-                logger.info(f"Game quit by {player_name} ({user_id})")
+                logger.info("Game quit by %s (%s)", player_name, user_id)
                 break
 
             if len(player_input) == 1:
                 self.update_single_letter(get_unaccented_letter(player_input))
             else:
-                logger.info(f"{player_name} guessed the full word: '{player_input}'")
+                logger.info("%s guessed the full word: '%s'", player_name, player_input)
                 self.hidden_word_list = self.original_word_list
 
             await self.send_embed(ctx, player_name, player_input)
 
             # Log game state after each turn
             if self.word_found():
-                logger.info(f"Game won by {player_name} after {turn_count} turns!")
+                logger.info("Game won by %s after %s turns!", player_name, turn_count)
                 break
             elif self.max_errors_reached():
-                logger.info(f"Game lost after {turn_count} turns - max errors reached")
+                logger.info("Game lost after %s turns - max errors reached", turn_count)
                 break
 
         # Log final game statistics
         total_players = len(self.players)
         total_guesses = sum(p["guesses"] for p in self.players.values())
-        logger.info(f"Game ended: {total_players} players, {total_guesses} total guesses, {self.errors} errors")
+        logger.info("Game ended: %s players, %s total guesses, %s errors", total_players, total_guesses, self.errors)
 
     def game_in_progress(self):
         return (
@@ -150,11 +150,11 @@ class Hangman:
         """Check if user quit the game. Only the game starter can quit."""
         if user_guess == 'quit':
             if user_id == self.game_starter:
-                logger.info(f"Game quit by starter (user {user_id})")
+                logger.info("Game quit by starter (user %s)", user_id)
                 await context.send('Partida terminada')
                 return True
             else:
-                logger.debug(f"Quit attempt by non-starter user {user_id} - ignored")
+                logger.debug("Quit attempt by non-starter user %s - ignored", user_id)
                 await context.send('⚠️ Solo quien inició la partida puede terminarla.')
                 return False
         return False
@@ -163,27 +163,27 @@ class Hangman:
         input_found = player_input in self.indices
         input_unique = player_input not in self.letters_found
 
-        logger.debug(f"Letter '{player_input}': found={input_found}, unique={input_unique}")
+        logger.debug("Letter '%s': found=%s, unique=%s", player_input, input_found, input_unique)
 
         if input_found and input_unique:
             self.replace_hidden_character(self.indices[player_input])
             self.extend_found_set(player_input)
             self.embedded_message = CORRECT_GUESS
-            logger.debug(f"Correct guess! Letter '{player_input}' found at positions {self.indices[player_input]}")
+            logger.debug("Correct guess! Letter '%s' found at positions %s", player_input, self.indices[player_input])
         elif not input_unique:
             self.errors += 1
             self.embedded_message = ALREADY_GUESSED
-            logger.debug(f"Letter '{player_input}' already guessed. Errors: {self.errors}")
+            logger.debug("Letter '%s' already guessed. Errors: %s", player_input, self.errors)
         else:
             self.extend_found_set(player_input)
             self.errors += 1
             self.embedded_message = DOES_NOT_EXIST
-            logger.debug(f"Letter '{player_input}' not in word. Errors: {self.errors}")
+            logger.debug("Letter '%s' not in word. Errors: %s", player_input, self.errors)
 
     def replace_hidden_character(self, indices):
         for i in indices:
             self.hidden_word_list[i] = self.original_word_list[i]
-        logger.debug(f"Updated hidden word: {''.join(self.hidden_word_list)}")
+        logger.debug("Updated hidden word: %s", ''.join(self.hidden_word_list))
 
     async def send_embed(self, context, name_, input_):
         if self.max_errors_reached():
@@ -205,17 +205,17 @@ class Hangman:
                 ),
             ))
         else:
-            logger.info(f"Game won by {name_}!")
+            logger.info("Game won by %s!", name_)
             await self.send_final_embed(context, name_, True)
 
     def extend_found_set(self, letter):
         before_size = len(self.letters_found)
         self.letters_found.update(VOWELS.get(letter, letter))
         after_size = len(self.letters_found)
-        logger.debug(f"Letters found updated: {before_size} -> {after_size} letters")
+        logger.debug("Letters found updated: %s -> %s letters", before_size, after_size)
 
     async def send_final_embed(self, context, name_, result):
-        logger.info(f"Sending final embed - Winner: {name_ if result else 'None'}, Word: {self.original_word}")
+        logger.info("Sending final embed - Winner: %s, Word: %s", name_ if result else 'None', self.original_word)
         end_embed = create_final_embed(name_, self.words, self.category, result)
         await context.send(file=end_embed[0], embed=end_embed[1])
 

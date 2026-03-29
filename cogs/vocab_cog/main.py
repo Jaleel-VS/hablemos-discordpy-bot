@@ -85,10 +85,10 @@ class VocabNoteModal(Modal, title="Add Vocabulary Note"):
             embed.set_footer(text=f"You now have {total_count} vocab notes")
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
-            logger.info(f"User {username} ({user_id}) added vocab note: {word_value}")
+            logger.info("User %s (%s) added vocab note: %s", username, user_id, word_value)
 
         except Exception as e:
-            logger.error(f"Error adding vocab note: {e}", exc_info=True)
+            logger.error("Error adding vocab note: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Error",
                 description=f"Failed to add vocabulary note: {e!s}",
@@ -172,10 +172,10 @@ class VocabCog(BaseCog):
             embed.set_footer(text=f"Total vocab notes: {total_count} | Use /vocab delete <id> to remove a note")
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
-            logger.info(f"User {interaction.user} ({user_id}) listed {len(notes)} vocab notes")
+            logger.info("User %s (%s) listed %s vocab notes", interaction.user, user_id, len(notes))
 
         except Exception as e:
-            logger.error(f"Error listing vocab notes: {e}", exc_info=True)
+            logger.error("Error listing vocab notes: %s", e, exc_info=True)
             embed = Embed(
                 title="Error",
                 description=f"Failed to list vocabulary notes: {e!s}",
@@ -232,10 +232,10 @@ class VocabCog(BaseCog):
             embed.set_footer(text="Use /vocab delete <id> to remove a note")
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
-            logger.info(f"User {interaction.user} ({user_id}) searched vocab notes for: {query}")
+            logger.info("User %s (%s) searched vocab notes for: %s", interaction.user, user_id, query)
 
         except Exception as e:
-            logger.error(f"Error searching vocab notes: {e}", exc_info=True)
+            logger.error("Error searching vocab notes: %s", e, exc_info=True)
             embed = Embed(
                 title="Error",
                 description=f"Failed to search vocabulary notes: {e!s}",
@@ -265,7 +265,7 @@ class VocabCog(BaseCog):
                     description=f"Successfully deleted vocabulary note #{note_id}",
                     color=discord.Color.green()
                 )
-                logger.info(f"User {interaction.user} ({user_id}) deleted vocab note {note_id}")
+                logger.info("User %s (%s) deleted vocab note %s", interaction.user, user_id, note_id)
             else:
                 embed = Embed(
                     title="Not Found",
@@ -276,7 +276,7 @@ class VocabCog(BaseCog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
         except Exception as e:
-            logger.error(f"Error deleting vocab note: {e}", exc_info=True)
+            logger.error("Error deleting vocab note: %s", e, exc_info=True)
             embed = Embed(
                 title="Error",
                 description=f"Failed to delete vocabulary note: {e!s}",
@@ -350,10 +350,10 @@ class VocabCog(BaseCog):
 
             # Send file with embed
             await interaction.followup.send(embed=embed, file=file, ephemeral=True)
-            logger.info(f"User {username} ({user_id}) exported {len(notes)} vocab notes to CSV")
+            logger.info("User %s (%s) exported %s vocab notes to CSV", username, user_id, len(notes))
 
         except Exception as e:
-            logger.error(f"Error exporting vocab notes: {e}", exc_info=True)
+            logger.error("Error exporting vocab notes: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Export Failed",
                 description=f"Failed to export vocabulary notes: {e!s}",

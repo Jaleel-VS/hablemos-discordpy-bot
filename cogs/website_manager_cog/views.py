@@ -87,7 +87,7 @@ class PodcastMenuView(View):
             await interaction.followup.send(embed=embed, view=view, ephemeral=True)
 
         except Exception as e:
-            logger.error(f"Error listing podcasts: {e}", exc_info=True)
+            logger.error("Error listing podcasts: %s", e, exc_info=True)
             await interaction.followup.send(f"Error loading podcasts: {e}", ephemeral=True)
 
     @button(label="View Reports", style=ButtonStyle.secondary, emoji="🚩")
@@ -131,7 +131,7 @@ class PodcastMenuView(View):
             await interaction.followup.send(embed=embed, view=view, ephemeral=True)
 
         except Exception as e:
-            logger.error(f"Error fetching reports: {e}", exc_info=True)
+            logger.error("Error fetching reports: %s", e, exc_info=True)
             await interaction.followup.send(f"Error loading reports: {e}", ephemeral=True)
 
     @button(label="Back", style=ButtonStyle.secondary, emoji="◀️", row=1)
@@ -320,10 +320,10 @@ class PodcastActionsView(View):
                 color=discord.Color.green()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
-            logger.info(f"User {interaction.user} {action} podcast: {podcast.title}")
+            logger.info("User %s %s podcast: %s", interaction.user, action, podcast.title)
 
         except Exception as e:
-            logger.error(f"Error toggling archive: {e}", exc_info=True)
+            logger.error("Error toggling archive: %s", e, exc_info=True)
             await interaction.followup.send(f"Error: {e}", ephemeral=True)
 
     @button(label="Back to List", style=ButtonStyle.secondary, emoji="◀️", row=1)
@@ -335,7 +335,7 @@ class PodcastActionsView(View):
             embed = view.create_embed()
             await interaction.response.edit_message(embed=embed, view=view)
         except Exception as e:
-            logger.error(f"Error returning to list: {e}", exc_info=True)
+            logger.error("Error returning to list: %s", e, exc_info=True)
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
 
 class ConfirmDeleteView(View):
@@ -360,7 +360,7 @@ class ConfirmDeleteView(View):
                 color=discord.Color.green()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
-            logger.info(f"User {interaction.user} deleted podcast: {self.podcast.title}")
+            logger.info("User %s deleted podcast: %s", interaction.user, self.podcast.title)
 
             # Go back to list
             podcasts = await self.api_client.get_podcasts(include_archived=True)
@@ -377,7 +377,7 @@ class ConfirmDeleteView(View):
             await interaction.edit_original_response(embed=embed, view=view)
 
         except Exception as e:
-            logger.error(f"Error deleting podcast: {e}", exc_info=True)
+            logger.error("Error deleting podcast: %s", e, exc_info=True)
             await interaction.followup.send(f"Error: {e}", ephemeral=True)
 
     @button(label="Cancel", style=ButtonStyle.secondary, emoji="✖️")
@@ -496,10 +496,10 @@ class ReportedPodcastActionsView(View):
                 color=discord.Color.green()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
-            logger.info(f"User {interaction.user} archived reported podcast: {podcast.title}")
+            logger.info("User %s archived reported podcast: %s", interaction.user, podcast.title)
 
         except Exception as e:
-            logger.error(f"Error archiving podcast: {e}", exc_info=True)
+            logger.error("Error archiving podcast: %s", e, exc_info=True)
             await interaction.followup.send(f"Error: {e}", ephemeral=True)
 
     @button(label="Clear Reports", style=ButtonStyle.primary, emoji="🧹")
@@ -516,10 +516,10 @@ class ReportedPodcastActionsView(View):
                 color=discord.Color.green()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
-            logger.info(f"User {interaction.user} cleared reports for: {self.podcast.title}")
+            logger.info("User %s cleared reports for: %s", interaction.user, self.podcast.title)
 
         except Exception as e:
-            logger.error(f"Error clearing reports: {e}", exc_info=True)
+            logger.error("Error clearing reports: %s", e, exc_info=True)
             await interaction.followup.send(f"Error: {e}", ephemeral=True)
 
     @button(label="Delete Podcast", style=ButtonStyle.danger, emoji="🗑️")
@@ -561,5 +561,5 @@ class ReportedPodcastActionsView(View):
             await interaction.response.edit_message(embed=embed, view=view)
 
         except Exception as e:
-            logger.error(f"Error returning to reports: {e}", exc_info=True)
+            logger.error("Error returning to reports: %s", e, exc_info=True)
             await interaction.response.send_message(f"Error: {e}", ephemeral=True)
