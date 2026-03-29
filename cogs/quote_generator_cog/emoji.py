@@ -4,6 +4,7 @@ import re
 # Twemoji CDN base — serves PNG images by Unicode codepoint
 _TWEMOJI_BASE = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72"
 _IMG_PX = 24
+_IMG_STYLE = "vertical-align:text-bottom;display:inline"
 
 # Discord custom emoji: <:name:id> or <a:name:id>
 _CUSTOM_EMOJI_RE = re.compile(r"<a?:([A-Za-z0-9_]+):([0-9]+)>")
@@ -37,7 +38,7 @@ def _custom_to_img(match: re.Match) -> str:
     return (
         f'<img src="https://cdn.discordapp.com/emojis/{emoji_id}.png"'
         f' alt="{name}" width="{_IMG_PX}" height="{_IMG_PX}"'
-        f' style="vertical-align:middle;display:inline">'
+        f' style="{_IMG_STYLE}">'
     )
 
 
@@ -49,7 +50,7 @@ def _unicode_to_img(match: re.Match) -> str:
     return (
         f'<img src="{_TWEMOJI_BASE}/{codepoints}.png"'
         f' alt="{emoji}" width="{_IMG_PX}" height="{_IMG_PX}"'
-        f' style="vertical-align:middle;display:inline">'
+        f' style="{_IMG_STYLE}">'
     )
 
 
