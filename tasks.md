@@ -31,7 +31,7 @@ Tracked improvements identified during code review. Work through one at a time.
   hardcoded without `get_int_env()` fallback, unlike other cog configs. Also
   missing type annotations.
 
-- [ ] **Add env var fallback for hardcoded IDs in `general_cog/main.py`** · effort: 1
+- [x] **Add env var fallback for hardcoded IDs in `general_cog/main.py`** · effort: 1
   `cogs/general_cog/main.py` — `INVITE_LINK` contains a hardcoded client ID, and
   the `info` command has a hardcoded user mention `<@216848576549093376>`. Move
   these to config with env var fallback.

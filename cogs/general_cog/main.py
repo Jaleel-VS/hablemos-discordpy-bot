@@ -7,16 +7,10 @@ from discord.ext import commands
 from discord.ext.commands import Bot, command
 
 from base_cog import BaseCog
+from cogs.general_cog.config import BOT_AUTHOR_ID, DPY, INVITE_LINK, REPO
 from cogs.utils.embeds import green_embed
 
 logger = logging.getLogger(__name__)
-
-REPO = 'https://github.com/Jaleel-VS/hablemos-discordpy-bot'
-DPY = 'https://discordpy.readthedocs.io/en/latest/'
-INVITE_LINK = (
-    "https://discord.com/api/oauth2/authorize"
-    "?client_id=808377026330492941&permissions=3072&scope=bot"
-)
 
 # Cogs hidden from the public /help overview (owner/admin-only)
 HIDDEN_COGS = {"AdminCog", "General", "DatabaseCommands", "RelayCog", "AskCog"}
@@ -205,7 +199,7 @@ class General(BaseCog):
         text = (
             f"The bot was coded in Python using the [discord.py]({DPY}) framework.\n\n"
             f"To report an error or make a suggestion please message "
-            f"<@216848576549093376>\n[Github Repository]({REPO})"
+            f"<@{BOT_AUTHOR_ID}>\n[Github Repository]({REPO})"
         )
         await ctx.send(embed=green_embed(text))
 
