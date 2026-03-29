@@ -18,14 +18,21 @@ ITEMS_PER_PAGE = 5
 class MainManageView(View):
     """Main management menu with resource type buttons"""
 
-    def __init__(self, api_client, timeout: float = 180):
+    def __init__(self, api_client, user_id: int, timeout: float = 180):
         super().__init__(timeout=timeout)
         self.api_client = api_client
+        self.user_id = user_id
+
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
+            return False
+        return True
 
     @button(label="Podcasts", style=ButtonStyle.primary, emoji="🎙️")
     async def podcasts_button(self, interaction: Interaction, btn: Button):
         """Open podcast management menu"""
-        view = PodcastMenuView(self.api_client)
+        view = PodcastMenuView(self.api_client, interaction.user.id)
         embed = Embed(
             title="Podcast Management",
             description="Choose an action:",
@@ -63,9 +70,16 @@ class MainManageView(View):
 class PodcastMenuView(View):
     """Podcast management menu"""
 
-    def __init__(self, api_client, timeout: float = 180):
+    def __init__(self, api_client, user_id: int, timeout: float = 180):
         super().__init__(timeout=timeout)
         self.api_client = api_client
+        self.user_id = user_id
+
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
+            return False
+        return True
 
     @button(label="Add Podcast", style=ButtonStyle.success, emoji="➕")
     async def add_button(self, interaction: Interaction, btn: Button):
@@ -90,7 +104,7 @@ class PodcastMenuView(View):
                 await interaction.followup.send(embed=embed, ephemeral=True)
                 return
 
-            view = PodcastListView(self.api_client, podcasts, page=0)
+            view = PodcastListView(self.api_client, podcasts, page=0, user_id=interaction.user.id)
             embed = view.create_embed()
             await interaction.followup.send(embed=embed, view=view, ephemeral=True)
 
@@ -135,7 +149,7 @@ class PodcastMenuView(View):
                         inline=False
                     )
 
-            view = ReportActionsView(self.api_client, report_counts, podcast_map)
+            view = ReportActionsView(self.api_client, report_counts, podcast_map, user_id=interaction.user.id)
             await interaction.followup.send(embed=embed, view=view, ephemeral=True)
 
         except Exception as e:
@@ -145,7 +159,7 @@ class PodcastMenuView(View):
     @button(label="Back", style=ButtonStyle.secondary, emoji="◀️", row=1)
     async def back_button(self, interaction: Interaction, btn: Button):
         """Go back to main menu"""
-        view = MainManageView(self.api_client)
+        view = MainManageView(self.api_client, interaction.user.id)
         embed = Embed(
             title="Website Management",
             description="Select a resource type to manage:",
@@ -164,16 +178,23 @@ class PodcastMenuView(View):
 class PodcastListView(View):
     """Paginated list of podcasts with actions"""
 
-    def __init__(self, api_client, podcasts: list, page: int = 0, timeout: float = 180):
+    def __init__(self, api_client, podcasts: list, page: int = 0, user_id: int = 0, timeout: float = 180):
         super().__init__(timeout=timeout)
         self.api_client = api_client
         self.podcasts = podcasts
         self.page = page
+        self.user_id = user_id
         self.total_pages = (len(podcasts) - 1) // ITEMS_PER_PAGE + 1 if podcasts else 1
 
         # Add podcast select dropdown
         self._update_select()
         self._update_buttons()
+
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
+            return False
+        return True
 
     def _update_select(self):
         """Update the podcast select dropdown for current page"""
@@ -244,7 +265,7 @@ class PodcastListView(View):
             await interaction.response.send_message("Podcast not found.", ephemeral=True)
             return
 
-        view = PodcastActionsView(self.api_client, podcast, parent_view=self)
+        view = PodcastActionsView(self.api_client, podcast, parent_view=self, user_id=interaction.user.id)
         embed = Embed(
             title=podcast.title,
             description=podcast.description,
@@ -280,7 +301,7 @@ class PodcastListView(View):
     @button(label="Back to Menu", style=ButtonStyle.secondary, emoji="◀️", row=1)
     async def back_button(self, interaction: Interaction, btn: Button):
         """Go back to podcast menu"""
-        view = PodcastMenuView(self.api_client)
+        view = PodcastMenuView(self.api_client, interaction.user.id)
         embed = Embed(
             title="Podcast Management",
             description="Choose an action:",
@@ -298,10 +319,11 @@ class PodcastListView(View):
 class PodcastActionsView(View):
     """Actions for a single podcast"""
 
-    def __init__(self, api_client, podcast, parent_view=None, timeout: float = 180):
+    def __init__(self, api_client, podcast, parent_view=None, user_id: int = 0, timeout: float = 180):
         super().__init__(timeout=timeout)
         self.api_client = api_client
         self.podcast = podcast
+        self.user_id = user_id
         self.parent_view = parent_view
 
         # Update archive button based on current state
@@ -315,6 +337,12 @@ class PodcastActionsView(View):
                     item.label = "Archive"
                     item.style = ButtonStyle.secondary
                     item.emoji = "🗄️"
+
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
+            return False
+        return True
 
     @button(label="Edit", style=ButtonStyle.primary, emoji="✏️")
     async def edit_button(self, interaction: Interaction, btn: Button):
@@ -354,7 +382,7 @@ class PodcastActionsView(View):
         """Go back to podcast list"""
         try:
             podcasts = await self.api_client.get_podcasts(include_archived=True)
-            view = PodcastListView(self.api_client, podcasts, page=0)
+            view = PodcastListView(self.api_client, podcasts, page=0, user_id=interaction.user.id)
             embed = view.create_embed()
             await interaction.response.edit_message(embed=embed, view=view)
         except Exception as e:
@@ -371,10 +399,17 @@ class PodcastActionsView(View):
 class ConfirmDeleteView(View):
     """Confirmation dialog for deleting a podcast"""
 
-    def __init__(self, api_client, podcast, timeout: float = 60):
+    def __init__(self, api_client, podcast, user_id: int = 0, timeout: float = 60):
         super().__init__(timeout=timeout)
         self.api_client = api_client
         self.podcast = podcast
+        self.user_id = user_id
+
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
+            return False
+        return True
 
     @button(label="Yes, Delete", style=ButtonStyle.danger, emoji="🗑️")
     async def confirm_button(self, interaction: Interaction, btn: Button):
@@ -395,10 +430,10 @@ class ConfirmDeleteView(View):
             # Go back to list
             podcasts = await self.api_client.get_podcasts(include_archived=True)
             if podcasts:
-                view = PodcastListView(self.api_client, podcasts, page=0)
+                view = PodcastListView(self.api_client, podcasts, page=0, user_id=interaction.user.id)
                 embed = view.create_embed()
             else:
-                view = PodcastMenuView(self.api_client)
+                view = PodcastMenuView(self.api_client, interaction.user.id)
                 embed = Embed(
                     title="Podcast Management",
                     description="No podcasts remaining. Add one!",
@@ -413,7 +448,7 @@ class ConfirmDeleteView(View):
     @button(label="Cancel", style=ButtonStyle.secondary, emoji="✖️")
     async def cancel_button(self, interaction: Interaction, btn: Button):
         """Cancel deletion"""
-        view = PodcastActionsView(self.api_client, self.podcast)
+        view = PodcastActionsView(self.api_client, self.podcast, user_id=interaction.user.id)
         embed = Embed(
             title=self.podcast.title,
             description=self.podcast.description,
@@ -436,11 +471,12 @@ class ConfirmDeleteView(View):
 class ReportActionsView(View):
     """Actions for managing reported podcasts"""
 
-    def __init__(self, api_client, report_counts, podcast_map, timeout: float = 180):
+    def __init__(self, api_client, report_counts, podcast_map, user_id: int = 0, timeout: float = 180):
         super().__init__(timeout=timeout)
         self.api_client = api_client
         self.report_counts = report_counts
         self.podcast_map = podcast_map
+        self.user_id = user_id
 
         # Add select for reported podcasts
         reported_podcasts = [
@@ -468,6 +504,12 @@ class ReportActionsView(View):
             select_menu.callback = self.podcast_selected
             self.add_item(select_menu)
 
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
+            return False
+        return True
+
     async def podcast_selected(self, interaction: Interaction):
         """Handle podcast selection from reports"""
         podcast_id = interaction.data['values'][0]
@@ -483,7 +525,7 @@ class ReportActionsView(View):
         )
 
         view = ReportedPodcastActionsView(
-            self.api_client, podcast, report_count, parent_view=self
+            self.api_client, podcast, report_count, parent_view=self, user_id=interaction.user.id
         )
         embed = Embed(
             title=f"🚩 {podcast.title}",
@@ -500,7 +542,7 @@ class ReportActionsView(View):
     @button(label="Back to Menu", style=ButtonStyle.secondary, emoji="◀️", row=1)
     async def back_button(self, interaction: Interaction, btn: Button):
         """Go back to podcast menu"""
-        view = PodcastMenuView(self.api_client)
+        view = PodcastMenuView(self.api_client, interaction.user.id)
         embed = Embed(
             title="Podcast Management",
             description="Choose an action:",
@@ -518,12 +560,19 @@ class ReportActionsView(View):
 class ReportedPodcastActionsView(View):
     """Actions for a reported podcast"""
 
-    def __init__(self, api_client, podcast, report_count, parent_view=None, timeout: float = 180):
+    def __init__(self, api_client, podcast, report_count, parent_view=None, user_id: int = 0, timeout: float = 180):
         super().__init__(timeout=timeout)
         self.api_client = api_client
         self.podcast = podcast
         self.report_count = report_count
         self.parent_view = parent_view
+        self.user_id = user_id
+
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
+            return False
+        return True
 
     @button(label="Archive Podcast", style=ButtonStyle.secondary, emoji="🗄️")
     async def archive_button(self, interaction: Interaction, btn: Button):
@@ -569,7 +618,7 @@ class ReportedPodcastActionsView(View):
     @button(label="Delete Podcast", style=ButtonStyle.danger, emoji="🗑️")
     async def delete_button(self, interaction: Interaction, btn: Button):
         """Delete the podcast"""
-        view = ConfirmDeleteView(self.api_client, self.podcast)
+        view = ConfirmDeleteView(self.api_client, self.podcast, user_id=interaction.user.id)
         embed = Embed(
             title="Confirm Delete",
             description=f"Are you sure you want to delete **{self.podcast.title}**?\n\nThis action cannot be undone.",
@@ -601,7 +650,7 @@ class ReportedPodcastActionsView(View):
                         inline=False
                     )
 
-            view = ReportActionsView(self.api_client, report_counts, podcast_map)
+            view = ReportActionsView(self.api_client, report_counts, podcast_map, user_id=interaction.user.id)
             await interaction.response.edit_message(embed=embed, view=view)
 
         except Exception as e:

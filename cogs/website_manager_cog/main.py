@@ -50,7 +50,7 @@ class WebsiteManagerCog(BaseCog):
         )
         embed.set_footer(text="This panel is only visible to you")
 
-        view = MainManageView(self.api_client)
+        view = MainManageView(self.api_client, interaction.user.id)
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
         logger.info("User %s opened website management panel", interaction.user)
 
@@ -68,7 +68,7 @@ class WebsiteManagerCog(BaseCog):
             logger.error("Error in manage command: %s", error, exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"An error occurred: {error!s}",
+                description="Something went wrong. Please try again later.",
                 color=discord.Color.red()
             )
             if not interaction.response.is_done():
