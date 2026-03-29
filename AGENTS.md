@@ -22,9 +22,13 @@ cogs/<name>_cog/     — Each feature is a cog in its own directory
   admin.py           — Optional admin commands (loaded from main.py's setup)
   config.py          — Optional cog-specific configuration (IDs, constants)
   *.py               — Helpers, parsers, etc.
+scripts/             — Utility scripts
+tasks.md             — Task tracking
 cogs/utils/          — Shared utilities
   embeds.py          — Reusable embed helpers (green_embed, red_embed, etc.)
   rate_limiter.py    — Shared RateLimiter for API calls
+  discovery.py       — Cog auto-discovery helpers
+  gemini_base.py     — Shared Gemini AI client base
 ```
 
 ### Cog Loading
@@ -93,3 +97,89 @@ Always use `self.bot.db` (the shared `Database` instance). All queries go throug
 - Don't use in-memory caches for data that belongs in the database
 - Don't use raw `pool.acquire()` + inline SQL in cog files — add query methods to DB mixins
 - Don't call `tree.sync()` in `on_ready` — use the `$sync` owner command instead
+
+## Git
+
+### Commit Messages
+
+All commit messages should follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+
+🤖 Assisted by AI
+```
+
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`
+
+Best practices:
+- Use the imperative mood ("add" not "added" or "adds")
+- Don't end the subject line with a period
+- Limit the subject line to 50 characters
+- Capitalize the subject line
+- Separate subject from body with a blank line
+- Use the body to explain what and why vs. how
+- Wrap the body at 72 characters
+
+### Git Repository Integrity Rules
+
+The key principle: once a commit exists in the remote repository, it's immutable.
+
+#### Never delete or corrupt Git internals
+- The `.git` directory must never be modified directly
+- Never run commands that would delete or corrupt Git history
+- Do not use `git filter-branch` or similar destructive history rewrites
+
+#### Remote history is sacrosanct
+- Never force push (`git push --force` or `git push -f`)
+- Never rewrite, amend, or rebase commits that have been pushed
+- Once pushed to remote, commits are permanent — fix forward with new commits
+
+#### Local history can be cleaned before sharing
+Always `git fetch` before assuming commits are local-only.
+
+Acceptable for commits that have **not** been pushed:
+- Amending the most recent commit (`git commit --amend`)
+- Soft/mixed reset to restructure unpushed work (`git reset --soft`, `git reset`)
+
+Do not use interactive rebase (`git rebase -i`) — it doesn't work well in CLI environments.
+
+**Squashing from a feature branch onto main:**
+1. `git fetch`
+2. `git checkout mainline`
+3. `git merge --squash $FEATURE_BRANCH_NAME`
+4. Commit with a quality message following the conventions above
+
+**Squashing within a single branch:**
+1. Ensure working directory is clean
+2. `git fetch`
+3. `git reset --soft origin/mainline` (keeps changes staged, removes local commits)
+4. Commit with a quality message following the conventions above
+
+Avoid even locally:
+- Hard reset (`git reset --hard`) — too easy to lose work
+- Cleaning untracked files (`git clean`) — might have important uncommitted work
+
+#### Emergency Recovery
+If these rules are accidentally violated:
+1. STOP — do not attempt further Git operations
+2. Document what happened and inform the user
+3. Consider creating a new branch from the last known good state
+4. If history is corrupted, preserve the working directory before attempting recovery
+
+## Source Citations
+
+When creating or updating files with information gathered from external sources (Quip documents, wikis, web searches, etc.), add a `## Sources` section at the end of the file:
+
+```
+## Sources
+
+- [Title or description](URL) — accessed YYYY-MM-DD
+- ⚠️ External link — [AWS Lambda Docs](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) — accessed YYYY-MM-DD
+```
+
+Prefix non-wiki, non-quip links with `⚠️ External link —`.
