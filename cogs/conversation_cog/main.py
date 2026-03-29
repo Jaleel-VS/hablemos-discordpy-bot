@@ -8,6 +8,7 @@ import random
 import time
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 from base_cog import COLORS, BaseCog
@@ -34,78 +35,56 @@ class ConversationCog(BaseCog):
             self.gemini = ConversationGeminiClient(api_key=bot.settings.gemini_api_key)
             logger.info("ConversationCog initialized successfully")
         except ValueError as e:
-            logger.error(f"Failed to initialize ConversationCog: {e}")
+            logger.error("Failed to initialize ConversationCog: %s", e)
             raise
 
-    async def parse_convo_args(self, args: tuple) -> dict | None:
-        """
-        Parse flexible arguments for $convo command
+    def _resolve_args(self, language: str | None, level: str | None, category: str | None) -> dict | None:
+        """Resolve and validate language/level/category, applying alias lookup and defaults."""
+        result: dict[str, str] = {}
 
-        Supports:
-        - spanish, spa, es → 'spanish'
-        - beginner, beg, a1 → 'beginner'
-        - restaurant, rest, food → 'restaurant'
-
-        Returns dict with 'language', 'level', 'category' or None for invalid
-        """
-        result = {'language': None, 'level': None, 'category': None}
-
-        for arg in args:
-            arg_lower = arg.lower()
-
-            # Try to match language
-            if arg_lower in LANGUAGE_ALIASES and result['language'] is None:
-                result['language'] = LANGUAGE_ALIASES[arg_lower]
-            # Try to match level
-            elif arg_lower in LEVEL_ALIASES and result['level'] is None:
-                result['level'] = LEVEL_ALIASES[arg_lower]
-            # Try to match category
-            elif arg_lower in CATEGORY_ALIASES and result['category'] is None:
-                result['category'] = CATEGORY_ALIASES[arg_lower]
+        for value, aliases, key, choices in [
+            (language, LANGUAGE_ALIASES, 'language', LANGUAGES),
+            (level, LEVEL_ALIASES, 'level', LEVELS),
+            (category, CATEGORY_ALIASES, 'category', CATEGORIES),
+        ]:
+            if value is None:
+                result[key] = random.choice(list(choices.keys()))
+            elif value.lower() in aliases:
+                result[key] = aliases[value.lower()]
             else:
-                # Invalid argument
                 return None
-
-        # Fill in defaults for missing args
-        if result['language'] is None:
-            result['language'] = random.choice(list(LANGUAGES.keys()))
-        if result['level'] is None:
-            result['level'] = 'beginner'
-        if result['category'] is None:
-            result['category'] = random.choice(list(CATEGORIES.keys()))
 
         return result
 
-    @commands.command(name='convo', aliases=['conv', 'conversation'])
+    @commands.hybrid_command(name='convo', aliases=['conv', 'conversation'])
     @commands.cooldown(1, 10, commands.BucketType.user)
-    async def convo(self, ctx, *args):
+    @app_commands.describe(
+        language="Language for the conversation",
+        level="Difficulty level",
+        category="Conversation topic",
+    )
+    @app_commands.choices(
+        language=[app_commands.Choice(name=v['name'], value=k) for k, v in LANGUAGES.items()],
+        level=[app_commands.Choice(name=v['name'], value=k) for k, v in LEVELS.items()],
+        category=[app_commands.Choice(name=v['name'], value=k) for k, v in CATEGORIES.items()],
+    )
+    async def convo(self, ctx: commands.Context, language: str | None = None,
+                    level: str | None = None, category: str | None = None):
         """
-        Get a language learning conversation
+        Get a language learning conversation.
 
-        Usage:
-            $convo                              - Random beginner conversation
-            $convo spanish                      - Random Spanish beginner
-            $convo english intermediate         - Random English intermediate
-            $convo spanish advanced restaurant  - Specific request
-
-        Languages: spanish (spa/es), english (eng/en)
-        Levels: beginner (beg), intermediate (int), advanced (adv)
-        Categories: restaurant, travel, shopping, workplace, social
+        Usage (prefix): $convo [language] [level] [category]
+        Slash command provides autocomplete for all options.
         """
-        # Send typing indicator
         async with ctx.typing():
-            # Parse arguments
-            params = await self.parse_convo_args(args)
+            params = self._resolve_args(language, level, category)
 
             if params is None:
                 embed = discord.Embed(
                     title="❌ Invalid Arguments",
                     description=(
-                        "**Usage:** `$convo [language] [level] [category]`\n\n"
-                        "**Examples:**\n"
-                        "• `$convo` - Random beginner conversation\n"
-                        "• `$convo spanish` - Random Spanish beginner\n"
-                        "• `$convo english intermediate restaurant`\n\n"
+                        "**Usage:** `$convo [language] [level] [category]`\n"
+                        "or use `/convo` for autocomplete.\n\n"
                         "**Languages:** spanish (spa/es), english (eng/en)\n"
                         "**Levels:** beginner (beg), intermediate (int), advanced (adv)\n"
                         "**Categories:** restaurant, travel, shopping, workplace, social"
@@ -238,16 +217,16 @@ class ConversationCog(BaseCog):
                         conversation_text=conversation_data['conversation']
                     )
                     success_count += 1
-                    logger.info(f"Generated conversation {i+1}/{count} for {language}/{level}/{category}")
+                    logger.info("Generated conversation %s/%s for %s/%s/%s", i+1, count, language, level, category)
                 else:
-                    logger.warning(f"Failed to generate conversation {i+1}/{count}")
+                    logger.warning("Failed to generate conversation %s/%s", i+1, count)
 
                 # Rate limiting: 1 second between generations
                 if i < count - 1:
                     await asyncio.sleep(1)
 
             except Exception as e:
-                logger.error(f"Error generating conversation {i+1}/{count}: {e}")
+                logger.error("Error generating conversation %s/%s: %s", i+1, count, e)
                 continue
 
         return success_count
@@ -259,21 +238,21 @@ class ConversationCog(BaseCog):
         This runs asynchronously without blocking the user's request
         """
         try:
-            logger.info(f"Starting regeneration for {language}/{level}/{category}")
+            logger.info("Starting regeneration for %s/%s/%s", language, level, category)
 
             # Delete old conversations
             deleted = await self.bot.db.delete_old_conversations(language, level, category)
-            logger.info(f"Deleted {deleted} old conversations")
+            logger.info("Deleted %s old conversations", deleted)
 
             # Generate 10 new ones
             success_count = await self.generate_conversations_batch(
                 language, level, category, count=10
             )
 
-            logger.info(f"Regenerated {success_count}/10 conversations for {language}/{level}/{category}")
+            logger.info("Regenerated %s/10 conversations for %s/%s/%s", success_count, language, level, category)
 
         except Exception as e:
-            logger.error(f"Error in background regeneration: {e}", exc_info=True)
+            logger.error("Error in background regeneration: %s", e, exc_info=True)
 
     def format_conversation_embed(self, conversation: dict, remaining_uses: int | None = None) -> discord.Embed:
         """
@@ -450,7 +429,7 @@ class ConversationCog(BaseCog):
         )
 
         await progress_msg.edit(embed=final_embed)
-        logger.info(f"Setup complete: {total} conversations generated, {failed} failed")
+        logger.info("Setup complete: %s conversations generated, %s failed", total, failed)
 
     @commands.command(name='convo_stats', aliases=['convostats'])
     @commands.is_owner()
@@ -505,7 +484,7 @@ class ConversationCog(BaseCog):
         elif isinstance(error, commands.CheckFailure):
             await ctx.send("❌ You don't have permission to use this command.")
         else:
-            logger.error(f"Unhandled error in conversation cog: {error}", exc_info=True)
+            logger.error("Unhandled error in conversation cog: %s", error, exc_info=True)
             await ctx.send("❌ An error occurred. Please try again later.")
 
 async def setup(bot):
