@@ -1,18 +1,18 @@
-"""Modals for the Introduce cog — free-text input forms."""
+"""Modals for the Introduce cog — free-text input forms with v2 components."""
 import logging
 import time
 from typing import TYPE_CHECKING
 
 import discord
-from discord import Embed, Interaction, TextStyle
-from discord.ui import Modal, TextInput
+from discord import Embed, Interaction, RadioGroupOption, TextStyle
+from discord.ui import Label, Modal, RadioGroup, TextInput
 
 from cogs.utils.embeds import green_embed, red_embed
 
-from .config import EXCHANGE_COLOR, INTRO_COLOR
+from .config import EXCHANGE_COLOR, INTRO_COLOR, LANGUAGES, PROFICIENCY_LEVELS
 
 if TYPE_CHECKING:
-    from .views import ExchangeRequestView
+    from .views import ExchangePrefsView
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +29,11 @@ def _format_as_list(text: str) -> str:
 def _format_blockquote(text: str) -> str:
     """Format text as a Discord blockquote."""
     return '\n'.join(f"> {line}" for line in text.strip().split('\n'))
+
+
+def _lookup_display(options: list[tuple[str, str]], value: str) -> str:
+    """Return the display label for a value from a (label, value) option list."""
+    return next((label for label, v in options if v == value), value)
 
 
 async def _post_introduction(
@@ -112,34 +117,41 @@ class IntroOnlyModal(Modal, title="Introduce Yourself"):
         await _post_introduction(interaction, embed, self.introductions_channel_id, "Welcome to the community!")
 
 
+def _radio_options(options: list[tuple[str, str]]) -> list[RadioGroupOption]:
+    """Convert (label, value) tuples to RadioGroupOption list."""
+    return [RadioGroupOption(label=lbl, value=v) for lbl, v in options]
+
+
 class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
-    """Modal for collecting free-text details about the exchange request."""
+    """Modal with RadioGroups for language/level + TextInput for about me."""
 
-    about_me = TextInput(
-        label="About Me",
-        placeholder="Tell others a bit about yourself...",
-        required=True,
-        max_length=500,
-        style=TextStyle.paragraph,
+    lang_offer = Label(
+        text="Language you offer",
+        component=RadioGroup(options=_radio_options(LANGUAGES)),
+    )
+    offer_level = Label(
+        text="Your level",
+        component=RadioGroup(options=_radio_options(PROFICIENCY_LEVELS)),
+    )
+    lang_seek = Label(
+        text="Language you're looking for",
+        component=RadioGroup(options=_radio_options(LANGUAGES)),
+    )
+    seek_level = Label(
+        text="Partner's minimum level",
+        component=RadioGroup(options=_radio_options(PROFICIENCY_LEVELS)),
+    )
+    about_me = Label(
+        text="About Me",
+        component=TextInput(
+            placeholder="Tell others about yourself, activities, additional info...",
+            required=True,
+            max_length=1000,
+            style=TextStyle.paragraph,
+        ),
     )
 
-    activities = TextInput(
-        label="Activities You'd Like To Do (Optional)",
-        placeholder="e.g., Watch shows together, voice calls, text chat, play games...",
-        required=False,
-        max_length=500,
-        style=TextStyle.paragraph,
-    )
-
-    additional_info = TextInput(
-        label="Additional Info (Optional)",
-        placeholder="Age/age range, availability, dialect preference, etc.",
-        required=False,
-        max_length=500,
-        style=TextStyle.paragraph,
-    )
-
-    def __init__(self, parent_view: ExchangeRequestView, introductions_channel_id: int):
+    def __init__(self, parent_view: ExchangePrefsView, introductions_channel_id: int):
         super().__init__()
         self.parent_view = parent_view
         self.introductions_channel_id = introductions_channel_id
@@ -151,10 +163,15 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
     def _build_request_embed(self, user: discord.User | discord.Member) -> Embed:
         """Build the formatted embed for exchange partner requests."""
         pv = self.parent_view
+        about_text = _format_blockquote(self.about_me.component.value.strip())
 
-        about_me_text = _format_blockquote(self.about_me.value.strip())
+        lang_offer_val = self.lang_offer.component.value
+        offer_level_val = self.offer_level.component.value
+        lang_seek_val = self.lang_seek.component.value
+        seek_level_val = self.seek_level.component.value
+
         embed = Embed(
-            description=f"{user.mention}'s seeking an exchange partner!\n\n**About Me**\n{about_me_text}",
+            description=f"{user.mention}'s seeking an exchange partner!\n\n**About Me**\n{about_text}",
             color=EXCHANGE_COLOR,
         )
 
@@ -162,8 +179,8 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
         embed.set_author(name=user.display_name, icon_url=avatar_url)
 
         # What I Offer
-        embed.add_field(name="Language", value=pv.language_offering_display, inline=True)
-        embed.add_field(name="Level", value=pv.offering_level_display, inline=True)
+        embed.add_field(name="Language", value=_lookup_display(LANGUAGES, lang_offer_val), inline=True)
+        embed.add_field(name="Level", value=_lookup_display(PROFICIENCY_LEVELS, offer_level_val), inline=True)
         current_unix = int(time.time())
         embed.add_field(name="Timezone", value=f"{pv.timezone} — <t:{current_unix}:t>", inline=True)
 
@@ -173,19 +190,10 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
             value="-# What I'm looking for in a language partner and how we can practice together.",
             inline=False,
         )
-        embed.add_field(name="Language", value=pv.language_seeking_display, inline=True)
-        embed.add_field(name="Level", value=pv.seeking_level_display, inline=True)
+        embed.add_field(name="Language", value=_lookup_display(LANGUAGES, lang_seek_val), inline=True)
+        embed.add_field(name="Level", value=_lookup_display(PROFICIENCY_LEVELS, seek_level_val), inline=True)
         country_value = pv.country_display if pv.country and pv.country != "no_preference" else "No preference"
         embed.add_field(name="Country", value=country_value, inline=True)
-
-        # Optional free-text fields
-        activities = (self.activities.value or "").strip()
-        if activities:
-            embed.add_field(name="Activities", value=_format_blockquote(activities), inline=False)
-
-        additional = (self.additional_info.value or "").strip()
-        if additional:
-            embed.add_field(name="Additional Information", value=_format_blockquote(additional), inline=False)
 
         footer = "Please send me DM if you want to be my language partner!" if pv.prefer_dm else "Please tag me in the server if you want to be my language partner!"
         embed.set_footer(text=footer)

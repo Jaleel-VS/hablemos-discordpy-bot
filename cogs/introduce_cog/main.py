@@ -33,10 +33,10 @@ class IntroduceCog(BaseCog):
 
         view = IntroStartView(introductions_channel_id=INTRODUCTIONS_CHANNEL_ID)
         embed = Embed(
-            title="Introduction (Step 1/4)",
+            title="Introduction",
             description=(
                 "Welcome! Let's introduce you to the community.\n\n"
-                "**Step 1:** Are you looking for a language exchange partner?"
+                "Are you looking for a language exchange partner?"
             ),
             color=discord.Color.blue(),
         )
