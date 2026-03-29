@@ -8,16 +8,12 @@ logger = logging.getLogger(__name__)
 
 dir_path = path.dirname(path.realpath(__file__))
 
+_RANK_MEDALS = {1: "🥇", 2: "🥈", 3: "🥉"}
+
+
 def _get_rank_display(rank: int) -> str:
     """Returns medal emoji for top 3, otherwise #rank format"""
-    if rank == 1:
-        return "🥇"
-    elif rank == 2:
-        return "🥈"
-    elif rank == 3:
-        return "🥉"
-    else:
-        return f"#{rank}"
+    return _RANK_MEDALS.get(rank, f"#{rank}")
 
 def _get_board_emoji(board_type: str) -> str:
     """Returns emoji for board type"""

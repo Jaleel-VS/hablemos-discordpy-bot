@@ -220,10 +220,8 @@ Generate the conversation now:"""
                     speaker2 = line.replace('SPEAKER2:', '').strip()
                 elif line.startswith('CONVERSATION:'):
                     in_conversation = True
-                elif in_conversation:
-                    # This is a conversation line
-                    if ':' in line:
-                        conversation_lines.append(line)
+                elif in_conversation and ':' in line:
+                    conversation_lines.append(line)
 
             # Validate we got everything
             if not all([scenario, speaker1, speaker2, conversation_lines]):

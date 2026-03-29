@@ -23,11 +23,7 @@ def has_management_permission():
             return True
 
         # Allow users with manage_messages permission (mods)
-        if isinstance(interaction.user, discord.Member):
-            if interaction.user.guild_permissions.manage_messages:
-                return True
-
-        return False
+        return isinstance(interaction.user, discord.Member) and interaction.user.guild_permissions.manage_messages
 
     return app_commands.check(predicate)
 

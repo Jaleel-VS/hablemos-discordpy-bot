@@ -28,6 +28,7 @@ class ConversationCog(BaseCog):
 
     def __init__(self, bot):
         super().__init__(bot)
+        self._background_tasks: set[asyncio.Task] = set()
         try:
             self.gemini = ConversationGeminiClient(api_key=bot.settings.gemini_api_key)
             logger.info("ConversationCog initialized successfully")
@@ -185,10 +186,11 @@ class ConversationCog(BaseCog):
             )
 
             if needs_regen:
-                # Trigger background regeneration (don't await)
-                asyncio.create_task(self.regenerate_conversations(
+                task = asyncio.create_task(self.regenerate_conversations(
                     language, level, category
                 ))
+                self._background_tasks.add(task)
+                task.add_done_callback(self._background_tasks.discard)
 
             # Display conversation
             # Calculate remaining uses for display (only for non-moderators)
