@@ -221,7 +221,7 @@ class PracticeCog(BaseCog):
         self.active_sessions[user_id] = session
 
         # Show first question
-        await self._show_question(interaction, session)
+        await self._show_question(interaction, session, is_first=True)
 
     @practice_group.command(name="stats", description="View your practice statistics")
     @app_commands.describe(
@@ -320,7 +320,8 @@ class PracticeCog(BaseCog):
 
         return cards
 
-    async def _show_question(self, interaction: Interaction, session: PracticeSession):
+    async def _show_question(self, interaction: Interaction, session: PracticeSession,
+                             *, is_first: bool = False):
         """Show the current question"""
         card = session.current_card
 
@@ -342,8 +343,7 @@ class PracticeCog(BaseCog):
                 card_mode = "typing"
 
         # Create embed and view (show disclaimer on first question only)
-        show_disclaimer = session.current_index == 0
-        embed = create_question_embed(session, card, show_disclaimer=show_disclaimer)
+        embed = create_question_embed(session, card, show_disclaimer=is_first)
 
         view = PracticeView(
             session=session,
@@ -355,12 +355,16 @@ class PracticeCog(BaseCog):
             on_quit=lambda i: self._handle_quit(i, session)
         )
 
-        # Send or edit message
-        try:
-            await interaction.followup.send(embed=embed, view=view, ephemeral=True)
-        except discord.HTTPException:
-            # If followup fails, try editing
-            await interaction.edit_original_response(embed=embed, view=view)
+        if is_first:
+            try:
+                await interaction.followup.send(embed=embed, view=view, ephemeral=True)
+            except discord.HTTPException:
+                await interaction.edit_original_response(embed=embed, view=view)
+        else:
+            try:
+                await interaction.response.edit_message(embed=embed, view=view)
+            except discord.InteractionResponded:
+                await interaction.followup.send(embed=embed, view=view, ephemeral=True)
 
     async def _handle_answer(self, interaction: Interaction, session: PracticeSession, user_answer: str):
         """Handle a user's answer"""
@@ -415,7 +419,7 @@ class PracticeCog(BaseCog):
         if session.is_complete:
             await self._end_session(interaction, session)
         else:
-            await self._show_next_question(interaction, session)
+            await self._show_question(interaction, session)
 
     async def _handle_skip(self, interaction: Interaction, session: PracticeSession):
         """Handle skipping a card"""
@@ -424,49 +428,11 @@ class PracticeCog(BaseCog):
         if session.is_complete:
             await self._end_session(interaction, session)
         else:
-            await self._show_next_question(interaction, session)
+            await self._show_question(interaction, session)
 
     async def _handle_quit(self, interaction: Interaction, session: PracticeSession):
         """Handle quitting a session"""
         await self._end_session(interaction, session, quit_early=True)
-
-    async def _show_next_question(self, interaction: Interaction, session: PracticeSession):
-        """Show the next question"""
-        card = session.current_card
-
-        if card is None:
-            await self._end_session(interaction, session)
-            return
-
-        # Determine mode for this card
-        card_mode = session.get_mode_for_card()
-
-        # Get distractors for multiple choice
-        distractors = []
-        if card_mode == "choice":
-            distractors = await self.bot.db.get_card_distractors(
-                session.language, card.word, count=3
-            )
-            if len(distractors) < 3:
-                card_mode = "typing"
-
-        # Create embed and view
-        embed = create_question_embed(session, card)
-
-        view = PracticeView(
-            session=session,
-            card=card,
-            card_mode=card_mode,
-            distractors=distractors,
-            on_answer=lambda i, a: self._handle_answer(i, session, a),
-            on_skip=lambda i: self._handle_skip(i, session),
-            on_quit=lambda i: self._handle_quit(i, session)
-        )
-
-        try:
-            await interaction.response.edit_message(embed=embed, view=view)
-        except discord.InteractionResponded:
-            await interaction.followup.send(embed=embed, view=view, ephemeral=True)
 
     async def _end_session(self, interaction: Interaction, session: PracticeSession,
                            quit_early: bool = False):
