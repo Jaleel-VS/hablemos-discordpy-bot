@@ -1,10 +1,10 @@
 import logging
-import os
 
 import discord
 from discord import Game
 from discord.ext.commands import Bot
 
+from cogs.utils.discovery import discover_extensions
 from config import load_settings
 from db import Database
 from logger import setup_logging
@@ -14,7 +14,7 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 settings = load_settings()
-logger.info(f"Environment: {settings.environment}")
+logger.info("Environment: %s", settings.environment)
 
 
 
@@ -50,7 +50,7 @@ class Hablemos(Bot):
             await self.db.connect()
             logger.info("Database connected successfully")
         except Exception as e:
-            logger.error(f"Failed to connect to database: {e}")
+            logger.error("Failed to connect to database: %s", e)
             return
 
         # Load disabled cogs set for filtering
@@ -59,28 +59,22 @@ class Hablemos(Bot):
         except Exception:
             disabled = set()
 
-        for folder in os.listdir('./cogs'):
-            if folder.endswith('_cog'):
-                cog_path = f'./cogs/{folder}'
-                if os.path.isdir(cog_path):
-                    for file in os.listdir(cog_path):
-                        if file.endswith('.py') and file.startswith('main'):
-                            ext = f'cogs.{folder}.{file[:-3]}'
-                            if ext in disabled:
-                                logger.info(f'Skipping disabled extension: {ext}')
-                                continue
-                            try:
-                                await self.load_extension(ext)
-                                logger.info(f'Loaded extension: {ext}')
-                            except Exception as e:
-                                logger.error(f'Failed to load extension {ext}: {e}', exc_info=True)
+        for ext in discover_extensions():
+            if ext in disabled:
+                logger.info("Skipping disabled extension: %s", ext)
+                continue
+            try:
+                await self.load_extension(ext)
+                logger.info("Loaded extension: %s", ext)
+            except Exception:
+                logger.error("Failed to load extension %s", ext, exc_info=True)
 
     async def on_ready(self):
         guild_id = self.settings.bot_playground_guild_id
         guild = self.get_guild(guild_id)
 
         if guild is None:
-            logger.warning(f"Guild with ID {guild_id} not found")
+            logger.warning("Guild with ID %s not found", guild_id)
             return
 
         self.error_channel = guild.get_channel(self.settings.error_channel_id)
@@ -94,7 +88,7 @@ class Hablemos(Bot):
         await self.change_presence(activity=Game(f'{self.command_prefix}help'))
 
     async def on_command_completion(self, ctx):
-        logger.info(f'Command {ctx.command} completed successfully by {ctx.author} in {ctx.guild}.')
+        logger.info("Command %s completed successfully by %s in %s.", ctx.command, ctx.author, ctx.guild)
         try:
             cog_name = type(ctx.cog).__name__ if ctx.cog else None
             await self.db.record_command(
@@ -106,7 +100,7 @@ class Hablemos(Bot):
                 is_slash=False,
             )
         except Exception as e:
-            logger.debug(f"Failed to record command metric: {e}")
+            logger.debug("Failed to record command metric: %s", e)
 
 # Initialize and run
 bot = Hablemos(settings.prefix, settings)

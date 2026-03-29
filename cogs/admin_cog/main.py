@@ -2,7 +2,6 @@
 Admin cog — owner-only commands for cog management and bot metrics.
 """
 import logging
-import os
 from datetime import UTC, datetime, timedelta
 
 import discord
@@ -10,6 +9,7 @@ from discord import Color, Embed
 from discord.ext import commands, tasks
 
 from base_cog import BaseCog
+from cogs.utils.discovery import discover_extensions
 
 logger = logging.getLogger(__name__)
 
@@ -21,19 +21,6 @@ METRICS_RETENTION_DAYS = 30
 
 # How many days of interaction rows to keep
 INTERACTIONS_RETENTION_DAYS = 90
-
-
-def _discover_extensions() -> list[str]:
-    """Return all discoverable cog extension paths."""
-    extensions = []
-    for folder in os.listdir('./cogs'):
-        if folder.endswith('_cog'):
-            cog_path = f'./cogs/{folder}'
-            if os.path.isdir(cog_path):
-                for file in os.listdir(cog_path):
-                    if file.endswith('.py') and file.startswith('main'):
-                        extensions.append(f'cogs.{folder}.{file[:-3]}')
-    return sorted(extensions)
 
 
 class AdminCog(BaseCog):
@@ -119,7 +106,7 @@ class AdminCog(BaseCog):
     @commands.is_owner()
     async def list_cogs(self, ctx: commands.Context):
         """List all cogs and their status."""
-        extensions = _discover_extensions()
+        extensions = discover_extensions()
         disabled = await self.bot.db.get_disabled_cogs()
         loaded = set(self.bot.extensions.keys())
 

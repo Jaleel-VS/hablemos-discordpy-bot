@@ -16,7 +16,7 @@ Tracked improvements identified during code review. Work through one at a time.
   inline generic syntax `def handle_interaction_errors[**P, T]` which shadows
   them. The `typing` imports and module-level assignments are dead code.
 
-- [ ] **Use `pathlib.Path` for cog discovery instead of `os.listdir`/`os.path`** · effort: 1
+- [x] **Use `pathlib.Path` for cog discovery instead of `os.listdir`/`os.path`** · effort: 1
   `hablemos.py` (`setup_hook`) and `cogs/admin_cog/main.py`
   (`_discover_extensions`) both use `os.listdir` + `os.path.isdir` for cog
   discovery. Replace with `pathlib.Path.glob()` or `iterdir()` for modern Python.
