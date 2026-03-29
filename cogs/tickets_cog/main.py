@@ -18,10 +18,11 @@ def _is_open(thread: discord.Thread, open_tag_names: set[str]) -> bool:
     return any(tag.name.lower() in open_tag_names for tag in thread.applied_tags)
 
 
-def _format_thread(thread: discord.Thread) -> str:
+def _format_thread(thread: discord.Thread, open_tag_names: set[str]) -> str:
     """Format a single thread as a line item."""
     responded = "✅" if thread.message_count > 1 else "⏳"
-    return f"{responded} [{thread.name}]({thread.jump_url})"
+    tags = " ".join(f"`{tag.name}`" for tag in thread.applied_tags if tag.name.lower() not in open_tag_names)
+    return f"{responded} [{thread.name}]({thread.jump_url}) {tags}".rstrip()
 
 
 class TicketsCog(BaseCog):
@@ -57,7 +58,7 @@ class TicketsCog(BaseCog):
             open_threads.sort(key=lambda t: t.created_at or t.id)
 
             if open_threads:
-                lines = [_format_thread(t) for t in open_threads]
+                lines = [_format_thread(t, open_tags) for t in open_threads]
                 value = '\n'.join(lines)
                 # Embed field value limit is 1024
                 if len(value) > 1024:
