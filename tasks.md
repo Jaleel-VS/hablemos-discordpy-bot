@@ -10,11 +10,6 @@ Tracked improvements identified during code review. Work through one at a time.
 
 ## Pending
 
-- [ ] **Extract error handler from `hablemos.py`** · effort: 3
-  The `on_command_error` handler has a 30-item quotes list and mixed
-  responsibilities (logging, metrics, user messages). Extract the quotes to a
-  constant and consider moving error handling to a utility or dedicated cog.
-
 - [ ] **Convert `$league` admin to `@commands.group()` subcommands** · effort: 3
   `cogs/league_cog/admin.py` — Replace the manual `if/elif` dispatcher in
   `league_admin` with proper `@commands.group()` subcommands like `$introtracker`
@@ -39,5 +34,6 @@ Tracked improvements identified during code review. Work through one at a time.
 - [x] **Move inline SQL into DB mixins** — `db/conversations.py`, `db/leaderboard.py`
 - [x] **Stop syncing slash commands on every `on_ready`** — `hablemos.py`, `cogs/admin_cog/main.py`
 - [x] **Narrow `Intents.all()` to only what's needed** — `hablemos.py`
+- [x] **Extract error handler from `hablemos.py`** — `cogs/error_handler_cog/main.py`
 - [x] **Auto-generate `/help` from cog metadata** — `cogs/general_cog/main.py`
 - [x] **Fix cog docstrings for user-facing help** — 12 cog files
