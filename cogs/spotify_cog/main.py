@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class SpotifyCog(BaseCog):
+    """Share what you're listening to on Spotify."""
 
     @commands.hybrid_command(name="nowplaying", aliases=['spoti', 'np'])
     @app_commands.describe(member="The user to check (leave empty for yourself)")

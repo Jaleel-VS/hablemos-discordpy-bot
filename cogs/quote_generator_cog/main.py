@@ -103,6 +103,7 @@ def _parse_message_link(link: str) -> tuple[int, int, int] | None:
 
 
 class QuoteGenerator(BaseCog):
+    """Create styled quote images from Discord messages."""
 
     async def _check_permissions(self, ctx) -> bool:
         """Check pause state, user ban, and channel ban. Sends error and returns False if blocked."""

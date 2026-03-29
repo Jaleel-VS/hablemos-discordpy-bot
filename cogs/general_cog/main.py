@@ -1,509 +1,229 @@
+"""General cog — help, info, ping, and invite commands."""
+import logging
 import time
 
 from discord import Color, Embed, Interaction, app_commands
+from discord.ext import commands
 from discord.ext.commands import Bot, command
 
 from base_cog import BaseCog
 from cogs.utils.embeds import green_embed
 
-try:
-    from cogs.league_cog.config import ROUNDS
-except ImportError:
-    # Fallback if league cog not available
-    class ROUNDS:
-        ROUND_DURATION_DAYS = 14
+logger = logging.getLogger(__name__)
 
 REPO = 'https://github.com/Jaleel-VS/hablemos-discordpy-bot'
 DPY = 'https://discordpy.readthedocs.io/en/latest/'
-PYC = 'https://github.com/Pycord-Development/pycord'
-INVITE_LINK = "https://discord.com/api/oauth2/authorize?client_id=808377026330492941&permissions=3072&scope=bot"
+INVITE_LINK = (
+    "https://discord.com/api/oauth2/authorize"
+    "?client_id=808377026330492941&permissions=3072&scope=bot"
+)
+
+# Cogs hidden from the public /help overview (owner/admin-only)
+HIDDEN_COGS = {"AdminCog", "General", "DatabaseCommands", "RelayCog", "AskCog"}
+
+
+def _is_owner_command(cmd: commands.Command) -> bool:
+    """Check if a prefix command has an is_owner check."""
+    return any(
+        getattr(check, "__qualname__", "").startswith("is_owner")
+        for check in cmd.checks
+    )
+
+
+def _format_prefix_cmd(prefix: str, cmd: commands.Command) -> str:
+    """Format a single prefix command for embed display."""
+    name = f"`{prefix}{cmd.qualified_name}`"
+    doc = cmd.short_doc or cmd.description or ""
+    return f"{name} — {doc}" if doc else name
+
+
+def _format_slash_cmd(cmd: app_commands.Command | app_commands.Group) -> str:
+    """Format a single slash command/group for embed display."""
+    if isinstance(cmd, app_commands.Group):
+        return f"`/{cmd.qualified_name}` — {cmd.description}"
+    desc = cmd.description or ""
+    return f"`/{cmd.qualified_name}` — {desc}" if desc else f"`/{cmd.qualified_name}`"
+
+
+def _build_cog_field(
+    cog_name: str,
+    cog_desc: str,
+    slash_lines: list[str],
+    prefix_lines: list[str],
+) -> tuple[str, str]:
+    """Return (field_name, field_value) for a cog's help section."""
+    lines = slash_lines + prefix_lines
+    value = "\n".join(lines) if lines else "*No commands*"
+    return cog_name, value
+
+
+def _collect_cog_entries(bot: Bot) -> list[tuple[str, str, list[str], list[str]]]:
+    """Collect (cog_name, cog_desc, slash_lines, prefix_lines) for visible cogs."""
+    entries: list[tuple[str, str, list[str], list[str]]] = []
+    prefix = bot.command_prefix
+
+    for name, cog in sorted(bot.cogs.items()):
+        if name in HIDDEN_COGS:
+            continue
+
+        slash_lines: list[str] = []
+        for cmd in cog.walk_app_commands():
+            if isinstance(cmd, app_commands.Command):
+                slash_lines.append(_format_slash_cmd(cmd))
+
+        # Also show top-level groups themselves
+        for cmd in cog.get_app_commands():
+            if isinstance(cmd, app_commands.Group):
+                slash_lines.insert(0, _format_slash_cmd(cmd))
+
+        prefix_lines: list[str] = []
+        for cmd in cog.get_commands():
+            if _is_owner_command(cmd):
+                continue
+            prefix_lines.append(_format_prefix_cmd(prefix, cmd))
+
+        if slash_lines or prefix_lines:
+            entries.append((name, cog.description or "", slash_lines, prefix_lines))
+
+    return entries
 
 
 class General(BaseCog):
+    """General bot commands — help, info, ping."""
+
     def __init__(self, bot: Bot):
         super().__init__(bot)
 
-    @app_commands.command(name="help", description="View all available bot commands and features")
-    @app_commands.describe(category="Choose a specific category to view")
-    @app_commands.choices(category=[
-        app_commands.Choice(name="📚 All Commands", value="all"),
-        app_commands.Choice(name="🗣️ Conversation & Learning", value="conversation"),
-        app_commands.Choice(name="📝 Vocabulary & Study", value="vocabulary"),
-        app_commands.Choice(name="🎮 Games & Fun", value="games"),
-        app_commands.Choice(name="🏆 Language League", value="league"),
-        app_commands.Choice(name="🎵 Social Features", value="social"),
-        app_commands.Choice(name="🛠️ Moderation & Admin", value="admin")
-    ])
-    async def help_slash(self, interaction: Interaction, category: str = "all"):
-        """Comprehensive help command showing all bot features"""
+    # ------------------------------------------------------------------
+    # /help  (slash)
+    # ------------------------------------------------------------------
 
-        if category == "all":
+    @app_commands.command(
+        name="help",
+        description="View all available bot commands and features",
+    )
+    @app_commands.describe(category="Choose a specific cog to view")
+    async def help_slash(self, interaction: Interaction, category: str | None = None):
+        """Auto-generated help from cog docstrings and command metadata."""
+        entries = _collect_cog_entries(self.bot)
+
+        if category:
+            # Find matching cog (case-insensitive)
+            match = next(
+                (e for e in entries if e[0].lower() == category.lower()),
+                None,
+            )
+            if not match:
+                await interaction.response.send_message(
+                    f"Unknown category `{category}`. Use `/help` to see all.",
+                    ephemeral=True,
+                )
+                return
+
+            cog_name, cog_desc, slash_lines, prefix_lines = match
             embed = Embed(
-                title="🤖 Hablemos Bot - Command Guide",
+                title=f"📖 {cog_name}",
+                description=cog_desc or None,
+                color=Color.green(),
+            )
+            if slash_lines:
+                embed.add_field(
+                    name="Slash Commands",
+                    value="\n".join(slash_lines),
+                    inline=False,
+                )
+            if prefix_lines:
+                embed.add_field(
+                    name="Prefix Commands",
+                    value="\n".join(prefix_lines),
+                    inline=False,
+                )
+        else:
+            embed = Embed(
+                title="🤖 Hablemos Bot — Command Guide",
                 description=(
-                    "A comprehensive language learning bot for Spanish and English learners!\n\n"
-                    "**Select a category below or use `/help <category>` for details:**"
+                    "A language learning bot for Spanish and English learners!\n"
+                    "Use `/help <category>` for details on a specific category."
                 ),
-                color=Color.blue()
+                color=Color.blue(),
             )
+            for cog_name, cog_desc, slash_lines, prefix_lines in entries:
+                field_name, field_value = _build_cog_field(
+                    cog_name, cog_desc, slash_lines, prefix_lines,
+                )
+                # Truncate to embed field limit
+                if len(field_value) > 1024:
+                    field_value = field_value[:1021] + "…"
+                embed.add_field(name=field_name, value=field_value, inline=False)
 
-            embed.add_field(
-                name="🗣️ Conversation & Learning",
-                value=(
-                    "`/convo` - Generate AI conversations\n"
-                    "`/conjugate` - Practice verb conjugations\n"
-                    "`/synonyms` - Find synonyms & antonyms"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="📝 Vocabulary & Study",
-                value=(
-                    "`/vocab add` - Save vocabulary notes\n"
-                    "`/vocab list` - View your notes\n"
-                    "`/vocab search` - Search your vocabulary\n"
-                    "`/vocab delete` - Remove a note\n"
-                    "`/vocab export` - Export to CSV"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="🎮 Games & Fun",
-                value=(
-                    "`$hangman` - Play hangman\n"
-                    "`$topic` - Conversation starters\n"
-                    "`$quote` - Random quotes"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="🏆 Language League",
-                value=(
-                    "`/league join` - Join the competition\n"
-                    "`/league view` - See rankings\n"
-                    "`/league stats` - Your progress\n"
-                    "`/league leave` - Opt out"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="🎵 Social Features",
-                value=(
-                    "`/spotify` - Share what you're listening to\n"
-                    "`$info` - Bot information\n"
-                    "`$ping` - Check bot latency"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="🛠️ Moderation & Admin",
-                value=(
-                    "`$summarize` - Summarize conversations\n"
-                    "`$intro` - Introduction tracking\n"
-                    "`$note` - Database commands\n"
-                    "*Owner-only commands available*"
-                ),
-                inline=False
-            )
-
-            embed.set_footer(text="Use /help <category> for detailed information about each category")
-
-        elif category == "conversation":
-            embed = Embed(
-                title="🗣️ Conversation & Learning Commands",
-                description="AI-powered conversation generation and language practice tools",
-                color=Color.green()
-            )
-
-            embed.add_field(
-                name="/convo",
-                value=(
-                    "Generate AI conversations for language practice.\n"
-                    "**Daily limit:** 10 conversations per user\n"
-                    "**Features:** Customizable scenarios, realistic dialogues"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="/conjugate <verb> [tense]",
-                value=(
-                    "Practice verb conjugations in Spanish.\n"
-                    "**Supported tenses:** Present, Preterite, Imperfect, Future, and more\n"
-                    "**Example:** `/conjugate hablar present`"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="/synonyms <word> <language>",
-                value=(
-                    "Find synonyms and antonyms for any word.\n"
-                    "**Languages:** Spanish, English\n"
-                    "**Example:** `/synonyms happy english`"
-                ),
-                inline=False
-            )
-
-        elif category == "vocabulary":
-            embed = Embed(
-                title="📝 Vocabulary & Study Commands",
-                description="Save, manage, and review your vocabulary notes privately",
-                color=Color.gold()
-            )
-
-            embed.add_field(
-                name="/vocab add",
-                value=(
-                    "Add a new vocabulary note (ephemeral - private to you).\n"
-                    "Opens a form where you can enter:\n"
-                    "• Word or phrase\n"
-                    "• Translation/definition\n"
-                    "• Language (optional)"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="/vocab list [limit]",
-                value=(
-                    "View your saved vocabulary notes.\n"
-                    "**Default:** Shows 10 most recent notes\n"
-                    "**Max:** 50 notes per page"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="/vocab search <query>",
-                value=(
-                    "Search through your vocabulary notes.\n"
-                    "Searches in words, translations, and language fields."
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="/vocab delete <note_id>",
-                value=(
-                    "Delete a specific note by ID.\n"
-                    "You can find note IDs using `/vocab list`"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="/vocab export",
-                value=(
-                    "Export all your notes to a CSV file.\n"
-                    "Perfect for importing into flashcard apps!"
-                ),
-                inline=False
-            )
-
-        elif category == "games":
-            embed = Embed(
-                title="🎮 Games & Fun Commands",
-                description="Interactive games and conversation tools",
-                color=Color.purple()
-            )
-
-            embed.add_field(
-                name="$hangman",
-                value=(
-                    "Classic hangman game for vocabulary practice.\n"
-                    "Guess letters to reveal the hidden word!"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="$topic [category]",
-                value=(
-                    "Get conversation starter questions.\n"
-                    "**Categories:** general (1), philosophical (2), would you rather (3), other (4)\n"
-                    "**Example:** `$topic phil`"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="$quote",
-                value="Get a random inspirational quote.",
-                inline=False
-            )
-
-        elif category == "league":
-            embed = Embed(
-                title="🏆 Language League Commands",
-                description="Compete with other learners and track your progress!",
-                color=Color.orange()
-            )
-
-            embed.add_field(
-                name="How It Works",
-                value=(
-                    "• **Choose ONE language** to focus on (Spanish OR English)\n"
-                    "• **Write messages** in that language (min 10 characters)\n"
-                    "• **Earn points** for quality language practice\n"
-                    "• **Get bonuses** for consistency (+5 points per active day)\n"
-                    "• **Compete** in biweekly rounds (2 weeks each)\n"
-                    "• **Win awards** - #1 winners get a star ⭐"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="/league join",
-                value=(
-                    "Join the Language League competition.\n"
-                    "**Requirements:**\n"
-                    "• Must have ONE Learning role (Spanish OR English)\n"
-                    "• Cannot be native in language you're learning\n"
-                    "• Only messages in your learning language count"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="/league view [spanish|english|combined] [limit]",
-                value=(
-                    "View league rankings.\n"
-                    "**Spanish League:** Spanish learners only\n"
-                    "**English League:** English learners only\n"
-                    "**Combined League:** All participants"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="/league stats [@user]",
-                value=(
-                    "View your stats or another user's stats.\n"
-                    "Shows: Total points, active days, score, rankings"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="/league leave",
-                value="Opt out of the Language League (preserves historical data).",
-                inline=False
-            )
-
-            embed.add_field(
-                name="📊 Scoring System",
-                value=(
-                    "**Points:** 1 point per valid message\n"
-                    "**Consistency Bonus:** +5 points per active day\n"
-                    "**Total Score:** Points + (Active Days × 5)\n\n"
-                    "**Anti-Spam:**\n"
-                    "• 2-minute cooldown per channel\n"
-                    "• 50 message daily cap\n"
-                    "• Language detection (must be in target language)"
-                ),
-                inline=False
-            )
-
-        elif category == "social":
-            embed = Embed(
-                title="🎵 Social Features",
-                description="Share and connect with the community",
-                color=Color.teal()
-            )
-
-            embed.add_field(
-                name="/spotify",
-                value=(
-                    "Share what you're currently listening to on Spotify.\n"
-                    "Shows: Song, artist, album, and link"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="$info",
-                value="Get information about the bot and development.",
-                inline=False
-            )
-
-            embed.add_field(
-                name="$ping",
-                value="Check the bot's latency and response time.",
-                inline=False
-            )
-
-        elif category == "admin":
-            embed = Embed(
-                title="🛠️ Moderation & Admin Commands",
-                description="Tools for server moderators and administrators",
-                color=Color.red()
-            )
-
-            embed.add_field(
-                name="$summarize <message_count> [#channel]",
-                value=(
-                    "Summarize recent conversation using AI.\n"
-                    "**Max:** 100 messages\n"
-                    "*Moderator only*"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="Introduction Tracking",
-                value=(
-                    "Tracks user introductions and exemptions.\n"
-                    "`$intro exempt <@user>` - Add exemption\n"
-                    "`$intro unexempt <@user>` - Remove exemption\n"
-                    "*Admin only*"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="Database Commands",
-                value=(
-                    "`$note add <@user> <note>` - Add user note\n"
-                    "`$note view <@user>` - View user notes\n"
-                    "`$note delete <note_id>` - Delete note\n"
-                    "*Admin only*"
-                ),
-                inline=False
-            )
-
-            embed.add_field(
-                name="League Admin Commands",
-                value=(
-                    "`$league ban <@user>` - Ban from league\n"
-                    "`$league unban <@user>` - Unban from league\n"
-                    "`$league exclude <#channel>` - Exclude channel\n"
-                    "`$league include <#channel>` - Include channel\n"
-                    "`$league excluded` - List excluded channels\n"
-                    "`$league admin_stats` - View league statistics\n"
-                    "`$league endround` - End round & start new one\n"
-                    "`$league preview` - Preview round-end announcement\n"
-                    "`$league seedrole <ids>` - Seed role recipients\n"
-                    "*Owner only*"
-                ),
-                inline=False
-            )
+            embed.set_footer(text="Use /help <category> for detailed information")
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @help_slash.autocomplete("category")
+    async def _help_category_autocomplete(
+        self, interaction: Interaction, current: str,
+    ) -> list[app_commands.Choice[str]]:
+        entries = _collect_cog_entries(self.bot)
+        return [
+            app_commands.Choice(name=name, value=name)
+            for name, *_ in entries
+            if current.lower() in name.lower()
+        ][:25]
+
+    # ------------------------------------------------------------------
+    # $help  (prefix) — keeps the existing fallback-to-command.help pattern
+    # ------------------------------------------------------------------
 
     @command()
     async def help(self, ctx, arg=''):
         if arg:
-            # Special handling for league
-            if arg.lower() == 'league':
-                # Calculate round duration display
-                days = ROUNDS.ROUND_DURATION_DAYS
-                if days == 7:
-                    duration_text = "week"
-                elif days == 14:
-                    duration_text = "2 weeks"
-                elif days % 7 == 0:
-                    duration_text = f"{days // 7} weeks"
-                else:
-                    duration_text = f"{days} days"
-
-                league_embed = Embed(
-                    title="🏆 Language League",
-                    description=(
-                        "**Practice your target language. Compete. Win.**\n\n"
-                        "The Language League rewards consistent practice in Spanish or English. "
-                        "Every message you write in your target language earns points. "
-                        "Stay active, climb the rankings, and show your dedication!\n\n"
-                        f"🔁 **Rounds:** Every {duration_text}\n"
-                        f"🎯 **Focus:** Write in your target language to earn points\n"
-                        f"⭐ **Rewards:** Top 3 winners each round get recognition\n\n"
-                    ),
-                    color=Color.gold()
-                )
-
-                league_embed.add_field(
-                    name="⚡ Quick Start",
-                    value=(
-                        "**1.** Use `/league join` to opt in\n"
-                        "**2.** Start writing messages in your target language\n"
-                        "**3.** Check `/league view` to see rankings\n"
-                        "**4.** Track your progress with `/league stats`"
-                    ),
-                    inline=False
-                )
-
-                league_embed.set_footer(
-                    text="💬 Use /league commands | Questions? Message/tag the bot owner"
-                )
-
-                await ctx.send(embed=league_embed)
-                return
-
-            # Default command lookup
             requested = self.bot.get_command(arg)
             if not requested:
                 await ctx.send("I was unable to find the command you requested")
                 return
-            message = ""
-            message += f"**{self.bot.command_prefix}{requested.qualified_name}**\n"
+            message = f"**{self.bot.command_prefix}{requested.qualified_name}**\n"
             if requested.aliases:
                 message += f"Aliases: `{'`, `'.join(requested.aliases)}`\n"
             if requested.help:
                 message += requested.help
-            emb = green_embed(message)
-            await ctx.send(embed=emb)
+            await ctx.send(embed=green_embed(message))
         else:
-            to_send = f"""
-            Type `{self.bot.command_prefix}help <command>` for more info about on any command.
-            ⚠️ If something doesn't work as expected, it's expected lol. I'm currently refactoring the bot, please be patient.
-            """
+            to_send = (
+                f"Type `{self.bot.command_prefix}help <command>` for more info "
+                f"on any command.\nUse `/help` for the full command guide."
+            )
             await ctx.send(embed=green_embed(to_send))
+
+    # ------------------------------------------------------------------
+    # Utility commands
+    # ------------------------------------------------------------------
 
     @command()
     async def info(self, ctx):
-        """
-        Information about the bot
-        """
-
-        text = f"""
-        The bot was coded in Python using the [discord.py]({DPY}) framework. Possible future migration to a C# or Rust framework
-
-        To report an error or make a suggestion please message <@216848576549093376>
-        [Github Repository]({REPO})
-        """
-
+        """Information about the bot."""
+        text = (
+            f"The bot was coded in Python using the [discord.py]({DPY}) framework.\n\n"
+            f"To report an error or make a suggestion please message "
+            f"<@216848576549093376>\n[Github Repository]({REPO})"
+        )
         await ctx.send(embed=green_embed(text))
 
     @command()
     async def invite(self, ctx):
-        """
-        Bot invitation link
-        """
-
-        text = f"""
-        [Invite the bot to your server]({INVITE_LINK})
-        I still have to make the prefix configurable so for now you have to use `$`
-        """
-
+        """Bot invitation link."""
+        text = f"[Invite the bot to your server]({INVITE_LINK})"
         await ctx.send(embed=green_embed(text))
 
     @command()
     async def ping(self, ctx):
         """Check bot latency: WebSocket, API round-trip, and database."""
-        # WebSocket heartbeat
         ws = round(self.bot.latency * 1000, 2)
 
-        # API round-trip: time a message edit
         start = time.perf_counter()
         msg = await ctx.send(embed=green_embed("Pinging..."))
         api = round((time.perf_counter() - start) * 1000, 2)
 
-        # Database: time a simple query
         start = time.perf_counter()
         await self.bot.db._fetchval("SELECT 1")
         db = round((time.perf_counter() - start) * 1000, 2)
@@ -513,6 +233,7 @@ class General(BaseCog):
         embed.add_field(name="API", value=f"`{api}ms`", inline=True)
         embed.add_field(name="Database", value=f"`{db}ms`", inline=True)
         await msg.edit(embed=embed)
+
 
 async def setup(bot):
     await bot.add_cog(General(bot))

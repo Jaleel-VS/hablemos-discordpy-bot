@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class IntroduceCog(BaseCog):
-    """Cog for member introductions and language exchange partner requests."""
+    """Introduce yourself and find language exchange partners."""
 
     @app_commands.command(
         name="introduce",

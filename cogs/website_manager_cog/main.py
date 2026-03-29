@@ -28,7 +28,7 @@ def has_management_permission():
     return app_commands.check(predicate)
 
 class WebsiteManagerCog(BaseCog):
-    """Cog for managing website resources"""
+    """Manage podcasts, videos, and other website resources."""
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)

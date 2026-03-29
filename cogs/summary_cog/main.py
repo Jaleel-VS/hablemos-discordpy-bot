@@ -19,7 +19,7 @@ MAX_MESSAGES = 500
 
 
 class SummaryCog(BaseCog):
-    """Cog for AI-powered conversation summaries using Gemini."""
+    """AI-powered conversation summaries."""
 
     def __init__(self, bot):
         super().__init__(bot)

@@ -24,7 +24,7 @@ from .gemini_client import ConversationGeminiClient
 logger = logging.getLogger(__name__)
 
 class ConversationCog(BaseCog):
-    """Cog for AI-powered language learning conversations"""
+    """AI-generated conversations for language practice."""
 
     def __init__(self, bot):
         super().__init__(bot)

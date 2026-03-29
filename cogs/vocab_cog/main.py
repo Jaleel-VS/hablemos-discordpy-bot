@@ -97,7 +97,7 @@ class VocabNoteModal(Modal, title="Add Vocabulary Note"):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 class VocabCog(BaseCog):
-    """Cog for managing vocabulary notes with ephemeral messages"""
+    """Save, search, and export your personal vocabulary notes."""
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)

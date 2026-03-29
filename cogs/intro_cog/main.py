@@ -54,6 +54,8 @@ def _build_alert_embed(
 
 
 class IntroductionTracker(BaseCog):
+    """Tracks and manages member introductions."""
+
     def __init__(self, bot: Bot):
         super().__init__(bot)
         self.intro_channel_id = bot.settings.intro_channel_id
@@ -157,7 +159,7 @@ class IntroductionTracker(BaseCog):
     @commands.group(name='introtracker', aliases=['toggleintro'], invoke_without_command=True)
     @has_permissions(manage_messages=True)
     async def introtracker(self, ctx: commands.Context):
-        """Introduction tracker management. Use subcommands: on, off, status, alertchannel, warnchannel."""
+        """Manage the introduction tracker."""
         await ctx.invoke(self.status)
 
     @introtracker.command(name='on', aliases=['enable'])
@@ -245,7 +247,7 @@ class IntroductionTracker(BaseCog):
     @commands.command()
     @has_permissions(manage_messages=True)
     async def introexempt(self, ctx: commands.Context, user_id: int | None = None):
-        """Exempt a user from intro tracking. Usage: $introexempt <user_id>"""
+        """Exempt a user from intro tracking."""
         if user_id is None:
             await ctx.send(embed=red_embed("Usage: `$introexempt <user_id>`"))
             return
@@ -264,7 +266,7 @@ class IntroductionTracker(BaseCog):
     @commands.command()
     @has_permissions(manage_messages=True)
     async def introunexempt(self, ctx: commands.Context, user_id: int | None = None):
-        """Remove a user's intro tracking exemption. Usage: $introunexempt <user_id>"""
+        """Remove a user's intro tracking exemption."""
         if user_id is None:
             await ctx.send(embed=red_embed("Usage: `$introunexempt <user_id>`"))
             return

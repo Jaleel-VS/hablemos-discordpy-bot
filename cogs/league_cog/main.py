@@ -65,7 +65,7 @@ def handle_interaction_errors[**P, T](func: Callable[P, T]) -> Callable[P, T]:
     return wrapper
 
 class LeagueCog(BaseCog):
-    """Cog for managing the opt-in Language League"""
+    """Compete with other learners and track your language progress."""
 
     # Cache TTL in seconds
     LEADERBOARD_CACHE_TTL = 30

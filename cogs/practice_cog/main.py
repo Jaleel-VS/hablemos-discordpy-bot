@@ -27,7 +27,7 @@ from .views import (
 logger = logging.getLogger(__name__)
 
 class PracticeCog(BaseCog):
-    """Cog for SRS vocabulary practice"""
+    """Vocabulary practice with spaced repetition."""
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)

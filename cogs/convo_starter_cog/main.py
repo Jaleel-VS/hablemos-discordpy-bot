@@ -26,6 +26,7 @@ def embed_question(question_1a, question_1b):
     return embed
 
 class ConvoStarter(BaseCog):
+    """Random conversation starters and discussion topics."""
 
     def __init__(self, bot):
         super().__init__(bot)
@@ -34,9 +35,9 @@ class ConvoStarter(BaseCog):
     @commands.command(aliases=['top', ])
     async def topic(self, ctx, *category):
         """
-        Command used to suggestion a random conversation topic. Type `$topic <category>`.
-        Just typing `$topic` will suggest a topic from the `general` category.
+        Suggest a random conversation topic.
 
+        Just typing `$topic` will suggest a topic from the `general` category.
         Type `$lst` to see the list of categories.
 
         Examples: `$topic`, `$topic phil`, `$topic 4`"""

@@ -18,6 +18,8 @@ CATEGORIES = {
 }
 
 class HangmanController(BaseCog):
+    """Classic hangman game for Spanish vocabulary practice."""
+
     def __init__(self, bot):
         super().__init__(bot)
         self.active_games: dict[int, Hangman] = {}  # channel_id -> game instance
