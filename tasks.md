@@ -10,12 +10,6 @@ Tracked improvements identified during code review. Work through one at a time.
 
 ## Pending
 
-- [ ] **Convert `$league` admin to `@commands.group()` subcommands** · effort: 3
-  `cogs/league_cog/admin.py` — Replace the manual `if/elif` dispatcher in
-  `league_admin` with proper `@commands.group()` subcommands like `$introtracker`
-  and `$quoteadmin` already use. Gets free per-subcommand help, argument parsing,
-  and error handling.
-
 - [ ] **Convert `$convo` to a slash/hybrid command** · effort: 4
   `cogs/conversation_cog/main.py` — Main user-facing feature is prefix-only with
   manual arg parsing. Convert to hybrid or slash command with `app_commands.choices`
@@ -35,5 +29,6 @@ Tracked improvements identified during code review. Work through one at a time.
 - [x] **Stop syncing slash commands on every `on_ready`** — `hablemos.py`, `cogs/admin_cog/main.py`
 - [x] **Narrow `Intents.all()` to only what's needed** — `hablemos.py`
 - [x] **Extract error handler from `hablemos.py`** — `cogs/error_handler_cog/main.py`
+- [x] **Convert `$league` admin to `@commands.group()` subcommands** — `cogs/league_cog/admin.py`
 - [x] **Auto-generate `/help` from cog metadata** — `cogs/general_cog/main.py`
 - [x] **Fix cog docstrings for user-facing help** — 12 cog files
