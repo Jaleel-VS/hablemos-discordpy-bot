@@ -88,7 +88,7 @@ class PodcastMenuView(View):
 
         except Exception as e:
             logger.error("Error listing podcasts: %s", e, exc_info=True)
-            await interaction.followup.send(f"Error loading podcasts: {e}", ephemeral=True)
+            await interaction.followup.send("Error loading podcasts. Please try again later.", ephemeral=True)
 
     @button(label="View Reports", style=ButtonStyle.secondary, emoji="🚩")
     async def reports_button(self, interaction: Interaction, btn: Button):
@@ -132,7 +132,7 @@ class PodcastMenuView(View):
 
         except Exception as e:
             logger.error("Error fetching reports: %s", e, exc_info=True)
-            await interaction.followup.send(f"Error loading reports: {e}", ephemeral=True)
+            await interaction.followup.send("Error loading reports. Please try again later.", ephemeral=True)
 
     @button(label="Back", style=ButtonStyle.secondary, emoji="◀️", row=1)
     async def back_button(self, interaction: Interaction, btn: Button):
@@ -324,7 +324,7 @@ class PodcastActionsView(View):
 
         except Exception as e:
             logger.error("Error toggling archive: %s", e, exc_info=True)
-            await interaction.followup.send(f"Error: {e}", ephemeral=True)
+            await interaction.followup.send("Something went wrong. Please try again later.", ephemeral=True)
 
     @button(label="Back to List", style=ButtonStyle.secondary, emoji="◀️", row=1)
     async def back_button(self, interaction: Interaction, btn: Button):
@@ -336,7 +336,7 @@ class PodcastActionsView(View):
             await interaction.response.edit_message(embed=embed, view=view)
         except Exception as e:
             logger.error("Error returning to list: %s", e, exc_info=True)
-            await interaction.response.send_message(f"Error: {e}", ephemeral=True)
+            await interaction.response.send_message("Something went wrong. Please try again later.", ephemeral=True)
 
 class ConfirmDeleteView(View):
     """Confirmation dialog for deleting a podcast"""
@@ -378,7 +378,7 @@ class ConfirmDeleteView(View):
 
         except Exception as e:
             logger.error("Error deleting podcast: %s", e, exc_info=True)
-            await interaction.followup.send(f"Error: {e}", ephemeral=True)
+            await interaction.followup.send("Failed to delete podcast. Please try again later.", ephemeral=True)
 
     @button(label="Cancel", style=ButtonStyle.secondary, emoji="✖️")
     async def cancel_button(self, interaction: Interaction, btn: Button):
@@ -500,7 +500,7 @@ class ReportedPodcastActionsView(View):
 
         except Exception as e:
             logger.error("Error archiving podcast: %s", e, exc_info=True)
-            await interaction.followup.send(f"Error: {e}", ephemeral=True)
+            await interaction.followup.send("Something went wrong. Please try again later.", ephemeral=True)
 
     @button(label="Clear Reports", style=ButtonStyle.primary, emoji="🧹")
     async def clear_reports_button(self, interaction: Interaction, btn: Button):
@@ -520,7 +520,7 @@ class ReportedPodcastActionsView(View):
 
         except Exception as e:
             logger.error("Error clearing reports: %s", e, exc_info=True)
-            await interaction.followup.send(f"Error: {e}", ephemeral=True)
+            await interaction.followup.send("Something went wrong. Please try again later.", ephemeral=True)
 
     @button(label="Delete Podcast", style=ButtonStyle.danger, emoji="🗑️")
     async def delete_button(self, interaction: Interaction, btn: Button):
@@ -562,4 +562,4 @@ class ReportedPodcastActionsView(View):
 
         except Exception as e:
             logger.error("Error returning to reports: %s", e, exc_info=True)
-            await interaction.response.send_message(f"Error: {e}", ephemeral=True)
+            await interaction.response.send_message("Something went wrong. Please try again later.", ephemeral=True)

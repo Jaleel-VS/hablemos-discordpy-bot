@@ -142,7 +142,8 @@ class AdminCog(BaseCog):
             try:
                 await self.bot.load_extension(ext)
             except Exception as e:
-                await ctx.send(f"Enabled in DB but failed to load: {e}")
+                logger.error("Failed to load extension %s: %s", ext, e, exc_info=True)
+                await ctx.send("Enabled in DB but failed to load. Check logs.")
                 return
 
         await ctx.send(f"Enabled and loaded `{name}`.")
@@ -164,7 +165,8 @@ class AdminCog(BaseCog):
             try:
                 await self.bot.unload_extension(ext)
             except Exception as e:
-                await ctx.send(f"Disabled in DB but failed to unload: {e}")
+                logger.error("Failed to unload extension %s: %s", ext, e, exc_info=True)
+                await ctx.send("Disabled in DB but failed to unload. Check logs.")
                 return
 
         await ctx.send(f"Disabled and unloaded `{name}`.")
@@ -181,7 +183,8 @@ class AdminCog(BaseCog):
             await ctx.send(f"Reloaded `{name}`.")
             logger.info("Cog reloaded: %s by %s", ext, ctx.author.id)
         except Exception as e:
-            await ctx.send(f"Failed to reload: {e}")
+            logger.error("Failed to reload extension: %s", e, exc_info=True)
+            await ctx.send("Failed to reload. Check logs.")
 
     # ── Metrics ──
 
@@ -428,7 +431,8 @@ class AdminCog(BaseCog):
             scope = f"guild {guild_id}" if guild_id else "globally"
             await ctx.send(f"✅ Synced {len(synced)} command(s) {scope}.")
         except Exception as e:
-            await ctx.send(f"❌ Sync failed: {e}")
+            logger.error("Sync failed: %s", e, exc_info=True)
+            await ctx.send("❌ Sync failed. Check logs.")
 
 
 async def setup(bot: commands.Bot):

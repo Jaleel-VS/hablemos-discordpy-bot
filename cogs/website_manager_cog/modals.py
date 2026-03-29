@@ -88,7 +88,7 @@ class AddPodcastModal(Modal, title="Add New Podcast"):
             logger.error("Error adding podcast: %s", e, exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"Failed to add podcast: {e!s}",
+                description="Failed to add podcast. Please try again later.",
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
@@ -198,7 +198,7 @@ class AddPodcastModalFull(Modal, title="Add New Podcast"):
             logger.error("Error adding podcast: %s", e, exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"Failed to add podcast: {e!s}",
+                description="Failed to add podcast. Please try again later.",
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
@@ -308,7 +308,7 @@ class EditPodcastModal(Modal, title="Edit Podcast"):
             logger.error("Error updating podcast: %s", e, exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"Failed to update podcast: {e!s}",
+                description="Failed to update podcast. Please try again later.",
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)

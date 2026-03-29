@@ -195,7 +195,7 @@ class AskCog(BaseCog):
             elif any(k in error_str for k in ('rate', 'quota', '429')):
                 await processing.edit(content="Rate limited. Try again in a minute.")
             else:
-                await processing.edit(content=f"Error: {e}")
+                await processing.edit(content="Something went wrong. Please try again later.")
 
 
 async def setup(bot: commands.Bot):

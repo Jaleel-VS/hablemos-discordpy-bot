@@ -79,7 +79,7 @@ class HangmanController(BaseCog):
                 # Ensure cleanup on any error
                 self.active_games.pop(channel_id, None)
                 logger.error("Failed to start hangman game in channel %s: %s", channel_id, e, exc_info=True)
-                await ctx.send(f"❌ Failed to start game: {e!s}")
+                await ctx.send("❌ Failed to start game. Please try again later.")
                 raise
             # Successfully started; nothing else to send here
 

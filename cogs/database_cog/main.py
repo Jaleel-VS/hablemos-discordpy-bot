@@ -37,7 +37,7 @@ class DatabaseCommands(BaseCog):
 
         except Exception as e:
             logger.error("Error adding note: %s", e)
-            await ctx.send(embed=red_embed(f"Failed to save note: {e!s}"))
+            await ctx.send(embed=red_embed("Failed to save note. Please try again later."))
 
     @command(aliases=['getnote', 'readnote'])
     @is_owner()
@@ -64,7 +64,7 @@ class DatabaseCommands(BaseCog):
 
         except Exception as e:
             logger.error("Error retrieving note: %s", e)
-            await ctx.send(embed=red_embed(f"Failed to retrieve note: {e!s}"))
+            await ctx.send(embed=red_embed("Failed to retrieve note. Please try again later."))
 
     @command(aliases=['mynotes', 'listnotes'])
     @is_owner()
@@ -100,7 +100,7 @@ class DatabaseCommands(BaseCog):
 
         except Exception as e:
             logger.error("Error listing notes: %s", e)
-            await ctx.send(embed=red_embed(f"Failed to list notes: {e!s}"))
+            await ctx.send(embed=red_embed("Failed to list notes. Please try again later."))
 
     @command(aliases=['delnote', 'removenote'])
     @is_owner()
@@ -122,7 +122,7 @@ class DatabaseCommands(BaseCog):
 
         except Exception as e:
             logger.error("Error deleting note: %s", e)
-            await ctx.send(embed=red_embed(f"Failed to delete note: {e!s}"))
+            await ctx.send(embed=red_embed("Failed to delete note. Please try again later."))
 
 async def setup(bot):
     await bot.add_cog(DatabaseCommands(bot))

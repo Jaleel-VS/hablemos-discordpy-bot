@@ -234,7 +234,7 @@ class LeagueAdminCog(BaseCog):
         except discord.Forbidden:
             await ctx.send("❌ No permission to access that message")
         except Exception as e:
-            await ctx.send(f"❌ Error: {e!s}")
+            await ctx.send("❌ Something went wrong. Check logs.")
             logger.error("Error in validatemessage: %s", e, exc_info=True)
 
     @league_admin.command(name="audit")
@@ -297,7 +297,8 @@ class LeagueAdminCog(BaseCog):
                 except discord.Forbidden:
                     embed.add_field(name=f"Message {i}", value="❌ No permission to access message", inline=False)
                 except Exception as e:
-                    embed.add_field(name=f"Message {i}", value=f"❌ Error: {e!s}", inline=False)
+                    logger.error("Error fetching audit message: %s", e, exc_info=True)
+                    embed.add_field(name=f"Message {i}", value="❌ Failed to fetch message", inline=False)
 
             await ctx.send(embed=embed)
             logger.info("Admin %s audited user %s", ctx.author, user_id)
@@ -305,7 +306,7 @@ class LeagueAdminCog(BaseCog):
         except ValueError:
             await ctx.send("❌ Invalid user ID.")
         except Exception as e:
-            await ctx.send(f"❌ Error: {e!s}")
+            await ctx.send("❌ Something went wrong. Check logs.")
             logger.error("Error in audit command: %s", e, exc_info=True)
 
     @league_admin.command(name="endround")
@@ -340,7 +341,7 @@ class LeagueAdminCog(BaseCog):
             logger.info("Admin %s manually ended round %s, created round %s", ctx.author, round_number, result['next_round_number'])
 
         except Exception as e:
-            await ctx.send(f"❌ Error ending round: {e!s}")
+            await ctx.send("❌ Error ending round. Check logs.")
             logger.error("Error in endround command: %s", e, exc_info=True)
 
     @league_admin.command(name="seedrole")
@@ -358,7 +359,7 @@ class LeagueAdminCog(BaseCog):
         except ValueError:
             await ctx.send("❌ Invalid format. Use comma-separated user IDs: `$league seedrole 123,456,789`")
         except Exception as e:
-            await ctx.send(f"❌ Error: {e!s}")
+            await ctx.send("❌ Something went wrong. Check logs.")
             logger.error("Error in seedrole command: %s", e, exc_info=True)
 
     @league_admin.command(name="preview")
@@ -404,7 +405,7 @@ class LeagueAdminCog(BaseCog):
             logger.info("Admin %s previewed round %s announcement", ctx.author, round_number)
 
         except Exception as e:
-            await ctx.send(f"❌ Error: {e!s}")
+            await ctx.send("❌ Something went wrong. Check logs.")
             logger.error("Error in preview command: %s", e, exc_info=True)
 
     @commands.command(name="langa", aliases=["lng"])
@@ -449,7 +450,8 @@ class LeagueAdminCog(BaseCog):
             except discord.Forbidden:
                 return await ctx.send("❌ No permission to fetch that message.")
             except Exception as e:
-                return await ctx.send(f"❌ Error fetching message: {e}")
+                logger.error("Error fetching message in langa: %s", e, exc_info=True)
+                return await ctx.send("❌ Failed to fetch message.")
         else:
             content = stripped
             source_label = "Provided text"

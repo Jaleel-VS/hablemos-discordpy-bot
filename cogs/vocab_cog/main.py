@@ -91,7 +91,7 @@ class VocabNoteModal(Modal, title="Add Vocabulary Note"):
             logger.error("Error adding vocab note: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Error",
-                description=f"Failed to add vocabulary note: {e!s}",
+                description="Failed to add vocabulary note. Please try again later.",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -178,7 +178,7 @@ class VocabCog(BaseCog):
             logger.error("Error listing vocab notes: %s", e, exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"Failed to list vocabulary notes: {e!s}",
+                description="Failed to list vocabulary notes. Please try again later.",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -238,7 +238,7 @@ class VocabCog(BaseCog):
             logger.error("Error searching vocab notes: %s", e, exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"Failed to search vocabulary notes: {e!s}",
+                description="Failed to search vocabulary notes. Please try again later.",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -279,7 +279,7 @@ class VocabCog(BaseCog):
             logger.error("Error deleting vocab note: %s", e, exc_info=True)
             embed = Embed(
                 title="Error",
-                description=f"Failed to delete vocabulary note: {e!s}",
+                description="Failed to delete vocabulary note. Please try again later.",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -356,7 +356,7 @@ class VocabCog(BaseCog):
             logger.error("Error exporting vocab notes: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Export Failed",
-                description=f"Failed to export vocabulary notes: {e!s}",
+                description="Failed to export vocabulary notes. Please try again later.",
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)

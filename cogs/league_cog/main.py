@@ -566,7 +566,7 @@ class LeagueCog(BaseCog):
             logger.error("Error in league join: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Error",
-                description=f"Failed to join Language League: {e!s}",
+                description="Failed to join Language League. Please try again later.",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -604,7 +604,7 @@ class LeagueCog(BaseCog):
             logger.error("Error in league leave: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Error",
-                description=f"Failed to leave Language League: {e!s}",
+                description="Failed to leave Language League. Please try again later.",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -774,7 +774,7 @@ class LeagueCog(BaseCog):
             logger.error("Error viewing league: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Error",
-                description=f"Failed to load league: {e!s}",
+                description="Failed to load league. Please try again later.",
                 color=discord.Color.red()
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
@@ -876,7 +876,7 @@ class LeagueCog(BaseCog):
             logger.error("Error viewing stats: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Error",
-                description=f"Failed to load stats: {e!s}",
+                description="Failed to load stats. Please try again later.",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
