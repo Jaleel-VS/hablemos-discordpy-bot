@@ -1,6 +1,7 @@
 """
 Discord views (buttons, selects) for website management
 """
+import contextlib
 import logging
 
 import discord
@@ -51,6 +52,13 @@ class MainManageView(View):
             view=None
         )
         self.stop()
+
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            with contextlib.suppress(Exception):
+                await self.message.edit(view=self)
 
 class PodcastMenuView(View):
     """Podcast management menu"""
@@ -144,6 +152,14 @@ class PodcastMenuView(View):
             color=discord.Color.blue()
         )
         await interaction.response.edit_message(embed=embed, view=view)
+
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            with contextlib.suppress(Exception):
+                await self.message.edit(view=self)
+
 
 class PodcastListView(View):
     """Paginated list of podcasts with actions"""
@@ -272,6 +288,13 @@ class PodcastListView(View):
         )
         await interaction.response.edit_message(embed=embed, view=view)
 
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            with contextlib.suppress(Exception):
+                await self.message.edit(view=self)
+
 class PodcastActionsView(View):
     """Actions for a single podcast"""
 
@@ -338,6 +361,13 @@ class PodcastActionsView(View):
             logger.error("Error returning to list: %s", e, exc_info=True)
             await interaction.response.send_message("Something went wrong. Please try again later.", ephemeral=True)
 
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            with contextlib.suppress(Exception):
+                await self.message.edit(view=self)
+
 class ConfirmDeleteView(View):
     """Confirmation dialog for deleting a podcast"""
 
@@ -395,6 +425,13 @@ class ConfirmDeleteView(View):
             embed.set_thumbnail(url=self.podcast.image_url)
 
         await interaction.response.edit_message(embed=embed, view=view)
+
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            with contextlib.suppress(Exception):
+                await self.message.edit(view=self)
 
 class ReportActionsView(View):
     """Actions for managing reported podcasts"""
@@ -470,6 +507,13 @@ class ReportActionsView(View):
             color=discord.Color.orange()
         )
         await interaction.response.edit_message(embed=embed, view=view)
+
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            with contextlib.suppress(Exception):
+                await self.message.edit(view=self)
 
 class ReportedPodcastActionsView(View):
     """Actions for a reported podcast"""
@@ -563,3 +607,10 @@ class ReportedPodcastActionsView(View):
         except Exception as e:
             logger.error("Error returning to reports: %s", e, exc_info=True)
             await interaction.response.send_message("Something went wrong. Please try again later.", ephemeral=True)
+
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            with contextlib.suppress(Exception):
+                await self.message.edit(view=self)

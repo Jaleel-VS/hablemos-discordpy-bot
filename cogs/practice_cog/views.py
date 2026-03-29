@@ -2,6 +2,7 @@
 Discord UI Views for practice sessions.
 """
 
+import contextlib
 import logging
 import random
 from collections.abc import Awaitable, Callable
@@ -113,6 +114,14 @@ class PracticeView(View):
         """Quit the session"""
         await self.on_quit_callback(interaction)
 
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            with contextlib.suppress(Exception):
+                await self.message.edit(view=self)
+
+
 class QualityRatingView(View):
     """View for rating answer quality (SRS feedback)"""
 
@@ -170,6 +179,14 @@ class QualityRatingView(View):
         async def callback(interaction: Interaction):
             await self.on_rating_callback(interaction, quality)
         return callback
+
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            with contextlib.suppress(Exception):
+                await self.message.edit(view=self)
+
 
 def create_question_embed(session: PracticeSession, card: PracticeCard,
                           show_disclaimer: bool = False) -> Embed:
