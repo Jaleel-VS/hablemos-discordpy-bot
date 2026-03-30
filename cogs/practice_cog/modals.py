@@ -5,14 +5,12 @@ Modal for typing answers in practice sessions.
 import contextlib
 import logging
 from collections.abc import Awaitable, Callable
-from typing import TYPE_CHECKING
 
 import discord
 from discord import Interaction, TextStyle
 from discord.ui import Modal, TextInput
 
-if TYPE_CHECKING:
-    from .session import PracticeCard
+from .session import PracticeCard
 
 logger = logging.getLogger(__name__)
 

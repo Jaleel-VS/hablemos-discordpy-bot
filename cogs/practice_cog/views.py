@@ -6,17 +6,14 @@ import contextlib
 import logging
 import random
 from collections.abc import Awaitable, Callable
-from typing import TYPE_CHECKING
 
 import discord
 from discord import ButtonStyle, Embed, Interaction
 from discord.ui import Button, View
 
 from .modals import AnswerModal
+from .session import PracticeCard, PracticeSession
 from .srs import QUALITY_AGAIN, QUALITY_EASY, QUALITY_GOOD, QUALITY_HARD
-
-if TYPE_CHECKING:
-    from .session import PracticeCard, PracticeSession
 
 logger = logging.getLogger(__name__)
 
