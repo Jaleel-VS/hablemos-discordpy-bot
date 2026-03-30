@@ -1,6 +1,5 @@
 """Modals for the Introduce cog — free-text input forms with v2 components."""
 import logging
-import time
 from typing import TYPE_CHECKING
 
 import discord
@@ -36,13 +35,18 @@ def _lookup_display(options: list[tuple[str, str]], value: str) -> str:
     return next((label for label, v in options if v == value), value)
 
 
+def _avatar_url(user: discord.User | discord.Member) -> str:
+    """Return the user's avatar URL, falling back to the default avatar."""
+    return user.avatar.url if user.avatar else user.default_avatar.url
+
+
 async def _post_introduction(
     interaction: Interaction,
     embed: Embed,
     channel_id: int,
     success_message: str,
 ) -> None:
-    """Shared logic: fetch channel, post embed, confirm to user."""
+    """Shared logic: fetch channel, post embed, record to DB, confirm to user."""
     await interaction.response.defer(ephemeral=True)
 
     channel = interaction.client.get_channel(channel_id)
@@ -68,6 +72,9 @@ async def _post_introduction(
         logger.exception("Failed to post introduction in channel %s", channel_id)
         await interaction.followup.send(embed=red_embed("Failed to post your introduction. Please try again later."), ephemeral=True)
         return
+
+    # Record introduction in DB for cooldown tracking / stats
+    await interaction.client.db.record_introduction(interaction.user.id)
 
     await interaction.followup.send(
         embed=green_embed(f"Your introduction has been posted to {channel.mention}.\n\n{success_message}"),
@@ -111,10 +118,16 @@ class IntroOnlyModal(Modal, title="Introduce Yourself"):
         if interests:
             embed.add_field(name="My Interests", value=_format_as_list(interests), inline=False)
 
-        if interaction.user.avatar:
-            embed.set_thumbnail(url=interaction.user.avatar.url)
+        embed.set_thumbnail(url=_avatar_url(interaction.user))
 
         await _post_introduction(interaction, embed, self.introductions_channel_id, "Welcome to the community!")
+
+    async def on_error(self, interaction: Interaction, error: Exception):
+        logger.exception("IntroOnlyModal error for user %s", interaction.user.id)
+        if not interaction.response.is_done():
+            await interaction.response.send_message(embed=red_embed("Something went wrong. Please try again later."), ephemeral=True)
+        else:
+            await interaction.followup.send(embed=red_embed("Something went wrong. Please try again later."), ephemeral=True)
 
 
 def _radio_options(options: list[tuple[str, str]]) -> list[RadioGroupOption]:
@@ -151,7 +164,7 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
         ),
     )
 
-    def __init__(self, parent_view: ExchangePrefsView, introductions_channel_id: int):
+    def __init__(self, parent_view: "ExchangePrefsView", introductions_channel_id: int):
         super().__init__()
         self.parent_view = parent_view
         self.introductions_channel_id = introductions_channel_id
@@ -159,6 +172,13 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
     async def on_submit(self, interaction: Interaction):
         embed = self._build_request_embed(interaction.user)
         await _post_introduction(interaction, embed, self.introductions_channel_id, "Good luck finding a partner!")
+
+    async def on_error(self, interaction: Interaction, error: Exception):
+        logger.exception("ExchangeDetailsModal error for user %s", interaction.user.id)
+        if not interaction.response.is_done():
+            await interaction.response.send_message(embed=red_embed("Something went wrong. Please try again later."), ephemeral=True)
+        else:
+            await interaction.followup.send(embed=red_embed("Something went wrong. Please try again later."), ephemeral=True)
 
     def _build_request_embed(self, user: discord.User | discord.Member) -> Embed:
         """Build the formatted embed for exchange partner requests."""
@@ -175,14 +195,12 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
             color=EXCHANGE_COLOR,
         )
 
-        avatar_url = user.avatar.url if user.avatar else user.default_avatar.url
-        embed.set_author(name=user.display_name, icon_url=avatar_url)
+        embed.set_author(name=user.display_name, icon_url=_avatar_url(user))
 
         # What I Offer
         embed.add_field(name="Language", value=_lookup_display(LANGUAGES, lang_offer_val), inline=True)
         embed.add_field(name="Level", value=_lookup_display(PROFICIENCY_LEVELS, offer_level_val), inline=True)
-        current_unix = int(time.time())
-        embed.add_field(name="Timezone", value=f"{pv.timezone} — <t:{current_unix}:t>", inline=True)
+        embed.add_field(name="Timezone", value=pv.timezone or "Not specified", inline=True)
 
         # What I Want
         embed.add_field(
@@ -192,7 +210,7 @@ class ExchangeDetailsModal(Modal, title="Exchange Partner Details"):
         )
         embed.add_field(name="Language", value=_lookup_display(LANGUAGES, lang_seek_val), inline=True)
         embed.add_field(name="Level", value=_lookup_display(PROFICIENCY_LEVELS, seek_level_val), inline=True)
-        country_value = pv.country_display if pv.country and pv.country != "no_preference" else "No preference"
+        country_value = pv.country_display if pv.country_display and pv.country != "no_preference" else "No preference"
         embed.add_field(name="Country", value=country_value, inline=True)
 
         footer = "Please send me DM if you want to be my language partner!" if pv.prefer_dm else "Please tag me in the server if you want to be my language partner!"

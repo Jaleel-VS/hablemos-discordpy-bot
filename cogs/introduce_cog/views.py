@@ -9,14 +9,7 @@ from .config import (
     EXCHANGE_COLOR,
     TIMEZONES,
 )
-from .modals import ExchangeDetailsModal, IntroOnlyModal
-
-logger = logging.getLogger(__name__)
-
-
-def _lookup_display(options: list[tuple[str, str]], value: str) -> str:
-    """Return the display label for a value from a (label, value) option list."""
-    return next((label for label, v in options if v == value), value)
+from .modals import ExchangeDetailsModal, IntroOnlyModal, _lookup_display
 
 
 class IntroStartView(View):
