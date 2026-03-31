@@ -11,6 +11,8 @@ from .config import (
 )
 from .modals import ExchangeDetailsModal, IntroOnlyModal, _lookup_display
 
+logger = logging.getLogger(__name__)
+
 
 class IntroStartView(View):
     """Initial view: yes/no exchange partner question."""
