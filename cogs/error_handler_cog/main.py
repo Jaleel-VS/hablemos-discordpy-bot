@@ -77,7 +77,13 @@ class ErrorHandler(BaseCog):
                         f"------\nCommand not found:\n{ctx.author}, {ctx.author.id}, {ctx.channel}, {ctx.channel.id}, "
                         f"{ctx.guild}, {ctx.guild.id}, \n{ctx.message.content}\n{ctx.message.jump_url}\n------"
                     )
-                logger.warning("Command not found: %s", ctx.message.content)
+                logger.warning(
+                    "Command not found: %s | guild: %s (%s) | user: %s",
+                    ctx.message.content,
+                    ctx.guild.name if ctx.guild else "DM",
+                    ctx.guild.id if ctx.guild else "N/A",
+                    ctx.author.id,
+                )
 
             elif isinstance(error, commands.CommandOnCooldown):
                 if isinstance(ctx.channel, discord.TextChannel):
