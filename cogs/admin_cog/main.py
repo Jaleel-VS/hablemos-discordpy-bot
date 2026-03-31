@@ -350,6 +350,19 @@ class AdminCog(BaseCog):
         )
         await ctx.send(embed=embed)
 
+    @commands.command(name='leave')
+    @commands.is_owner()
+    async def leave_guild(self, ctx: commands.Context, guild_id: int):
+        """Leave a guild by ID. Usage: $leave <guild_id>"""
+        guild = self.bot.get_guild(guild_id)
+        if not guild:
+            await ctx.send(f"Guild `{guild_id}` not found.")
+            return
+        name = guild.name
+        await guild.leave()
+        await ctx.send(f"Left **{name}**.")
+        logger.info("Left guild %s (%s) by request of %s", name, guild_id, ctx.author.id)
+
     # ── Interaction analysis ──
 
     @commands.command(name='interactions')
