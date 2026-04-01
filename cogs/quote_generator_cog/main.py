@@ -140,7 +140,7 @@ class QuoteGenerator(BaseCog):
             message.channel_mentions, ctx.guild, db=self.bot.db,
         )
         username = _get_safe_username(message.author, ctx.guild)
-        avatar = _get_img_url(message.author.avatar)
+        avatar = _get_img_url(message.author.display_avatar)
         return username, avatar, content
 
     async def _fetch_message_safe(self, ctx, channel, message_id):
