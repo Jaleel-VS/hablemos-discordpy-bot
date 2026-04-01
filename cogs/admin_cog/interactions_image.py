@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 def generate_interactions_image(
     pairs: list[dict],
     channel_name: str,
-    days: int,
+    duration_label: str,
 ) -> str:
     """Generate an image of top interaction pairs.
 
@@ -27,7 +27,7 @@ def generate_interactions_image(
         pairs: List of dicts with keys user_a_name, user_b_name,
                user_a_avatar, user_b_avatar, replies, mentions.
         channel_name: Channel name for the filename.
-        days: Number of days the data covers.
+        duration_label: Human-readable duration (e.g. "7d", "12h").
 
     Returns:
         Path to the generated PNG file.
@@ -35,7 +35,8 @@ def generate_interactions_image(
     WIDTH = 800
     ENTRY_HEIGHT = 80
     PADDING = 20
-    HEIGHT = PADDING + len(pairs) * ENTRY_HEIGHT + PADDING
+    MIN_HEIGHT = 500
+    HEIGHT = max(MIN_HEIGHT, PADDING + len(pairs) * ENTRY_HEIGHT + PADDING)
 
     image = Image.new("RGB", (WIDTH, HEIGHT), color=(26, 27, 30))
     draw = ImageDraw.Draw(image)
@@ -121,6 +122,6 @@ def generate_interactions_image(
 
         y += ENTRY_HEIGHT
 
-    output = Path(__file__).parent / f"interactions_{channel_name}_{days}d.png"
+    output = Path(__file__).parent / f"interactions_{channel_name}_{duration_label}.png"
     image.save(output, "PNG", quality=95)
     return str(output)

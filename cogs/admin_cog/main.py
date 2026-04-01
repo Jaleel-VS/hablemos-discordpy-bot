@@ -2,7 +2,7 @@
 Admin cog — owner-only commands for cog management and bot metrics.
 """
 import logging
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 
 import discord
@@ -12,6 +12,7 @@ from discord.ext import commands, tasks
 from base_cog import BaseCog
 from cogs.admin_cog.interactions_image import generate_interactions_image
 from cogs.utils.discovery import discover_extensions
+from cogs.utils.duration import format_duration, parse_duration
 
 logger = logging.getLogger(__name__)
 
@@ -370,21 +371,29 @@ class AdminCog(BaseCog):
 
     @commands.command(name='interactions')
     @commands.cooldown(1, 60, commands.BucketType.default)
-    async def interactions(self, ctx: commands.Context, channel: discord.TextChannel = None, days: int = 7):
+    async def interactions(self, ctx: commands.Context, channel: discord.TextChannel = None, duration: str = "7d"):
         """
         Show top reply/mention pairs in a channel (from tracked data).
 
-        Usage: $interactions [#channel] [days]
+        Usage: $interactions [#channel] [duration]
+        Examples: $interactions 12h | $interactions #general 3d | $interactions 1d12h
         """
         channel = channel or ctx.channel
-        days = max(1, min(days, 90))
-        after = datetime.now(UTC) - timedelta(days=days)
+
+        try:
+            td = parse_duration(duration)
+        except ValueError as exc:
+            await ctx.send(str(exc))
+            return
+
+        after = datetime.now(UTC) - td
+        duration_label = format_duration(td)
 
         top_pairs = await self.bot.db.get_top_pairs(channel.id, after)
         stats = await self.bot.db.get_interaction_stats(channel.id, after)
 
         if not top_pairs:
-            await ctx.send(f"No interactions recorded in #{channel.name} over the last {days} days.")
+            await ctx.send(f"No interactions recorded in #{channel.name} over the last {duration_label}.")
             return
 
         # Resolve display names and avatar URLs for all user IDs
@@ -404,20 +413,20 @@ class AdminCog(BaseCog):
             ma = members.get(pair['user_a'])
             mb = members.get(pair['user_b'])
             enriched.append({
-                'user_a_name': ma.display_name if ma else f"User {pair['user_a']}",
-                'user_b_name': mb.display_name if mb else f"User {pair['user_b']}",
+                'user_a_name': (ma.global_name or ma.name) if ma else f"User {pair['user_a']}",
+                'user_b_name': (mb.global_name or mb.name) if mb else f"User {pair['user_b']}",
                 'user_a_avatar': str(ma.display_avatar) if ma else None,
                 'user_b_avatar': str(mb.display_avatar) if mb else None,
                 'replies': pair['replies'],
                 'mentions': pair['mentions'],
             })
 
-        image_path = generate_interactions_image(enriched, channel.name, days)
+        image_path = generate_interactions_image(enriched, channel.name, duration_label)
 
         try:
             embed = Embed(
                 title=f"Interactions in #{channel.name}",
-                description=f"Last {days} days",
+                description=f"Last {duration_label}",
                 color=Color.blurple(),
             )
             file = discord.File(image_path, filename="interactions.png")
