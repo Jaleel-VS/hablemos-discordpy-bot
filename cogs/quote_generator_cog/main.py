@@ -224,7 +224,7 @@ class QuoteGenerator(BaseCog):
             ctx.message.channel_mentions, ctx.guild, db=self.bot.db,
         )
         username = _get_safe_username(ctx.author, ctx.guild)
-        avatar = _get_img_url(ctx.author.avatar)
+        avatar = _get_img_url(ctx.author.display_avatar)
         return username, avatar, content
 
     async def _generate_and_send(self, ctx, user_input: tuple, command_name: str, creator_fn) -> None:
