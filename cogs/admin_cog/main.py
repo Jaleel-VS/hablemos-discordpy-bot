@@ -3,12 +3,14 @@ Admin cog — owner-only commands for cog management and bot metrics.
 """
 import logging
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 
 import discord
 from discord import Color, Embed
 from discord.ext import commands, tasks
 
 from base_cog import BaseCog
+from cogs.admin_cog.interactions_image import generate_interactions_image
 from cogs.utils.discovery import discover_extensions
 
 logger = logging.getLogger(__name__)
@@ -30,6 +32,7 @@ class AdminCog(BaseCog):
         super().__init__(bot)
         self.daily_cleanup.start()
         self._interaction_errors = 0
+        self._last_interactions_msg: discord.Message | None = None
 
     async def cog_unload(self):
         self.daily_cleanup.cancel()
@@ -366,7 +369,7 @@ class AdminCog(BaseCog):
     # ── Interaction analysis ──
 
     @commands.command(name='interactions')
-    @commands.is_owner()
+    @commands.cooldown(1, 60, commands.BucketType.default)
     async def interactions(self, ctx: commands.Context, channel: discord.TextChannel = None, days: int = 7):
         """
         Show top reply/mention pairs in a channel (from tracked data).
@@ -384,49 +387,66 @@ class AdminCog(BaseCog):
             await ctx.send(f"No interactions recorded in #{channel.name} over the last {days} days.")
             return
 
-        # Resolve display names for all user IDs in the results
+        # Resolve display names and avatar URLs for all user IDs
         user_ids: set[int] = set()
         for pair in top_pairs:
             user_ids.add(pair['user_a'])
             user_ids.add(pair['user_b'])
 
-        names: dict[int, str] = {}
+        members: dict[int, discord.Member | None] = {}
         guild = ctx.guild
         for uid in user_ids:
-            member = guild.get_member(uid) if guild else None
-            names[uid] = member.display_name if member else f"User {uid}"
+            members[uid] = guild.get_member(uid) if guild else None
 
-        # Build embed
-        lines = []
-        for i, pair in enumerate(top_pairs, 1):
-            parts = []
-            if pair['replies']:
-                r = pair['replies']
-                parts.append(f"{r} {'reply' if r == 1 else 'replies'}")
-            if pair['mentions']:
-                m = pair['mentions']
-                parts.append(f"{m} {'mention' if m == 1 else 'mentions'}")
-            lines.append(
-                f"`{i:>2}.` **{names[pair['user_a']]}** & **{names[pair['user_b']]}** — {', '.join(parts)}"
+        # Build enriched data for image generation
+        enriched = []
+        for pair in top_pairs:
+            ma = members.get(pair['user_a'])
+            mb = members.get(pair['user_b'])
+            enriched.append({
+                'user_a_name': ma.display_name if ma else f"User {pair['user_a']}",
+                'user_b_name': mb.display_name if mb else f"User {pair['user_b']}",
+                'user_a_avatar': str(ma.display_avatar) if ma else None,
+                'user_b_avatar': str(mb.display_avatar) if mb else None,
+                'replies': pair['replies'],
+                'mentions': pair['mentions'],
+            })
+
+        image_path = generate_interactions_image(enriched, channel.name, days)
+
+        try:
+            embed = Embed(
+                title=f"Interactions in #{channel.name}",
+                description=f"Last {days} days",
+                color=Color.blurple(),
             )
+            file = discord.File(image_path, filename="interactions.png")
+            embed.set_image(url="attachment://interactions.png")
+            embed.add_field(
+                name="Stats",
+                value=(
+                    f"**{stats['unique_pairs']}** unique pairs — "
+                    f"**{stats['total_replies']}** replies, "
+                    f"**{stats['total_mentions']}** mentions"
+                ),
+                inline=False,
+            )
+            await ctx.send(embed=embed, file=file)
+            self._last_interactions_msg = ctx.message
+        finally:
+            Path(image_path).unlink(missing_ok=True)
 
-        embed = Embed(
-            title=f"Interactions in #{channel.name}",
-            description=f"Last {days} days",
-            color=Color.blurple(),
-        )
-        embed.add_field(name="Top Pairs", value='\n'.join(lines), inline=False)
-        embed.add_field(
-            name="Stats",
-            value=(
-                f"**{stats['unique_pairs']}** unique pairs — "
-                f"**{stats['total_replies']}** replies, "
-                f"**{stats['total_mentions']}** mentions"
-            ),
-            inline=False,
-        )
-
-        await ctx.send(embed=embed)
+    @interactions.error
+    async def interactions_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
+        """Show cooldown with a jump link to the last invocation."""
+        if isinstance(error, commands.CommandOnCooldown):
+            msg = f"⏱️ On cooldown — try again in {round(error.retry_after)}s."
+            if self._last_interactions_msg:
+                msg += f" [Last used here]({self._last_interactions_msg.jump_url})"
+            await ctx.send(msg)
+            return
+        # Let the global handler deal with anything else
+        raise error
 
 
     @commands.command(name='sync')
