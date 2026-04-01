@@ -10,3 +10,4 @@ bot_config.py
 *.log
 .python-version
 *.sql
+.DS_Store
