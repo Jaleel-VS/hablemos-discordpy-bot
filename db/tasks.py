@@ -18,17 +18,18 @@ class TasksMixin(DatabaseMixin):
         assignee_ids: list[int] | None = None,
     ) -> dict:
         """Create a task and return the row."""
+        ids = list(assignee_ids) if assignee_ids else []
         row = await self._fetchrow(
             """
             INSERT INTO tasks (guild_id, title, description, created_by, assignee_ids)
-            VALUES ($1, $2, $3, $4, $5)
+            VALUES ($1, $2, $3, $4, $5::BIGINT[])
             RETURNING *
             """,
             guild_id,
             title,
             description,
             created_by,
-            assignee_ids or [],
+            ids,
         )
         return dict(row)
 
@@ -55,11 +56,11 @@ class TasksMixin(DatabaseMixin):
         """Replace assignees and return updated row."""
         row = await self._fetchrow(
             """
-            UPDATE tasks SET assignee_ids = $2, updated_at = NOW()
+            UPDATE tasks SET assignee_ids = $2::BIGINT[], updated_at = NOW()
             WHERE id = $1 RETURNING *
             """,
             task_id,
-            assignee_ids,
+            list(assignee_ids),
         )
         return dict(row) if row else None
 
