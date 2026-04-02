@@ -16,6 +16,7 @@ from .config import (
     STATUSES,
     TASKS_CATEGORY_ID,
     TASKS_CHANNEL_ID,
+    TASKS_ROLE_ID,
 )
 from .modals import TaskCreateModal
 from .views import TaskView
@@ -81,21 +82,13 @@ class TaskManager(BaseCog):
     )
 
     @task_group.command(name="create", description="Create a new task")
-    @app_commands.describe(
-        assignee1="Assign a member",
-        assignee2="Assign a second member",
-        assignee3="Assign a third member",
-    )
-    async def task_create(
-        self,
-        interaction: Interaction,
-        assignee1: discord.Member | None = None,
-        assignee2: discord.Member | None = None,
-        assignee3: discord.Member | None = None,
-    ) -> None:
+    async def task_create(self, interaction: Interaction) -> None:
         """Open a modal form to create a task."""
-        assignees = [m for m in (assignee1, assignee2, assignee3) if m]
-        await interaction.response.send_modal(TaskCreateModal(assignees=assignees))
+        role = interaction.guild.get_role(TASKS_ROLE_ID)
+        members = role.members if role else []
+        await interaction.response.send_modal(
+            TaskCreateModal(members=members, invoker=interaction.user),
+        )
 
     @task_group.command(name="list", description="List tasks")
     @app_commands.describe(

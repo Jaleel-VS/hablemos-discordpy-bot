@@ -5,8 +5,8 @@ import logging
 from typing import TYPE_CHECKING
 
 import discord
-from discord import Interaction, TextStyle
-from discord.ui import Modal, TextInput
+from discord import Interaction, RadioGroupOption, TextStyle
+from discord.ui import Label, Modal, RadioGroup, TextInput
 
 from cogs.utils.embeds import green_embed, red_embed
 
@@ -19,37 +19,83 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+def _build_member_options(
+    members: list[discord.Member],
+    invoker: discord.Member,
+) -> list[RadioGroupOption]:
+    """Build radio options from role members, invoker first with (self) tag."""
+    options = [RadioGroupOption(label="None", value="0")]
+    # Invoker first
+    options.append(RadioGroupOption(
+        label=f"{invoker.display_name} (self)",
+        value=str(invoker.id),
+    ))
+    for m in members:
+        if m.id != invoker.id:
+            options.append(RadioGroupOption(label=m.display_name, value=str(m.id)))
+    return options
+
+
 class TaskCreateModal(Modal, title="Create a Task"):
-    """Modal form for creating a new task."""
+    """Modal form for creating a new task with assignee radio buttons."""
 
-    task_title = TextInput(
-        label="Title",
-        placeholder="What needs to be done?",
-        required=True,
-        max_length=256,
-    )
-
-    description = TextInput(
-        label="Description",
-        placeholder="Add details, context, links…",
-        required=False,
-        max_length=1024,
-        style=TextStyle.paragraph,
-    )
-
-    def __init__(self, assignees: list[discord.Member] | None = None):
+    def __init__(self, members: list[discord.Member], invoker: discord.Member):
         super().__init__()
-        self.assignees = assignees or []
+        self.member_options = _build_member_options(members, invoker)
+
+        self.add_item(Label(
+            text="Title",
+            component=TextInput(
+                placeholder="What needs to be done?",
+                required=True,
+                max_length=256,
+            ),
+        ))
+        self.add_item(Label(
+            text="Description",
+            component=TextInput(
+                placeholder="Add details, context, links…",
+                required=False,
+                max_length=1024,
+                style=TextStyle.paragraph,
+            ),
+        ))
+        self.add_item(Label(
+            text="Assignee 1",
+            component=RadioGroup(options=self.member_options),
+        ))
+        self.add_item(Label(
+            text="Assignee 2",
+            component=RadioGroup(options=self.member_options),
+        ))
+        self.add_item(Label(
+            text="Assignee 3",
+            component=RadioGroup(options=self.member_options),
+        ))
 
     async def on_submit(self, interaction: Interaction) -> None:
         """Create the task, post embed, and ping assignees."""
         bot: Hablemos = interaction.client  # type: ignore[assignment]
-        assignee_ids = [m.id for m in self.assignees]
+
+        # Extract values from dynamic components
+        title_component = self.children[0].component
+        desc_component = self.children[1].component
+        task_title = title_component.value or ""
+        description = desc_component.value or ""
+
+        # Collect unique non-zero assignee IDs
+        assignee_ids: list[int] = []
+        for i in range(2, 5):
+            radio = self.children[i].component
+            if radio.value and radio.value != "0":
+                uid = int(radio.value)
+                if uid not in assignee_ids:
+                    assignee_ids.append(uid)
 
         task = await bot.db.create_task(
             guild_id=interaction.guild_id,
-            title=str(self.task_title),
-            description=str(self.description),
+            title=task_title,
+            description=description,
             created_by=interaction.user.id,
             assignee_ids=assignee_ids,
         )
@@ -68,10 +114,10 @@ class TaskCreateModal(Modal, title="Create a Task"):
         msg = await channel.send(embed=embed, view=view)
         await bot.db.update_task_message(task["id"], msg.id)
 
-        if self.assignees:
-            mentions = " ".join(m.mention for m in self.assignees)
+        if assignee_ids:
+            mentions = " ".join(f"<@{uid}>" for uid in assignee_ids)
             await channel.send(
-                f"📌 {mentions} — new task: **{self.task_title}** (#{task['id']})",
+                f"📌 {mentions} — new task: **{task_title}** (#{task['id']})",
                 allowed_mentions=discord.AllowedMentions(users=True),
             )
 

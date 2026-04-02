@@ -3,6 +3,7 @@ from config import get_int_env
 
 TASKS_CHANNEL_ID = get_int_env("TASKS_CHANNEL_ID", "1437832952028467251")
 TASKS_CATEGORY_ID = get_int_env("TASKS_CATEGORY_ID", "1003424008907272314")
+TASKS_ROLE_ID = get_int_env("TASKS_ROLE_ID", "243854949522472971")
 
 STATUSES = {
     "todo": ("📋", "Todo", 0x95A5A6),
