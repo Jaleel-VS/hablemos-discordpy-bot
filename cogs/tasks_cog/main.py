@@ -17,7 +17,8 @@ from .config import (
     TASKS_CATEGORY_ID,
     TASKS_CHANNEL_ID,
 )
-from .views import TaskView, build_task_embed
+from .modals import TaskCreateModal
+from .views import TaskView
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -81,8 +82,6 @@ class TaskManager(BaseCog):
 
     @task_group.command(name="create", description="Create a new task")
     @app_commands.describe(
-        title="Task title",
-        description="Task description",
         assignee1="Assign a member",
         assignee2="Assign a second member",
         assignee3="Assign a third member",
@@ -90,52 +89,13 @@ class TaskManager(BaseCog):
     async def task_create(
         self,
         interaction: Interaction,
-        title: str,
-        description: str = "",
         assignee1: discord.Member | None = None,
         assignee2: discord.Member | None = None,
         assignee3: discord.Member | None = None,
     ) -> None:
-        """Create a task and post it in the tasks channel."""
+        """Open a modal form to create a task."""
         assignees = [m for m in (assignee1, assignee2, assignee3) if m]
-        assignee_ids = [m.id for m in assignees]
-
-        task = await self.bot.db.create_task(
-            guild_id=interaction.guild_id,
-            title=title,
-            description=description,
-            created_by=interaction.user.id,
-            assignee_ids=assignee_ids,
-        )
-
-        embed = build_task_embed(task, interaction.guild)
-        view = TaskView(task["id"])
-
-        # Post in the tasks channel
-        channel = self.bot.get_channel(TASKS_CHANNEL_ID)
-        if not channel:
-            await interaction.response.send_message(
-                embed=red_embed("Tasks channel not configured. Set `TASKS_CHANNEL_ID`."),
-                ephemeral=True,
-            )
-            return
-
-        msg = await channel.send(embed=embed, view=view)
-        await self.bot.db.update_task_message(task["id"], msg.id)
-
-        # Ping assignees
-        if assignees:
-            mentions = " ".join(m.mention for m in assignees)
-            await channel.send(
-                f"📌 {mentions} — new task: **{title}** (#{task['id']})",
-                allowed_mentions=discord.AllowedMentions(users=True),
-            )
-
-        await interaction.response.send_message(
-            embed=green_embed(f"Task **#{task['id']}** created in {channel.mention}."),
-            ephemeral=True,
-        )
-        logger.info("Task #%s created by %s", task["id"], interaction.user)
+        await interaction.response.send_modal(TaskCreateModal(assignees=assignees))
 
     @task_group.command(name="list", description="List tasks")
     @app_commands.describe(
