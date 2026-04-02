@@ -5,12 +5,12 @@ import logging
 from typing import TYPE_CHECKING
 
 import discord
-from discord import Interaction, RadioGroupOption, TextStyle
-from discord.ui import Label, Modal, RadioGroup, TextInput
+from discord import CheckboxGroupOption, Interaction, TextStyle
+from discord.ui import CheckboxGroup, Label, Modal, TextInput
 
 from cogs.utils.embeds import green_embed, red_embed
 
-from .config import TASKS_CHANNEL_ID
+from .config import ASSIGNABLE_MEMBER_IDS, TASKS_CHANNEL_ID
 from .views import TaskView, build_task_embed
 
 if TYPE_CHECKING:
@@ -19,30 +19,26 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def _build_member_options(
-    members: list[discord.Member],
+def _build_assignee_options(
+    guild: discord.Guild,
     invoker: discord.Member,
-) -> list[RadioGroupOption]:
-    """Build radio options from role members, invoker first with (self) tag."""
-    options = [RadioGroupOption(label="None", value="0")]
-    # Invoker first
-    options.append(RadioGroupOption(
-        label=f"{invoker.display_name} (self)",
-        value=str(invoker.id),
-    ))
-    for m in members:
-        if m.id != invoker.id:
-            options.append(RadioGroupOption(label=m.display_name, value=str(m.id)))
+) -> list[CheckboxGroupOption]:
+    """Build checkbox options from hardcoded member IDs, invoker tagged with (self)."""
+    options = []
+    for uid in ASSIGNABLE_MEMBER_IDS:
+        member = guild.get_member(uid)
+        name = member.display_name if member else str(uid)
+        if uid == invoker.id:
+            name = f"{name} (self)"
+        options.append(CheckboxGroupOption(label=name, value=str(uid)))
     return options
 
 
 class TaskCreateModal(Modal, title="Create a Task"):
-    """Modal form for creating a new task with assignee radio buttons."""
+    """Modal form for creating a new task with checkbox assignees."""
 
-    def __init__(self, members: list[discord.Member], invoker: discord.Member):
+    def __init__(self, guild: discord.Guild, invoker: discord.Member):
         super().__init__()
-        self.member_options = _build_member_options(members, invoker)
-
         self.add_item(Label(
             text="Title",
             component=TextInput(
@@ -61,36 +57,23 @@ class TaskCreateModal(Modal, title="Create a Task"):
             ),
         ))
         self.add_item(Label(
-            text="Assignee 1",
-            component=RadioGroup(options=self.member_options),
-        ))
-        self.add_item(Label(
-            text="Assignee 2",
-            component=RadioGroup(options=self.member_options),
-        ))
-        self.add_item(Label(
-            text="Assignee 3",
-            component=RadioGroup(options=self.member_options),
+            text="Assignees",
+            component=CheckboxGroup(
+                options=_build_assignee_options(guild, invoker),
+                min_values=0,
+                max_values=len(ASSIGNABLE_MEMBER_IDS),
+            ),
         ))
 
     async def on_submit(self, interaction: Interaction) -> None:
         """Create the task, post embed, and ping assignees."""
         bot: Hablemos = interaction.client  # type: ignore[assignment]
 
-        # Extract values from dynamic components
-        title_component = self.children[0].component
-        desc_component = self.children[1].component
-        task_title = title_component.value or ""
-        description = desc_component.value or ""
+        task_title = self.children[0].component.value or ""
+        description = self.children[1].component.value or ""
 
-        # Collect unique non-zero assignee IDs
-        assignee_ids: list[int] = []
-        for i in range(2, 5):
-            radio = self.children[i].component
-            if radio.value and radio.value != "0":
-                uid = int(radio.value)
-                if uid not in assignee_ids:
-                    assignee_ids.append(uid)
+        checkbox = self.children[2].component
+        assignee_ids = [int(v) for v in checkbox.values] if checkbox.values else []
 
         task = await bot.db.create_task(
             guild_id=interaction.guild_id,

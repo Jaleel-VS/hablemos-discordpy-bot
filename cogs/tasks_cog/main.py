@@ -16,7 +16,6 @@ from .config import (
     STATUSES,
     TASKS_CATEGORY_ID,
     TASKS_CHANNEL_ID,
-    TASKS_ROLE_ID,
 )
 from .modals import TaskCreateModal
 from .views import TaskView
@@ -84,10 +83,8 @@ class TaskManager(BaseCog):
     @task_group.command(name="create", description="Create a new task")
     async def task_create(self, interaction: Interaction) -> None:
         """Open a modal form to create a task."""
-        role = interaction.guild.get_role(TASKS_ROLE_ID)
-        members = role.members if role else []
         await interaction.response.send_modal(
-            TaskCreateModal(members=members, invoker=interaction.user),
+            TaskCreateModal(guild=interaction.guild, invoker=interaction.user),
         )
 
     @task_group.command(name="list", description="List tasks")
