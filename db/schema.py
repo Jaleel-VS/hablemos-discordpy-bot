@@ -430,4 +430,25 @@ async def initialize_schema(pool):
             ON interactions(user_a, user_b)
         ''')
 
+        # Task management for admins
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS tasks (
+                id SERIAL PRIMARY KEY,
+                guild_id BIGINT NOT NULL,
+                title VARCHAR(256) NOT NULL,
+                description TEXT NOT NULL DEFAULT '',
+                status VARCHAR(20) NOT NULL DEFAULT 'todo',
+                assignee_ids BIGINT[] NOT NULL DEFAULT '{}',
+                created_by BIGINT NOT NULL,
+                message_id BIGINT,
+                created_at TIMESTAMPTZ DEFAULT NOW(),
+                updated_at TIMESTAMPTZ DEFAULT NOW()
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_tasks_guild_status
+            ON tasks(guild_id, status)
+        ''')
+
         logger.info("Database schema initialized")
