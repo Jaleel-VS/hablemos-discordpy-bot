@@ -32,7 +32,8 @@ def _get_img_url(url_identifier: str | None) -> str:
     """Get a high-res avatar URL, falling back to a default."""
     if url_identifier is None:
         return DEFAULT_AVATAR
-    return str(url_identifier)[:-4] + '4096'
+    url = str(url_identifier).split("?")[0]
+    return f"{url}?size=4096"
 
 
 def _remove_custom_emoji(text: str) -> str:

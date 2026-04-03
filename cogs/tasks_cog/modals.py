@@ -60,6 +60,7 @@ class TaskCreateModal(Modal, title="Create a Task"):
             text="Assignees",
             component=CheckboxGroup(
                 options=_build_assignee_options(guild, invoker),
+                required=False,
                 min_values=0,
                 max_values=len(ASSIGNABLE_MEMBER_IDS),
             ),

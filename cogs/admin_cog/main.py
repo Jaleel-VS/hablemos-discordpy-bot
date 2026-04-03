@@ -3,14 +3,12 @@ Admin cog — owner-only commands for cog management and bot metrics.
 """
 import logging
 from datetime import UTC, datetime
-from pathlib import Path
 
 import discord
 from discord import Color, Embed
 from discord.ext import commands, tasks
 
 from base_cog import BaseCog
-from cogs.admin_cog.interactions_image import generate_interactions_image
 from cogs.utils.discovery import discover_extensions
 from cogs.utils.duration import format_duration, parse_duration
 
@@ -396,54 +394,45 @@ class AdminCog(BaseCog):
             await ctx.send(f"No interactions recorded in #{channel.name} over the last {duration_label}.")
             return
 
-        # Resolve display names and avatar URLs for all user IDs
-        user_ids: set[int] = set()
-        for pair in top_pairs:
-            user_ids.add(pair['user_a'])
-            user_ids.add(pair['user_b'])
-
-        members: dict[int, discord.Member | None] = {}
         guild = ctx.guild
-        for uid in user_ids:
-            members[uid] = guild.get_member(uid) if guild else None
 
-        # Build enriched data for image generation
-        enriched = []
-        for pair in top_pairs:
-            ma = members.get(pair['user_a'])
-            mb = members.get(pair['user_b'])
-            enriched.append({
-                'user_a_name': (ma.global_name or ma.name) if ma else f"User {pair['user_a']}",
-                'user_b_name': (mb.global_name or mb.name) if mb else f"User {pair['user_b']}",
-                'user_a_avatar': str(ma.display_avatar) if ma else None,
-                'user_b_avatar': str(mb.display_avatar) if mb else None,
-                'replies': pair['replies'],
-                'mentions': pair['mentions'],
-            })
+        def _display_name(uid: int) -> str:
+            member = guild.get_member(uid) if guild else None
+            if member:
+                return member.nick or member.global_name or member.name
+            return f"User {uid}"
 
-        image_path = generate_interactions_image(enriched, channel.name, duration_label)
+        lines = []
+        for i, pair in enumerate(top_pairs, 1):
+            name_a = _display_name(pair['user_a'])
+            name_b = _display_name(pair['user_b'])
+            parts = []
+            if pair['replies']:
+                r = pair['replies']
+                parts.append(f"{r} {'reply' if r == 1 else 'replies'}")
+            if pair['mentions']:
+                m = pair['mentions']
+                parts.append(f"{m} {'mention' if m == 1 else 'mentions'}")
+            detail = ", ".join(parts)
+            lines.append(f"**{i}.** {name_a}  &  {name_b} — {detail}")
 
-        try:
-            embed = Embed(
-                title=f"Interactions in #{channel.name}",
-                description=f"Last {duration_label}",
-                color=Color.blurple(),
-            )
-            file = discord.File(image_path, filename="interactions.png")
-            embed.set_image(url="attachment://interactions.png")
-            embed.add_field(
-                name="Stats",
-                value=(
-                    f"**{stats['unique_pairs']}** unique pairs — "
-                    f"**{stats['total_replies']}** replies, "
-                    f"**{stats['total_mentions']}** mentions"
-                ),
-                inline=False,
-            )
-            await ctx.send(embed=embed, file=file)
-            self._last_interactions_msg = ctx.message
-        finally:
-            Path(image_path).unlink(missing_ok=True)
+        embed = Embed(
+            title=f"Interactions in #{channel.name}",
+            description="\n".join(lines),
+            color=Color.blurple(),
+        )
+        embed.set_footer(text=f"Last {duration_label}")
+        embed.add_field(
+            name="Stats",
+            value=(
+                f"**{stats['unique_pairs']}** unique pairs — "
+                f"**{stats['total_replies']}** replies, "
+                f"**{stats['total_mentions']}** mentions"
+            ),
+            inline=False,
+        )
+        await ctx.send(embed=embed)
+        self._last_interactions_msg = ctx.message
 
     @interactions.error
     async def interactions_error(self, ctx: commands.Context, error: commands.CommandError) -> None:

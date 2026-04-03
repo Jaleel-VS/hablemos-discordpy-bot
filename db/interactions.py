@@ -29,7 +29,7 @@ class InteractionsMixin(DatabaseMixin):
         self,
         channel_id: int,
         after: datetime,
-        limit: int = 15,
+        limit: int = 10,
     ) -> list[dict]:
         """Return top interaction pairs with reply/mention counts and a weighted score."""
         rows = await self._fetch(

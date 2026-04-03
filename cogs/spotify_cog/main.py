@@ -1,13 +1,56 @@
 """Spotify now-playing command — shows what a user is listening to."""
 import logging
 
-from discord import Color, Embed, HTTPException, Member, Spotify, app_commands
+import discord
+from discord import Color, HTTPException, Member, Spotify, app_commands, ui
 from discord.ext import commands
 
 from base_cog import BaseCog
 from cogs.utils.embeds import red_embed
 
 logger = logging.getLogger(__name__)
+
+
+class NowPlayingView(ui.LayoutView):
+    """Components v2 layout for the now-playing card."""
+
+    def __init__(self, target: Member, spotify: Spotify):
+        super().__init__()
+
+        lines = [
+            f"### 🎵 {spotify.title}",
+            f"**{spotify.artist}**",
+            f"-# {spotify.album}",
+        ]
+
+        container_children = [
+            ui.Section(
+                ui.TextDisplay(
+                    f"-# {target.display_name} is listening to\n" + "\n".join(lines),
+                ),
+                accessory=ui.Thumbnail(
+                    spotify.album_cover_url or target.display_avatar.url,
+                ),
+            ),
+        ]
+
+        if spotify.track_url:
+            container_children.append(ui.Separator(visible=True))
+            container_children.append(
+                ui.ActionRow(
+                    ui.Button(
+                        label="Listen on Spotify",
+                        url=spotify.track_url,
+                        style=discord.ButtonStyle.link,
+                        emoji="🎧",
+                    ),
+                ),
+            )
+
+        self.add_item(ui.Container(
+            *container_children,
+            accent_colour=Color.green(),
+        ))
 
 
 class SpotifyCog(BaseCog):
@@ -27,7 +70,6 @@ class SpotifyCog(BaseCog):
             await ctx.send(embed=red_embed("Could not find that user!"))
             return
 
-        # Find Spotify activity
         spotify = next((a for a in target.activities if isinstance(a, Spotify)), None)
 
         if not spotify:
@@ -39,23 +81,10 @@ class SpotifyCog(BaseCog):
             ))
             return
 
-        embed = Embed(
-            title=f"{target.display_name} is currently listening to",
-            description=f"# {spotify.title}\n**Artist**\n{spotify.artist}",
-            color=Color.green(),
-        )
-        embed.add_field(name="Album", value=spotify.album, inline=True)
-        embed.set_author(name=target.display_name, icon_url=target.display_avatar.url)
-
-        if spotify.album_cover_url:
-            embed.set_thumbnail(url=spotify.album_cover_url)
-        if spotify.track_url:
-            embed.add_field(name="Listen on Spotify", value=f"[Click here]({spotify.track_url})", inline=False)
-
         try:
-            await ctx.send(embed=embed)
+            await ctx.send(view=NowPlayingView(target, spotify))
         except HTTPException:
-            logger.exception("Failed to send Spotify embed for %s", target)
+            logger.exception("Failed to send Spotify view for %s", target)
             await ctx.send(embed=red_embed("Something went wrong sending the embed."))
 
 
