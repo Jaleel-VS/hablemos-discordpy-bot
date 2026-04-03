@@ -5,7 +5,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from discord import Interaction
-from discord.ext.commands import Cog, CommandOnCooldown
+from discord.ext.commands import CheckFailure, Cog, CommandOnCooldown
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -39,7 +39,15 @@ class BaseCog(Cog):
         """Handle errors for commands in this cog"""
         if isinstance(error, CommandOnCooldown):
             await ctx.send(f"⏱️ Command is on cooldown. Try again in {error.retry_after:.1f} seconds.")
+        elif isinstance(error, CheckFailure):
+            # Look for fail_msg metadata on the check predicate
+            msg = None
+            if ctx.command:
+                for check in ctx.command.checks:
+                    if hasattr(check, "fail_msg"):
+                        msg = check.fail_msg
+                        break
+            await ctx.send(msg or "You don't have permission to use this command.")
         else:
             logger.error('An error occurred: %s in %s', error, ctx.channel)
-            # Re-raise other errors so they can be handled by global error handlers
             raise error

@@ -1,4 +1,5 @@
 """Global command error handler cog."""
+import difflib
 import logging
 import random
 
@@ -71,6 +72,14 @@ class ErrorHandler(BaseCog):
 
         try:
             if isinstance(error, commands.CommandNotFound):
+                # Suggest similar commands via fuzzy match
+                invoked = ctx.invoked_with
+                all_cmds = [c.name for c in self.bot.commands if not c.hidden]
+                close = difflib.get_close_matches(invoked, all_cmds, n=3, cutoff=0.6)
+                if close:
+                    suggestions = ", ".join(f"`{self.bot.command_prefix}{c}`" for c in close)
+                    await ctx.send(f"Command not found. Did you mean {suggestions}?")
+
                 error_channel = self.bot.error_channel
                 if isinstance(error_channel, discord.TextChannel) and ctx.guild:
                     await error_channel.send(
@@ -98,7 +107,21 @@ class ErrorHandler(BaseCog):
                     f"Please contact <@{owner_id}> for any trouble.\n\n*{quote}*"
                 )
 
+            elif isinstance(error, commands.CheckFailure):
+                # Look for fail_msg metadata on the check predicate
+                msg = None
+                if ctx.command:
+                    for check in ctx.command.checks:
+                        if hasattr(check, "fail_msg"):
+                            msg = check.fail_msg
+                            break
+                await ctx.send(msg or "You don't have permission to use this command.")
+
             else:
+                # Silently drop Forbidden from users who blocked the bot
+                if isinstance(error, commands.CommandInvokeError) and isinstance(error.original, discord.Forbidden):
+                    logger.debug("Forbidden error (likely blocked): %s", error.original)
+                    return
                 logger.error("Unhandled error: %s in command %s", error, ctx.command)
                 if isinstance(ctx.channel, discord.TextChannel):
                     await ctx.send("An unexpected error occurred. Please try again later.")

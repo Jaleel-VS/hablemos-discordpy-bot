@@ -1,4 +1,5 @@
 """Bot entrypoint — Hablemos subclass of discord.py Bot."""
+import asyncio
 import logging
 
 import discord
@@ -47,11 +48,17 @@ class Hablemos(Bot):
         await super().close()
 
     async def setup_hook(self):
-        try:
-            await self.db.connect()
-            logger.info("Database connected successfully")
-        except Exception as e:
-            logger.error("Failed to connect to database: %s", e)
+        for attempt in range(5):
+            try:
+                await self.db.connect()
+                logger.info("Database connected successfully")
+                break
+            except Exception:
+                logger.warning("DB not ready, attempt %s/5", attempt + 1, exc_info=True)
+                if attempt < 4:
+                    await asyncio.sleep(2 ** attempt)
+        else:
+            logger.error("Database unavailable after 5 retries — aborting setup")
             return
 
         # Load disabled cogs set for filtering
@@ -65,8 +72,10 @@ class Hablemos(Bot):
                 logger.info("Skipping disabled extension: %s", ext)
                 continue
             try:
-                await self.load_extension(ext)
+                await asyncio.wait_for(self.load_extension(ext), timeout=30)
                 logger.info("Loaded extension: %s", ext)
+            except TimeoutError:
+                logger.error("Extension %s timed out during load", ext)
             except Exception:
                 logger.error("Failed to load extension %s", ext, exc_info=True)
 
