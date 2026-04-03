@@ -14,6 +14,10 @@ from discord.ext import commands
 
 from base_cog import BaseCog
 from cogs.league_cog.config import LEAGUE_GUILD_ID, RATE_LIMITS
+from cogs.league_cog.rounds import (
+    build_round_end_announcement,
+    get_eligible_champions,
+)
 from cogs.league_cog.utils import (
     CUSTOM_EMOJI_PATTERN,
     UNICODE_EMOJI_PATTERN,
@@ -325,7 +329,7 @@ class LeagueAdminCog(BaseCog):
             if not league_cog:
                 return await ctx.send("❌ LeagueCog not loaded.")
 
-            result = await league_cog.process_round_end(current_round)
+            result = await league_cog._process_round_end(current_round)
 
             end_timestamp = int(result['next_end'].timestamp())
             embed = Embed(
@@ -384,10 +388,10 @@ class LeagueAdminCog(BaseCog):
 
             spanish_top3 = spanish_top[:3]
             english_top3 = english_top[:3]
-            spanish_champions = league_cog.get_eligible_champions(spanish_top, last_round_recipients)
-            english_champions = league_cog.get_eligible_champions(english_top, last_round_recipients)
+            spanish_champions = get_eligible_champions(spanish_top, last_round_recipients)
+            english_champions = get_eligible_champions(english_top, last_round_recipients)
 
-            message = league_cog.build_round_end_announcement(
+            message = build_round_end_announcement(
                 round_number=round_number,
                 spanish_top3=spanish_top3,
                 english_top3=english_top3,
