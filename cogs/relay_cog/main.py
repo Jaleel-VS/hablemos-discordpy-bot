@@ -101,9 +101,10 @@ class RelayCog(BaseCog):
 
         try:
             await target_channel.send(message)
-            await ctx.send(
-                f"✅ Sent to #{target_channel.name} ({target_channel.id})."
-            )
+            if target_channel.id != ctx.channel.id:
+                await ctx.send(
+                    f"✅ Sent to #{target_channel.name} ({target_channel.id})."
+                )
             logger.info(
                 "Parrot succeeded: relayed message from %s to channel=%s",
                 invoker, target_channel.id,
