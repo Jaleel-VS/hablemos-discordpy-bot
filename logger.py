@@ -1,4 +1,5 @@
 """Logging setup — RotatingFileHandler + stdout + optional Discord webhook."""
+import asyncio
 import logging
 import os
 import sys
@@ -13,19 +14,27 @@ class DiscordWebhookHandler(logging.Handler):
     def __init__(self, webhook_url: str):
         super().__init__(level=logging.WARNING)
         self.webhook_url = webhook_url
+        self._session: aiohttp.ClientSession | None = None
+        self._tasks: set[asyncio.Task] = set()
+
+    def _get_session(self) -> aiohttp.ClientSession:
+        if self._session is None or self._session.closed:
+            self._session = aiohttp.ClientSession()
+        return self._session
 
     def emit(self, record: logging.LogRecord):
-        import asyncio
         try:
             loop = asyncio.get_running_loop()
-            loop.create_task(self._send(self.format(record)))
+            task = loop.create_task(self._send(self.format(record)))
+            self._tasks.add(task)
+            task.add_done_callback(self._tasks.discard)
         except RuntimeError:
             pass  # No running loop (e.g. during startup) — skip silently
 
     async def _send(self, message: str):
         try:
-            async with aiohttp.ClientSession() as session:
-                await session.post(self.webhook_url, json={"content": f"```\n{message[:1990]}\n```"})
+            session = self._get_session()
+            await session.post(self.webhook_url, json={"content": f"```\n{message[:1990]}\n```"})
         except Exception:
             pass  # Never let the log handler crash the bot
 

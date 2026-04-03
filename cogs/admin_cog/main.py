@@ -11,6 +11,7 @@ from discord.ext import commands, tasks
 from base_cog import BaseCog
 from cogs.utils.discovery import discover_extensions
 from cogs.utils.duration import format_duration, parse_duration
+from cogs.utils.plural import plural
 
 logger = logging.getLogger(__name__)
 
@@ -410,11 +411,9 @@ class AdminCog(BaseCog):
             name_b = _display_name(pair['user_b'])
             parts = []
             if pair['replies']:
-                r = pair['replies']
-                parts.append(f"{r} {'reply' if r == 1 else 'replies'}")
+                parts.append(f"{plural(pair['replies']):reply/replies}")
             if pair['mentions']:
-                m = pair['mentions']
-                parts.append(f"{m} {'mention' if m == 1 else 'mentions'}")
+                parts.append(f"{plural(pair['mentions']):mention}")
             detail = ", ".join(parts)
             rank = MEDALS.get(i, f"**{i}.**")
             lines.append(f"{rank} {name_a}  &  {name_b}\n-# {detail}")
