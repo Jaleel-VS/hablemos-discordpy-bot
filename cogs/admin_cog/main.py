@@ -5,7 +5,7 @@ import logging
 from datetime import UTC, datetime
 
 import discord
-from discord import Color, Embed
+from discord import Color, Embed, ui
 from discord.ext import commands, tasks
 
 from base_cog import BaseCog
@@ -402,6 +402,8 @@ class AdminCog(BaseCog):
                 return member.nick or member.global_name or member.name
             return f"User {uid}"
 
+        MEDALS = {1: "🥇", 2: "🥈", 3: "🥉"}
+
         lines = []
         for i, pair in enumerate(top_pairs, 1):
             name_a = _display_name(pair['user_a'])
@@ -414,24 +416,24 @@ class AdminCog(BaseCog):
                 m = pair['mentions']
                 parts.append(f"{m} {'mention' if m == 1 else 'mentions'}")
             detail = ", ".join(parts)
-            lines.append(f"**{i}.** {name_a}  &  {name_b} — {detail}")
+            rank = MEDALS.get(i, f"**{i}.**")
+            lines.append(f"{rank} {name_a}  &  {name_b}\n-# {detail}")
 
-        embed = Embed(
-            title=f"Interactions in #{channel.name}",
-            description="\n".join(lines),
-            color=Color.blurple(),
-        )
-        embed.set_footer(text=f"Last {duration_label}")
-        embed.add_field(
-            name="Stats",
-            value=(
+        view = ui.LayoutView()
+        view.add_item(ui.Container(
+            ui.TextDisplay(f"## Interactions in #{channel.name}\n-# Top pairs by replies & mentions"),
+            ui.Separator(visible=True),
+            ui.TextDisplay("\n".join(lines)),
+            ui.Separator(visible=True),
+            ui.TextDisplay(
                 f"**{stats['unique_pairs']}** unique pairs — "
                 f"**{stats['total_replies']}** replies, "
-                f"**{stats['total_mentions']}** mentions"
+                f"**{stats['total_mentions']}** mentions\n"
+                f"-# Last {duration_label}"
             ),
-            inline=False,
-        )
-        await ctx.send(embed=embed)
+            accent_colour=Color.blurple(),
+        ))
+        await ctx.send(view=view)
         self._last_interactions_msg = ctx.message
 
     @interactions.error

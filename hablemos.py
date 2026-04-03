@@ -70,6 +70,8 @@ class Hablemos(Bot):
             except Exception:
                 logger.error("Failed to load extension %s", ext, exc_info=True)
 
+        self.tree.on_app_command_completion = self._on_app_command_completion
+
     async def on_ready(self):
         guild_id = self.settings.bot_playground_guild_id
         guild = self.get_guild(guild_id)
@@ -102,6 +104,20 @@ class Hablemos(Bot):
             )
         except Exception as e:
             logger.debug("Failed to record command metric: %s", e)
+
+    async def _on_app_command_completion(self, interaction, command):
+        logger.info("Slash command %s completed by %s in %s.", command.qualified_name, interaction.user, interaction.guild)
+        try:
+            await self.db.record_command(
+                command_name=command.qualified_name,
+                cog_name=type(command.binding).__name__ if command.binding else None,
+                user_id=interaction.user.id,
+                guild_id=interaction.guild_id,
+                channel_id=interaction.channel_id,
+                is_slash=True,
+            )
+        except Exception as e:
+            logger.debug("Failed to record slash command metric: %s", e)
 
 # Initialize and run
 bot = Hablemos(settings.prefix, settings)
