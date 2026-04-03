@@ -369,12 +369,12 @@ class AdminCog(BaseCog):
 
     @commands.command(name='interactions')
     @commands.cooldown(1, 60, commands.BucketType.default)
-    async def interactions(self, ctx: commands.Context, channel: discord.TextChannel = None, duration: str = "7d"):
+    async def interactions(self, ctx: commands.Context, duration: str = "7d", channel: discord.TextChannel = None):
         """
         Show top reply/mention pairs in a channel (from tracked data).
 
-        Usage: $interactions [#channel] [duration]
-        Examples: $interactions 12h | $interactions #general 3d | $interactions 1d12h
+        Usage: $interactions [duration] [#channel]
+        Examples: $interactions 12h | $interactions 3d #general | $interactions 1d12h
         """
         channel = channel or ctx.channel
 

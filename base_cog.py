@@ -5,7 +5,12 @@ import logging
 from typing import TYPE_CHECKING
 
 from discord import Interaction
-from discord.ext.commands import CheckFailure, Cog, CommandOnCooldown
+from discord.ext.commands import (
+    CheckFailure,
+    Cog,
+    CommandOnCooldown,
+    UserInputError,
+)
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -48,6 +53,9 @@ class BaseCog(Cog):
                         msg = check.fail_msg
                         break
             await ctx.send(msg or "You don't have permission to use this command.")
+        elif isinstance(error, UserInputError):
+            usage = f"Usage: `{ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}`" if ctx.command else ""
+            await ctx.send(f"Invalid input: {error}\n{usage}")
         else:
             logger.error('An error occurred: %s in %s', error, ctx.channel)
             raise error
