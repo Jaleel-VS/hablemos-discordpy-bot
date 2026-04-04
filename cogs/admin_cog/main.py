@@ -458,7 +458,7 @@ class AdminCog(BaseCog):
         raise error
 
     @commands.command(name="whotalks", aliases=["wt"])
-    @commands.cooldown(1, 30, commands.BucketType.channel)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def whotalks(
         self,
         ctx: commands.Context,
