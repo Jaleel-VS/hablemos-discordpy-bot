@@ -551,10 +551,10 @@ class AdminCog(BaseCog):
                     label += f"\n-# {global_name}"
                 if member.name != global_name:
                     label += f"\n-# @{member.name}"
-                label += f"\n-# `{uid}`"
+                label += f"\n```{uid}```"
             else:
                 avatar_url = "https://cdn.discordapp.com/embed/avatars/0.png"
-                label = f"**Unknown User**\n-# `{uid}`"
+                label = f"**Unknown User**\n```{uid}```"
 
             if uid == joiner_id:
                 label = f"➡️ {label}  *(joined)*"
