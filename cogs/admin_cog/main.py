@@ -6,10 +6,11 @@ import re
 from datetime import UTC, datetime
 
 import discord
-from discord import Color, Embed, ui
+from discord import Color, Embed, app_commands, ui
 from discord.ext import commands, tasks
 
 from base_cog import BaseCog
+from cogs.admin_cog.config import VC_ENRICH_CHANNEL_ID
 from cogs.utils.discovery import discover_extensions
 from cogs.utils.duration import format_duration, parse_duration
 from cogs.utils.plural import plural
@@ -39,9 +40,12 @@ class AdminCog(BaseCog):
         self.daily_cleanup.start()
         self._interaction_errors = 0
         self._last_interactions_msg: discord.Message | None = None
+        self._vc_enrich_ctx_menu: app_commands.ContextMenu | None = None
 
     async def cog_unload(self):
         self.daily_cleanup.cancel()
+        if self._vc_enrich_ctx_menu:
+            self.bot.tree.remove_command(self._vc_enrich_ctx_menu.name, type=self._vc_enrich_ctx_menu.type)
 
     # ── Interaction tracking (on_message) ──
 
@@ -456,11 +460,101 @@ class AdminCog(BaseCog):
 
     # ── Voice channel enrichment ──
 
+    async def _parse_vc_embed(self, message: discord.Message) -> list[ui.LayoutView] | str:
+        """Parse a Rai voice-join embed and return LayoutViews, or an error string."""
+        if not message.embeds:
+            return "That message has no embeds."
+
+        embed_dict = message.embeds[0].to_dict()
+
+        footer_text = embed_dict.get('footer', {}).get('text', '')
+        joiner_match = _JOINER_RE.match(footer_text)
+        if not joiner_match:
+            return "Couldn't parse joiner ID from embed footer. Is this a Rai voice log?"
+        joiner_id = int(joiner_match.group(1))
+
+        fields = embed_dict.get('fields', [])
+        if not fields:
+            return "No participant field found in embed."
+
+        participant_ids = [int(m) for m in _PARTICIPANT_RE.findall(fields[0].get('value', ''))]
+        if not participant_ids:
+            return "No participant IDs found in embed field."
+
+        desc = embed_dict.get('description', '')
+        vc_name_match = re.search(r'\*\*(.+?)\*\*\]', desc)
+        vc_name = vc_name_match.group(1) if vc_name_match else "Voice Channel"
+
+        guild = message.guild
+        MAX_SECTIONS = 10
+        accent = Color(embed_dict.get('color', 0x3B9EA3))
+
+        sections: list[ui.Section] = []
+        for uid in participant_ids:
+            member = guild.get_member(uid) if guild else None
+            if not member and guild:
+                try:
+                    member = await guild.fetch_member(uid)
+                except discord.HTTPException:
+                    member = None
+
+            if member:
+                avatar_url = member.display_avatar.url
+                global_name = member.global_name or member.name
+                display_name = member.nick or global_name
+                label = f"**{display_name}**"
+                if display_name != global_name:
+                    label += f"\n-# {global_name}"
+                if member.name != global_name:
+                    label += f"\n-# @{member.name}"
+                label += f"\n```{uid}```"
+            else:
+                avatar_url = "https://cdn.discordapp.com/embed/avatars/0.png"
+                label = f"**Unknown User**\n```{uid}```"
+
+            if uid == joiner_id:
+                label = f"➡️ {label}  *(joined)*"
+
+            sections.append(ui.Section(
+                ui.TextDisplay(label),
+                accessory=ui.Thumbnail(avatar_url),
+            ))
+
+        ts_text = None
+        ts = embed_dict.get('timestamp', '')
+        if ts:
+            try:
+                dt = datetime.fromisoformat(ts)
+                ts_text = f"-# <t:{int(dt.timestamp())}:R>"
+            except ValueError:
+                pass
+
+        views: list[ui.LayoutView] = []
+        for i in range(0, len(sections), MAX_SECTIONS):
+            chunk = sections[i:i + MAX_SECTIONS]
+            items: list[ui.Item] = []
+
+            if i == 0:
+                items.append(ui.TextDisplay(f"## {vc_name}\n-# {len(participant_ids)} users in channel"))
+                items.append(ui.Separator(visible=True))
+
+            items.extend(chunk)
+
+            is_last = i + MAX_SECTIONS >= len(sections)
+            if is_last and ts_text:
+                items.append(ui.Separator(visible=True))
+                items.append(ui.TextDisplay(ts_text))
+
+            view = ui.LayoutView()
+            view.add_item(ui.Container(*items, accent_colour=accent))
+            views.append(view)
+
+        return views
+
     @commands.command(name='vcenrich')
     @commands.is_owner()
     async def vc_enrich(self, ctx: commands.Context, message_link: str):
         """Enrich a Rai voice-join log embed with avatars. Usage: $vcenrich <message_link>"""
-        # Parse message link
         parts = message_link.strip().split('/')
         try:
             guild_id = int(parts[-3])
@@ -493,105 +587,11 @@ class AdminCog(BaseCog):
             await ctx.send("❌ Failed to fetch message.")
             return
 
-        if not message.embeds:
-            await ctx.send("❌ That message has no embeds.")
+        result = await self._parse_vc_embed(message)
+        if isinstance(result, str):
+            await ctx.send(f"❌ {result}")
             return
-
-        embed = message.embeds[0]
-        embed_dict = embed.to_dict()
-
-        # Extract joiner ID from footer (e.g. "V638764284670640163 - Voice Join")
-        footer_text = embed_dict.get('footer', {}).get('text', '')
-        joiner_match = _JOINER_RE.match(footer_text)
-        if not joiner_match:
-            await ctx.send("❌ Couldn't parse joiner ID from embed footer. Is this a Rai voice log?")
-            return
-        joiner_id = int(joiner_match.group(1))
-
-        # Extract participant IDs from the field
-        fields = embed_dict.get('fields', [])
-        if not fields:
-            await ctx.send("❌ No participant field found in embed.")
-            return
-
-        participant_ids = [int(m) for m in _PARTICIPANT_RE.findall(fields[0].get('value', ''))]
-        if not participant_ids:
-            await ctx.send("❌ No participant IDs found in embed field.")
-            return
-
-        # Extract channel name from description (e.g. "**💬￤Sala 1**")
-        desc = embed_dict.get('description', '')
-        vc_name_match = re.search(r'\*\*(.+?)\*\*\]', desc)
-        vc_name = vc_name_match.group(1) if vc_name_match else "Voice Channel"
-
-        # Build the Components v2 view
-        # LayoutView has a global 40-component limit across all containers.
-        # Each Section(TextDisplay, accessory=Thumbnail) = 3 components.
-        # Container itself = 1, header (TextDisplay + Separator) = 2.
-        # Budget per message: (40 - 1 - 2) / 3 = 12 sections max with header,
-        # (40 - 1) / 3 = 13 without. Use 10 to leave room for footer.
-        MAX_SECTIONS = 10
-        accent = Color(embed_dict.get('color', 0x3B9EA3))
-
-        sections: list[ui.Section] = []
-        for uid in participant_ids:
-            member = guild.get_member(uid)
-            if not member:
-                try:
-                    member = await guild.fetch_member(uid)
-                except discord.HTTPException:
-                    member = None
-
-            if member:
-                avatar_url = member.display_avatar.url
-                global_name = member.global_name or member.name
-                display_name = member.nick or global_name
-                label = f"**{display_name}**"
-                if display_name != global_name:
-                    label += f"\n-# {global_name}"
-                if member.name != global_name:
-                    label += f"\n-# @{member.name}"
-                label += f"\n```{uid}```"
-            else:
-                avatar_url = "https://cdn.discordapp.com/embed/avatars/0.png"
-                label = f"**Unknown User**\n```{uid}```"
-
-            if uid == joiner_id:
-                label = f"➡️ {label}  *(joined)*"
-
-            sections.append(ui.Section(
-                ui.TextDisplay(label),
-                accessory=ui.Thumbnail(avatar_url),
-            ))
-
-        # Parse timestamp for footer
-        ts_text = None
-        ts = embed_dict.get('timestamp', '')
-        if ts:
-            try:
-                dt = datetime.fromisoformat(ts)
-                ts_text = f"-# <t:{int(dt.timestamp())}:R>"
-            except ValueError:
-                pass
-
-        # Send in batches — each LayoutView gets one Container
-        for i in range(0, len(sections), MAX_SECTIONS):
-            chunk = sections[i:i + MAX_SECTIONS]
-            items: list[ui.Item] = []
-
-            if i == 0:
-                items.append(ui.TextDisplay(f"## {vc_name}\n-# {len(participant_ids)} users in channel"))
-                items.append(ui.Separator(visible=True))
-
-            items.extend(chunk)
-
-            is_last = i + MAX_SECTIONS >= len(sections)
-            if is_last and ts_text:
-                items.append(ui.Separator(visible=True))
-                items.append(ui.TextDisplay(ts_text))
-
-            view = ui.LayoutView()
-            view.add_item(ui.Container(*items, accent_colour=accent))
+        for view in result:
             await ctx.send(view=view)
 
     # ── Raw embed output ──
@@ -671,4 +671,30 @@ class AdminCog(BaseCog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(AdminCog(bot))
+    cog = AdminCog(bot)
+
+    # Context menu commands must be added to the tree manually
+    @app_commands.context_menu(name="VC Enrich")
+    async def vc_enrich_ctx(interaction: discord.Interaction, message: discord.Message):
+        """Enrich a Rai voice-join log and post to the admin channel."""
+        await interaction.response.defer(ephemeral=True)
+
+        result = await cog._parse_vc_embed(message)
+        if isinstance(result, str):
+            await interaction.followup.send(f"❌ {result}", ephemeral=True)
+            return
+
+        target = bot.get_channel(VC_ENRICH_CHANNEL_ID)
+        if not target:
+            await interaction.followup.send("❌ Enrich channel not found.", ephemeral=True)
+            return
+
+        await target.send(f"{interaction.user.mention} enriched a VC log from {message.jump_url}")
+        for view in result:
+            await target.send(view=view)
+
+        await interaction.followup.send("✅ Posted to enrich channel.", ephemeral=True)
+
+    cog._vc_enrich_ctx_menu = vc_enrich_ctx
+    bot.tree.add_command(vc_enrich_ctx)
+    await bot.add_cog(cog)
