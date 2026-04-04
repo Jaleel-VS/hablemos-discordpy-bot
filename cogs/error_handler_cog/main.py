@@ -117,6 +117,10 @@ class ErrorHandler(BaseCog):
                             break
                 await ctx.send(msg or "You don't have permission to use this command.")
 
+            elif isinstance(error, commands.UserInputError):
+                # Already handled by BaseCog.cog_command_error — don't double-message
+                return
+
             else:
                 # Silently drop Forbidden from users who blocked the bot
                 if isinstance(error, commands.CommandInvokeError) and isinstance(error.original, discord.Forbidden):
