@@ -525,12 +525,12 @@ class AdminCog(BaseCog):
         vc_name = vc_name_match.group(1) if vc_name_match else "Voice Channel"
 
         # Build the Components v2 view
-        view = ui.LayoutView()
-        items: list[ui.Item] = [
-            ui.TextDisplay(f"## {vc_name}\n-# {len(participant_ids)} users in channel"),
-            ui.Separator(visible=True),
-        ]
+        # Each Section = 3 components toward the 40-item LayoutView limit.
+        # Header/footer overhead ~4, so batch at 10 sections per container.
+        SECTIONS_PER_CONTAINER = 10
+        accent = Color(embed_dict.get('color', 0x3B9EA3))
 
+        sections: list[ui.Section] = []
         for uid in participant_ids:
             member = guild.get_member(uid)
             if not member:
@@ -552,26 +552,43 @@ class AdminCog(BaseCog):
                 avatar_url = "https://cdn.discordapp.com/embed/avatars/0.png"
                 label = f"**Unknown User**\n-# ID: {uid}"
 
-            is_joiner = uid == joiner_id
-            if is_joiner:
+            if uid == joiner_id:
                 label = f"➡️ {label}  *(joined)*"
 
-            items.append(ui.Section(
+            sections.append(ui.Section(
                 ui.TextDisplay(label),
                 accessory=ui.Thumbnail(avatar_url),
             ))
 
+        # Parse timestamp for footer
+        ts_display = None
         ts = embed_dict.get('timestamp', '')
         if ts:
-            items.append(ui.Separator(visible=True))
-            # Parse ISO timestamp to unix for Discord formatting
             try:
                 dt = datetime.fromisoformat(ts)
-                items.append(ui.TextDisplay(f"-# <t:{int(dt.timestamp())}:R>"))
+                ts_display = ui.TextDisplay(f"-# <t:{int(dt.timestamp())}:R>")
             except ValueError:
                 pass
 
-        view.add_item(ui.Container(*items, accent_colour=Color(embed_dict.get('color', 0x3B9EA3))))
+        view = ui.LayoutView()
+        for i in range(0, len(sections), SECTIONS_PER_CONTAINER):
+            chunk = sections[i:i + SECTIONS_PER_CONTAINER]
+            items: list[ui.Item] = []
+
+            if i == 0:
+                items.append(ui.TextDisplay(f"## {vc_name}\n-# {len(participant_ids)} users in channel"))
+                items.append(ui.Separator(visible=True))
+
+            items.extend(chunk)
+
+            # Add timestamp to the last container
+            is_last = i + SECTIONS_PER_CONTAINER >= len(sections)
+            if is_last and ts_display:
+                items.append(ui.Separator(visible=True))
+                items.append(ts_display)
+
+            view.add_item(ui.Container(*items, accent_colour=accent))
+
         await ctx.send(view=view)
 
     # ── Raw embed output ──
