@@ -552,7 +552,7 @@ class AdminCog(BaseCog):
         return views
 
     @commands.command(name='vcenrich')
-    @commands.is_owner()
+    @commands.has_permissions(manage_messages=True)
     async def vc_enrich(self, ctx: commands.Context, message_link: str):
         """Enrich a Rai voice-join log embed with avatars. Usage: $vcenrich <message_link>"""
         parts = message_link.strip().split('/')
