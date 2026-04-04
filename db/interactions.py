@@ -68,6 +68,33 @@ class InteractionsMixin(DatabaseMixin):
         )
         return dict(row) if row else {"unique_pairs": 0, "total_replies": 0, "total_mentions": 0}
 
+    async def get_top_partners_for_user(
+        self,
+        user_id: int,
+        after: datetime,
+        channel_id: int | None = None,
+        limit: int = 10,
+    ) -> list[dict]:
+        """Return the users a given user interacts with most, with counts."""
+        base = """
+            SELECT
+                CASE WHEN user_a = $1 THEN user_b ELSE user_a END AS partner_id,
+                COUNT(*) FILTER (WHERE interaction_type = 'reply')  AS replies,
+                COUNT(*) FILTER (WHERE interaction_type = 'mention') AS mentions,
+                COUNT(*) FILTER (WHERE interaction_type = 'reply') * 2
+                  + COUNT(*) FILTER (WHERE interaction_type = 'mention') AS score
+            FROM interactions
+            WHERE (user_a = $1 OR user_b = $1) AND created_at >= $2
+        """
+        if channel_id is not None:
+            base += " AND channel_id = $4"
+            args = (user_id, after, limit, channel_id)
+        else:
+            args = (user_id, after, limit)
+        base += " GROUP BY partner_id ORDER BY score DESC LIMIT $3"
+        rows = await self._fetch(base, *args)
+        return [dict(r) for r in rows]
+
     async def purge_old_interactions(self, days: int) -> int:
         """Delete interaction rows older than N days. Returns rows deleted."""
         result = await self._execute(

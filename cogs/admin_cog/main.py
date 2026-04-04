@@ -457,6 +457,70 @@ class AdminCog(BaseCog):
         # Let the global handler deal with anything else
         raise error
 
+    @commands.command(name="whotalks", aliases=["wt"])
+    @commands.cooldown(1, 30, commands.BucketType.channel)
+    async def whotalks(
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        duration: str = "30d",
+        channel: discord.TextChannel = None,
+    ):
+        """Show who a user interacts with the most.
+
+        Usage: $whotalks @user [duration] [#channel]
+        Examples: $whotalks @jaleel | $whotalks @jaleel 7d | $whotalks @jaleel 30d #general
+        """
+        try:
+            td = parse_duration(duration)
+        except ValueError as exc:
+            await ctx.send(str(exc))
+            return
+
+        after = datetime.now(UTC) - td
+        duration_label = format_duration(td)
+
+        partners = await self.bot.db.get_top_partners_for_user(
+            user.id, after, channel_id=channel.id if channel else None,
+        )
+
+        scope = f"in #{channel.name}" if channel else "server-wide"
+        if not partners:
+            await ctx.send(f"No interactions recorded for {user.display_name} {scope} over the last {duration_label}.")
+            return
+
+        guild = ctx.guild
+        MEDALS = {1: "🥇", 2: "🥈", 3: "🥉"}
+
+        lines = []
+        for i, row in enumerate(partners, 1):
+            member = guild.get_member(row['partner_id']) if guild else None
+            name = member.nick or member.global_name or member.name if member else f"User {row['partner_id']}"
+            parts = []
+            if row['replies']:
+                parts.append(f"{plural(row['replies']):reply/replies}")
+            if row['mentions']:
+                parts.append(f"{plural(row['mentions']):mention}")
+            detail = ", ".join(parts)
+            rank = MEDALS.get(i, f"**{i}.**")
+            lines.append(f"{rank} {name}\n-# {detail}")
+
+        total = sum(r['score'] for r in partners)
+
+        view = ui.LayoutView()
+        view.add_item(ui.Container(
+            ui.TextDisplay(f"## Who does {user.display_name} talk to?\n-# Top partners by replies & mentions ({scope})"),
+            ui.Separator(visible=True),
+            ui.TextDisplay("\n".join(lines)),
+            ui.Separator(visible=True),
+            ui.TextDisplay(
+                f"**{len(partners)}** unique partners — "
+                f"**{total}** weighted interactions\n"
+                f"-# Last {duration_label}"
+            ),
+            accent_colour=Color.blurple(),
+        ))
+        await ctx.send(view=view)
 
     # ── Voice channel enrichment ──
 
