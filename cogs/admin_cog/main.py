@@ -525,9 +525,12 @@ class AdminCog(BaseCog):
         vc_name = vc_name_match.group(1) if vc_name_match else "Voice Channel"
 
         # Build the Components v2 view
-        # Each Section = 3 components toward the 40-item LayoutView limit.
-        # Header/footer overhead ~4, so batch at 10 sections per container.
-        SECTIONS_PER_CONTAINER = 10
+        # LayoutView has a global 40-component limit across all containers.
+        # Each Section(TextDisplay, accessory=Thumbnail) = 3 components.
+        # Container itself = 1, header (TextDisplay + Separator) = 2.
+        # Budget per message: (40 - 1 - 2) / 3 = 12 sections max with header,
+        # (40 - 1) / 3 = 13 without. Use 10 to leave room for footer.
+        MAX_SECTIONS = 10
         accent = Color(embed_dict.get('color', 0x3B9EA3))
 
         sections: list[ui.Section] = []
@@ -561,18 +564,18 @@ class AdminCog(BaseCog):
             ))
 
         # Parse timestamp for footer
-        ts_display = None
+        ts_text = None
         ts = embed_dict.get('timestamp', '')
         if ts:
             try:
                 dt = datetime.fromisoformat(ts)
-                ts_display = ui.TextDisplay(f"-# <t:{int(dt.timestamp())}:R>")
+                ts_text = f"-# <t:{int(dt.timestamp())}:R>"
             except ValueError:
                 pass
 
-        view = ui.LayoutView()
-        for i in range(0, len(sections), SECTIONS_PER_CONTAINER):
-            chunk = sections[i:i + SECTIONS_PER_CONTAINER]
+        # Send in batches — each LayoutView gets one Container
+        for i in range(0, len(sections), MAX_SECTIONS):
+            chunk = sections[i:i + MAX_SECTIONS]
             items: list[ui.Item] = []
 
             if i == 0:
@@ -581,15 +584,14 @@ class AdminCog(BaseCog):
 
             items.extend(chunk)
 
-            # Add timestamp to the last container
-            is_last = i + SECTIONS_PER_CONTAINER >= len(sections)
-            if is_last and ts_display:
+            is_last = i + MAX_SECTIONS >= len(sections)
+            if is_last and ts_text:
                 items.append(ui.Separator(visible=True))
-                items.append(ts_display)
+                items.append(ui.TextDisplay(ts_text))
 
+            view = ui.LayoutView()
             view.add_item(ui.Container(*items, accent_colour=accent))
-
-        await ctx.send(view=view)
+            await ctx.send(view=view)
 
     # ── Raw embed output ──
 
