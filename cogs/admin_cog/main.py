@@ -594,6 +594,78 @@ class AdminCog(BaseCog):
         for view in result:
             await ctx.send(view=view)
 
+    # ── Message export ──
+
+    @commands.command(name='fetch')
+    @commands.is_owner()
+    async def fetch_messages(
+        self, ctx: commands.Context, channel: discord.TextChannel | discord.Thread | None = None, count: int = 50,
+    ):
+        """Export messages from a channel or thread. Usage: $fetch [#channel] [count]
+
+        In a thread with no args, exports all thread messages.
+        In a channel, exports the last `count` messages (default 50, max 500).
+        """
+        target = channel or ctx.channel
+        is_thread = isinstance(target, discord.Thread)
+
+        if is_thread and channel is None:
+            limit = None  # all messages in thread
+        else:
+            limit = max(1, min(count, 500))
+
+        status = await ctx.send(f"⏳ Fetching messages from {target.mention}...")
+
+        try:
+            messages: list[discord.Message] = [
+                msg async for msg in target.history(limit=limit, oldest_first=True)
+            ]
+        except discord.Forbidden:
+            await status.edit(content="❌ No permission to read that channel.")
+            return
+        except discord.HTTPException:
+            logger.exception("Failed to fetch history for %s", target.id)
+            await status.edit(content="❌ Failed to fetch messages.")
+            return
+
+        if not messages:
+            await status.edit(content="ℹ️ No messages found.")
+            return
+
+        guild_id = ctx.guild.id if ctx.guild else 0
+        lines = [f"# {target.name}\n", f"Exported {len(messages)} messages\n\n---\n"]
+
+        for msg in messages:
+            jump = f"https://discord.com/channels/{guild_id}/{target.id}/{msg.id}"
+            ts = int(msg.created_at.timestamp())
+            header = f"**{msg.author.display_name}** (@{msg.author.name}) — <t:{ts}:f>"
+            lines.append(f"### [{header}]({jump})\n")
+
+            if msg.content:
+                lines.append(f"{msg.content}\n")
+
+            for embed in msg.embeds:
+                lines.append(f"```json\n{embed.to_dict()}\n```\n")
+
+            for attachment in msg.attachments:
+                lines.append(f"📎 [{attachment.filename}]({attachment.url})\n")
+
+            if msg.stickers:
+                sticker_names = ", ".join(s.name for s in msg.stickers)
+                lines.append(f"🏷️ Stickers: {sticker_names}\n")
+
+            if msg.reference and msg.reference.message_id:
+                ref_jump = f"https://discord.com/channels/{guild_id}/{target.id}/{msg.reference.message_id}"
+                lines.append(f"-# ↩️ Reply to [{msg.reference.message_id}]({ref_jump})\n")
+
+            lines.append("---\n")
+
+        content = "\n".join(lines).encode()
+        filename = f"{target.name}_{len(messages)}msgs.md"
+        file = discord.File(__import__('io').BytesIO(content), filename=filename)
+        await status.edit(content=f"✅ Exported {len(messages)} messages from {target.mention}.")
+        await ctx.send(file=file)
+
     # ── Raw embed output ──
 
     @commands.command(name='rawembed')
