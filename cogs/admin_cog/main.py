@@ -448,6 +448,63 @@ class AdminCog(BaseCog):
         raise error
 
 
+    # ── Raw embed output ──
+
+    @commands.command(name='rawembed')
+    @commands.is_owner()
+    async def raw_embed(self, ctx: commands.Context, message_link: str):
+        """Show the raw embed data from a message. Usage: $rawembed <message_link>"""
+        parts = message_link.strip().split('/')
+        try:
+            guild_id = int(parts[-3])
+            channel_id = int(parts[-2])
+            message_id = int(parts[-1].split('?')[0])
+        except (IndexError, ValueError):
+            await ctx.send("❌ Invalid message link. Use: `https://discord.com/channels/guild/channel/message`")
+            return
+
+        guild = self.bot.get_guild(guild_id)
+        if not guild:
+            await ctx.send("❌ Bot is not in that server.")
+            return
+
+        channel = guild.get_channel(channel_id)
+        if not channel:
+            await ctx.send("❌ Channel not found or not accessible.")
+            return
+
+        try:
+            message = await channel.fetch_message(message_id)
+        except discord.NotFound:
+            await ctx.send("❌ Message not found.")
+            return
+        except discord.Forbidden:
+            await ctx.send("❌ No permission to read that channel.")
+            return
+        except discord.HTTPException:
+            logger.exception("Failed to fetch message %s", message_id)
+            await ctx.send("❌ Failed to fetch message.")
+            return
+
+        if not message.embeds:
+            await ctx.send("ℹ️ That message has no embeds.")
+            return
+
+        for i, embed in enumerate(message.embeds):
+            raw = str(embed.to_dict())
+            header = f"**Embed {i + 1}/{len(message.embeds)}**\n"
+
+            # Discord message limit is 2000 chars
+            if len(header) + len(raw) + 8 <= 2000:  # +8 for code block markers
+                await ctx.send(f"{header}```\n{raw}\n```")
+            else:
+                # Send as file if too long
+                file = discord.File(
+                    __import__('io').BytesIO(raw.encode()),
+                    filename=f"embed_{i + 1}.txt",
+                )
+                await ctx.send(header, file=file)
+
     @commands.command(name='sync')
     @commands.is_owner()
     async def sync_commands(self, ctx: commands.Context, guild_id: int | None = None):
