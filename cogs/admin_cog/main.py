@@ -2,6 +2,7 @@
 Admin cog — owner-only commands for cog management and bot metrics.
 """
 import logging
+import re
 from datetime import UTC, datetime
 
 import discord
@@ -23,6 +24,11 @@ METRICS_RETENTION_DAYS = 30
 
 # How many days of interaction rows to keep
 INTERACTIONS_RETENTION_DAYS = 90
+
+# Pattern to extract user IDs from Rai voice log embed field values
+_PARTICIPANT_RE = re.compile(r'participant-id-is-P(\d+)')
+# Pattern to extract the joiner's user ID from the footer text
+_JOINER_RE = re.compile(r'^V(\d+)')
 
 
 class AdminCog(BaseCog):
@@ -447,6 +453,126 @@ class AdminCog(BaseCog):
         # Let the global handler deal with anything else
         raise error
 
+
+    # ── Voice channel enrichment ──
+
+    @commands.command(name='vcenrich')
+    @commands.is_owner()
+    async def vc_enrich(self, ctx: commands.Context, message_link: str):
+        """Enrich a Rai voice-join log embed with avatars. Usage: $vcenrich <message_link>"""
+        # Parse message link
+        parts = message_link.strip().split('/')
+        try:
+            guild_id = int(parts[-3])
+            channel_id = int(parts[-2])
+            message_id = int(parts[-1].split('?')[0])
+        except (IndexError, ValueError):
+            await ctx.send("❌ Invalid message link.")
+            return
+
+        guild = self.bot.get_guild(guild_id)
+        if not guild:
+            await ctx.send("❌ Bot is not in that server.")
+            return
+
+        channel = guild.get_channel(channel_id)
+        if not channel:
+            await ctx.send("❌ Channel not found.")
+            return
+
+        try:
+            message = await channel.fetch_message(message_id)
+        except discord.NotFound:
+            await ctx.send("❌ Message not found.")
+            return
+        except discord.Forbidden:
+            await ctx.send("❌ No permission to read that channel.")
+            return
+        except discord.HTTPException:
+            logger.exception("Failed to fetch message %s", message_id)
+            await ctx.send("❌ Failed to fetch message.")
+            return
+
+        if not message.embeds:
+            await ctx.send("❌ That message has no embeds.")
+            return
+
+        embed = message.embeds[0]
+        embed_dict = embed.to_dict()
+
+        # Extract joiner ID from footer (e.g. "V638764284670640163 - Voice Join")
+        footer_text = embed_dict.get('footer', {}).get('text', '')
+        joiner_match = _JOINER_RE.match(footer_text)
+        if not joiner_match:
+            await ctx.send("❌ Couldn't parse joiner ID from embed footer. Is this a Rai voice log?")
+            return
+        joiner_id = int(joiner_match.group(1))
+
+        # Extract participant IDs from the field
+        fields = embed_dict.get('fields', [])
+        if not fields:
+            await ctx.send("❌ No participant field found in embed.")
+            return
+
+        participant_ids = [int(m) for m in _PARTICIPANT_RE.findall(fields[0].get('value', ''))]
+        if not participant_ids:
+            await ctx.send("❌ No participant IDs found in embed field.")
+            return
+
+        # Extract channel name from description (e.g. "**💬￤Sala 1**")
+        desc = embed_dict.get('description', '')
+        vc_name_match = re.search(r'\*\*(.+?)\*\*\]', desc)
+        vc_name = vc_name_match.group(1) if vc_name_match else "Voice Channel"
+
+        # Build the Components v2 view
+        view = ui.LayoutView()
+        items: list[ui.Item] = [
+            ui.TextDisplay(f"## {vc_name}\n-# {len(participant_ids)} users in channel"),
+            ui.Separator(visible=True),
+        ]
+
+        for uid in participant_ids:
+            member = guild.get_member(uid)
+            if not member:
+                try:
+                    member = await guild.fetch_member(uid)
+                except discord.HTTPException:
+                    member = None
+
+            if member:
+                avatar_url = member.display_avatar.url
+                global_name = member.global_name or member.name
+                display_name = member.nick or global_name
+                label = f"**{display_name}**"
+                if display_name != global_name:
+                    label += f"\n-# {global_name}"
+                if member.name != global_name:
+                    label += f"\n-# @{member.name}"
+            else:
+                avatar_url = "https://cdn.discordapp.com/embed/avatars/0.png"
+                label = f"**Unknown User**\n-# ID: {uid}"
+
+            is_joiner = uid == joiner_id
+            if is_joiner:
+                label = f"➡️ {label}  *(joined)*"
+
+            items.append(ui.Section(
+                ui.TextDisplay(label),
+                accessory=ui.Thumbnail(avatar_url),
+            ))
+
+        ts = embed_dict.get('timestamp', '')
+        if ts:
+            items.append(ui.Separator(visible=True))
+            # Parse ISO timestamp to unix for Discord formatting
+            try:
+                dt = datetime.fromisoformat(ts)
+                items.append(ui.TextDisplay(f"-# <t:{int(dt.timestamp())}:R>"))
+            except ValueError:
+                pass
+
+        view.add_item(ui.Container(*items, accent_colour=Color(embed_dict.get('color', 0x3B9EA3))))
+        await ctx.send(view=view)
 
     # ── Raw embed output ──
 
