@@ -3,7 +3,7 @@ Admin cog — owner-only commands for cog management and bot metrics.
 """
 import logging
 import re
-from datetime import UTC, datetime
+from datetime import datetime
 
 import discord
 from discord import Color, Embed, app_commands, ui
@@ -12,8 +12,6 @@ from discord.ext import commands, tasks
 from base_cog import BaseCog
 from cogs.admin_cog.config import VC_ENRICH_CHANNEL_ID
 from cogs.utils.discovery import discover_extensions
-from cogs.utils.duration import format_duration, parse_duration
-from cogs.utils.plural import plural
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +20,6 @@ PROTECTED_EXTENSIONS = {'cogs.admin_cog.main'}
 
 # How many days of raw command_metrics to keep before rolling up
 METRICS_RETENTION_DAYS = 30
-
-# How many days of interaction rows to keep
-INTERACTIONS_RETENTION_DAYS = 90
 
 # Pattern to extract user IDs from Rai voice log embed field values
 _PARTICIPANT_RE = re.compile(r'participant-id-is-P(\d+)')
@@ -38,52 +33,12 @@ class AdminCog(BaseCog):
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
         self.daily_cleanup.start()
-        self._interaction_errors = 0
-        self._last_interactions_msg: discord.Message | None = None
         self._vc_enrich_ctx_menu: app_commands.ContextMenu | None = None
 
     async def cog_unload(self):
         self.daily_cleanup.cancel()
         if self._vc_enrich_ctx_menu:
             self.bot.tree.remove_command(self._vc_enrich_ctx_menu.name, type=self._vc_enrich_ctx_menu.type)
-
-    # ── Interaction tracking (on_message) ──
-
-    async def _record(self, channel_id: int, guild_id: int, author_id: int, target_id: int, kind: str) -> None:
-        """Record an interaction, suppressing repeated DB errors to avoid log spam."""
-        try:
-            await self.bot.db.record_interaction(channel_id, guild_id, author_id, target_id, kind)
-            self._interaction_errors = 0
-        except Exception:
-            self._interaction_errors += 1
-            if self._interaction_errors <= 3:
-                logger.exception("Failed to record %s interaction", kind)
-            elif self._interaction_errors == 4:
-                logger.error("Suppressing further interaction recording errors")
-
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
-        """Track reply and mention interactions to the database."""
-        if message.author.bot or not message.guild:
-            return
-
-        author_id = message.author.id
-        channel_id = message.channel.id
-        guild_id = message.guild.id
-
-        # Track replies
-        replied_to_id = None
-        ref = message.reference
-        if ref and ref.resolved and not isinstance(ref.resolved, discord.DeletedReferencedMessage):
-            target = ref.resolved.author
-            if not target.bot and target.id != author_id:
-                replied_to_id = target.id
-                await self._record(channel_id, guild_id, author_id, target.id, "reply")
-
-        # Track mentions (skip the reply target — Discord auto-mentions them)
-        for mentioned in message.mentions:
-            if not mentioned.bot and mentioned.id != author_id and mentioned.id != replied_to_id:
-                await self._record(channel_id, guild_id, author_id, mentioned.id, "mention")
 
     # ── Daily cleanup task ──
 
@@ -93,12 +48,11 @@ class AdminCog(BaseCog):
         try:
             result = await self.bot.db.rollup_and_purge_metrics(METRICS_RETENTION_DAYS)
             league_purged = await self.bot.db.purge_old_league_activity()
-            interactions_purged = await self.bot.db.purge_old_interactions(INTERACTIONS_RETENTION_DAYS)
             logger.info(
                 "Daily cleanup: metrics rolled=%s purged=%s, "
-                "league_activity purged=%s, interactions purged=%s",
+                "league_activity purged=%s",
                 result['rolled_up'], result['purged'],
-                league_purged, interactions_purged,
+                league_purged,
             )
         except Exception:
             logger.exception("Daily cleanup failed")
@@ -319,7 +273,6 @@ class AdminCog(BaseCog):
             value=(
                 f"**command_metrics:** raw rows kept {METRICS_RETENTION_DAYS} days, then rolled up to metrics_daily\n"
                 f"**leaderboard_activity:** purged for rounds older than current - 1\n"
-                f"**interactions:** raw rows kept {INTERACTIONS_RETENTION_DAYS} days\n"
                 f"**Cleanup runs:** every 24 hours"
             ),
             inline=False,
@@ -334,12 +287,10 @@ class AdminCog(BaseCog):
         msg = await ctx.send("Running cleanup...")
         result = await self.bot.db.rollup_and_purge_metrics(METRICS_RETENTION_DAYS)
         league_purged = await self.bot.db.purge_old_league_activity()
-        interactions_purged = await self.bot.db.purge_old_interactions(INTERACTIONS_RETENTION_DAYS)
         await msg.edit(
             content=(
                 f"Done. Metrics: {result['rolled_up']} rolled up, {result['purged']} purged. "
-                f"League activity: {league_purged} purged. "
-                f"Interactions: {interactions_purged} purged."
+                f"League activity: {league_purged} purged."
             )
         )
 
@@ -375,158 +326,6 @@ class AdminCog(BaseCog):
         await guild.leave()
         await ctx.send(f"Left **{name}**.")
         logger.info("Left guild %s (%s) by request of %s", name, guild_id, ctx.author.id)
-
-    # ── Interaction analysis ──
-
-    @commands.command(name='interactions')
-    @commands.cooldown(1, 60, commands.BucketType.default)
-    async def interactions(self, ctx: commands.Context, duration: str = "7d", channel: discord.TextChannel = None):
-        """
-        Show top reply/mention pairs in a channel (from tracked data).
-
-        Usage: $interactions [duration] [#channel]
-        Examples: $interactions 12h | $interactions 3d #general | $interactions 1d12h
-        """
-        channel = channel or ctx.channel
-
-        try:
-            td = parse_duration(duration)
-        except ValueError as exc:
-            await ctx.send(str(exc))
-            return
-
-        after = datetime.now(UTC) - td
-        duration_label = format_duration(td)
-
-        top_pairs = await self.bot.db.get_top_pairs(channel.id, after)
-        stats = await self.bot.db.get_interaction_stats(channel.id, after)
-
-        if not top_pairs:
-            await ctx.send(f"No interactions recorded in #{channel.name} over the last {duration_label}.")
-            return
-
-        guild = ctx.guild
-
-        def _display_name(uid: int) -> str:
-            member = guild.get_member(uid) if guild else None
-            if member:
-                return member.nick or member.global_name or member.name
-            return f"User {uid}"
-
-        MEDALS = {1: "🥇", 2: "🥈", 3: "🥉"}
-
-        lines = []
-        for i, pair in enumerate(top_pairs, 1):
-            name_a = _display_name(pair['user_a'])
-            name_b = _display_name(pair['user_b'])
-            parts = []
-            if pair['replies']:
-                parts.append(f"{plural(pair['replies']):reply/replies}")
-            if pair['mentions']:
-                parts.append(f"{plural(pair['mentions']):mention}")
-            detail = ", ".join(parts)
-            rank = MEDALS.get(i, f"**{i}.**")
-            lines.append(f"{rank} {name_a}  &  {name_b}\n-# {detail}")
-
-        view = ui.LayoutView()
-        view.add_item(ui.Container(
-            ui.TextDisplay(f"## Interactions in #{channel.name}\n-# Top pairs by replies & mentions"),
-            ui.Separator(visible=True),
-            ui.TextDisplay("\n".join(lines)),
-            ui.Separator(visible=True),
-            ui.TextDisplay(
-                f"**{stats['unique_pairs']}** unique pairs — "
-                f"**{stats['total_replies']}** replies, "
-                f"**{stats['total_mentions']}** mentions\n"
-                f"-# Last {duration_label}"
-            ),
-            accent_colour=Color.blurple(),
-        ))
-        await ctx.send(view=view)
-        self._last_interactions_msg = ctx.message
-
-    @interactions.error
-    async def interactions_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
-        """Show cooldown with a jump link to the last invocation."""
-        if isinstance(error, commands.CommandOnCooldown):
-            msg = f"⏱️ On cooldown — try again in {round(error.retry_after)}s."
-            if self._last_interactions_msg:
-                msg += f" [Last used here]({self._last_interactions_msg.jump_url})"
-            await ctx.send(msg)
-            return
-        # Let the global handler deal with anything else
-        raise error
-
-    @commands.command(name="whotalks", aliases=["wt"])
-    @commands.cooldown(1, 10, commands.BucketType.user)
-    async def whotalks(
-        self,
-        ctx: commands.Context,
-        user: discord.Member = None,
-        duration: str = "30d",
-        channel: discord.TextChannel = None,
-    ):
-        """Show who you interact with the most.
-
-        Usage: $wt [duration] [#channel]
-        Examples: $wt | $wt 7d | $wt 30d #general
-        """
-        if user is not None and user.id != ctx.author.id:
-            await ctx.send("🔒 You can only view your own interaction stats.")
-            return
-
-        user = ctx.author
-        try:
-            td = parse_duration(duration)
-        except ValueError as exc:
-            await ctx.send(str(exc))
-            return
-
-        after = datetime.now(UTC) - td
-        duration_label = format_duration(td)
-
-        partners = await self.bot.db.get_top_partners_for_user(
-            user.id, after, guild_id=ctx.guild.id,
-            channel_id=channel.id if channel else None,
-        )
-
-        scope = f"in #{channel.name}" if channel else "server-wide"
-        if not partners:
-            await ctx.send(f"No interactions recorded for {user.display_name} {scope} over the last {duration_label}.")
-            return
-
-        guild = ctx.guild
-        MEDALS = {1: "🥇", 2: "🥈", 3: "🥉"}
-
-        lines = []
-        for i, row in enumerate(partners, 1):
-            member = guild.get_member(row['partner_id']) if guild else None
-            name = member.nick or member.global_name or member.name if member else f"User {row['partner_id']}"
-            parts = []
-            if row['replies']:
-                parts.append(f"{plural(row['replies']):reply/replies}")
-            if row['mentions']:
-                parts.append(f"{plural(row['mentions']):mention}")
-            detail = ", ".join(parts)
-            rank = MEDALS.get(i, f"**{i}.**")
-            lines.append(f"{rank} {name}\n-# {detail}")
-
-        total = sum(r['score'] for r in partners)
-
-        view = ui.LayoutView()
-        view.add_item(ui.Container(
-            ui.TextDisplay(f"## Who does {user.display_name} talk to?\n-# Top partners by replies & mentions ({scope})"),
-            ui.Separator(visible=True),
-            ui.TextDisplay("\n".join(lines)),
-            ui.Separator(visible=True),
-            ui.TextDisplay(
-                f"**{len(partners)}** unique partners — "
-                f"**{total}** weighted interactions\n"
-                f"-# Last {duration_label}"
-            ),
-            accent_colour=Color.blurple(),
-        ))
-        await ctx.send(view=view)
 
     # ── Voice channel enrichment ──
 
