@@ -462,15 +462,20 @@ class AdminCog(BaseCog):
     async def whotalks(
         self,
         ctx: commands.Context,
-        user: discord.Member,
+        user: discord.Member = None,
         duration: str = "30d",
         channel: discord.TextChannel = None,
     ):
-        """Show who a user interacts with the most.
+        """Show who you interact with the most.
 
-        Usage: $whotalks @user [duration] [#channel]
-        Examples: $whotalks @jaleel | $whotalks @jaleel 7d | $whotalks @jaleel 30d #general
+        Usage: $wt [duration] [#channel]
+        Examples: $wt | $wt 7d | $wt 30d #general
         """
+        if user is not None and user.id != ctx.author.id:
+            await ctx.send("🔒 You can only view your own interaction stats.")
+            return
+
+        user = ctx.author
         try:
             td = parse_duration(duration)
         except ValueError as exc:
