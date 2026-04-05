@@ -139,7 +139,8 @@ class HigherOrLower(BaseCog):
     async def hol(self, ctx: commands.Context):
         """Start a Higher-or-Lower game. Guess which search term gets more Google searches!"""
         if HOL_CHANNEL_IDS and ctx.channel.id not in HOL_CHANNEL_IDS and not isinstance(ctx.channel, discord.DMChannel):
-            await ctx.send("🎮 This game can only be played in designated channels or DMs.")
+            channels = " ".join(f"<#{cid}>" for cid in HOL_CHANNEL_IDS)
+            await ctx.send(f"🎮 This game can only be played in {channels} or DMs.")
             return
 
         if ctx.author.id in self._active:
