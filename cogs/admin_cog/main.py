@@ -481,7 +481,8 @@ class AdminCog(BaseCog):
         duration_label = format_duration(td)
 
         partners = await self.bot.db.get_top_partners_for_user(
-            user.id, after, channel_id=channel.id if channel else None,
+            user.id, after, guild_id=ctx.guild.id,
+            channel_id=channel.id if channel else None,
         )
 
         scope = f"in #{channel.name}" if channel else "server-wide"

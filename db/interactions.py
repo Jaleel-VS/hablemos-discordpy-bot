@@ -72,6 +72,7 @@ class InteractionsMixin(DatabaseMixin):
         self,
         user_id: int,
         after: datetime,
+        guild_id: int,
         channel_id: int | None = None,
         limit: int = 10,
     ) -> list[dict]:
@@ -84,13 +85,13 @@ class InteractionsMixin(DatabaseMixin):
                 COUNT(*) FILTER (WHERE interaction_type = 'reply') * 2
                   + COUNT(*) FILTER (WHERE interaction_type = 'mention') AS score
             FROM interactions
-            WHERE (user_a = $1 OR user_b = $1) AND created_at >= $2
+            WHERE (user_a = $1 OR user_b = $1) AND created_at >= $2 AND guild_id = $4
         """
         if channel_id is not None:
-            base += " AND channel_id = $4"
-            args = (user_id, after, limit, channel_id)
+            base += " AND channel_id = $5"
+            args = (user_id, after, limit, guild_id, channel_id)
         else:
-            args = (user_id, after, limit)
+            args = (user_id, after, limit, guild_id)
         base += " GROUP BY partner_id ORDER BY score DESC LIMIT $3"
         rows = await self._fetch(base, *args)
         return [dict(r) for r in rows]
