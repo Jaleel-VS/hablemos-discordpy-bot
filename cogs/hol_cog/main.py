@@ -3,7 +3,7 @@ import contextlib
 import logging
 
 import discord
-from discord import Color, ui
+from discord import Color, Embed, ui
 from discord.ext import commands
 
 from base_cog import BaseCog
@@ -13,20 +13,55 @@ from cogs.hol_cog.data import pick_pair
 logger = logging.getLogger(__name__)
 
 TIMEOUT = 30
-KNOWN_TEXT_ID = 1001
-MYSTERY_TEXT_ID = 1002
-HEADER_TEXT_ID = 1003
 
 
 def _fmt(n: int) -> str:
     return f"{n:,}"
 
 
-class GameView(ui.LayoutView):
-    """Interactive Higher-or-Lower game for a single player."""
+def _round_embed(known: str, known_vol: int, mystery: str, streak: int) -> Embed:
+    embed = Embed(color=Color.blurple())
+    embed.title = f"🎮 Higher or Lower?  —  Streak: {streak}"
+    embed.description = (
+        f"**{known}**\n"
+        f"🔍 {_fmt(known_vol)} searches/mo\n\n"
+        f"**{mystery}**\n"
+        f"🔍 ???"
+    )
+    embed.set_footer(text="Does the second term get more or fewer searches?")
+    return embed
 
-    def __init__(self, player: discord.Member | discord.User):
+
+def _result_embed(
+    known: str, known_vol: int, mystery: str, mystery_vol: int,
+    streak: int, result: str,
+) -> Embed:
+    if result == "correct":
+        color = Color.green()
+        title = f"✅ Correct!  —  Streak: {streak}"
+    elif result == "wrong":
+        color = Color.red()
+        title = f"💥 Wrong!  —  Final streak: {streak}"
+    else:
+        color = Color.orange()
+        title = f"⏱️ Time's up!  —  Final streak: {streak}"
+
+    embed = Embed(color=color, title=title)
+    embed.description = (
+        f"**{known}**\n"
+        f"🔍 {_fmt(known_vol)} searches/mo\n\n"
+        f"**{mystery}**\n"
+        f"🔍 {_fmt(mystery_vol)} searches/mo"
+    )
+    return embed
+
+
+class GameView(ui.View):
+    """Interactive Higher-or-Lower buttons."""
+
+    def __init__(self, cog: "HigherOrLower", player: discord.Member | discord.User):
         super().__init__(timeout=TIMEOUT)
+        self.cog = cog
         self.player = player
         self.streak = 0
         self.seen: set[str] = set()
@@ -40,35 +75,6 @@ class GameView(ui.LayoutView):
         self.mystery_vol = mystery_vol
         self.seen.update({known, mystery})
 
-        self._build()
-
-    def _build(self) -> None:
-        self.clear_items()
-        header = f"### 🎮 Higher or Lower?  Streak: {self.streak}"
-        self.add_item(ui.Container(
-            ui.TextDisplay(header, id=HEADER_TEXT_ID),
-            ui.Separator(visible=True),
-            ui.TextDisplay(
-                f"**{self.known}**\n🔍 {_fmt(self.known_vol)} searches/mo",
-                id=KNOWN_TEXT_ID,
-            ),
-            ui.Separator(visible=False),
-            ui.TextDisplay(f"**{self.mystery}**\n🔍 ???", id=MYSTERY_TEXT_ID),
-            ui.Separator(visible=True),
-            self.buttons,
-            accent_colour=Color.blurple(),
-        ))
-
-    buttons = ui.ActionRow()
-
-    @buttons.button(label="🔼 Higher", style=discord.ButtonStyle.green)
-    async def higher(self, interaction: discord.Interaction, button: ui.Button) -> None:
-        await self._handle_guess(interaction, True)
-
-    @buttons.button(label="🔽 Lower", style=discord.ButtonStyle.red)
-    async def lower(self, interaction: discord.Interaction, button: ui.Button) -> None:
-        await self._handle_guess(interaction, False)
-
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.player.id:
             await interaction.response.send_message("This isn't your game!", ephemeral=True)
@@ -81,6 +87,14 @@ class GameView(ui.LayoutView):
 
         if correct:
             self.streak += 1
+
+            # Show correct result on current message (no buttons)
+            result = _result_embed(
+                self.known, self.known_vol, self.mystery, self.mystery_vol,
+                self.streak, "correct",
+            )
+            await interaction.response.edit_message(embed=result, view=None)
+
             # Chain: mystery becomes the new known
             self.known = self.mystery
             self.known_vol = self.mystery_vol
@@ -88,43 +102,60 @@ class GameView(ui.LayoutView):
             try:
                 _, _, self.mystery, self.mystery_vol = pick_pair(self.seen)
             except ValueError:
-                # Ran out of terms
-                self._show_end("🏆 You've seen every term!")
-                await interaction.response.edit_message(view=self)
-                self.game_over = True
-                self.stop()
+                await interaction.followup.send(
+                    f"🏆 You've seen every term! Final streak: **{self.streak}**"
+                )
+                self._end()
                 return
 
             self.seen.add(self.mystery)
-            self._build()
-            await interaction.response.edit_message(view=self)
-        else:
-            self._show_end("💥 Wrong!")
-            await interaction.response.edit_message(view=self)
-            self.game_over = True
-            self.stop()
 
-    def _show_end(self, reason: str) -> None:
-        """Replace the view with a game-over screen."""
-        self.clear_items()
-        self.add_item(ui.Container(
-            ui.TextDisplay(f"### {reason}  Final streak: {self.streak}"),
-            ui.Separator(visible=True),
-            ui.TextDisplay(
-                f"**{self.known}**\n🔍 {_fmt(self.known_vol)} searches/mo"
-            ),
-            ui.Separator(visible=False),
-            ui.TextDisplay(
-                f"**{self.mystery}**\n🔍 {_fmt(self.mystery_vol)} searches/mo"
-            ),
-            accent_colour=Color.red(),
-        ))
+            # Send next round as a new message with fresh buttons
+            new_view = GameView(self.cog, self.player)
+            new_view.streak = self.streak
+            new_view.seen = self.seen
+            new_view.known = self.known
+            new_view.known_vol = self.known_vol
+            new_view.mystery = self.mystery
+            new_view.mystery_vol = self.mystery_vol
+
+            embed = _round_embed(self.known, self.known_vol, self.mystery, self.streak)
+            msg = await interaction.followup.send(embed=embed, view=new_view, wait=True)
+            new_view.message = msg
+
+            # Transfer active game tracking
+            self.cog._active[self.player.id] = new_view
+            self.stop()
+        else:
+            result = _result_embed(
+                self.known, self.known_vol, self.mystery, self.mystery_vol,
+                self.streak, "wrong",
+            )
+            await interaction.response.edit_message(embed=result, view=None)
+            self._end()
+
+    def _end(self) -> None:
+        self.game_over = True
+        self.cog._active.pop(self.player.id, None)
+        self.stop()
+
+    @ui.button(label="🔼 Higher", style=discord.ButtonStyle.green)
+    async def higher(self, interaction: discord.Interaction, button: ui.Button) -> None:
+        await self._handle_guess(interaction, True)
+
+    @ui.button(label="🔽 Lower", style=discord.ButtonStyle.red)
+    async def lower(self, interaction: discord.Interaction, button: ui.Button) -> None:
+        await self._handle_guess(interaction, False)
 
     async def on_timeout(self) -> None:
         if not self.game_over and self.message:
-            self._show_end("⏱️ Time's up!")
+            result = _result_embed(
+                self.known, self.known_vol, self.mystery, self.mystery_vol,
+                self.streak, "timeout",
+            )
             with contextlib.suppress(discord.HTTPException):
-                await self.message.edit(view=self)
+                await self.message.edit(embed=result, view=None)
+            self._end()
 
 
 class HigherOrLower(BaseCog):
@@ -147,14 +178,12 @@ class HigherOrLower(BaseCog):
             await ctx.send("You already have an active game! Finish it first.")
             return
 
-        game = GameView(ctx.author)
+        game = GameView(self, ctx.author)
         self._active[ctx.author.id] = game
 
-        msg = await ctx.send(view=game)
+        embed = _round_embed(game.known, game.known_vol, game.mystery, 0)
+        msg = await ctx.send(embed=embed, view=game)
         game.message = msg
-
-        await game.wait()
-        self._active.pop(ctx.author.id, None)
 
 
 async def setup(bot: commands.Bot):
