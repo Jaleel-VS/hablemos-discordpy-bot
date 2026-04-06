@@ -9,6 +9,7 @@ from discord.ext import commands, tasks
 from base_cog import BaseCog
 from cogs.utils.duration import format_duration, parse_duration
 from cogs.utils.plural import plural
+from cogs.utils.visibility import VisibilityView
 
 logger = logging.getLogger(__name__)
 
@@ -235,49 +236,26 @@ class InteractionsCog(BaseCog):
             return
 
         result_view = self._build_wt_view(user.display_name, scope, duration_label, partners, ctx.guild)
-        visibility = WhoTalksVisibilityView(result_view, ctx.author.id, ctx.message)
+
+        async def on_public(cmd_msg):
+            kwargs = {'view': result_view, 'mention_author': False}
+            if cmd_msg:
+                await cmd_msg.reply(**kwargs)
+            else:
+                kwargs.pop('mention_author', None)
+                await ctx.channel.send(**kwargs)
+
+        async def on_private(interaction):
+            await interaction.response.send_message(view=result_view, ephemeral=True)
+
+        visibility = VisibilityView(
+            author_id=ctx.author.id,
+            command_message=ctx.message,
+            on_public=on_public,
+            on_private=on_private,
+        )
         prompt = await ctx.send("Ready. Send publicly or privately?", view=visibility)
         visibility.prompt_message = prompt
-
-
-class WhoTalksVisibilityView(discord.ui.View):
-    """Public/private visibility chooser for whotalks results."""
-
-    def __init__(self, result_view: ui.LayoutView, author_id: int, command_message: discord.Message):
-        super().__init__(timeout=120)
-        self.result_view = result_view
-        self.author_id = author_id
-        self.command_message = command_message
-        self.prompt_message: discord.Message | None = None
-
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
-        return interaction.user.id == self.author_id
-
-    @discord.ui.button(label='Send Public', style=discord.ButtonStyle.primary)
-    async def send_public(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.message.delete()
-        try:
-            await self.command_message.reply(view=self.result_view, mention_author=False)
-        except (discord.NotFound, discord.HTTPException):
-            await interaction.channel.send(view=self.result_view)
-        self.stop()
-
-    @discord.ui.button(label='Send Private', style=discord.ButtonStyle.secondary)
-    async def send_private(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_message(view=self.result_view, ephemeral=True)
-        await interaction.message.delete()
-        try:
-            await self.command_message.delete()
-        except (discord.NotFound, discord.HTTPException):
-            pass
-        self.stop()
-
-    async def on_timeout(self):
-        if self.prompt_message:
-            try:
-                await self.prompt_message.edit(content="Response expired (no choice made).", view=None)
-            except discord.NotFound:
-                pass
 
 
 async def setup(bot: commands.Bot):
