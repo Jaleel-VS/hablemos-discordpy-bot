@@ -162,6 +162,40 @@ class InteractionsCog(BaseCog):
 
     # ── $whotalks / $wt (per-user) ──
 
+    def _build_wt_view(self, display_name: str, scope: str, duration_label: str,
+                       partners: list, guild: discord.Guild | None) -> ui.LayoutView:
+        """Build the LayoutView for whotalks results."""
+        MEDALS = {1: "🥇", 2: "🥈", 3: "🥉"}
+        lines = []
+        for i, row in enumerate(partners, 1):
+            member = guild.get_member(row['partner_id']) if guild else None
+            name = member.nick or member.global_name or member.name if member else f"User {row['partner_id']}"
+            parts = []
+            if row['replies']:
+                parts.append(f"{plural(row['replies']):reply/replies}")
+            if row['mentions']:
+                parts.append(f"{plural(row['mentions']):mention}")
+            detail = ", ".join(parts)
+            rank = MEDALS.get(i, f"**{i}.**")
+            lines.append(f"{rank} {name}\n-# {detail}")
+
+        total = sum(r['score'] for r in partners)
+
+        view = ui.LayoutView()
+        view.add_item(ui.Container(
+            ui.TextDisplay(f"## Who does {display_name} talk to?\n-# Top partners by replies & mentions ({scope})"),
+            ui.Separator(visible=True),
+            ui.TextDisplay("\n".join(lines)),
+            ui.Separator(visible=True),
+            ui.TextDisplay(
+                f"**{len(partners)}** unique partners — "
+                f"**{total}** weighted interactions\n"
+                f"-# Last {duration_label}"
+            ),
+            accent_colour=Color.blurple(),
+        ))
+        return view
+
     @commands.command(name="whotalks", aliases=["wt"])
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def whotalks(
@@ -200,38 +234,50 @@ class InteractionsCog(BaseCog):
             await ctx.send(f"No interactions recorded for {user.display_name} {scope} over the last {duration_label}.")
             return
 
-        guild = ctx.guild
-        MEDALS = {1: "🥇", 2: "🥈", 3: "🥉"}
+        result_view = self._build_wt_view(user.display_name, scope, duration_label, partners, ctx.guild)
+        visibility = WhoTalksVisibilityView(result_view, ctx.author.id, ctx.message)
+        prompt = await ctx.send("Ready. Send publicly or privately?", view=visibility)
+        visibility.prompt_message = prompt
 
-        lines = []
-        for i, row in enumerate(partners, 1):
-            member = guild.get_member(row['partner_id']) if guild else None
-            name = member.nick or member.global_name or member.name if member else f"User {row['partner_id']}"
-            parts = []
-            if row['replies']:
-                parts.append(f"{plural(row['replies']):reply/replies}")
-            if row['mentions']:
-                parts.append(f"{plural(row['mentions']):mention}")
-            detail = ", ".join(parts)
-            rank = MEDALS.get(i, f"**{i}.**")
-            lines.append(f"{rank} {name}\n-# {detail}")
 
-        total = sum(r['score'] for r in partners)
+class WhoTalksVisibilityView(discord.ui.View):
+    """Public/private visibility chooser for whotalks results."""
 
-        view = ui.LayoutView()
-        view.add_item(ui.Container(
-            ui.TextDisplay(f"## Who does {user.display_name} talk to?\n-# Top partners by replies & mentions ({scope})"),
-            ui.Separator(visible=True),
-            ui.TextDisplay("\n".join(lines)),
-            ui.Separator(visible=True),
-            ui.TextDisplay(
-                f"**{len(partners)}** unique partners — "
-                f"**{total}** weighted interactions\n"
-                f"-# Last {duration_label}"
-            ),
-            accent_colour=Color.blurple(),
-        ))
-        await ctx.send(view=view)
+    def __init__(self, result_view: ui.LayoutView, author_id: int, command_message: discord.Message):
+        super().__init__(timeout=120)
+        self.result_view = result_view
+        self.author_id = author_id
+        self.command_message = command_message
+        self.prompt_message: discord.Message | None = None
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        return interaction.user.id == self.author_id
+
+    @discord.ui.button(label='Send Public', style=discord.ButtonStyle.primary)
+    async def send_public(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.message.delete()
+        try:
+            await self.command_message.reply(view=self.result_view, mention_author=False)
+        except (discord.NotFound, discord.HTTPException):
+            await interaction.channel.send(view=self.result_view)
+        self.stop()
+
+    @discord.ui.button(label='Send Private', style=discord.ButtonStyle.secondary)
+    async def send_private(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message(view=self.result_view, ephemeral=True)
+        await interaction.message.delete()
+        try:
+            await self.command_message.delete()
+        except (discord.NotFound, discord.HTTPException):
+            pass
+        self.stop()
+
+    async def on_timeout(self):
+        if self.prompt_message:
+            try:
+                await self.prompt_message.edit(content="Response expired (no choice made).", view=None)
+            except discord.NotFound:
+                pass
 
 
 async def setup(bot: commands.Bot):

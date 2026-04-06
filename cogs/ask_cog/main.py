@@ -49,11 +49,12 @@ def split_response(text: str) -> list[str]:
 class VisibilityView(discord.ui.View):
     """Buttons to choose public or private delivery after generation."""
 
-    def __init__(self, pages: list[str], question: str, author_id: int):
+    def __init__(self, pages: list[str], question: str, author_id: int, command_message: discord.Message):
         super().__init__(timeout=120)
         self.pages = pages
         self.question = question
         self.author_id = author_id
+        self.command_message = command_message
 
     def _build_embed(self, page_idx: int = 0) -> discord.Embed:
         title = self.question[:256]
@@ -69,18 +70,27 @@ class VisibilityView(discord.ui.View):
 
     @discord.ui.button(label='Send Public', style=discord.ButtonStyle.primary)
     async def send_public(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # Delete the prompt message with buttons
         await interaction.message.delete()
 
         if len(self.pages) == 1:
-            await interaction.channel.send(embed=self._build_embed())
+            await self._send_public_reply(interaction, self._build_embed())
         else:
             view = PageView(self.pages, self.question, self.author_id)
-            await interaction.channel.send(embed=view.build_embed(), view=view)
+            await self._send_public_reply(interaction, view.build_embed(), view)
+
+    async def _send_public_reply(self, interaction, embed, view=None):
+        """Reply to the original command message, fallback to plain post."""
+        kwargs = {'embed': embed, 'mention_author': False}
+        if view:
+            kwargs['view'] = view
+        try:
+            await self.command_message.reply(**kwargs)
+        except (discord.NotFound, discord.HTTPException):
+            kwargs.pop('mention_author', None)
+            await interaction.channel.send(**kwargs)
 
     @discord.ui.button(label='Send Private', style=discord.ButtonStyle.secondary)
     async def send_private(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # Respond with ephemeral first, then delete the prompt
         if len(self.pages) == 1:
             await interaction.response.send_message(embed=self._build_embed(), ephemeral=True)
         else:
@@ -88,6 +98,10 @@ class VisibilityView(discord.ui.View):
             await interaction.response.send_message(embed=view.build_embed(), view=view, ephemeral=True)
 
         await interaction.message.delete()
+        try:
+            await self.command_message.delete()
+        except (discord.NotFound, discord.HTTPException):
+            pass
 
     @discord.ui.button(label='Discard', style=discord.ButtonStyle.danger)
     async def discard(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -183,7 +197,7 @@ class AskCog(BaseCog):
                 return
 
             pages = split_response(text)
-            view = VisibilityView(pages, question, ctx.author.id)
+            view = VisibilityView(pages, question, ctx.author.id, ctx.message)
             msg = await processing.edit(content="Ready. How do you want to send it?", view=view)
             view.message = msg or processing  # edit returns None in some versions
 
