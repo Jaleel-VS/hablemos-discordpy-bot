@@ -1,11 +1,13 @@
 """Spotify now-playing command — shows what a user is listening to."""
 import logging
+from typing import Optional
 
 import discord
 from discord import Color, HTTPException, Member, Spotify, app_commands, ui
 from discord.ext import commands
 
 from base_cog import BaseCog
+from cogs.spotify_cog.config import SPOTIFY_EMOJI
 from cogs.utils.embeds import red_embed
 
 logger = logging.getLogger(__name__)
@@ -18,7 +20,7 @@ class NowPlayingView(ui.LayoutView):
         super().__init__()
 
         lines = [
-            f"### 🎵 {spotify.title}",
+            f"### {SPOTIFY_EMOJI} {spotify.title}",
             f"**{spotify.artist}**",
             f"-# {spotify.album}",
         ]
@@ -59,7 +61,7 @@ class SpotifyCog(BaseCog):
     @commands.hybrid_command(name="nowplaying", aliases=['spoti', 'np'])
     @commands.cooldown(1, 10, commands.BucketType.user)
     @app_commands.describe(member="The user to check (leave empty for yourself)")
-    async def nowplaying(self, ctx: commands.Context, member: Member | None = None):
+    async def nowplaying(self, ctx: commands.Context, member: Optional[Member] = None):  # noqa: UP045 — discord.py needs Optional[]
         """Shows what song a user is currently listening to on Spotify."""
         if ctx.guild is None:
             await ctx.send(embed=red_embed("This command can only be used in a server."))
@@ -88,5 +90,5 @@ class SpotifyCog(BaseCog):
             await ctx.send(embed=red_embed("Something went wrong sending the embed."))
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     await bot.add_cog(SpotifyCog(bot))
