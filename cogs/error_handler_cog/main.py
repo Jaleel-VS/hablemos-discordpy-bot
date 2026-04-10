@@ -49,6 +49,10 @@ class ErrorHandler(BaseCog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
+        # Skip if a command-level or cog-level handler already dealt with this
+        if getattr(ctx, 'error_handled', False):
+            return
+
         # Ignore non-command prefixes (e.g. "$5", "$$")
         if len(ctx.message.content) > 1 and (
             ctx.message.content[1].isdigit() or ctx.message.content[-1] == self.bot.command_prefix

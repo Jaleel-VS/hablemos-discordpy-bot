@@ -27,6 +27,8 @@ class BaseCog(Cog):
 
     async def cog_command_error(self, ctx, error):
         """Handle errors for commands in this cog"""
+        if getattr(ctx, 'error_handled', False):
+            return
         if isinstance(error, CommandOnCooldown):
             await ctx.send(f"⏱️ Command is on cooldown. Try again in {error.retry_after:.1f} seconds.")
         elif isinstance(error, CheckFailure):
@@ -44,3 +46,4 @@ class BaseCog(Cog):
         else:
             logger.error('An error occurred: %s in %s', error, ctx.channel)
             raise error
+        ctx.error_handled = True

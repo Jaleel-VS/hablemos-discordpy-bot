@@ -85,12 +85,12 @@ class InteractionsCog(BaseCog):
 
     @commands.command(name='interactions')
     @commands.cooldown(1, 60, commands.BucketType.default)
-    async def interactions(self, ctx: commands.Context, duration: str = "7d", channel: discord.TextChannel = None):
+    async def interactions(self, ctx: commands.Context, channel: discord.TextChannel = None, duration: str = "7d"):
         """
         Show top reply/mention pairs in a channel (from tracked data).
 
-        Usage: $interactions [duration] [#channel]
-        Examples: $interactions 12h | $interactions 3d #general | $interactions 1d12h
+        Usage: $interactions [#channel] [duration]
+        Examples: $interactions 12h | $interactions #general 3d | $interactions #general 1d12h
         """
         channel = channel or ctx.channel
 
@@ -158,8 +158,8 @@ class InteractionsCog(BaseCog):
             if self._last_interactions_msg:
                 msg += f" [Last used here]({self._last_interactions_msg.jump_url})"
             await ctx.send(msg)
+            ctx.error_handled = True
             return
-        raise error
 
     # ── $whotalks / $wt (per-user) ──
 
