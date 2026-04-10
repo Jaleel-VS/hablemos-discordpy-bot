@@ -40,7 +40,7 @@ class NowPlayingView(ui.LayoutView):
         super().__init__()
 
         lines = [
-            f"### {SPOTIFY_EMOJI} {spotify.title}",
+            f"### 🎵 {spotify.title}",
             f"**{spotify.artist}**",
             f"-# {spotify.album}",
         ]
@@ -64,7 +64,7 @@ class NowPlayingView(ui.LayoutView):
                         label="Listen on Spotify",
                         url=spotify.track_url,
                         style=discord.ButtonStyle.link,
-                        emoji="🎧",
+                        emoji=discord.PartialEmoji.from_str(SPOTIFY_EMOJI),
                     ),
                 ),
             )
