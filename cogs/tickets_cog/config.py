@@ -8,3 +8,6 @@ ADMIN_FORUM_ID: Final[int] = get_int_env("TICKETS_ADMIN_FORUM_ID", 1226387256915
 
 # Tag names treated as "open" (case-insensitive match)
 OPEN_TAGS: Final[list[str]] = ['Open']
+
+# Thread names to exclude from the ticket list (case-insensitive)
+FILTERED_THREADS: Final[set[str]] = {"meta discussion"}

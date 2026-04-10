@@ -4,25 +4,69 @@ Tickets cog — quick overview of open moderation tickets across forum channels.
 import logging
 
 import discord
+from discord import Color, ui
 from discord.ext import commands
 
 from base_cog import BaseCog
 
-from .config import ADMIN_FORUM_ID, OPEN_TAGS, STAFF_FORUM_ID
+from .config import ADMIN_FORUM_ID, FILTERED_THREADS, OPEN_TAGS, STAFF_FORUM_ID
 
 logger = logging.getLogger(__name__)
 
 
 def _is_open(thread: discord.Thread, open_tag_names: set[str]) -> bool:
     """Check if a thread has any tag matching the open tags list."""
+    if thread.name.lower() in FILTERED_THREADS:
+        return False
     return any(tag.name.lower() in open_tag_names for tag in thread.applied_tags)
 
 
-def _format_thread(thread: discord.Thread, open_tag_names: set[str]) -> str:
-    """Format a single thread as a line item."""
+async def _format_thread(thread: discord.Thread, open_tag_names: set[str]) -> str:
+    """Format a single thread as a line item with last interaction info."""
     responded = "✅" if thread.message_count > 1 else "⏳"
     tags = " ".join(f"`{tag.name}`" for tag in thread.applied_tags if tag.name.lower() not in open_tag_names)
-    return f"{responded} [{thread.name}]({thread.jump_url}) {tags}".rstrip()
+    line = f"{responded} [{thread.name}]({thread.jump_url}) {tags}".rstrip()
+
+    try:
+        msgs = [msg async for msg in thread.history(limit=1)]
+        if msgs:
+            msg = msgs[0]
+            timestamp = discord.utils.format_dt(msg.created_at, "R")
+            line += f"\n-# Last interaction: {timestamp} by {msg.author.mention}"
+    except (discord.Forbidden, discord.HTTPException):
+        pass
+
+    return line
+
+
+def _loading_view() -> ui.LayoutView:
+    """Build a loading placeholder view."""
+    view = ui.LayoutView()
+    view.add_item(ui.Container(
+        ui.TextDisplay("## Open Tickets\n⏳ Fetching tickets..."),
+        accent_colour=Color.orange(),
+    ))
+    return view
+
+
+def _tickets_view(sections: list[tuple[str, str]], total: int) -> ui.LayoutView:
+    """Build the final tickets layout view."""
+    children: list[ui.Item] = [
+        ui.TextDisplay("## Open Tickets"),
+        ui.Separator(visible=True),
+    ]
+
+    for name, value in sections:
+        children.append(ui.TextDisplay(f"**{name}**\n{value}"))
+
+    children.append(ui.Separator(visible=True))
+    children.append(ui.TextDisplay(
+        f"-# {total} open · ✅ = responded · ⏳ = awaiting response"
+    ))
+
+    view = ui.LayoutView()
+    view.add_item(ui.Container(*children, accent_colour=Color.orange()))
+    return view
 
 
 class TicketsCog(BaseCog):
@@ -50,7 +94,10 @@ class TicketsCog(BaseCog):
             await ctx.send("No forum channels configured. Set `STAFF_FORUM_ID` / `ADMIN_FORUM_ID`.")
             return
 
-        embed = discord.Embed(title="Open Tickets", color=discord.Color.orange())
+        # Send loading state
+        msg = await ctx.send(view=_loading_view())
+
+        sections: list[tuple[str, str]] = []
         total = 0
 
         for forum in forums:
@@ -58,19 +105,21 @@ class TicketsCog(BaseCog):
             open_threads.sort(key=lambda t: t.created_at or t.id)
 
             if open_threads:
-                lines = [_format_thread(t, open_tags) for t in open_threads]
-                value = '\n'.join(lines)
-                # Embed field value limit is 1024
-                if len(value) > 1024:
-                    value = value[:1020] + "\n..."
+                lines = [await _format_thread(t, open_tags) for t in open_threads]
+                value = "\n".join(lines)
+                if len(value) > 900:
+                    value = value[:896] + "\n..."
             else:
                 value = "No open tickets 🎉"
 
-            embed.add_field(name=f"#{forum.name} ({len(open_threads)})", value=value, inline=False)
+            sections.append((f"#{forum.name} ({len(open_threads)})", value))
             total += len(open_threads)
 
-        embed.set_footer(text=f"{total} open · ✅ = responded · ⏳ = awaiting response")
-        await ctx.send(embed=embed)
+        # Edit with final view
+        try:
+            await msg.edit(view=_tickets_view(sections, total))
+        except discord.HTTPException:
+            logger.exception("Failed to edit tickets message")
 
 
 async def setup(bot: commands.Bot):
