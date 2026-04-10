@@ -1,19 +1,19 @@
 """Interactions cog — tracks reply/mention interactions and provides analysis commands."""
 import logging
 from datetime import UTC, datetime
+from typing import Optional
 
 import discord
 from discord import Color, ui
 from discord.ext import commands, tasks
 
 from base_cog import BaseCog
+from cogs.interactions_cog.config import INTERACTIONS_RETENTION_DAYS
 from cogs.utils.duration import format_duration, parse_duration
 from cogs.utils.plural import plural
 from cogs.utils.visibility import VisibilityView
 
 logger = logging.getLogger(__name__)
-
-INTERACTIONS_RETENTION_DAYS = 90
 
 
 class InteractionsCog(BaseCog):
@@ -22,7 +22,7 @@ class InteractionsCog(BaseCog):
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
         self._interaction_errors = 0
-        self._last_interactions_msg: discord.Message | None = None
+        self._last_interactions_msgs: dict[int, discord.Message] = {}
         self.daily_purge.start()
 
     async def cog_unload(self):
@@ -84,8 +84,8 @@ class InteractionsCog(BaseCog):
     # ── $interactions (top pairs) ──
 
     @commands.command(name='interactions')
-    @commands.cooldown(1, 60, commands.BucketType.default)
-    async def interactions(self, ctx: commands.Context, channel: discord.TextChannel = None, duration: str = "7d"):
+    @commands.cooldown(1, 60, commands.BucketType.channel)
+    async def interactions(self, ctx: commands.Context, channel: Optional[discord.TextChannel] = None, *, duration: str = "7d"):  # noqa: UP045 — discord.py needs Optional[] to detect optional converters
         """
         Show top reply/mention pairs in a channel (from tracked data).
 
@@ -148,15 +148,16 @@ class InteractionsCog(BaseCog):
             accent_colour=Color.blurple(),
         ))
         await ctx.send(view=view)
-        self._last_interactions_msg = ctx.message
+        self._last_interactions_msgs[ctx.channel.id] = ctx.message
 
     @interactions.error
     async def interactions_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
         """Show cooldown with a jump link to the last invocation."""
         if isinstance(error, commands.CommandOnCooldown):
             msg = f"⏱️ On cooldown — try again in {round(error.retry_after)}s."
-            if self._last_interactions_msg:
-                msg += f" [Last used here]({self._last_interactions_msg.jump_url})"
+            last = self._last_interactions_msgs.get(ctx.channel.id)
+            if last:
+                msg += f" [Last used here]({last.jump_url})"
             await ctx.send(msg)
             ctx.error_handled = True
             return
@@ -202,19 +203,15 @@ class InteractionsCog(BaseCog):
     async def whotalks(
         self,
         ctx: commands.Context,
-        user: discord.Member = None,
+        channel: Optional[discord.TextChannel] = None,  # noqa: UP045 — discord.py needs Optional[]
+        *,
         duration: str = "30d",
-        channel: discord.TextChannel = None,
     ):
         """Show who you interact with the most.
 
-        Usage: $wt [duration] [#channel]
-        Examples: $wt | $wt 7d | $wt 30d #general
+        Usage: $wt [#channel] [duration]
+        Examples: $wt | $wt 7d | $wt #general 30d
         """
-        if user is not None and user.id != ctx.author.id:
-            await ctx.send("🔒 You can only view your own interaction stats.")
-            return
-
         user = ctx.author
         try:
             td = parse_duration(duration)
