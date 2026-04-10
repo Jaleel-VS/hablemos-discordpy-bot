@@ -95,8 +95,11 @@ class SpotifyCog(BaseCog):
             name = "You're" if target.id == ctx.author.id else f"{target.display_name} is"
             await ctx.send(embed=red_embed(
                 f"{name} not listening to Spotify right now!\n\n"
-                "Make sure you're set to Online and have Spotify linked in "
-                "**Settings → Connections**."
+                "Make sure you have:\n"
+                "• **Display current activity** enabled for this server "
+                "(Settings → Activity Privacy)\n"
+                "• Spotify linked in **Settings → Connections** with "
+                "\"Display Spotify as your status\" on"
             ))
             return
 
