@@ -233,8 +233,10 @@ def _build_exchange_layout(
         ui.TextDisplay(
             f"**{user.display_name}**\n"
             f"{t('embed_seeking', lang, mention=user.mention)}\n"
-            f"-# {t('embed_i_speak', lang)}: {offer_display} · {t('embed_region', lang)}: {region_display}\n"
-            f"-# {t('embed_looking_for', lang)}: {seek_display} {t('embed_partner_suffix', lang)} · {t('embed_my_level', lang)}: {level_display}"
+            f"-# {t('embed_i_speak', lang)}: {offer_display}\n"
+            f"-# {t('embed_region', lang)}: {region_display}\n"
+            f"-# {t('embed_looking_for', lang)}: {seek_display} {t('embed_partner_suffix', lang)}\n"
+            f"-# {t('embed_my_level', lang)}: {level_display}"
         ),
         accessory=ui.Thumbnail(avatar_url(user)),
     )
