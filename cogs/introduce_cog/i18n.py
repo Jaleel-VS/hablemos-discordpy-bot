@@ -147,6 +147,14 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "en": "partner",
         "es": "compañero/a",
     },
+    "seeking_english": {
+        "en": "English partner",
+        "es": "compañero/a angloparlante",
+    },
+    "seeking_spanish": {
+        "en": "Spanish partner",
+        "es": "compañero/a hispanohablante",
+    },
     "embed_my_level": {
         "en": "My level",
         "es": "Mi nivel",

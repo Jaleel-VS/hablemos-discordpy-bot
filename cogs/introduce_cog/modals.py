@@ -216,9 +216,10 @@ def _build_exchange_layout(
     elif data["other_lang"]:
         offer_display += f" + {data['other_lang']}"
 
-    seek_display = td(data["seek_lang"], lang)
     level_display = td(data["seek_level"], lang)
     region_display = lookup_display(REGIONS, data["region"])
+
+    seek_key = f"seeking_{data['seek_lang']}"
 
     footer_key = "embed_footer_dm" if data["prefer_dm"] else "embed_footer_tag"
 
@@ -230,7 +231,7 @@ def _build_exchange_layout(
             f"{t('embed_seeking', lang, mention=user.mention)}\n"
             f"-# {t('embed_i_speak', lang)}: {offer_display}\n"
             f"-# {t('embed_region', lang)}: {region_display}\n"
-            f"-# {t('embed_looking_for', lang)}: {seek_display} {t('embed_partner_suffix', lang)}\n"
+            f"-# {t('embed_looking_for', lang)}: {t(seek_key, lang)}\n"
             f"-# {t('embed_my_level', lang)}: {level_display}"
         ),
         accessory=ui.Thumbnail(avatar_url(user)),
@@ -259,6 +260,7 @@ def _build_dm_copy_embed(data: dict) -> Embed:
     from .config import REGIONS
 
     lang = data["lang"]
+    seek_key = f"seeking_{data['seek_lang']}"
     offer_display = td(data["offer_lang"], lang)
     if data["offer_lang"] == "other" and data["other_lang"]:
         offer_display = data["other_lang"]
@@ -273,7 +275,7 @@ def _build_dm_copy_embed(data: dict) -> Embed:
     embed.add_field(name=t("embed_region", lang), value=lookup_display(REGIONS, data["region"]), inline=True)
     embed.add_field(
         name=t("embed_looking_for", lang),
-        value=f"{td(data['seek_lang'], lang)} — {td(data['seek_level'], lang)}",
+        value=f"{t(seek_key, lang)} — {td(data['seek_level'], lang)}",
         inline=False,
     )
     return embed
