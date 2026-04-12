@@ -18,6 +18,7 @@ from .config import (
     detect_ui_lang,
 )
 from .i18n import t
+from .modals import _audit_log
 from .views import IntroStartView
 
 logger = logging.getLogger(__name__)
@@ -115,6 +116,7 @@ class IntroduceCog(BaseCog):
 
         await interaction.client.db.delete_exchange_post(interaction.user.id)
         await interaction.followup.send(embed=green_embed("Your exchange post has been deleted."), ephemeral=True)
+        await _audit_log(interaction.client, interaction.user, "Exchange deleted (self)")
 
     @exchange_group.command(name="repost", description="Repost your exchange partner request")
     async def exchange_repost(self, interaction: Interaction):
@@ -182,6 +184,7 @@ class IntroduceCog(BaseCog):
 
         await interaction.client.db.save_exchange_post(interaction.user.id, new_msg.id, target_channel.id)
         await interaction.followup.send(embed=green_embed("Your exchange post has been reposted!"), ephemeral=True)
+        await _audit_log(interaction.client, interaction.user, "Exchange reposted")
 
     # ── Admin: delete someone else's exchange post ──
 
@@ -212,6 +215,7 @@ class IntroduceCog(BaseCog):
         await interaction.followup.send(
             embed=green_embed(f"Removed {user.mention}'s exchange post."), ephemeral=True,
         )
+        await _audit_log(interaction.client, interaction.user, f"Exchange removed (mod) — target: {user} (`{user.id}`)")
 
 
 async def setup(bot: commands.Bot):

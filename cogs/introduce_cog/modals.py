@@ -224,6 +224,19 @@ def _build_exchange_embed(
 # ── Post helpers ──
 
 
+async def _audit_log(client, user: discord.User | discord.Member, action: str) -> None:
+    """Send a minimal audit entry to the audit channel."""
+    from .config import AUDIT_CHANNEL_ID
+
+    channel = client.get_channel(AUDIT_CHANNEL_ID)
+    if not channel:
+        return
+    try:
+        await channel.send(f"📋 **{action}** — {user} (`{user.id}`)")
+    except discord.HTTPException:
+        logger.debug("Failed to send audit log for %s", action)
+
+
 async def _post_intro(interaction: Interaction, embed: Embed, channel_id: int, lang: str) -> None:
     """Post a simple introduction embed."""
     await interaction.response.defer(ephemeral=True)
@@ -246,6 +259,7 @@ async def _post_intro(interaction: Interaction, embed: Embed, channel_id: int, l
     await interaction.followup.send(
         embed=green_embed(t("success_intro", lang, channel=channel.mention)), ephemeral=True,
     )
+    await _audit_log(interaction.client, interaction.user, "Introduction posted")
 
 
 async def _post_exchange(interaction: Interaction, embed: Embed, channel_id: int, lang: str) -> None:
@@ -258,6 +272,7 @@ async def _post_exchange(interaction: Interaction, embed: Embed, channel_id: int
         await interaction.followup.send(
             embed=red_embed(t("error_already_posted", lang)), ephemeral=True,
         )
+        await _audit_log(interaction.client, interaction.user, "Exchange blocked (duplicate)")
         return
 
     channel = await _resolve_channel(interaction, channel_id)
@@ -281,6 +296,7 @@ async def _post_exchange(interaction: Interaction, embed: Embed, channel_id: int
     await interaction.followup.send(
         embed=green_embed(t("success_exchange", lang, channel=channel.mention)), ephemeral=True,
     )
+    await _audit_log(interaction.client, interaction.user, "Exchange posted")
 
     # DM the user a copy of their info
     try:
