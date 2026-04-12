@@ -220,6 +220,19 @@ class IntroduceCog(BaseCog):
         )
         await _audit_log(interaction.client, interaction.user, f"Exchange removed (mod) — target: {user} (`{user.id}`)")
 
+    # ── Admin: reset a user's exchange post record ──
+
+    @commands.command(name="exchangereset")
+    @commands.has_permissions(manage_messages=True)
+    async def exchange_reset(self, ctx: commands.Context, user: discord.Member):
+        """Reset a user's exchange post DB entry so they can post again."""
+        deleted = await ctx.bot.db.delete_exchange_post(user.id)
+        if deleted:
+            await ctx.send(f"✅ Reset exchange post for {user.mention} (`{user.id}`).")
+            await _audit_log(ctx.bot, ctx.author, f"Exchange reset (mod) — target: {user} (`{user.id}`)")
+        else:
+            await ctx.send(f"{user.mention} has no exchange post to reset.")
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(IntroduceCog(bot))
