@@ -82,12 +82,20 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "es": "Sobre ti",
     },
     "label_about": {
-        "en": "About me & what I'm looking for",
-        "es": "Sobre mí y lo que busco",
+        "en": "About Me",
+        "es": "Sobre mí",
     },
     "placeholder_about": {
-        "en": "About yourself, hobbies, goals, and what you want in a partner...",
-        "es": "Sobre ti, hobbies, metas, y lo que buscas en un compañero...",
+        "en": "Tell others about yourself, your hobbies, what you do...",
+        "es": "Cuéntanos sobre ti, tus hobbies, a qué te dedicas...",
+    },
+    "label_what_i_want": {
+        "en": "What I'm looking for in a partner",
+        "es": "Lo que busco en un compañero/a",
+    },
+    "placeholder_what_i_want": {
+        "en": "e.g., Someone to practice conversation, play games, study together...",
+        "es": "ej., Alguien para practicar conversación, jugar, estudiar juntos...",
     },
     "label_other_lang": {
         "en": "Other native language (if any)",

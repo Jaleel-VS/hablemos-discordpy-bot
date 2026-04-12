@@ -109,7 +109,8 @@ class IntroOnlyModal(Modal):
 class ExchangeDetailsModal(Modal):
     """Single modal: about me + what I'm looking for. Language/region collected in the view."""
 
-    about_and_wants = TextInput(label=".", required=True, max_length=1000, style=TextStyle.paragraph)
+    about_me = TextInput(label=".", required=True, max_length=500, style=TextStyle.paragraph)
+    what_i_want = TextInput(label=".", required=True, max_length=500, style=TextStyle.paragraph)
     other_language = TextInput(label=".", required=False, max_length=100, style=TextStyle.short)
 
     def __init__(self, parent_view, introductions_channel_id: int, lang: str = "en"):
@@ -118,16 +119,19 @@ class ExchangeDetailsModal(Modal):
         self.introductions_channel_id = introductions_channel_id
         self.lang = lang
 
-        self.about_and_wants.label = t("label_about", lang)
-        self.about_and_wants.placeholder = t("placeholder_about", lang)
+        self.about_me.label = t("label_about_me", lang)
+        self.about_me.placeholder = t("placeholder_about", lang)
+        self.what_i_want.label = t("label_what_i_want", lang)
+        self.what_i_want.placeholder = t("placeholder_what_i_want", lang)
         self.other_language.label = t("label_other_lang", lang)
         self.other_language.placeholder = t("placeholder_other_lang", lang)
 
     async def on_submit(self, interaction: Interaction):
-        about_text = self.about_and_wants.value.strip()
+        about_text = self.about_me.value.strip()
+        want_text = self.what_i_want.value.strip()
         other_lang = (self.other_language.value or "").strip()
 
-        if contains_url(about_text) or contains_url(other_lang):
+        if contains_url(about_text) or contains_url(want_text) or contains_url(other_lang):
             await interaction.response.send_message(
                 embed=red_embed(t("error_no_links", self.lang)), ephemeral=True,
             )
@@ -143,6 +147,7 @@ class ExchangeDetailsModal(Modal):
         data = _build_exchange_data(
             user=interaction.user,
             about_text=about_text,
+            want_text=want_text,
             other_lang=other_lang,
             offer_lang=pv.offer_lang,
             seek_lang=pv.seek_lang,
@@ -170,6 +175,7 @@ def _build_exchange_data(
     *,
     user: discord.User | discord.Member,
     about_text: str,
+    want_text: str,
     other_lang: str,
     offer_lang: str,
     seek_lang: str,
@@ -182,6 +188,7 @@ def _build_exchange_data(
     return {
         "user_id": user.id,
         "about_text": about_text,
+        "want_text": want_text,
         "other_lang": other_lang,
         "offer_lang": offer_lang,
         "seek_lang": seek_lang,
@@ -230,7 +237,9 @@ def _build_exchange_layout(
         accessory=ui.Thumbnail(avatar_url(user)),
     )
 
-    about = ui.TextDisplay(f"> {data['about_text'].replace(chr(10), chr(10) + '> ')}")
+    about = ui.TextDisplay(f"**{t('label_about_me', lang)}**\n> {data['about_text'].replace(chr(10), chr(10) + '> ')}")
+
+    want = ui.TextDisplay(f"**⭐ {t('label_what_i_want', lang)}**\n> {data['want_text'].replace(chr(10), chr(10) + '> ')}")
 
     offer_info = ui.TextDisplay(
         f"**{t('embed_i_speak', lang)}:** {offer_display}\n"
@@ -249,6 +258,8 @@ def _build_exchange_layout(
         header,
         ui.Separator(visible=True),
         about,
+        ui.Separator(visible=True),
+        want,
         ui.Separator(visible=True),
         offer_info,
         ui.Separator(visible=False),
@@ -278,7 +289,7 @@ def _build_dm_copy_embed(data: dict) -> Embed:
 
     embed = Embed(
         title="Your Exchange Partner Post",
-        description=f"Here's a copy of what was posted. Manage it with `/exchange`.\n\n> {data['about_text'][:900]}",
+        description=f"Here's a copy of what was posted. Manage it with `/exchange`.\n\n**About Me**\n> {data['about_text'][:400]}\n\n**⭐ What I'm looking for**\n> {data['want_text'][:400]}",
     )
     embed.add_field(name=t("embed_i_speak", lang), value=offer_display, inline=True)
     embed.add_field(name=t("embed_region", lang), value=lookup_display(REGIONS, data["region"]), inline=True)
