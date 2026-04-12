@@ -15,15 +15,17 @@ class ExchangePostsMixin(DatabaseMixin):
         user_id: int,
         message_id: int,
         channel_id: int,
+        post_data: dict | None = None,
     ) -> bool:
         """Save or replace a user's exchange post reference."""
+        import json
         try:
             await self._execute(
-                """INSERT INTO exchange_posts (user_id, message_id, channel_id)
-                   VALUES ($1, $2, $3)
+                """INSERT INTO exchange_posts (user_id, message_id, channel_id, post_data)
+                   VALUES ($1, $2, $3, $4::jsonb)
                    ON CONFLICT (user_id)
-                   DO UPDATE SET message_id = $2, channel_id = $3, posted_at = NOW()""",
-                user_id, message_id, channel_id,
+                   DO UPDATE SET message_id = $2, channel_id = $3, post_data = $4::jsonb, posted_at = NOW()""",
+                user_id, message_id, channel_id, json.dumps(post_data) if post_data else None,
             )
             return True
         except Exception:
@@ -33,10 +35,16 @@ class ExchangePostsMixin(DatabaseMixin):
     async def get_exchange_post(self, user_id: int) -> dict | None:
         """Get a user's current exchange post."""
         row = await self._fetchrow(
-            "SELECT user_id, message_id, channel_id, posted_at FROM exchange_posts WHERE user_id = $1",
+            "SELECT user_id, message_id, channel_id, post_data, posted_at FROM exchange_posts WHERE user_id = $1",
             user_id,
         )
-        return dict(row) if row else None
+        if not row:
+            return None
+        result = dict(row)
+        if result.get("post_data") and isinstance(result["post_data"], str):
+            import json
+            result["post_data"] = json.loads(result["post_data"])
+        return result
 
     async def delete_exchange_post(self, user_id: int) -> bool:
         """Delete a user's exchange post record."""

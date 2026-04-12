@@ -457,6 +457,7 @@ async def initialize_schema(pool):
                 user_id BIGINT PRIMARY KEY,
                 message_id BIGINT NOT NULL,
                 channel_id BIGINT NOT NULL,
+                post_data JSONB,
                 posted_at TIMESTAMPTZ DEFAULT NOW()
             )
         ''')
@@ -464,6 +465,12 @@ async def initialize_schema(pool):
         await conn.execute('''
             CREATE INDEX IF NOT EXISTS idx_exchange_posts_message
             ON exchange_posts(message_id)
+        ''')
+
+        # Migration: add post_data column if missing
+        await conn.execute('''
+            ALTER TABLE exchange_posts
+            ADD COLUMN IF NOT EXISTS post_data JSONB
         ''')
 
         logger.info("Database schema initialized")

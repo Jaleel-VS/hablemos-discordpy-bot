@@ -140,7 +140,7 @@ class ExchangeDetailsModal(Modal):
             return
 
         pv = self.parent_view
-        embed = _build_exchange_embed(
+        data = _build_exchange_data(
             user=interaction.user,
             about_text=about_text,
             other_lang=other_lang,
@@ -152,7 +152,7 @@ class ExchangeDetailsModal(Modal):
             lang=self.lang,
         )
 
-        await _post_exchange(interaction, embed, self.introductions_channel_id, self.lang)
+        await _post_exchange(interaction, data, self.introductions_channel_id, self.lang)
 
     async def on_error(self, interaction: Interaction, error: Exception):
         logger.exception("ExchangeDetailsModal error for user %s", interaction.user.id)
@@ -163,10 +163,10 @@ class ExchangeDetailsModal(Modal):
             await interaction.followup.send(embed=msg, ephemeral=True)
 
 
-# ── Embed builders ──
+# ── Layout builder ──
 
 
-def _build_exchange_embed(
+def _build_exchange_data(
     *,
     user: discord.User | discord.Member,
     about_text: str,
@@ -177,8 +177,26 @@ def _build_exchange_embed(
     region: str,
     prefer_dm: bool,
     lang: str,
-) -> Embed:
-    """Build the exchange partner embed."""
+) -> dict:
+    """Build a serializable dict of exchange post data."""
+    return {
+        "user_id": user.id,
+        "about_text": about_text,
+        "other_lang": other_lang,
+        "offer_lang": offer_lang,
+        "seek_lang": seek_lang,
+        "seek_level": seek_level,
+        "region": region,
+        "prefer_dm": prefer_dm,
+        "lang": lang,
+    }
+
+
+def _build_exchange_layout(
+    data: dict,
+    user: discord.User | discord.Member,
+) -> discord.ui.LayoutView:
+    """Build a LayoutView from exchange post data."""
     from .config import (
         OFFER_LANGUAGES,
         PROFICIENCY_LEVELS,
@@ -186,38 +204,89 @@ def _build_exchange_embed(
         SEEK_LANGUAGES,
     )
 
+    lang = data["lang"]
     color = embed_color_for_member(user) if isinstance(user, Member) else COLOR_ENGLISH_NATIVE
-    about_quoted = "\n".join(f"> {line}" for line in about_text.split("\n"))
+
+    # Offer display
+    offer_display = lookup_display(OFFER_LANGUAGES, data["offer_lang"])
+    if data["offer_lang"] == "other" and data["other_lang"]:
+        offer_display = data["other_lang"]
+    elif data["other_lang"]:
+        offer_display += f" + {data['other_lang']}"
+
+    seek_display = lookup_display(SEEK_LANGUAGES, data["seek_lang"])
+    level_display = lookup_display(PROFICIENCY_LEVELS, data["seek_level"])
+    region_display = lookup_display(REGIONS, data["region"])
+
+    footer_key = "embed_footer_dm" if data["prefer_dm"] else "embed_footer_tag"
+
+    ui = discord.ui
+
+    header = ui.Section(
+        ui.TextDisplay(
+            f"**{user.display_name}**\n"
+            f"{t('embed_seeking', lang, mention=user.mention)}"
+        ),
+        accessory=ui.Thumbnail(avatar_url(user)),
+    )
+
+    about = ui.TextDisplay(f"> {data['about_text'].replace(chr(10), chr(10) + '> ')}")
+
+    offer_info = ui.TextDisplay(
+        f"**{t('embed_i_speak', lang)}:** {offer_display}\n"
+        f"**{t('embed_region', lang)}:** {region_display}"
+    )
+
+    seek_info = ui.TextDisplay(
+        f"**{t('embed_looking_for', lang)}:** {seek_display} {t('embed_partner_suffix', lang)}\n"
+        f"**{t('embed_my_level', lang)}:** {level_display}"
+    )
+
+    footer = ui.TextDisplay(f"-# {t(footer_key, lang)}")
+
+    view = ui.LayoutView()
+    view.add_item(ui.Container(
+        header,
+        ui.Separator(visible=True),
+        about,
+        ui.Separator(visible=True),
+        offer_info,
+        ui.Separator(visible=False),
+        seek_info,
+        ui.Separator(visible=True),
+        footer,
+        accent_colour=color,
+    ))
+    return view
+
+
+def _build_dm_copy_embed(data: dict) -> Embed:
+    """Build a simple embed copy for DM."""
+    from .config import (
+        OFFER_LANGUAGES,
+        PROFICIENCY_LEVELS,
+        REGIONS,
+        SEEK_LANGUAGES,
+    )
+
+    lang = data["lang"]
+    offer_display = lookup_display(OFFER_LANGUAGES, data["offer_lang"])
+    if data["offer_lang"] == "other" and data["other_lang"]:
+        offer_display = data["other_lang"]
+    elif data["other_lang"]:
+        offer_display += f" + {data['other_lang']}"
 
     embed = Embed(
-        description=t("embed_seeking", lang, mention=user.mention) + f"\n\n{about_quoted}",
-        color=color,
+        title="Your Exchange Partner Post",
+        description=f"Here's a copy of what was posted. Manage it with `/exchange`.\n\n> {data['about_text'][:900]}",
     )
-    embed.set_author(name=user.display_name, icon_url=avatar_url(user))
-
-    # What I offer
-    offer_display = lookup_display(OFFER_LANGUAGES, offer_lang)
-    if offer_lang == "other" and other_lang:
-        offer_display = other_lang
-    elif other_lang:
-        offer_display += f" + {other_lang}"
     embed.add_field(name=t("embed_i_speak", lang), value=offer_display, inline=True)
-    embed.add_field(name=t("embed_region", lang), value=lookup_display(REGIONS, region), inline=True)
-    embed.add_field(name="\u200b", value="\u200b", inline=True)
-
-    # What I want
-    seek_display = lookup_display(SEEK_LANGUAGES, seek_lang)
+    embed.add_field(name=t("embed_region", lang), value=lookup_display(REGIONS, data["region"]), inline=True)
     embed.add_field(
         name=t("embed_looking_for", lang),
-        value=f"{seek_display} {t('embed_partner_suffix', lang)}",
-        inline=True,
+        value=f"{lookup_display(SEEK_LANGUAGES, data['seek_lang'])} — {lookup_display(PROFICIENCY_LEVELS, data['seek_level'])}",
+        inline=False,
     )
-    embed.add_field(name=t("embed_my_level", lang), value=lookup_display(PROFICIENCY_LEVELS, seek_level), inline=True)
-    embed.add_field(name="\u200b", value="\u200b", inline=True)
-
-    footer_key = "embed_footer_dm" if prefer_dm else "embed_footer_tag"
-    embed.set_footer(text=t(footer_key, lang))
-
     return embed
 
 
@@ -262,8 +331,8 @@ async def _post_intro(interaction: Interaction, embed: Embed, channel_id: int, l
     await _audit_log(interaction.client, interaction.user, "Introduction posted")
 
 
-async def _post_exchange(interaction: Interaction, embed: Embed, channel_id: int, lang: str) -> None:
-    """Post an exchange partner embed and track it in the DB."""
+async def _post_exchange(interaction: Interaction, data: dict, channel_id: int, lang: str) -> None:
+    """Post an exchange partner LayoutView and track it in the DB."""
     await interaction.response.defer(ephemeral=True)
 
     # Check for existing post
@@ -279,8 +348,10 @@ async def _post_exchange(interaction: Interaction, embed: Embed, channel_id: int
     if not channel:
         return
 
+    view = _build_exchange_layout(data, interaction.user)
+
     try:
-        msg = await channel.send(embed=embed)
+        msg = await channel.send(view=view)
     except discord.Forbidden:
         logger.error("Missing permissions to post in channel %s", channel_id)
         await interaction.followup.send(embed=red_embed(t("error_generic", lang)), ephemeral=True)
@@ -291,26 +362,16 @@ async def _post_exchange(interaction: Interaction, embed: Embed, channel_id: int
         return
 
     await interaction.client.db.record_introduction(interaction.user.id)
-    await interaction.client.db.save_exchange_post(interaction.user.id, msg.id, channel_id)
+    await interaction.client.db.save_exchange_post(interaction.user.id, msg.id, channel_id, post_data=data)
 
     await interaction.followup.send(
         embed=green_embed(t("success_exchange", lang, channel=channel.mention)), ephemeral=True,
     )
     await _audit_log(interaction.client, interaction.user, "Exchange posted")
 
-    # DM the user a copy of their info
+    # DM the user a copy
     try:
-        dm_embed = Embed(
-            title="Your Exchange Partner Post",
-            description="Here's a copy of what was posted. You can manage it with `/exchange`.",
-            color=embed.color,
-        )
-        for field in embed.fields:
-            if field.name != "\u200b":
-                dm_embed.add_field(name=field.name, value=field.value, inline=field.inline)
-        if embed.description:
-            dm_embed.add_field(name="Full text", value=embed.description[:1024], inline=False)
-        await interaction.user.send(embed=dm_embed)
+        await interaction.user.send(embed=_build_dm_copy_embed(data))
     except discord.HTTPException:
         logger.debug("Could not DM user %s a copy of their exchange post", interaction.user.id)
         with contextlib.suppress(discord.HTTPException):

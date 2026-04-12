@@ -18,7 +18,7 @@ from .config import (
     detect_ui_lang,
 )
 from .i18n import t
-from .modals import _audit_log
+from .modals import _audit_log, _build_exchange_layout
 from .views import IntroStartView
 
 logger = logging.getLogger(__name__)
@@ -145,44 +145,47 @@ class IntroduceCog(BaseCog):
 
         await interaction.response.defer(ephemeral=True)
 
-        # Fetch the old message to get the embed
+        # Fetch the user as a member for role-based color
+        guild = interaction.guild
+        member = guild.get_member(interaction.user.id) if guild else interaction.user
+
+        # Delete old message
         channel = interaction.client.get_channel(post["channel_id"])
-        if not channel:
-            await interaction.followup.send(embed=red_embed("Could not find the channel."), ephemeral=True)
-            return
+        if channel:
+            try:
+                old_msg = await channel.fetch_message(post["message_id"])
+                await old_msg.delete()
+            except discord.NotFound:
+                pass
+            except discord.HTTPException:
+                logger.warning("Failed to delete old exchange post %s", post["message_id"])
 
-        old_embed = None
-        try:
-            old_msg = await channel.fetch_message(post["message_id"])
-            old_embed = old_msg.embeds[0] if old_msg.embeds else None
-            await old_msg.delete()
-        except discord.NotFound:
-            pass
-        except discord.HTTPException:
-            logger.warning("Failed to fetch/delete old exchange post %s", post["message_id"])
-
-        if not old_embed:
+        # Rebuild from stored data
+        post_data = post.get("post_data")
+        if not post_data:
             await interaction.client.db.delete_exchange_post(interaction.user.id)
             await interaction.followup.send(
-                embed=red_embed("Your old post could not be found. Use `/introduce` to create a new one."),
+                embed=red_embed("Your post data could not be found. Use `/introduce` to create a new one."),
                 ephemeral=True,
             )
             return
 
-        # Post the embed again in the introductions channel
+        view = _build_exchange_layout(post_data, member)
+
+        # Post in the introductions channel
         target_channel = interaction.client.get_channel(INTRODUCTIONS_CHANNEL_ID)
         if not target_channel:
             await interaction.followup.send(embed=red_embed("Introductions channel not found."), ephemeral=True)
             return
 
         try:
-            new_msg = await target_channel.send(embed=old_embed)
+            new_msg = await target_channel.send(view=view)
         except discord.HTTPException:
-            logger.exception("Failed to repost exchange embed")
+            logger.exception("Failed to repost exchange layout")
             await interaction.followup.send(embed=red_embed("Failed to repost. Please try again later."), ephemeral=True)
             return
 
-        await interaction.client.db.save_exchange_post(interaction.user.id, new_msg.id, target_channel.id)
+        await interaction.client.db.save_exchange_post(interaction.user.id, new_msg.id, target_channel.id, post_data=post_data)
         await interaction.followup.send(embed=green_embed("Your exchange post has been reposted!"), ephemeral=True)
         await _audit_log(interaction.client, interaction.user, "Exchange reposted")
 
