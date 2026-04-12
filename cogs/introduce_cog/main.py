@@ -18,7 +18,7 @@ from .config import (
     detect_ui_lang,
 )
 from .i18n import t
-from .modals import _audit_log, _build_exchange_layout
+from .modals import _audit_log, _build_exchange_embed
 from .views import IntroStartView
 
 logger = logging.getLogger(__name__)
@@ -179,7 +179,7 @@ class IntroduceCog(BaseCog):
             )
             return
 
-        view = _build_exchange_layout(post_data, member)
+        view = _build_exchange_embed(post_data, member)
 
         # Post in the introductions channel
         target_channel = interaction.client.get_channel(INTRODUCTIONS_CHANNEL_ID)
@@ -188,7 +188,7 @@ class IntroduceCog(BaseCog):
             return
 
         try:
-            new_msg = await target_channel.send(view=view)
+            new_msg = await target_channel.send(embed=view)
         except discord.HTTPException:
             logger.exception("Failed to repost exchange layout")
             await interaction.followup.send(embed=red_embed("Failed to repost. Please try again later."), ephemeral=True)

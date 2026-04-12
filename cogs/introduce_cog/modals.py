@@ -199,11 +199,11 @@ def _build_exchange_data(
     }
 
 
-def _build_exchange_layout(
+def _build_exchange_embed(
     data: dict,
     user: discord.User | discord.Member,
-) -> discord.ui.LayoutView:
-    """Build a LayoutView from exchange post data."""
+) -> Embed:
+    """Build an exchange partner embed matching V's design."""
     from .config import REGIONS
 
     lang = data["lang"]
@@ -218,41 +218,39 @@ def _build_exchange_layout(
 
     level_display = td(data["seek_level"], lang)
     region_display = lookup_display(REGIONS, data["region"])
-
     seek_key = f"seeking_{data['seek_lang']}"
-
     footer_key = "embed_footer_dm" if data["prefer_dm"] else "embed_footer_tag"
 
-    ui = discord.ui
+    about_quoted = "\n".join(f"> {line}" for line in data["about_text"].split("\n"))
+    want_quoted = "\n".join(f"> {line}" for line in data["want_text"].split("\n"))
 
-    header = ui.Section(
-        ui.TextDisplay(
-            f"**{user.display_name}**\n"
-            f"{t('embed_seeking', lang, mention=user.mention)}\n"
-            f"-# {t('embed_i_speak', lang)}: {offer_display}\n"
-            f"-# {t('embed_region', lang)}: {region_display}\n"
-            f"-# {t('embed_looking_for', lang)}: {t(seek_key, lang)}\n"
-            f"-# {t('embed_my_level', lang)}: {level_display}"
+    embed = Embed(
+        description=(
+            f"{t('embed_seeking', lang, mention=user.mention)}\n\n"
+            f"**{t('label_about_me', lang)}**\n{about_quoted}"
         ),
-        accessory=ui.Thumbnail(avatar_url(user)),
+        color=color,
+    )
+    embed.set_author(name=user.display_name, icon_url=avatar_url(user))
+
+    # Language / Level / Region row
+    embed.add_field(name=t("embed_i_speak", lang), value=offer_display, inline=True)
+    embed.add_field(name=t("embed_my_level", lang), value=level_display, inline=True)
+    embed.add_field(name=t("embed_region", lang), value=region_display, inline=True)
+
+    # What I want
+    embed.add_field(
+        name=f"⭐ {t('label_what_i_want', lang)}",
+        value=want_quoted,
+        inline=False,
     )
 
-    about = ui.TextDisplay(f"**{t('label_about_me', lang)}**\n> {data['about_text'].replace(chr(10), chr(10) + '> ')}")
+    # Seeking row
+    embed.add_field(name=t("embed_looking_for", lang), value=t(seek_key, lang), inline=True)
 
-    want = ui.TextDisplay(f"**⭐ {t('label_what_i_want', lang)}**\n> {data['want_text'].replace(chr(10), chr(10) + '> ')}")
+    embed.set_footer(text=t(footer_key, lang))
 
-    footer = ui.TextDisplay(f"-# {t(footer_key, lang)}")
-
-    view = ui.LayoutView()
-    view.add_item(ui.Container(
-        header,
-        about,
-        want,
-        ui.Separator(visible=True),
-        footer,
-        accent_colour=color,
-    ))
-    return view
+    return embed
 
 
 def _build_dm_copy_embed(data: dict) -> Embed:
@@ -339,10 +337,10 @@ async def _post_exchange(interaction: Interaction, data: dict, channel_id: int, 
     if not channel:
         return
 
-    view = _build_exchange_layout(data, interaction.user)
+    view = _build_exchange_embed(data, interaction.user)
 
     try:
-        msg = await channel.send(view=view)
+        msg = await channel.send(embed=view)
     except discord.Forbidden:
         logger.error("Missing permissions to post in channel %s", channel_id)
         await interaction.followup.send(embed=red_embed(t("error_generic", lang)), ephemeral=True)
