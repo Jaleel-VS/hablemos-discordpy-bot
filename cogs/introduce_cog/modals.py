@@ -232,7 +232,9 @@ def _build_exchange_layout(
     header = ui.Section(
         ui.TextDisplay(
             f"**{user.display_name}**\n"
-            f"{t('embed_seeking', lang, mention=user.mention)}"
+            f"{t('embed_seeking', lang, mention=user.mention)}\n"
+            f"-# {t('embed_i_speak', lang)}: {offer_display} · {t('embed_region', lang)}: {region_display}\n"
+            f"-# {t('embed_looking_for', lang)}: {seek_display} {t('embed_partner_suffix', lang)} · {t('embed_my_level', lang)}: {level_display}"
         ),
         accessory=ui.Thumbnail(avatar_url(user)),
     )
@@ -241,16 +243,6 @@ def _build_exchange_layout(
 
     want = ui.TextDisplay(f"**⭐ {t('label_what_i_want', lang)}**\n> {data['want_text'].replace(chr(10), chr(10) + '> ')}")
 
-    offer_info = ui.TextDisplay(
-        f"**{t('embed_i_speak', lang)}:** {offer_display}\n"
-        f"**{t('embed_region', lang)}:** {region_display}"
-    )
-
-    seek_info = ui.TextDisplay(
-        f"**{t('embed_looking_for', lang)}:** {seek_display} {t('embed_partner_suffix', lang)}\n"
-        f"**{t('embed_my_level', lang)}:** {level_display}"
-    )
-
     footer = ui.TextDisplay(f"-# {t(footer_key, lang)}")
 
     view = ui.LayoutView()
@@ -258,9 +250,6 @@ def _build_exchange_layout(
         header,
         about,
         want,
-        ui.Separator(visible=True),
-        offer_info,
-        seek_info,
         ui.Separator(visible=True),
         footer,
         accent_colour=color,
