@@ -229,9 +229,10 @@ def _build_exchange_embed(
     embed.set_thumbnail(url=avatar_url(user))
 
     # About Me
+    about_small = "\n".join(f"-# {line}" for line in data["about_text"].split("\n"))
     embed.add_field(
         name=t("label_about_me", lang),
-        value=f"-# {data['about_text']}",
+        value=about_small,
         inline=False,
     )
 
@@ -241,9 +242,10 @@ def _build_exchange_embed(
     embed.add_field(name=t("embed_region", lang), value=region_display, inline=True)
 
     # What I want
+    want_small = "\n".join(f"-# {line}" for line in data["want_text"].split("\n"))
     embed.add_field(
         name=f"⭐ {t('label_what_i_want', lang)}",
-        value=f"-# {data['want_text']}",
+        value=want_small,
         inline=False,
     )
 
