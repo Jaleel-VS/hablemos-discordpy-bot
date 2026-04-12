@@ -19,7 +19,7 @@ from .config import (
     OTHER_NATIVE_ROLE_ID,
     SPANISH_NATIVE_ROLE_ID,
 )
-from .i18n import t
+from .i18n import t, td
 
 logger = logging.getLogger(__name__)
 
@@ -204,25 +204,20 @@ def _build_exchange_layout(
     user: discord.User | discord.Member,
 ) -> discord.ui.LayoutView:
     """Build a LayoutView from exchange post data."""
-    from .config import (
-        OFFER_LANGUAGES,
-        PROFICIENCY_LEVELS,
-        REGIONS,
-        SEEK_LANGUAGES,
-    )
+    from .config import REGIONS
 
     lang = data["lang"]
     color = embed_color_for_member(user) if isinstance(user, Member) else COLOR_ENGLISH_NATIVE
 
     # Offer display
-    offer_display = lookup_display(OFFER_LANGUAGES, data["offer_lang"])
+    offer_display = td(data["offer_lang"], lang)
     if data["offer_lang"] == "other" and data["other_lang"]:
         offer_display = data["other_lang"]
     elif data["other_lang"]:
         offer_display += f" + {data['other_lang']}"
 
-    seek_display = lookup_display(SEEK_LANGUAGES, data["seek_lang"])
-    level_display = lookup_display(PROFICIENCY_LEVELS, data["seek_level"])
+    seek_display = td(data["seek_lang"], lang)
+    level_display = td(data["seek_level"], lang)
     region_display = lookup_display(REGIONS, data["region"])
 
     footer_key = "embed_footer_dm" if data["prefer_dm"] else "embed_footer_tag"
@@ -261,15 +256,10 @@ def _build_exchange_layout(
 
 def _build_dm_copy_embed(data: dict) -> Embed:
     """Build a simple embed copy for DM."""
-    from .config import (
-        OFFER_LANGUAGES,
-        PROFICIENCY_LEVELS,
-        REGIONS,
-        SEEK_LANGUAGES,
-    )
+    from .config import REGIONS
 
     lang = data["lang"]
-    offer_display = lookup_display(OFFER_LANGUAGES, data["offer_lang"])
+    offer_display = td(data["offer_lang"], lang)
     if data["offer_lang"] == "other" and data["other_lang"]:
         offer_display = data["other_lang"]
     elif data["other_lang"]:
@@ -283,7 +273,7 @@ def _build_dm_copy_embed(data: dict) -> Embed:
     embed.add_field(name=t("embed_region", lang), value=lookup_display(REGIONS, data["region"]), inline=True)
     embed.add_field(
         name=t("embed_looking_for", lang),
-        value=f"{lookup_display(SEEK_LANGUAGES, data['seek_lang'])} — {lookup_display(PROFICIENCY_LEVELS, data['seek_level'])}",
+        value=f"{td(data['seek_lang'], lang)} — {td(data['seek_level'], lang)}",
         inline=False,
     )
     return embed

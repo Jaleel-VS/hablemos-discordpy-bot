@@ -210,3 +210,25 @@ def t(key: str, lang: str = "en", **kwargs) -> str:
     if kwargs:
         text = text.format(**kwargs)
     return text
+
+
+# Translated display values for select options shown in embeds
+DISPLAY_VALUES: Final[dict[str, dict[str, str]]] = {
+    # Languages
+    "english": {"en": "English", "es": "Inglés"},
+    "spanish": {"en": "Spanish", "es": "Español"},
+    "other": {"en": "Other", "es": "Otro"},
+    # Proficiency
+    "C2": {"en": "C2 (Proficient)", "es": "C2 (Competente)"},
+    "C1": {"en": "C1 (Advanced)", "es": "C1 (Avanzado)"},
+    "B2": {"en": "B2 (Upper Intermediate)", "es": "B2 (Intermedio alto)"},
+    "B1": {"en": "B1 (Intermediate)", "es": "B1 (Intermedio)"},
+    "A2": {"en": "A2 (Elementary)", "es": "A2 (Elemental)"},
+    "A1": {"en": "A1 (Beginner)", "es": "A1 (Principiante)"},
+}
+
+
+def td(value: str, lang: str = "en") -> str:
+    """Get a translated display value. Falls back to the raw value."""
+    entry = DISPLAY_VALUES.get(value, {})
+    return entry.get(lang, entry.get("en", value))
