@@ -38,6 +38,15 @@ def _intro_embed(lang: str) -> Embed:
 async def _start_intro_flow(interaction: Interaction) -> None:
     """Send the ephemeral intro start view."""
     lang = detect_ui_lang(interaction.user) if isinstance(interaction.user, discord.Member) else "en"
+
+    # Block if they already have an active exchange post
+    existing = await interaction.client.db.get_exchange_post(interaction.user.id)
+    if existing:
+        await interaction.response.send_message(
+            embed=red_embed(t("error_already_posted", lang)), ephemeral=True,
+        )
+        return
+
     view = IntroStartView(introductions_channel_id=INTRODUCTIONS_CHANNEL_ID, lang=lang)
     await interaction.response.send_message(embed=_intro_embed(lang), view=view, ephemeral=True)
     logger.info("Introduction started by user %s", interaction.user.id)
