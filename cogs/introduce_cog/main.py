@@ -15,30 +15,30 @@ from .config import (
     INTRODUCTIONS_CHANNEL_ID,
     REPOST_COOLDOWN_DAYS,
     REPOST_GRACE_MINUTES,
+    detect_ui_lang,
 )
+from .i18n import t
 from .views import IntroStartView
 
 logger = logging.getLogger(__name__)
 
 
-def _intro_embed() -> Embed:
+def _intro_embed(lang: str) -> Embed:
     """Build the intro start embed."""
     embed = Embed(
-        title="Introduction",
-        description=(
-            "Welcome! Let's introduce you to the community.\n\n"
-            "Are you looking for a language exchange partner?"
-        ),
+        title=t("intro_title", lang),
+        description=t("intro_description", lang),
         color=discord.Color.blue(),
     )
-    embed.set_footer(text="This form will expire in 5 minutes")
+    embed.set_footer(text=t("intro_footer", lang))
     return embed
 
 
 async def _start_intro_flow(interaction: Interaction) -> None:
     """Send the ephemeral intro start view."""
-    view = IntroStartView(introductions_channel_id=INTRODUCTIONS_CHANNEL_ID)
-    await interaction.response.send_message(embed=_intro_embed(), view=view, ephemeral=True)
+    lang = detect_ui_lang(interaction.user) if isinstance(interaction.user, discord.Member) else "en"
+    view = IntroStartView(introductions_channel_id=INTRODUCTIONS_CHANNEL_ID, lang=lang)
+    await interaction.response.send_message(embed=_intro_embed(lang), view=view, ephemeral=True)
     logger.info("Introduction started by user %s", interaction.user.id)
 
 

@@ -11,6 +11,7 @@ from .config import (
     REGIONS,
     SEEK_LANGUAGES,
 )
+from .i18n import t
 from .modals import ExchangeDetailsModal, IntroOnlyModal
 
 logger = logging.getLogger(__name__)
@@ -19,22 +20,31 @@ logger = logging.getLogger(__name__)
 class IntroStartView(View):
     """Initial view: yes/no exchange partner question."""
 
-    def __init__(self, introductions_channel_id: int, timeout: float = 300):
+    def __init__(self, introductions_channel_id: int, lang: str = "en", timeout: float = 300):
         super().__init__(timeout=timeout)
         self.introductions_channel_id = introductions_channel_id
+        self.lang = lang
         self.seeking_exchange: bool | None = None
 
         select = Select(
-            placeholder="Looking for an exchange partner?",
+            placeholder=t("select_exchange_placeholder", lang),
             options=[
-                SelectOption(label="Yes", value="yes", description="I want to find a language exchange partner"),
-                SelectOption(label="No", value="no", description="I just want to introduce myself"),
+                SelectOption(
+                    label=t("select_exchange_yes", lang), value="yes",
+                    description=t("select_exchange_yes_desc", lang),
+                ),
+                SelectOption(
+                    label=t("select_exchange_no", lang), value="no",
+                    description=t("select_exchange_no_desc", lang),
+                ),
             ],
             custom_id="seeking_exchange",
             row=0,
         )
         select.callback = self._exchange_select_cb
         self.add_item(select)
+
+        self.continue_button.label = t("btn_continue", lang)
 
     async def _exchange_select_cb(self, interaction: Interaction):
         self.seeking_exchange = interaction.data["values"][0] == "yes"
@@ -45,23 +55,22 @@ class IntroStartView(View):
         """Branch based on selection."""
         if self.seeking_exchange is None:
             await interaction.response.send_message(
-                "Please select whether you're looking for an exchange partner.",
-                ephemeral=True,
+                t("please_select_exchange", self.lang), ephemeral=True,
             )
             return
 
         if self.seeking_exchange:
-            view = ExchangePrefsView(introductions_channel_id=self.introductions_channel_id)
+            view = ExchangePrefsView(introductions_channel_id=self.introductions_channel_id, lang=self.lang)
             embed = Embed(
-                title="Find an Exchange Partner",
-                description="Fill in your details below, then click **Next** to finish.",
+                title=t("exchange_title", self.lang),
+                description=t("exchange_description", self.lang),
                 color=discord.Color.teal(),
             )
-            embed.set_footer(text="This form will expire in 5 minutes")
+            embed.set_footer(text=t("intro_footer", self.lang))
             await interaction.response.edit_message(embed=embed, view=view)
         else:
             await interaction.response.send_modal(
-                IntroOnlyModal(introductions_channel_id=self.introductions_channel_id),
+                IntroOnlyModal(introductions_channel_id=self.introductions_channel_id, lang=self.lang),
             )
 
     async def on_timeout(self):
@@ -69,11 +78,12 @@ class IntroStartView(View):
 
 
 class ExchangePrefsView(View):
-    """Selects for language offer/seek, level, region, DM pref — then modal for free text."""
+    """Selects for language offer/seek, level, region — then modal for free text."""
 
-    def __init__(self, introductions_channel_id: int, timeout: float = 300):
+    def __init__(self, introductions_channel_id: int, lang: str = "en", timeout: float = 300):
         super().__init__(timeout=timeout)
         self.introductions_channel_id = introductions_channel_id
+        self.lang = lang
 
         self.offer_lang: str | None = None
         self.seek_lang: str | None = None
@@ -82,10 +92,13 @@ class ExchangePrefsView(View):
         self.prefer_dm: bool = True
 
         self._build_selects()
+        self.continue_button.label = t("btn_next_about", lang)
 
     def _build_selects(self):
+        lang = self.lang
+
         offer = Select(
-            placeholder="Language you speak natively...",
+            placeholder=t("select_offer_placeholder", lang),
             options=[SelectOption(label=lbl, value=v) for lbl, v in OFFER_LANGUAGES],
             custom_id="offer_lang",
             row=0,
@@ -94,7 +107,7 @@ class ExchangePrefsView(View):
         self.add_item(offer)
 
         seek = Select(
-            placeholder="Language you want to learn...",
+            placeholder=t("select_seek_placeholder", lang),
             options=[SelectOption(label=lbl, value=v) for lbl, v in SEEK_LANGUAGES],
             custom_id="seek_lang",
             row=1,
@@ -103,7 +116,7 @@ class ExchangePrefsView(View):
         self.add_item(seek)
 
         level = Select(
-            placeholder="Your level in that language...",
+            placeholder=t("select_level_placeholder", lang),
             options=[SelectOption(label=lbl, value=v) for lbl, v in PROFICIENCY_LEVELS],
             custom_id="seek_level",
             row=2,
@@ -112,7 +125,7 @@ class ExchangePrefsView(View):
         self.add_item(level)
 
         region = Select(
-            placeholder="Your region...",
+            placeholder=t("select_region_placeholder", lang),
             options=[SelectOption(label=lbl, value=v) for lbl, v in REGIONS],
             custom_id="region",
             row=3,
@@ -151,7 +164,7 @@ class ExchangePrefsView(View):
 
         if missing:
             await interaction.response.send_message(
-                f"Please select: {', '.join(missing)}.", ephemeral=True,
+                t("missing_fields", self.lang, fields=", ".join(missing)), ephemeral=True,
             )
             return
 
@@ -159,6 +172,7 @@ class ExchangePrefsView(View):
             ExchangeDetailsModal(
                 parent_view=self,
                 introductions_channel_id=self.introductions_channel_id,
+                lang=self.lang,
             ),
         )
 

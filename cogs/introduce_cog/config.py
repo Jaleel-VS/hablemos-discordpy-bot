@@ -67,3 +67,11 @@ DM_OPTIONS: Final[list[tuple[str, str]]] = [
     ("Yes — contact me via DM", "yes"),
     ("No — tag me in the server", "no"),
 ]
+
+
+def detect_ui_lang(member: discord.Member) -> str:
+    """Return 'es' for Spanish natives, 'en' for everyone else."""
+    role_ids = {r.id for r in member.roles}
+    if SPANISH_NATIVE_ROLE_ID in role_ids and ENGLISH_NATIVE_ROLE_ID not in role_ids:
+        return "es"
+    return "en"
