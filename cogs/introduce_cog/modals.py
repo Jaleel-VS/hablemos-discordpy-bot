@@ -221,17 +221,19 @@ def _build_exchange_embed(
     seek_key = f"seeking_{data['seek_lang']}"
     footer_key = "embed_footer_dm" if data["prefer_dm"] else "embed_footer_tag"
 
-    about_quoted = "\n".join(f"> {line}" for line in data["about_text"].split("\n"))
-    want_quoted = "\n".join(f"> {line}" for line in data["want_text"].split("\n"))
-
     embed = Embed(
-        description=(
-            f"{t('embed_seeking', lang, mention=user.mention)}\n\n"
-            f"**{t('label_about_me', lang)}**\n{about_quoted}"
-        ),
+        description=t("embed_seeking", lang, mention=user.mention),
         color=color,
     )
-    embed.set_author(name=user.display_name, icon_url=avatar_url(user))
+    embed.set_author(name=user.display_name)
+    embed.set_thumbnail(url=avatar_url(user))
+
+    # About Me
+    embed.add_field(
+        name=t("label_about_me", lang),
+        value=f"-# {data['about_text']}",
+        inline=False,
+    )
 
     # Language / Level / Region row
     embed.add_field(name=t("embed_i_speak", lang), value=offer_display, inline=True)
@@ -241,7 +243,7 @@ def _build_exchange_embed(
     # What I want
     embed.add_field(
         name=f"⭐ {t('label_what_i_want', lang)}",
-        value=want_quoted,
+        value=f"-# {data['want_text']}",
         inline=False,
     )
 
