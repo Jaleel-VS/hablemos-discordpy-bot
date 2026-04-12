@@ -105,6 +105,14 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "en": "e.g., Portuguese, Catalan, Arabic... (leave blank if N/A)",
         "es": "ej., Portugués, Catalán, Árabe... (dejar en blanco si no aplica)",
     },
+    "label_country": {
+        "en": "Country (optional)",
+        "es": "País (opcional)",
+    },
+    "placeholder_country": {
+        "en": "e.g., Spain, USA, Mexico...",
+        "es": "ej., España, EE.UU., México...",
+    },
     # ── IntroOnlyModal ──
     "modal_title_intro": {
         "en": "Introduce Yourself",
@@ -158,6 +166,10 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
     "embed_my_level": {
         "en": "My level",
         "es": "Mi nivel",
+    },
+    "embed_country": {
+        "en": "Country",
+        "es": "País",
     },
     "embed_footer_dm": {
         "en": "Send me a DM if you'd like to be my partner!",
