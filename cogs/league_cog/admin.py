@@ -36,7 +36,16 @@ class LeagueAdminCog(BaseCog):
     @commands.group(name="league", invoke_without_command=True)
     @commands.is_owner()
     async def league_admin(self, ctx: commands.Context):
-        """Admin league management (Owner only). Use `$league <subcommand>`."""
+        """🏆 Language League — Compete with other learners!
+
+Earn points by chatting in your target language channels. The more active you are, the higher you climb!
+
+**How to join:** Use `/league join` (you need a native + learning role)
+**View rankings:** `/league view`
+**Your stats:** `/league stats`
+**Leave:** `/league leave`
+
+Rounds last 2 weeks. Top performers earn a champion role!"""
         await ctx.send(
             "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole|preview> [target]`"
         )
