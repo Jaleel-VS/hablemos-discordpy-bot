@@ -451,4 +451,19 @@ async def initialize_schema(pool):
             ON tasks(guild_id, status)
         ''')
 
+        # Exchange partner posts tracking (one active post per user)
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS exchange_posts (
+                user_id BIGINT PRIMARY KEY,
+                message_id BIGINT NOT NULL,
+                channel_id BIGINT NOT NULL,
+                posted_at TIMESTAMPTZ DEFAULT NOW()
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_exchange_posts_message
+            ON exchange_posts(message_id)
+        ''')
+
         logger.info("Database schema initialized")

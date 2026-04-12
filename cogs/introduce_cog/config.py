@@ -5,23 +5,41 @@ import discord
 
 from config import get_int_env
 
-# Channel IDs — loaded from env with hardcoded defaults
+# Channel IDs
 COMMAND_CHANNEL_ID: Final[int] = get_int_env("INTRODUCE_COMMAND_CHANNEL_ID", 1437832952028467251)
 INTRODUCTIONS_CHANNEL_ID: Final[int] = get_int_env("INTRODUCE_CHANNEL_ID", 1464254572204916969)
 
-# Embed colors
-INTRO_COLOR: Final[discord.Color] = discord.Color.greyple()
-EXCHANGE_COLOR: Final[discord.Color] = discord.Color.teal()
+# Native-language role IDs
+SPANISH_NATIVE_ROLE_ID: Final[int] = get_int_env("SPANISH_NATIVE_ROLE_ID", 243854128424550401)
+ENGLISH_NATIVE_ROLE_ID: Final[int] = get_int_env("ENGLISH_NATIVE_ROLE_ID", 243853718758359040)
+OTHER_NATIVE_ROLE_ID: Final[int] = get_int_env("OTHER_NATIVE_ROLE_ID", 247020385730691073)
 
-# Language options for select menus
-LANGUAGES: Final[list[tuple[str, str]]] = [
+# Embed colors based on native language role
+COLOR_ENGLISH_NATIVE: Final[discord.Color] = discord.Color.blue()
+COLOR_SPANISH_NATIVE: Final[discord.Color] = discord.Color.dark_green()
+COLOR_BOTH_NATIVE: Final[discord.Color] = discord.Color.orange()
+COLOR_OTHER_NATIVE: Final[discord.Color] = discord.Color.purple()
+COLOR_INTRO: Final[discord.Color] = discord.Color.greyple()
+
+# Repost cooldowns
+REPOST_GRACE_MINUTES: Final[int] = 10
+REPOST_COOLDOWN_DAYS: Final[int] = 14
+
+# Language you OFFER (what you're native in / can teach)
+OFFER_LANGUAGES: Final[list[tuple[str, str]]] = [
+    ("English", "english"),
+    ("Spanish", "spanish"),
+    ("Other", "other"),
+]
+
+# Language you SEEK (what you want to learn — only the server's two languages)
+SEEK_LANGUAGES: Final[list[tuple[str, str]]] = [
     ("English", "english"),
     ("Spanish", "spanish"),
 ]
 
-# Proficiency levels
+# Proficiency in your TARGET language (the one you're learning)
 PROFICIENCY_LEVELS: Final[list[tuple[str, str]]] = [
-    ("Native", "Native"),
     ("C2 (Proficient)", "C2"),
     ("C1 (Advanced)", "C1"),
     ("B2 (Upper Intermediate)", "B2"),
@@ -30,39 +48,22 @@ PROFICIENCY_LEVELS: Final[list[tuple[str, str]]] = [
     ("A1 (Beginner)", "A1"),
 ]
 
-# Common timezones grouped by region
-TIMEZONES: Final[list[tuple[str, str]]] = [
-    ("UTC-12:00 (Baker Island)", "UTC-12"),
-    ("UTC-11:00 (Samoa)", "UTC-11"),
-    ("UTC-10:00 (Hawaii)", "UTC-10"),
-    ("UTC-09:00 (Alaska)", "UTC-9"),
-    ("UTC-08:00 (Pacific US)", "UTC-8"),
-    ("UTC-07:00 (Mountain US)", "UTC-7"),
-    ("UTC-06:00 (Central US/Mexico)", "UTC-6"),
-    ("UTC-05:00 (Eastern US/Colombia)", "UTC-5"),
-    ("UTC-04:00 (Atlantic/Venezuela)", "UTC-4"),
-    ("UTC-03:00 (Argentina/Brazil)", "UTC-3"),
-    ("UTC-02:00 (Mid-Atlantic)", "UTC-2"),
-    ("UTC-01:00 (Azores)", "UTC-1"),
-    ("UTC+00:00 (UK/Portugal)", "UTC+0"),
-    ("UTC+01:00 (Central Europe)", "UTC+1"),
-    ("UTC+02:00 (Eastern Europe)", "UTC+2"),
-    ("UTC+03:00 (Moscow/Turkey)", "UTC+3"),
-    ("UTC+04:00 (Dubai/Baku)", "UTC+4"),
-    ("UTC+05:00 (Pakistan)", "UTC+5"),
-    ("UTC+05:30 (India)", "UTC+5:30"),
-    ("UTC+06:00 (Bangladesh)", "UTC+6"),
-    ("UTC+07:00 (Thailand/Vietnam)", "UTC+7"),
-    ("UTC+08:00 (China/Singapore)", "UTC+8"),
-    ("UTC+09:00 (Japan/Korea)", "UTC+9"),
-    ("UTC+10:00 (Sydney)", "UTC+10"),
-    ("UTC+12:00 (New Zealand)", "UTC+12"),
+# Regions — inclusive, broad, easy to pick
+REGIONS: Final[list[tuple[str, str]]] = [
+    ("🌎 North America", "north_america"),
+    ("🌎 Central America & Caribbean", "central_america"),
+    ("🌎 South America", "south_america"),
+    ("🌍 Western Europe", "western_europe"),
+    ("🌍 Eastern Europe", "eastern_europe"),
+    ("🌍 Africa", "africa"),
+    ("🌏 Middle East", "middle_east"),
+    ("🌏 South & Southeast Asia", "south_asia"),
+    ("🌏 East Asia", "east_asia"),
+    ("🌏 Oceania", "oceania"),
 ]
 
-# Countries for partner preference
-COUNTRIES: Final[list[tuple[str, str]]] = [
-    ("No Preference", "no_preference"),
-    ("Spain", "spain"),
-    ("England", "england"),
-    ("Mexico", "mexico"),
+# DM preference
+DM_OPTIONS: Final[list[tuple[str, str]]] = [
+    ("Yes — contact me via DM", "yes"),
+    ("No — tag me in the server", "no"),
 ]

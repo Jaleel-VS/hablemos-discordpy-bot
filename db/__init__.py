@@ -32,6 +32,7 @@ class DatabaseMixin:
             return await conn.execute(query, *args)
 
 from db.conversations import ConversationsMixin
+from db.exchange_posts import ExchangePostsMixin
 from db.interactions import InteractionsMixin
 from db.introductions import IntroductionsMixin
 from db.leaderboard import LeaderboardMixin
@@ -48,6 +49,7 @@ from db.vocab import VocabMixin
 class Database(
     NotesMixin,
     IntroductionsMixin,
+    ExchangePostsMixin,
     SettingsMixin,
     ConversationsMixin,
     VocabMixin,

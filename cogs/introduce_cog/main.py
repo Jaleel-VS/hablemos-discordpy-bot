@@ -1,5 +1,6 @@
-"""Introduce cog — slash and prefix commands for member introductions and exchange partner requests."""
+"""Introduce cog — slash and prefix commands for introductions and exchange partner requests."""
 import logging
+from datetime import timedelta
 
 import discord
 from discord import ButtonStyle, Embed, Interaction, app_commands
@@ -7,8 +8,14 @@ from discord.ext import commands
 from discord.ui import Button, View, button
 
 from base_cog import BaseCog
+from cogs.utils.embeds import green_embed, red_embed
 
-from .config import COMMAND_CHANNEL_ID, INTRODUCTIONS_CHANNEL_ID
+from .config import (
+    COMMAND_CHANNEL_ID,
+    INTRODUCTIONS_CHANNEL_ID,
+    REPOST_COOLDOWN_DAYS,
+    REPOST_GRACE_MINUTES,
+)
 from .views import IntroStartView
 
 logger = logging.getLogger(__name__)
@@ -43,7 +50,6 @@ class IntroduceButton(View):
 
     @button(label="Introduce Yourself", style=ButtonStyle.primary, custom_id="introduce:start", emoji="👋")
     async def start_button(self, interaction: Interaction, btn: Button):
-        """Handle button click — start the ephemeral intro flow."""
         await _start_intro_flow(interaction)
 
 
@@ -54,33 +60,27 @@ class IntroduceCog(BaseCog):
         super().__init__(bot)
         bot.add_view(IntroduceButton())
 
-    @app_commands.command(
-        name="introduce",
-        description="Introduce yourself to the community",
-    )
-    async def introduce_slash(self, interaction: Interaction):
-        """Start the introduction flow via slash command."""
-        if interaction.channel_id != COMMAND_CHANNEL_ID:
-            command_channel = interaction.client.get_channel(COMMAND_CHANNEL_ID)
-            channel_mention = command_channel.mention if command_channel else f"<#{COMMAND_CHANNEL_ID}>"
-            await interaction.response.send_message(
-                f"This command can only be used in {channel_mention}.",
-                ephemeral=True,
-            )
-            return
+    # ── /introduce ──
 
+    @app_commands.command(name="introduce", description="Introduce yourself to the community")
+    async def introduce_slash(self, interaction: Interaction):
+        if interaction.channel_id != COMMAND_CHANNEL_ID:
+            ch = interaction.client.get_channel(COMMAND_CHANNEL_ID)
+            mention = ch.mention if ch else f"<#{COMMAND_CHANNEL_ID}>"
+            await interaction.response.send_message(f"Use this in {mention}.", ephemeral=True)
+            return
         await _start_intro_flow(interaction)
+
+    # ── $introduce (prefix — posts persistent button) ──
 
     @commands.command(name="introduce")
     @commands.cooldown(1, 60, commands.BucketType.channel)
     async def introduce_prefix(self, ctx: commands.Context):
-        """Send a persistent button to start the introduction flow."""
         if ctx.channel.id != COMMAND_CHANNEL_ID:
-            command_channel = ctx.bot.get_channel(COMMAND_CHANNEL_ID)
-            channel_mention = command_channel.mention if command_channel else f"<#{COMMAND_CHANNEL_ID}>"
-            await ctx.send(f"This command can only be used in {channel_mention}.")
+            ch = ctx.bot.get_channel(COMMAND_CHANNEL_ID)
+            mention = ch.mention if ch else f"<#{COMMAND_CHANNEL_ID}>"
+            await ctx.send(f"Use this in {mention}.")
             return
-
         embed = Embed(
             title="👋 Introduce Yourself",
             description="Click the button below to introduce yourself to the community!",
@@ -88,8 +88,132 @@ class IntroduceCog(BaseCog):
         )
         await ctx.send(embed=embed, view=IntroduceButton())
 
+    # ── /exchange (manage your exchange post) ──
+
+    exchange_group = app_commands.Group(name="exchange", description="Manage your exchange partner post")
+
+    @exchange_group.command(name="delete", description="Delete your exchange partner post")
+    async def exchange_delete(self, interaction: Interaction):
+        post = await interaction.client.db.get_exchange_post(interaction.user.id)
+        if not post:
+            await interaction.response.send_message(
+                embed=red_embed("You don't have an active exchange post."), ephemeral=True,
+            )
+            return
+
+        await interaction.response.defer(ephemeral=True)
+
+        channel = interaction.client.get_channel(post["channel_id"])
+        if channel:
+            try:
+                msg = await channel.fetch_message(post["message_id"])
+                await msg.delete()
+            except discord.NotFound:
+                pass
+            except discord.HTTPException:
+                logger.warning("Failed to delete exchange message %s", post["message_id"])
+
+        await interaction.client.db.delete_exchange_post(interaction.user.id)
+        await interaction.followup.send(embed=green_embed("Your exchange post has been deleted."), ephemeral=True)
+
+    @exchange_group.command(name="repost", description="Repost your exchange partner request")
+    async def exchange_repost(self, interaction: Interaction):
+        post = await interaction.client.db.get_exchange_post(interaction.user.id)
+        if not post:
+            await interaction.response.send_message(
+                embed=red_embed("You don't have an active exchange post. Use `/introduce` to create one."),
+                ephemeral=True,
+            )
+            return
+
+        can_repost, posted_at = await interaction.client.db.can_repost_exchange(
+            interaction.user.id, REPOST_COOLDOWN_DAYS, REPOST_GRACE_MINUTES,
+        )
+        if not can_repost:
+            next_date = posted_at + timedelta(days=REPOST_COOLDOWN_DAYS)
+            await interaction.response.send_message(
+                embed=red_embed(
+                    f"You can repost after <t:{int(next_date.timestamp())}:R>.\n\n"
+                    f"-# Reposts are allowed within {REPOST_GRACE_MINUTES} minutes of posting, "
+                    f"or after {REPOST_COOLDOWN_DAYS} days."
+                ),
+                ephemeral=True,
+            )
+            return
+
+        await interaction.response.defer(ephemeral=True)
+
+        # Fetch the old message to get the embed
+        channel = interaction.client.get_channel(post["channel_id"])
+        if not channel:
+            await interaction.followup.send(embed=red_embed("Could not find the channel."), ephemeral=True)
+            return
+
+        old_embed = None
+        try:
+            old_msg = await channel.fetch_message(post["message_id"])
+            old_embed = old_msg.embeds[0] if old_msg.embeds else None
+            await old_msg.delete()
+        except discord.NotFound:
+            pass
+        except discord.HTTPException:
+            logger.warning("Failed to fetch/delete old exchange post %s", post["message_id"])
+
+        if not old_embed:
+            await interaction.client.db.delete_exchange_post(interaction.user.id)
+            await interaction.followup.send(
+                embed=red_embed("Your old post could not be found. Use `/introduce` to create a new one."),
+                ephemeral=True,
+            )
+            return
+
+        # Post the embed again in the introductions channel
+        target_channel = interaction.client.get_channel(INTRODUCTIONS_CHANNEL_ID)
+        if not target_channel:
+            await interaction.followup.send(embed=red_embed("Introductions channel not found."), ephemeral=True)
+            return
+
+        try:
+            new_msg = await target_channel.send(embed=old_embed)
+        except discord.HTTPException:
+            logger.exception("Failed to repost exchange embed")
+            await interaction.followup.send(embed=red_embed("Failed to repost. Please try again later."), ephemeral=True)
+            return
+
+        await interaction.client.db.save_exchange_post(interaction.user.id, new_msg.id, target_channel.id)
+        await interaction.followup.send(embed=green_embed("Your exchange post has been reposted!"), ephemeral=True)
+
+    # ── Admin: delete someone else's exchange post ──
+
+    @exchange_group.command(name="remove", description="[Mod] Remove someone's exchange post")
+    @app_commands.checks.has_permissions(manage_messages=True)
+    @app_commands.describe(user="The user whose post to remove")
+    async def exchange_remove(self, interaction: Interaction, user: discord.Member):
+        post = await interaction.client.db.get_exchange_post(user.id)
+        if not post:
+            await interaction.response.send_message(
+                embed=red_embed(f"{user.mention} doesn't have an active exchange post."), ephemeral=True,
+            )
+            return
+
+        await interaction.response.defer(ephemeral=True)
+
+        channel = interaction.client.get_channel(post["channel_id"])
+        if channel:
+            try:
+                msg = await channel.fetch_message(post["message_id"])
+                await msg.delete()
+            except discord.NotFound:
+                pass
+            except discord.HTTPException:
+                logger.warning("Failed to delete exchange message %s for user %s", post["message_id"], user.id)
+
+        await interaction.client.db.delete_exchange_post(user.id)
+        await interaction.followup.send(
+            embed=green_embed(f"Removed {user.mention}'s exchange post."), ephemeral=True,
+        )
+
 
 async def setup(bot: commands.Bot):
-    """Setup function for loading the cog."""
     await bot.add_cog(IntroduceCog(bot))
     logger.info("IntroduceCog loaded")
