@@ -117,11 +117,7 @@ class ExchangeDetailsModal(Modal, title="About You"):
 
     about_and_wants = TextInput(
         label="About me & what I'm looking for",
-        placeholder=(
-            "Tell others about yourself and what you're looking for in a "
-            "language partner (hobbies, study style, goals...)\n"
-            "Mention 'tag me in server' if you prefer not to receive DMs."
-        ),
+        placeholder="About yourself, hobbies, goals, and what you want in a partner...",
         required=True,
         max_length=1000,
         style=TextStyle.paragraph,
