@@ -37,8 +37,8 @@ def lookup_display(options: list[tuple[str, str]], value: str) -> str:
 
 
 def avatar_url(user: discord.User | discord.Member) -> str:
-    """Return the user's avatar URL, falling back to the default avatar."""
-    return user.avatar.url if user.avatar else user.default_avatar.url
+    """Return the user's display avatar URL (always resolves)."""
+    return user.display_avatar.url
 
 
 def embed_color_for_member(member: Member) -> discord.Color:
@@ -258,11 +258,9 @@ def _build_exchange_layout(
         header,
         ui.Separator(visible=True),
         about,
-        ui.Separator(visible=True),
         want,
         ui.Separator(visible=True),
         offer_info,
-        ui.Separator(visible=False),
         seek_info,
         ui.Separator(visible=True),
         footer,
