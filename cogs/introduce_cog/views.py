@@ -168,6 +168,12 @@ class ExchangePrefsView(View):
             )
             return
 
+        if self.offer_lang == self.seek_lang:
+            await interaction.response.send_message(
+                t("error_same_language", self.lang), ephemeral=True,
+            )
+            return
+
         await interaction.response.send_modal(
             ExchangeDetailsModal(
                 parent_view=self,

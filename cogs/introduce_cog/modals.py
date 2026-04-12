@@ -1,4 +1,5 @@
 """Modals for the Introduce cog."""
+import contextlib
 import logging
 import re
 
@@ -129,6 +130,12 @@ class ExchangeDetailsModal(Modal):
         if contains_url(about_text) or contains_url(other_lang):
             await interaction.response.send_message(
                 embed=red_embed(t("error_no_links", self.lang)), ephemeral=True,
+            )
+            return
+
+        if self.parent_view.offer_lang == "other" and not other_lang:
+            await interaction.response.send_message(
+                embed=red_embed(t("error_other_lang_required", self.lang)), ephemeral=True,
             )
             return
 
@@ -290,6 +297,10 @@ async def _post_exchange(interaction: Interaction, embed: Embed, channel_id: int
         await interaction.user.send(embed=dm_embed)
     except discord.HTTPException:
         logger.debug("Could not DM user %s a copy of their exchange post", interaction.user.id)
+        with contextlib.suppress(discord.HTTPException):
+            await interaction.followup.send(
+                embed=red_embed(t("dm_copy_failed", lang)), ephemeral=True,
+            )
 
 
 async def _resolve_channel(interaction: Interaction, channel_id: int):

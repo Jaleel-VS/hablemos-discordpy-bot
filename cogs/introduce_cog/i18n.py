@@ -172,6 +172,18 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "en": "Something went wrong. Please try again later.",
         "es": "Algo salió mal. Por favor inténtalo más tarde.",
     },
+    "error_same_language": {
+        "en": "You can't offer and seek the same language. Please change one of your selections.",
+        "es": "No puedes ofrecer y buscar el mismo idioma. Por favor cambia una de tus selecciones.",
+    },
+    "error_other_lang_required": {
+        "en": "You selected 'Other' as your native language — please specify which language in the field provided.",
+        "es": "Seleccionaste 'Other' como tu idioma nativo — por favor especifica cuál en el campo proporcionado.",
+    },
+    "dm_copy_failed": {
+        "en": "I couldn't DM you a copy of your post — check your privacy settings if you'd like to receive it.",
+        "es": "No pude enviarte una copia por DM — revisa tu configuración de privacidad si deseas recibirla.",
+    },
     "success_intro": {
         "en": "Your introduction has been posted to {channel}.\n\nWelcome to the community!",
         "es": "Tu presentación ha sido publicada en {channel}.\n\n¡Bienvenido/a a la comunidad!",
