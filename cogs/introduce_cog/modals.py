@@ -256,7 +256,6 @@ def _build_exchange_layout(
     view = ui.LayoutView()
     view.add_item(ui.Container(
         header,
-        ui.Separator(visible=True),
         about,
         want,
         ui.Separator(visible=True),
