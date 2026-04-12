@@ -244,6 +244,15 @@ async def _post_intro(interaction: Interaction, embed: Embed, channel_id: int, l
 async def _post_exchange(interaction: Interaction, embed: Embed, channel_id: int, lang: str) -> None:
     """Post an exchange partner embed and track it in the DB."""
     await interaction.response.defer(ephemeral=True)
+
+    # Check for existing post
+    existing = await interaction.client.db.get_exchange_post(interaction.user.id)
+    if existing:
+        await interaction.followup.send(
+            embed=red_embed(t("error_already_posted", lang)), ephemeral=True,
+        )
+        return
+
     channel = await _resolve_channel(interaction, channel_id)
     if not channel:
         return

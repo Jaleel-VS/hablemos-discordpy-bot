@@ -164,6 +164,10 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "en": "Links are not allowed. Please remove any URLs and try again.",
         "es": "No se permiten enlaces. Por favor elimina cualquier URL e inténtalo de nuevo.",
     },
+    "error_already_posted": {
+        "en": "You already have an active exchange post. Use `/exchange delete` to remove it first, or `/exchange repost` to bump it.",
+        "es": "Ya tienes una publicación activa. Usa `/exchange delete` para eliminarla, o `/exchange repost` para republicarla.",
+    },
     "error_generic": {
         "en": "Something went wrong. Please try again later.",
         "es": "Algo salió mal. Por favor inténtalo más tarde.",
