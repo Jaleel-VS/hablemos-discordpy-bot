@@ -2,6 +2,7 @@
 Language League Cog
 Tracks user activity and maintains league rankings for language learners
 """
+import asyncio
 import functools
 import logging
 import time
@@ -470,13 +471,17 @@ class LeagueCog(BaseCog):
                         }
 
             # Generate leaderboard image
-            image_path = generate_leaderboard_image(
-                leaderboard_data=enriched_data,
-                board_type=board,
-                round_info={
-                    'round_number': current_round['round_number'],
-                    'end_date': current_round['end_date']
-                }
+            image_path = await asyncio.wait_for(
+                asyncio.to_thread(
+                    generate_leaderboard_image,
+                    leaderboard_data=enriched_data,
+                    board_type=board,
+                    round_info={
+                        'round_number': current_round['round_number'],
+                        'end_date': current_round['end_date']
+                    },
+                ),
+                timeout=30,
             )
 
             try:

@@ -1,4 +1,5 @@
 """Quote generator — creates styled quote images from Discord messages."""
+import asyncio
 import logging
 import tempfile
 import time
@@ -247,11 +248,17 @@ class QuoteGenerator(BaseCog):
         try:
             with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
                 img_path = tmp.name
-            creator_fn(user_nick, user_avatar, message_content, output_path=img_path)
+            await asyncio.wait_for(
+                asyncio.to_thread(creator_fn, user_nick, user_avatar, message_content, output_path=img_path),
+                timeout=30,
+            )
             await ctx.send(file=File(img_path))
         except HTTPException:
             logger.exception("Failed to send quote image")
             await ctx.send(embed=red_embed("Something went wrong sending the image."))
+        except TimeoutError:
+            logger.warning("Quote image generation timed out for %s", ctx.author)
+            await ctx.send(embed=red_embed("Image generation timed out. Please try again."))
         except Exception:
             logger.exception("Failed to generate quote image")
             await ctx.send(embed=red_embed("Something went wrong generating the image."))
