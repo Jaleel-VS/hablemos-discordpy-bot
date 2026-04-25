@@ -29,7 +29,7 @@ def create_image3(user_name: str, user_avatar: str, message_content: str, *, out
         'format': 'png',
         'encoding': 'UTF-8',
         'enable-local-file-access': None,
-        'crop-w': '580',
+        'width': '580',
     }
 
     font_px = _compute_font_size(message_content)
@@ -43,21 +43,17 @@ def create_image3(user_name: str, user_avatar: str, message_content: str, *, out
   <style>
     @font-face {{
       font-family: 'Calligraffiti';
-      src: url('{dir_path}/fonts/Calligraffiti-webfont.eot');
-      src: url('{dir_path}/fonts/Calligraffiti-webfont.eot?#iefix') format('embedded-opentype'),
-           url('{dir_path}/fonts/Calligraffiti-webfont.woff') format('woff'),
-           url('{dir_path}/fonts/Calligraffiti-webfont.ttf') format('truetype');
+      src: url('{dir_path}/fonts/Calligraffiti-webfont.ttf') format('truetype');
       font-weight: normal;
       font-style: normal;
-      font-display: swap;
     }}
 
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-    html, body {{ background: #1a1a1a; }}
+    html, body {{ background: #1a1a1a; width: 580px; }}
 
     .polaroid {{
       width: 480px;
-      margin: 40px;
+      margin: 40px auto;
       background: #fafaf7;
       padding: 20px 20px 0;
       box-shadow: 4px 6px 18px rgba(0,0,0,0.45);
