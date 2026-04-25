@@ -18,6 +18,12 @@ from cogs.quote_generator_cog.quote_generator_helper.image_creator import (
 from cogs.quote_generator_cog.quote_generator_helper.image_creator2 import (
     create_image2,
 )
+from cogs.quote_generator_cog.quote_generator_helper.image_creator3 import (
+    create_image3,
+)
+from cogs.quote_generator_cog.quote_generator_helper.image_creator_multi import (
+    create_multi_image,
+)
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
 from .config import FEATURE_KEY_EMOJI
@@ -284,6 +290,110 @@ class QuoteGenerator(BaseCog):
     async def quote2(self, ctx, *user_input):
         """Creates a quote using the card style. Usage mirrors `$quote`."""
         await self._generate_and_send(ctx, user_input, "quote2", create_image2)
+
+    @command(aliases=['q3'])
+    @cooldown(1, 10, type=BucketType.user)
+    async def quote3(self, ctx, *user_input):
+        """Creates a quote using the polaroid style. Usage mirrors `$quote`."""
+        await self._generate_and_send(ctx, user_input, "quote3", create_image3)
+
+    @command(aliases=['qm'])
+    @cooldown(1, 15, type=BucketType.user)
+    async def quotem(self, ctx, count: int = 1):
+        """
+        Quote a conversation. Reply to a message to capture it and previous messages.
+
+        `$quotem` — the replied message + the one before it (if it's a reply chain)
+        `$quotem 3` — the replied message + up to 3 messages before it
+
+        Must be used as a reply.
+        """
+        if not await self._check_permissions(ctx):
+            return
+
+        if ctx.message.reference is None:
+            await ctx.send(embed=red_embed("Reply to a message to use `$quotem`."))
+            return
+
+        count = max(1, min(count, 5))
+
+        ref = ctx.message.reference
+        channel = self.bot.get_channel(ref.channel_id)
+        if channel is None:
+            await ctx.send(embed=red_embed("I can't access that channel."))
+            return
+
+        target = await self._fetch_message_safe(ctx, channel, ref.message_id)
+        if target is None:
+            return
+
+        # Collect messages: walk reply chain first, then fall back to channel history
+        collected = [target]
+        current = target
+        for _ in range(count):
+            if current.reference is not None:
+                try:
+                    parent = await channel.fetch_message(current.reference.message_id)
+                    collected.append(parent)
+                    current = parent
+                    continue
+                except (NotFound, Forbidden, HTTPException):
+                    pass
+            # No reply chain — grab from channel history before the oldest collected message
+            oldest = collected[-1]
+            try:
+                async for msg in channel.history(limit=1, before=oldest):
+                    collected.append(msg)
+            except (Forbidden, HTTPException):
+                break
+
+        # Oldest first
+        collected.reverse()
+
+        # Build message tuples, checking opt-outs
+        messages: list[tuple[str, str, str]] = []
+        total_length = 0
+        for msg in collected:
+            if await self.bot.db.is_quote_opted_out(msg.author.id):
+                continue
+            content = await _clean_message_content(
+                msg.content, msg.mentions, msg.role_mentions,
+                msg.channel_mentions, ctx.guild, db=self.bot.db,
+            )
+            if not content.strip():
+                continue
+            total_length += visual_length(content)
+            if total_length > MAX_QUOTE_LENGTH * 2:
+                break
+            username = _get_safe_username(msg.author, ctx.guild)
+            avatar = _get_img_url(msg.author.display_avatar)
+            messages.append((username, avatar, content))
+
+        if not messages:
+            await ctx.send(embed=red_embed("No quotable messages found."))
+            return
+
+        img_path = None
+        try:
+            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
+                img_path = tmp.name
+            await asyncio.wait_for(
+                asyncio.to_thread(create_multi_image, messages, output_path=img_path),
+                timeout=30,
+            )
+            await ctx.send(file=File(img_path))
+        except HTTPException:
+            logger.exception("Failed to send multi-quote image")
+            await ctx.send(embed=red_embed("Something went wrong sending the image."))
+        except TimeoutError:
+            logger.warning("Multi-quote image generation timed out for %s", ctx.author)
+            await ctx.send(embed=red_embed("Image generation timed out. Please try again."))
+        except Exception:
+            logger.exception("Failed to generate multi-quote image")
+            await ctx.send(embed=red_embed("Something went wrong generating the image."))
+        finally:
+            if img_path:
+                Path(img_path).unlink(missing_ok=True)
 
     @command()
     async def quoteme(self, ctx, toggle: str | None = None):
