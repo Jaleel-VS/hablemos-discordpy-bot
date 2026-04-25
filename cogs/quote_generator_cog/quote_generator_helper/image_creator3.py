@@ -30,6 +30,7 @@ def create_image3(user_name: str, user_avatar: str, message_content: str, *, out
         'encoding': 'UTF-8',
         'enable-local-file-access': None,
         'width': '580',
+        'transparent': '',
     }
 
     font_px = _compute_font_size(message_content)
@@ -49,7 +50,7 @@ def create_image3(user_name: str, user_avatar: str, message_content: str, *, out
     }}
 
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-    html, body {{ background: #1a1a1a; width: 580px; }}
+    html, body {{ background: transparent; width: 580px; }}
 
     .polaroid {{
       width: 480px;
@@ -65,6 +66,8 @@ def create_image3(user_name: str, user_avatar: str, message_content: str, *, out
       height: 400px;
       background: url('{user_avatar}') center/cover no-repeat;
       display: block;
+      -webkit-filter: sepia(0.25) saturate(0.85) contrast(1.05) brightness(1.05);
+      filter: sepia(0.25) saturate(0.85) contrast(1.05) brightness(1.05);
     }}
 
     .caption {{
