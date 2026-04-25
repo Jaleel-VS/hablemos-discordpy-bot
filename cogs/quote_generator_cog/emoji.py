@@ -4,6 +4,7 @@ import re
 # Twemoji CDN base — serves PNG images by Unicode codepoint
 _TWEMOJI_BASE = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72"
 _IMG_PX = 24
+_LARGE_IMG_PX = 96
 _IMG_STYLE = "vertical-align:text-bottom;display:inline"
 
 # Discord custom emoji: <:name:id> or <a:name:id>
@@ -63,6 +64,16 @@ def visual_length(text: str) -> int:
 
 
 def replace_emoji_with_images(text: str) -> str:
-    """Replace both custom Discord and Unicode emoji with inline <img> tags."""
+    """Replace both custom Discord and Unicode emoji with inline <img> tags.
+
+    If the entire message is a single emoji, the image is rendered larger.
+    """
     text = _CUSTOM_EMOJI_RE.sub(_custom_to_img, text)
-    return _UNICODE_EMOJI_RE.sub(_unicode_to_img, text)
+    text = _UNICODE_EMOJI_RE.sub(_unicode_to_img, text)
+    # Enlarge if the entire message is a single emoji image
+    if _IMG_TAG_RE.fullmatch(text.strip()):
+        text = text.replace(
+            f'width="{_IMG_PX}" height="{_IMG_PX}"',
+            f'width="{_LARGE_IMG_PX}" height="{_LARGE_IMG_PX}"',
+        )
+    return text
