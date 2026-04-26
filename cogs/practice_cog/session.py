@@ -7,7 +7,6 @@ from enum import Enum
 class PracticeMode(Enum):
     TYPING = "typing"
     CHOICE = "choice"
-    MIXED = "mixed"
 
 
 @dataclass
@@ -67,8 +66,5 @@ class PracticeSession:
             self.correct_count += 1
 
     def get_mode_for_card(self) -> str:
-        """Get the mode to use for the current card (handles mixed mode)."""
-        if self.mode == PracticeMode.MIXED:
-            import random
-            return random.choice(["typing", "choice"])
+        """Get the mode to use for the current card."""
         return self.mode.value

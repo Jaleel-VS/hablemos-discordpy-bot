@@ -188,7 +188,7 @@ class PracticeCog(BaseCog):
     @app_commands.describe(
         language="Language to practice (spanish or english)",
         level="Difficulty level",
-        mode="Practice mode: mixed (default), typing, or choice",
+        mode="Practice mode: multiple choice (default) or typing",
     )
     @app_commands.choices(
         language=[
@@ -200,16 +200,14 @@ class PracticeCog(BaseCog):
             app_commands.Choice(name="A — Beginner", value="A"),
             app_commands.Choice(name="B — Intermediate", value="B"),
             app_commands.Choice(name="C — Advanced", value="C"),
-            app_commands.Choice(name="C — Advanced", value="C"),
         ],
         mode=[
-            app_commands.Choice(name="Mixed (typing and choice)", value="mixed"),
-            app_commands.Choice(name="Typing only", value="typing"),
-            app_commands.Choice(name="Multiple choice only", value="choice"),
+            app_commands.Choice(name="Multiple choice", value="choice"),
+            app_commands.Choice(name="Typing", value="typing"),
         ]
     )
     async def practice_start(self, interaction: Interaction, language: str,
-                             level: str = "A", mode: str = "mixed"):
+                             level: str = "A", mode: str = "choice"):
         """Start a tracked practice session with spaced repetition."""
         await self._begin_session(interaction, language, level, mode, tracked=True)
 
@@ -217,7 +215,7 @@ class PracticeCog(BaseCog):
     @app_commands.describe(
         language="Language to practice (spanish or english)",
         level="Difficulty level",
-        mode="Practice mode: mixed (default), typing, or choice",
+        mode="Practice mode: multiple choice (default) or typing",
     )
     @app_commands.choices(
         language=[
@@ -231,13 +229,12 @@ class PracticeCog(BaseCog):
             app_commands.Choice(name="C — Advanced", value="C"),
         ],
         mode=[
-            app_commands.Choice(name="Mixed (typing and choice)", value="mixed"),
-            app_commands.Choice(name="Typing only", value="typing"),
-            app_commands.Choice(name="Multiple choice only", value="choice"),
+            app_commands.Choice(name="Multiple choice", value="choice"),
+            app_commands.Choice(name="Typing", value="typing"),
         ]
     )
     async def practice_quick(self, interaction: Interaction, language: str,
-                             level: str = "A", mode: str = "mixed"):
+                             level: str = "A", mode: str = "choice"):
         """Start a quick practice session without spaced repetition tracking."""
         await self._begin_session(interaction, language, level, mode, tracked=False)
 

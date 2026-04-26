@@ -92,13 +92,13 @@ class PracticeMixin(DatabaseMixin):
         return [dict(row) for row in rows]
 
     async def update_user_progress(self, user_id: int, card_id: int,
-                                   card_json: str, next_review: str) -> None:
+                                   card_json: str, next_review) -> None:
         """Update or create user progress for a card using FSRS state."""
         await self._execute('''
             INSERT INTO user_card_progress (user_id, card_id, card_json, next_review)
-            VALUES ($1, $2, $3, $4::timestamptz)
+            VALUES ($1, $2, $3, $4)
             ON CONFLICT (user_id, card_id) DO UPDATE
-            SET card_json = $3, next_review = $4::timestamptz
+            SET card_json = $3, next_review = $4
         ''', user_id, card_id, card_json, next_review)
 
     async def get_card_distractors(self, language: str, exclude_word: str,
