@@ -32,6 +32,7 @@ class PracticeSession:
     language: str
     mode: PracticeMode
     tracked: bool = True
+    show_hints: bool = False
     cards: list[PracticeCard] = field(default_factory=list)
     current_index: int = 0
     correct_count: int = 0

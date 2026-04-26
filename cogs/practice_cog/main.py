@@ -204,9 +204,9 @@ class PracticeCog(BaseCog):
         ]
     )
     async def practice_start(self, interaction: Interaction, language: str,
-                             level: str = "A", mode: str = "choice"):
+                             level: str = "A", mode: str = "choice", hints: bool = False):
         """Start a tracked practice session with spaced repetition."""
-        await self._begin_session(interaction, language, level, mode, tracked=True)
+        await self._begin_session(interaction, language, level, mode, tracked=True, hints=hints)
 
     @practice_group.command(name="quick", description="Quick practice — no progress tracking")
     @app_commands.describe(
@@ -231,12 +231,12 @@ class PracticeCog(BaseCog):
         ]
     )
     async def practice_quick(self, interaction: Interaction, language: str,
-                             level: str = "A", mode: str = "choice"):
+                             level: str = "A", mode: str = "choice", hints: bool = False):
         """Start a quick practice session without spaced repetition tracking."""
-        await self._begin_session(interaction, language, level, mode, tracked=False)
+        await self._begin_session(interaction, language, level, mode, tracked=False, hints=hints)
 
     async def _begin_session(self, interaction: Interaction, language: str,
-                             level: str, mode: str, *, tracked: bool):
+                             level: str, mode: str, *, tracked: bool, hints: bool = False):
         """Shared session startup logic."""
         user_id = interaction.user.id
         level_filter = None if level == "X" else level
@@ -276,6 +276,7 @@ class PracticeCog(BaseCog):
             language=language,
             mode=practice_mode,
             tracked=tracked,
+            show_hints=hints,
             cards=cards
         )
         self.active_sessions[user_id] = session

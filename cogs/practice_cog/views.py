@@ -54,7 +54,7 @@ def build_question_view(
         ui.TextDisplay(f"**{card.sentence_with_blank}**"),
     ]
 
-    if card.sentence_translation:
+    if session.show_hints and card.sentence_translation:
         parts.append(ui.Separator(visible=True))
         parts.append(ui.TextDisplay(f"-# *{card.sentence_translation}*"))
 
