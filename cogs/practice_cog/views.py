@@ -21,7 +21,10 @@ def _extract_blanked_word(card: PracticeCard) -> str | None:
     if len(parts) != 2:
         return None
     prefix, suffix = parts
-    return card.sentence.removeprefix(prefix).removesuffix(suffix).strip() or None
+    result = card.sentence.removeprefix(prefix).removesuffix(suffix).strip()
+    if not result or "___" in result:
+        return None
+    return result
 
 
 def _normalize_word(text: str) -> str:
