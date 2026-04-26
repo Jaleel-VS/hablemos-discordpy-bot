@@ -114,7 +114,7 @@ class PracticeView(View):
     async def on_timeout(self):
         for item in self.children:
             item.disabled = True
-        if self.message:
+        if getattr(self, "message", None):
             with contextlib.suppress(Exception):
                 await self.message.edit(view=self)
 
@@ -180,7 +180,7 @@ class QualityRatingView(View):
     async def on_timeout(self):
         for item in self.children:
             item.disabled = True
-        if self.message:
+        if getattr(self, "message", None):
             with contextlib.suppress(Exception):
                 await self.message.edit(view=self)
 
@@ -206,7 +206,7 @@ class NextCardView(View):
     async def on_timeout(self):
         for item in self.children:
             item.disabled = True
-        if self.message:
+        if getattr(self, "message", None):
             with contextlib.suppress(Exception):
                 await self.message.edit(view=self)
 
