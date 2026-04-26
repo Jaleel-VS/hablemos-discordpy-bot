@@ -65,15 +65,22 @@ def build_question_view(
     if card_mode == "choice" and len(distractors) >= 3:
         # Use the actual blanked word (conjugated form) instead of the infinitive
         correct_label = _extract_blanked_word(card) or card.word
-        choices = [*distractors[:3], correct_label]
-        random.shuffle(choices)
-        choice_row = ui.ActionRow()
-        for choice in choices:
-            btn = ui.Button(label=choice[:80], style=ButtonStyle.primary)
-            btn.callback = _answer_cb(on_answer, choice)
-            choice_row.add_item(btn)
-        parts.append(choice_row)
-    else:
+        # Deduplicate: remove distractors that match the correct answer
+        unique_distractors = [d for d in distractors if _normalize_word(d) != _normalize_word(correct_label)]
+        if len(unique_distractors) >= 3:
+            choices = [*unique_distractors[:3], correct_label]
+            random.shuffle(choices)
+            choice_row = ui.ActionRow()
+            for choice in choices:
+                btn = ui.Button(label=choice[:80], style=ButtonStyle.primary)
+                btn.callback = _answer_cb(on_answer, choice)
+                choice_row.add_item(btn)
+            parts.append(choice_row)
+        else:
+            # Not enough unique distractors — fall back to typing
+            card_mode = "typing"
+
+    if card_mode == "typing":
         type_row = ui.ActionRow()
         answer_btn = ui.Button(label="Answer", style=ButtonStyle.primary)
         answer_btn.callback = _modal_cb(card, on_answer)
@@ -123,7 +130,7 @@ def build_result_view(
     parts: list[ui.Item] = [ui.TextDisplay(title), ui.TextDisplay(highlighted)]
 
     if not was_correct:
-        parts.append(ui.TextDisplay(f"Your answer: ~~{user_answer}~~"))
+        parts.append(ui.TextDisplay(f"Your answer: ~~{user_answer[:100]}~~"))
 
     parts.append(ui.Separator(visible=True))
     # Show both the conjugated form and the dictionary form if they differ
