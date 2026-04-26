@@ -102,21 +102,21 @@ class PracticeMixin(DatabaseMixin):
         ''', user_id, card_id, card_json, next_review)
 
     async def get_card_distractors(self, language: str, exclude_word: str,
-                                   count: int = 3, level: str | None = None) -> list[str]:
+                                   count: int = 3, level: str | None = None) -> list[dict]:
         """Get random words for multiple choice distractors, optionally from same level."""
         if level:
             rows = await self._fetch('''
-                SELECT word FROM practice_cards
+                SELECT word, translation FROM practice_cards
                 WHERE language = $1 AND word != $2 AND level = $3
                 ORDER BY RANDOM() LIMIT $4
             ''', language, exclude_word, level, count)
         else:
             rows = await self._fetch('''
-                SELECT word FROM practice_cards
+                SELECT word, translation FROM practice_cards
                 WHERE language = $1 AND word != $2
                 ORDER BY RANDOM() LIMIT $3
             ''', language, exclude_word, count)
-        return [row['word'] for row in rows]
+        return [dict(row) for row in rows]
 
     async def get_practice_stats(self, user_id: int, language: str) -> dict:
         """Get practice statistics for a user, broken down by level."""

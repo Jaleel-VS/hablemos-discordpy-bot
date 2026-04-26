@@ -110,6 +110,7 @@ def build_result_view(
     was_correct: bool,
     *,
     tracked: bool,
+    wrong_translation: str = "",
     on_rating: Callable[[Interaction, int], Awaitable[None]] | None = None,
     on_next: Callable[[Interaction], Awaitable[None]] | None = None,
     on_quit: Callable[[Interaction], Awaitable[None]] | None = None,
@@ -130,7 +131,10 @@ def build_result_view(
     parts: list[ui.Item] = [ui.TextDisplay(title), ui.TextDisplay(highlighted)]
 
     if not was_correct:
-        parts.append(ui.TextDisplay(f"Your answer: ~~{user_answer[:100]}~~"))
+        wrong_display = f"Your answer: ~~{user_answer[:100]}~~"
+        if wrong_translation:
+            wrong_display += f" ({wrong_translation})"
+        parts.append(ui.TextDisplay(wrong_display))
 
     parts.append(ui.Separator(visible=True))
     # Show both the conjugated form and the dictionary form if they differ

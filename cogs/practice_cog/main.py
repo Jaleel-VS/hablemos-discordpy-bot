@@ -406,10 +406,13 @@ class PracticeCog(BaseCog):
 
         # Get distractors for multiple choice
         distractors = []
+        distractor_map: dict[str, str] = {}  # word → translation
         if card_mode == "choice":
-            distractors = await self.bot.db.get_card_distractors(
+            raw = await self.bot.db.get_card_distractors(
                 session.language, card.word, count=3, level=card.level or None
             )
+            distractors = [d['word'] for d in raw]
+            distractor_map = {d['word']: d['translation'] for d in raw}
             # Fall back to typing if not enough distractors
             if len(distractors) < 3:
                 card_mode = "typing"
@@ -417,7 +420,7 @@ class PracticeCog(BaseCog):
         # Build question view
         view = build_question_view(
             session=session, card=card, card_mode=card_mode, distractors=distractors,
-            on_answer=lambda i, a: self._handle_answer(i, session, a),
+            on_answer=lambda i, a: self._handle_answer(i, session, a, distractor_map),
             on_skip=lambda i: self._handle_skip(i, session),
             on_quit=lambda i: self._handle_quit(i, session),
         )
@@ -433,7 +436,8 @@ class PracticeCog(BaseCog):
             except discord.InteractionResponded:
                 await interaction.followup.send(view=view, ephemeral=True)
 
-    async def _handle_answer(self, interaction: Interaction, session: PracticeSession, user_answer: str):
+    async def _handle_answer(self, interaction: Interaction, session: PracticeSession,
+                             user_answer: str, distractor_map: dict[str, str] | None = None):
         """Handle a user's answer"""
         card = session.current_card
 
@@ -452,16 +456,23 @@ class PracticeCog(BaseCog):
                 was_correct = answer == _normalize(actual)
         session.record_answer(was_correct)
 
-        # Create result embed
+        # Look up translation of wrong answer (for multiple choice)
+        wrong_translation = ""
+        if not was_correct and distractor_map:
+            wrong_translation = distractor_map.get(user_answer, "")
+
+        # Create result view
         if session.tracked:
             view = build_result_view(
                 card, user_answer, was_correct, tracked=True,
+                wrong_translation=wrong_translation,
                 on_rating=lambda i, q: self._handle_rating(i, session, card, q),
             )
         else:
             session.advance()
             view = build_result_view(
                 card, user_answer, was_correct, tracked=False,
+                wrong_translation=wrong_translation,
                 on_next=lambda i: self._show_question(i, session) if not session.is_complete
                 else self._end_session(i, session),
                 on_quit=lambda i: self._handle_quit(i, session),
