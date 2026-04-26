@@ -69,7 +69,7 @@ def build_question_view(
         random.shuffle(choices)
         choice_row = ui.ActionRow()
         for choice in choices:
-            btn = ui.Button(label=choice, style=ButtonStyle.primary)
+            btn = ui.Button(label=choice[:80], style=ButtonStyle.primary)
             btn.callback = _answer_cb(on_answer, choice)
             choice_row.add_item(btn)
         parts.append(choice_row)
