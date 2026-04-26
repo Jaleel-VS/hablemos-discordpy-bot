@@ -204,4 +204,7 @@ class SummaryCog(BaseCog):
 
 
 async def setup(bot):
+    if not bot.settings.gemini_api_key:
+        logger.info("GEMINI_API_KEY not set — SummaryCog will not load")
+        return
     await bot.add_cog(SummaryCog(bot))
