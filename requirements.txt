@@ -19,6 +19,9 @@ langdetect~=1.0
 Pillow~=12.1
 imgkit~=1.2
 
+# Spaced Repetition
+fsrs~=6.3
+
 # Utilities
 demoji~=1.1
 yarl~=1.23

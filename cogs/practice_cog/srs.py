@@ -1,76 +1,35 @@
 """
-SM-2 Spaced Repetition Algorithm
+FSRS (Free Spaced Repetition Scheduler) wrapper.
 
-Quality ratings:
-- 1 (Again): Failed - reset interval
-- 3 (Hard): Correct but difficult
-- 4 (Good): Correct with some hesitation
-- 5 (Easy): Perfect recall
+Ratings:
+- Again (1): Forgot the card
+- Hard  (2): Remembered with serious difficulty
+- Good  (3): Remembered after hesitation
+- Easy  (4): Remembered easily
 """
-from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from fsrs import Card, Rating, Scheduler
+
+# Shared scheduler instance (stateless — safe to reuse)
+scheduler = Scheduler()
 
 
-@dataclass
-class SRSResult:
-    """Result of SM-2 calculation"""
-    interval_days: float
-    ease_factor: float
-    repetitions: int
-    next_review: datetime
-
-def calculate_sm2(quality: int, interval_days: float, ease_factor: float,
-                  repetitions: int) -> SRSResult:
-    """
-    Calculate new SRS values based on quality rating.
+def review_card(card_json: str | None, rating: Rating) -> tuple[str, str]:
+    """Review a card and return (updated_card_json, due_iso).
 
     Args:
-        quality: Rating 1-5 (1=Again, 3=Hard, 4=Good, 5=Easy)
-        interval_days: Current interval in days
-        ease_factor: Current ease factor (typically 1.3-2.5)
-        repetitions: Number of successful repetitions
+        card_json: Serialized FSRS Card JSON, or None for a new card.
+        rating: FSRS Rating (Again, Hard, Good, Easy).
 
     Returns:
-        SRSResult with new values
+        Tuple of (card_json, due_iso_string).
     """
-    # Clamp quality to valid range
-    quality = max(1, min(5, quality))
+    card = Card.from_json(card_json) if card_json else Card()
+    card, _log = scheduler.review_card(card, rating)
+    return card.to_json(), card.due.isoformat()
 
-    if quality < 3:
-        # Failed - reset to beginning
-        new_interval = 1.0
-        new_repetitions = 0
-        # Reduce ease factor but keep minimum of 1.3
-        new_ease = max(1.3, ease_factor - 0.2)
-    else:
-        # Passed
-        if repetitions == 0:
-            new_interval = 1.0
-        elif repetitions == 1:
-            new_interval = 6.0
-        else:
-            new_interval = interval_days * ease_factor
 
-        new_repetitions = repetitions + 1
-
-        # Adjust ease factor based on quality
-        # EF' = EF + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02))
-        new_ease = ease_factor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02))
-        new_ease = max(1.3, new_ease)  # Minimum 1.3
-
-    # Calculate next review datetime
-    now = datetime.now(UTC)
-    next_review = now + timedelta(days=new_interval)
-
-    return SRSResult(
-        interval_days=new_interval,
-        ease_factor=new_ease,
-        repetitions=new_repetitions,
-        next_review=next_review
-    )
-
-# Quality rating constants for readability
-QUALITY_AGAIN = 1
-QUALITY_HARD = 3
-QUALITY_GOOD = 4
-QUALITY_EASY = 5
+# Re-export for views
+RATING_AGAIN = Rating.Again
+RATING_HARD = Rating.Hard
+RATING_GOOD = Rating.Good
+RATING_EASY = Rating.Easy

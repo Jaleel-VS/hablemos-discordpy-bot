@@ -13,7 +13,7 @@ from discord.ui import Button, View
 
 from .modals import AnswerModal
 from .session import PracticeCard, PracticeSession
-from .srs import QUALITY_AGAIN, QUALITY_EASY, QUALITY_GOOD, QUALITY_HARD
+from .srs import RATING_AGAIN, RATING_EASY, RATING_GOOD, RATING_HARD
 
 logger = logging.getLogger(__name__)
 
@@ -143,7 +143,7 @@ class QualityRatingView(View):
                 style=ButtonStyle.secondary,
                 custom_id="hard"
             )
-            hard_btn.callback = self._make_rating_callback(QUALITY_HARD)
+            hard_btn.callback = self._make_rating_callback(RATING_HARD)
             self.add_item(hard_btn)
 
             good_btn = Button(
@@ -151,7 +151,7 @@ class QualityRatingView(View):
                 style=ButtonStyle.primary,
                 custom_id="good"
             )
-            good_btn.callback = self._make_rating_callback(QUALITY_GOOD)
+            good_btn.callback = self._make_rating_callback(RATING_GOOD)
             self.add_item(good_btn)
 
             easy_btn = Button(
@@ -159,7 +159,7 @@ class QualityRatingView(View):
                 style=ButtonStyle.success,
                 custom_id="easy"
             )
-            easy_btn.callback = self._make_rating_callback(QUALITY_EASY)
+            easy_btn.callback = self._make_rating_callback(RATING_EASY)
             self.add_item(easy_btn)
         else:
             # Show only Again
@@ -168,7 +168,7 @@ class QualityRatingView(View):
                 style=ButtonStyle.danger,
                 custom_id="again"
             )
-            again_btn.callback = self._make_rating_callback(QUALITY_AGAIN)
+            again_btn.callback = self._make_rating_callback(RATING_AGAIN)
             self.add_item(again_btn)
 
     def _make_rating_callback(self, quality: int):
@@ -185,10 +185,36 @@ class QualityRatingView(View):
                 await self.message.edit(view=self)
 
 
-def create_question_embed(session: PracticeSession, card: PracticeCard,
-                          show_disclaimer: bool = False) -> Embed:
+class NextCardView(View):
+    """Simple Next/Quit view for untracked practice sessions."""
+
+    def __init__(
+        self,
+        on_next: Callable[[Interaction], Awaitable[None]],
+        on_quit: Callable[[Interaction], Awaitable[None]],
+        timeout: float = 300,
+    ):
+        super().__init__(timeout=timeout)
+        next_btn = Button(label="Next", style=ButtonStyle.primary, custom_id="next")
+        next_btn.callback = lambda i: on_next(i)
+        self.add_item(next_btn)
+
+        quit_btn = Button(label="Quit", style=ButtonStyle.danger, custom_id="quit")
+        quit_btn.callback = lambda i: on_quit(i)
+        self.add_item(quit_btn)
+
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            with contextlib.suppress(Exception):
+                await self.message.edit(view=self)
+
+
+def create_question_embed(session: PracticeSession, card: PracticeCard) -> Embed:
     """Create an embed for a practice question"""
-    lang_emoji = {"spanish": "ES", "english": "EN"}.get(session.language, "")
+    level_label = {"A": "Beginner", "B": "Intermediate", "C": "Advanced"}.get(card.level, "")
+    lang_emoji = {"spanish": "🇪🇸", "english": "🇬🇧"}.get(session.language, "")
 
     embed = Embed(
         title=f"Practice ({session.progress_text})",
@@ -196,14 +222,18 @@ def create_question_embed(session: PracticeSession, card: PracticeCard,
         color=discord.Color.blue()
     )
 
-    if show_disclaimer:
+    # Show the English translation as context (the key learning aid)
+    if card.sentence_translation:
         embed.add_field(
-            name="Beta Feature",
-            value="This feature is new and being prototyped. Please contact the server owner for feedback or questions.",
+            name="Translation",
+            value=f"*{card.sentence_translation}*",
             inline=False
         )
 
-    embed.set_footer(text=f"{lang_emoji} {session.language.title()}")
+    footer_parts = [f"{lang_emoji} {session.language.title()}"]
+    if level_label:
+        footer_parts.append(f"Level {card.level} ({level_label})")
+    embed.set_footer(text=" · ".join(footer_parts))
 
     return embed
 
@@ -237,6 +267,13 @@ def create_result_embed(card: PracticeCard, user_answer: str, was_correct: bool)
         value=card.translation,
         inline=False
     )
+
+    if card.sentence_translation:
+        embed.add_field(
+            name="Sentence",
+            value=f"*{card.sentence_translation}*",
+            inline=False
+        )
 
     return embed
 

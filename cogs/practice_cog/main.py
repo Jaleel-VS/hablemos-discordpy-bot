@@ -4,6 +4,7 @@ Vocab Practice Cog with SRS (Clozemaster-style)
 Provides spaced repetition practice with cloze sentences.
 """
 import logging
+import unicodedata
 
 import discord
 from discord import Embed, Interaction, app_commands
@@ -14,8 +15,9 @@ from base_cog import BaseCog
 from .gemini import PracticeGeminiClient
 from .seed_words import SEED_WORDS
 from .session import PracticeCard, PracticeMode, PracticeSession
-from .srs import calculate_sm2
+from .srs import review_card
 from .views import (
+    NextCardView,
     PracticeView,
     QualityRatingView,
     create_question_embed,
@@ -25,6 +27,12 @@ from .views import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _normalize(text: str) -> str:
+    """Normalize text for answer comparison: strip accents and lowercase."""
+    nfkd = unicodedata.normalize("NFKD", text.strip().lower())
+    return "".join(c for c in nfkd if not unicodedata.combining(c))
 
 class PracticeCog(BaseCog):
     """Vocabulary practice with spaced repetition."""
@@ -176,15 +184,23 @@ class PracticeCog(BaseCog):
         description="Vocabulary practice with spaced repetition"
     )
 
-    @practice_group.command(name="start", description="Start a practice session")
+    @practice_group.command(name="start", description="Start a tracked practice session (spaced repetition)")
     @app_commands.describe(
         language="Language to practice (spanish or english)",
-        mode="Practice mode: mixed (default), typing, or choice"
+        level="Difficulty level",
+        mode="Practice mode: mixed (default), typing, or choice",
     )
     @app_commands.choices(
         language=[
             app_commands.Choice(name="Spanish", value="spanish"),
             app_commands.Choice(name="English", value="english"),
+        ],
+        level=[
+            app_commands.Choice(name="X — All Levels", value="X"),
+            app_commands.Choice(name="A — Beginner", value="A"),
+            app_commands.Choice(name="B — Intermediate", value="B"),
+            app_commands.Choice(name="C — Advanced", value="C"),
+            app_commands.Choice(name="C — Advanced", value="C"),
         ],
         mode=[
             app_commands.Choice(name="Mixed (typing and choice)", value="mixed"),
@@ -192,14 +208,44 @@ class PracticeCog(BaseCog):
             app_commands.Choice(name="Multiple choice only", value="choice"),
         ]
     )
-    async def practice_start(
-        self,
-        interaction: Interaction,
-        language: str,
-        mode: str = "mixed"
-    ):
-        """Start a practice session"""
+    async def practice_start(self, interaction: Interaction, language: str,
+                             level: str = "A", mode: str = "mixed"):
+        """Start a tracked practice session with spaced repetition."""
+        await self._begin_session(interaction, language, level, mode, tracked=True)
+
+    @practice_group.command(name="quick", description="Quick practice — no progress tracking")
+    @app_commands.describe(
+        language="Language to practice (spanish or english)",
+        level="Difficulty level",
+        mode="Practice mode: mixed (default), typing, or choice",
+    )
+    @app_commands.choices(
+        language=[
+            app_commands.Choice(name="Spanish", value="spanish"),
+            app_commands.Choice(name="English", value="english"),
+        ],
+        level=[
+            app_commands.Choice(name="X — All Levels", value="X"),
+            app_commands.Choice(name="A — Beginner", value="A"),
+            app_commands.Choice(name="B — Intermediate", value="B"),
+            app_commands.Choice(name="C — Advanced", value="C"),
+        ],
+        mode=[
+            app_commands.Choice(name="Mixed (typing and choice)", value="mixed"),
+            app_commands.Choice(name="Typing only", value="typing"),
+            app_commands.Choice(name="Multiple choice only", value="choice"),
+        ]
+    )
+    async def practice_quick(self, interaction: Interaction, language: str,
+                             level: str = "A", mode: str = "mixed"):
+        """Start a quick practice session without spaced repetition tracking."""
+        await self._begin_session(interaction, language, level, mode, tracked=False)
+
+    async def _begin_session(self, interaction: Interaction, language: str,
+                             level: str, mode: str, *, tracked: bool):
+        """Shared session startup logic."""
         user_id = interaction.user.id
+        level_filter = None if level == "X" else level
 
         # Clean up stale sessions
         self._purge_stale_sessions()
@@ -216,12 +262,15 @@ class PracticeCog(BaseCog):
         await interaction.response.defer(ephemeral=True)
 
         # Get cards for session
-        cards = await self._get_session_cards(user_id, language, limit=10)
+        if tracked:
+            cards = await self._get_session_cards(user_id, language, level=level_filter, limit=10)
+        else:
+            cards = await self._get_random_cards(language, level=level_filter, limit=10)
 
         if not cards:
             await interaction.followup.send(
-                f"No practice cards available for {language}. "
-                "An admin needs to run `$practice seed {language}` first.",
+                f"No practice cards available for {language} level {level}. "
+                "An admin needs to seed cards first.",
                 ephemeral=True
             )
             return
@@ -232,6 +281,7 @@ class PracticeCog(BaseCog):
             user_id=user_id,
             language=language,
             mode=practice_mode,
+            tracked=tracked,
             cards=cards
         )
         self.active_sessions[user_id] = session
@@ -298,12 +348,13 @@ class PracticeCog(BaseCog):
     # Session Flow Methods
     # ========================
 
-    async def _get_session_cards(self, user_id: int, language: str, limit: int = 10) -> list[PracticeCard]:
+    async def _get_session_cards(self, user_id: int, language: str, limit: int = 10,
+                                    level: str | None = None) -> list[PracticeCard]:
         """Get cards for a practice session (due cards first, then new)"""
         cards = []
 
         # Get due cards first
-        due_cards = await self.bot.db.get_due_cards(user_id, language, limit)
+        due_cards = await self.bot.db.get_due_cards(user_id, language, limit, level=level)
         for card_data in due_cards:
             cards.append(PracticeCard(
                 id=card_data['id'],
@@ -312,15 +363,15 @@ class PracticeCog(BaseCog):
                 language=card_data['language'],
                 sentence=card_data['sentence'],
                 sentence_with_blank=card_data['sentence_with_blank'],
-                interval_days=card_data.get('interval_days'),
-                ease_factor=card_data.get('ease_factor'),
-                repetitions=card_data.get('repetitions')
+                card_json=card_data.get('card_json'),
+                sentence_translation=card_data.get('sentence_translation') or "",
+                level=card_data.get('level') or "",
             ))
 
         # Fill remaining with new cards
         remaining = limit - len(cards)
         if remaining > 0:
-            new_cards = await self.bot.db.get_new_cards(user_id, language, remaining)
+            new_cards = await self.bot.db.get_new_cards(user_id, language, remaining, level=level)
             for card_data in new_cards:
                 cards.append(PracticeCard(
                     id=card_data['id'],
@@ -329,12 +380,26 @@ class PracticeCog(BaseCog):
                     language=card_data['language'],
                     sentence=card_data['sentence'],
                     sentence_with_blank=card_data['sentence_with_blank'],
-                    interval_days=1.0,
-                    ease_factor=2.5,
-                    repetitions=0
+                    sentence_translation=card_data.get('sentence_translation') or "",
+                    level=card_data.get('level') or "",
                 ))
 
         return cards
+
+    async def _get_random_cards(self, language: str, level: str | None = None,
+                                limit: int = 10) -> list[PracticeCard]:
+        """Get random cards for untracked practice."""
+        raw = await self.bot.db.get_random_cards(language, limit, level=level)
+        return [
+            PracticeCard(
+                id=c['id'], word=c['word'], translation=c['translation'],
+                language=c['language'], sentence=c['sentence'],
+                sentence_with_blank=c['sentence_with_blank'],
+                sentence_translation=c.get('sentence_translation') or "",
+                level=c.get('level') or "",
+            )
+            for c in raw
+        ]
 
     async def _show_question(self, interaction: Interaction, session: PracticeSession,
                              *, is_first: bool = False):
@@ -352,14 +417,14 @@ class PracticeCog(BaseCog):
         distractors = []
         if card_mode == "choice":
             distractors = await self.bot.db.get_card_distractors(
-                session.language, card.word, count=3
+                session.language, card.word, count=3, level=card.level or None
             )
             # Fall back to typing if not enough distractors
             if len(distractors) < 3:
                 card_mode = "typing"
 
         # Create embed and view (show disclaimer on first question only)
-        embed = create_question_embed(session, card, show_disclaimer=is_first)
+        embed = create_question_embed(session, card)
 
         view = PracticeView(
             session=session,
@@ -390,17 +455,26 @@ class PracticeCog(BaseCog):
             return
 
         # Check answer (case-insensitive)
-        was_correct = user_answer.lower().strip() == card.word.lower().strip()
+        was_correct = _normalize(user_answer) == _normalize(card.word)
         session.record_answer(was_correct)
 
         # Create result embed
         embed = create_result_embed(card, user_answer, was_correct)
 
-        # Create rating view
-        view = QualityRatingView(
-            was_correct=was_correct,
-            on_rating=lambda i, q: self._handle_rating(i, session, card, q)
-        )
+        if session.tracked:
+            # Show rating buttons for SRS tracking
+            view = QualityRatingView(
+                was_correct=was_correct,
+                on_rating=lambda i, q: self._handle_rating(i, session, card, q)
+            )
+        else:
+            # Untracked — skip rating, just advance
+            session.advance()
+            view = NextCardView(
+                on_next=lambda i: self._show_question(i, session) if not session.is_complete
+                else self._end_session(i, session),
+                on_quit=lambda i: self._handle_quit(i, session),
+            )
 
         # Send result
         try:
@@ -411,21 +485,14 @@ class PracticeCog(BaseCog):
     async def _handle_rating(self, interaction: Interaction, session: PracticeSession,
                              card: PracticeCard, quality: int):
         """Handle quality rating and update SRS"""
-        # Calculate new SRS values
-        interval = card.interval_days or 1.0
-        ease = card.ease_factor or 2.5
-        reps = card.repetitions or 0
-
-        result = calculate_sm2(quality, interval, ease, reps)
+        card_json, due_iso = review_card(card.card_json, quality)
 
         # Update database
         await self.bot.db.update_user_progress(
             user_id=session.user_id,
             card_id=card.id,
-            interval_days=result.interval_days,
-            ease_factor=result.ease_factor,
-            repetitions=result.repetitions,
-            next_review=result.next_review
+            card_json=card_json,
+            next_review=due_iso,
         )
 
         # Advance to next card
