@@ -312,37 +312,33 @@ class PracticeCog(BaseCog):
             embed = create_stats_embed(language, stats)
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
-            # Show stats for both languages
-            spanish_stats = await self.bot.db.get_practice_stats(user_id, "spanish")
-            english_stats = await self.bot.db.get_practice_stats(user_id, "english")
+            embeds = []
+            for lang in ("spanish", "english"):
+                stats = await self.bot.db.get_practice_stats(user_id, lang)
+                if stats['total'] > 0:
+                    embeds.append(create_stats_embed(lang, stats))
+            if embeds:
+                await interaction.response.send_message(embeds=embeds, ephemeral=True)
+            else:
+                await interaction.response.send_message("No practice cards available yet.", ephemeral=True)
 
-            embed = Embed(
-                title="Practice Stats",
-                color=discord.Color.blue()
-            )
-
-            embed.add_field(
-                name="Spanish",
-                value=(
-                    f"New: {spanish_stats['new']} | "
-                    f"Learning: {spanish_stats['learning']} | "
-                    f"Due: {spanish_stats['due']} | "
-                    f"Mastered: {spanish_stats['mastered']}"
-                ),
-                inline=False
-            )
-            embed.add_field(
-                name="English",
-                value=(
-                    f"New: {english_stats['new']} | "
-                    f"Learning: {english_stats['learning']} | "
-                    f"Due: {english_stats['due']} | "
-                    f"Mastered: {english_stats['mastered']}"
-                ),
-                inline=False
-            )
-
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+    @practice_group.command(name="reset", description="Reset your practice progress")
+    @app_commands.describe(language="Language to reset (or leave blank for all)")
+    @app_commands.choices(
+        language=[
+            app_commands.Choice(name="Spanish", value="spanish"),
+            app_commands.Choice(name="English", value="english"),
+        ]
+    )
+    async def practice_reset(self, interaction: Interaction, language: str | None = None):
+        """Reset practice progress for a language or all languages."""
+        user_id = interaction.user.id
+        deleted = await self.bot.db.reset_user_progress(user_id, language)
+        label = language or "all languages"
+        await interaction.response.send_message(
+            f"♻️ Reset {deleted} cards for {label}. Your progress starts fresh!",
+            ephemeral=True
+        )
 
     # ========================
     # Session Flow Methods

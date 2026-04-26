@@ -119,36 +119,48 @@ class PracticeMixin(DatabaseMixin):
         return [row['word'] for row in rows]
 
     async def get_practice_stats(self, user_id: int, language: str) -> dict:
-        """Get practice statistics for a user."""
+        """Get practice statistics for a user, broken down by level."""
         total = await self._fetchval(
             'SELECT COUNT(*) FROM practice_cards WHERE language = $1', language,
         )
-        user_cards = await self._fetch('''
-            SELECT ucp.card_json, ucp.next_review
+        rows = await self._fetch('''
+            SELECT pc.level, ucp.card_json, ucp.next_review
             FROM user_card_progress ucp
             JOIN practice_cards pc ON ucp.card_id = pc.id
             WHERE ucp.user_id = $1 AND pc.language = $2
         ''', user_id, language)
 
-        new_count = (total or 0) - len(user_cards)
-        due_count = learning_count = mastered_count = 0
-
         now = datetime.now(UTC)
-        for row in user_cards:
+        levels: dict[str, dict] = {}
+        total_due = total_learning = total_mastered = 0
+
+        for row in rows:
+            lvl = row['level'] or '?'
+            if lvl not in levels:
+                levels[lvl] = {'due': 0, 'learning': 0, 'mastered': 0}
+
             if row['next_review'] and row['next_review'] <= now:
-                due_count += 1
+                levels[lvl]['due'] += 1
+                total_due += 1
             elif row['card_json']:
                 card = Card.from_json(row['card_json'])
                 if card.state == 2 and card.stability >= 21:
-                    mastered_count += 1
+                    levels[lvl]['mastered'] += 1
+                    total_mastered += 1
                 else:
-                    learning_count += 1
+                    levels[lvl]['learning'] += 1
+                    total_learning += 1
             else:
-                learning_count += 1
+                levels[lvl]['learning'] += 1
+                total_learning += 1
+
+        seen = len(rows)
+        new_count = (total or 0) - seen
 
         return {
-            'total': total or 0, 'new': new_count,
-            'learning': learning_count, 'due': due_count, 'mastered': mastered_count,
+            'total': total or 0, 'new': new_count, 'seen': seen,
+            'due': total_due, 'learning': total_learning, 'mastered': total_mastered,
+            'levels': levels,
         }
 
     async def get_practice_card_count(self, language: str) -> int:
@@ -157,6 +169,22 @@ class PracticeMixin(DatabaseMixin):
             'SELECT COUNT(*) FROM practice_cards WHERE language = $1', language,
         )
         return count or 0
+
+    async def reset_user_progress(self, user_id: int, language: str | None = None) -> int:
+        """Delete user progress, optionally filtered by language. Returns rows deleted."""
+        if language:
+            result = await self._execute('''
+                DELETE FROM user_card_progress
+                WHERE user_id = $1 AND card_id IN (
+                    SELECT id FROM practice_cards WHERE language = $2
+                )
+            ''', user_id, language)
+        else:
+            result = await self._execute(
+                'DELETE FROM user_card_progress WHERE user_id = $1', user_id,
+            )
+        # result is like "DELETE 5"
+        return int(result.split()[-1])
 
     async def get_random_cards(self, language: str, limit: int = 10,
                                level: str | None = None) -> list[dict]:

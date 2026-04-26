@@ -300,18 +300,32 @@ def create_summary_embed(session: PracticeSession) -> Embed:
     return embed
 
 def create_stats_embed(language: str, stats: dict) -> Embed:
-    """Create an embed showing practice statistics"""
-    lang_emoji = {"spanish": "ES", "english": "EN"}.get(language, "")
+    """Create an embed showing practice statistics with per-level breakdown."""
+    lang_emoji = {"spanish": "🇪🇸", "english": "🇬🇧"}.get(language, "")
+    level_names = {"A": "Beginner", "B": "Intermediate", "C": "Advanced"}
 
     embed = Embed(
-        title=f"Practice Stats - {lang_emoji} {language.title()}",
+        title=f"{lang_emoji} {language.title()} Practice Stats",
         color=discord.Color.blue()
     )
 
-    embed.add_field(name="New", value=str(stats['new']), inline=True)
-    embed.add_field(name="Learning", value=str(stats['learning']), inline=True)
-    embed.add_field(name="Due", value=str(stats['due']), inline=True)
-    embed.add_field(name="Mastered", value=str(stats['mastered']), inline=True)
-    embed.add_field(name="Total Cards", value=str(stats['total']), inline=True)
+    # Per-level breakdown
+    levels = stats.get('levels', {})
+    for lvl in ("A", "B", "C"):
+        lvl_stats = levels.get(lvl, {'due': 0, 'learning': 0, 'mastered': 0})
+        name = f"Level {lvl} — {level_names.get(lvl, '')}"
+        value = f"📬 {lvl_stats['due']} due · 📖 {lvl_stats['learning']} learning · ✅ {lvl_stats['mastered']} mastered"
+        embed.add_field(name=name, value=value, inline=False)
+
+    # Summary
+    embed.add_field(
+        name="Overall",
+        value=(
+            f"**{stats['seen']}/{stats['total']}** cards seen · "
+            f"**{stats['due']}** due now · "
+            f"**{stats['mastered']}** mastered"
+        ),
+        inline=False,
+    )
 
     return embed
