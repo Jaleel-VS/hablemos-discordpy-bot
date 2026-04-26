@@ -24,6 +24,11 @@ def _extract_blanked_word(card: PracticeCard) -> str | None:
     return card.sentence.removeprefix(prefix).removesuffix(suffix).strip() or None
 
 
+def _normalize_word(text: str) -> str:
+    """Lowercase strip for simple comparison."""
+    return text.strip().lower()
+
+
 # ── Question ──
 
 def build_question_view(
@@ -101,15 +106,16 @@ def build_result_view(
 ) -> ui.LayoutView:
     """Build a LayoutView for the answer result."""
     view = ui.LayoutView(timeout=300)
+    actual_word = _extract_blanked_word(card) or card.word
 
     if was_correct:
         title = "## ✅ Correct!"
         colour = Color.green()
-        highlighted = card.sentence.replace(card.word, f"**{card.word}**")
     else:
         title = "## ❌ Not quite"
         colour = Color.red()
-        highlighted = card.sentence.replace(card.word, f"**{card.word}**")
+
+    highlighted = card.sentence.replace(actual_word, f"**{actual_word}**")
 
     parts: list[ui.Item] = [ui.TextDisplay(title), ui.TextDisplay(highlighted)]
 
@@ -117,7 +123,11 @@ def build_result_view(
         parts.append(ui.TextDisplay(f"Your answer: ~~{user_answer}~~"))
 
     parts.append(ui.Separator(visible=True))
-    parts.append(ui.TextDisplay(f"**{card.word}** — {card.translation}"))
+    # Show both the conjugated form and the dictionary form if they differ
+    word_display = f"**{actual_word}** — {card.translation}"
+    if _normalize_word(actual_word) != _normalize_word(card.word):
+        word_display += f"  *(from {card.word})*"
+    parts.append(ui.TextDisplay(word_display))
 
     if card.sentence_translation:
         parts.append(ui.TextDisplay(f"-# *{card.sentence_translation}*"))
