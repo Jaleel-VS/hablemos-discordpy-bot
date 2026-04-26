@@ -17,13 +17,10 @@ from .seed_words import SEED_WORDS
 from .session import PracticeCard, PracticeMode, PracticeSession
 from .srs import review_card
 from .views import (
-    NextCardView,
-    PracticeView,
-    QualityRatingView,
-    create_question_embed,
-    create_result_embed,
+    build_question_view,
+    build_result_view,
+    build_summary_view,
     create_stats_embed,
-    create_summary_embed,
 )
 
 logger = logging.getLogger(__name__)
@@ -416,29 +413,24 @@ class PracticeCog(BaseCog):
             if len(distractors) < 3:
                 card_mode = "typing"
 
-        # Create embed and view (show disclaimer on first question only)
-        embed = create_question_embed(session, card)
-
-        view = PracticeView(
-            session=session,
-            card=card,
-            card_mode=card_mode,
-            distractors=distractors,
+        # Build question view
+        view = build_question_view(
+            session=session, card=card, card_mode=card_mode, distractors=distractors,
             on_answer=lambda i, a: self._handle_answer(i, session, a),
             on_skip=lambda i: self._handle_skip(i, session),
-            on_quit=lambda i: self._handle_quit(i, session)
+            on_quit=lambda i: self._handle_quit(i, session),
         )
 
         if is_first:
             try:
-                await interaction.followup.send(embed=embed, view=view, ephemeral=True)
+                await interaction.followup.send(view=view, ephemeral=True)
             except discord.HTTPException:
-                await interaction.edit_original_response(embed=embed, view=view)
+                await interaction.edit_original_response(view=view)
         else:
             try:
-                await interaction.response.edit_message(embed=embed, view=view)
+                await interaction.response.edit_message(view=view)
             except discord.InteractionResponded:
-                await interaction.followup.send(embed=embed, view=view, ephemeral=True)
+                await interaction.followup.send(view=view, ephemeral=True)
 
     async def _handle_answer(self, interaction: Interaction, session: PracticeSession, user_answer: str):
         """Handle a user's answer"""
@@ -452,18 +444,15 @@ class PracticeCog(BaseCog):
         session.record_answer(was_correct)
 
         # Create result embed
-        embed = create_result_embed(card, user_answer, was_correct)
-
         if session.tracked:
-            # Show rating buttons for SRS tracking
-            view = QualityRatingView(
-                was_correct=was_correct,
-                on_rating=lambda i, q: self._handle_rating(i, session, card, q)
+            view = build_result_view(
+                card, user_answer, was_correct, tracked=True,
+                on_rating=lambda i, q: self._handle_rating(i, session, card, q),
             )
         else:
-            # Untracked — skip rating, just advance
             session.advance()
-            view = NextCardView(
+            view = build_result_view(
+                card, user_answer, was_correct, tracked=False,
                 on_next=lambda i: self._show_question(i, session) if not session.is_complete
                 else self._end_session(i, session),
                 on_quit=lambda i: self._handle_quit(i, session),
@@ -471,9 +460,9 @@ class PracticeCog(BaseCog):
 
         # Send result
         try:
-            await interaction.response.edit_message(embed=embed, view=view)
+            await interaction.response.edit_message(view=view)
         except discord.InteractionResponded:
-            await interaction.followup.send(embed=embed, view=view, ephemeral=True)
+            await interaction.followup.send(view=view, ephemeral=True)
 
     async def _handle_rating(self, interaction: Interaction, session: PracticeSession,
                              card: PracticeCard, quality: int):
@@ -517,23 +506,17 @@ class PracticeCog(BaseCog):
         if session.user_id in self.active_sessions:
             del self.active_sessions[session.user_id]
 
-        # Create summary embed
+        # Create summary
         if quit_early and session.total_reviewed == 0:
-            embed = Embed(
-                title="Session Ended",
-                description="Session quit. No cards were reviewed.",
-                color=discord.Color.orange()
-            )
+            view = build_summary_view(session, quit_early=True)
         else:
-            embed = create_summary_embed(session)
-            if quit_early:
-                embed.title = "Session Ended Early"
+            view = build_summary_view(session, quit_early=quit_early)
 
-        # Send summary with no view (session is over)
+        # Send summary (session is over)
         try:
-            await interaction.response.edit_message(embed=embed, view=None)
+            await interaction.response.edit_message(view=view)
         except discord.InteractionResponded:
-            await interaction.followup.send(embed=embed, ephemeral=True)
+            await interaction.followup.send(view=view, ephemeral=True)
 
     async def cog_command_error(self, ctx, error):
         """Handle command errors"""
