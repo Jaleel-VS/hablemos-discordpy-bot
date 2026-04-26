@@ -439,8 +439,16 @@ class PracticeCog(BaseCog):
         if card is None:
             return
 
-        # Check answer (case-insensitive)
-        was_correct = _normalize(user_answer) == _normalize(card.word)
+        # Check answer — accept the dictionary form OR the conjugated form from the sentence
+        answer = _normalize(user_answer)
+        was_correct = answer == _normalize(card.word)
+        if not was_correct and "___" in card.sentence_with_blank:
+            # Extract the actual blanked word by diffing sentence vs sentence_with_blank
+            blanked = card.sentence_with_blank.split("___")
+            if len(blanked) == 2:
+                prefix, suffix = blanked
+                actual = card.sentence.removeprefix(prefix).removesuffix(suffix).strip()
+                was_correct = answer == _normalize(actual)
         session.record_answer(was_correct)
 
         # Create result embed
