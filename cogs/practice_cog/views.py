@@ -13,6 +13,17 @@ LEVEL_LABELS = {"A": "Beginner", "B": "Intermediate", "C": "Advanced"}
 LANG_EMOJI = {"spanish": "🇪🇸", "english": "🇬🇧"}
 
 
+def _extract_blanked_word(card: PracticeCard) -> str | None:
+    """Extract the actual word that was replaced by ___ in the sentence."""
+    if "___" not in card.sentence_with_blank:
+        return None
+    parts = card.sentence_with_blank.split("___")
+    if len(parts) != 2:
+        return None
+    prefix, suffix = parts
+    return card.sentence.removeprefix(prefix).removesuffix(suffix).strip() or None
+
+
 # ── Question ──
 
 def build_question_view(
@@ -44,7 +55,9 @@ def build_question_view(
 
     # Choice or typing buttons
     if card_mode == "choice" and len(distractors) >= 3:
-        choices = [*distractors[:3], card.word]
+        # Use the actual blanked word (conjugated form) instead of the infinitive
+        correct_label = _extract_blanked_word(card) or card.word
+        choices = [*distractors[:3], correct_label]
         random.shuffle(choices)
         choice_row = ui.ActionRow()
         for choice in choices:
