@@ -17,7 +17,7 @@ def parse_duration(text: str, default: timedelta | None = None) -> timedelta:
 
     # Bare integer → days
     if text.isdigit():
-        return _clamp(timedelta(days=int(text)))
+        return _clamp(timedelta(days=min(int(text), MAX_DAYS)))
 
     m = _DURATION_RE.match(text)
     if not m or not any(m.groups()):
@@ -25,7 +25,7 @@ def parse_duration(text: str, default: timedelta | None = None) -> timedelta:
             return default
         raise ValueError(f"Invalid duration: `{text}`. Use e.g. `7d`, `12h`, `1d12h`.")
 
-    days = int(m.group(1) or 0)
+    days = min(int(m.group(1) or 0), MAX_DAYS)
     hours = int(m.group(2) or 0)
     minutes = int(m.group(3) or 0)
     return _clamp(timedelta(days=days, hours=hours, minutes=minutes))
