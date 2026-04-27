@@ -83,7 +83,7 @@ class DictionaryCog(BaseCog):
             async with session.get(url) as response:
                 response.raise_for_status()
                 return await response.text()
-    
+
     async def _define_rae(self, word: str, source_key: str = "rae") -> DefinitionResult | None:
         """Look up a word in the DLE."""
         url = f"https://dle.rae.es/{quote(word)}"
@@ -148,81 +148,81 @@ class DictionaryCog(BaseCog):
         )
 
     async def _define_wiktionary(
-    self,
-    word: str,
-    source_key: str = "wiktionary",
-    lang: str | None = None,
-) -> DefinitionResult | None:
-    """Look up a word in Wiktionary, optionally filtering by language code."""
-    url = f"https://en.wiktionary.org/wiki/{quote(word)}"
-    html = await self._fetch_html(url)
-    soup = BeautifulSoup(html, "lxml")
+        self,
+        word: str,
+        source_key: str = "wiktionary",
+        lang: str | None = None,
+    ) -> DefinitionResult | None:
+        """Look up a word in Wiktionary, optionally filtering by language code."""
+        url = f"https://en.wiktionary.org/wiki/{quote(word)}"
+        html = await self._fetch_html(url)
+        soup = BeautifulSoup(html, "lxml")
 
-    content = soup.select_one("#mw-content-text")
-    if content is None:
-        return None
-
-    definitions: list[str] = []
-
-    lang_headings = {
-        "en": "English",
-        "es": "Spanish",
-        "jp": "Japanese",
-        "ja": "Japanese",
-        "ko": "Korean",
-        "fr": "French",
-        "de": "German",
-        "it": "Italian",
-        "pt": "Portuguese",
-        "zh": "Chinese",
-        "ru": "Russian",
-    }
-
-    target_heading = lang_headings.get(lang.lower()) if lang else None
-
-    if target_heading:
-        heading = content.find(id=target_heading)
-        if heading is None:
+        content = soup.select_one("#mw-content-text")
+        if content is None:
             return None
 
-        section = []
-        for sibling in heading.parent.find_next_siblings():
-            if sibling.name == "h2":
+        definitions: list[str] = []
+
+        lang_headings = {
+            "en": "English",
+            "es": "Spanish",
+            "jp": "Japanese",
+            "ja": "Japanese",
+            "ko": "Korean",
+            "fr": "French",
+            "de": "German",
+            "it": "Italian",
+            "pt": "Portuguese",
+            "zh": "Chinese",
+            "ru": "Russian",
+        }
+
+        target_heading = lang_headings.get(lang.lower()) if lang else None
+
+        if target_heading:
+            heading = content.find(id=target_heading)
+            if heading is None:
+                return None
+
+            section = []
+            for sibling in heading.parent.find_next_siblings():
+                if sibling.name == "h2":
+                    break
+                section.append(str(sibling))
+
+            section_soup = BeautifulSoup("\n".join(section), "lxml")
+            items = section_soup.select("ol > li")
+        else:
+            items = content.select("ol > li")
+
+        for item in items:
+            text = self._clean_text(item.get_text(" ", strip=True))
+            text = re.sub(r"\[quotations ▼\].*$", "", text).strip()
+            text = re.sub(r"\(.*?please add.*?\)", "", text, flags=re.I).strip()
+
+            if len(text) < 8:
+                continue
+
+            definitions.append(text)
+
+            if len(definitions) >= self.MAX_DEFINITIONS:
                 break
-            section.append(str(sibling))
 
-        section_soup = BeautifulSoup("\n".join(section), "lxml")
-        items = section_soup.select("ol > li")
-    else:
-        items = content.select("ol > li")
+        if not definitions:
+            return None
 
-    for item in items:
-        text = self._clean_text(item.get_text(" ", strip=True))
-        text = re.sub(r"\[quotations ▼\].*$", "", text).strip()
-        text = re.sub(r"\(.*?please add.*?\)", "", text, flags=re.I).strip()
+        source_name = self.SOURCES[source_key]
+        if target_heading:
+            source_name = f"{source_name} / {target_heading}"
 
-        if len(text) < 8:
-            continue
-
-        definitions.append(text)
-
-        if len(definitions) >= self.MAX_DEFINITIONS:
-            break
-
-    if not definitions:
-        return None
-
-    source_name = self.SOURCES[source_key]
-    if target_heading:
-        source_name = f"{source_name} / {target_heading}"
-
-    return DefinitionResult(
-        word=word,
-        source_key=source_key,
-        source_name=source_name,
-        definitions=definitions,
-        url=url,
-    )
+        return DefinitionResult(
+            word=word,
+            source_key=source_key,
+            source_name=source_name,
+            definitions=definitions,
+            url=url,
+        )
 
     async def _define_not_configured(self, word: str, source_key: str) -> DefinitionResult:
         """Return a controlled response for sources that need API/legal setup."""
@@ -236,7 +236,7 @@ class DictionaryCog(BaseCog):
             ],
             url=None,
         )
-    
+
     async def _lookup(
         self,
         source_key: str,
@@ -330,7 +330,7 @@ class DictionaryCog(BaseCog):
         lang: str | None = None
 
         normalized_first = self._normalize_source(first)
-        """Command correction / Did you meant?"""
+
         valid_langs = {"en", "es", "jp", "ja", "ko", "fr", "de", "it", "pt", "zh", "ru"}
 
         if (
@@ -341,11 +341,11 @@ class DictionaryCog(BaseCog):
         ):
             await ctx.send(
                 embed=yellow_embed(
-                    f"Miswriten command. Use `{ctx.prefix}define <source> <lang> <word>`."
+                    f"Malformed command. Use `{ctx.prefix}define <source> <lang> <word>`."
                 ),
             )
             return
-            
+
         if normalized_first not in self.SOURCES:
             source_key = "wiktionary"
             word = " ".join(part for part in [first, second, rest] if part)
@@ -396,5 +396,6 @@ class DictionaryCog(BaseCog):
 
         await ctx.send(embed=self._build_result_embed(result))
 
+"""Setup"""
 async def setup(bot) -> None:
     await bot.add_cog(DictionaryCog(bot))
