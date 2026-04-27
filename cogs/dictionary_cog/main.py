@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 from discord.ext import commands
 
 from base_cog import BaseCog
-from cogs.utils.embeds import blue_embed, red_embed, yellow_embed
+from cogs.utils.embeds import red_embed, yellow_embed
 
 logger = logging.getLogger(__name__)
 
@@ -151,7 +151,7 @@ class DictionaryCog(BaseCog):
         source_key: str = "wiktionary",
         lang: str | None = None,
     ) -> DefinitionResult | None:
-        """Look up a word in Wiktionary, optionally using a language-specific Wiktionary."""
+        """Look up a word in Wiktionary."""
         lang = (lang or "en").lower().strip()
 
         wiki_domains = {
@@ -314,7 +314,7 @@ class DictionaryCog(BaseCog):
 
         embed.set_footer(text=footer)
         return embed
-        
+
     def _build_sources_embed(self) -> discord.Embed:
         """Build source list embed."""
         lines = [
