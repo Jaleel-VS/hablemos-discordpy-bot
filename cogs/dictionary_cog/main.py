@@ -9,7 +9,7 @@ from urllib.parse import quote
 
 import aiohttp
 import discord
-from bs4 import BeautifulSoup
+from beautifulsoup4 import BeautifulSoup
 from discord.ext import commands
 
 from base_cog import BaseCog
@@ -33,7 +33,7 @@ class DictionaryCog(BaseCog):
     """Look up words in selected dictionary sources."""
 
     SOURCES: dict[str, str] = {
-        "web": "Wiktionary fallback",
+        "web": "Merriam-Webster",
         "wiktionary": "Wiktionary",
         "rae": "RAE / DLE",
         "asale": "ASALE / DLE",
@@ -50,6 +50,9 @@ class DictionaryCog(BaseCog):
         "americanismos": "damer",
         "dammer": "damer",
         "ox": "oxf",
+        "mw": "web",
+        "merriam": "web",
+        "webster": "web",
     }
 
     MAX_DEFINITIONS = 5
@@ -203,8 +206,11 @@ class DictionaryCog(BaseCog):
         if source_key == "damer":
             return await self._define_damer(word)
 
-        if source_key in {"web", "wiktionary"}:
-            return await self._define_wiktionary(word, source_key)
+        if source_key == "web":
+            return await self._define_not_configured(word, "web")
+
+        if source_key == "wiktionary":
+            return await self._define_wiktionary(word, "wiktionary")
 
         if source_key in {"oxf", "oxford", "cambridge"}:
             normalized = "oxf" if source_key in {"oxf", "oxford"} else "cambridge"
@@ -245,7 +251,7 @@ class DictionaryCog(BaseCog):
     def _build_sources_embed(self) -> discord.Embed:
         """Build source list embed."""
         lines = [
-            "`web` — fallback search through Wiktionary",
+            "`web` / `webster` — Merriam-Webster. Registered, not configured",
             "`wiktionary` — open multilingual dictionary",
             "`rae` / `dle` — Diccionario de la lengua española",
             "`asale` — academic Spanish lookup through DLE",
