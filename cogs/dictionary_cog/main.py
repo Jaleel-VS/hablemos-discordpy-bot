@@ -275,7 +275,7 @@ class DictionaryCog(BaseCog):
             f"{shortened}...\n\n*Para más significados, ve a la página fuente.*",
             True,
         )
-        def _build_result_embed(self, result: DefinitionResult) -> discord.Embed:
+    def _build_result_embed(self, result: DefinitionResult) -> discord.Embed:
         """Build a Hablemos-style result embed."""
         lines = []
         was_shortened = False
