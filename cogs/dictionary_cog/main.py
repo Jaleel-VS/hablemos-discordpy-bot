@@ -147,76 +147,101 @@ class DictionaryCog(BaseCog):
             url=url,
         )
 
-    async def _define_wiktionary(self, word: str, source_key: str = "wiktionary") -> DefinitionResult | None:
-        """Look up a word in Wiktionary."""
-        url = f"https://en.wiktionary.org/wiki/{quote(word)}"
-        html = await self._fetch_html(url)
-        soup = BeautifulSoup(html, "lxml")
+    async def _define_wiktionary(
+    self,
+    word: str,
+    source_key: str = "wiktionary",
+    lang: str | None = None,
+) -> DefinitionResult | None:
+    """Look up a word in Wiktionary, optionally filtering by language code."""
+    url = f"https://en.wiktionary.org/wiki/{quote(word)}"
+    html = await self._fetch_html(url)
+    soup = BeautifulSoup(html, "lxml")
 
-        content = soup.select_one("#mw-content-text")
-        if content is None:
-            return None
-
-        definitions: list[str] = []
-        for item in content.select("ol > li"):
-            text = self._clean_text(item.get_text(" ", strip=True))
-            text = re.sub(r"\[quotations ▼\].*$", "", text).strip()
-            text = re.sub(r"\(.*?please add.*?\)", "", text, flags=re.I).strip()
-
-            if len(text) < 8:
-                continue
-
-            definitions.append(text)
-
-            if len(definitions) >= self.MAX_DEFINITIONS:
-                break
-
-        if not definitions:
-            return None
-
-        return DefinitionResult(
-            word=word,
-            source_key=source_key,
-            source_name=self.SOURCES[source_key],
-            definitions=definitions,
-            url=url,
-        )
-
-    async def _define_not_configured(self, word: str, source_key: str) -> DefinitionResult:
-        """Return a controlled response for sources that need API/legal setup."""
-        return DefinitionResult(
-            word=word,
-            source_key=source_key,
-            source_name=self.SOURCES[source_key],
-            definitions=[
-                "This dictionary source is registered, but not configured yet.",
-                "Use `rae`, `asale`, `damer`, `wiktionary`, or `web` for now.",
-            ],
-            url=None,
-        )
-
-    async def _lookup(self, source_key: str, word: str) -> DefinitionResult | None:
-        """Dispatch lookup to the selected source."""
-        if source_key == "rae":
-            return await self._define_rae(word, "rae")
-
-        if source_key == "asale":
-            return await self._define_rae(word, "asale")
-
-        if source_key == "damer":
-            return await self._define_damer(word)
-
-        if source_key == "web":
-            return await self._define_not_configured(word, "web")
-
-        if source_key == "wiktionary":
-            return await self._define_wiktionary(word, "wiktionary")
-
-        if source_key in {"oxf", "oxford", "cambridge"}:
-            normalized = "oxf" if source_key in {"oxf", "oxford"} else "cambridge"
-            return await self._define_not_configured(word, normalized)
-
+    content = soup.select_one("#mw-content-text")
+    if content is None:
         return None
+
+    definitions: list[str] = []
+
+    lang_headings = {
+        "en": "English",
+        "es": "Spanish",
+        "jp": "Japanese",
+        "ja": "Japanese",
+        "ko": "Korean",
+        "fr": "French",
+        "de": "German",
+        "it": "Italian",
+        "pt": "Portuguese",
+        "zh": "Chinese",
+        "ru": "Russian",
+    }
+
+    target_heading = lang_headings.get(lang.lower()) if lang else None
+
+    if target_heading:
+        heading = content.find(id=target_heading)
+        if heading is None:
+            return None
+
+        section = []
+        for sibling in heading.parent.find_next_siblings():
+            if sibling.name == "h2":
+                break
+            section.append(str(sibling))
+
+        section_soup = BeautifulSoup("\n".join(section), "lxml")
+        items = section_soup.select("ol > li")
+    else:
+        items = content.select("ol > li")
+
+    for item in items:
+        text = self._clean_text(item.get_text(" ", strip=True))
+        text = re.sub(r"\[quotations ▼\].*$", "", text).strip()
+        text = re.sub(r"\(.*?please add.*?\)", "", text, flags=re.I).strip()
+
+        if len(text) < 8:
+            continue
+
+        definitions.append(text)
+
+        if len(definitions) >= self.MAX_DEFINITIONS:
+            break
+
+    if not definitions:
+        return None
+
+    source_name = self.SOURCES[source_key]
+    if target_heading:
+        source_name = f"{source_name} / {target_heading}"
+
+    return DefinitionResult(
+        word=word,
+        source_key=source_key,
+        source_name=source_name,
+        definitions=definitions,
+        url=url,
+    )
+
+    async def _lookup(
+    self,
+    source_key: str,
+    word: str,
+    lang: str | None = None,
+) -> DefinitionResult | None:
+    """Dispatch lookup to the selected source."""
+    if source_key in {"rae", "asale", "web", "oxf", "oxford", "cambridge"}:
+        normalized = "oxf" if source_key in {"oxf", "oxford"} else source_key
+        return await self._define_not_configured(word, normalized)
+
+    if source_key == "damer":
+        return await self._define_damer(word)
+
+    if source_key == "wiktionary":
+        return await self._define_wiktionary(word, "wiktionary", lang=lang)
+
+    return None
 
     def _build_result_embed(self, result: DefinitionResult) -> discord.Embed:
         """Build a Hablemos-style result embed."""
@@ -269,70 +294,91 @@ class DictionaryCog(BaseCog):
         return embed
 
     @commands.command(name="define", aliases=["def", "meaning"])
-    @commands.cooldown(1, 8, commands.BucketType.user)
-    async def define_command(
-        self,
-        ctx: commands.Context,
-        source: str | None = None,
-        *,
-        word: str | None = None,
-    ) -> None:
-        """Look up a word in a selected dictionary source."""
-        if source is None:
-            await ctx.send(embed=self._build_sources_embed())
-            return
+@commands.cooldown(1, 8, commands.BucketType.user)
+async def define_command(
+    self,
+    ctx: commands.Context,
+    first: str | None = None,
+    second: str | None = None,
+    *,
+    rest: str | None = None,
+) -> None:
+    """Look up a word in a selected dictionary source."""
+    if first is None:
+        await ctx.send(embed=self._build_sources_embed())
+        return
 
-        if source.lower() in {"sources", "source", "dicts", "dictionaries"}:
-            await ctx.send(embed=self._build_sources_embed())
-            return
+    if first.lower() in {"sources", "source", "dicts", "dictionaries"}:
+        await ctx.send(embed=self._build_sources_embed())
+        return
 
-        if word is None:
+    source_key: str
+    word: str
+    lang: str | None = None
+
+    normalized_first = self._normalize_source(first)
+
+    # Case 1:
+    # $define casa
+    # Default to Wiktionary.
+    if normalized_first not in self.SOURCES:
+        source_key = "wiktionary"
+        word = " ".join(part for part in [first, second, rest] if part)
+    
+    # Case 2:
+    # $define wiki es casa
+    # $define wiktionary en house
+    elif normalized_first == "wiktionary" and second is not None and rest is not None:
+        source_key = "wiktionary"
+        lang = second.lower().strip()
+        word = rest.strip()
+
+    # Case 3:
+    # $define rae casa
+    # $define damer guagua
+    # $define web house
+    else:
+        source_key = normalized_first
+        word = " ".join(part for part in [second, rest] if part)
+
+    if not word:
+        await ctx.send(
+            embed=yellow_embed(
+                f"Usage: `{ctx.prefix}define <word>`\n"
+                f"Or: `{ctx.prefix}define <source> <word>`\n"
+                f"Or: `{ctx.prefix}define wiki <lang> <word>`",
+            ),
+        )
+        return
+
+    async with ctx.typing():
+        try:
+            result = await self._lookup(source_key, word.strip(), lang=lang)
+        except aiohttp.ClientResponseError as exc:
+            logger.warning("Dictionary HTTP error for %s/%s: %s", source_key, word, exc)
             await ctx.send(
-                embed=yellow_embed(
-                    f"Usage: `{ctx.prefix}define <source> <word>`\n"
-                    f"Example: `{ctx.prefix}define rae casa`",
-                ),
+                embed=red_embed("The dictionary source rejected or failed the request."),
             )
             return
-
-        source_key = self._normalize_source(source)
-        if source_key not in self.SOURCES:
-            await ctx.send(
-                embed=red_embed(
-                    f"Unknown source `{source}`.\n"
-                    f"Use `{ctx.prefix}define sources` to see available sources.",
-                ),
-            )
+        except aiohttp.ClientError as exc:
+            logger.warning("Dictionary network error for %s/%s: %s", source_key, word, exc)
+            await ctx.send(embed=red_embed("Could not reach the dictionary source."))
+            return
+        except Exception:
+            logger.exception("Unexpected dictionary error for %s/%s", source_key, word)
+            await ctx.send(embed=red_embed("Unexpected dictionary error."))
             return
 
-        async with ctx.typing():
-            try:
-                result = await self._lookup(source_key, word.strip())
-            except aiohttp.ClientResponseError as exc:
-                logger.warning("Dictionary HTTP error for %s/%s: %s", source_key, word, exc)
-                await ctx.send(
-                    embed=red_embed("The dictionary source rejected or failed the request."),
-                )
-                return
-            except aiohttp.ClientError as exc:
-                logger.warning("Dictionary network error for %s/%s: %s", source_key, word, exc)
-                await ctx.send(embed=red_embed("Could not reach the dictionary source."))
-                return
-            except Exception:
-                logger.exception("Unexpected dictionary error for %s/%s", source_key, word)
-                await ctx.send(embed=red_embed("Unexpected dictionary error."))
-                return
+    if result is None:
+        lang_text = f" with language `{lang}`" if lang else ""
+        await ctx.send(
+            embed=yellow_embed(
+                f"No definition found for `{word}` in `{source_key}`{lang_text}.",
+            ),
+        )
+        return
 
-        if result is None:
-            await ctx.send(
-                embed=yellow_embed(
-                    f"No definition found for `{word}` in `{source_key}`.\n"
-                    f"Try `{ctx.prefix}define web {word}` or `{ctx.prefix}define rae {word}`.",
-                ),
-            )
-            return
-
-        await ctx.send(embed=self._build_result_embed(result))
+    await ctx.send(embed=self._build_result_embed(result))
 
 
 async def setup(bot) -> None:
