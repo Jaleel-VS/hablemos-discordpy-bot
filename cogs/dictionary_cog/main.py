@@ -330,7 +330,22 @@ class DictionaryCog(BaseCog):
         lang: str | None = None
 
         normalized_first = self._normalize_source(first)
+        """Command correction / Did you meant?"""
+        valid_langs = {"en", "es", "jp", "ja", "ko", "fr", "de", "it", "pt", "zh", "ru"}
 
+        if (
+            normalized_first not in self.SOURCES
+            and second is not None
+            and second.lower().strip() in valid_langs
+            and rest is None
+        ):
+            await ctx.send(
+                embed=yellow_embed(
+                    f"Miswriten command. Use `{ctx.prefix}define <source> <lang> <word>`."
+                ),
+            )
+            return
+            
         if normalized_first not in self.SOURCES:
             source_key = "wiktionary"
             word = " ".join(part for part in [first, second, rest] if part)
