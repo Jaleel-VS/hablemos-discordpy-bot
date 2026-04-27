@@ -337,5 +337,3 @@ class DictionaryCog(BaseCog):
 
 async def setup(bot) -> None:
     await bot.add_cog(DictionaryCog(bot))
-    await bot.add_cog(DictionaryCog(bot))
-    logger.info("DictionaryCog loaded successfully")
