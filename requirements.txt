@@ -23,3 +23,8 @@ imgkit~=1.2
 demoji~=1.1
 yarl~=1.23
 Reverso-API
+
+# Dictionary
+beautifulsoup4 
+lxml 
+aiohttp
