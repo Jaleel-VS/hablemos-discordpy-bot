@@ -153,68 +153,78 @@ class DictionaryCog(BaseCog):
         source_key: str = "wiktionary",
         lang: str | None = None,
     ) -> DefinitionResult | None:
-        """Look up a word in Wiktionary, optionally filtering by language code."""
-        url = f"https://en.wiktionary.org/wiki/{quote(word)}"
+        """Look up a word in Wiktionary, optionally using a language-specific Wiktionary."""
+        lang = (lang or "en").lower().strip()
+
+        wiki_domains = {
+            "en": "en.wiktionary.org",
+            "es": "es.wiktionary.org",
+            "jp": "ja.wiktionary.org",
+            "ja": "ja.wiktionary.org",
+            "ko": "ko.wiktionary.org",
+            "fr": "fr.wiktionary.org",
+            "de": "de.wiktionary.org",
+            "it": "it.wiktionary.org",
+            "pt": "pt.wiktionary.org",
+            "zh": "zh.wiktionary.org",
+            "ru": "ru.wiktionary.org",
+        }
+
+        domain = wiki_domains.get(lang, "en.wiktionary.org")
+        url = f"https://{domain}/wiki/{quote(word)}"
+
         html = await self._fetch_html(url)
         soup = BeautifulSoup(html, "lxml")
 
-        content = soup.select_one("#mw-content-text")
-        if content is None:
-            return None
-
         definitions: list[str] = []
 
-        lang_headings = {
-            "en": "English",
-            "es": "Spanish",
-            "jp": "Japanese",
-            "ja": "Japanese",
-            "ko": "Korean",
-            "fr": "French",
-            "de": "German",
-            "it": "Italian",
-            "pt": "Portuguese",
-            "zh": "Chinese",
-            "ru": "Russian",
-        }
-
-        target_heading = lang_headings.get(lang.lower()) if lang else None
-
-        if target_heading:
-            heading = content.find(id=target_heading)
-            if heading is None:
+        # Spanish Wiktionary uses definition lists more reliably than ordered lists.
+        if lang == "es":
+            content = soup.select_one("#mw-content-text")
+            if content is None:
                 return None
 
-            section = []
-            for sibling in heading.parent.find_next_siblings():
-                if sibling.name == "h2":
+            for item in content.select("dd"):
+                text = self._clean_text(item.get_text(" ", strip=True))
+
+                if not text:
+                    continue
+                if len(text) < 8:
+                    continue
+                if text.lower().startswith(("del latín", "plural", "pronunciación")):
+                    continue
+                if "editar" in text.lower():
+                    continue
+
+                definitions.append(text)
+
+                if len(definitions) >= self.MAX_DEFINITIONS:
                     break
-                section.append(str(sibling))
 
-            section_soup = BeautifulSoup("\n".join(section), "lxml")
-            items = section_soup.select("ol > li")
         else:
-            items = content.select("ol > li")
+            content = soup.select_one("#mw-content-text")
+            if content is None:
+                return None
 
-        for item in items:
-            text = self._clean_text(item.get_text(" ", strip=True))
-            text = re.sub(r"\[quotations ▼\].*$", "", text).strip()
-            text = re.sub(r"\(.*?please add.*?\)", "", text, flags=re.I).strip()
+            for item in content.select("ol > li"):
+                text = self._clean_text(item.get_text(" ", strip=True))
+                text = re.sub(r"\[quotations ▼\].*$", "", text).strip()
+                text = re.sub(r"\(.*?please add.*?\)", "", text, flags=re.I).strip()
 
-            if len(text) < 8:
-                continue
+                if len(text) < 8:
+                    continue
 
-            definitions.append(text)
+                definitions.append(text)
 
-            if len(definitions) >= self.MAX_DEFINITIONS:
-                break
+                if len(definitions) >= self.MAX_DEFINITIONS:
+                    break
 
         if not definitions:
             return None
 
         source_name = self.SOURCES[source_key]
-        if target_heading:
-            source_name = f"{source_name} / {target_heading}"
+        if lang:
+            source_name = f"{source_name} / {lang}"
 
         return DefinitionResult(
             word=word,
@@ -223,7 +233,6 @@ class DictionaryCog(BaseCog):
             definitions=definitions,
             url=url,
         )
-
     async def _define_not_configured(self, word: str, source_key: str) -> DefinitionResult:
         """Return a controlled response for sources that need API/legal setup."""
         return DefinitionResult(
@@ -334,18 +343,16 @@ class DictionaryCog(BaseCog):
         valid_langs = {"en", "es", "jp", "ja", "ko", "fr", "de", "it", "pt", "zh", "ru"}
 
         if (
-            normalized_first not in self.SOURCES
+            normalized_first in valid_langs
             and second is not None
-            and second.lower().strip() in valid_langs
             and rest is None
         ):
             await ctx.send(
                 embed=yellow_embed(
-                    f"Malformed command. Use `{ctx.prefix}define <source> <lang> <word>`."
+                    f"Malformed command. Use `{ctx.prefix}define wiki <lang> <word>`."
                 ),
             )
             return
-
         if normalized_first not in self.SOURCES:
             source_key = "wiktionary"
             word = " ".join(part for part in [first, second, rest] if part)
