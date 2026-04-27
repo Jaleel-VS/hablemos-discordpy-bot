@@ -35,8 +35,6 @@ class DictionaryCog(BaseCog):
     SOURCES: dict[str, str] = {
         "web": "Merriam-Webster",
         "wiktionary": "Wiktionary",
-        "rae": "RAE / DLE",
-        "asale": "ASALE / DLE",
         "damer": "ASALE / DAMER",
         "oxf": "Oxford",
         "oxford": "Oxford",
@@ -46,7 +44,6 @@ class DictionaryCog(BaseCog):
     SOURCE_ALIASES: dict[str, str] = {
         "wikt": "wiktionary",
         "wiki": "wiktionary",
-        "dle": "rae",
         "americanismos": "damer",
         "dammer": "damer",
         "ox": "oxf",
@@ -55,8 +52,9 @@ class DictionaryCog(BaseCog):
         "webster": "web",
     }
 
-    MAX_DEFINITIONS = 5
-    REQUEST_TIMEOUT_SECONDS = 12
+    MAX_DEFINITIONS = 3 #Adjust this to set the maximum definitions in the answer.
+    REQUEST_TIMEOUT_SECONDS = 12 #How much have the server to answer the request.
+    MAX_DEFINITION_WORDS = 200 #How much words can Hablemos-Bot answer.
 
     def _normalize_source(self, source: str) -> str:
         """Normalize source aliases."""
@@ -265,12 +263,30 @@ class DictionaryCog(BaseCog):
 
         return None
 
-    def _build_result_embed(self, result: DefinitionResult) -> discord.Embed:
+    def _shorten_definition(self, text: str) -> tuple[str, bool]:
+        """Shorten a definition if it exceeds the word limit."""
+        words = text.split()
+
+        if len(words) <= self.MAX_DEFINITION_WORDS:
+            return text, False
+
+        shortened = " ".join(words[: self.MAX_DEFINITION_WORDS])
+        return (
+            f"{shortened}...\n\n*Para más significados, ve a la página fuente.*",
+            True,
+        )
+        def _build_result_embed(self, result: DefinitionResult) -> discord.Embed:
         """Build a Hablemos-style result embed."""
         lines = []
+        was_shortened = False
+
         for index, definition in enumerate(result.definitions[: self.MAX_DEFINITIONS], start=1):
-            if len(definition) > 500:
-                definition = definition[:497] + "..."
+            definition, shortened = self._shorten_definition(definition)
+            was_shortened = was_shortened or shortened
+
+            if len(definition) > 900:
+                definition = definition[:897] + "..."
+
             lines.append(f"**{index}.** {definition}")
 
         embed = discord.Embed(
@@ -292,9 +308,13 @@ class DictionaryCog(BaseCog):
                 inline=True,
             )
 
-        embed.set_footer(text=f"{len(result.definitions[: self.MAX_DEFINITIONS])} definition(s)")
-        return embed
+        footer = f"{len(result.definitions[: self.MAX_DEFINITIONS])} definition(s)"
+        if was_shortened:
+            footer += " • Shortened"
 
+        embed.set_footer(text=footer)
+        return embed
+        
     def _build_sources_embed(self) -> discord.Embed:
         """Build source list embed."""
         lines = [
