@@ -9,7 +9,7 @@ from urllib.parse import quote
 
 import aiohttp
 import discord
-from beautifulsoup4 import BeautifulSoup
+from bs4 import BeautifulSoup
 from discord.ext import commands
 
 from base_cog import BaseCog
