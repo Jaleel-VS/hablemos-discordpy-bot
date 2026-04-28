@@ -35,7 +35,6 @@ class DictionaryCog(BaseCog):
     SOURCES: dict[str, str] = {
         "web": "Merriam-Webster",
         "wiktionary": "Wiktionary",
-        "damer": "ASALE / DAMER",
         "oxf": "Oxford",
         "oxford": "Oxford",
         "cambridge": "Cambridge",
@@ -44,17 +43,15 @@ class DictionaryCog(BaseCog):
     SOURCE_ALIASES: dict[str, str] = {
         "wikt": "wiktionary",
         "wiki": "wiktionary",
-        "americanismos": "damer",
-        "dammer": "damer",
         "ox": "oxf",
         "mw": "web",
         "merriam": "web",
         "webster": "web",
     }
 
-    MAX_DEFINITIONS = 3 #Adjust this to set the maximum definitions in the answer.
-    REQUEST_TIMEOUT_SECONDS = 12 #How much have the server to answer the request.
-    MAX_DEFINITION_WORDS = 200 #How much words can Hablemos-Bot answer.
+    MAX_DEFINITIONS = 3
+    REQUEST_TIMEOUT_SECONDS = 12
+    MAX_DEFINITION_WORDS = 200
 
     def _normalize_source(self, source: str) -> str:
         """Normalize source aliases."""
@@ -81,69 +78,6 @@ class DictionaryCog(BaseCog):
             async with session.get(url) as response:
                 response.raise_for_status()
                 return await response.text()
-
-    async def _define_rae(self, word: str, source_key: str = "rae") -> DefinitionResult | None:
-        """Look up a word in the DLE."""
-        url = f"https://dle.rae.es/{quote(word)}"
-        html = await self._fetch_html(url)
-        soup = BeautifulSoup(html, "lxml")
-
-        definitions: list[str] = []
-        for item in soup.select("p.j"):
-            text = self._clean_text(item.get_text(" ", strip=True))
-            if text:
-                definitions.append(text)
-
-            if len(definitions) >= self.MAX_DEFINITIONS:
-                break
-
-        if not definitions:
-            return None
-
-        return DefinitionResult(
-            word=word,
-            source_key=source_key,
-            source_name=self.SOURCES[source_key],
-            definitions=definitions,
-            url=url,
-        )
-
-    async def _define_damer(self, word: str) -> DefinitionResult | None:
-        """Look up a word in the Diccionario de americanismos."""
-        url = f"https://www.asale.org/damer/{quote(word)}"
-        html = await self._fetch_html(url)
-        soup = BeautifulSoup(html, "lxml")
-
-        definitions: list[str] = []
-
-        for item in soup.select("article p, .field-name-body p, .entry-content p, p"):
-            text = self._clean_text(item.get_text(" ", strip=True))
-            lowered = text.lower()
-
-            if not text or len(text) < 12:
-                continue
-            if "diccionario de americanismos" in lowered:
-                continue
-            if "asociación de academias" in lowered:
-                continue
-            if "buscador general" in lowered:
-                continue
-
-            definitions.append(text)
-
-            if len(definitions) >= self.MAX_DEFINITIONS:
-                break
-
-        if not definitions:
-            return None
-
-        return DefinitionResult(
-            word=word,
-            source_key="damer",
-            source_name=self.SOURCES["damer"],
-            definitions=definitions,
-            url=url,
-        )
 
     async def _define_wiktionary(
         self,
@@ -239,7 +173,7 @@ class DictionaryCog(BaseCog):
             source_name=self.SOURCES[source_key],
             definitions=[
                 "This dictionary source is registered, but not configured yet.",
-                "Use `wiktionary` or `damer` for now.",
+                "Use `wiktionary` for now.",
             ],
             url=None,
         )
@@ -254,9 +188,6 @@ class DictionaryCog(BaseCog):
         if source_key in {"web", "oxf", "oxford", "cambridge"}:
             normalized = "oxf" if source_key in {"oxf", "oxford"} else source_key
             return await self._define_not_configured(word, normalized)
-
-        if source_key == "damer":
-            return await self._define_damer(word)
 
         if source_key == "wiktionary":
             return await self._define_wiktionary(word, "wiktionary", lang=lang)
@@ -320,9 +251,6 @@ class DictionaryCog(BaseCog):
         lines = [
             "`web` / `webster` — Merriam-Webster. Registered, not configured",
             "`wiktionary` — open multilingual dictionary",
-            "`rae` / `dle` — Diccionario de la lengua española",
-            "`asale` — academic Spanish lookup through DLE",
-            "`damer` — Diccionario de americanismos",
             "`oxf` / `oxford` — registered, not configured",
             "`cambridge` — registered, not configured",
         ]
@@ -396,9 +324,15 @@ class DictionaryCog(BaseCog):
             )
             return
 
+        word = word.lower()
+
         async with ctx.typing():
             try:
                 result = await self._lookup(source_key, word.strip(), lang=lang)
+            except TimeoutError:
+                logger.warning("Dictionary timeout for %s/%s", source_key, word)
+                await ctx.send(embed=red_embed("The dictionary source took too long to respond."))
+                return
             except aiohttp.ClientResponseError as exc:
                 logger.warning("Dictionary HTTP error for %s/%s: %s", source_key, word, exc)
                 await ctx.send(embed=red_embed("The dictionary source rejected or failed the request."))
