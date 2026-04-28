@@ -110,13 +110,13 @@ class ConjugationCog(BaseCog):
     async def _get_distractors(
         self, tense: str, pronoun: str, correct_form: str, verb_id: int,
     ) -> list[str]:
-        """Get 3 plausible wrong answers (same tense+pronoun, different verb)."""
+        """Get 3 plausible wrong answers (same verb+tense, different pronoun)."""
         rows = await self.bot.db._fetch("""
             SELECT f.form FROM conjugation_forms f
-            WHERE f.tense = $1 AND f.pronoun = $2
-              AND f.verb_id != $3 AND f.form != $4
+            WHERE f.tense = $1 AND f.verb_id = $2
+              AND f.pronoun != $3 AND f.form != $4
             ORDER BY random() LIMIT 3
-        """, tense, pronoun, verb_id, correct_form)
+        """, tense, verb_id, pronoun, correct_form)
         return [r["form"] for r in rows]
 
     async def _get_categories(self) -> list[dict]:
