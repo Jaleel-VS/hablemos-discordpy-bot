@@ -1,280 +1,263 @@
-"""
-Discord UI Views for practice sessions.
-"""
-
-import contextlib
-import logging
+"""Discord UI Views for practice sessions — Components V2 (LayoutView)."""
 import random
 from collections.abc import Awaitable, Callable
 
 import discord
-from discord import ButtonStyle, Embed, Interaction
-from discord.ui import Button, View
+from discord import ButtonStyle, Color, Interaction, ui
 
 from .modals import AnswerModal
 from .session import PracticeCard, PracticeSession
-from .srs import QUALITY_AGAIN, QUALITY_EASY, QUALITY_GOOD, QUALITY_HARD
+from .srs import RATING_AGAIN, RATING_EASY, RATING_GOOD, RATING_HARD
 
-logger = logging.getLogger(__name__)
+LEVEL_LABELS = {"A": "Beginner", "B": "Intermediate", "C": "Advanced"}
+LANG_EMOJI = {"spanish": "🇪🇸", "english": "🇬🇧"}
 
-class PracticeView(View):
-    """View for displaying a practice question"""
 
-    def __init__(
-        self,
-        session: PracticeSession,
-        card: PracticeCard,
-        card_mode: str,  # 'typing' or 'choice'
-        distractors: list[str],
-        on_answer: Callable[[Interaction, str], Awaitable[None]],
-        on_skip: Callable[[Interaction], Awaitable[None]],
-        on_quit: Callable[[Interaction], Awaitable[None]],
-        timeout: float = 300
-    ):
-        super().__init__(timeout=timeout)
-        self.session = session
-        self.card = card
-        self.card_mode = card_mode
-        self.distractors = distractors
-        self.on_answer_callback = on_answer
-        self.on_skip_callback = on_skip
-        self.on_quit_callback = on_quit
+def _extract_blanked_word(card: PracticeCard) -> str | None:
+    """Extract the actual word that was replaced by ___ in the sentence."""
+    if "___" not in card.sentence_with_blank:
+        return None
+    parts = card.sentence_with_blank.split("___")
+    if len(parts) != 2:
+        return None
+    prefix, suffix = parts
+    result = card.sentence.removeprefix(prefix).removesuffix(suffix).strip()
+    if not result or "___" in result:
+        return None
+    return result
 
-        self._build_buttons()
 
-    def _build_buttons(self):
-        """Build the view buttons based on mode"""
-        if self.card_mode == "choice" and len(self.distractors) >= 3:
-            # Multiple choice mode - create choice buttons
-            choices = [*self.distractors[:3], self.card.word]
+def _normalize_word(text: str) -> str:
+    """Lowercase strip for simple comparison."""
+    return text.strip().lower()
+
+
+# ── Question ──
+
+def build_question_view(
+    session: PracticeSession,
+    card: PracticeCard,
+    card_mode: str,
+    distractors: list[str],
+    on_answer: Callable[[Interaction, str], Awaitable[None]],
+    on_skip: Callable[[Interaction], Awaitable[None]],
+    on_quit: Callable[[Interaction], Awaitable[None]],
+) -> ui.LayoutView:
+    """Build a LayoutView for a practice question."""
+    view = ui.LayoutView(timeout=300)
+
+    level_label = LEVEL_LABELS.get(card.level, "")
+    lang = LANG_EMOJI.get(session.language, "")
+    footer = f"-# {lang} {session.language.title()}"
+    if level_label:
+        footer += f" · Level {card.level} ({level_label})"
+
+    parts: list[ui.Item] = [
+        ui.TextDisplay(f"## Practice ({session.progress_text})"),
+        ui.TextDisplay(f"**{card.sentence_with_blank}**"),
+    ]
+
+    if session.show_hints and card.sentence_translation:
+        parts.append(ui.Separator(visible=True))
+        parts.append(ui.TextDisplay(f"-# *{card.sentence_translation}*"))
+
+    # Choice or typing buttons
+    if card_mode == "choice" and len(distractors) >= 3:
+        # Use the actual blanked word (conjugated form) instead of the infinitive
+        correct_label = _extract_blanked_word(card) or card.word
+        # Deduplicate: remove distractors that match the correct answer
+        unique_distractors = [d for d in distractors if _normalize_word(d) != _normalize_word(correct_label)]
+        if len(unique_distractors) >= 3:
+            choices = [*unique_distractors[:3], correct_label]
             random.shuffle(choices)
-
+            choice_row = ui.ActionRow()
             for choice in choices:
-                btn = Button(
-                    label=choice,
-                    style=ButtonStyle.primary,
-                    custom_id=f"choice_{choice}"
-                )
-                btn.callback = self._make_choice_callback(choice)
-                self.add_item(btn)
-
-            # Add skip and quit on next row
-            self._add_control_buttons(row=1)
+                btn = ui.Button(label=choice[:80], style=ButtonStyle.primary)
+                btn.callback = _answer_cb(on_answer, choice)
+                choice_row.add_item(btn)
+            parts.append(choice_row)
         else:
-            # Typing mode - add answer button
-            answer_btn = Button(
-                label="Answer",
-                style=ButtonStyle.primary,
-                custom_id="answer"
-            )
-            answer_btn.callback = self._answer_button_callback
-            self.add_item(answer_btn)
+            # Not enough unique distractors — fall back to typing
+            card_mode = "typing"
 
-            self._add_control_buttons(row=0)
+    if card_mode == "typing":
+        type_row = ui.ActionRow()
+        answer_btn = ui.Button(label="Answer", style=ButtonStyle.primary)
+        answer_btn.callback = _modal_cb(card, on_answer)
+        type_row.add_item(answer_btn)
+        parts.append(type_row)
 
-    def _add_control_buttons(self, row: int):
-        """Add skip and quit buttons"""
-        skip_btn = Button(
-            label="Skip",
-            style=ButtonStyle.secondary,
-            custom_id="skip",
-            row=row
-        )
-        skip_btn.callback = self._skip_callback
-        self.add_item(skip_btn)
+    # Control row
+    ctrl = ui.ActionRow()
+    skip_btn = ui.Button(label="Skip", style=ButtonStyle.secondary)
+    skip_btn.callback = _simple_cb(on_skip)
+    ctrl.add_item(skip_btn)
+    quit_btn = ui.Button(label="Quit", style=ButtonStyle.danger)
+    quit_btn.callback = _simple_cb(on_quit)
+    ctrl.add_item(quit_btn)
+    parts.append(ctrl)
 
-        quit_btn = Button(
-            label="Quit",
-            style=ButtonStyle.danger,
-            custom_id="quit",
-            row=row
-        )
-        quit_btn.callback = self._quit_callback
-        self.add_item(quit_btn)
-
-    def _make_choice_callback(self, choice: str):
-        """Create a callback for a choice button"""
-        async def callback(interaction: Interaction):
-            await self.on_answer_callback(interaction, choice)
-        return callback
-
-    async def _answer_button_callback(self, interaction: Interaction):
-        """Open the answer modal for typing"""
-        modal = AnswerModal(self.card, self.on_answer_callback)
-        await interaction.response.send_modal(modal)
-
-    async def _skip_callback(self, interaction: Interaction):
-        """Skip the current card"""
-        await self.on_skip_callback(interaction)
-
-    async def _quit_callback(self, interaction: Interaction):
-        """Quit the session"""
-        await self.on_quit_callback(interaction)
-
-    async def on_timeout(self):
-        for item in self.children:
-            item.disabled = True
-        if self.message:
-            with contextlib.suppress(Exception):
-                await self.message.edit(view=self)
+    parts.append(ui.TextDisplay(footer))
+    view.add_item(ui.Container(*parts, accent_colour=Color.blue()))
+    return view
 
 
-class QualityRatingView(View):
-    """View for rating answer quality (SRS feedback)"""
+# ── Result ──
 
-    def __init__(
-        self,
-        was_correct: bool,
-        on_rating: Callable[[Interaction, int], Awaitable[None]],
-        timeout: float = 300
-    ):
-        super().__init__(timeout=timeout)
-        self.was_correct = was_correct
-        self.on_rating_callback = on_rating
+def build_result_view(
+    card: PracticeCard,
+    user_answer: str,
+    was_correct: bool,
+    *,
+    tracked: bool,
+    wrong_translation: str = "",
+    on_rating: Callable[[Interaction, int], Awaitable[None]] | None = None,
+    on_next: Callable[[Interaction], Awaitable[None]] | None = None,
+    on_quit: Callable[[Interaction], Awaitable[None]] | None = None,
+) -> ui.LayoutView:
+    """Build a LayoutView for the answer result."""
+    view = ui.LayoutView(timeout=300)
+    actual_word = _extract_blanked_word(card) or card.word
 
-        self._build_buttons()
-
-    def _build_buttons(self):
-        """Build rating buttons based on whether answer was correct"""
-        if self.was_correct:
-            # Show Hard, Good, Easy
-            hard_btn = Button(
-                label="Hard",
-                style=ButtonStyle.secondary,
-                custom_id="hard"
-            )
-            hard_btn.callback = self._make_rating_callback(QUALITY_HARD)
-            self.add_item(hard_btn)
-
-            good_btn = Button(
-                label="Good",
-                style=ButtonStyle.primary,
-                custom_id="good"
-            )
-            good_btn.callback = self._make_rating_callback(QUALITY_GOOD)
-            self.add_item(good_btn)
-
-            easy_btn = Button(
-                label="Easy",
-                style=ButtonStyle.success,
-                custom_id="easy"
-            )
-            easy_btn.callback = self._make_rating_callback(QUALITY_EASY)
-            self.add_item(easy_btn)
-        else:
-            # Show only Again
-            again_btn = Button(
-                label="Again",
-                style=ButtonStyle.danger,
-                custom_id="again"
-            )
-            again_btn.callback = self._make_rating_callback(QUALITY_AGAIN)
-            self.add_item(again_btn)
-
-    def _make_rating_callback(self, quality: int):
-        """Create a callback for a rating button"""
-        async def callback(interaction: Interaction):
-            await self.on_rating_callback(interaction, quality)
-        return callback
-
-    async def on_timeout(self):
-        for item in self.children:
-            item.disabled = True
-        if self.message:
-            with contextlib.suppress(Exception):
-                await self.message.edit(view=self)
-
-
-def create_question_embed(session: PracticeSession, card: PracticeCard,
-                          show_disclaimer: bool = False) -> Embed:
-    """Create an embed for a practice question"""
-    lang_emoji = {"spanish": "ES", "english": "EN"}.get(session.language, "")
-
-    embed = Embed(
-        title=f"Practice ({session.progress_text})",
-        description=f"**{card.sentence_with_blank}**",
-        color=discord.Color.blue()
-    )
-
-    if show_disclaimer:
-        embed.add_field(
-            name="Beta Feature",
-            value="This feature is new and being prototyped. Please contact the server owner for feedback or questions.",
-            inline=False
-        )
-
-    embed.set_footer(text=f"{lang_emoji} {session.language.title()}")
-
-    return embed
-
-def create_result_embed(card: PracticeCard, user_answer: str, was_correct: bool) -> Embed:
-    """Create an embed showing the result of an answer"""
     if was_correct:
-        embed = Embed(
-            title="Correct!",
-            color=discord.Color.green()
-        )
-        # Show full sentence with word highlighted
-        highlighted = card.sentence.replace(
-            card.word,
-            f"**{card.word}**"
-        )
-        embed.description = highlighted
+        title = "## ✅ Correct!"
+        colour = Color.green()
     else:
-        embed = Embed(
-            title="Not quite",
-            color=discord.Color.red()
-        )
-        embed.description = (
-            f"Your answer: **{user_answer}**\n"
-            f"Correct: **{card.word}**\n\n"
-            f"{card.sentence.replace(card.word, f'**{card.word}**')}"
-        )
+        title = "## ❌ Not quite"
+        colour = Color.red()
 
-    # Add translation
-    embed.add_field(
-        name=card.word,
-        value=card.translation,
-        inline=False
+    highlighted = card.sentence.replace(actual_word, f"**{actual_word}**")
+
+    parts: list[ui.Item] = [ui.TextDisplay(title), ui.TextDisplay(highlighted)]
+
+    if not was_correct:
+        wrong_display = f"Your answer: ~~{user_answer[:100]}~~"
+        if wrong_translation:
+            wrong_display += f" ({wrong_translation})"
+        parts.append(ui.TextDisplay(wrong_display))
+
+    parts.append(ui.Separator(visible=True))
+    # Show both the conjugated form and the dictionary form if they differ
+    word_display = f"**{actual_word}** — {card.translation}"
+    if _normalize_word(actual_word) != _normalize_word(card.word):
+        word_display += f"  *(from {card.word})*"
+    parts.append(ui.TextDisplay(word_display))
+
+    if card.sentence_translation:
+        parts.append(ui.TextDisplay(f"-# *{card.sentence_translation}*"))
+
+    # Action row depends on tracked vs untracked
+    row = ui.ActionRow()
+    if tracked and on_rating:
+        if was_correct:
+            for label, style, rating in [
+                ("Hard", ButtonStyle.secondary, RATING_HARD),
+                ("Good", ButtonStyle.primary, RATING_GOOD),
+                ("Easy", ButtonStyle.success, RATING_EASY),
+            ]:
+                btn = ui.Button(label=label, style=style)
+                btn.callback = _rating_cb(on_rating, rating)
+                row.add_item(btn)
+        else:
+            btn = ui.Button(label="Again", style=ButtonStyle.danger)
+            btn.callback = _rating_cb(on_rating, RATING_AGAIN)
+            row.add_item(btn)
+    else:
+        if on_next:
+            next_btn = ui.Button(label="Next", style=ButtonStyle.primary)
+            next_btn.callback = _simple_cb(on_next)
+            row.add_item(next_btn)
+        if on_quit:
+            quit_btn = ui.Button(label="Quit", style=ButtonStyle.danger)
+            quit_btn.callback = _simple_cb(on_quit)
+            row.add_item(quit_btn)
+
+    parts.append(row)
+    view.add_item(ui.Container(*parts, accent_colour=colour))
+    return view
+
+
+# ── Summary ──
+
+def build_summary_view(session: PracticeSession, *, quit_early: bool = False) -> ui.LayoutView:
+    """Build a LayoutView for the session summary."""
+    view = ui.LayoutView(timeout=None)
+
+    if quit_early and session.total_reviewed == 0:
+        view.add_item(ui.Container(
+            ui.TextDisplay("## Session Ended"),
+            ui.TextDisplay("No cards were reviewed."),
+            accent_colour=Color.orange(),
+        ))
+        return view
+
+    pct = (session.correct_count / session.total_reviewed * 100) if session.total_reviewed > 0 else 0
+    title = "## Session Ended Early" if quit_early else "## 🎉 Session Complete!"
+
+    view.add_item(ui.Container(
+        ui.TextDisplay(title),
+        ui.Separator(visible=True),
+        ui.TextDisplay(
+            f"**Score:** {session.correct_count}/{session.total_reviewed} ({pct:.0f}%)\n"
+            f"**Cards reviewed:** {session.total_reviewed}"
+        ),
+        accent_colour=Color.gold(),
+    ))
+    return view
+
+
+# ── Stats (still Embed — works outside ephemeral practice flow) ──
+
+def create_stats_embed(language: str, stats: dict) -> discord.Embed:
+    """Create an embed showing practice statistics with per-level breakdown."""
+    lang_emoji = LANG_EMOJI.get(language, "")
+
+    embed = discord.Embed(
+        title=f"{lang_emoji} {language.title()} Practice Stats",
+        color=Color.blue()
     )
 
+    levels = stats.get('levels', {})
+    for lvl in ("A", "B", "C"):
+        lvl_stats = levels.get(lvl, {'due': 0, 'learning': 0, 'mastered': 0})
+        name = f"Level {lvl} — {LEVEL_LABELS.get(lvl, '')}"
+        value = f"📬 {lvl_stats['due']} due · 📖 {lvl_stats['learning']} learning · ✅ {lvl_stats['mastered']} mastered"
+        embed.add_field(name=name, value=value, inline=False)
+
+    embed.add_field(
+        name="Overall",
+        value=(
+            f"**{stats['seen']}/{stats['total']}** cards seen · "
+            f"**{stats['due']}** due now · "
+            f"**{stats['mastered']}** mastered"
+        ),
+        inline=False,
+    )
     return embed
 
-def create_summary_embed(session: PracticeSession) -> Embed:
-    """Create a session summary embed"""
-    percentage = (session.correct_count / session.total_reviewed * 100) if session.total_reviewed > 0 else 0
 
-    embed = Embed(
-        title="Session Complete!",
-        color=discord.Color.gold()
-    )
+# ── Callback helpers ──
 
-    embed.add_field(
-        name="Score",
-        value=f"{session.correct_count}/{session.total_reviewed} ({percentage:.0f}%)",
-        inline=True
-    )
-    embed.add_field(
-        name="Cards reviewed",
-        value=str(session.total_reviewed),
-        inline=True
-    )
+def _answer_cb(on_answer, choice):
+    async def cb(interaction: Interaction):
+        await on_answer(interaction, choice)
+    return cb
 
-    return embed
 
-def create_stats_embed(language: str, stats: dict) -> Embed:
-    """Create an embed showing practice statistics"""
-    lang_emoji = {"spanish": "ES", "english": "EN"}.get(language, "")
+def _modal_cb(card, on_answer):
+    async def cb(interaction: Interaction):
+        modal = AnswerModal(card, on_answer)
+        await interaction.response.send_modal(modal)
+    return cb
 
-    embed = Embed(
-        title=f"Practice Stats - {lang_emoji} {language.title()}",
-        color=discord.Color.blue()
-    )
 
-    embed.add_field(name="New", value=str(stats['new']), inline=True)
-    embed.add_field(name="Learning", value=str(stats['learning']), inline=True)
-    embed.add_field(name="Due", value=str(stats['due']), inline=True)
-    embed.add_field(name="Mastered", value=str(stats['mastered']), inline=True)
-    embed.add_field(name="Total Cards", value=str(stats['total']), inline=True)
+def _simple_cb(fn):
+    async def cb(interaction: Interaction):
+        await fn(interaction)
+    return cb
 
-    return embed
+
+def _rating_cb(on_rating, rating):
+    async def cb(interaction: Interaction):
+        await on_rating(interaction, rating)
+    return cb

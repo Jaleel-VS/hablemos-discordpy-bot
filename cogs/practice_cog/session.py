@@ -1,6 +1,4 @@
-"""
-Practice Session State Management
-"""
+"""Practice session state management."""
 import time
 from dataclasses import dataclass, field
 from enum import Enum
@@ -9,28 +7,32 @@ from enum import Enum
 class PracticeMode(Enum):
     TYPING = "typing"
     CHOICE = "choice"
-    MIXED = "mixed"
+
 
 @dataclass
 class PracticeCard:
-    """A single practice card"""
+    """A single practice card."""
+
     id: int
     word: str
     translation: str
     language: str
     sentence: str
     sentence_with_blank: str
-    # SRS fields (may be None for new cards)
-    interval_days: float | None = None
-    ease_factor: float | None = None
-    repetitions: int | None = None
+    card_json: str | None = None  # Serialized FSRS Card state
+    sentence_translation: str = ""
+    level: str = ""
+
 
 @dataclass
 class PracticeSession:
-    """State for an active practice session"""
+    """State for an active practice session."""
+
     user_id: int
     language: str
     mode: PracticeMode
+    tracked: bool = True
+    show_hints: bool = False
     cards: list[PracticeCard] = field(default_factory=list)
     current_index: int = 0
     correct_count: int = 0
@@ -39,35 +41,31 @@ class PracticeSession:
 
     @property
     def current_card(self) -> PracticeCard | None:
-        """Get the current card or None if session is complete"""
+        """Get the current card or None if session is complete."""
         if self.current_index < len(self.cards):
             return self.cards[self.current_index]
         return None
 
     @property
     def is_complete(self) -> bool:
-        """Check if all cards have been reviewed"""
+        """Check if all cards have been reviewed."""
         return self.current_index >= len(self.cards)
 
     @property
     def progress_text(self) -> str:
-        """Get progress string like '3/10'"""
+        """Get progress string like '3/10'."""
         return f"{self.current_index + 1}/{len(self.cards)}"
 
     def advance(self) -> None:
-        """Move to the next card"""
+        """Move to the next card."""
         self.current_index += 1
 
     def record_answer(self, correct: bool) -> None:
-        """Record whether the answer was correct"""
+        """Record whether the answer was correct."""
         self.total_reviewed += 1
         if correct:
             self.correct_count += 1
 
     def get_mode_for_card(self) -> str:
-        """Get the mode to use for the current card (handles mixed mode)"""
-        if self.mode == PracticeMode.MIXED:
-            # Alternate between typing and choice
-            import random
-            return random.choice(["typing", "choice"])
+        """Get the mode to use for the current card."""
         return self.mode.value

@@ -489,4 +489,7 @@ class ConversationCog(BaseCog):
 
 async def setup(bot):
     """Required setup function for loading the cog"""
+    if not bot.settings.gemini_api_key:
+        logger.info("GEMINI_API_KEY not set — ConversationCog will not load")
+        return
     await bot.add_cog(ConversationCog(bot))

@@ -303,17 +303,14 @@ async def initialize_schema(pool):
             ON practice_cards(language)
         ''')
 
-        # User card progress table (per-user SRS tracking)
+        # User card progress table (per-user FSRS tracking)
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS user_card_progress (
                 id SERIAL PRIMARY KEY,
                 user_id BIGINT NOT NULL,
                 card_id INTEGER NOT NULL REFERENCES practice_cards(id) ON DELETE CASCADE,
-                last_review TIMESTAMPTZ,
+                card_json TEXT,
                 next_review TIMESTAMPTZ,
-                interval_days REAL DEFAULT 1.0,
-                ease_factor REAL DEFAULT 2.5,
-                repetitions INTEGER DEFAULT 0,
                 created_at TIMESTAMPTZ DEFAULT NOW(),
                 UNIQUE(user_id, card_id)
             )
@@ -327,6 +324,45 @@ async def initialize_schema(pool):
         await conn.execute('''
             CREATE INDEX IF NOT EXISTS idx_progress_due
             ON user_card_progress(user_id, next_review)
+        ''')
+
+        # Migration: add card_json and drop SM-2 columns from user_card_progress
+        await conn.execute('''
+            DO $$
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name='user_card_progress' AND column_name='card_json'
+                ) THEN
+                    ALTER TABLE user_card_progress ADD COLUMN card_json TEXT;
+                END IF;
+                IF EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name='user_card_progress' AND column_name='interval_days'
+                ) THEN
+                    ALTER TABLE user_card_progress
+                        DROP COLUMN interval_days,
+                        DROP COLUMN ease_factor,
+                        DROP COLUMN repetitions,
+                        DROP COLUMN last_review;
+                END IF;
+            END $$;
+        ''')
+
+        # Migration: add level, topic, sentence_translation to practice_cards
+        await conn.execute('''
+            DO $$
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name='practice_cards' AND column_name='level'
+                ) THEN
+                    ALTER TABLE practice_cards
+                        ADD COLUMN level VARCHAR(2),
+                        ADD COLUMN topic TEXT,
+                        ADD COLUMN sentence_translation TEXT;
+                END IF;
+            END $$;
         ''')
 
         # Quote banned users table

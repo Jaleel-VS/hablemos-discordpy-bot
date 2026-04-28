@@ -258,7 +258,7 @@ class QuoteGenerator(BaseCog):
                 asyncio.to_thread(creator_fn, user_nick, user_avatar, message_content, output_path=img_path),
                 timeout=30,
             )
-            await ctx.send(file=File(img_path))
+            await ctx.send(content=ctx.author.mention, file=File(img_path))
         except HTTPException:
             logger.exception("Failed to send quote image")
             await ctx.send(embed=red_embed("Something went wrong sending the image."))
@@ -288,14 +288,14 @@ class QuoteGenerator(BaseCog):
     @command(aliases=['q2'])
     @cooldown(1, 10, type=BucketType.user)
     async def quote2(self, ctx, *user_input):
-        """Creates a quote using the card style. Usage mirrors `$quote`."""
-        await self._generate_and_send(ctx, user_input, "quote2", create_image2)
+        """Creates a quote using the polaroid style. Usage mirrors `$quote`."""
+        await self._generate_and_send(ctx, user_input, "quote2", create_image3)
 
     @command(aliases=['q3'])
     @cooldown(1, 10, type=BucketType.user)
     async def quote3(self, ctx, *user_input):
-        """Creates a quote using the polaroid style. Usage mirrors `$quote`."""
-        await self._generate_and_send(ctx, user_input, "quote3", create_image3)
+        """Creates a quote using the card style. Usage mirrors `$quote`."""
+        await self._generate_and_send(ctx, user_input, "quote3", create_image2)
 
     @command(aliases=['qm'])
     @cooldown(1, 15, type=BucketType.user)
@@ -381,7 +381,7 @@ class QuoteGenerator(BaseCog):
                 asyncio.to_thread(create_multi_image, messages, output_path=img_path),
                 timeout=30,
             )
-            await ctx.send(file=File(img_path))
+            await ctx.send(content=ctx.author.mention, file=File(img_path))
         except HTTPException:
             logger.exception("Failed to send multi-quote image")
             await ctx.send(embed=red_embed("Something went wrong sending the image."))

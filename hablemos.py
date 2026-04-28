@@ -79,7 +79,7 @@ class Hablemos(Bot):
             except Exception:
                 logger.error("Failed to load extension %s", ext, exc_info=True)
 
-        self.tree.on_app_command_completion = self._on_app_command_completion
+        # on_app_command_completion is a client event, not a tree attribute
 
     async def on_ready(self):
         guild_id = self.settings.bot_playground_guild_id
@@ -114,7 +114,7 @@ class Hablemos(Bot):
         except Exception as e:
             logger.debug("Failed to record command metric: %s", e)
 
-    async def _on_app_command_completion(self, interaction, command):
+    async def on_app_command_completion(self, interaction, command):
         logger.info("Slash command %s completed by %s in %s.", command.qualified_name, interaction.user, interaction.guild)
         try:
             await self.db.record_command(

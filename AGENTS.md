@@ -111,7 +111,6 @@ All commit messages should follow the [Conventional Commits](https://www.convent
 
 [optional footer(s)]
 
-🤖 Assisted by AI
 ```
 
 Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`
@@ -170,16 +169,3 @@ If these rules are accidentally violated:
 2. Document what happened and inform the user
 3. Consider creating a new branch from the last known good state
 4. If history is corrupted, preserve the working directory before attempting recovery
-
-## Source Citations
-
-When creating or updating files with information gathered from external sources (Quip documents, wikis, web searches, etc.), add a `## Sources` section at the end of the file:
-
-```
-## Sources
-
-- [Title or description](URL) — accessed YYYY-MM-DD
-- ⚠️ External link — [AWS Lambda Docs](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) — accessed YYYY-MM-DD
-```
-
-Prefix non-wiki, non-quip links with `⚠️ External link —`.

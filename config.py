@@ -51,7 +51,7 @@ class Settings:
     online_channel_id: int
     league_guild_id: int
     owner_id: int
-    gemini_api_key: str
+    gemini_api_key: str | None
     environment: str
     website_api_url: str
     convo_spa_channels: list[int]
@@ -78,7 +78,7 @@ def load_settings() -> Settings:
         online_channel_id=get_int_env("ONLINE_CHANNEL_ID", "808679873837137940"),
         league_guild_id=get_int_env("LEAGUE_GUILD_ID", "243838819743432704"),
         owner_id=get_int_env("BOT_OWNER_ID", "216848576549093376"),
-        gemini_api_key=get_required_env("GEMINI_API_KEY"),
+        gemini_api_key=os.getenv("GEMINI_API_KEY") or None,
         environment=get_str_env("ENVIRONMENT", "development"),
         website_api_url=get_str_env(
             "WEBSITE_API_URL",

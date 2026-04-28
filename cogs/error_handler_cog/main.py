@@ -76,6 +76,10 @@ class ErrorHandler(BaseCog):
 
         try:
             if isinstance(error, commands.CommandNotFound):
+                # Only handle command-not-found in the main server
+                if not ctx.guild or ctx.guild.id != self.bot.settings.league_guild_id:
+                    return
+
                 # Suggest similar commands via fuzzy match
                 invoked = ctx.invoked_with
                 all_cmds = [c.name for c in self.bot.commands if not c.hidden]

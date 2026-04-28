@@ -172,4 +172,7 @@ class AskCog(BaseCog):
 
 
 async def setup(bot: commands.Bot):
+    if not bot.settings.gemini_api_key:
+        logger.info("GEMINI_API_KEY not set — AskCog will not load")
+        return
     await bot.add_cog(AskCog(bot))
