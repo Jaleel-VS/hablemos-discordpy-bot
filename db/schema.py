@@ -509,4 +509,43 @@ async def initialize_schema(pool):
             ADD COLUMN IF NOT EXISTS post_data JSONB
         ''')
 
+        # Conjugation verbs table (verb metadata)
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS conjugation_verbs (
+                id SERIAL PRIMARY KEY,
+                infinitive VARCHAR(100) NOT NULL UNIQUE,
+                english TEXT NOT NULL,
+                category VARCHAR(50),
+                level VARCHAR(2),
+                frequency_rank INTEGER
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_conj_verbs_category
+            ON conjugation_verbs(category)
+        ''')
+
+        # Conjugation forms table (one row per verb × tense × pronoun)
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS conjugation_forms (
+                id SERIAL PRIMARY KEY,
+                verb_id INTEGER NOT NULL REFERENCES conjugation_verbs(id) ON DELETE CASCADE,
+                tense VARCHAR(50) NOT NULL,
+                pronoun VARCHAR(50) NOT NULL,
+                form VARCHAR(200) NOT NULL,
+                UNIQUE(verb_id, tense, pronoun)
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_conj_forms_verb
+            ON conjugation_forms(verb_id)
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_conj_forms_tense_pronoun
+            ON conjugation_forms(tense, pronoun)
+        ''')
+
         logger.info("Database schema initialized")

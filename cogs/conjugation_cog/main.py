@@ -1,225 +1,294 @@
 """
 Conjugation practice cog — interactive Spanish verb conjugation game.
+
+Uses Components V2 (LayoutView) for ephemeral, button-driven sessions.
+Verb data stored in PostgreSQL (conjugation_verbs + conjugation_forms).
 """
-import json
+from __future__ import annotations
+
 import logging
 import random
-import unicodedata
-from pathlib import Path
+import time
 
 import discord
+from discord import Interaction, app_commands
 from discord.ext import commands
 
 from base_cog import BaseCog
 
+from .session import ConjugationCard, ConjugationMode, ConjugationSession
+from .views import build_question_view, build_result_view, build_summary_view
+
 logger = logging.getLogger(__name__)
 
-TIMEOUT_SECONDS = 60
+TENSES = [
+    ("presente", "Present"),
+    ("pretérito", "Preterite"),
+    ("imperfecto", "Imperfect"),
+    ("futuro", "Future"),
+    ("condicional", "Conditional"),
+    ("pretérito_perfecto", "Present Perfect"),
+    ("pluscuamperfecto", "Pluperfect"),
+    ("subjuntivo_presente", "Subj. Present"),
+    ("subjuntivo_imperfecto", "Subj. Imperfect"),
+    ("imperativo_afirmativo", "Imperative (+)"),
+    ("imperativo_negativo", "Imperative (−)"),
+]
 
 
-def normalize(text: str) -> str:
-    """Normalize text for comparison — remove accents, lowercase, strip."""
-    if not text:
-        return ""
-    text = text.strip().lower()
-    return ''.join(
-        c for c in unicodedata.normalize('NFD', text)
-        if unicodedata.category(c) != 'Mn'
-    )
+def _normalize(text: str) -> str:
+    return text.strip().lower()
 
 
-PRONOUN_DISPLAY = {
-    "él/ella": "él",
-    "ellos/ellas": "ellos",
-    "él/ella/usted": "él",
-    "ellos/ellas/ustedes": "ellos",
-}
+_PRONOUNS = {"yo", "tú", "tu", "él", "el", "ella", "nosotros", "nosotras",
+             "vosotros", "vosotras", "ellos", "ellas", "usted", "ustedes"}
 
-TENSE_DISPLAY = {
-    "presente": "Present",
-    "pretérito": "Preterite",
-    "futuro": "Future",
-}
+
+def _strip_pronoun(text: str) -> str:
+    """Strip a leading pronoun if the user typed 'yo hablo' instead of 'hablo'."""
+    parts = text.strip().split(None, 1)
+    if len(parts) == 2 and parts[0].lower() in _PRONOUNS:
+        return parts[1]
+    return text
 
 
 class ConjugationCog(BaseCog):
     """Interactive Spanish verb conjugation practice."""
 
+    SESSION_TTL = 1800
+    MAX_SESSIONS = 50
+
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
-        self.active_users: set[int] = set()
-        self.verb_data: dict = {}
-        self.categories: dict = {}
+        self.active_sessions: dict[int, ConjugationSession] = {}
 
-    async def cog_load(self):
-        logger.info("Loading verb data...")
-        data_file = Path(__file__).parent / 'verb_data.json'
-        with open(data_file, encoding='utf-8') as f:
-            data = json.load(f)
-        self.categories = data['categories']
-        self.verb_data = data['verbs']
-        logger.info("Loaded %s verbs across %s categories", len(self.verb_data), len(self.categories))
+    def _purge_stale(self) -> None:
+        now = time.time()
+        stale = [uid for uid, s in self.active_sessions.items()
+                 if now - s.created_at > self.SESSION_TTL]
+        for uid in stale:
+            del self.active_sessions[uid]
 
-    @commands.command(name='conj', aliases=['conjugate'])
-    @commands.cooldown(1, 10, commands.BucketType.user)
-    async def start_game(self, ctx, category: str | None = None, questions: int = 10):
-        """
-        Start a conjugation practice session.
+    # ── DB queries ──
 
-        Usage: $conj [category] [questions]
-        Categories: high-frequency, regular-ar, regular-er-ir, irregulars
-        """
-        if ctx.author.id in self.active_users:
-            await ctx.send("You already have an active session. Finish it or type `quit`.")
+    async def _get_cards(
+        self, category: str | None, tense: str | None, limit: int,
+    ) -> list[ConjugationCard]:
+        """Get random conjugation questions from the DB."""
+        conditions = []
+        args: list = []
+        idx = 1
+
+        if category:
+            conditions.append(f"v.category = ${idx}")
+            args.append(category)
+            idx += 1
+        if tense:
+            conditions.append(f"f.tense = ${idx}")
+            args.append(tense)
+            idx += 1
+
+        where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+
+        rows = await self.bot.db._fetch(f"""
+            SELECT v.id, v.infinitive, v.english, f.tense, f.pronoun, f.form
+            FROM conjugation_forms f
+            JOIN conjugation_verbs v ON v.id = f.verb_id
+            {where}
+            ORDER BY random()
+            LIMIT ${idx}
+        """, *args, limit)
+
+        return [
+            ConjugationCard(
+                verb_id=r["id"], infinitive=r["infinitive"], english=r["english"],
+                tense=r["tense"], pronoun=r["pronoun"], correct_form=r["form"],
+            )
+            for r in rows
+        ]
+
+    async def _get_distractors(
+        self, tense: str, pronoun: str, correct_form: str, verb_id: int,
+    ) -> list[str]:
+        """Get 3 plausible wrong answers (same tense+pronoun, different verb)."""
+        rows = await self.bot.db._fetch("""
+            SELECT f.form FROM conjugation_forms f
+            WHERE f.tense = $1 AND f.pronoun = $2
+              AND f.verb_id != $3 AND f.form != $4
+            ORDER BY random() LIMIT 3
+        """, tense, pronoun, verb_id, correct_form)
+        return [r["form"] for r in rows]
+
+    async def _get_categories(self) -> list[dict]:
+        """Get categories with verb counts."""
+        return await self.bot.db._fetch("""
+            SELECT category, count(*) as verb_count
+            FROM conjugation_verbs
+            WHERE category IS NOT NULL
+            GROUP BY category ORDER BY verb_count DESC
+        """)
+
+    # ── Slash commands ──
+
+    conj_group = app_commands.Group(
+        name="conjugate", description="Spanish verb conjugation practice",
+    )
+
+    @conj_group.command(name="start", description="Start a conjugation practice session")
+    @app_commands.describe(
+        category="Verb category",
+        tense="Tense to practice (or 'all')",
+        mode="Multiple choice or typing",
+        count="Number of questions (5–20)",
+    )
+    @app_commands.choices(
+        category=[
+            app_commands.Choice(name="High Frequency", value="high-frequency"),
+            app_commands.Choice(name="Regular -AR", value="regular-ar"),
+            app_commands.Choice(name="Regular -ER", value="regular-er"),
+            app_commands.Choice(name="Regular -IR", value="regular-ir"),
+            app_commands.Choice(name="All Categories", value="all"),
+        ],
+        tense=[
+            app_commands.Choice(name="All Tenses", value="all"),
+            *[app_commands.Choice(name=display, value=key) for key, display in TENSES],
+        ],
+        mode=[
+            app_commands.Choice(name="Multiple choice", value="choice"),
+            app_commands.Choice(name="Typing", value="typing"),
+        ],
+        count=[
+            app_commands.Choice(name="5", value=5),
+            app_commands.Choice(name="10", value=10),
+            app_commands.Choice(name="15", value=15),
+            app_commands.Choice(name="20", value=20),
+        ],
+    )
+    async def conj_start(
+        self, interaction: Interaction,
+        category: str = "high-frequency", tense: str = "all",
+        mode: str = "choice", count: int = 10,
+    ):
+        user_id = interaction.user.id
+        self._purge_stale()
+
+        if user_id in self.active_sessions:
+            await interaction.response.send_message(
+                "You already have an active session. Finish or quit it first.",
+                ephemeral=True,
+            )
             return
 
-        # Handle $conj 15 (number as first arg)
-        if category and category.isdigit():
-            questions = int(category)
-            category = "high-frequency"
-        category = category or "high-frequency"
+        await interaction.response.defer(ephemeral=True)
 
-        if category not in self.categories:
-            cats = ', '.join(f'`{c}`' for c in self.categories)
-            await ctx.send(f"Unknown category. Available: {cats}")
+        cat_filter = None if category == "all" else category
+        tense_filter = None if tense == "all" else tense
+
+        cards = await self._get_cards(cat_filter, tense_filter, count)
+        if not cards:
+            await interaction.followup.send(
+                "No conjugation data found for that combination.", ephemeral=True,
+            )
             return
 
-        questions = max(1, min(questions, 30))
-        cat = self.categories[category]
-        verbs = {v: self.verb_data[v] for v in cat['verbs'] if v in self.verb_data}
-        tenses = cat['tenses']
-
-        self.active_users.add(ctx.author.id)
-        try:
-            await self._run_game(ctx, cat['name'], verbs, tenses, questions)
-        finally:
-            self.active_users.discard(ctx.author.id)
-
-    async def _run_game(self, ctx, category_name: str, verbs: dict,
-                        tenses: list[str], total: int):
-        """Run the game loop using wait_for."""
-        score = 0
-        verb_list = list(verbs.keys())
-        random.shuffle(verb_list)
-
-        # Welcome
-        embed = discord.Embed(
-            title="Let's Practice",
-            description=f"**{category_name}** — {total} questions",
-            color=0x57F287,
+        session = ConjugationSession(
+            user_id=user_id, mode=ConjugationMode(mode), cards=cards,
         )
-        embed.set_footer(text="Type the conjugation or 'quit' to stop")
-        await ctx.send(embed=embed)
+        self.active_sessions[user_id] = session
+        await self._show_question(interaction, session, is_first=True)
 
-        for i in range(total):
-            # Pick verb, tense, pronoun
-            verb_key = verb_list[i % len(verb_list)]
-            verb = verbs[verb_key]
-            tense = random.choice(tenses)
-            pronouns = list(verb['conjugations'][tense].keys())
-            pronoun = random.choice(pronouns)
-            answer = verb['conjugations'][tense][pronoun]
+    @conj_group.command(name="categories", description="Show available verb categories")
+    async def conj_categories(self, interaction: Interaction):
+        cats = await self._get_categories()
+        lines = [f"`{c['category']}` — {c['verb_count']} verbs" for c in cats]
+        embed = discord.Embed(
+            title="Conjugation Categories",
+            description="\n".join(lines) if lines else "No categories found.",
+            color=discord.Color.blue(),
+        )
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
-            display_pronoun = PRONOUN_DISPLAY.get(pronoun, pronoun)
-            display_tense = TENSE_DISPLAY.get(tense, tense)
+    # ── Session flow ──
 
-            # Question embed
-            q_embed = discord.Embed(
-                title=f"Question {i + 1}/{total}",
-                description=f"# {display_pronoun} + {verb_key}\n*{verb.get('english', '')}*",
-                color=0x5865F2,
+    async def _show_question(
+        self, interaction: Interaction, session: ConjugationSession, *, is_first: bool = False,
+    ):
+        card = session.current_card
+        if card is None or session.is_complete:
+            await self._end_session(interaction, session)
+            return
+
+        card_mode = session.mode.value
+        distractors: list[str] = []
+
+        if card_mode == "choice":
+            distractors = await self._get_distractors(
+                card.tense, card.pronoun, card.correct_form, card.verb_id,
             )
-            q_embed.add_field(name="Tense", value=display_tense, inline=True)
-            if i > 0:
-                q_embed.add_field(name="Score", value=f"{score}/{i}", inline=True)
-            q_embed.set_footer(text="Type your answer or 'quit'")
-            await ctx.send(embed=q_embed)
+            if len(distractors) < 3:
+                card_mode = "typing"
 
-            # Wait for answer
-            def check(m):
-                return m.author.id == ctx.author.id and m.channel.id == ctx.channel.id
+        view = build_question_view(
+            session=session, card=card, card_mode=card_mode, distractors=distractors,
+            on_answer=lambda i, a: self._handle_answer(i, session, a),
+            on_skip=lambda i: self._handle_skip(i, session),
+            on_quit=lambda i: self._handle_quit(i, session),
+        )
 
+        if is_first:
+            await interaction.followup.send(view=view, ephemeral=True)
+        else:
             try:
-                msg = await self.bot.wait_for('message', check=check, timeout=TIMEOUT_SECONDS)
-            except TimeoutError:
-                await ctx.send(f"Session timed out. Final score: **{score}/{i}**")
-                return
+                await interaction.response.edit_message(view=view)
+            except discord.InteractionResponded:
+                await interaction.followup.send(view=view, ephemeral=True)
 
-            user_input = msg.content.strip()
+    async def _handle_answer(
+        self, interaction: Interaction, session: ConjugationSession, user_answer: str,
+    ):
+        card = session.current_card
+        if card is None:
+            return
 
-            if user_input.lower() in ('quit', 'stop', 'exit'):
-                await ctx.send(embed=self._results_embed(score, i, category_name, stopped=True))
-                return
+        was_correct = _normalize(user_answer) == _normalize(card.correct_form)
+        if not was_correct:
+            was_correct = _normalize(_strip_pronoun(user_answer)) == _normalize(card.correct_form)
+        session.record_answer(was_correct)
+        session.advance()
 
-            # Check answer (lenient: accept with or without pronoun)
-            correct = (
-                normalize(user_input) == normalize(answer) or
-                normalize(answer) in normalize(user_input)
-            )
-            if correct:
-                score += 1
+        view = build_result_view(
+            card, user_answer, was_correct,
+            on_next=lambda i: self._show_question(i, session)
+            if not session.is_complete else self._end_session(i, session),
+            on_quit=lambda i: self._handle_quit(i, session),
+        )
 
-            # Feedback
-            if correct:
-                fb = discord.Embed(
-                    title="Correct!",
-                    description=f"**{display_pronoun} {answer}**",
-                    color=0x57F287,
-                )
-            else:
-                fb = discord.Embed(
-                    title="Not quite",
-                    description=f"You said: **{user_input}**\nAnswer: **{display_pronoun} {answer}**",
-                    color=0xED4245,
-                )
-            fb.add_field(name="Score", value=f"{score}/{i + 1}", inline=True)
-            await ctx.send(embed=fb)
+        try:
+            await interaction.response.edit_message(view=view)
+        except discord.InteractionResponded:
+            await interaction.followup.send(view=view, ephemeral=True)
 
-        # Game complete
-        await ctx.send(embed=self._results_embed(score, total, category_name, stopped=False))
-
-    def _results_embed(self, score: int, answered: int, category: str,
-                       stopped: bool) -> discord.Embed:
-        if answered == 0:
-            desc = "No questions answered."
+    async def _handle_skip(self, interaction: Interaction, session: ConjugationSession):
+        session.advance()
+        if session.is_complete:
+            await self._end_session(interaction, session)
         else:
-            pct = score / answered * 100
-            desc = f"Final score: **{score}/{answered}** ({pct:.0f}%)"
-            if pct == 100:
-                desc += "\n\nPerfecto!"
-            elif pct >= 80:
-                desc += "\n\nExcelente!"
-            elif pct >= 60:
-                desc += "\n\nBien hecho!"
-            else:
-                desc += "\n\nSigue practicando!"
+            await self._show_question(interaction, session)
 
-        return discord.Embed(
-            title="Practice Stopped" if stopped else "Practice Complete!",
-            description=desc,
-            color=0xFEE75C if stopped else 0x57F287,
-        ).add_field(name="Category", value=category, inline=True)
+    async def _handle_quit(self, interaction: Interaction, session: ConjugationSession):
+        await self._end_session(interaction, session, quit_early=True)
 
-    @commands.command(name='conj_categories', aliases=['conj_cats'])
-    async def show_categories(self, ctx):
-        """Show available practice categories."""
-        embed = discord.Embed(title="Practice Categories", color=0x5865F2)
-        for cat_id, cat in self.categories.items():
-            embed.add_field(
-                name=cat['name'],
-                value=f"*{cat['description']}*\n`{len(cat['verbs'])} verbs` — `$conj {cat_id}`",
-                inline=False,
-            )
-        await ctx.send(embed=embed)
-
-    @commands.command(name='conj_stop')
-    async def stop_game(self, ctx):
-        """Stop hint — actual stopping is done by typing 'quit' in-game."""
-        if ctx.author.id in self.active_users:
-            await ctx.send("Type `quit` in the game channel to stop your session.")
-        else:
-            await ctx.send("You don't have an active session.")
+    async def _end_session(
+        self, interaction: Interaction, session: ConjugationSession, quit_early: bool = False,
+    ):
+        self.active_sessions.pop(session.user_id, None)
+        view = build_summary_view(session, quit_early=quit_early)
+        try:
+            await interaction.response.edit_message(view=view)
+        except discord.InteractionResponded:
+            await interaction.followup.send(view=view, ephemeral=True)
 
 
 async def setup(bot):
     await bot.add_cog(ConjugationCog(bot))
+    logger.info("ConjugationCog loaded")
