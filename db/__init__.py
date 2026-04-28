@@ -75,10 +75,14 @@ class Database(
                 statement_cache_size=0,
             )
             logger.info("Database connection pool created successfully")
+        except Exception as e:
+            logger.error("Failed to create database pool: %s", e)
+            raise
+
+        try:
             await initialize_schema(self.pool)
         except Exception as e:
-            logger.error("Failed to connect to database: %s", e)
-            raise
+            logger.warning("Schema init failed (tables likely already exist): %s", e)
 
     async def close(self):
         """Close the database connection pool"""
