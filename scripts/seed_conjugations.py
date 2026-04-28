@@ -31,9 +31,17 @@ PRONOUN_MAP: dict[str, str] = {
     "yo": "yo",
     "tú": "tú",
     "él/ella/usted": "él/ella",
-    "nosotros": "nosotros",
-    "vosotros": "vosotros",
+    "nosotros/nosotras": "nosotros",
+    "vosotros/vosotras": "vosotros",
     "ellos/ellas/ustedes": "ellos/ellas",
+}
+
+# Jehle imperative uses a shifted pronoun layout
+IMP_PRONOUN_MAP: dict[str, str] = {
+    "tú": "tú",
+    "él/ella/usted": "vosotros",
+    "vosotros/vosotras": "usted",
+    "ellos/ellas/ustedes": "ustedes",
 }
 
 # Top verbs by frequency for category assignment
@@ -80,6 +88,8 @@ def main() -> None:
             if key not in TENSE_MAP:
                 continue
             pronoun = PRONOUN_MAP.get(e["performer"])
+            if "Imperative" in e["mood"]:
+                pronoun = IMP_PRONOUN_MAP.get(e["performer"])
             if pronoun is None:
                 continue
 

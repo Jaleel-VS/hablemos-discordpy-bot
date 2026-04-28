@@ -28,6 +28,8 @@ PRONOUN_DISPLAY = {
     "nosotros": "nosotros",
     "vosotros": "vosotros",
     "ellos/ellas": "ellos",
+    "usted": "usted",
+    "ustedes": "ustedes",
 }
 
 
