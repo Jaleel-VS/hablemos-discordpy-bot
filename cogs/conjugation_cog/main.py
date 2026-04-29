@@ -115,15 +115,11 @@ class ConjugationCog(BaseCog):
         Prioritizes same-tense different-pronoun, then fills from other tenses.
         """
         rows = await self.bot.db._fetch("""
-            (SELECT f.form, 1 as priority FROM conjugation_forms f
-             WHERE f.verb_id = $1 AND f.tense = $2
-               AND f.pronoun != $3 AND f.form != $4
-             ORDER BY random() LIMIT 3)
-            UNION ALL
-            (SELECT f.form, 2 FROM conjugation_forms f
-             WHERE f.verb_id = $1 AND f.tense != $2 AND f.form != $4
-             ORDER BY random() LIMIT 3)
-            ORDER BY priority, random() LIMIT 3
+            SELECT f.form FROM conjugation_forms f
+            WHERE f.verb_id = $1 AND f.form != $4
+              AND NOT (f.tense = $2 AND f.pronoun = $3)
+            ORDER BY (f.tense = $2)::int DESC, random()
+            LIMIT 3
         """, verb_id, tense, pronoun, correct_form)
         return [r["form"] for r in rows]
 
