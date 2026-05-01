@@ -152,8 +152,11 @@ def _parse_args(*args: str) -> tuple[str, str]:
     return diff, lang
 
 
-def _build_v2_view(game: CrosswordGame) -> discord.ui.LayoutView:
-    """Build a Components V2 LayoutView for the crossword game."""
+def _build_v2_view(game: CrosswordGame) -> tuple[discord.ui.LayoutView, File]:
+    """Build a Components V2 LayoutView for the crossword game.
+
+    Returns (view, file) — file must be passed to send() separately.
+    """
     view = discord.ui.LayoutView(timeout=GAME_TIMEOUT_SECONDS)
 
     diff_cfg = DIFFICULTIES[game.difficulty]
@@ -161,7 +164,7 @@ def _build_v2_view(game: CrosswordGame) -> discord.ui.LayoutView:
     progress = f"{len(game.solved)}/{len(game.grid.placed)}"
 
     buf = render_grid(game.grid, game.solved, game.revealed_cells)
-    view.add_file(File(buf, filename="crossword.png"))
+    file = File(buf, filename="crossword.png")
 
     header = discord.ui.TextDisplay(
         f"## 🧩 Crossword — {diff_cfg.label} · {lang_label}\n"
@@ -180,7 +183,7 @@ def _build_v2_view(game: CrosswordGame) -> discord.ui.LayoutView:
         accent_colour=color,
     ))
 
-    return view
+    return view, file
 
 
 def _build_game(
@@ -282,8 +285,8 @@ class CrosswordCog(BaseCog):
         )
 
         if use_v2:
-            view = _build_v2_view(game)
-            msg = await channel.send(view=view)
+            view, file = _build_v2_view(game)
+            msg = await channel.send(view=view, file=file)
         else:
             embed = game.build_embed()
             img = game.render()
@@ -412,8 +415,8 @@ class CrosswordCog(BaseCog):
         else:
             try:
                 if game.use_v2:
-                    view = _build_v2_view(game)
-                    msg = await message.channel.send(view=view)
+                    view, file = _build_v2_view(game)
+                    msg = await message.channel.send(view=view, file=file)
                 else:
                     embed = game.build_embed()
                     img = game.render()
