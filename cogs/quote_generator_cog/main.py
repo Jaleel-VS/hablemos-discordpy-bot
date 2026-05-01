@@ -453,11 +453,6 @@ class QuoteGenerator(BaseCog):
             if img_path:
                 Path(img_path).unlink(missing_ok=True)
 
-    @app_commands.context_menu(name="Quote this")
-    async def quote_context_menu(self, interaction: Interaction, message: discord.Message) -> None:
-        """Right-click a message to create a quote image."""
-        await self._generate_from_message(interaction, message, create_image)
-
     @command()
     async def quoteme(self, ctx, toggle: str | None = None):
         """
