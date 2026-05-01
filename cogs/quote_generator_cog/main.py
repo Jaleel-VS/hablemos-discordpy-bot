@@ -498,6 +498,15 @@ class QuoteGenerator(BaseCog):
 
 
 async def setup(bot):
-    await bot.add_cog(QuoteGenerator(bot))
+    cog = QuoteGenerator(bot)
+    await bot.add_cog(cog)
+
+    @app_commands.context_menu(name="Quote this")
+    async def quote_context_menu(interaction: Interaction, message: discord.Message) -> None:
+        """Right-click a message to create a quote image."""
+        await cog._generate_from_message(interaction, message, create_image)
+
+    bot.tree.add_command(quote_context_menu)
+
     from cogs.quote_generator_cog.admin import QuoteAdminCog
     await bot.add_cog(QuoteAdminCog(bot))
