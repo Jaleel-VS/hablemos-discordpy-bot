@@ -261,7 +261,7 @@ class CrosswordCog(BaseCog):
     async def _start_game(
         self, channel: discord.abc.Messageable, channel_id: int,
         author: discord.User | discord.Member, diff: str, lang: str,
-        *, use_v2: bool = False,
+        *, use_v2: bool = False, followup: discord.Webhook | None = None,
     ) -> str | None:
         """Start a crossword game. Returns an error message or None on success."""
         if not self._words:
@@ -284,13 +284,15 @@ class CrosswordCog(BaseCog):
             author, channel_id, diff, lang, use_v2,
         )
 
+        send = followup.send if followup else channel.send
+
         if use_v2:
             view, file = _build_v2_view(game)
-            msg = await channel.send(view=view, file=file)
+            msg = await send(view=view, file=file)
         else:
             embed = game.build_embed()
             img = game.render()
-            msg = await channel.send(embed=embed, file=img)
+            msg = await send(embed=embed, file=img)
 
         game.message = msg
         self.bot.loop.create_task(self._timeout_watcher(channel_id))
@@ -351,7 +353,8 @@ class CrosswordCog(BaseCog):
         use_v2 = style == "v2"
         err = await self._start_game(
             interaction.channel, interaction.channel.id,
-            interaction.user, difficulty, language, use_v2=use_v2,
+            interaction.user, difficulty, language,
+            use_v2=use_v2, followup=interaction.followup,
         )
         if err:
             await interaction.followup.send(err, ephemeral=True)
