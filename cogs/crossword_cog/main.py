@@ -329,7 +329,6 @@ class CrosswordCog(BaseCog):
     @app_commands.describe(
         difficulty="Word difficulty level",
         language="What language are you practicing?",
-        style="Message style",
     )
     @app_commands.choices(
         difficulty=[
@@ -340,25 +339,19 @@ class CrosswordCog(BaseCog):
             app_commands.Choice(name="🇪🇸 Spanish (clues & answers in Spanish)", value="es"),
             app_commands.Choice(name="🇬🇧 English (clues & answers in English)", value="en"),
         ],
-        style=[
-            app_commands.Choice(name="Classic (embed + image)", value="classic"),
-            app_commands.Choice(name="V2 (components layout)", value="v2"),
-        ],
     )
     async def crossword_slash(
         self,
         interaction: Interaction,
         difficulty: str = DEFAULT_DIFFICULTY,
         language: str = DEFAULT_LANGUAGE,
-        style: str = "classic",
     ) -> None:
         """Start a mini crossword puzzle with dropdown options."""
         await interaction.response.defer()
-        use_v2 = style == "v2"
         err = await self._start_game(
             interaction.channel, interaction.channel.id,
             interaction.user, difficulty, language,
-            use_v2=use_v2, followup=interaction.followup,
+            use_v2=True, followup=interaction.followup,
         )
         if err:
             await interaction.followup.send(err, ephemeral=True)
