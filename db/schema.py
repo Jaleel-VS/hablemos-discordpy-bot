@@ -572,4 +572,44 @@ async def initialize_schema(pool):
             ON crossword_words(theme)
         ''')
 
+        # Dictation sentences table
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS dictation_sentences (
+                id SERIAL PRIMARY KEY,
+                language VARCHAR(2) NOT NULL CHECK (language IN ('es', 'en')),
+                level VARCHAR(15) NOT NULL CHECK (level IN ('beginner', 'intermediate')),
+                sentence TEXT NOT NULL,
+                audio_url TEXT,
+                created_at TIMESTAMPTZ DEFAULT now(),
+                UNIQUE (language, sentence)
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_dictation_lang_level
+            ON dictation_sentences(language, level)
+        ''')
+
+        # Dictation scores table
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS dictation_scores (
+                id SERIAL PRIMARY KEY,
+                user_id BIGINT NOT NULL,
+                sentence_id INTEGER NOT NULL REFERENCES dictation_sentences(id) ON DELETE CASCADE,
+                score INTEGER NOT NULL CHECK (score >= 0 AND score <= 4),
+                user_answer TEXT NOT NULL,
+                attempted_at TIMESTAMPTZ DEFAULT now()
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_dictation_scores_user
+            ON dictation_scores(user_id)
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_dictation_scores_sentence
+            ON dictation_scores(sentence_id)
+        ''')
+
         logger.info("Database schema initialized")

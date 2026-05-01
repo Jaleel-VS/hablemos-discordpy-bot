@@ -32,6 +32,7 @@ class DatabaseMixin:
             return await conn.execute(query, *args)
 
 from db.conversations import ConversationsMixin
+from db.dictation import DictationMixin
 from db.exchange_posts import ExchangePostsMixin
 from db.interactions import InteractionsMixin
 from db.introductions import IntroductionsMixin
@@ -59,6 +60,7 @@ class Database(
     MetricsMixin,
     InteractionsMixin,
     TasksMixin,
+    DictationMixin,
 ):
     def __init__(self, database_url: str):
         self.pool: asyncpg.Pool | None = None

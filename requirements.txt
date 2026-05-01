@@ -23,6 +23,7 @@ imgkit~=1.2
 fsrs~=6.3
 
 # Utilities
+aioboto3~=15.5
 demoji~=1.1
 yarl~=1.23
 Reverso-API
