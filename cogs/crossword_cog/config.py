@@ -32,4 +32,4 @@ DIFFICULTIES: dict[str, DifficultyConfig] = {
 }
 
 DEFAULT_DIFFICULTY: Final[str] = "beginner"
-DEFAULT_LANGUAGE: Final[str] = "en"
+DEFAULT_LANGUAGE: Final[str] = "es"

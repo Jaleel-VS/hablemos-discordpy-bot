@@ -24,6 +24,8 @@ from .words import WordEntry, load_words_from_db, pick_words
 
 logger = logging.getLogger(__name__)
 
+LANG_LABELS = {"es": "🇪🇸 Español", "en": "🇬🇧 English"}
+
 
 def _normalize(text: str) -> str:
     """Strip accents and lowercase for answer comparison."""
@@ -32,7 +34,11 @@ def _normalize(text: str) -> str:
 
 
 class CrosswordGame:
-    """State for a single crossword game in a channel."""
+    """State for a single crossword game in a channel.
+
+    ``language`` is the language being practiced — both clues and answers
+    are in this language.
+    """
 
     def __init__(
         self,
@@ -43,10 +49,10 @@ class CrosswordGame:
     ) -> None:
         self.grid = grid
         self.entries = entries  # parallel to grid.placed
-        self.language = language
+        self.language = language  # "es" or "en" — the practice language
         self.difficulty = difficulty
         self.solved: set[int] = set()
-        self.solvers: dict[int, str] = {}  # word index -> display_name
+        self.solvers: dict[int, str] = {}
         self.revealed_cells: dict[tuple[int, int], str] = {}
         self.started_at = time.monotonic()
         self.starter_id: int = 0
@@ -61,19 +67,15 @@ class CrosswordGame:
     def elapsed(self) -> float:
         return time.monotonic() - self.started_at
 
-    def answer_word(self) -> str:
-        """Return 'es' or 'en' — the language of the answer."""
-        return "es" if self.language == "en" else "en"
-
     def get_answer(self, idx: int) -> str:
-        """Get the answer word for a placed word by index."""
+        """Get the answer word (same language as clue)."""
         entry = self.entries[idx]
-        return entry.word_es if self.answer_word() == "es" else entry.word_en
+        return entry.word_es if self.language == "es" else entry.word_en
 
     def get_clue(self, idx: int) -> str:
-        """Get the clue for a placed word by index."""
+        """Get the clue (same language as answer)."""
         entry = self.entries[idx]
-        return entry.clue_en if self.language == "en" else entry.clue_es
+        return entry.clue_es if self.language == "es" else entry.clue_en
 
     def try_solve(self, text: str) -> int | None:
         """Try to match *text* against unsolved words. Return index or None."""
@@ -110,7 +112,7 @@ class CrosswordGame:
     def build_embed(self) -> Embed:
         """Build the game embed with clues."""
         diff_cfg = DIFFICULTIES[self.difficulty]
-        lang_label = "EN → ES" if self.language == "en" else "ES → EN"
+        lang_label = LANG_LABELS.get(self.language, self.language)
         progress = f"{len(self.solved)}/{len(self.grid.placed)}"
 
         embed = Embed(
@@ -138,8 +140,8 @@ def _parse_args(*args: str) -> tuple[str, str]:
         a = arg.lower()
         if a in DIFFICULTIES:
             diff = a
-        elif a in ("en", "es"):
-            lang = a
+        elif a in ("en", "es", "english", "spanish"):
+            lang = "en" if a in ("en", "english") else "es"
     return diff, lang
 
 
@@ -148,31 +150,26 @@ def _build_v2_view(game: CrosswordGame) -> discord.ui.LayoutView:
     view = discord.ui.LayoutView(timeout=GAME_TIMEOUT_SECONDS)
 
     diff_cfg = DIFFICULTIES[game.difficulty]
-    lang_label = "EN → ES" if game.language == "en" else "ES → EN"
+    lang_label = LANG_LABELS.get(game.language, game.language)
     progress = f"{len(game.solved)}/{len(game.grid.placed)}"
 
-    # Render grid to an attachment
     buf = render_grid(game.grid, game.solved, game.revealed_cells)
-    file = File(buf, filename="crossword.png")
-    view.add_file(file)
+    view.add_file(File(buf, filename="crossword.png"))
 
     header = discord.ui.TextDisplay(
-        f"## 🧩 Crossword — {diff_cfg.label} · {lang_label}\n-# {progress} solved · Type your answers! · ⏱️ {GAME_TIMEOUT_SECONDS // 60}min"
+        f"## 🧩 Crossword — {diff_cfg.label} · {lang_label}\n"
+        f"-# {progress} solved · Type your answers! · ⏱️ {GAME_TIMEOUT_SECONDS // 60}min"
     )
 
     gallery = discord.ui.MediaGallery(
         discord.MediaGalleryItem(media="attachment://crossword.png"),
     )
 
-    clues_text = game.build_clues_text()
-    clues = discord.ui.TextDisplay(clues_text)
+    clues = discord.ui.TextDisplay(game.build_clues_text())
 
     color = discord.Color.green() if game.all_solved else discord.Color.blurple()
     view.add_item(discord.ui.Container(
-        header,
-        gallery,
-        discord.ui.Separator(),
-        clues,
+        header, gallery, discord.ui.Separator(), clues,
         accent_colour=color,
     ))
 
@@ -182,15 +179,18 @@ def _build_v2_view(game: CrosswordGame) -> discord.ui.LayoutView:
 def _build_game(
     word_pool: list[WordEntry], difficulty: str, language: str,
 ) -> CrosswordGame | None:
-    """Build a new crossword game. Returns None on grid generation failure."""
+    """Build a new crossword game.
+
+    ``language`` is the practice language — clues and answers are both
+    in this language.
+    """
     entries = pick_words(word_pool, difficulty, WORDS_PER_GAME)
     if len(entries) < 3:
         return None
 
-    # Determine answer words (what goes on the grid)
-    answer_lang = "es" if language == "en" else "en"
+    # Grid words are in the practice language
     answer_words = [
-        (e.word_es if answer_lang == "es" else e.word_en) for e in entries
+        (e.word_es if language == "es" else e.word_en) for e in entries
     ]
 
     grid = generate_grid(answer_words)
@@ -294,13 +294,14 @@ class CrosswordCog(BaseCog):
         Usage: `$crossword [difficulty] [language]`
 
         Difficulty: `beginner` (default) or `advanced`
-        Language: `en` (English clues → Spanish answers, default)
-                  `es` (Spanish clues → English answers)
+        Language: `es` / `spanish` (default) — practice Spanish
+                  `en` / `english` — practice English
 
         Examples:
-          `$crossword` — beginner, English clues
-          `$crossword advanced es` — advanced, Spanish clues
-          `$cw` — shortcut
+          `$crossword` — beginner Spanish
+          `$crossword advanced` — advanced Spanish
+          `$crossword en` — beginner English
+          `$cw advanced english` — advanced English
         """
         diff, lang = _parse_args(difficulty, language)
         err = await self._start_game(ctx.channel, ctx.channel.id, ctx.author, diff, lang)
@@ -310,7 +311,7 @@ class CrosswordCog(BaseCog):
     @app_commands.command(name="crossword", description="Start a mini crossword puzzle!")
     @app_commands.describe(
         difficulty="Word difficulty level",
-        language="Clue language (en = English clues → Spanish answers)",
+        language="What language are you practicing?",
         style="Message style",
     )
     @app_commands.choices(
@@ -319,8 +320,8 @@ class CrosswordCog(BaseCog):
             app_commands.Choice(name="🔴 Advanced", value="advanced"),
         ],
         language=[
-            app_commands.Choice(name="EN → ES (English clues, Spanish answers)", value="en"),
-            app_commands.Choice(name="ES → EN (Spanish clues, English answers)", value="es"),
+            app_commands.Choice(name="🇪🇸 Spanish (clues & answers in Spanish)", value="es"),
+            app_commands.Choice(name="🇬🇧 English (clues & answers in English)", value="en"),
         ],
         style=[
             app_commands.Choice(name="Classic (embed + image)", value="classic"),
@@ -334,7 +335,7 @@ class CrosswordCog(BaseCog):
         language: str = DEFAULT_LANGUAGE,
         style: str = "classic",
     ) -> None:
-        """Start a mini crossword puzzle with autocomplete options."""
+        """Start a mini crossword puzzle with dropdown options."""
         await interaction.response.defer()
         use_v2 = style == "v2"
         err = await self._start_game(
@@ -343,10 +344,6 @@ class CrosswordCog(BaseCog):
         )
         if err:
             await interaction.followup.send(err, ephemeral=True)
-        else:
-            # Defer already sent, followup was handled by _start_game via channel.send
-            # We need a visible ack — the game message itself serves as the response
-            pass
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
@@ -403,7 +400,6 @@ class CrosswordCog(BaseCog):
             elapsed = game.elapsed
             await self._end_game(channel_id, completed=True, elapsed=elapsed)
         else:
-            # Post a new message so the updated grid stays at the bottom
             try:
                 if game.use_v2:
                     view = _build_v2_view(game)
