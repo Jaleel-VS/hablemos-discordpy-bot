@@ -1,0 +1,115 @@
+lapiz,pencil,Instrumento de grafito para escribir y dibujar,Graphite instrument used for writing and drawing,escuela,beginner
+goma,eraser,Objeto que sirve para borrar lo escrito con lápiz,Object used to remove pencil marks,escuela,beginner
+regla,ruler,Herramienta para medir y trazar líneas rectas,Tool for measuring and drawing straight lines,escuela,beginner
+libro,book,Conjunto de páginas con texto e información,Collection of pages with text and information,escuela,beginner
+papel,paper,Hoja delgada donde se escribe o dibuja,Thin sheet used for writing or drawing,escuela,beginner
+tiza,chalk,Barra blanca para escribir en la pizarra,White stick used to write on the blackboard,escuela,beginner
+mapa,map,Representación gráfica de un territorio,Graphic representation of a territory,escuela,beginner
+nota,grade,Calificación que recibes por tu trabajo escolar,Score you receive for your school work,escuela,beginner
+aula,classroom,Sala donde los estudiantes reciben clases,Room where students attend lessons,escuela,beginner
+tarea,homework,Trabajo escolar que se hace en casa,School work done at home,escuela,beginner
+clase,class,Sesión de enseñanza con un profesor,Teaching session with a teacher,escuela,beginner
+mesa,desk,Mueble plano donde apoyas tus libros,Flat furniture where you rest your books,escuela,beginner
+examen,exam,Prueba para evaluar los conocimientos,Test to evaluate knowledge,escuela,beginner
+patio,yard,Espacio abierto en la escuela para el recreo,Open space at school for recess,escuela,beginner
+arte,art,Materia creativa con pintura y dibujo,Creative subject with painting and drawing,escuela,beginner
+ciencia,science,Materia que estudia la naturaleza y sus leyes,Subject that studies nature and its laws,escuela,beginner
+musica,music,Materia donde aprendes ritmo y melodía,Subject where you learn rhythm and melody,escuela,beginner
+lectura,reading,Actividad de interpretar texto escrito,Activity of interpreting written text,escuela,beginner
+prueba,test,Evaluación breve de conocimientos,Brief assessment of knowledge,escuela,beginner
+recreo,recess,Tiempo de descanso entre clases,Break time between classes,escuela,beginner
+timbre,bell,Sonido que marca el inicio o fin de clase,Sound that marks the start or end of class,escuela,advanced
+beca,grant,Ayuda económica para estudiar,Financial aid for studying,escuela,advanced
+tutor,tutor,Persona que guía el aprendizaje individual,Person who guides individual learning,escuela,advanced
+titulo,degree,Documento que certifica estudios completados,Document certifying completed studies,escuela,advanced
+campus,campus,Terreno donde se ubican los edificios escolares,Grounds where school buildings are located,escuela,advanced
+tesis,thesis,Trabajo de investigación para obtener un grado,Research work to obtain a degree,escuela,advanced
+ensayo,essay,Texto argumentativo sobre un tema específico,Argumentative text on a specific topic,escuela,advanced
+fisica,physics,Ciencia que estudia la materia y la energía,Science that studies matter and energy,escuela,advanced
+quimica,chemistry,Ciencia que estudia las sustancias y sus cambios,Science that studies substances and their changes,escuela,advanced
+algebra,algebra,Rama de las matemáticas con ecuaciones,Branch of mathematics with equations,escuela,advanced
+logica,logic,Estudio del razonamiento correcto,Study of correct reasoning,escuela,advanced
+debate,debate,Discusión formal sobre un tema con argumentos,Formal discussion on a topic with arguments,escuela,advanced
+idioma,language,Lengua que se estudia como materia escolar,Tongue studied as a school subject,escuela,advanced
+cuadro,chart,Representación visual de datos o información,Visual representation of data or information,escuela,advanced
+texto,text,Material escrito usado para estudiar,Written material used for studying,escuela,advanced
+pluma,pen,Instrumento con tinta para escribir,Ink instrument for writing,escuela,beginner
+borrador,draft,Versión preliminar de un trabajo escrito,Preliminary version of a written work,escuela,advanced
+carpeta,folder,Objeto para organizar y guardar papeles,Object for organizing and storing papers,escuela,beginner
+oficina,office,Lugar de trabajo con escritorio y silla,Workplace with a desk and chair,trabajo,beginner
+jefe,boss,Persona que dirige a los empleados,Person who manages employees,trabajo,beginner
+sueldo,salary,Dinero que recibes por tu trabajo mensual,Money you receive for your monthly work,trabajo,beginner
+equipo,team,Grupo de personas que trabajan juntas,Group of people who work together,trabajo,beginner
+carta,letter,Documento escrito enviado por correo,Written document sent by mail,trabajo,beginner
+firma,signature,Nombre escrito a mano en documentos oficiales,Handwritten name on official documents,trabajo,beginner
+cita,meeting,Encuentro programado con otra persona,Scheduled encounter with another person,trabajo,beginner
+meta,goal,Objetivo que deseas alcanzar en el trabajo,Objective you want to achieve at work,trabajo,beginner
+turno,shift,Período asignado de horas de trabajo,Assigned period of work hours,trabajo,beginner
+socio,partner,Persona con quien compartes un negocio,Person with whom you share a business,trabajo,beginner
+venta,sale,Acción de ofrecer productos por dinero,Action of offering products for money,trabajo,beginner
+cargo,position,Puesto o función dentro de una empresa,Role or function within a company,trabajo,beginner
+bono,bonus,Pago extra como recompensa por buen trabajo,Extra payment as reward for good work,trabajo,beginner
+envio,shipment,Acción de mandar paquetes o documentos,Action of sending packages or documents,trabajo,beginner
+copia,copy,Reproducción exacta de un documento,Exact reproduction of a document,trabajo,beginner
+ficha,file,Tarjeta con datos de un empleado o cliente,Card with employee or client data,trabajo,beginner
+horario,schedule,Plan que indica las horas de trabajo,Plan indicating work hours,trabajo,beginner
+informe,report,Documento con resultados o análisis,Document with results or analysis,trabajo,beginner
+pedido,order,Solicitud de productos o servicios,Request for products or services,trabajo,beginner
+recibo,receipt,Comprobante de un pago realizado,Proof of a payment made,trabajo,beginner
+reunion,briefing,Encuentro formal para discutir asuntos de trabajo,Formal gathering to discuss work matters,trabajo,beginner
+cliente,client,Persona que compra productos o servicios,Person who buys products or services,trabajo,advanced
+gerente,manager,Persona responsable de dirigir un departamento,Person responsible for leading a department,trabajo,advanced
+contrato,contract,Acuerdo legal entre empleado y empresa,Legal agreement between employee and company,trabajo,advanced
+factura,invoice,Documento que detalla un cobro por servicios,Document detailing a charge for services,trabajo,advanced
+ascenso,promotion,Avance a un puesto superior en la empresa,Advancement to a higher position in the company,trabajo,advanced
+despido,dismissal,Terminación del empleo de un trabajador,Termination of a worker's employment,trabajo,advanced
+nomina,payroll,Lista de empleados y sus pagos,List of employees and their payments,trabajo,advanced
+empresa,company,Organización dedicada a actividades comerciales,Organization dedicated to commercial activities,trabajo,advanced
+negocio,business,Actividad comercial con fines de lucro,Commercial activity for profit,trabajo,advanced
+ingreso,income,Dinero que entra por trabajo o ventas,Money coming in from work or sales,trabajo,advanced
+archivo,archive,Lugar donde se guardan documentos importantes,Place where important documents are stored,trabajo,advanced
+permiso,permit,Autorización para ausentarse del trabajo,Authorization to be absent from work,trabajo,advanced
+planilla,form,Documento con campos para llenar información,Document with fields to fill in information,trabajo,advanced
+proyecto,project,Plan organizado para lograr un objetivo laboral,Organized plan to achieve a work objective,trabajo,advanced
+gestion,process,Conjunto de acciones para administrar recursos,Set of actions to manage resources,trabajo,advanced
+trato,deal,Acuerdo comercial entre dos partes,Commercial agreement between two parties,trabajo,advanced
+red,network,Sistema de conexiones entre computadoras,System of connections between computers,tecnologia,beginner
+dato,data,Información procesada por una computadora,Information processed by a computer,tecnologia,beginner
+clave,password,Código secreto para acceder a una cuenta,Secret code to access an account,tecnologia,beginner
+sitio,site,Página o lugar en internet,Page or place on the internet,tecnologia,beginner
+nube,cloud,Servicio remoto para almacenar archivos,Remote service for storing files,tecnologia,beginner
+disco,disk,Dispositivo para almacenar datos digitales,Device for storing digital data,tecnologia,beginner
+tecla,key,Botón individual en un teclado,Individual button on a keyboard,tecnologia,beginner
+cable,cable,Conductor que transmite electricidad o datos,Conductor that transmits electricity or data,tecnologia,beginner
+icono,icon,Imagen pequeña que representa una aplicación,Small image representing an application,tecnologia,beginner
+virus,virus,Programa dañino que infecta computadoras,Harmful program that infects computers,tecnologia,beginner
+enlace,link,Conexión que lleva a otra página web,Connection that leads to another web page,tecnologia,beginner
+correo,email,Mensaje electrónico enviado por internet,Electronic message sent over the internet,tecnologia,beginner
+cursor,cursor,Indicador que muestra la posición en pantalla,Indicator showing position on screen,tecnologia,beginner
+pixel,pixel,Punto mínimo de color en una pantalla,Minimum color point on a screen,tecnologia,beginner
+audio,audio,Sonido reproducido por un dispositivo,Sound played by a device,tecnologia,beginner
+video,video,Grabación visual reproducida en pantalla,Visual recording played on screen,tecnologia,beginner
+wifi,wifi,Conexión inalámbrica a internet,Wireless internet connection,tecnologia,beginner
+blog,blog,Sitio web con publicaciones periódicas,Website with periodic publications,tecnologia,beginner
+chip,chip,Circuito integrado dentro de un dispositivo,Integrated circuit inside a device,tecnologia,beginner
+menu,menu,Lista de opciones en una aplicación,List of options in an application,tecnologia,beginner
+raton,mouse,Dispositivo para mover el cursor en pantalla,Device for moving the cursor on screen,tecnologia,beginner
+tablet,tablet,Dispositivo portátil con pantalla táctil,Portable device with a touch screen,tecnologia,beginner
+celular,phone,Teléfono móvil con funciones inteligentes,Mobile phone with smart features,tecnologia,beginner
+codigo,code,Instrucciones escritas para un programa,Written instructions for a program,tecnologia,advanced
+servidor,server,Computadora que provee servicios a otras,Computer that provides services to others,tecnologia,advanced
+sistema,system,Conjunto organizado de programas y hardware,Organized set of programs and hardware,tecnologia,advanced
+binario,binary,Sistema numérico de ceros y unos,Number system of zeros and ones,tecnologia,advanced
+dominio,domain,Nombre único que identifica un sitio web,Unique name that identifies a website,tecnologia,advanced
+cifrado,encrypt,Proceso de proteger datos con un código,Process of protecting data with a code,tecnologia,advanced
+parche,patch,Actualización que corrige errores de software,Update that fixes software errors,tecnologia,advanced
+script,script,Archivo con instrucciones automatizadas,File with automated instructions,tecnologia,advanced
+modulo,module,Componente independiente de un programa,Independent component of a program,tecnologia,advanced
+kernel,kernel,Núcleo central del sistema operativo,Central core of the operating system,tecnologia,advanced
+backup,backup,Copia de seguridad de archivos importantes,Safety copy of important files,tecnologia,advanced
+debug,debug,Proceso de encontrar y corregir errores,Process of finding and fixing errors,tecnologia,advanced
+proxy,proxy,Intermediario entre usuario y servidor,Intermediary between user and server,tecnologia,advanced
+token,token,Código temporal para verificar identidad,Temporary code to verify identity,tecnologia,advanced
+api,api,Interfaz para comunicar programas entre sí,Interface for programs to communicate,tecnologia,advanced
+bot,bot,Programa que realiza tareas automáticas,Program that performs automatic tasks,tecnologia,advanced
+log,log,Registro de eventos en un sistema,Record of events in a system,tecnologia,advanced

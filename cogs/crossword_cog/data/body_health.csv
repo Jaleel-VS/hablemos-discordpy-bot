@@ -1,0 +1,114 @@
+ojo,eye,Órgano de la visión,Organ used for seeing,cuerpo,beginner
+nariz,nose,Parte de la cara para oler,Facial feature used for smelling,cuerpo,beginner
+boca,mouth,Se usa para hablar y comer,Used for speaking and eating,cuerpo,beginner
+oreja,ear,Parte externa del oído,Outer part of the hearing organ,cuerpo,beginner
+mano,hand,Extremidad con cinco dedos,Extremity with five fingers,cuerpo,beginner
+pie,foot,Parte inferior de la pierna,Lower part of the leg,cuerpo,beginner
+dedo,finger,Cada una de las partes de la mano,Each of the parts of the hand,cuerpo,beginner
+brazo,arm,Extremidad superior del cuerpo,Upper limb of the body,cuerpo,beginner
+pierna,leg,Extremidad inferior del cuerpo,Lower limb of the body,cuerpo,beginner
+cabeza,head,Parte superior del cuerpo,Top part of the body,cuerpo,beginner
+cuello,neck,Conecta la cabeza con el tronco,Connects the head to the torso,cuerpo,beginner
+pecho,chest,Parte frontal del torso,Front part of the torso,cuerpo,beginner
+espalda,back,Parte posterior del torso,Rear part of the torso,cuerpo,beginner
+hombro,shoulder,Articulación entre brazo y torso,Joint between arm and torso,cuerpo,beginner
+rodilla,knee,Articulación de la pierna,Joint in the middle of the leg,cuerpo,beginner
+codo,elbow,Articulación del brazo,Joint in the middle of the arm,cuerpo,beginner
+cara,face,Parte frontal de la cabeza,Front of the head,cuerpo,beginner
+pelo,hair,Crece en la cabeza,Grows on the head,cuerpo,beginner
+labio,lip,Borde de la boca,Edge of the mouth,cuerpo,beginner
+lengua,tongue,Órgano muscular dentro de la boca,Muscular organ inside the mouth,cuerpo,beginner
+diente,tooth,Pieza dura en la boca para masticar,Hard piece in the mouth for chewing,cuerpo,beginner
+muneca,wrist,Articulación entre mano y brazo,Joint between hand and arm,cuerpo,beginner
+tobillo,ankle,Articulación entre pie y pierna,Joint between foot and leg,cuerpo,beginner
+cintura,waist,Parte estrecha del torso,Narrow part of the torso,cuerpo,beginner
+cadera,hip,Articulación lateral del torso inferior,Lateral joint of the lower torso,cuerpo,beginner
+ceja,eyebrow,Pelo sobre el ojo,Hair above the eye,cuerpo,beginner
+pestana,eyelash,Pelo en el borde del párpado,Hair on the edge of the eyelid,cuerpo,beginner
+mejilla,cheek,Lado de la cara bajo el ojo,Side of the face below the eye,cuerpo,beginner
+menton,chin,Parte inferior de la cara,Lower part of the face,cuerpo,beginner
+frente,forehead,Parte superior de la cara,Upper part of the face,cuerpo,beginner
+pulmon,lung,Órgano para respirar,Organ used for breathing,cuerpo,advanced
+higado,liver,Órgano que filtra la sangre,Organ that filters blood,cuerpo,advanced
+rinon,kidney,Órgano que filtra desechos,Organ that filters waste,cuerpo,advanced
+cerebro,brain,Órgano del pensamiento,Organ of thought,cuerpo,advanced
+costilla,rib,Hueso que protege los pulmones,Bone that protects the lungs,cuerpo,advanced
+columna,spine,Estructura ósea de la espalda,Bony structure of the back,cuerpo,advanced
+craneo,skull,Hueso que protege el cerebro,Bone that protects the brain,cuerpo,advanced
+tendon,tendon,Tejido que une músculo y hueso,Tissue connecting muscle and bone,cuerpo,advanced
+arteria,artery,Vaso que lleva sangre del corazón,Vessel carrying blood from the heart,cuerpo,advanced
+vena,vein,Vaso que lleva sangre al corazón,Vessel carrying blood to the heart,cuerpo,advanced
+musculo,muscle,Tejido que permite el movimiento,Tissue that enables movement,cuerpo,advanced
+hueso,bone,Estructura rígida del esqueleto,Rigid structure of the skeleton,cuerpo,advanced
+piel,skin,Órgano que cubre todo el cuerpo,Organ that covers the entire body,cuerpo,beginner
+sangre,blood,Líquido rojo vital del cuerpo,Vital red fluid of the body,cuerpo,advanced
+torso,torso,Parte central del cuerpo,Central part of the body,cuerpo,beginner
+nuca,nape,Parte posterior del cuello,Back of the neck,cuerpo,advanced
+palma,palm,Parte interior de la mano,Inner part of the hand,cuerpo,beginner
+talon,heel,Parte posterior del pie,Back part of the foot,cuerpo,beginner
+pulgar,thumb,Dedo más grueso de la mano,Thickest finger of the hand,cuerpo,beginner
+ombligo,navel,Cicatriz en el centro del abdomen,Scar in the center of the abdomen,cuerpo,beginner
+garganta,throat,Parte interna del cuello,Inner part of the neck,cuerpo,beginner
+axila,armpit,Zona bajo el hombro,Area under the shoulder,cuerpo,advanced
+clavicula,clavicle,Hueso horizontal sobre el pecho,Horizontal bone above the chest,cuerpo,advanced
+femur,femur,Hueso más largo del cuerpo,Longest bone in the body,cuerpo,advanced
+tibia,tibia,Hueso frontal de la pierna baja,Front bone of the lower leg,cuerpo,advanced
+medico,doctor,Profesional que cura enfermedades,Professional who cures diseases,salud,beginner
+clinico,clinical,Relativo al tratamiento de pacientes,Related to patient treatment,salud,advanced
+salud,health,Estado de bienestar físico,State of physical wellbeing,salud,beginner
+fiebre,fever,Temperatura corporal elevada,Elevated body temperature,salud,beginner
+gripe,flu,Enfermedad viral respiratoria,Viral respiratory illness,salud,beginner
+tos,cough,Expulsión brusca de aire,Sudden expulsion of air,salud,beginner
+dolor,pain,Sensación desagradable del cuerpo,Unpleasant body sensation,salud,beginner
+herida,wound,Lesión abierta en la piel,Open injury on the skin,salud,beginner
+cura,cure,Remedio que elimina la enfermedad,Remedy that eliminates illness,salud,beginner
+vacuna,vaccine,Previene enfermedades infecciosas,Prevents infectious diseases,salud,beginner
+receta,recipe,Documento del médico para medicinas,Doctor's document for medicines,salud,beginner
+pastilla,pill,Medicamento sólido para tragar,Solid medication to swallow,salud,beginner
+jarabe,syrup,Medicamento líquido y dulce,Sweet liquid medication,salud,beginner
+venda,bandage,Tira para cubrir una herida,Strip to cover a wound,salud,beginner
+yeso,cast,Material duro para huesos rotos,Hard material for broken bones,salud,beginner
+clinica,clinic,Centro médico pequeño,Small medical center,salud,beginner
+farmacia,pharmacy,Tienda donde venden medicinas,Store where medicines are sold,salud,beginner
+alergia,allergy,Reacción adversa a una sustancia,Adverse reaction to a substance,salud,beginner
+asma,asthma,Dificultad crónica para respirar,Chronic difficulty breathing,salud,advanced
+virus,virus,Agente infeccioso microscópico,Microscopic infectious agent,salud,advanced
+bacteria,bacteria,Microorganismo unicelular,Single-celled microorganism,salud,advanced
+cirugia,surgery,Operación médica invasiva,Invasive medical operation,salud,advanced
+anemia,anemia,Falta de glóbulos rojos,Lack of red blood cells,salud,advanced
+diabetes,diabetes,Enfermedad del azúcar en sangre,Blood sugar disease,salud,advanced
+infarto,infarct,Bloqueo del flujo sanguíneo,Blockage of blood flow,salud,advanced
+tumor,tumor,Masa anormal de tejido,Abnormal mass of tissue,salud,advanced
+ulcera,ulcer,Llaga en tejido interno,Sore on internal tissue,salud,advanced
+fractura,fracture,Rotura de un hueso,Breaking of a bone,salud,advanced
+esguince,sprain,Lesión de un ligamento,Injury to a ligament,salud,advanced
+sutura,suture,Puntos para cerrar una herida,Stitches to close a wound,salud,advanced
+biopsia,biopsy,Extracción de tejido para análisis,Tissue extraction for analysis,salud,advanced
+dosis,dose,Cantidad de medicamento a tomar,Amount of medication to take,salud,beginner
+sintoma,symptom,Señal de una enfermedad,Sign of a disease,salud,advanced
+cronica,chronic,Enfermedad de larga duración,Long-lasting disease,salud,advanced
+terapia,therapy,Tratamiento para mejorar la salud,Treatment to improve health,salud,advanced
+remedio,remedy,Sustancia que alivia un mal,Substance that relieves an ailment,salud,beginner
+reposo,rest,Descanso para recuperarse,Rest to recover,salud,beginner
+dieta,diet,Plan de alimentación saludable,Healthy eating plan,salud,beginner
+pulso,pulse,Latido que se siente en la muñeca,Beat felt at the wrist,salud,beginner
+presion,pressure,Fuerza de la sangre en las arterias,Force of blood in arteries,salud,advanced
+oxigeno,oxygen,Gas esencial para respirar,Essential gas for breathing,salud,advanced
+plasma,plasma,Parte líquida de la sangre,Liquid part of blood,salud,advanced
+toxina,toxin,Sustancia venenosa del cuerpo,Poisonous substance in the body,salud,advanced
+injerto,graft,Trasplante de tejido,Tissue transplant,salud,advanced
+catarro,cold,Infección leve de las vías nasales,Mild infection of nasal passages,salud,beginner
+nausea,nausea,Sensación de querer vomitar,Feeling of wanting to vomit,salud,beginner
+mareo,vertigo,Sensación de que todo gira,Feeling that everything is spinning,salud,beginner
+fatiga,fatigue,Cansancio extremo del cuerpo,Extreme tiredness of the body,salud,beginner
+estres,stress,Tensión física o mental excesiva,Excessive physical or mental tension,salud,beginner
+insomnio,insomnia,Dificultad para dormir,Difficulty sleeping,salud,advanced
+otitis,otitis,Infección del oído,Infection of the ear,salud,advanced
+angina,angina,Dolor en el pecho por el corazón,Chest pain from the heart,salud,advanced
+edema,edema,Hinchazón por acumulación de líquido,Swelling from fluid buildup,salud,advanced
+sepsis,sepsis,Infección grave generalizada,Severe generalized infection,salud,advanced
+embolia,embolism,Bloqueo de un vaso sanguíneo,Blockage of a blood vessel,salud,advanced
+trombos,thrombus,Coágulo de sangre en un vaso,Blood clot in a vessel,salud,advanced
+quiste,cyst,Saco cerrado lleno de líquido,Closed sac filled with fluid,salud,advanced
+miopia,myopia,Dificultad para ver de lejos,Difficulty seeing far away,salud,advanced
+caries,cavity,Deterioro del diente,Decay of the tooth,salud,beginner

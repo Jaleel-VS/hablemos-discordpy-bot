@@ -548,4 +548,28 @@ async def initialize_schema(pool):
             ON conjugation_forms(tense, pronoun)
         ''')
 
+        # Crossword words table
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS crossword_words (
+                id SERIAL PRIMARY KEY,
+                word_es VARCHAR(9) NOT NULL,
+                word_en VARCHAR(30) NOT NULL,
+                clue_es TEXT NOT NULL,
+                clue_en TEXT NOT NULL,
+                theme VARCHAR(30) NOT NULL,
+                difficulty VARCHAR(10) NOT NULL CHECK (difficulty IN ('beginner', 'advanced')),
+                UNIQUE (word_es, theme)
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_crossword_difficulty
+            ON crossword_words(difficulty)
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_crossword_theme
+            ON crossword_words(theme)
+        ''')
+
         logger.info("Database schema initialized")

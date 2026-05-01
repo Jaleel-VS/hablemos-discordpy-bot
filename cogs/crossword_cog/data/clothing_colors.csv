@@ -1,0 +1,92 @@
+falda,skirt,Prenda femenina que cubre desde la cintura,Female garment covering from the waist down,ropa,beginner
+camisa,shirt,Prenda con botones para el torso,Buttoned garment for the upper body,ropa,beginner
+gorra,cap,Accesorio para cubrir la cabeza con visera,Head accessory with a visor,ropa,beginner
+bota,boot,Calzado alto que cubre el tobillo,Tall footwear covering the ankle,ropa,beginner
+bufanda,scarf,Prenda larga para abrigar el cuello,Long garment to warm the neck,ropa,beginner
+blusa,blouse,Prenda femenina ligera para el torso,Light female upper body garment,ropa,beginner
+traje,suit,Conjunto formal de chaqueta y pantalón,Formal jacket and pants set,ropa,beginner
+chaleco,vest,Prenda sin mangas que se usa sobre la camisa,Sleeveless garment worn over a shirt,ropa,advanced
+guante,glove,Prenda que cubre la mano y los dedos,Garment covering the hand and fingers,ropa,beginner
+media,sock,Prenda que cubre el pie dentro del zapato,Garment covering the foot inside a shoe,ropa,beginner
+abrigo,coat,Prenda gruesa para protegerse del frío,Thick garment for cold weather protection,ropa,beginner
+zapato,shoe,Calzado común que cubre el pie,Common footwear covering the foot,ropa,beginner
+gafas,glasses,Accesorio óptico que se lleva en la cara,Optical accessory worn on the face,ropa,beginner
+pijama,pajamas,Ropa cómoda para dormir,Comfortable clothing for sleeping,ropa,beginner
+short,shorts,Pantalón corto para clima cálido,Short pants for warm weather,ropa,beginner
+toga,gown,Vestimenta larga y ceremonial,Long ceremonial garment,ropa,advanced
+capa,cape,Prenda suelta que cubre la espalda,Loose garment covering the back,ropa,advanced
+boina,beret,Sombrero plano y redondo de origen francés,Flat round hat of French origin,ropa,advanced
+delantal,apron,Prenda protectora usada al cocinar,Protective garment used while cooking,ropa,advanced
+corbata,tie,Accesorio formal que se anuda al cuello,Formal accessory knotted at the neck,ropa,beginner
+jersey,jersey,Prenda de punto para abrigarse,Knitted garment for warmth,ropa,beginner
+chaqueta,jacket,Prenda con mangas que se abre por delante,Sleeved garment that opens in front,ropa,beginner
+sudadera,hoodie,Prenda deportiva con capucha,Sporty garment with a hood,ropa,beginner
+bermuda,bermudas,Pantalón que llega hasta la rodilla,Pants reaching to the knee,ropa,advanced
+polo,polo,Camiseta con cuello y botones cortos,Collared shirt with short buttons,ropa,beginner
+cinto,belt,Accesorio para ajustar la cintura,Accessory to adjust the waist,ropa,advanced
+malla,tights,Prenda elástica ajustada a las piernas,Elastic garment fitted to the legs,ropa,advanced
+parka,parka,Abrigo largo e impermeable con capucha,Long waterproof hooded coat,ropa,advanced
+bata,robe,Prenda holgada para estar en casa,Loose garment for being at home,ropa,beginner
+tanga,thong,Ropa interior mínima y ajustada,Minimal fitted underwear,ropa,advanced
+bikini,bikini,Traje de baño femenino de dos piezas,Two-piece female swimsuit,ropa,beginner
+rojo,red,Color de la sangre y las rosas,Color of blood and roses,colores,beginner
+azul,blue,Color del cielo despejado,Color of the clear sky,colores,beginner
+verde,green,Color de la hierba y las hojas,Color of grass and leaves,colores,beginner
+negro,black,Color más oscuro que existe,The darkest color that exists,colores,beginner
+blanco,white,Color de la nieve y las nubes,Color of snow and clouds,colores,beginner
+gris,gray,Color entre el blanco y el negro,Color between white and black,colores,beginner
+rosa,pink,Color claro parecido al rojo suave,Light color similar to soft red,colores,beginner
+morado,purple,Color mezcla de rojo y azul,Color mixing red and blue,colores,beginner
+naranja,orange,Color de la fruta cítrica del mismo nombre,Color of the citrus fruit of the same name,colores,beginner
+marron,brown,Color de la tierra y la madera,Color of earth and wood,colores,beginner
+dorado,golden,Color brillante del oro,Bright color of gold,colores,advanced
+plata,silver,Color brillante del metal precioso,Bright color of the precious metal,colores,advanced
+crema,cream,Color blanco amarillento suave,Soft yellowish white color,colores,advanced
+coral,coral,Color rosado anaranjado como el arrecife,Pinkish orange color like the reef,colores,advanced
+lila,lilac,Color violeta pálido como la flor,Pale violet color like the flower,colores,advanced
+celeste,sky,Color azul claro como el cielo,Light blue color like the sky,colores,beginner
+turquesa,teal,Color azul verdoso como la piedra,Blue-green color like the stone,colores,advanced
+ocre,ochre,Color terroso entre amarillo y marrón,Earthy color between yellow and brown,colores,advanced
+indigo,indigo,Color azul oscuro profundo,Deep dark blue color,colores,advanced
+cobre,copper,Color rojizo como el metal conductor,Reddish color like the conductive metal,colores,advanced
+bronce,bronze,Color marrón metálico de la aleación,Metallic brown color of the alloy,colores,advanced
+oliva,olive,Color verde oscuro como la aceituna,Dark green color like the olive fruit,colores,advanced
+vino,wine,Color rojo oscuro como la bebida,Dark red color like the drink,colores,advanced
+hueso,bone,Color blanco amarillento natural,Natural yellowish white color,colores,advanced
+arena,sand,Color beige claro como la playa,Light beige color like the beach,colores,advanced
+salmon,salmon,Color rosado anaranjado como el pez,Pinkish orange color like the fish,colores,advanced
+perla,pearl,Color blanco iridiscente como la gema,Iridescent white color like the gem,colores,advanced
+jade,jade,Color verde intenso como la piedra,Intense green color like the stone,colores,advanced
+granate,garnet,Color rojo oscuro como la piedra preciosa,Dark red color like the precious stone,colores,advanced
+magenta,magenta,Color fucsia intenso y vibrante,Intense and vibrant fuchsia color,colores,advanced
+canela,cinnamon,Color marrón cálido como la especia,Warm brown color like the spice,colores,advanced
+seda,silk,Tela suave y brillante de origen animal,Soft shiny fabric of animal origin,materiales,beginner
+lana,wool,Fibra natural del pelo de oveja,Natural fiber from sheep hair,materiales,beginner
+lino,linen,Tela fresca hecha de la planta del lino,Cool fabric made from the flax plant,materiales,beginner
+cuero,leather,Material resistente hecho de piel animal,Resistant material made from animal skin,materiales,beginner
+raso,satin,Tela brillante y lisa al tacto,Shiny and smooth fabric to the touch,materiales,advanced
+tul,tulle,Tela fina y transparente tipo red,Fine transparent net-like fabric,materiales,advanced
+ante,suede,Cuero con superficie aterciopelada,Leather with a velvety surface,materiales,advanced
+fieltro,felt,Tela gruesa hecha de fibras prensadas,Thick fabric made from pressed fibers,materiales,advanced
+nailon,nylon,Fibra sintética muy resistente,Very resistant synthetic fiber,materiales,advanced
+rayon,rayon,Fibra semisintética suave y absorbente,Soft and absorbent semi-synthetic fiber,materiales,advanced
+pana,cord,Tela con líneas verticales en relieve,Fabric with raised vertical lines,materiales,advanced
+gamuza,chamois,Material suave usado para limpiar y vestir,Soft material used for cleaning and clothing,materiales,advanced
+poplin,poplin,Tela ligera de tejido cerrado,Lightweight tightly woven fabric,materiales,advanced
+crespo,crepe,Tela con textura arrugada y ondulada,Fabric with wrinkled wavy texture,materiales,advanced
+manta,fleece,Tela gruesa y cálida para abrigo,Thick warm fabric for warmth,materiales,beginner
+yute,jute,Fibra vegetal áspera para sacos,Rough plant fiber used for sacks,materiales,advanced
+drill,drill,Tela resistente de algodón diagonal,Resistant diagonal cotton fabric,materiales,advanced
+organza,organza,Tela fina transparente y rígida,Fine transparent and stiff fabric,materiales,advanced
+batista,batiste,Tela muy fina y delicada de algodón,Very fine and delicate cotton fabric,materiales,advanced
+cretona,chintz,Tela de algodón estampada y gruesa,Printed thick cotton fabric,materiales,advanced
+dril,twill,Tejido diagonal resistente y duradero,Resistant and durable diagonal weave,materiales,advanced
+piel,hide,Material natural de origen animal,Natural material of animal origin,materiales,beginner
+hilo,thread,Fibra delgada para coser y tejer,Thin fiber for sewing and weaving,materiales,beginner
+rejilla,mesh,Tejido abierto con forma de red,Open weave in net form,materiales,advanced
+punto,knit,Tejido elástico hecho con agujas,Elastic fabric made with needles,materiales,beginner
+polar,polar,Tela sintética suave y muy cálida,Soft and very warm synthetic fabric,materiales,beginner
+lycra,lycra,Fibra elástica para ropa deportiva,Elastic fiber for sportswear,materiales,advanced
+modal,modal,Fibra suave derivada de la celulosa,Soft fiber derived from cellulose,materiales,advanced
+lame,lame,Tela con hilos metálicos brillantes,Fabric with shiny metallic threads,materiales,advanced
+tencel,tencel,Fibra ecológica suave de eucalipto,Soft ecological fiber from eucalyptus,materiales,advanced
