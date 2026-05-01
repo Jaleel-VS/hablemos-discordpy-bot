@@ -94,7 +94,7 @@ class CrosswordGame:
 
         for idx, pw in enumerate(self.grid.placed):
             status = "✅" if idx in self.solved else f"({len(pw.word)})"
-            solver = f" — *{self.solvers[idx]}*" if idx in self.solved else ""
+            solver = f" — *{self.solvers[idx]}*" if idx in self.solvers else ""
             line = f"**{pw.number}.** {self.get_clue(idx)} {status}{solver}"
 
             if pw.direction == "across":
