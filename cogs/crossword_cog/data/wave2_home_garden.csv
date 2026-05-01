@@ -1,0 +1,82 @@
+rosa,rose,Flor romántica de muchos colores,Romantic flower of many colors,jardin,beginner
+tulipan,tulip,Flor originaria de los Países Bajos,Flower originally from the Netherlands,jardin,beginner
+semilla,seed,De aquí nace una planta,From this a plant is born,jardin,beginner
+tierra,soil,Material donde crecen las plantas,Material where plants grow,jardin,beginner
+regar,water,Dar agua a las plantas,To give water to plants,jardin,beginner
+hoja,leaf,Parte verde de la planta,Green part of the plant,jardin,beginner
+raiz,root,Parte subterránea de la planta,Underground part of the plant,jardin,beginner
+tallo,stem,Parte que sostiene la flor,Part that holds up the flower,jardin,beginner
+poda,prune,Cortar ramas para dar forma,To cut branches to shape,jardin,advanced
+abono,compost,Nutriente para enriquecer la tierra,Nutrient to enrich the soil,jardin,advanced
+cesped,lawn,Hierba corta que cubre el suelo,Short grass covering the ground,jardin,beginner
+maceta,pot,Recipiente para cultivar plantas,Container for growing plants,jardin,beginner
+jardin,garden,Espacio exterior con plantas y flores,Outdoor space with plants and flowers,jardin,beginner
+arbusto,shrub,Planta leñosa más pequeña que un árbol,Woody plant smaller than a tree,jardin,advanced
+clavel,carnation,Flor con pétalos rizados y fragantes,Flower with curly fragrant petals,jardin,beginner
+lirio,lily,Flor elegante con pétalos grandes,Elegant flower with large petals,jardin,advanced
+musgo,moss,Planta verde que crece en superficies húmedas,Green plant growing on damp surfaces,jardin,advanced
+brote,sprout,Primer crecimiento de una semilla,First growth from a seed,jardin,advanced
+cerca,fence,Barrera que rodea el jardín,Barrier surrounding the garden,jardin,beginner
+pala,shovel,Herramienta para cavar la tierra,Tool for digging soil,jardin,beginner
+ramo,bouquet,Conjunto de flores cortadas,Bundle of cut flowers,jardin,beginner
+hierba,herb,Planta aromática o silvestre,Aromatic or wild plant,jardin,beginner
+surco,furrow,Línea cavada en la tierra para sembrar,Line dug in soil for planting,jardin,advanced
+vivero,nursery,Lugar donde se cultivan plantas para vender,Place where plants are grown for sale,jardin,advanced
+helecho,fern,Planta con hojas verdes y sin flores,Plant with green leaves and no flowers,jardin,advanced
+petunia,petunia,Flor colorida común en jardines,Colorful flower common in gardens,jardin,beginner
+dalia,dahlia,Flor grande con muchos pétalos,Large flower with many petals,jardin,advanced
+trepar,climb,Lo que hacen las plantas enredaderas,What climbing plants do,jardin,advanced
+cocinar,cook,Preparar alimentos con calor,To prepare food with heat,cocinar,beginner
+hervir,boil,Calentar líquido hasta hacer burbujas,To heat liquid until it bubbles,cocinar,beginner
+freir,fry,Cocinar en aceite caliente,To cook in hot oil,cocinar,beginner
+asar,roast,Cocinar con calor seco en el horno,To cook with dry heat in the oven,cocinar,beginner
+batir,beat,Mezclar rápidamente con un tenedor,To mix rapidly with a fork,cocinar,beginner
+picar,chop,Cortar en trozos pequeños,To cut into small pieces,cocinar,beginner
+pelar,peel,Quitar la piel de una fruta o verdura,To remove the skin of a fruit or vegetable,cocinar,beginner
+rallar,grate,Desmenuzar con un rallador,To shred with a grater,cocinar,advanced
+mezclar,mix,Combinar ingredientes juntos,To combine ingredients together,cocinar,beginner
+hornear,bake,Cocinar en el horno con calor seco,To cook in the oven with dry heat,cocinar,beginner
+guisar,stew,Cocinar lentamente en salsa,To cook slowly in sauce,cocinar,advanced
+saltear,saute,Cocinar rápido en poco aceite,To cook quickly in little oil,cocinar,advanced
+colar,strain,Separar líquido de sólido con un colador,To separate liquid from solid with a strainer,cocinar,advanced
+marinar,marinate,Dejar reposar en una mezcla de sabores,To let rest in a flavor mixture,cocinar,advanced
+amasar,knead,Trabajar la masa con las manos,To work dough with your hands,cocinar,advanced
+tostar,toast,Dorar con calor seco,To brown with dry heat,cocinar,beginner
+sazonar,season,Añadir sal y especias a la comida,To add salt and spices to food,cocinar,advanced
+licuar,blend,Triturar alimentos hasta hacerlos líquido,To crush food until liquid,cocinar,beginner
+caldo,broth,Líquido sabroso base de sopas,Flavorful liquid base for soups,cocinar,beginner
+receta,recipe,Instrucciones para preparar un plato,Instructions to prepare a dish,cocinar,beginner
+sarten,pan,Utensilio plano para freír,Flat utensil for frying,cocinar,beginner
+harina,flour,Polvo blanco para hacer pan,White powder for making bread,cocinar,beginner
+masa,dough,Mezcla de harina y agua para cocinar,Mixture of flour and water for cooking,cocinar,beginner
+cuchara,spoon,Utensilio para revolver y servir,Utensil for stirring and serving,cocinar,beginner
+escurrir,drain,Quitar el exceso de agua,To remove excess water,cocinar,advanced
+glasear,glaze,Cubrir con una capa brillante de azúcar,To cover with a shiny sugar layer,cocinar,advanced
+barrer,sweep,Limpiar el suelo con una escoba,To clean the floor with a broom,limpieza,beginner
+fregar,scrub,Limpiar frotando con fuerza,To clean by rubbing hard,limpieza,beginner
+trapear,mop,Limpiar el suelo con un trapo húmedo,To clean the floor with a wet cloth,limpieza,beginner
+lavar,wash,Limpiar con agua y jabón,To clean with water and soap,limpieza,beginner
+secar,dry,Quitar la humedad de algo,To remove moisture from something,limpieza,beginner
+planchar,iron,Alisar la ropa con calor,To smooth clothes with heat,limpieza,beginner
+sacudir,shake,Quitar el polvo agitando,To remove dust by shaking,limpieza,beginner
+tender,hang,Poner la ropa a secar al aire,To put clothes to air dry,limpieza,beginner
+escoba,broom,Herramienta con cerdas para barrer,Tool with bristles for sweeping,limpieza,beginner
+jabon,soap,Producto para limpiar y desinfectar,Product for cleaning and disinfecting,limpieza,beginner
+polvo,dust,Partículas finas que se acumulan en muebles,Fine particles that accumulate on furniture,limpieza,beginner
+trapo,rag,Tela vieja usada para limpiar,Old cloth used for cleaning,limpieza,beginner
+cubo,bucket,Recipiente para llevar agua,Container for carrying water,limpieza,beginner
+mancha,stain,Marca sucia en la ropa o superficie,Dirty mark on clothes or surface,limpieza,beginner
+lejia,bleach,Producto químico para blanquear y desinfectar,Chemical product for whitening and disinfecting,limpieza,advanced
+pulir,polish,Frotar para dar brillo a una superficie,To rub to give shine to a surface,limpieza,advanced
+aspirar,vacuum,Limpiar con una aspiradora,To clean with a vacuum cleaner,limpieza,beginner
+frotar,rub,Pasar la mano con presión para limpiar,To press and move hand to clean,limpieza,beginner
+mugre,grime,Suciedad difícil de quitar,Dirt that is hard to remove,limpieza,advanced
+colada,laundry,Ropa sucia lista para lavar,Dirty clothes ready to wash,limpieza,beginner
+baldosa,tile,Pieza plana que cubre suelos y paredes,Flat piece covering floors and walls,limpieza,advanced
+cepillo,brush,Herramienta con cerdas para fregar,Tool with bristles for scrubbing,limpieza,beginner
+recoger,tidy,Ordenar y guardar cosas en su lugar,To organize and put things in place,limpieza,beginner
+basura,trash,Desechos que se tiran,Waste that is thrown away,limpieza,beginner
+grasa,grease,Sustancia aceitosa difícil de limpiar,Oily substance hard to clean,limpieza,advanced
+vinagre,vinegar,Líquido ácido usado como limpiador natural,Acidic liquid used as natural cleaner,limpieza,advanced
+ordenar,sort,Poner cada cosa en su sitio,To put each thing in its place,limpieza,beginner
+sumidero,sinkhole,Conducto por donde sale el agua sucia,Pipe where dirty water flows out,limpieza,advanced

@@ -1052,3 +1052,529 @@ cabina,cabin,Espacio cerrado del piloto en un avión,Enclosed space of the pilot
 vagones,wagons,Compartimentos de un tren,Compartments of a train,transporte,advanced
 helice,propeller,Pieza giratoria que impulsa aviones o barcos,Rotating piece that propels planes or boats,transporte,advanced
 balsa,raft,Plataforma flotante improvisada,Improvised floating platform,transporte,advanced
+avispa,wasp,Insecto que pica y tiene rayas amarillas,Stinging insect with yellow stripes,insectos,beginner
+mosquito,gnat,Insecto pequeño que vuela en enjambres,Small insect that flies in swarms,insectos,beginner
+larva,grub,Fase joven de un insecto antes de crecer,Young stage of an insect before growing,insectos,beginner
+arana,spider,Arácnido que teje telarañas para cazar,Arachnid that weaves webs to hunt,insectos,beginner
+pulga,flea,Insecto diminuto que salta y pica,Tiny insect that jumps and bites,insectos,beginner
+polilla,moth,Insecto nocturno atraído por la luz,Nocturnal insect attracted to light,insectos,beginner
+cucarach,cockroach,Insecto que corre rápido en la cocina,Insect that runs fast in the kitchen,insectos,beginner
+gusano,worm,Criatura larga y blanda sin patas,Long soft creature without legs,insectos,beginner
+oruga,larva,Larva que se convierte en mariposa,Larva that becomes a butterfly,insectos,beginner
+cigarra,cicada,Insecto que canta fuerte en verano,Insect that sings loudly in summer,insectos,beginner
+mariquit,ladybug,Insecto rojo con puntos negros,Red insect with black spots,insectos,beginner
+luciernag,firefly,Insecto que brilla en la oscuridad,Insect that glows in the dark,insectos,advanced
+libelula,dragonfly,Insecto con alas transparentes cerca del agua,Insect with transparent wings near water,insectos,advanced
+escarab,beetle,Insecto con caparazón duro y brillante,Insect with a hard shiny shell,insectos,advanced
+mantis,mantis,Insecto que reza con sus patas delanteras,Insect that prays with its front legs,insectos,advanced
+garrapata,tick,Parásito que se pega a la piel,Parasite that attaches to skin,insectos,advanced
+tabano,horsefly,Mosca grande que pica a los caballos,Large fly that bites horses,insectos,advanced
+piojo,louse,Parásito pequeño que vive en el cabello,Small parasite that lives in hair,insectos,advanced
+chinche,bedbug,Insecto plano que pica mientras duermes,Flat insect that bites while you sleep,insectos,advanced
+tijereta,earwig,Insecto con pinzas en la cola,Insect with pincers on its tail,insectos,advanced
+acaros,mites,Arácnidos microscópicos del polvo,Microscopic arachnids in dust,insectos,advanced
+termita,termite,Insecto que devora la madera,Insect that devours wood,insectos,advanced
+saltamon,locust,Insecto verde que salta por el pasto,Green insect that jumps through grass,insectos,advanced
+avispero,hornets,Nido de insectos que pican muy fuerte,Nest of insects that sting very hard,insectos,advanced
+zancudo,mosquito,Insecto que zumba y chupa sangre,Insect that buzzes and sucks blood,insectos,advanced
+cienpies,centipede,Criatura con muchas patas que se arrastra,Creature with many legs that crawls,insectos,advanced
+escorpio,scorpion,Arácnido con cola venenosa y pinzas,Arachnid with venomous tail and pincers,insectos,advanced
+cangrejo,crab,Crustáceo con pinzas que camina de lado,Crustacean with claws that walks sideways,marinos,beginner
+estrella,starfish,Criatura marina con forma de estrella,Sea creature shaped like a star,marinos,beginner
+foca,seal,Mamífero marino que descansa en las rocas,Marine mammal that rests on rocks,marinos,beginner
+morsa,walrus,Mamífero marino grande con colmillos,Large marine mammal with tusks,marinos,beginner
+almeja,clam,Molusco con dos conchas que vive en la arena,Mollusk with two shells living in sand,marinos,beginner
+calamar,squid,Criatura marina con diez tentáculos,Sea creature with ten tentacles,marinos,beginner
+camaron,shrimp,Crustáceo pequeño rosado muy sabroso,Small pink crustacean very tasty,marinos,beginner
+sardina,sardine,Pez pequeño plateado que nada en grupo,Small silver fish that swims in groups,marinos,beginner
+trucha,trout,Pez de río con manchas en el cuerpo,River fish with spots on its body,marinos,beginner
+atun,tuna,Pez grande y rápido del océano,Large fast fish of the ocean,marinos,beginner
+ostra,oyster,Molusco que puede crear perlas,Mollusk that can create pearls,marinos,beginner
+caracol,snail,Molusco lento con concha en espiral,Slow mollusk with a spiral shell,marinos,beginner
+langosta,lobster,Crustáceo grande con pinzas enormes,Large crustacean with huge claws,marinos,advanced
+erizo,urchin,Criatura marina redonda con espinas,Round sea creature with spines,marinos,advanced
+raya,ray,Pez plano con cola larga y venenosa,Flat fish with a long venomous tail,marinos,advanced
+anguila,eel,Pez largo como una serpiente marina,Long fish like a sea snake,marinos,advanced
+narval,narwhal,Ballena ártica con un cuerno largo,Arctic whale with a long horn,marinos,advanced
+manati,manatee,Mamífero marino herbívoro y tranquilo,Herbivorous and calm marine mammal,marinos,advanced
+barracud,barracuda,Pez depredador largo con dientes afilados,Long predatory fish with sharp teeth,marinos,advanced
+mejillon,mussel,Molusco oscuro que se pega a las rocas,Dark mollusk that clings to rocks,marinos,advanced
+pirana,piranha,Pez de río con dientes muy afilados,River fish with very sharp teeth,marinos,advanced
+caballito,seahorse,Pez diminuto con forma de caballo,Tiny fish shaped like a horse,marinos,advanced
+nautilo,nautilus,Molusco antiguo con concha en espiral,Ancient mollusk with spiral shell,marinos,advanced
+vieira,scallop,Molusco con concha en forma de abanico,Mollusk with a fan-shaped shell,marinos,advanced
+bagre,catfish,Pez de río con bigotes largos,River fish with long whiskers,marinos,advanced
+pargo,snapper,Pez tropical rojo muy popular en cocina,Red tropical fish popular in cooking,marinos,advanced
+colibri,sunbird,Ave diminuta que aletea muy rápido,Tiny bird that flaps its wings very fast,aves,beginner
+loro,parrot,Ave tropical que puede hablar,Tropical bird that can talk,aves,beginner
+paloma,dove,Ave gris común en las ciudades,Common gray bird in cities,aves,beginner
+cotorra,parakeet,Ave verde ruidosa que vive en bandadas,Noisy green bird that lives in flocks,aves,beginner
+cisne,swan,Ave blanca elegante que nada en lagos,Elegant white bird that swims in lakes,aves,beginner
+pavo,turkey,Ave grande que comemos en fiestas,Large bird we eat at celebrations,aves,beginner
+ganso,goose,Ave ruidosa que cuida su territorio,Noisy bird that guards its territory,aves,beginner
+canario,canary,Ave pequeña amarilla que canta bonito,Small yellow bird that sings beautifully,aves,beginner
+gorrion,sparrow,Ave pequeña marrón muy común,Very common small brown bird,aves,beginner
+flamenco,flamingo,Ave rosada que se para en una pata,Pink bird that stands on one leg,aves,beginner
+tucan,toucan,Ave tropical con pico enorme y colorido,Tropical bird with huge colorful beak,aves,beginner
+condor,condor,Ave enorme que vuela sobre los Andes,Huge bird that flies over the Andes,aves,beginner
+pelicano,pelican,Ave con bolsa grande bajo el pico,Bird with a large pouch under its beak,aves,beginner
+lechuza,owl,Ave nocturna que caza ratones,Nocturnal bird that hunts mice,aves,advanced
+golondri,swallow,Ave migratoria que anuncia la primavera,Migratory bird that announces spring,aves,advanced
+perdiz,partridge,Ave de caza que corre por el suelo,Game bird that runs on the ground,aves,advanced
+codorniz,quail,Ave pequeña de caza con plumas moteadas,Small game bird with speckled feathers,aves,advanced
+garza,heron,Ave alta y delgada que pesca en ríos,Tall slender bird that fishes in rivers,aves,advanced
+grulla,crane,Ave grande que migra en formación,Large bird that migrates in formation,aves,advanced
+cacatua,cockatoo,Ave blanca con cresta que grita fuerte,White crested bird that screams loudly,aves,advanced
+cernical,kestrel,Ave rapaz pequeña que se cierne en el aire,Small bird of prey that hovers in the air,aves,advanced
+urraca,magpie,Ave blanca y negra que roba objetos,Black and white bird that steals objects,aves,advanced
+buitre,vulture,Ave carroñera que vuela en círculos,Scavenger bird that flies in circles,aves,advanced
+mirlo,blackbird,Ave negra con pico amarillo que canta,Black bird with yellow beak that sings,aves,advanced
+ruisenor,songbird,Ave famosa por su canto nocturno,Bird famous for its nighttime song,aves,advanced
+alondra,lark,Ave que canta mientras vuela alto,Bird that sings while flying high,aves,advanced
+martin,fisher,Ave colorida que pesca en picada,Colorful bird that fishes by diving,aves,advanced
+guacamay,macaw,Loro grande y colorido de la selva,Large colorful parrot of the jungle,aves,advanced
+faisan,pheasant,Ave de caza con plumas muy vistosas,Game bird with very showy feathers,aves,advanced
+ibis,ibis,Ave zancuda con pico largo y curvo,Wading bird with a long curved beak,aves,advanced
+buzon,mailbox,Caja para depositar cartas,Box for depositing letters,ciudad,beginner
+farol,lamppost,Luz que ilumina las calles de noche,Light that illuminates streets at night,ciudad,advanced
+avenida,avenue,Calle ancha y principal de la ciudad,Wide main street of the city,ciudad,advanced
+muro,wall,Barrera de piedra o ladrillo,Barrier made of stone or brick,ciudad,beginner
+glorieta,rotary,Intersección circular para el tráfico,Circular intersection for traffic,ciudad,advanced
+callejon,alley,Calle estrecha entre edificios,Narrow street between buildings,ciudad,advanced
+vereda,path,Sendero estrecho para caminar,Narrow trail for walking,ciudad,advanced
+banca,bench,Asiento largo en un lugar público,Long seat in a public place,ciudad,beginner
+cruce,crossing,Lugar donde se cruzan dos caminos,Place where two roads cross,ciudad,beginner
+zona,zone,Área delimitada de la ciudad,Delimited area of the city,ciudad,beginner
+obra,works,Construcción o reparación en la calle,Construction or repair on the street,ciudad,advanced
+bocina,horn,Dispositivo sonoro de un vehículo,Sound device of a vehicle,ciudad,advanced
+rampa,ramp,Superficie inclinada para subir o bajar,Inclined surface for going up or down,ciudad,advanced
+precio,price,Cantidad de dinero que cuesta algo,Amount of money something costs,compras,beginner
+caja,register,Lugar donde se paga en una tienda,Place where you pay in a store,compras,beginner
+oferta,offer,Producto con precio reducido,Product with a reduced price,compras,beginner
+cambio,change,Dinero que te devuelven al pagar,Money returned to you after paying,compras,beginner
+marca,brand,Nombre comercial de un producto,Commercial name of a product,compras,beginner
+talla,size,Medida de la ropa,Measurement of clothing,compras,beginner
+ganga,bargain,Producto muy barato,Very cheap product,compras,advanced
+carrito,cart,Vehículo pequeño para llevar compras,Small vehicle to carry purchases,compras,beginner
+vitrina,display,Ventana de vidrio que muestra productos,Glass window that shows products,compras,advanced
+rebaja,sale,Reducción del precio original,Reduction of the original price,compras,beginner
+costo,cost,Lo que se paga por un bien o servicio,What you pay for a good or service,compras,beginner
+pago,payment,Acción de entregar dinero por algo,Action of giving money for something,compras,beginner
+deuda,debt,Dinero que se debe a alguien,Money owed to someone,compras,advanced
+ahorro,savings,Dinero guardado para el futuro,Money saved for the future,compras,advanced
+probador,fitting,Cuarto para probarse la ropa,Room for trying on clothes,compras,advanced
+tarjeta,card,Plástico para pagar sin efectivo,Plastic for paying without cash,compras,beginner
+efectivo,cash,Dinero en billetes y monedas,Money in bills and coins,compras,advanced
+regalo,gift,Objeto que se da sin esperar pago,Object given without expecting payment,compras,beginner
+vale,voucher,Cupón que se puede canjear por productos,Coupon redeemable for products,compras,advanced
+fila,line,Personas esperando en orden,People waiting in order,compras,beginner
+saldo,balance,Cantidad de dinero disponible,Amount of money available,compras,advanced
+gasto,expense,Dinero que se usa para comprar algo,Money used to buy something,compras,advanced
+etiqueta,tag,Papel con el precio del producto,Paper with the product price,compras,beginner
+copa,glass,Recipiente elegante para beber vino,Elegant container for drinking wine,restaurante,beginner
+cuenta,check,Documento con el total a pagar,Document with the total to pay,restaurante,beginner
+propina,tip,Dinero extra que se deja al mesero,Extra money left for the waiter,restaurante,beginner
+postre,dessert,Comida dulce al final de la cena,Sweet food at the end of dinner,restaurante,beginner
+cena,dinner,Comida principal de la noche,Main meal of the evening,restaurante,beginner
+mantel,cloth,Tela que cubre la mesa del restaurante,Fabric that covers the restaurant table,restaurante,advanced
+asado,roast,Carne cocinada al fuego o al horno,Meat cooked over fire or in the oven,restaurante,advanced
+frito,fried,Comida cocinada en aceite caliente,Food cooked in hot oil,restaurante,beginner
+horno,oven,Aparato para cocinar con calor,Appliance for cooking with heat,restaurante,advanced
+entrada,entree,Plato principal que se pide en un restaurante,Main dish ordered at a restaurant,restaurante,advanced
+barra,bar,Mostrador largo donde se sirven bebidas,Long counter where drinks are served,restaurante,advanced
+filete,fillet,Corte fino de carne o pescado,Thin cut of meat or fish,restaurante,advanced
+anhelo,longing,Deseo intenso de algo que no se tiene,Intense desire for something one doesn't have,sentimientos,advanced
+hartazgo,weariness,Cansancio extremo de una situación,Extreme tiredness of a situation,sentimientos,advanced
+sosiego,serenity,Tranquilidad profunda del espíritu,Deep tranquility of the spirit,sentimientos,advanced
+zozobra,anxiety,Inquietud y angustia persistente,Persistent unease and anguish,sentimientos,advanced
+ternura,tender,Sentimiento suave de cariño y delicadeza,Soft feeling of affection and gentleness,sentimientos,beginner
+desvelo,worry,Preocupación que no deja descansar,Worry that doesn't let you rest,sentimientos,advanced
+rechazo,rejection,Sentimiento de no ser aceptado,Feeling of not being accepted,sentimientos,advanced
+estupor,stupor,Asombro que deja sin reacción,Amazement that leaves one without reaction,sentimientos,advanced
+fervor,fervor,Entusiasmo apasionado e intenso,Passionate and intense enthusiasm,sentimientos,advanced
+letargo,lethargy,Estado de somnolencia y apatía,State of drowsiness and apathy,sentimientos,advanced
+jubilo,jubilee,Alegría desbordante y celebración,Overflowing joy and celebration,sentimientos,advanced
+fastidio,nuisance,Molestia o irritación persistente,Persistent annoyance or irritation,sentimientos,advanced
+sopor,drowse,Adormecimiento pesado y profundo,Heavy and deep drowsiness,sentimientos,advanced
+encanto,delight,Sensación de fascinación y agrado,Sensation of fascination and pleasure,sentimientos,beginner
+despecho,spite,Dolor causado por un desengaño amoroso,Pain caused by a romantic disappointment,sentimientos,advanced
+morrina,homesick,Nostalgia profunda por el hogar lejano,Deep longing for a distant home,sentimientos,advanced
+dulzura,sweetness,Ternura y suavidad en el trato,Tenderness and softness in manner,sentimientos,beginner
+congoja,distress,Pena profunda que oprime el corazón,Deep sorrow that oppresses the heart,sentimientos,advanced
+deleite,enjoyment,Placer intenso y refinado,Intense and refined pleasure,sentimientos,advanced
+apego,bond,Vínculo emocional fuerte con algo o alguien,Strong emotional bond with something or someone,sentimientos,advanced
+hartura,surfeit,Exceso que produce cansancio o disgusto,Excess that produces weariness or displeasure,sentimientos,advanced
+regocijo,glee,Alegría viva y expresiva,Lively and expressive joy,sentimientos,advanced
+pesadez,heavines,Sensación de carga emocional o física,Feeling of emotional or physical burden,sentimientos,advanced
+agobio,overwhelm,Sensación de presión excesiva,Feeling of excessive pressure,sentimientos,advanced
+embeleso,rapture,Fascinación intensa que absorbe la atención,Intense fascination that absorbs attention,sentimientos,advanced
+desden,disdain,Desprecio o falta de interés hacia algo,Contempt or lack of interest toward something,sentimientos,advanced
+candor,candor,Inocencia y sinceridad natural,Natural innocence and sincerity,sentimientos,advanced
+pudor,modesty,Vergüenza relacionada con la intimidad,Shame related to intimacy,sentimientos,advanced
+resquemor,rancor,Molestia persistente por algo pasado,Persistent annoyance about something past,sentimientos,advanced
+amigo,friend,Persona con quien se tiene confianza y cariño,Person with whom one has trust and affection,relaciones,beginner
+novio,groom,Pareja sentimental masculina,Male romantic partner,relaciones,beginner
+novia,bride,Pareja sentimental femenina,Female romantic partner,relaciones,beginner
+vecino,neighbor,Persona que vive cerca de tu casa,Person who lives near your home,relaciones,beginner
+aliado,ally,Persona que apoya en una causa común,Person who supports in a common cause,relaciones,advanced
+rival,rival,Persona que compite contigo,Person who competes with you,relaciones,beginner
+colega,peer,Compañero de trabajo o profesión,Work or profession companion,relaciones,beginner
+pareja,couple,Dos personas en una relación sentimental,Two people in a romantic relationship,relaciones,beginner
+grupo,group,Conjunto de personas reunidas,Set of people gathered together,relaciones,beginner
+mentor,mentor,Persona que guía y aconseja a otra,Person who guides and advises another,relaciones,advanced
+tutora,tutor,Persona encargada de enseñar y orientar,Person in charge of teaching and guiding,relaciones,advanced
+vinculo,link,Lazo emocional que une a las personas,Emotional tie that unites people,relaciones,advanced
+clan,clan,Grupo familiar o social muy unido,Very close family or social group,relaciones,advanced
+tribu,tribe,Comunidad unida por lazos culturales,Community united by cultural ties,relaciones,advanced
+pandilla,gang,Grupo de amigos que siempre están juntos,Group of friends who are always together,relaciones,beginner
+compadre,buddy,Amigo cercano o padrino de un hijo,Close friend or godfather of a child,relaciones,beginner
+cuate,pal,Amigo cercano en lenguaje coloquial,Close friend in colloquial language,relaciones,beginner
+pupilo,pupil,Persona que aprende bajo la guía de otro,Person who learns under another's guidance,relaciones,advanced
+anfitrion,host,Persona que recibe invitados en su casa,Person who receives guests at home,relaciones,advanced
+huesped,guest,Persona que se aloja en casa ajena,Person who stays in someone else's home,relaciones,advanced
+confeso,confessor,Persona a quien se cuentan secretos,Person to whom secrets are told,relaciones,advanced
+complice,cohort,Persona que participa en algo con otra,Person who participates in something with another,relaciones,advanced
+camarada,comrade,Compañero de lucha o ideales,Companion in struggle or ideals,relaciones,advanced
+consorte,consort,Esposo o esposa de una persona,Husband or wife of a person,relaciones,advanced
+protector,protector,Persona que cuida y defiende a otra,Person who cares for and defends another,relaciones,advanced
+seguidor,follower,Persona que admira y sigue a otra,Person who admires and follows another,relaciones,beginner
+charla,chat,Conversación informal y relajada,Informal and relaxed conversation,comunicacion,beginner
+rumor,rumor,Información no confirmada que se difunde,Unconfirmed information that spreads,comunicacion,beginner
+aviso,notice,Mensaje para informar o advertir,Message to inform or warn,comunicacion,beginner
+grito,shout,Voz muy alta para llamar la atención,Very loud voice to get attention,comunicacion,beginner
+frase,phrase,Conjunto de palabras con sentido completo,Set of words with complete meaning,comunicacion,beginner
+signo,sign,Símbolo que representa algo,Symbol that represents something,comunicacion,advanced
+radio,radio,Medio de comunicación por ondas sonoras,Communication medium through sound waves,comunicacion,beginner
+relato,tale,Narración de hechos reales o ficticios,Narration of real or fictional events,comunicacion,advanced
+cuento,story,Narración breve de ficción,Brief fiction narration,comunicacion,beginner
+poema,poem,Composición literaria en verso,Literary composition in verse,comunicacion,advanced
+resumen,summary,Versión breve de un texto más largo,Brief version of a longer text,comunicacion,beginner
+parrafo,paragraph,Sección de un texto con idea principal,Section of a text with a main idea,comunicacion,advanced
+dialogo,dialogue,Conversación entre dos o más personas,Conversation between two or more people,comunicacion,advanced
+discurso,speech,Exposición oral ante un público,Oral presentation before an audience,comunicacion,advanced
+emisora,station,Canal de radio o televisión que transmite,Radio or TV channel that broadcasts,comunicacion,advanced
+trama,plot,Secuencia de eventos en una narración,Sequence of events in a narration,comunicacion,advanced
+cabo,cape,Punta de tierra que entra en el mar,A point of land extending into water,geografia,beginner
+bahia,bay,Entrada del mar en la costa,A body of water partially enclosed by land,geografia,beginner
+cerro,hill,Elevación de terreno menor que una montaña,A small natural elevation,geografia,beginner
+duna,dune,Colina de arena formada por el viento,A mound of sand formed by wind,geografia,beginner
+golfo,gulf,Gran porción de mar que entra en la tierra,A large area of sea partly enclosed by land,geografia,beginner
+llanura,plain,Terreno plano y extenso,A large area of flat land,geografia,advanced
+laguna,lagoon,Lago pequeño y poco profundo,A shallow body of water,geografia,beginner
+cima,peak,La parte más alta de una montaña,The top of a mountain,geografia,beginner
+delta,delta,Terreno triangular en la boca de un río,Triangular land at a river mouth,geografia,advanced
+canal,canal,Vía de agua artificial o natural,An artificial or natural waterway,geografia,beginner
+penon,rock,Roca grande que sobresale del terreno,A large prominent rock formation,geografia,advanced
+fiesta,party,Celebración con música y baile,A celebration with music and dancing,cultura,beginner
+comida,food,Alimento que se consume,Nourishment that is eaten,cultura,beginner
+tango,tango,Baile originario de Argentina,Dance originating from Argentina,cultura,beginner
+cumbia,cumbia,Género musical colombiano popular,Popular Colombian music genre,cultura,advanced
+pinata,pinata,Figura decorada llena de dulces,Decorated figure filled with candy,cultura,beginner
+feria,fair,Evento con juegos y comida,An event with games and food,cultura,beginner
+danza,dancing,Expresión artística con movimiento,Artistic expression through movement,cultura,beginner
+mascara,mask,Objeto que cubre el rostro,An object that covers the face,cultura,advanced
+carnaval,carnival,Fiesta popular antes de cuaresma,Popular festival before Lent,cultura,advanced
+sarape,serape,Manta colorida mexicana tradicional,Traditional colorful Mexican blanket,cultura,advanced
+corrida,bullfight,Espectáculo taurino tradicional,Traditional bullfighting spectacle,cultura,advanced
+marimba,marimba,Instrumento de percusión de madera,A wooden percussion instrument,cultura,advanced
+leyenda,legend,Historia tradicional transmitida oralmente,A traditional story passed down orally,cultura,advanced
+copla,verse,Composición poética popular cantada,A popular sung poetic composition,cultura,advanced
+bolero,bolero,Género musical romántico latino,Romantic Latin music genre,cultura,advanced
+trova,ballad,Canción poética tradicional,Traditional poetic song,cultura,advanced
+joropo,joropo,Baile tradicional venezolano,Traditional Venezuelan dance,cultura,advanced
+zamba,zamba,Danza folclórica argentina,Argentine folk dance,cultura,advanced
+rodeo,rodeo,Evento de habilidades con ganado,An event showcasing cattle skills,cultura,beginner
+torero,matador,Persona que lidia toros,A person who fights bulls,cultura,advanced
+mole,mole,Salsa mexicana hecha con chiles y chocolate,Mexican sauce made with chiles and chocolate,cultura,advanced
+santo,saint,Persona reconocida por su santidad,A person recognized for holiness,religion,beginner
+cruz,cross,Símbolo principal del cristianismo,The main symbol of Christianity,religion,beginner
+biblia,bible,Libro sagrado del cristianismo,The sacred book of Christianity,religion,beginner
+alma,soul,Parte espiritual del ser humano,The spiritual part of a human being,religion,beginner
+angel,angel,Ser celestial mensajero de Dios,A celestial messenger of God,religion,beginner
+rezo,prayer,Comunicación con Dios,Communication with God,religion,beginner
+misa,mass,Ceremonia religiosa católica,A Catholic religious ceremony,religion,beginner
+virgen,virgin,Título dado a María madre de Jesús,Title given to Mary mother of Jesus,religion,beginner
+rosario,rosary,Cadena de cuentas para rezar,A string of beads used for prayer,religion,beginner
+bautizo,baptism,Sacramento de iniciación cristiana,Christian initiation sacrament,religion,beginner
+patron,patron,Santo protector de un lugar,Protective saint of a place,religion,advanced
+altar,altar,Mesa sagrada para ceremonias,A sacred table for ceremonies,religion,beginner
+fraile,friar,Religioso de una orden mendicante,A member of a mendicant religious order,religion,advanced
+obispo,bishop,Líder religioso de una diócesis,A religious leader of a diocese,religion,advanced
+piedad,piety,Devoción y respeto hacia Dios,Devotion and respect toward God,religion,advanced
+pecado,sin,Acción contraria a la ley divina,An action against divine law,religion,beginner
+milagro,miracle,Evento sobrenatural atribuido a Dios,A supernatural event attributed to God,religion,advanced
+ermita,hermitage,Pequeña iglesia en un lugar apartado,A small church in a remote place,religion,advanced
+credo,creed,Declaración de creencias religiosas,A statement of religious beliefs,religion,advanced
+devoto,devout,Persona muy dedicada a su religión,A person deeply dedicated to religion,religion,advanced
+gracia,grace,Favor divino otorgado por Dios,Divine favor granted by God,religion,advanced
+bendito,blessed,Que ha recibido una bendición,One who has received a blessing,religion,advanced
+campana,bell,Objeto de metal que suena en la iglesia,A metal object that rings in church,religion,beginner
+parroquia,parish,Comunidad religiosa local,A local religious community,religion,advanced
+novena,novena,Nueve días de oración continua,Nine days of continuous prayer,religion,advanced
+tulipan,tulip,Flor originaria de los Países Bajos,Flower originally from the Netherlands,jardin,beginner
+regar,water,Dar agua a las plantas,To give water to plants,jardin,beginner
+tallo,stem,Parte que sostiene la flor,Part that holds up the flower,jardin,beginner
+poda,prune,Cortar ramas para dar forma,To cut branches to shape,jardin,advanced
+abono,compost,Nutriente para enriquecer la tierra,Nutrient to enrich the soil,jardin,advanced
+cesped,lawn,Hierba corta que cubre el suelo,Short grass covering the ground,jardin,beginner
+maceta,pot,Recipiente para cultivar plantas,Container for growing plants,jardin,beginner
+arbusto,shrub,Planta leñosa más pequeña que un árbol,Woody plant smaller than a tree,jardin,advanced
+clavel,carnation,Flor con pétalos rizados y fragantes,Flower with curly fragrant petals,jardin,beginner
+lirio,lily,Flor elegante con pétalos grandes,Elegant flower with large petals,jardin,advanced
+brote,sprout,Primer crecimiento de una semilla,First growth from a seed,jardin,advanced
+cerca,fence,Barrera que rodea el jardín,Barrier surrounding the garden,jardin,beginner
+ramo,bouquet,Conjunto de flores cortadas,Bundle of cut flowers,jardin,beginner
+surco,furrow,Línea cavada en la tierra para sembrar,Line dug in soil for planting,jardin,advanced
+vivero,nursery,Lugar donde se cultivan plantas para vender,Place where plants are grown for sale,jardin,advanced
+petunia,petunia,Flor colorida común en jardines,Colorful flower common in gardens,jardin,beginner
+dalia,dahlia,Flor grande con muchos pétalos,Large flower with many petals,jardin,advanced
+trepar,climb,Lo que hacen las plantas enredaderas,What climbing plants do,jardin,advanced
+cocinar,cook,Preparar alimentos con calor,To prepare food with heat,cocinar,beginner
+hervir,boil,Calentar líquido hasta hacer burbujas,To heat liquid until it bubbles,cocinar,beginner
+freir,fry,Cocinar en aceite caliente,To cook in hot oil,cocinar,beginner
+asar,roast,Cocinar con calor seco en el horno,To cook with dry heat in the oven,cocinar,beginner
+batir,beat,Mezclar rápidamente con un tenedor,To mix rapidly with a fork,cocinar,beginner
+picar,chop,Cortar en trozos pequeños,To cut into small pieces,cocinar,beginner
+pelar,peel,Quitar la piel de una fruta o verdura,To remove the skin of a fruit or vegetable,cocinar,beginner
+rallar,grate,Desmenuzar con un rallador,To shred with a grater,cocinar,advanced
+mezclar,mix,Combinar ingredientes juntos,To combine ingredients together,cocinar,beginner
+hornear,bake,Cocinar en el horno con calor seco,To cook in the oven with dry heat,cocinar,beginner
+guisar,stew,Cocinar lentamente en salsa,To cook slowly in sauce,cocinar,advanced
+saltear,saute,Cocinar rápido en poco aceite,To cook quickly in little oil,cocinar,advanced
+colar,strain,Separar líquido de sólido con un colador,To separate liquid from solid with a strainer,cocinar,advanced
+marinar,marinate,Dejar reposar en una mezcla de sabores,To let rest in a flavor mixture,cocinar,advanced
+amasar,knead,Trabajar la masa con las manos,To work dough with your hands,cocinar,advanced
+tostar,toast,Dorar con calor seco,To brown with dry heat,cocinar,beginner
+sazonar,season,Añadir sal y especias a la comida,To add salt and spices to food,cocinar,advanced
+licuar,blend,Triturar alimentos hasta hacerlos líquido,To crush food until liquid,cocinar,beginner
+masa,dough,Mezcla de harina y agua para cocinar,Mixture of flour and water for cooking,cocinar,beginner
+escurrir,drain,Quitar el exceso de agua,To remove excess water,cocinar,advanced
+glasear,glaze,Cubrir con una capa brillante de azúcar,To cover with a shiny sugar layer,cocinar,advanced
+barrer,sweep,Limpiar el suelo con una escoba,To clean the floor with a broom,limpieza,beginner
+fregar,scrub,Limpiar frotando con fuerza,To clean by rubbing hard,limpieza,beginner
+trapear,mop,Limpiar el suelo con un trapo húmedo,To clean the floor with a wet cloth,limpieza,beginner
+lavar,wash,Limpiar con agua y jabón,To clean with water and soap,limpieza,beginner
+secar,dry,Quitar la humedad de algo,To remove moisture from something,limpieza,beginner
+planchar,iron,Alisar la ropa con calor,To smooth clothes with heat,limpieza,beginner
+sacudir,shake,Quitar el polvo agitando,To remove dust by shaking,limpieza,beginner
+tender,hang,Poner la ropa a secar al aire,To put clothes to air dry,limpieza,beginner
+polvo,dust,Partículas finas que se acumulan en muebles,Fine particles that accumulate on furniture,limpieza,beginner
+trapo,rag,Tela vieja usada para limpiar,Old cloth used for cleaning,limpieza,beginner
+mancha,stain,Marca sucia en la ropa o superficie,Dirty mark on clothes or surface,limpieza,beginner
+lejia,bleach,Producto químico para blanquear y desinfectar,Chemical product for whitening and disinfecting,limpieza,advanced
+pulir,polish,Frotar para dar brillo a una superficie,To rub to give shine to a surface,limpieza,advanced
+aspirar,vacuum,Limpiar con una aspiradora,To clean with a vacuum cleaner,limpieza,beginner
+frotar,rub,Pasar la mano con presión para limpiar,To press and move hand to clean,limpieza,beginner
+mugre,grime,Suciedad difícil de quitar,Dirt that is hard to remove,limpieza,advanced
+colada,laundry,Ropa sucia lista para lavar,Dirty clothes ready to wash,limpieza,beginner
+baldosa,tile,Pieza plana que cubre suelos y paredes,Flat piece covering floors and walls,limpieza,advanced
+recoger,tidy,Ordenar y guardar cosas en su lugar,To organize and put things in place,limpieza,beginner
+basura,trash,Desechos que se tiran,Waste that is thrown away,limpieza,beginner
+grasa,grease,Sustancia aceitosa difícil de limpiar,Oily substance hard to clean,limpieza,advanced
+vinagre,vinegar,Líquido ácido usado como limpiador natural,Acidic liquid used as natural cleaner,limpieza,advanced
+ordenar,sort,Poner cada cosa en su sitio,To put each thing in its place,limpieza,beginner
+sumidero,sinkhole,Conducto por donde sale el agua sucia,Pipe where dirty water flows out,limpieza,advanced
+atomo,atom,Partícula más pequeña de un elemento,Smallest particle of an element,ciencia,beginner
+celula,cell,Unidad básica de la vida,Basic unit of life,ciencia,beginner
+gen,gene,Unidad de herencia biológica,Unit of biological inheritance,ciencia,advanced
+adn,dna,Molécula que lleva la información genética,Molecule carrying genetic information,ciencia,advanced
+ion,ion,Átomo con carga eléctrica,Electrically charged atom,ciencia,advanced
+acido,acid,Sustancia con pH menor a siete,Substance with pH less than seven,ciencia,beginner
+base,base,Sustancia con pH mayor a siete,Substance with pH greater than seven,ciencia,beginner
+mol,mole,Unidad de cantidad de sustancia en química,Unit of amount of substance in chemistry,ciencia,advanced
+enzima,enzyme,Proteína que acelera reacciones químicas,Protein that speeds up chemical reactions,ciencia,advanced
+hongos,fungi,Organismos como setas y levaduras,Organisms like mushrooms and yeasts,ciencia,beginner
+flora,flora,Conjunto de plantas de una región,Plant life of a region,ciencia,beginner
+fauna,fauna,Conjunto de animales de una región,Animal life of a region,ciencia,beginner
+fosil,fossil,Resto preservado de un ser antiguo,Preserved remains of an ancient organism,ciencia,beginner
+mitosis,mitosis,División celular que produce dos células iguales,Cell division producing two identical cells,ciencia,advanced
+osmosis,osmosis,Paso de agua a través de una membrana,Passage of water through a membrane,ciencia,advanced
+organo,organ,Estructura formada por varios tejidos,Structure formed by various tissues,ciencia,beginner
+nervio,nerve,Fibra que transmite impulsos eléctricos,Fiber that transmits electrical impulses,ciencia,advanced
+fibra,fiber,Estructura alargada en tejidos biológicos,Elongated structure in biological tissues,ciencia,beginner
+metal,metal,Elemento que conduce electricidad y calor,Element that conducts electricity and heat,ciencia,beginner
+gas,gas,Estado de la materia sin forma ni volumen fijo,State of matter with no fixed shape or volume,ciencia,beginner
+litio,lithium,Elemento químico más ligero de los metales,Lightest metallic chemical element,ciencia,advanced
+sodio,sodium,Elemento presente en la sal de mesa,Element present in table salt,ciencia,advanced
+hierro,iron,Metal esencial en la hemoglobina,Essential metal in hemoglobin,ciencia,beginner
+plomo,lead,Metal pesado tóxico de símbolo Pb,Toxic heavy metal with symbol Pb,ciencia,advanced
+azufre,sulfur,Elemento amarillo con olor característico,Yellow element with characteristic smell,ciencia,advanced
+marte,mars,Planeta rojo del sistema solar,Red planet of the solar system,espacio,beginner
+venus,venus,Segundo planeta desde el Sol,Second planet from the Sun,espacio,beginner
+pluton,pluto,Planeta enano antes considerado el noveno,Dwarf planet formerly considered the ninth,espacio,beginner
+orbita,orbit,Trayectoria de un cuerpo alrededor de otro,Path of a body around another,espacio,beginner
+crater,crater,Depresión causada por impacto de meteorito,Depression caused by meteorite impact,espacio,beginner
+nebula,nebula,Nube de gas y polvo en el espacio,Cloud of gas and dust in space,espacio,advanced
+quasar,quasar,Núcleo galáctico extremadamente luminoso,Extremely luminous galactic nucleus,espacio,advanced
+pulsar,pulsar,Estrella de neutrones que emite radiación,Neutron star that emits radiation,espacio,advanced
+nova,nova,Explosión estelar que aumenta el brillo,Stellar explosion that increases brightness,espacio,advanced
+cosmos,cosmos,El universo como un todo ordenado,The universe as an ordered whole,espacio,beginner
+astro,star,Cuerpo celeste luminoso,Luminous celestial body,espacio,beginner
+galaxia,galaxy,Sistema masivo de estrellas y planetas,Massive system of stars and planets,espacio,beginner
+eclipse,eclipse,Ocultación de un astro por otro,Hiding of one celestial body by another,espacio,beginner
+cohete,rocket,Vehículo que viaja al espacio,Vehicle that travels to space,espacio,beginner
+sonda,probe,Nave no tripulada de exploración,Unmanned exploration spacecraft,espacio,advanced
+apogeo,apogee,Punto más lejano de una órbita,Farthest point of an orbit,espacio,advanced
+perigeo,perigee,Punto más cercano de una órbita,Closest point of an orbit,espacio,advanced
+vacio,vacuum,Espacio sin materia,Space without matter,espacio,advanced
+meteoro,meteor,Roca que se quema al entrar en la atmósfera,Rock that burns upon entering the atmosphere,espacio,beginner
+titan,titan,Luna más grande de Saturno,Largest moon of Saturn,espacio,advanced
+cenit,zenith,Punto más alto del cielo sobre el observador,Highest point of the sky above the observer,espacio,advanced
+nadir,nadir,Punto opuesto al cenit bajo el observador,Point opposite the zenith below the observer,espacio,advanced
+fase,phase,Apariencia de la Luna según su iluminación,Appearance of the Moon based on illumination,espacio,beginner
+eje,axis,Línea imaginaria de rotación de un planeta,Imaginary line of rotation of a planet,espacio,beginner
+halo,halo,Anillo de luz alrededor de un astro,Ring of light around a celestial body,espacio,advanced
+ocaso,sunset,Momento en que el Sol se oculta,Moment when the Sun sets,espacio,beginner
+suma,sum,Resultado de añadir cantidades,Result of adding quantities,matematicas,beginner
+resta,minus,Operación de quitar una cantidad de otra,Operation of taking one quantity from another,matematicas,beginner
+area,area,Medida de una superficie,Measure of a surface,matematicas,beginner
+cono,cone,Sólido con base circular y punta,Solid with circular base and a point,matematicas,beginner
+par,even,Número divisible entre dos,Number divisible by two,matematicas,beginner
+impar,odd,Número no divisible entre dos,Number not divisible by two,matematicas,beginner
+moda,mode,Valor más frecuente en un conjunto de datos,Most frequent value in a data set,matematicas,advanced
+rango,range,Diferencia entre el valor máximo y mínimo,Difference between maximum and minimum value,matematicas,advanced
+vector,vector,Cantidad con magnitud y dirección,Quantity with magnitude and direction,matematicas,advanced
+matriz,matrix,Arreglo rectangular de números,Rectangular array of numbers,matematicas,advanced
+plano,plane,Superficie infinita sin curvatura,Infinite surface without curvature,matematicas,beginner
+recta,line,Sucesión infinita de puntos en una dirección,Infinite succession of points in one direction,matematicas,beginner
+angulo,angle,Abertura formada por dos líneas que se cruzan,Opening formed by two intersecting lines,matematicas,beginner
+grado,degree,Unidad de medida de ángulos,Unit of measurement for angles,matematicas,beginner
+lado,side,Segmento que forma parte de un polígono,Segment that forms part of a polygon,matematicas,beginner
+rombo,rhombus,Cuadrilátero con cuatro lados iguales,Quadrilateral with four equal sides,matematicas,advanced
+ovalo,oval,Forma curva alargada como un huevo,Elongated curved shape like an egg,matematicas,beginner
+esfera,sphere,Sólido perfectamente redondo,Perfectly round solid,matematicas,beginner
+prisma,prism,Sólido con dos bases iguales y caras planas,Solid with two equal bases and flat faces,matematicas,advanced
+vertice,vertex,Punto donde se encuentran dos lados,Point where two sides meet,matematicas,advanced
+arista,edge,Línea donde se encuentran dos caras,Line where two faces meet,matematicas,advanced
+seno,sine,Función trigonométrica fundamental,Fundamental trigonometric function,matematicas,advanced
+coseno,cosine,Función trigonométrica complementaria del seno,Trigonometric function complementary to sine,matematicas,advanced
+cero,zero,Número que representa la nada,Number that represents nothing,matematicas,beginner
+cifra,digit,Símbolo usado para representar un número,Symbol used to represent a number,matematicas,beginner
+valor,value,Cantidad numérica de una expresión,Numerical quantity of an expression,matematicas,beginner
+mola,cool,Algo que está genial o fantástico,Something awesome or fantastic,jerga,advanced
+currar,work,Trabajar duro en el empleo,To work hard at a job,jerga,advanced
+flipar,freak,Quedarse muy sorprendido,To be amazed or shocked,jerga,advanced
+rollo,vibe,Ambiente o situación general,General atmosphere or situation,jerga,advanced
+cursi,cheesy,Algo excesivamente sentimental,Something overly sentimental,jerga,advanced
+morro,nerve,Descaro o atrevimiento,Audacity or cheekiness,jerga,advanced
+guay,great,Estupendo o muy bueno,Wonderful or very good,jerga,advanced
+pijo,posh,Persona de clase alta presumida,Snobbish upper-class person,jerga,advanced
+lata,drag,Algo aburrido o molesto,Something boring or annoying,jerga,advanced
+lio,mess,Desorden o situación caótica,Disorder or chaotic situation,jerga,advanced
+finde,weekend,Fin de semana abreviado,Abbreviated weekend,jerga,advanced
+soplon,snitch,Persona que delata a otros,Person who tells on others,jerga,advanced
+pelado,broke,Sin dinero en absoluto,Without any money at all,jerga,advanced
+movida,scene,Situación complicada o interesante,Complicated or interesting situation,jerga,advanced
+trasto,junk,Objeto inútil o persona traviesa,Useless object or mischievous person,jerga,advanced
+bronca,fight,Pelea o discusión acalorada,Fight or heated argument,jerga,advanced
+timo,scam,Engaño o estafa callejera,Street trick or fraud,jerga,advanced
+cotilla,gossip,Persona que difunde chismes,Person who spreads rumors,jerga,advanced
+chaval,kid,Chico joven o adolescente,Young boy or teenager,jerga,advanced
+mogollon,tons,Mucha cantidad de algo,A huge amount of something,jerga,advanced
+majo,nice,Persona agradable y simpática,Pleasant and likeable person,jerga,advanced
+chollo,bargain,Oferta increíble o ganga,Incredible deal or bargain,jerga,advanced
+curro,job,Empleo o puesto de trabajo,Employment or work position,jerga,advanced
+palo,stick,Golpe o decepción inesperada,Blow or unexpected disappointment,modismos,advanced
+bola,ball,Mentira o exageración,Lie or exaggeration,modismos,advanced
+piedra,stone,Objeto duro en expresiones de sorpresa,Hard object in expressions of surprise,modismos,advanced
+vuelta,turn,Giro en expresiones de cambio,Turn in expressions about change,modismos,advanced
+pata,paw,Extremidad animal en expresiones de torpeza,Animal limb in expressions of clumsiness,modismos,advanced
+tabla,board,Superficie plana en expresiones de salvación,Flat surface in expressions of salvation,modismos,advanced
+cuerpo,body,Figura humana en expresiones de bienestar,Human figure in expressions of wellbeing,modismos,advanced
+meme,meme,Imagen viral con texto humorístico,Viral image with humorous text,internet,advanced
+trol,troll,Persona que provoca en línea,Person who provokes others online,internet,advanced
+viral,viral,Contenido que se difunde masivamente,Content that spreads massively,internet,advanced
+spam,spam,Mensajes no deseados repetitivos,Unwanted repetitive messages,internet,advanced
+selfie,selfie,Foto de uno mismo con el móvil,Photo of oneself with a phone,internet,advanced
+emoji,emoji,Icono pequeño para expresar emociones,Small icon to express emotions,internet,advanced
+hater,hater,Persona que critica todo en línea,Person who criticizes everything online,internet,advanced
+sticker,sticker,Imagen adhesiva para mensajería,Adhesive image for messaging,internet,advanced
+stream,stream,Transmisión en vivo por internet,Live broadcast over the internet,internet,advanced
+lag,lag,Retraso en la conexión de un juego,Delay in a game connection,internet,advanced
+nerfear,nerf,Reducir el poder de algo en un juego,To reduce the power of something in a game,internet,advanced
+farmear,farm,Repetir acciones para obtener recursos,To repeat actions to obtain resources,internet,advanced
+bugear,bug,Causar un error en un programa o juego,To cause an error in a program or game,internet,advanced
+hostear,host,Alojar o ser anfitrión de un servidor,To host or run a server,internet,advanced
+rankear,rank,Subir de posición en clasificaciones,To climb in rankings,internet,advanced
+banear,ban,Prohibir acceso a un usuario,To prohibit access to a user,internet,advanced
+lootear,loot,Recoger objetos de enemigos derrotados,To collect items from defeated enemies,internet,advanced
+campear,camp,Quedarse quieto esperando enemigos,To stay still waiting for enemies,internet,advanced
+spamear,flood,Enviar mensajes repetidos sin parar,To send repeated messages nonstop,internet,advanced
+tiktoker,creator,Persona que crea contenido en TikTok,Person who creates content on TikTok,internet,advanced
+podcast,podcast,Programa de audio digital por episodios,Digital audio program by episodes,internet,advanced
+avatar,avatar,Imagen que representa a un usuario,Image that represents a user,internet,advanced
+server,server,Servidor donde se alojan datos o juegos,Server where data or games are hosted,internet,advanced
+noob,noob,Jugador novato o sin experiencia,Novice or inexperienced player,internet,advanced
+gamer,gamer,Persona aficionada a los videojuegos,Person who is into videogames,internet,advanced
+lunes,monday,Primer día laborable de la semana,First working day of the week,tiempo,beginner
+martes,tuesday,Día de la semana dedicado a Marte,Day of the week named after Mars,tiempo,beginner
+jueves,thursday,Día entre miércoles y viernes,Day between Wednesday and Friday,tiempo,beginner
+viernes,friday,¡El mejor día! Empieza el fin de semana,The best day! The weekend starts,tiempo,beginner
+sabado,saturday,Día para descansar y divertirse,Day to rest and have fun,tiempo,beginner
+domingo,sunday,Último día de la semana en muchos países,Last day of the week in many countries,tiempo,beginner
+enero,january,Primer mes del año nuevo,First month of the new year,tiempo,beginner
+febrero,february,El mes más corto del año,The shortest month of the year,tiempo,beginner
+marzo,march,Mes en que llega la primavera,Month when spring arrives,tiempo,beginner
+abril,april,Mes de lluvias y flores,Month of rain and flowers,tiempo,beginner
+mayo,may,Mes de las madres en muchos países,Month of mothers in many countries,tiempo,beginner
+junio,june,Mes en que empieza el verano,Month when summer begins,tiempo,beginner
+julio,july,Mes más caluroso del verano,Hottest month of summer,tiempo,beginner
+agosto,august,Mes de vacaciones por excelencia,The quintessential vacation month,tiempo,beginner
+octubre,october,Mes del otoño y Halloween,Month of autumn and Halloween,tiempo,beginner
+hora,hour,Sesenta minutos forman una,Sixty minutes make one,tiempo,beginner
+minuto,minute,Sesenta segundos forman uno,Sixty seconds make one,tiempo,beginner
+segundo,second,La unidad de tiempo más pequeña común,The smallest common unit of time,tiempo,beginner
+semana,week,Siete días forman una,Seven days make one,tiempo,beginner
+mes,month,Período de aproximadamente treinta días,Period of approximately thirty days,tiempo,beginner
+ano,year,Período de doce meses,Period of twelve months,tiempo,beginner
+siglo,century,Cien años forman uno,One hundred years make one,tiempo,advanced
+decada,decade,Diez años forman una,Ten years make one,tiempo,advanced
+manana,morning,Parte del día antes del mediodía,Part of the day before noon,tiempo,beginner
+tarde,evening,Parte del día después del mediodía,Part of the day after noon,tiempo,beginner
+noche,night,Cuando sale la luna y las estrellas,When the moon and stars come out,tiempo,beginner
+hoy,today,Este día presente,This present day,tiempo,beginner
+ayer,yesterday,El día antes de hoy,The day before today,tiempo,beginner
+fecha,date,Día específico en el calendario,Specific day on the calendar,tiempo,beginner
+pasado,past,Lo que ya ocurrió antes,What already happened before,tiempo,advanced
+futuro,future,Lo que está por venir,What is yet to come,tiempo,advanced
+uno,one,El primer número natural,The first natural number,numeros,beginner
+dos,two,Par de cosas iguales,A pair of equal things,numeros,beginner
+tres,three,Número de lados de un triángulo,Number of sides in a triangle,numeros,beginner
+cuatro,four,Número de estaciones del año,Number of seasons in a year,numeros,beginner
+cinco,five,Dedos en una mano,Fingers on one hand,numeros,beginner
+seis,six,Mitad de una docena,Half a dozen,numeros,beginner
+siete,seven,Días en una semana,Days in a week,numeros,beginner
+ocho,eight,Número que parece un infinito de pie,Number that looks like infinity standing up,numeros,beginner
+nueve,nine,El último dígito antes del diez,The last digit before ten,numeros,beginner
+diez,ten,Número de dedos en ambas manos,Number of fingers on both hands,numeros,beginner
+once,eleven,Diez más uno,Ten plus one,numeros,beginner
+doce,twelve,Número de meses en un año,Number of months in a year,numeros,beginner
+trece,thirteen,Número considerado de mala suerte,Number considered unlucky,numeros,beginner
+catorce,fourteen,Dos veces siete,Two times seven,numeros,beginner
+quince,fifteen,Tres veces cinco,Three times five,numeros,beginner
+veinte,twenty,Dos decenas completas,Two complete tens,numeros,beginner
+cien,hundred,Diez veces diez,Ten times ten,numeros,beginner
+mil,thousand,Diez veces cien,Ten times one hundred,numeros,beginner
+doble,double,Multiplicar por dos,To multiply by two,numeros,beginner
+triple,triple,Multiplicar por tres,To multiply by three,numeros,advanced
+mitad,half,Dividir algo en dos partes iguales,To divide something into two equal parts,numeros,beginner
+tercio,third,Una de tres partes iguales,One of three equal parts,numeros,advanced
+cuarto,quarter,Una de cuatro partes iguales,One of four equal parts,numeros,advanced
+quinto,fifth,Posición número cinco en una fila,Position number five in a line,numeros,advanced
+sexto,sixth,Posición después del quinto,Position after the fifth,numeros,advanced
+septimo,seventh,Posición número siete,Position number seven,numeros,advanced
+octavo,eighth,Posición número ocho,Position number eight,numeros,advanced
+noveno,ninth,Posición número nueve,Position number nine,numeros,advanced
+decimo,tenth,Posición número diez,Position number ten,numeros,advanced
+navidad,christmas,Fiesta del 25 de diciembre,Holiday on December 25th,calendario,beginner
+pascua,easter,Fiesta cristiana de resurrección,Christian holiday of resurrection,calendario,beginner
+boda,wedding,Ceremonia para unir a dos personas,Ceremony to unite two people,calendario,beginner
+cumple,birthday,Día en que naciste ¡a celebrar!,Day you were born - time to celebrate!,calendario,beginner
+brindis,toast,Levantar la copa y decir ¡salud!,Raise your glass and say cheers!,calendario,advanced
+desfile,parade,Marcha festiva por las calles,Festive march through the streets,calendario,advanced
+disfraz,costume,Ropa especial para Halloween o carnaval,Special clothes for Halloween or carnival,calendario,beginner
+villano,villain,Personaje malo en las obras de teatro,Bad character in theater plays,calendario,advanced
+corona,crown,Adorno para la cabeza del rey o reina,Head ornament for a king or queen,calendario,advanced
+ritual,ritual,Ceremonia tradicional repetida cada año,Traditional ceremony repeated every year,calendario,advanced
+ofrenda,offering,Se pone en el altar del Día de Muertos,Placed on the Day of the Dead altar,calendario,advanced
+tumba,tomb,Lugar donde descansan los difuntos,Place where the deceased rest,calendario,advanced

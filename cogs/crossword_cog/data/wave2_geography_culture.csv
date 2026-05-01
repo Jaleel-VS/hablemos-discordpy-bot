@@ -1,0 +1,95 @@
+rio,river,Corriente de agua que desemboca en el mar,A natural flowing watercourse,geografia,beginner
+lago,lake,Masa de agua rodeada de tierra,A large body of water surrounded by land,geografia,beginner
+mar,sea,Gran extensión de agua salada,A large body of saltwater,geografia,beginner
+isla,island,Porción de tierra rodeada de agua,A piece of land surrounded by water,geografia,beginner
+playa,beach,Orilla del mar con arena,Sandy shore by the ocean,geografia,beginner
+monte,mount,Elevación natural del terreno,A large natural elevation of earth,geografia,beginner
+valle,valley,Llanura entre montañas,Low area of land between hills,geografia,beginner
+costa,coast,Orilla del mar y tierra cercana,Land along the edge of the sea,geografia,beginner
+selva,jungle,Bosque tropical muy denso,A dense tropical forest,geografia,beginner
+cabo,cape,Punta de tierra que entra en el mar,A point of land extending into water,geografia,beginner
+bahia,bay,Entrada del mar en la costa,A body of water partially enclosed by land,geografia,beginner
+cerro,hill,Elevación de terreno menor que una montaña,A small natural elevation,geografia,beginner
+cueva,cave,Cavidad natural en la roca,A natural underground chamber,geografia,beginner
+duna,dune,Colina de arena formada por el viento,A mound of sand formed by wind,geografia,beginner
+golfo,gulf,Gran porción de mar que entra en la tierra,A large area of sea partly enclosed by land,geografia,beginner
+meseta,plateau,Llanura elevada sobre el nivel del mar,A flat elevated area of land,geografia,advanced
+volcan,volcano,Montaña que expulsa lava y ceniza,A mountain that erupts lava,geografia,beginner
+bosque,forest,Gran extensión de árboles,A large area covered with trees,geografia,beginner
+arroyo,stream,Corriente pequeña de agua,A small narrow river,geografia,beginner
+cumbre,summit,Punto más alto de una montaña,The highest point of a mountain,geografia,advanced
+llanura,plain,Terreno plano y extenso,A large area of flat land,geografia,advanced
+cascada,cascade,Caída de agua desde una altura,A waterfall or series of waterfalls,geografia,advanced
+laguna,lagoon,Lago pequeño y poco profundo,A shallow body of water,geografia,beginner
+pradera,meadow,Campo de hierba natural,A field of grass and wildflowers,geografia,advanced
+acantil,cliff,Pared vertical de roca junto al mar,A steep rock face by the sea,geografia,advanced
+cima,peak,La parte más alta de una montaña,The top of a mountain,geografia,beginner
+delta,delta,Terreno triangular en la boca de un río,Triangular land at a river mouth,geografia,advanced
+canal,canal,Vía de agua artificial o natural,An artificial or natural waterway,geografia,beginner
+colina,hillock,Pequeña elevación del terreno,A small rounded elevation,geografia,beginner
+penon,rock,Roca grande que sobresale del terreno,A large prominent rock formation,geografia,advanced
+arena,sand,Material granular de las playas,Granular material found on beaches,geografia,beginner
+fiesta,party,Celebración con música y baile,A celebration with music and dancing,cultura,beginner
+baile,dance,Movimiento rítmico del cuerpo,Rhythmic movement of the body,cultura,beginner
+musica,music,Arte de combinar sonidos,The art of combining sounds,cultura,beginner
+comida,food,Alimento que se consume,Nourishment that is eaten,cultura,beginner
+salsa,salsa,Baile y género musical latino,Latin dance and music genre,cultura,beginner
+tango,tango,Baile originario de Argentina,Dance originating from Argentina,cultura,beginner
+cumbia,cumbia,Género musical colombiano popular,Popular Colombian music genre,cultura,advanced
+pinata,pinata,Figura decorada llena de dulces,Decorated figure filled with candy,cultura,beginner
+mural,mural,Pintura grande hecha en una pared,A large painting on a wall,cultura,beginner
+feria,fair,Evento con juegos y comida,An event with games and food,cultura,beginner
+danza,dancing,Expresión artística con movimiento,Artistic expression through movement,cultura,beginner
+tambor,drum,Instrumento musical de percusión,A percussion musical instrument,cultura,beginner
+mascara,mask,Objeto que cubre el rostro,An object that covers the face,cultura,advanced
+carnaval,carnival,Fiesta popular antes de cuaresma,Popular festival before Lent,cultura,advanced
+mercado,market,Lugar donde se compran y venden cosas,A place where goods are bought and sold,cultura,beginner
+sarape,serape,Manta colorida mexicana tradicional,Traditional colorful Mexican blanket,cultura,advanced
+corrida,bullfight,Espectáculo taurino tradicional,Traditional bullfighting spectacle,cultura,advanced
+guitarra,guitar,Instrumento musical de cuerdas,A stringed musical instrument,cultura,beginner
+marimba,marimba,Instrumento de percusión de madera,A wooden percussion instrument,cultura,advanced
+leyenda,legend,Historia tradicional transmitida oralmente,A traditional story passed down orally,cultura,advanced
+cuento,tale,Narración breve de ficción,A short fictional narrative,cultura,beginner
+copla,verse,Composición poética popular cantada,A popular sung poetic composition,cultura,advanced
+rumba,rumba,Baile y música de origen cubano,Cuban dance and music style,cultura,advanced
+bolero,bolero,Género musical romántico latino,Romantic Latin music genre,cultura,advanced
+trova,ballad,Canción poética tradicional,Traditional poetic song,cultura,advanced
+joropo,joropo,Baile tradicional venezolano,Traditional Venezuelan dance,cultura,advanced
+zamba,zamba,Danza folclórica argentina,Argentine folk dance,cultura,advanced
+rodeo,rodeo,Evento de habilidades con ganado,An event showcasing cattle skills,cultura,beginner
+plaza,plaza,Espacio público abierto en una ciudad,An open public square in a city,cultura,beginner
+torero,matador,Persona que lidia toros,A person who fights bulls,cultura,advanced
+mole,mole,Salsa mexicana hecha con chiles y chocolate,Mexican sauce made with chiles and chocolate,cultura,advanced
+iglesia,church,Edificio donde los cristianos se reúnen,A building where Christians gather,religion,beginner
+santo,saint,Persona reconocida por su santidad,A person recognized for holiness,religion,beginner
+cruz,cross,Símbolo principal del cristianismo,The main symbol of Christianity,religion,beginner
+biblia,bible,Libro sagrado del cristianismo,The sacred book of Christianity,religion,beginner
+alma,soul,Parte espiritual del ser humano,The spiritual part of a human being,religion,beginner
+cielo,heaven,Lugar de descanso eterno según la fe,Place of eternal rest according to faith,religion,beginner
+angel,angel,Ser celestial mensajero de Dios,A celestial messenger of God,religion,beginner
+rezo,prayer,Comunicación con Dios,Communication with God,religion,beginner
+misa,mass,Ceremonia religiosa católica,A Catholic religious ceremony,religion,beginner
+cura,priest,Sacerdote católico de una parroquia,A Catholic parish priest,religion,beginner
+virgen,virgin,Título dado a María madre de Jesús,Title given to Mary mother of Jesus,religion,beginner
+rosario,rosary,Cadena de cuentas para rezar,A string of beads used for prayer,religion,beginner
+templo,temple,Edificio dedicado al culto religioso,A building dedicated to religious worship,religion,beginner
+bautizo,baptism,Sacramento de iniciación cristiana,Christian initiation sacrament,religion,beginner
+patron,patron,Santo protector de un lugar,Protective saint of a place,religion,advanced
+altar,altar,Mesa sagrada para ceremonias,A sacred table for ceremonies,religion,beginner
+monja,nun,Mujer que vive en comunidad religiosa,A woman living in a religious community,religion,beginner
+fraile,friar,Religioso de una orden mendicante,A member of a mendicant religious order,religion,advanced
+obispo,bishop,Líder religioso de una diócesis,A religious leader of a diocese,religion,advanced
+vela,candle,Objeto de cera que da luz en rituales,A wax object that gives light in rituals,religion,beginner
+piedad,piety,Devoción y respeto hacia Dios,Devotion and respect toward God,religion,advanced
+pecado,sin,Acción contraria a la ley divina,An action against divine law,religion,beginner
+milagro,miracle,Evento sobrenatural atribuido a Dios,A supernatural event attributed to God,religion,advanced
+ermita,hermitage,Pequeña iglesia en un lugar apartado,A small church in a remote place,religion,advanced
+monje,monk,Hombre que vive en comunidad religiosa,A man living in a religious community,religion,advanced
+credo,creed,Declaración de creencias religiosas,A statement of religious beliefs,religion,advanced
+devoto,devout,Persona muy dedicada a su religión,A person deeply dedicated to religion,religion,advanced
+gracia,grace,Favor divino otorgado por Dios,Divine favor granted by God,religion,advanced
+bendito,blessed,Que ha recibido una bendición,One who has received a blessing,religion,advanced
+campana,bell,Objeto de metal que suena en la iglesia,A metal object that rings in church,religion,beginner
+parroquia,parish,Comunidad religiosa local,A local religious community,religion,advanced
+capilla,chapel,Lugar pequeño de oración,A small place of worship,religion,beginner
+novena,novena,Nueve días de oración continua,Nine days of continuous prayer,religion,advanced

@@ -1,0 +1,92 @@
+anhelo,longing,Deseo intenso de algo que no se tiene,Intense desire for something one doesn't have,sentimientos,advanced
+hartazgo,weariness,Cansancio extremo de una situación,Extreme tiredness of a situation,sentimientos,advanced
+sosiego,serenity,Tranquilidad profunda del espíritu,Deep tranquility of the spirit,sentimientos,advanced
+zozobra,anxiety,Inquietud y angustia persistente,Persistent unease and anguish,sentimientos,advanced
+ternura,tender,Sentimiento suave de cariño y delicadeza,Soft feeling of affection and gentleness,sentimientos,beginner
+desvelo,worry,Preocupación que no deja descansar,Worry that doesn't let you rest,sentimientos,advanced
+rechazo,rejection,Sentimiento de no ser aceptado,Feeling of not being accepted,sentimientos,advanced
+estupor,stupor,Asombro que deja sin reacción,Amazement that leaves one without reaction,sentimientos,advanced
+fervor,fervor,Entusiasmo apasionado e intenso,Passionate and intense enthusiasm,sentimientos,advanced
+letargo,lethargy,Estado de somnolencia y apatía,State of drowsiness and apathy,sentimientos,advanced
+jubilo,jubilee,Alegría desbordante y celebración,Overflowing joy and celebration,sentimientos,advanced
+fastidio,nuisance,Molestia o irritación persistente,Persistent annoyance or irritation,sentimientos,advanced
+sopor,drowse,Adormecimiento pesado y profundo,Heavy and deep drowsiness,sentimientos,advanced
+encanto,delight,Sensación de fascinación y agrado,Sensation of fascination and pleasure,sentimientos,beginner
+despecho,spite,Dolor causado por un desengaño amoroso,Pain caused by a romantic disappointment,sentimientos,advanced
+morrina,homesick,Nostalgia profunda por el hogar lejano,Deep longing for a distant home,sentimientos,advanced
+bochorno,embarras,Vergüenza intensa ante una situación,Intense embarrassment in a situation,sentimientos,advanced
+dulzura,sweetness,Ternura y suavidad en el trato,Tenderness and softness in manner,sentimientos,beginner
+congoja,distress,Pena profunda que oprime el corazón,Deep sorrow that oppresses the heart,sentimientos,advanced
+deleite,enjoyment,Placer intenso y refinado,Intense and refined pleasure,sentimientos,advanced
+apego,bond,Vínculo emocional fuerte con algo o alguien,Strong emotional bond with something or someone,sentimientos,advanced
+hartura,surfeit,Exceso que produce cansancio o disgusto,Excess that produces weariness or displeasure,sentimientos,advanced
+regocijo,glee,Alegría viva y expresiva,Lively and expressive joy,sentimientos,advanced
+pesadez,heavines,Sensación de carga emocional o física,Feeling of emotional or physical burden,sentimientos,advanced
+agobio,overwhelm,Sensación de presión excesiva,Feeling of excessive pressure,sentimientos,advanced
+embeleso,rapture,Fascinación intensa que absorbe la atención,Intense fascination that absorbs attention,sentimientos,advanced
+desden,disdain,Desprecio o falta de interés hacia algo,Contempt or lack of interest toward something,sentimientos,advanced
+candor,candor,Inocencia y sinceridad natural,Natural innocence and sincerity,sentimientos,advanced
+pudor,modesty,Vergüenza relacionada con la intimidad,Shame related to intimacy,sentimientos,advanced
+resquemor,rancor,Molestia persistente por algo pasado,Persistent annoyance about something past,sentimientos,advanced
+amigo,friend,Persona con quien se tiene confianza y cariño,Person with whom one has trust and affection,relaciones,beginner
+novio,groom,Pareja sentimental masculina,Male romantic partner,relaciones,beginner
+novia,bride,Pareja sentimental femenina,Female romantic partner,relaciones,beginner
+vecino,neighbor,Persona que vive cerca de tu casa,Person who lives near your home,relaciones,beginner
+socio,partner,Persona con quien se comparte un negocio,Person with whom one shares a business,relaciones,advanced
+aliado,ally,Persona que apoya en una causa común,Person who supports in a common cause,relaciones,advanced
+rival,rival,Persona que compite contigo,Person who competes with you,relaciones,beginner
+colega,peer,Compañero de trabajo o profesión,Work or profession companion,relaciones,beginner
+pareja,couple,Dos personas en una relación sentimental,Two people in a romantic relationship,relaciones,beginner
+equipo,team,Grupo de personas que trabajan juntas,Group of people who work together,relaciones,beginner
+grupo,group,Conjunto de personas reunidas,Set of people gathered together,relaciones,beginner
+jefe,boss,Persona que dirige a otros en el trabajo,Person who leads others at work,relaciones,beginner
+mentor,mentor,Persona que guía y aconseja a otra,Person who guides and advises another,relaciones,advanced
+tutora,tutor,Persona encargada de enseñar y orientar,Person in charge of teaching and guiding,relaciones,advanced
+enlace,liaison,Conexión o vínculo entre personas o grupos,Connection or link between people or groups,relaciones,advanced
+vinculo,link,Lazo emocional que une a las personas,Emotional tie that unites people,relaciones,advanced
+clan,clan,Grupo familiar o social muy unido,Very close family or social group,relaciones,advanced
+tribu,tribe,Comunidad unida por lazos culturales,Community united by cultural ties,relaciones,advanced
+pandilla,gang,Grupo de amigos que siempre están juntos,Group of friends who are always together,relaciones,beginner
+compadre,buddy,Amigo cercano o padrino de un hijo,Close friend or godfather of a child,relaciones,beginner
+cuate,pal,Amigo cercano en lenguaje coloquial,Close friend in colloquial language,relaciones,beginner
+pupilo,pupil,Persona que aprende bajo la guía de otro,Person who learns under another's guidance,relaciones,advanced
+anfitrion,host,Persona que recibe invitados en su casa,Person who receives guests at home,relaciones,advanced
+huesped,guest,Persona que se aloja en casa ajena,Person who stays in someone else's home,relaciones,advanced
+confeso,confessor,Persona a quien se cuentan secretos,Person to whom secrets are told,relaciones,advanced
+complice,cohort,Persona que participa en algo con otra,Person who participates in something with another,relaciones,advanced
+camarada,comrade,Compañero de lucha o ideales,Companion in struggle or ideals,relaciones,advanced
+consorte,consort,Esposo o esposa de una persona,Husband or wife of a person,relaciones,advanced
+protector,protector,Persona que cuida y defiende a otra,Person who cares for and defends another,relaciones,advanced
+seguidor,follower,Persona que admira y sigue a otra,Person who admires and follows another,relaciones,beginner
+charla,chat,Conversación informal y relajada,Informal and relaxed conversation,comunicacion,beginner
+debate,debate,Discusión organizada sobre un tema,Organized discussion about a topic,comunicacion,advanced
+rumor,rumor,Información no confirmada que se difunde,Unconfirmed information that spreads,comunicacion,beginner
+aviso,notice,Mensaje para informar o advertir,Message to inform or warn,comunicacion,beginner
+carta,letter,Mensaje escrito enviado a otra persona,Written message sent to another person,comunicacion,beginner
+nota,note,Mensaje breve escrito,Brief written message,comunicacion,beginner
+grito,shout,Voz muy alta para llamar la atención,Very loud voice to get attention,comunicacion,beginner
+frase,phrase,Conjunto de palabras con sentido completo,Set of words with complete meaning,comunicacion,beginner
+idioma,language,Sistema de comunicación de un pueblo,Communication system of a people,comunicacion,beginner
+lengua,tongue,Órgano del habla o idioma que se habla,Speech organ or language spoken,comunicacion,beginner
+signo,sign,Símbolo que representa algo,Symbol that represents something,comunicacion,advanced
+codigo,code,Sistema de símbolos para comunicarse,System of symbols for communication,comunicacion,advanced
+prensa,press,Medios de comunicación escritos,Written media outlets,comunicacion,advanced
+radio,radio,Medio de comunicación por ondas sonoras,Communication medium through sound waves,comunicacion,beginner
+correo,mail,Sistema para enviar y recibir mensajes,System for sending and receiving messages,comunicacion,beginner
+texto,text,Contenido escrito de un documento,Written content of a document,comunicacion,beginner
+relato,tale,Narración de hechos reales o ficticios,Narration of real or fictional events,comunicacion,advanced
+cuento,story,Narración breve de ficción,Brief fiction narration,comunicacion,beginner
+poema,poem,Composición literaria en verso,Literary composition in verse,comunicacion,advanced
+ensayo,essay,Texto que analiza un tema con profundidad,Text that analyzes a topic in depth,comunicacion,advanced
+resumen,summary,Versión breve de un texto más largo,Brief version of a longer text,comunicacion,beginner
+titulo,title,Nombre que identifica una obra o texto,Name that identifies a work or text,comunicacion,beginner
+parrafo,paragraph,Sección de un texto con idea principal,Section of a text with a main idea,comunicacion,advanced
+dialogo,dialogue,Conversación entre dos o más personas,Conversation between two or more people,comunicacion,advanced
+discurso,speech,Exposición oral ante un público,Oral presentation before an audience,comunicacion,advanced
+emisora,station,Canal de radio o televisión que transmite,Radio or TV channel that broadcasts,comunicacion,advanced
+lectura,reading,Acción de leer un texto,Action of reading a text,comunicacion,beginner
+firma,signing,Nombre escrito para validar un documento,Name written to validate a document,comunicacion,beginner
+cita,quote,Frase tomada de otro autor o fuente,Phrase taken from another author or source,comunicacion,advanced
+blog,blog,Página web con publicaciones periódicas,Web page with periodic publications,comunicacion,beginner
+trama,plot,Secuencia de eventos en una narración,Sequence of events in a narration,comunicacion,advanced
+cronica,chronicle,Relato detallado de hechos en orden,Detailed account of events in order,comunicacion,advanced
