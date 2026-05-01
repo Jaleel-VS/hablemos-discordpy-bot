@@ -89,10 +89,11 @@ def render_grid(
 
         # Draw number if this is a word start
         if (r, c) in number_positions:
+            num_color = (255, 255, 255) if (r, c) in solved_cells else (30, 31, 34)
             draw.text(
                 (x + 4, y + 2),
                 str(number_positions[(r, c)]),
-                fill=NUMBER_COLOR, font=number_font,
+                fill=num_color, font=number_font,
             )
 
         # Draw letter if solved or revealed
