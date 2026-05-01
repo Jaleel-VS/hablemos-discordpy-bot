@@ -49,6 +49,7 @@ class CrosswordGame:
         self.solvers: dict[int, str] = {}  # word index -> display_name
         self.revealed_cells: dict[tuple[int, int], str] = {}
         self.started_at = time.monotonic()
+        self.starter_id: int = 0
         self.message: discord.Message | None = None
 
     @property
@@ -240,6 +241,7 @@ class CrosswordCog(BaseCog):
 
             self._active[channel_id] = game
 
+        game.starter_id = ctx.author.id
         logger.info(
             "Crossword started by %s in #%s (%s, %s)",
             ctx.author, channel_id, diff, lang,
@@ -272,6 +274,18 @@ class CrosswordCog(BaseCog):
         text = message.content.strip()
         if not text or len(text) > 50:
             return
+
+        # Quit command — starter or members with manage_messages can end the game
+        if text.lower() == "quit":
+            can_quit = (
+                message.author.id == game.starter_id
+                or getattr(message.channel.permissions_for(message.author), "manage_messages", False)
+            )
+            if can_quit:
+                logger.info("Crossword quit by %s in #%s", message.author, channel_id)
+                await self._end_game(channel_id, completed=False)
+                await message.add_reaction("👋")
+                return
 
         idx = game.try_solve(text)
         if idx is None:
