@@ -284,15 +284,19 @@ class CrosswordCog(BaseCog):
             author, channel_id, diff, lang, use_v2,
         )
 
-        send = followup.send if followup else channel.send
-
         if use_v2:
             view, file = _build_v2_view(game)
-            msg = await send(view=view, file=file)
+            if followup:
+                msg = await followup.send(view=view, file=file, wait=True)
+            else:
+                msg = await channel.send(view=view, file=file)
         else:
             embed = game.build_embed()
             img = game.render()
-            msg = await send(embed=embed, file=img)
+            if followup:
+                msg = await followup.send(embed=embed, file=img, wait=True)
+            else:
+                msg = await channel.send(embed=embed, file=img)
 
         game.message = msg
         self.bot.loop.create_task(self._timeout_watcher(channel_id))
