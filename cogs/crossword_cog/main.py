@@ -189,49 +189,51 @@ def _build_game(
     """Build a new crossword game.
 
     ``language`` is the practice language — clues and answers are both
-    in this language.
+    in this language.  Retries with fresh words if grid generation fails.
     """
-    entries = pick_words(word_pool, difficulty, WORDS_PER_GAME)
-    if len(entries) < 3:
-        return None
+    for _attempt in range(5):
+        entries = pick_words(word_pool, difficulty, WORDS_PER_GAME)
+        if len(entries) < 3:
+            return None
 
-    # Grid words are in the practice language
-    answer_words = [
-        (e.word_es if language == "es" else e.word_en) for e in entries
-    ]
+        answer_words = [
+            (e.word_es if language == "es" else e.word_en) for e in entries
+        ]
 
-    grid = generate_grid(answer_words)
-    if grid is None:
-        return None
+        grid = generate_grid(answer_words)
+        if grid is None:
+            continue
 
-    # Map grid.placed order back to entries — grid may reorder words
-    ordered_entries: list[WordEntry] = []
-    used: set[int] = set()
-    for pw in grid.placed:
-        norm_pw = _normalize(pw.word)
-        for j, aw in enumerate(answer_words):
-            if j not in used and _normalize(aw) == norm_pw:
-                ordered_entries.append(entries[j])
-                used.add(j)
-                break
-
-    if len(ordered_entries) != len(grid.placed):
-        return None
-
-    game = CrosswordGame(grid, ordered_entries, language, difficulty)
-
-    # Pre-reveal letters for beginner
-    diff_cfg = DIFFICULTIES[difficulty]
-    if diff_cfg.reveal_fraction > 0:
+        # Map grid.placed order back to entries — grid may reorder words
+        ordered_entries: list[WordEntry] = []
+        used: set[int] = set()
         for pw in grid.placed:
-            cells = pw.cells
-            n_reveal = max(1, int(len(cells) * diff_cfg.reveal_fraction))
-            reveal_positions = random.sample(range(len(cells)), n_reveal)
-            for pos in reveal_positions:
-                r, c = cells[pos]
-                game.revealed_cells[(r, c)] = pw.word[pos]
+            norm_pw = _normalize(pw.word)
+            for j, aw in enumerate(answer_words):
+                if j not in used and _normalize(aw) == norm_pw:
+                    ordered_entries.append(entries[j])
+                    used.add(j)
+                    break
 
-    return game
+        if len(ordered_entries) != len(grid.placed):
+            continue
+
+        game = CrosswordGame(grid, ordered_entries, language, difficulty)
+
+        # Pre-reveal letters for beginner
+        diff_cfg = DIFFICULTIES[difficulty]
+        if diff_cfg.reveal_fraction > 0:
+            for pw in grid.placed:
+                cells = pw.cells
+                n_reveal = max(1, int(len(cells) * diff_cfg.reveal_fraction))
+                reveal_positions = random.sample(range(len(cells)), n_reveal)
+                for pos in reveal_positions:
+                    r, c = cells[pos]
+                    game.revealed_cells[(r, c)] = pw.word[pos]
+
+        return game
+
+    return None
 
 
 class CrosswordCog(BaseCog):
