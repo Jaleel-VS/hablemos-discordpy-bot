@@ -373,8 +373,10 @@ class CrosswordCog(BaseCog):
             )
             if can_quit:
                 logger.info("Crossword quit by %s in #%s", message.author, channel_id)
-                await self._end_game(channel_id, completed=False)
+                self._active.pop(channel_id, None)
+                self._locks.pop(channel_id, None)
                 await message.add_reaction("👋")
+                await message.channel.send("🧩 Crossword cancelled.")
                 return
 
         idx = game.try_solve(text)
