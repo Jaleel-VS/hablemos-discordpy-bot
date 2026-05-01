@@ -272,7 +272,7 @@ class CrosswordCog(BaseCog):
             return
 
         text = message.content.strip()
-        if not text or len(text) > 50:
+        if not text or len(text) < 2 or len(text) > 50:
             return
 
         # Quit command — starter or members with manage_messages can end the game
@@ -289,6 +289,9 @@ class CrosswordCog(BaseCog):
 
         idx = game.try_solve(text)
         if idx is None:
+            # Only react ❌ on single-word messages (likely intentional guesses)
+            if " " not in text and len(text) <= 12:
+                await message.add_reaction("❌")
             return
 
         # Correct answer!
@@ -301,19 +304,20 @@ class CrosswordCog(BaseCog):
             pw.number, message.author, channel_id,
         )
 
+        await message.add_reaction("✅")
+
         if game.all_solved:
             elapsed = game.elapsed
             await self._end_game(channel_id, completed=True, elapsed=elapsed)
-            await message.add_reaction("🎉")
         else:
-            await message.add_reaction("✅")
+            # Post a new message so the updated grid stays at the bottom
             try:
                 embed = game.build_embed()
                 img = game.render()
-                if game.message:
-                    await game.message.edit(embed=embed, attachments=[img])
+                msg = await message.channel.send(embed=embed, file=img)
+                game.message = msg
             except discord.HTTPException:
-                logger.warning("Failed to update crossword message in #%s", channel_id)
+                logger.warning("Failed to post updated crossword in #%s", channel_id)
 
     async def _end_game(
         self, channel_id: int, *, completed: bool, elapsed: float = 0,
