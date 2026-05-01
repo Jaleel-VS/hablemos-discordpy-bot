@@ -43,6 +43,7 @@ class Grid:
     cells: dict[tuple[int, int], str] = field(default_factory=dict)
     placed: list[PlacedWord] = field(default_factory=list)
     _next_number: int = 1
+    _cell_numbers: dict[tuple[int, int], int] = field(default_factory=dict)
 
     def _fits(self, word: str, row: int, col: int, direction: str) -> bool:
         """Check if *word* can be placed at (row, col) in *direction*."""
@@ -83,11 +84,18 @@ class Grid:
 
     def place(self, word: str, row: int, col: int, direction: str) -> PlacedWord:
         """Place a word on the grid. Caller must verify _fits() first."""
+        start = (row, col)
+        if start in self._cell_numbers:
+            number = self._cell_numbers[start]
+        else:
+            number = self._next_number
+            self._cell_numbers[start] = number
+            self._next_number += 1
+
         pw = PlacedWord(
             word=word, row=row, col=col,
-            direction=direction, number=self._next_number,
+            direction=direction, number=number,
         )
-        self._next_number += 1
         for r, c in pw.cells:
             self.cells[(r, c)] = word[pw.cells.index((r, c))]
         self.placed.append(pw)
