@@ -246,6 +246,7 @@ class CrosswordCog(BaseCog):
         super().__init__(bot)
         self._active: dict[int, CrosswordGame] = {}
         self._locks: dict[int, asyncio.Lock] = {}
+        self._watchers: dict[int, asyncio.Task] = {}
         self._words: list[WordEntry] = []
 
     async def cog_load(self) -> None:
@@ -299,7 +300,7 @@ class CrosswordCog(BaseCog):
                 msg = await channel.send(embed=embed, file=img)
 
         game.message = msg
-        self.bot.loop.create_task(self._timeout_watcher(channel_id))
+        self._watchers[channel_id] = self.bot.loop.create_task(self._timeout_watcher(channel_id))
         return None
 
     @commands.command(name="crossword", aliases=["cw"])
@@ -386,6 +387,9 @@ class CrosswordCog(BaseCog):
                 logger.info("Crossword quit by %s in #%s", message.author, channel_id)
                 self._active.pop(channel_id, None)
                 self._locks.pop(channel_id, None)
+                watcher = self._watchers.pop(channel_id, None)
+                if watcher and not watcher.done():
+                    watcher.cancel()
                 await message.add_reaction("👋")
                 await message.channel.send("🧩 Crossword cancelled.")
                 return
@@ -439,6 +443,9 @@ class CrosswordCog(BaseCog):
         )
         game = self._active.pop(channel_id, None)
         self._locks.pop(channel_id, None)
+        watcher = self._watchers.pop(channel_id, None)
+        if watcher and not watcher.done():
+            watcher.cancel()
         if game is None:
             logger.warning("Crossword _end_game: no active game for #%s (already ended)", channel_id)
             return
@@ -510,6 +517,9 @@ class CrosswordCog(BaseCog):
             )
         self._active.clear()
         self._locks.clear()
+        for task in self._watchers.values():
+            task.cancel()
+        self._watchers.clear()
 
 
 async def setup(bot: commands.Bot) -> None:
