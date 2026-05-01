@@ -429,9 +429,18 @@ class CrosswordCog(BaseCog):
         self, channel_id: int, *, completed: bool, elapsed: float = 0,
     ) -> None:
         """End a game and post results."""
+        import traceback
+        caller = ''.join(traceback.format_stack(limit=5))
+        game = self._active.get(channel_id)
+        game_age = f"{game.elapsed:.1f}s" if game else "N/A"
+        logger.info(
+            "Crossword _end_game called for #%s (completed=%s, age=%s)\nCall stack:\n%s",
+            channel_id, completed, game_age, caller,
+        )
         game = self._active.pop(channel_id, None)
         self._locks.pop(channel_id, None)
         if game is None:
+            logger.warning("Crossword _end_game: no active game for #%s (already ended)", channel_id)
             return
 
         if completed:
@@ -476,13 +485,29 @@ class CrosswordCog(BaseCog):
 
     async def _timeout_watcher(self, channel_id: int) -> None:
         """End the game after the timeout period."""
+        logger.info("Crossword timeout watcher started for #%s (%ds)", channel_id, GAME_TIMEOUT_SECONDS)
+        start = time.monotonic()
         await asyncio.sleep(GAME_TIMEOUT_SECONDS)
+        actual = time.monotonic() - start
         if channel_id in self._active:
-            logger.info("Crossword timed out in #%s", channel_id)
+            logger.info(
+                "Crossword timed out in #%s (slept %.1fs, expected %ds)",
+                channel_id, actual, GAME_TIMEOUT_SECONDS,
+            )
             await self._end_game(channel_id, completed=False)
+        else:
+            logger.info(
+                "Crossword timeout watcher fired for #%s but game already ended (slept %.1fs)",
+                channel_id, actual,
+            )
 
     async def cog_unload(self) -> None:
         """Clean up active games on cog unload."""
+        if self._active:
+            logger.warning(
+                "Crossword cog unloading with %d active game(s): %s",
+                len(self._active), list(self._active.keys()),
+            )
         self._active.clear()
         self._locks.clear()
 
