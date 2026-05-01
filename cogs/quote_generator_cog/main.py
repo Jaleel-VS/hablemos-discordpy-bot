@@ -7,7 +7,15 @@ from pathlib import Path
 from re import sub
 
 import demoji
-from discord import File, Forbidden, HTTPException, NotFound
+import discord
+from discord import (
+    File,
+    Forbidden,
+    HTTPException,
+    Interaction,
+    NotFound,
+    app_commands,
+)
 from discord.ext.commands import BucketType, command, cooldown
 
 from base_cog import BaseCog
@@ -394,6 +402,61 @@ class QuoteGenerator(BaseCog):
         finally:
             if img_path:
                 Path(img_path).unlink(missing_ok=True)
+
+    async def _generate_from_message(
+        self, interaction: Interaction, message, creator_fn,
+    ) -> None:
+        """Shared logic for context menu quote generation."""
+        if await self.bot.db.is_quote_banned(interaction.user.id):
+            await interaction.response.send_message("You are not allowed to use quote commands.", ephemeral=True)
+            return
+
+        if await self.bot.db.is_quote_opted_out(message.author.id):
+            await interaction.response.send_message("This user has opted out of being quoted.", ephemeral=True)
+            return
+
+        if not message.content.strip():
+            await interaction.response.send_message("That message has no text to quote.", ephemeral=True)
+            return
+
+        await interaction.response.defer()
+
+        content = await _clean_message_content(
+            message.content, message.mentions, message.role_mentions,
+            message.channel_mentions, interaction.guild, db=self.bot.db,
+        )
+
+        if visual_length(content) > MAX_QUOTE_LENGTH:
+            await interaction.followup.send(
+                f"Message is too long (max {MAX_QUOTE_LENGTH} characters).", ephemeral=True,
+            )
+            return
+
+        username = _get_safe_username(message.author, interaction.guild)
+        avatar = _get_img_url(message.author.display_avatar)
+
+        img_path = None
+        try:
+            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+                img_path = tmp.name
+            await asyncio.wait_for(
+                asyncio.to_thread(creator_fn, username, avatar, content, output_path=img_path),
+                timeout=30,
+            )
+            await interaction.followup.send(
+                content=interaction.user.mention, file=File(img_path),
+            )
+        except Exception:
+            logger.exception("Context menu quote failed")
+            await interaction.followup.send("Something went wrong generating the quote.", ephemeral=True)
+        finally:
+            if img_path:
+                Path(img_path).unlink(missing_ok=True)
+
+    @app_commands.context_menu(name="Quote this")
+    async def quote_context_menu(self, interaction: Interaction, message: discord.Message) -> None:
+        """Right-click a message to create a quote image."""
+        await self._generate_from_message(interaction, message, create_image)
 
     @command()
     async def quoteme(self, ctx, toggle: str | None = None):

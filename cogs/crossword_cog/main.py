@@ -6,7 +6,7 @@ import time
 import unicodedata
 
 import discord
-from discord import Embed, File
+from discord import Embed, File, Interaction, app_commands
 from discord.ext import commands
 
 from base_cog import BaseCog
@@ -50,6 +50,7 @@ class CrosswordGame:
         self.revealed_cells: dict[tuple[int, int], str] = {}
         self.started_at = time.monotonic()
         self.starter_id: int = 0
+        self.use_v2: bool = False
         self.message: discord.Message | None = None
 
     @property
@@ -129,6 +130,55 @@ class CrosswordGame:
         return File(buf, filename="crossword.png")
 
 
+def _parse_args(*args: str) -> tuple[str, str]:
+    """Parse difficulty and language from positional args."""
+    diff = DEFAULT_DIFFICULTY
+    lang = DEFAULT_LANGUAGE
+    for arg in args:
+        a = arg.lower()
+        if a in DIFFICULTIES:
+            diff = a
+        elif a in ("en", "es"):
+            lang = a
+    return diff, lang
+
+
+def _build_v2_view(game: CrosswordGame) -> discord.ui.LayoutView:
+    """Build a Components V2 LayoutView for the crossword game."""
+    view = discord.ui.LayoutView(timeout=GAME_TIMEOUT_SECONDS)
+
+    diff_cfg = DIFFICULTIES[game.difficulty]
+    lang_label = "EN → ES" if game.language == "en" else "ES → EN"
+    progress = f"{len(game.solved)}/{len(game.grid.placed)}"
+
+    # Render grid to an attachment
+    buf = render_grid(game.grid, game.solved, game.revealed_cells)
+    file = File(buf, filename="crossword.png")
+    view.add_file(file)
+
+    header = discord.ui.TextDisplay(
+        f"## 🧩 Crossword — {diff_cfg.label} · {lang_label}\n-# {progress} solved · Type your answers! · ⏱️ {GAME_TIMEOUT_SECONDS // 60}min"
+    )
+
+    gallery = discord.ui.MediaGallery(
+        discord.MediaGalleryItem(media="attachment://crossword.png"),
+    )
+
+    clues_text = game.build_clues_text()
+    clues = discord.ui.TextDisplay(clues_text)
+
+    color = discord.Color.green() if game.all_solved else discord.Color.blurple()
+    view.add_item(discord.ui.Container(
+        header,
+        gallery,
+        discord.ui.Separator(),
+        clues,
+        accent_colour=color,
+    ))
+
+    return view
+
+
 def _build_game(
     word_pool: list[WordEntry], difficulty: str, language: str,
 ) -> CrosswordGame | None:
@@ -196,6 +246,44 @@ class CrosswordCog(BaseCog):
             self._locks[channel_id] = asyncio.Lock()
         return self._locks[channel_id]
 
+    async def _start_game(
+        self, channel: discord.abc.Messageable, channel_id: int,
+        author: discord.User | discord.Member, diff: str, lang: str,
+        *, use_v2: bool = False,
+    ) -> str | None:
+        """Start a crossword game. Returns an error message or None on success."""
+        if not self._words:
+            return "❌ Word database not loaded yet. Try again in a moment."
+
+        async with self._get_lock(channel_id):
+            if channel_id in self._active:
+                return "🧩 A crossword is already running in this channel! Solve it first."
+
+            game = _build_game(self._words, diff, lang)
+            if game is None:
+                return "❌ Failed to generate a crossword. Try again!"
+
+            self._active[channel_id] = game
+
+        game.starter_id = author.id
+        game.use_v2 = use_v2
+        logger.info(
+            "Crossword started by %s in #%s (%s, %s, v2=%s)",
+            author, channel_id, diff, lang, use_v2,
+        )
+
+        if use_v2:
+            view = _build_v2_view(game)
+            msg = await channel.send(view=view)
+        else:
+            embed = game.build_embed()
+            img = game.render()
+            msg = await channel.send(embed=embed, file=img)
+
+        game.message = msg
+        self.bot.loop.create_task(self._timeout_watcher(channel_id))
+        return None
+
     @commands.command(name="crossword", aliases=["cw"])
     @commands.cooldown(1, 10, commands.BucketType.channel)
     async def crossword(
@@ -214,46 +302,51 @@ class CrosswordCog(BaseCog):
           `$crossword advanced es` — advanced, Spanish clues
           `$cw` — shortcut
         """
-        channel_id = ctx.channel.id
+        diff, lang = _parse_args(difficulty, language)
+        err = await self._start_game(ctx.channel, ctx.channel.id, ctx.author, diff, lang)
+        if err:
+            await ctx.send(err)
 
-        if not self._words:
-            await ctx.send("❌ Word database not loaded yet. Try again in a moment.")
-            return
-
-        # Parse args — allow either order
-        diff = DEFAULT_DIFFICULTY
-        lang = DEFAULT_LANGUAGE
-        for arg in (difficulty.lower(), language.lower()):
-            if arg in DIFFICULTIES:
-                diff = arg
-            elif arg in ("en", "es"):
-                lang = arg
-
-        async with self._get_lock(channel_id):
-            if channel_id in self._active:
-                await ctx.send("🧩 A crossword is already running in this channel! Solve it first.")
-                return
-
-            game = _build_game(self._words, diff, lang)
-            if game is None:
-                await ctx.send("❌ Failed to generate a crossword. Try again!")
-                return
-
-            self._active[channel_id] = game
-
-        game.starter_id = ctx.author.id
-        logger.info(
-            "Crossword started by %s in #%s (%s, %s)",
-            ctx.author, channel_id, diff, lang,
+    @app_commands.command(name="crossword", description="Start a mini crossword puzzle!")
+    @app_commands.describe(
+        difficulty="Word difficulty level",
+        language="Clue language (en = English clues → Spanish answers)",
+        style="Message style",
+    )
+    @app_commands.choices(
+        difficulty=[
+            app_commands.Choice(name="🟢 Beginner", value="beginner"),
+            app_commands.Choice(name="🔴 Advanced", value="advanced"),
+        ],
+        language=[
+            app_commands.Choice(name="EN → ES (English clues, Spanish answers)", value="en"),
+            app_commands.Choice(name="ES → EN (Spanish clues, English answers)", value="es"),
+        ],
+        style=[
+            app_commands.Choice(name="Classic (embed + image)", value="classic"),
+            app_commands.Choice(name="V2 (components layout)", value="v2"),
+        ],
+    )
+    async def crossword_slash(
+        self,
+        interaction: Interaction,
+        difficulty: str = DEFAULT_DIFFICULTY,
+        language: str = DEFAULT_LANGUAGE,
+        style: str = "classic",
+    ) -> None:
+        """Start a mini crossword puzzle with autocomplete options."""
+        await interaction.response.defer()
+        use_v2 = style == "v2"
+        err = await self._start_game(
+            interaction.channel, interaction.channel.id,
+            interaction.user, difficulty, language, use_v2=use_v2,
         )
-
-        embed = game.build_embed()
-        img = game.render()
-        msg = await ctx.send(embed=embed, file=img)
-        game.message = msg
-
-        # Start timeout watcher
-        self.bot.loop.create_task(self._timeout_watcher(channel_id))
+        if err:
+            await interaction.followup.send(err, ephemeral=True)
+        else:
+            # Defer already sent, followup was handled by _start_game via channel.send
+            # We need a visible ack — the game message itself serves as the response
+            pass
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
@@ -312,9 +405,13 @@ class CrosswordCog(BaseCog):
         else:
             # Post a new message so the updated grid stays at the bottom
             try:
-                embed = game.build_embed()
-                img = game.render()
-                msg = await message.channel.send(embed=embed, file=img)
+                if game.use_v2:
+                    view = _build_v2_view(game)
+                    msg = await message.channel.send(view=view)
+                else:
+                    embed = game.build_embed()
+                    img = game.render()
+                    msg = await message.channel.send(embed=embed, file=img)
                 game.message = msg
             except discord.HTTPException:
                 logger.warning("Failed to post updated crossword in #%s", channel_id)
