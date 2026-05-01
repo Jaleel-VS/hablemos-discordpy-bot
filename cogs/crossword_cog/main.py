@@ -109,6 +109,13 @@ class CrosswordGame:
             parts.append("**⬇️ Down**\n" + "\n".join(down))
         return "\n\n".join(parts)
 
+    def _time_remaining(self) -> str:
+        """Human-readable time remaining."""
+        remaining = max(0, GAME_TIMEOUT_SECONDS - self.elapsed)
+        minutes = int(remaining // 60)
+        seconds = int(remaining % 60)
+        return f"{minutes}:{seconds:02d}"
+
     def build_embed(self) -> Embed:
         """Build the game embed with clues."""
         diff_cfg = DIFFICULTIES[self.difficulty]
@@ -121,7 +128,7 @@ class CrosswordGame:
             color=discord.Color.green() if self.all_solved else discord.Color.blurple(),
         )
         embed.set_footer(
-            text=f"{progress} solved · Type your answers! · ⏱️ {GAME_TIMEOUT_SECONDS // 60}min",
+            text=f"{progress} solved · ⏱️ {self._time_remaining()} remaining · Type 'quit' to cancel",
         )
         embed.set_image(url="attachment://crossword.png")
         return embed
@@ -158,7 +165,7 @@ def _build_v2_view(game: CrosswordGame) -> discord.ui.LayoutView:
 
     header = discord.ui.TextDisplay(
         f"## 🧩 Crossword — {diff_cfg.label} · {lang_label}\n"
-        f"-# {progress} solved · Type your answers! · ⏱️ {GAME_TIMEOUT_SECONDS // 60}min"
+        f"-# {progress} solved · ⏱️ {game._time_remaining()} remaining · Type 'quit' to cancel"
     )
 
     gallery = discord.ui.MediaGallery(
@@ -285,7 +292,6 @@ class CrosswordCog(BaseCog):
         return None
 
     @commands.command(name="crossword", aliases=["cw"])
-    @commands.cooldown(1, 10, commands.BucketType.channel)
     async def crossword(
         self, ctx: commands.Context, difficulty: str = "", language: str = "",
     ) -> None:

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Final
 
 # Game settings
-GAME_TIMEOUT_SECONDS: Final[int] = 300  # 5 minutes
+GAME_TIMEOUT_SECONDS: Final[int] = 600  # 10 minutes
 COMMAND_COOLDOWN_SECONDS: Final[int] = 10
 WORDS_PER_GAME: Final[int] = 5
 MAX_PLACEMENT_ATTEMPTS: Final[int] = 200
