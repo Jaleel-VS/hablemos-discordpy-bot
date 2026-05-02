@@ -300,6 +300,15 @@ class CrosswordCog(BaseCog):
                 msg = await channel.send(embed=embed, file=img)
 
         game.message = msg
+
+        # Ensure the bot is a thread member so on_message fires in threads
+        if isinstance(channel, discord.Thread):
+            try:
+                await channel.join()
+                logger.info("Joined thread #%s for crossword game", channel_id)
+            except discord.HTTPException:
+                logger.warning("Failed to join thread #%s", channel_id)
+
         self._watchers[channel_id] = self.bot.loop.create_task(self._timeout_watcher(channel_id))
         return None
 
@@ -367,6 +376,11 @@ class CrosswordCog(BaseCog):
         game = self._active.get(channel_id)
         if game is None:
             return
+
+        logger.debug(
+            "Crossword on_message: channel=%s type=%s author=%s content=%r",
+            channel_id, type(message.channel).__name__, message.author, message.content[:80],
+        )
 
         # Ignore command invocations
         ctx = await self.bot.get_context(message)
