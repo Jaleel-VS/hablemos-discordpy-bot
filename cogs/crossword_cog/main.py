@@ -281,8 +281,8 @@ class CrosswordCog(BaseCog):
         game.starter_id = author.id
         game.use_v2 = use_v2
         logger.info(
-            "Crossword started by %s in #%s (%s, %s, v2=%s)",
-            author, channel_id, diff, lang, use_v2,
+            "Crossword started by %s in #%s (%s, %s, v2=%s, channel_type=%s)",
+            author, channel_id, diff, lang, use_v2, type(channel).__name__,
         )
 
         if use_v2:
@@ -373,6 +373,14 @@ class CrosswordCog(BaseCog):
             return
 
         channel_id = message.channel.id
+
+        # Temporary: log all non-bot messages in channels with active games
+        if self._active:
+            logger.info(
+                "Crossword on_message: channel=%s type=%s active_channels=%s",
+                channel_id, type(message.channel).__name__, list(self._active.keys()),
+            )
+
         game = self._active.get(channel_id)
         if game is None:
             return
