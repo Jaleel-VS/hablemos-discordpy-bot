@@ -301,13 +301,20 @@ class CrosswordCog(BaseCog):
 
         game.message = msg
 
-        # Ensure the bot is a thread member so on_message fires in threads
+        # Ensure the bot receives on_message events in this channel.
+        # Threads need an explicit join(); voice channel text chats may
+        # need a bot-token message (not webhook) to subscribe the gateway.
         if isinstance(channel, discord.Thread):
             try:
                 await channel.join()
-                logger.info("Joined thread #%s for crossword game", channel_id)
             except discord.HTTPException:
                 logger.warning("Failed to join thread #%s", channel_id)
+        elif isinstance(channel, discord.VoiceChannel):
+            try:
+                sub_msg = await channel.send("🧩 Crossword started! Type your answers here.")
+                await sub_msg.delete(delay=3)
+            except discord.HTTPException:
+                logger.warning("Failed to send subscription message in VC #%s", channel_id)
 
         self._watchers[channel_id] = self.bot.loop.create_task(self._timeout_watcher(channel_id))
         return None
