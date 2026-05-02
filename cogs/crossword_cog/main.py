@@ -281,8 +281,8 @@ class CrosswordCog(BaseCog):
         game.starter_id = author.id
         game.use_v2 = use_v2
         logger.info(
-            "Crossword started by %s in #%s (%s, %s, v2=%s, channel_type=%s)",
-            author, channel_id, diff, lang, use_v2, type(channel).__name__,
+            "Crossword started by %s in #%s (%s, %s, v2=%s)",
+            author, channel_id, diff, lang, use_v2,
         )
 
         if use_v2:
@@ -301,20 +301,12 @@ class CrosswordCog(BaseCog):
 
         game.message = msg
 
-        # Ensure the bot receives on_message events in this channel.
-        # Threads need an explicit join(); voice channel text chats may
-        # need a bot-token message (not webhook) to subscribe the gateway.
+        # Threads need an explicit join() so the bot receives on_message events
         if isinstance(channel, discord.Thread):
             try:
                 await channel.join()
             except discord.HTTPException:
                 logger.warning("Failed to join thread #%s", channel_id)
-        elif isinstance(channel, discord.VoiceChannel):
-            try:
-                sub_msg = await channel.send("🧩 Crossword started! Type your answers here.")
-                await sub_msg.delete(delay=3)
-            except discord.HTTPException:
-                logger.warning("Failed to send subscription message in VC #%s", channel_id)
 
         self._watchers[channel_id] = self.bot.loop.create_task(self._timeout_watcher(channel_id))
         return None
@@ -380,13 +372,6 @@ class CrosswordCog(BaseCog):
             return
 
         channel_id = message.channel.id
-
-        # Temporary: log all non-bot messages in channels with active games
-        if self._active:
-            logger.info(
-                "Crossword on_message: channel=%s type=%s active_channels=%s",
-                channel_id, type(message.channel).__name__, list(self._active.keys()),
-            )
 
         game = self._active.get(channel_id)
         if game is None:

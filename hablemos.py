@@ -30,6 +30,7 @@ class Hablemos(Bot):
             message_content=True,
             presences=True,
             reactions=True,
+            voice_states=True,
         )
         super().__init__(description="Bot by Jaleel#6408",
                           command_prefix=prefix,
