@@ -23,15 +23,9 @@ logger.info("Environment: %s", settings.environment)
 class Hablemos(Bot):
 
     def __init__(self, prefix, settings):
-        intents = discord.Intents(
-            guilds=True,
-            members=True,
-            messages=True,
-            message_content=True,
-            presences=True,
-            reactions=True,
-            voice_states=True,
-        )
+        intents = discord.Intents.default()
+        intents.members = True
+        intents.message_content = True
         super().__init__(description="Bot by Jaleel#6408",
                           command_prefix=prefix,
                           owner_id=settings.owner_id,
