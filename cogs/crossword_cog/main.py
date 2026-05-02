@@ -377,11 +377,6 @@ class CrosswordCog(BaseCog):
         if game is None:
             return
 
-        logger.debug(
-            "Crossword on_message: channel=%s type=%s author=%s content=%r",
-            channel_id, type(message.channel).__name__, message.author, message.content[:80],
-        )
-
         # Ignore command invocations
         ctx = await self.bot.get_context(message)
         if ctx.valid:
@@ -447,22 +442,19 @@ class CrosswordCog(BaseCog):
         self, channel_id: int, *, completed: bool, elapsed: float = 0,
     ) -> None:
         """End a game and post results."""
-        import traceback
-        caller = ''.join(traceback.format_stack(limit=5))
-        game = self._active.get(channel_id)
-        game_age = f"{game.elapsed:.1f}s" if game else "N/A"
-        logger.info(
-            "Crossword _end_game called for #%s (completed=%s, age=%s)\nCall stack:\n%s",
-            channel_id, completed, game_age, caller,
-        )
         game = self._active.pop(channel_id, None)
         self._locks.pop(channel_id, None)
         watcher = self._watchers.pop(channel_id, None)
         if watcher and not watcher.done():
             watcher.cancel()
         if game is None:
-            logger.warning("Crossword _end_game: no active game for #%s (already ended)", channel_id)
             return
+
+        outcome = "completed" if completed else "timeout"
+        logger.info(
+            "Crossword ended in #%s (%s, %d/%d solved, %.1fs)",
+            channel_id, outcome, len(game.solved), len(game.grid.placed), game.elapsed,
+        )
 
         if completed:
             minutes = int(elapsed // 60)
@@ -506,21 +498,9 @@ class CrosswordCog(BaseCog):
 
     async def _timeout_watcher(self, channel_id: int) -> None:
         """End the game after the timeout period."""
-        logger.info("Crossword timeout watcher started for #%s (%ds)", channel_id, GAME_TIMEOUT_SECONDS)
-        start = time.monotonic()
         await asyncio.sleep(GAME_TIMEOUT_SECONDS)
-        actual = time.monotonic() - start
         if channel_id in self._active:
-            logger.info(
-                "Crossword timed out in #%s (slept %.1fs, expected %ds)",
-                channel_id, actual, GAME_TIMEOUT_SECONDS,
-            )
             await self._end_game(channel_id, completed=False)
-        else:
-            logger.info(
-                "Crossword timeout watcher fired for #%s but game already ended (slept %.1fs)",
-                channel_id, actual,
-            )
 
     async def cog_unload(self) -> None:
         """Clean up active games on cog unload."""
