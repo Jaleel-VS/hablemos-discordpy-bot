@@ -2,6 +2,7 @@
 import logging
 import time
 
+import discord
 from discord import Color, Embed, Interaction, app_commands
 from discord.ext import commands
 from discord.ext.commands import Bot, command
@@ -227,6 +228,95 @@ class General(BaseCog):
         embed.add_field(name="API", value=f"`{api}ms`", inline=True)
         embed.add_field(name="Database", value=f"`{db}ms`", inline=True)
         await msg.edit(embed=embed)
+
+    @command()
+    @commands.is_owner()
+    async def permdebug(self, ctx, channel: discord.abc.GuildChannel | None = None):
+        """Dump computed permissions for the bot in a channel.
+
+        Usage:
+          $permdebug                  — current channel
+          $permdebug #some-channel    — specific channel
+          $permdebug 123456789012345  — channel by ID
+
+        Falls back to DM if the bot can't send in the target channel.
+        """
+        if ctx.guild is None:
+            await ctx.send("Must be run in a guild.")
+            return
+
+        target = channel or ctx.channel
+        me = ctx.guild.me
+        perms = target.permissions_for(me)
+
+        roles = ", ".join(f"{r.name}({r.id})" for r in me.roles)
+
+        # Per-channel + category-level role overwrites that apply to the bot
+        overwrites: list[str] = []
+        for role in me.roles:
+            ow = target.overwrites_for(role)
+            pair = ow.pair()  # (allow, deny) Permissions objects
+            allow = [name for name, val in pair[0] if val]
+            deny = [name for name, val in pair[1] if val]
+            if allow or deny:
+                overwrites.append(
+                    f"role `{role.name}`: allow={allow or '—'} deny={deny or '—'}"
+                )
+
+        member_ow = target.overwrites_for(me)
+        mpair = member_ow.pair()
+        m_allow = [name for name, val in mpair[0] if val]
+        m_deny = [name for name, val in mpair[1] if val]
+        if m_allow or m_deny:
+            overwrites.append(
+                f"member override: allow={m_allow or '—'} deny={m_deny or '—'}"
+            )
+
+        parent = getattr(target, "category", None)
+        parent_info = (
+            f"{parent.name} ({parent.id})" if parent else "— (no category)"
+        )
+
+        lines = [
+            f"**permdebug** for `#{target.name}`",
+            f"channel_id: `{target.id}`",
+            f"channel_type: `{type(target).__name__}`",
+            f"category: `{parent_info}`",
+            f"bot_roles: {roles or '—'}",
+            "",
+            "**Computed perms (what the bot actually has here):**",
+            f"  view_channel:              {perms.view_channel}",
+            f"  read_message_history:      {perms.read_message_history}",
+            f"  send_messages:             {perms.send_messages}",
+            f"  send_messages_in_threads:  {perms.send_messages_in_threads}",
+            f"  embed_links:               {perms.embed_links}",
+            f"  attach_files:              {perms.attach_files}",
+            f"  add_reactions:             {perms.add_reactions}",
+            f"  manage_messages:           {perms.manage_messages}",
+            f"  administrator:             {perms.administrator}",
+            "",
+            "**Channel/category overwrites touching bot roles:**",
+        ]
+        if overwrites:
+            lines.extend(f"  {line}" for line in overwrites)
+        else:
+            lines.append("  (none)")
+        report = "\n".join(lines)
+
+        # Always log so Railway captures it even if all sends fail
+        logger.info("permdebug for channel %s (%s):\n%s", target.name, target.id, report)
+
+        # Try channel first, fall back to DM
+        try:
+            await ctx.send(f"```\n{report[:1900]}\n```")
+            return
+        except discord.Forbidden:
+            pass
+
+        try:
+            await ctx.author.send(f"```\n{report[:1900]}\n```")
+        except discord.Forbidden:
+            logger.warning("permdebug: couldn't send in channel or DM; see server log above")
 
 
 async def setup(bot):
