@@ -409,6 +409,13 @@ class CrosswordCog(BaseCog):
         if err:
             await interaction.followup.send(err, ephemeral=True)
 
+    @commands.command(name="cwtimeout")
+    @commands.is_owner()
+    async def set_timeout(self, ctx: commands.Context, seconds: int = GAME_TIMEOUT_SECONDS):
+        """Owner-only: override crossword timeout. $cwtimeout 30"""
+        self._timeout_override = seconds
+        await ctx.send(f"⏱️ Crossword timeout set to **{seconds}s**.")
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
         """Listen for answers in channels with active games."""
@@ -647,7 +654,8 @@ class CrosswordCog(BaseCog):
 
     async def _timeout_watcher(self, channel_id: int) -> None:
         """End the game after the timeout period."""
-        await asyncio.sleep(GAME_TIMEOUT_SECONDS)
+        timeout = getattr(self, '_timeout_override', GAME_TIMEOUT_SECONDS)
+        await asyncio.sleep(timeout)
         if channel_id in self._active:
             await self._end_game(channel_id, completed=False)
 
