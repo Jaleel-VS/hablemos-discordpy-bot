@@ -484,6 +484,9 @@ class CrosswordCog(BaseCog):
             for idx in range(len(game.grid.placed)):
                 game.solved.add(idx)
 
+            solved_count = len(game.solvers)
+            total = len(game.grid.placed)
+
             embed = Embed(
                 title="🧩 Crossword — Time's Up! ⏱️",
                 description=game.build_clues_text(),
@@ -494,7 +497,10 @@ class CrosswordCog(BaseCog):
 
             channel = self.bot.get_channel(channel_id)
             if channel:
-                await channel.send(embed=embed, file=img)
+                await channel.send(
+                    f"⏱️ **Time's up!** The crossword expired with {solved_count}/{total} words solved. Here are the answers:",
+                    embed=embed, file=img,
+                )
 
     async def _timeout_watcher(self, channel_id: int) -> None:
         """End the game after the timeout period."""
