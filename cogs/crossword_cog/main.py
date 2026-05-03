@@ -532,10 +532,7 @@ class CrosswordCog(BaseCog):
                         ),
                         accent_colour=discord.Color.orange(),
                     ))
-                    await channel.send(
-                        f"⏱️ **Time's up!** Here are the answers:",
-                        view=view, file=file,
-                    )
+                    await channel.send(view=view, file=file)
                 else:
                     embed = Embed(
                         title="🧩 Crossword — Time's Up! ⏱️",
