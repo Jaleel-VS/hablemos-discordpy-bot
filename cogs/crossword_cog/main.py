@@ -324,8 +324,9 @@ class CrosswordCog(BaseCog):
         # Components v2 not supported in DMs
         game.use_v2 = use_v2 and getattr(channel, "guild", None) is not None
         logger.info(
-            "Crossword started by %s in #%s (%s, %s, v2=%s)",
-            author, channel_id, diff, lang, use_v2,
+            "Crossword started by %s in #%s (%s, %s, v2=%s, channel_type=%s, guild=%s)",
+            author, channel_id, diff, lang, game.use_v2,
+            type(channel).__name__, getattr(channel, "guild", "NO_ATTR"),
         )
 
         if use_v2:
@@ -543,13 +544,8 @@ class CrosswordCog(BaseCog):
             )
 
             channel = self.bot.get_channel(channel_id)
+            logger.info("DEBUG end-game COMPLETED: v2=%s ch_type=%s", game.use_v2, type(channel).__name__ if channel else "None")
             if channel:
-                if game.use_v2:
-                    view = discord.ui.LayoutView()
-                    file = game.render()
-                    view.add_item(discord.ui.Container(
-                        discord.ui.TextDisplay(
-                            f"## 🧩 Crossword Complete! 🎉\n"
                             f"Solved in **{minutes}m {seconds}s**\n\n{solver_text}"
                         ),
                         discord.ui.MediaGallery(
@@ -575,6 +571,7 @@ class CrosswordCog(BaseCog):
             total = len(game.grid.placed)
 
             channel = self.bot.get_channel(channel_id)
+            logger.info("DEBUG end-game TIMEOUT: v2=%s ch_type=%s", game.use_v2, type(channel).__name__ if channel else "None")
             if channel:
                 if game.use_v2:
                     view = discord.ui.LayoutView()
