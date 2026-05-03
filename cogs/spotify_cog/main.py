@@ -19,15 +19,19 @@ DEFAULT_ACCENT = Color.green()
 
 
 async def _dominant_color(url: str) -> Color:
-    """Fetch an image and return its dominant color, or green on failure."""
+    """Fetch an image and return its most vibrant color, or green on failure."""
     try:
         async with aiohttp.ClientSession() as session, session.get(url) as resp:
             if resp.status != 200:
                 return DEFAULT_ACCENT
             data = await resp.read()
-        img = Image.open(BytesIO(data)).convert("RGB").resize((1, 1))
-        r, g, b = img.getpixel((0, 0))
-        return Color.from_rgb(r, g, b)
+        img = Image.open(BytesIO(data)).convert("RGB")
+        # Quantize to 8 colors, pick the most saturated one
+        palette = img.quantize(colors=8, method=Image.Quantize.MEDIANCUT).convert("RGB")
+        pixels = list(palette.getdata())
+        # Score by saturation: max(rgb) - min(rgb)
+        best = max(pixels, key=lambda p: max(p) - min(p))
+        return Color.from_rgb(*best)
     except Exception:
         logger.debug("Failed to extract dominant color from %s", url)
         return DEFAULT_ACCENT

@@ -24,13 +24,17 @@ def _font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.I
 
 
 def _ensure_contrast(r: int, g: int, b: int) -> tuple[int, int, int]:
-    """Darken the color if it's too light for white text."""
-    # Relative luminance (simplified)
+    """Adjust color to ensure white text is readable on it."""
     lum = 0.299 * r + 0.587 * g + 0.114 * b
     if lum > 160:
-        # Too bright — darken by 40%
-        factor = 0.6
+        # Too bright for white text — darken
+        factor = 0.5
         return int(r * factor), int(g * factor), int(b * factor)
+    if lum < 50:
+        # Too dark — blend toward a muted version so it's not just black
+        # Boost the most dominant channel to create some color
+        mx = max(r, g, b, 1)
+        return int(r / mx * 90 + 20), int(g / mx * 90 + 20), int(b / mx * 90 + 20)
     return r, g, b
 
 
@@ -77,9 +81,9 @@ async def render_nowplaying(
     card = Image.new("RGBA", (WIDTH, HEIGHT), (r, g, b, 255))
     draw = ImageDraw.Draw(card)
 
-    # Gradient overlay — darken right side for text readability
-    for x in range(WIDTH):
-        alpha = int(40 * (x / WIDTH))  # subtle darkening
+    # Gradient overlay — very subtle darkening on right edge only
+    for x in range(WIDTH // 2, WIDTH):
+        alpha = int(30 * ((x - WIDTH // 2) / (WIDTH // 2)))
         draw.line([(x, 0), (x, HEIGHT)], fill=(0, 0, 0, alpha))
 
     # Album art
