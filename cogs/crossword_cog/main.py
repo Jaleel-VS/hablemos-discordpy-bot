@@ -209,6 +209,13 @@ def _build_game(
             (e.word_es if language == "es" else e.word_en) for e in entries
         ]
 
+        # Filter out multi-word answers (can't place on grid)
+        valid = [(aw, e) for aw, e in zip(answer_words, entries) if " " not in aw]
+        if len(valid) < 3:
+            continue
+        answer_words = [aw for aw, _ in valid]
+        entries = [e for _, e in valid]
+
         grid = generate_grid(answer_words)
         if grid is None:
             continue
