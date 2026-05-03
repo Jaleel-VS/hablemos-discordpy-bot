@@ -58,6 +58,9 @@ class CrosswordGame:
         self.starter_id: int = 0
         self.use_v2: bool = False
         self.message: discord.Message | None = None
+        self.hints_used: int = 0
+        self.scores: dict[int, int] = {}  # user_id -> points
+        self.scores_names: dict[int, str] = {}  # user_id -> display_name
 
     @property
     def all_solved(self) -> bool:
@@ -85,6 +88,25 @@ class CrosswordGame:
                 continue
             if _normalize(self.get_answer(idx)) == norm:
                 return idx
+        return None
+
+    def use_hint(self) -> str | None:
+        """Reveal one random unrevealed cell. Returns the word hint was for, or None."""
+        if self.hints_used >= 2:
+            return None
+        # Find unsolved words with unrevealed cells
+        for idx, pw in enumerate(self.grid.placed):
+            if idx in self.solved:
+                continue
+            unrevealed = [
+                (i, r, c) for i, (r, c) in enumerate(pw.cells)
+                if (r, c) not in self.revealed_cells
+            ]
+            if unrevealed:
+                pos, r, c = random.choice(unrevealed)
+                self.revealed_cells[(r, c)] = pw.word[pos]
+                self.hints_used += 1
+                return self.get_answer(idx)
         return None
 
     def build_clues_text(self, *, show_answers: bool = False) -> str:
@@ -424,6 +446,26 @@ class CrosswordCog(BaseCog):
                 await self._end_game(channel_id, completed=False)
             return
 
+        # Hint — reveal one letter, max 2 per game
+        if text.lower() == "!hint":
+            word = game.use_hint()
+            if word is None:
+                await message.add_reaction("🚫")
+            else:
+                await message.add_reaction("💡")
+                try:
+                    if game.use_v2:
+                        view, file = _build_v2_view(game)
+                        msg = await message.channel.send(view=view, file=file)
+                    else:
+                        embed = game.build_embed()
+                        img = game.render()
+                        msg = await message.channel.send(embed=embed, file=img)
+                    game.message = msg
+                except discord.HTTPException:
+                    pass
+            return
+
         idx = game.try_solve(text)
         if idx is None:
             # Only react ❌ on single-word messages (likely intentional guesses)
@@ -434,6 +476,8 @@ class CrosswordCog(BaseCog):
         # Correct answer!
         game.solved.add(idx)
         game.solvers[idx] = message.author.display_name
+        game.scores[message.author.id] = game.scores.get(message.author.id, 0) + 1
+        game.scores_names[message.author.id] = message.author.display_name
         pw = game.grid.placed[idx]
 
         logger.info(
@@ -552,6 +596,29 @@ class CrosswordCog(BaseCog):
                         f"⏱️ **Time's up!** The crossword expired with {solved_count}/{total} words solved. Here are the answers:",
                         embed=embed, file=img,
                     )
+
+        # Persist scores silently
+        await self._save_scores(game, channel_id)
+
+    async def _save_scores(self, game: CrosswordGame, channel_id: int) -> None:
+        """Persist per-user scores to the database."""
+        if not game.scores:
+            return
+        channel = self.bot.get_channel(channel_id)
+        guild_id = channel.guild.id if channel and hasattr(channel, "guild") else 0
+        total = len(game.grid.placed)
+        try:
+            for user_id, words_solved in game.scores.items():
+                display_name = game.scores_names.get(user_id, str(user_id))
+                await self.bot.db.pool.execute(
+                    """INSERT INTO crossword_scores
+                       (user_id, display_name, guild_id, words_solved, total_words, difficulty, language, elapsed_seconds)
+                       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)""",
+                    user_id, display_name, guild_id, words_solved, total,
+                    game.difficulty, game.language, game.elapsed,
+                )
+        except Exception:
+            logger.debug("Failed to save crossword scores", exc_info=True)
 
     async def _timeout_watcher(self, channel_id: int) -> None:
         """End the game after the timeout period."""

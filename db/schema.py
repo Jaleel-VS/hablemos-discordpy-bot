@@ -572,6 +572,26 @@ async def initialize_schema(pool):
             ON crossword_words(theme)
         ''')
 
+        # Crossword scores table
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS crossword_scores (
+                id SERIAL PRIMARY KEY,
+                user_id BIGINT NOT NULL,
+                display_name TEXT NOT NULL,
+                guild_id BIGINT NOT NULL,
+                words_solved INT NOT NULL DEFAULT 0,
+                total_words INT NOT NULL DEFAULT 0,
+                difficulty VARCHAR(10) NOT NULL,
+                language VARCHAR(2) NOT NULL,
+                elapsed_seconds REAL NOT NULL DEFAULT 0,
+                played_at TIMESTAMPTZ DEFAULT now()
+            )
+        ''')
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_crossword_scores_user
+            ON crossword_scores(user_id)
+        ''')
+
         # Dictation sentences table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS dictation_sentences (
