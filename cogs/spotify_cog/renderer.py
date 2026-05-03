@@ -5,21 +5,27 @@ from pathlib import Path
 import aiohttp
 from PIL import Image, ImageDraw, ImageFont
 
-FONT_DIR = Path(__file__).resolve().parent.parent / "league_cog" / "league_helper" / "fonts"
+FONT_DIR = Path(__file__).resolve().parent
 SPOTIFY_LOGO = Path(__file__).resolve().parent / "spotify_logo.png"
 
-# Card dimensions
-WIDTH = 580
-HEIGHT = 200
-PADDING = 20
-ART_SIZE = 160
-CORNER_RADIUS = 16
+# Card dimensions — render at 2x for crisp text, resize at end
+SCALE = 2
+WIDTH = 580 * SCALE
+HEIGHT = 200 * SCALE
+PADDING = 20 * SCALE
+ART_SIZE = 160 * SCALE
+CORNER_RADIUS = 16 * SCALE
+OUTPUT_WIDTH = 580
 
 
-def _font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    path = FONT_DIR / "HelveticaNeue-Roman.ttf"
+def _font(size: int, weight: str = "Regular") -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    path = FONT_DIR / f"Poppins-{weight}.ttf"
     if path.exists():
-        return ImageFont.truetype(str(path), size)
+        return ImageFont.truetype(str(path), size * SCALE)
+    # Fallback to Helvetica
+    fallback = FONT_DIR.parent / "league_cog" / "league_helper" / "fonts" / "HelveticaNeue-Roman.ttf"
+    if fallback.exists():
+        return ImageFont.truetype(str(fallback), size * SCALE)
     return ImageFont.load_default()
 
 
@@ -77,14 +83,9 @@ async def render_nowplaying(
     """Render a Spotify-style now-playing card. Returns PNG BytesIO."""
     r, g, b = _ensure_contrast(*accent)
 
-    # Create card with rounded corners
+    # Create card at 2x resolution for crisp text
     card = Image.new("RGBA", (WIDTH, HEIGHT), (r, g, b, 255))
     draw = ImageDraw.Draw(card)
-
-    # Gradient overlay — very subtle darkening on right edge only
-    for x in range(WIDTH // 2, WIDTH):
-        alpha = int(30 * ((x - WIDTH // 2) / (WIDTH // 2)))
-        draw.line([(x, 0), (x, HEIGHT)], fill=(0, 0, 0, alpha))
 
     # Album art
     art_x, art_y = PADDING, PADDING
@@ -92,17 +93,17 @@ async def render_nowplaying(
         art = await _fetch_image(album_art_url)
         if art:
             art = art.resize((ART_SIZE, ART_SIZE), Image.LANCZOS)
-            # Round the album art corners
-            art = _round_corners(art, 8)
+            art = _round_corners(art, 8 * SCALE)
             card.paste(art, (art_x, art_y), art)
 
     # Text area
     text_x = art_x + ART_SIZE + PADDING
     text_max_w = WIDTH - text_x - PADDING
 
-    title_font = _font(24)
-    artist_font = _font(17)
-    album_font = _font(14)
+    title_font = _font(22, "SemiBold")
+    artist_font = _font(15, "Regular")
+    album_font = _font(13, "Light")
+    label_font = _font(11, "Light")
 
     title_text = _truncate(title, title_font, text_max_w)
     artist_text = _truncate(artist, artist_font, text_max_w)
@@ -111,32 +112,35 @@ async def render_nowplaying(
     # Spotify logo (top-right)
     if SPOTIFY_LOGO.exists():
         logo = Image.open(SPOTIFY_LOGO).convert("RGBA")
-        logo = logo.resize((24, 24), Image.LANCZOS)
-        card.paste(logo, (WIDTH - PADDING - 24, PADDING), logo)
+        logo_size = 28 * SCALE
+        logo = logo.resize((logo_size, logo_size), Image.LANCZOS)
+        card.paste(logo, (WIDTH - PADDING - logo_size, PADDING), logo)
 
-    # Draw text — white on colored background
+    # Draw text
     white = (255, 255, 255)
     white_dim = (255, 255, 255, 180)
 
-    # Vertically center the text block
-    text_y = PADDING + 16
-    draw.text((text_x, text_y), "♫ Now Playing", fill=white_dim, font=_font(12))
+    text_y = PADDING + 16 * SCALE
+    draw.text((text_x, text_y), "Now Playing", fill=white_dim, font=label_font)
 
-    text_y += 26
+    text_y += 28 * SCALE
     draw.text((text_x, text_y), title_text, fill=white, font=title_font)
 
-    text_y += 34
+    text_y += 36 * SCALE
     draw.text((text_x, text_y), artist_text, fill=white, font=artist_font)
 
-    text_y += 26
+    text_y += 26 * SCALE
     draw.text((text_x, text_y), album_text, fill=white_dim, font=album_font)
 
-    # Round the whole card
+    # Round corners
     card = _round_corners(card, CORNER_RADIUS)
 
-    # Flatten to RGB for Discord (no transparency needed)
-    flat = Image.new("RGB", card.size, (47, 49, 54))  # Discord dark bg
+    # Flatten onto accent-colored background (not Discord dark) so corners blend
+    flat = Image.new("RGBA", card.size, (r, g, b, 255))
     flat.paste(card, mask=card.split()[3])
+
+    # Downscale to output size with antialiasing
+    flat = flat.resize((OUTPUT_WIDTH, OUTPUT_WIDTH * HEIGHT // WIDTH), Image.LANCZOS)
 
     buf = BytesIO()
     flat.save(buf, "PNG")
