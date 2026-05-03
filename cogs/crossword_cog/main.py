@@ -409,6 +409,14 @@ class CrosswordCog(BaseCog):
                 await message.channel.send("🧩 Crossword cancelled.")
                 return
 
+        # Give up — owner-only, end game early but show answers (like timeout)
+        if text.lower() in ("giveup", "give up", "reveal"):
+            if message.author.id == game.starter_id:
+                logger.info("Crossword give-up by %s in #%s", message.author, channel_id)
+                await message.add_reaction("🏳️")
+                await self._end_game(channel_id, completed=False)
+            return
+
         idx = game.try_solve(text)
         if idx is None:
             # Only react ❌ on single-word messages (likely intentional guesses)
