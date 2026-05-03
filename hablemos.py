@@ -26,6 +26,7 @@ class Hablemos(Bot):
         intents = discord.Intents.default()
         intents.members = True
         intents.message_content = True
+        intents.presences = True
         super().__init__(description="Bot by Jaleel#6408",
                           command_prefix=prefix,
                           owner_id=settings.owner_id,
