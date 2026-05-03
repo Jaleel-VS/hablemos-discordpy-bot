@@ -79,6 +79,7 @@ async def render_nowplaying(
     album: str,
     album_art_url: str | None,
     accent: tuple[int, int, int] = (30, 215, 96),
+    listener: str = "Someone",
 ) -> BytesIO:
     """Render a Spotify-style now-playing card. Returns PNG BytesIO."""
     r, g, b = _ensure_contrast(*accent)
@@ -121,7 +122,7 @@ async def render_nowplaying(
     white_dim = (255, 255, 255, 180)
 
     text_y = PADDING + 16 * SCALE
-    draw.text((text_x, text_y), "Now Playing", fill=white_dim, font=label_font)
+    draw.text((text_x, text_y), f"{listener} is listening to", fill=white_dim, font=label_font)
 
     text_y += 28 * SCALE
     draw.text((text_x, text_y), title_text, fill=white, font=title_font)

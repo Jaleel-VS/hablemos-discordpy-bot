@@ -163,6 +163,7 @@ class SpotifyCog(BaseCog):
             album=spotify.album or "",
             album_art_url=spotify.album_cover_url,
             accent=accent,
+            listener=target.display_name,
         )
 
         file = File(buf, filename="nowplaying.png")
