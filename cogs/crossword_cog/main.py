@@ -94,16 +94,21 @@ class CrosswordGame:
         """Reveal one random unrevealed cell. Returns the word hint was for, or None."""
         if self.hints_used >= 2:
             return None
-        # Find unsolved words with unrevealed cells
+        # Collect all cells already visible (solved words + pre-revealed)
+        visible: set[tuple[int, int]] = set(self.revealed_cells.keys())
+        for sidx in self.solved:
+            for r, c in self.grid.placed[sidx].cells:
+                visible.add((r, c))
+        # Find unsolved words with truly hidden cells
         for idx, pw in enumerate(self.grid.placed):
             if idx in self.solved:
                 continue
-            unrevealed = [
+            hidden = [
                 (i, r, c) for i, (r, c) in enumerate(pw.cells)
-                if (r, c) not in self.revealed_cells
+                if (r, c) not in visible
             ]
-            if unrevealed:
-                pos, r, c = random.choice(unrevealed)
+            if hidden:
+                pos, r, c = random.choice(hidden)
                 self.revealed_cells[(r, c)] = pw.word[pos]
                 self.hints_used += 1
                 return self.get_answer(idx)
