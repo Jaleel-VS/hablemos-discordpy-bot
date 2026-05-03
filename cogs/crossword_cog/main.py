@@ -526,7 +526,7 @@ class CrosswordCog(BaseCog):
         game = self._active.pop(channel_id, None)
         self._locks.pop(channel_id, None)
         watcher = self._watchers.pop(channel_id, None)
-        if watcher and not watcher.done():
+        if watcher and not watcher.done() and watcher is not asyncio.current_task():
             watcher.cancel()
         if game is None:
             return
