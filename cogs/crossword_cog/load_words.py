@@ -12,7 +12,7 @@ DB_URL = sys.argv[1] if len(sys.argv) > 1 else ""
 CREATE_TABLE = """
 CREATE TABLE IF NOT EXISTS crossword_words (
     id SERIAL PRIMARY KEY,
-    word_es VARCHAR(9) NOT NULL,
+    word_es VARCHAR(12) NOT NULL,
     word_en VARCHAR(30) NOT NULL,
     clue_es TEXT NOT NULL,
     clue_en TEXT NOT NULL,

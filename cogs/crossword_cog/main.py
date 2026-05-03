@@ -16,7 +16,8 @@ from .config import (
     DEFAULT_LANGUAGE,
     DIFFICULTIES,
     GAME_TIMEOUT_SECONDS,
-    WORDS_PER_GAME,
+    WORDS_PER_GAME_MAX,
+    WORDS_PER_GAME_MIN,
 )
 from .grid import generate_grid
 from .renderer import render_grid
@@ -228,7 +229,8 @@ def _build_game(
     in this language.  Retries with fresh words if grid generation fails.
     """
     for _attempt in range(5):
-        entries = pick_words(word_pool, difficulty, WORDS_PER_GAME)
+        n_words = random.randint(WORDS_PER_GAME_MIN, WORDS_PER_GAME_MAX)
+        entries = pick_words(word_pool, difficulty, n_words)
         if len(entries) < 3:
             return None
 

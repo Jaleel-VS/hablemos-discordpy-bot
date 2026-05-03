@@ -35,3 +35,6 @@ indent-style = "space"
 "db/__init__.py" = [
     "E402",  # imports after DatabaseMixin class (circular import avoidance)
 ]
+"scripts/*.py" = [
+    "SIM115",  # open() without context manager — intentional for incremental CSV writing
+]

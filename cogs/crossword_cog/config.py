@@ -5,7 +5,8 @@ from typing import Final
 # Game settings
 GAME_TIMEOUT_SECONDS: Final[int] = 600  # 10 minutes
 COMMAND_COOLDOWN_SECONDS: Final[int] = 10
-WORDS_PER_GAME: Final[int] = 5
+WORDS_PER_GAME_MIN: Final[int] = 4
+WORDS_PER_GAME_MAX: Final[int] = 6
 MAX_PLACEMENT_ATTEMPTS: Final[int] = 200
 
 

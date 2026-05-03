@@ -552,7 +552,7 @@ async def initialize_schema(pool):
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS crossword_words (
                 id SERIAL PRIMARY KEY,
-                word_es VARCHAR(9) NOT NULL,
+                word_es VARCHAR(12) NOT NULL,
                 word_en VARCHAR(30) NOT NULL,
                 clue_es TEXT NOT NULL,
                 clue_en TEXT NOT NULL,
@@ -560,6 +560,12 @@ async def initialize_schema(pool):
                 difficulty VARCHAR(10) NOT NULL CHECK (difficulty IN ('beginner', 'advanced')),
                 UNIQUE (word_es, theme)
             )
+        ''')
+
+        # Migration: widen word_es from VARCHAR(9) to VARCHAR(12)
+        await conn.execute('''
+            ALTER TABLE crossword_words
+            ALTER COLUMN word_es TYPE VARCHAR(12)
         ''')
 
         await conn.execute('''
