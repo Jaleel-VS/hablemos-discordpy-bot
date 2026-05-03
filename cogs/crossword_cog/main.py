@@ -586,50 +586,18 @@ class CrosswordCog(BaseCog):
             channel = self.bot.get_channel(channel_id) or (game.message and game.message.channel)
             logger.info("DEBUG end-game TIMEOUT: v2=%s ch_type=%s", game.use_v2, type(channel).__name__ if channel else "None")
             if channel:
-                if game.use_v2:
-                    try:
-                        view = discord.ui.LayoutView()
-                        file = game.render()
-                        view.add_item(discord.ui.Container(
-                            discord.ui.TextDisplay(
-                                f"## 🧩 Crossword — Time's Up! ⏱️\n"
-                                f"-# {solved_count}/{total} words solved\n\n"
-                                f"{game.build_clues_text(show_answers=True)}"
-                            ),
-                            discord.ui.Separator(visible=True),
-                            discord.ui.MediaGallery(
-                                discord.MediaGalleryItem(media="attachment://crossword.png"),
-                            ),
-                            accent_colour=discord.Color.orange(),
-                        ))
-                        logger.info("DEBUG: about to send v2 timeout message")
-                        await channel.send(view=view, file=file)
-                        logger.info("DEBUG: v2 timeout message sent OK")
-                    except Exception:
-                        logger.exception("v2 timeout send failed, falling back to embed")
-                        embed = Embed(
-                            title="🧩 Crossword — Time's Up! ⏱️",
-                            description=game.build_clues_text(show_answers=True),
-                            color=discord.Color.orange(),
-                        )
-                        img = game.render()
-                        embed.set_image(url="attachment://crossword.png")
-                        await channel.send(
-                            f"⏱️ **Time's up!** {solved_count}/{total} words solved. Here are the answers:",
-                            embed=embed, file=img,
-                        )
-                else:
-                    embed = Embed(
-                        title="🧩 Crossword — Time's Up! ⏱️",
-                        description=game.build_clues_text(show_answers=True),
-                        color=discord.Color.orange(),
-                    )
-                    img = game.render()
-                    embed.set_image(url="attachment://crossword.png")
-                    await channel.send(
-                        f"⏱️ **Time's up!** The crossword expired with {solved_count}/{total} words solved. Here are the answers:",
-                        embed=embed, file=img,
-                    )
+                # Always use embed for timeout — v2 LayoutView hangs from asyncio.Task
+                embed = Embed(
+                    title="🧩 Crossword — Time's Up! ⏱️",
+                    description=game.build_clues_text(show_answers=True),
+                    color=discord.Color.orange(),
+                )
+                img = game.render()
+                embed.set_image(url="attachment://crossword.png")
+                await channel.send(
+                    f"⏱️ **Time's up!** {solved_count}/{total} words solved. Here are the answers:",
+                    embed=embed, file=img,
+                )
 
         # Persist scores silently
         await self._save_scores(game, channel_id)
