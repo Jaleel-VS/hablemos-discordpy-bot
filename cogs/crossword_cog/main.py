@@ -475,17 +475,32 @@ class CrosswordCog(BaseCog):
                 for name, count in ranking
             )
 
-            embed = Embed(
-                title="🧩 Crossword Complete! 🎉",
-                description=f"Solved in **{minutes}m {seconds}s**\n\n{solver_text}",
-                color=discord.Color.green(),
-            )
-            img = game.render()
-            embed.set_image(url="attachment://crossword.png")
-
             channel = self.bot.get_channel(channel_id)
             if channel:
-                await channel.send(embed=embed, file=img)
+                if game.use_v2:
+                    view = discord.ui.LayoutView()
+                    img = game.render()
+                    file = File(img, filename="crossword.png")
+                    view.add_item(discord.ui.Container(
+                        discord.ui.TextDisplay(
+                            f"## 🧩 Crossword Complete! 🎉\n"
+                            f"Solved in **{minutes}m {seconds}s**\n\n{solver_text}"
+                        ),
+                        discord.ui.MediaGallery(
+                            discord.MediaGalleryItem(media="attachment://crossword.png"),
+                        ),
+                        accent_colour=discord.Color.green(),
+                    ))
+                    await channel.send(view=view, file=file)
+                else:
+                    embed = Embed(
+                        title="🧩 Crossword Complete! 🎉",
+                        description=f"Solved in **{minutes}m {seconds}s**\n\n{solver_text}",
+                        color=discord.Color.green(),
+                    )
+                    img = game.render()
+                    embed.set_image(url="attachment://crossword.png")
+                    await channel.send(embed=embed, file=img)
         else:
             for idx in range(len(game.grid.placed)):
                 game.solved.add(idx)
@@ -493,20 +508,40 @@ class CrosswordCog(BaseCog):
             solved_count = len(game.solvers)
             total = len(game.grid.placed)
 
-            embed = Embed(
-                title="🧩 Crossword — Time's Up! ⏱️",
-                description=game.build_clues_text(show_answers=True),
-                color=discord.Color.orange(),
-            )
-            img = game.render()
-            embed.set_image(url="attachment://crossword.png")
-
             channel = self.bot.get_channel(channel_id)
             if channel:
-                await channel.send(
-                    f"⏱️ **Time's up!** The crossword expired with {solved_count}/{total} words solved. Here are the answers:",
-                    embed=embed, file=img,
-                )
+                if game.use_v2:
+                    view = discord.ui.LayoutView()
+                    img = game.render()
+                    file = File(img, filename="crossword.png")
+                    view.add_item(discord.ui.Container(
+                        discord.ui.TextDisplay(
+                            f"## 🧩 Crossword — Time's Up! ⏱️\n"
+                            f"-# {solved_count}/{total} words solved\n\n"
+                            f"{game.build_clues_text(show_answers=True)}"
+                        ),
+                        discord.ui.Separator(visible=True),
+                        discord.ui.MediaGallery(
+                            discord.MediaGalleryItem(media="attachment://crossword.png"),
+                        ),
+                        accent_colour=discord.Color.orange(),
+                    ))
+                    await channel.send(
+                        f"⏱️ **Time's up!** Here are the answers:",
+                        view=view, file=file,
+                    )
+                else:
+                    embed = Embed(
+                        title="🧩 Crossword — Time's Up! ⏱️",
+                        description=game.build_clues_text(show_answers=True),
+                        color=discord.Color.orange(),
+                    )
+                    img = game.render()
+                    embed.set_image(url="attachment://crossword.png")
+                    await channel.send(
+                        f"⏱️ **Time's up!** The crossword expired with {solved_count}/{total} words solved. Here are the answers:",
+                        embed=embed, file=img,
+                    )
 
     async def _timeout_watcher(self, channel_id: int) -> None:
         """End the game after the timeout period."""
