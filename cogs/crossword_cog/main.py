@@ -543,7 +543,7 @@ class CrosswordCog(BaseCog):
                 for name, count in ranking
             )
 
-            channel = self.bot.get_channel(channel_id)
+            channel = self.bot.get_channel(channel_id) or (game.message and game.message.channel)
             logger.info("DEBUG end-game COMPLETED: v2=%s ch_type=%s", game.use_v2, type(channel).__name__ if channel else "None")
             if channel:
                 if game.use_v2:
@@ -576,7 +576,7 @@ class CrosswordCog(BaseCog):
             solved_count = len(game.solvers)
             total = len(game.grid.placed)
 
-            channel = self.bot.get_channel(channel_id)
+            channel = self.bot.get_channel(channel_id) or (game.message and game.message.channel)
             logger.info("DEBUG end-game TIMEOUT: v2=%s ch_type=%s", game.use_v2, type(channel).__name__ if channel else "None")
             if channel:
                 if game.use_v2:
@@ -615,8 +615,8 @@ class CrosswordCog(BaseCog):
         """Persist per-user scores to the database."""
         if not game.scores:
             return
-        channel = self.bot.get_channel(channel_id)
-        guild_id = channel.guild.id if channel and hasattr(channel, "guild") else 0
+        channel = self.bot.get_channel(channel_id) or (game.message and game.message.channel)
+        guild_id = getattr(getattr(channel, "guild", None), "id", 0)
         total = len(game.grid.placed)
         try:
             for user_id, words_solved in game.scores.items():
