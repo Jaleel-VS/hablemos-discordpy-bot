@@ -5,7 +5,7 @@ from typing import Optional
 
 import aiohttp
 import discord
-from discord import Color, HTTPException, Member, Spotify, app_commands, ui
+from discord import Color, File, HTTPException, Member, Spotify, app_commands, ui
 from discord.ext import commands
 from PIL import Image
 
@@ -123,8 +123,70 @@ class SpotifyCog(BaseCog):
     @commands.command(name="np2")
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def nowplaying_v2(self, ctx: commands.Context, member: Optional[Member] = None):  # noqa: UP045 — discord.py needs Optional[]
-        """Now playing with album art accent color (experimental)."""
-        await self._send_now_playing(ctx, member, use_art_color=True)
+        """Now playing with rendered Spotify-style card image."""
+        if ctx.guild is None:
+            await ctx.send(embed=red_embed("This command can only be used in a server."))
+            return
+
+        target = ctx.guild.get_member((member or ctx.author).id)
+        if target is None:
+            await ctx.send(embed=red_embed("Could not find that user!"))
+            return
+
+        spotify = next((a for a in target.activities if isinstance(a, Spotify)), None)
+        if not spotify:
+            name = "You're" if target.id == ctx.author.id else f"{target.display_name} is"
+            await ctx.send(embed=red_embed(
+                f"{name} not listening to Spotify right now!\n\n"
+                "Make sure you have:\n"
+                "• **Display current activity** enabled for this server "
+                "(Settings → Activity Privacy)\n"
+                "• Spotify linked in **Settings → Connections** with "
+                "\"Display Spotify as your status\" on"
+            ))
+            return
+
+        # Extract dominant color from album art
+        accent = (30, 215, 96)  # Spotify green default
+        if spotify.album_cover_url:
+            color = await _dominant_color(spotify.album_cover_url)
+            accent = (color.r, color.g, color.b)
+
+        from .renderer import render_nowplaying
+        buf = await render_nowplaying(
+            title=spotify.title or "Unknown",
+            artist=spotify.artist or "Unknown",
+            album=spotify.album or "",
+            album_art_url=spotify.album_cover_url,
+            accent=accent,
+        )
+
+        file = File(buf, filename="nowplaying.png")
+
+        # Send as v2 with Listen button
+        try:
+            view = discord.ui.LayoutView()
+            container_children = [
+                discord.ui.MediaGallery(
+                    discord.MediaGalleryItem(media="attachment://nowplaying.png"),
+                ),
+            ]
+            if spotify.track_url:
+                container_children.append(discord.ui.Separator(visible=True))
+                container_children.append(discord.ui.ActionRow(
+                    discord.ui.Button(
+                        label="Listen on Spotify",
+                        url=spotify.track_url,
+                        style=discord.ButtonStyle.link,
+                        emoji=discord.PartialEmoji.from_str(SPOTIFY_EMOJI),
+                    ),
+                ))
+            view.add_item(discord.ui.Container(*container_children))
+            await ctx.send(view=view, file=file)
+        except HTTPException:
+            # Fallback: just send the image
+            buf.seek(0)
+            await ctx.send(file=File(buf, filename="nowplaying.png"))
 
 
 async def setup(bot: commands.Bot):
