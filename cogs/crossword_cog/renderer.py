@@ -110,8 +110,8 @@ def render_grid(
             bbox = draw.textbbox((0, 0), show_letter, font=letter_font)
             tw = bbox[2] - bbox[0]
             th = bbox[3] - bbox[1]
-            lx = x + (CELL_SIZE - tw) // 2
-            ly = y + (CELL_SIZE - th) // 2 + 2
+            lx = x + (CELL_SIZE - tw) // 2 - bbox[0]
+            ly = y + (CELL_SIZE - th) // 2 - bbox[1] + 2
             draw.text((lx, ly), show_letter, fill=color, font=letter_font)
 
     buf = BytesIO()
