@@ -487,8 +487,7 @@ class CrosswordCog(BaseCog):
             if channel:
                 if game.use_v2:
                     view = discord.ui.LayoutView()
-                    img = game.render()
-                    file = File(img, filename="crossword.png")
+                    file = game.render()
                     view.add_item(discord.ui.Container(
                         discord.ui.TextDisplay(
                             f"## 🧩 Crossword Complete! 🎉\n"
@@ -520,8 +519,7 @@ class CrosswordCog(BaseCog):
             if channel:
                 if game.use_v2:
                     view = discord.ui.LayoutView()
-                    img = game.render()
-                    file = File(img, filename="crossword.png")
+                    file = game.render()
                     view.add_item(discord.ui.Container(
                         discord.ui.TextDisplay(
                             f"## 🧩 Crossword — Time's Up! ⏱️\n"
