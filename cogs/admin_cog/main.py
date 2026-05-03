@@ -603,12 +603,15 @@ class AdminCog(BaseCog):
         """
         try:
             guild = discord.Object(id=guild_id) if guild_id else None
+            if guild is not None:
+                self.bot.tree.copy_global_to(guild=guild)
             synced = await self.bot.tree.sync(guild=guild)
             scope = f"guild {guild_id}" if guild_id else "globally"
             await ctx.send(f"✅ Synced {len(synced)} command(s) {scope}.")
         except discord.HTTPException as e:
             if e.code == 50240 and guild_id is None and ctx.guild:
                 # Entry point conflict — fall back to guild sync
+                self.bot.tree.copy_global_to(guild=ctx.guild)
                 synced = await self.bot.tree.sync(guild=ctx.guild)
                 await ctx.send(f"✅ Synced {len(synced)} command(s) to this guild (global blocked by Activity entry point).")
             else:
