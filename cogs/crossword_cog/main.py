@@ -239,7 +239,7 @@ def _build_game(
         ]
 
         # Filter out multi-word answers (can't place on grid)
-        valid = [(aw, e) for aw, e in zip(answer_words, entries) if " " not in aw]
+        valid = [(aw, e) for aw, e in zip(answer_words, entries, strict=True) if " " not in aw]
         if len(valid) < 3:
             continue
         answer_words = [aw for aw, _ in valid]
@@ -546,6 +546,12 @@ class CrosswordCog(BaseCog):
             channel = self.bot.get_channel(channel_id)
             logger.info("DEBUG end-game COMPLETED: v2=%s ch_type=%s", game.use_v2, type(channel).__name__ if channel else "None")
             if channel:
+                if game.use_v2:
+                    view = discord.ui.LayoutView()
+                    file = game.render()
+                    view.add_item(discord.ui.Container(
+                        discord.ui.TextDisplay(
+                            f"## 🧩 Crossword Complete! 🎉\n"
                             f"Solved in **{minutes}m {seconds}s**\n\n{solver_text}"
                         ),
                         discord.ui.MediaGallery(
