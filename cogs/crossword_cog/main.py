@@ -602,7 +602,9 @@ class CrosswordCog(BaseCog):
                             ),
                             accent_colour=discord.Color.orange(),
                         ))
+                        logger.info("DEBUG: about to send v2 timeout message")
                         await channel.send(view=view, file=file)
+                        logger.info("DEBUG: v2 timeout message sent OK")
                     except Exception:
                         logger.exception("v2 timeout send failed, falling back to embed")
                         embed = Embed(
@@ -657,7 +659,12 @@ class CrosswordCog(BaseCog):
         timeout = getattr(self, '_timeout_override', GAME_TIMEOUT_SECONDS)
         await asyncio.sleep(timeout)
         if channel_id in self._active:
-            await self._end_game(channel_id, completed=False)
+            try:
+                await self._end_game(channel_id, completed=False)
+            except Exception:
+                logger.exception("_timeout_watcher: _end_game raised for #%s", channel_id)
+        else:
+            logger.info("_timeout_watcher: game already ended for #%s", channel_id)
 
     async def cog_unload(self) -> None:
         """Clean up active games on cog unload."""
