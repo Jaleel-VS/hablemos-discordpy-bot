@@ -11,3 +11,5 @@ bot_config.py
 .python-version
 *.sql
 .DS_Store
+cogs/crossword_cog/data/generated_batch.csv
+cogs/crossword_cog/data/generated_clean.csv
