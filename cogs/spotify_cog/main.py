@@ -1,5 +1,7 @@
 """Spotify now-playing command — shows what a user is listening to."""
+import colorsys
 import logging
+import math
 from io import BytesIO
 from typing import Optional
 
@@ -19,19 +21,63 @@ DEFAULT_ACCENT = Color.green()
 
 
 async def _dominant_color(url: str) -> Color:
-    """Fetch an image and return its most vibrant color, or green on failure."""
+    """Extract the most eye-catching color from album art, mimicking Spotify.
+
+    Uses Pillow quantize + a scoring formula based on chroma, darkness,
+    and cluster dominance (inspired by Spotify's approach).
+    """
     try:
         async with aiohttp.ClientSession() as session, session.get(url) as resp:
             if resp.status != 200:
                 return DEFAULT_ACCENT
             data = await resp.read()
-        img = Image.open(BytesIO(data)).convert("RGB")
-        # Quantize to 8 colors, pick the most saturated one
-        palette = img.quantize(colors=8, method=Image.Quantize.MEDIANCUT).convert("RGB")
-        pixels = list(palette.getdata())
-        # Score by saturation: max(rgb) - min(rgb)
-        best = max(pixels, key=lambda p: max(p) - min(p))
-        return Color.from_rgb(*best)
+        img = Image.open(BytesIO(data)).convert("RGB").resize((100, 100))
+
+        # Quantize to 16 color palette
+        quantized = img.quantize(colors=16, method=Image.Quantize.MEDIANCUT)
+        palette = quantized.getpalette()[:48]  # 16 colors × 3 channels
+        hist = quantized.histogram()[:16]
+        total_pixels = sum(hist)
+
+        best_score = -1
+        best_color = (30, 215, 96)
+
+        for i in range(16):
+            r, g, b = palette[i * 3], palette[i * 3 + 1], palette[i * 3 + 2]
+            rf, gf, bf = r / 255, g / 255, b / 255
+
+            # Chroma (colorfulness)
+            rg = rf - gf
+            yb = (rf + gf) / 2 - bf
+            chroma = math.sqrt(rg ** 2 + yb ** 2)
+
+            # Darkness (Spotify prefers darker backgrounds for white text)
+            lum = math.sqrt(0.299 * rf**2 + 0.587 * gf**2 + 0.114 * bf**2)
+            darkness = 1 - lum
+
+            # Dominance (area coverage)
+            dominance = hist[i] / total_pixels if total_pixels else 0
+
+            # Spotify-inspired scoring: heavily weight chroma
+            score = chroma * 4.92 + darkness * 1.41 + dominance * 0.79
+
+            # Skip near-gray colors (low saturation)
+            if chroma < 0.05:
+                continue
+
+            if score > best_score:
+                best_score = score
+                best_color = (r, g, b)
+
+        # Boost saturation in HSV space
+        rf, gf, bf = [c / 255 for c in best_color]
+        h, s, v = colorsys.rgb_to_hsv(rf, gf, bf)
+        s = min(s * 1.4, 1.0)  # boost saturation 40%
+        v = min(v, 0.75)  # cap brightness for white text contrast
+        rf, gf, bf = colorsys.hsv_to_rgb(h, s, v)
+        best_color = (int(rf * 255), int(gf * 255), int(bf * 255))
+
+        return Color.from_rgb(*best_color)
     except Exception:
         logger.debug("Failed to extract dominant color from %s", url)
         return DEFAULT_ACCENT
