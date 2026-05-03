@@ -606,6 +606,14 @@ class AdminCog(BaseCog):
             synced = await self.bot.tree.sync(guild=guild)
             scope = f"guild {guild_id}" if guild_id else "globally"
             await ctx.send(f"✅ Synced {len(synced)} command(s) {scope}.")
+        except discord.HTTPException as e:
+            if e.code == 50240 and guild_id is None and ctx.guild:
+                # Entry point conflict — fall back to guild sync
+                synced = await self.bot.tree.sync(guild=ctx.guild)
+                await ctx.send(f"✅ Synced {len(synced)} command(s) to this guild (global blocked by Activity entry point).")
+            else:
+                logger.error("Sync failed: %s", e, exc_info=True)
+                await ctx.send("❌ Sync failed. Check logs.")
         except Exception as e:
             logger.error("Sync failed: %s", e, exc_info=True)
             await ctx.send("❌ Sync failed. Check logs.")
