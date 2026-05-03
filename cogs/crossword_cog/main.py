@@ -28,9 +28,9 @@ LANG_LABELS = {"es": "🇪🇸 Español", "en": "🇬🇧 English"}
 
 
 def _normalize(text: str) -> str:
-    """Strip accents and lowercase for answer comparison."""
+    """Strip accents, punctuation, and lowercase for answer comparison."""
     nfkd = unicodedata.normalize("NFKD", text.strip().lower())
-    return "".join(c for c in nfkd if not unicodedata.combining(c))
+    return "".join(c for c in nfkd if not unicodedata.combining(c) and c.isalnum())
 
 
 class CrosswordGame:
@@ -87,15 +87,21 @@ class CrosswordGame:
                 return idx
         return None
 
-    def build_clues_text(self) -> str:
+    def build_clues_text(self, *, show_answers: bool = False) -> str:
         """Build the clue list for the embed."""
         across: list[str] = []
         down: list[str] = []
 
         for idx, pw in enumerate(self.grid.placed):
-            status = "✅" if idx in self.solved else f"({len(pw.word)})"
-            solver = f" — *{self.solvers[idx]}*" if idx in self.solvers else ""
-            line = f"**{pw.number}.** {self.get_clue(idx)} {status}{solver}"
+            if idx in self.solvers:
+                status = f"✅ — *{self.solvers[idx]}*"
+            elif show_answers:
+                status = f"💡 **{self.get_answer(idx)}**"
+            elif idx in self.solved:
+                status = "✅"
+            else:
+                status = f"({len(pw.word)})"
+            line = f"**{pw.number}.** {self.get_clue(idx)} {status}"
 
             if pw.direction == "across":
                 across.append(line)
@@ -489,7 +495,7 @@ class CrosswordCog(BaseCog):
 
             embed = Embed(
                 title="🧩 Crossword — Time's Up! ⏱️",
-                description=game.build_clues_text(),
+                description=game.build_clues_text(show_answers=True),
                 color=discord.Color.orange(),
             )
             img = game.render()
