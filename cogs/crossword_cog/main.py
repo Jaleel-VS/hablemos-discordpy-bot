@@ -322,7 +322,7 @@ class CrosswordCog(BaseCog):
 
         game.starter_id = author.id
         # Components v2 not supported in DMs
-        game.use_v2 = use_v2 and channel.guild is not None
+        game.use_v2 = use_v2 and getattr(channel, "guild", None) is not None
         logger.info(
             "Crossword started by %s in #%s (%s, %s, v2=%s)",
             author, channel_id, diff, lang, use_v2,
