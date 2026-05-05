@@ -163,7 +163,7 @@ class SpotifyCog(BaseCog):
             logger.exception("Failed to send Spotify view for %s", target)
             await ctx.send(embed=red_embed("Something went wrong sending the embed."))
 
-    @commands.hybrid_command(name="nowplaying", aliases=['spoti', 'np'])
+    @commands.hybrid_command(name="nowplaying", aliases=['nowplay', 'np', 'spotify'])
     @commands.cooldown(1, 10, commands.BucketType.user)
     @app_commands.describe(member="The user to check (leave empty for yourself)")
     async def nowplaying(self, ctx: commands.Context, member: Optional[Member] = None):  # noqa: UP045 — discord.py needs Optional[]
