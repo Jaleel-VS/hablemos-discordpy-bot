@@ -34,7 +34,7 @@ def make_embed(
 
 
 def green_embed(text: str, *, title: str | None = None) -> Embed:
-    """Create a success embed."""
+    """Create a success/answer embed."""
     return make_embed(text, title=title, color=SUCCESS_COLOR)
 
 
