@@ -7,7 +7,8 @@ import random
 import discord
 from discord.ext import commands
 
-from base_cog import COLORS, BaseCog
+from base_cog import BaseCog
+from cogs.utils.embeds import EMBED_COLORS
 
 from .cache import SummaryCache
 from .gemini_client import GeminiClient
@@ -156,7 +157,7 @@ class SummaryCog(BaseCog):
         embed = discord.Embed(
             title="Conversation Summary",
             description=summary[:4000],
-            color=random.choice(COLORS),
+            color=random.choice(EMBED_COLORS),
         )
         if not from_cache:
             embed.add_field(name="Messages", value=str(count), inline=True)
