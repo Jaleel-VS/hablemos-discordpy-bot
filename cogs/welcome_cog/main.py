@@ -17,6 +17,7 @@ from .config import (
     CUSTOMIZE_MENTION,
     RAI_BOT_ID,
     STAFF_ROLE_IDS,
+    STAFF_USER_IDS,
     WELCOME_CHANNEL_ID,
     WELCOME_COLOR,
 )
@@ -54,6 +55,9 @@ def _is_staff_context(ctx: commands.Context) -> bool:
     if ctx.guild is None:
         return False
 
+    if ctx.author.id in STAFF_USER_IDS:
+        return True
+
     if not isinstance(ctx.author, discord.Member):
         return False
 
@@ -65,7 +69,6 @@ def _is_staff_context(ctx: commands.Context) -> bool:
         or permissions.manage_messages
         or _has_staff_role(ctx.author)
     )
-
 
 def staff_only():
     """Command check that allows only configured staff members."""
