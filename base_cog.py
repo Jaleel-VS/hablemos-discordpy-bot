@@ -42,10 +42,10 @@ class BaseCog(Cog):
             await ctx.send(
                 embed=red_embed(
                     (
-                        "Este comando está en cooldown.\n"
-                        f"Intenta nuevamente en `{error.retry_after:.1f}` segundos."
+                        "This command is on cooldown.\n"
+                        f"Try again in `{error.retry_after:.1f}` seconds."
                     ),
-                    title="Error de cooldown",
+                    title="Command on cooldown",
                 )
             )
 
@@ -53,8 +53,8 @@ class BaseCog(Cog):
             msg = self._get_check_fail_message(ctx)
             await ctx.send(
                 embed=red_embed(
-                    msg or "No tienes permiso para usar este comando.",
-                    title="Permiso denegado",
+                    msg or "You do not have permission to use this command.",
+                    title="Permission denied",
                 )
             )
 
@@ -62,7 +62,7 @@ class BaseCog(Cog):
             await ctx.send(
                 embed=red_embed(
                     self._format_usage(ctx),
-                    title="Falta un argumento",
+                    title="Missing required argument",
                 )
             )
 
@@ -70,7 +70,7 @@ class BaseCog(Cog):
             await ctx.send(
                 embed=red_embed(
                     self._format_usage(ctx),
-                    title="Argumento inválido",
+                    title="Invalid argument",
                 )
             )
 
@@ -78,7 +78,7 @@ class BaseCog(Cog):
             await ctx.send(
                 embed=red_embed(
                     self._format_usage(ctx),
-                    title="Entrada inválida",
+                    title="Invalid input",
                 )
             )
 
@@ -90,8 +90,8 @@ class BaseCog(Cog):
             )
             await ctx.send(
                 embed=red_embed(
-                    "Ocurrió un error interno al ejecutar el comando.",
-                    title="Error interno",
+                    "An internal error occurred while running this command.",
+                    title="Internal error",
                 )
             )
             ctx.error_handled = True
@@ -113,7 +113,7 @@ class BaseCog(Cog):
     def _format_usage(self, ctx) -> str:
         """Return a safe usage message for invalid command input."""
         if not ctx.command:
-            return "La entrada entregada no es válida."
+            return "The provided input is invalid."
 
         signature = ctx.command.signature
         command_name = ctx.command.qualified_name
@@ -123,6 +123,6 @@ class BaseCog(Cog):
             usage = f"{usage} {signature}"
 
         return (
-            "La entrada entregada no es válida.\n\n"
-            f"Uso correcto:\n`{usage}`"
+            "The provided input is invalid.\n\n"
+            f"Correct usage:\n`{usage}`"
         )
