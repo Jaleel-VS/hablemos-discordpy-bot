@@ -4,8 +4,8 @@ from random import choice
 from discord import Embed
 from discord.ext import commands
 
-from base_cog import COLORS as colors
 from base_cog import BaseCog
+from cogs.utils.embeds import EMBED_COLORS
 from cogs.convo_starter_cog.convo_starter_help import (
     categories,
     get_random_question,
@@ -20,7 +20,7 @@ ERROR_MESSAGE = "The proper format is `$topic <topic>` eg. `$topic 2`. Please se
 NOT_FOUND = "Topic not found! Please type ``$lst`` to see a list of topics"
 
 def embed_question(question_1a, question_1b):
-    embed = Embed(color=choice(colors))
+    embed = Embed(color=choice(EMBED_COLORS))
     embed.clear_fields()
     embed.title = question_1a
     embed.description = f"**{question_1b}**"
