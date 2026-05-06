@@ -1,67 +1,62 @@
 """Global command error handler cog."""
+from __future__ import annotations
+
 import difflib
 import logging
-import random
 
 import discord
 from discord.ext import commands
 
 from base_cog import BaseCog
+from cogs.utils.embeds import red_embed, yellow_embed
 
 logger = logging.getLogger(__name__)
-
-PERMISSION_DENIED_QUOTES = [
-    "The only way to do great work is to love what you do. — Steve Jobs",
-    "In the middle of difficulty lies opportunity. — Albert Einstein",
-    "Be yourself; everyone else is already taken. — Oscar Wilde",
-    "Not all those who wander are lost. — J.R.R. Tolkien",
-    "The best time to plant a tree was 20 years ago. The second best time is now. — Chinese Proverb",
-    "It does not matter how slowly you go as long as you do not stop. — Confucius",
-    "Everything you can imagine is real. — Pablo Picasso",
-    "Turn your wounds into wisdom. — Oprah Winfrey",
-    "The mind is everything. What you think you become. — Buddha",
-    "Strive not to be a success, but rather to be of value. — Albert Einstein",
-    "What we achieve inwardly will change outer reality. — Plutarch",
-    "Happiness is not something ready made. It comes from your own actions. — Dalai Lama",
-    "The best revenge is massive success. — Frank Sinatra",
-    "If you want to lift yourself up, lift up someone else. — Booker T. Washington",
-    "Whoever is happy will make others happy too. — Anne Frank",
-    "Life is what happens when you're busy making other plans. — John Lennon",
-    "The purpose of our lives is to be happy. — Dalai Lama",
-    "Get busy living or get busy dying. — Stephen King",
-    "You only live once, but if you do it right, once is enough. — Mae West",
-    "Many of life's failures are people who did not realize how close they were to success when they gave up. — Thomas Edison",
-    "The future belongs to those who believe in the beauty of their dreams. — Eleanor Roosevelt",
-    "It is during our darkest moments that we must focus to see the light. — Aristotle",
-    "Do what you can, with what you have, where you are. — Theodore Roosevelt",
-    "Nothing is impossible, the word itself says 'I'm possible'! — Audrey Hepburn",
-    "The only impossible journey is the one you never begin. — Tony Robbins",
-    "Success is not final, failure is not fatal: it is the courage to continue that counts. — Winston Churchill",
-    "Believe you can and you're halfway there. — Theodore Roosevelt",
-    "Act as if what you do makes a difference. It does. — William James",
-    "What you get by achieving your goals is not as important as what you become by achieving your goals. — Zig Ziglar",
-    "You miss 100% of the shots you don't take. — Wayne Gretzky",
-]
 
 
 class ErrorHandler(BaseCog):
     """Global command error handler."""
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
-        # Skip if a command-level or cog-level handler already dealt with this
-        if getattr(ctx, 'error_handled', False):
+    async def on_command_error(
+        self,
+        ctx: commands.Context,
+        error: commands.CommandError,
+    ) -> None:
+        """Handle command errors that were not handled by a cog-level handler."""
+        if getattr(ctx, "error_handled", False):
             return
 
-        # Ignore non-command prefixes (e.g. "$5", "$$")
-        if len(ctx.message.content) > 1 and (
-            ctx.message.content[1].isdigit() or ctx.message.content[-1] == self.bot.command_prefix
-        ):
+        if self._should_ignore_non_command_prefix(ctx):
             return
 
-        # Record failed command metric
+        await self._record_failed_command(ctx)
+
+        try:
+            await self._dispatch_error(ctx, error)
+            ctx.error_handled = True
+        except discord.HTTPException:
+            logger.debug(
+                "Failed to send command error response",
+                exc_info=True,
+            )
+
+    def _should_ignore_non_command_prefix(self, ctx: commands.Context) -> bool:
+        """Return whether a prefixed message should be ignored as non-command noise."""
+        content = getattr(ctx.message, "content", "")
+
+        if len(content) <= 1:
+            return False
+
+        return (
+            content[1].isdigit()
+            or content[-1] == str(self.bot.command_prefix)
+        )
+
+    async def _record_failed_command(self, ctx: commands.Context) -> None:
+        """Record a failed command metric without breaking error handling."""
         try:
             cog_name = type(ctx.cog).__name__ if ctx.cog else None
+
             await self.bot.db.record_command(
                 command_name=str(ctx.command),
                 cog_name=cog_name,
@@ -72,74 +67,177 @@ class ErrorHandler(BaseCog):
                 failed=True,
             )
         except Exception:
-            pass
+            logger.debug("Failed to record failed command metric", exc_info=True)
 
-        try:
-            if isinstance(error, commands.CommandNotFound):
-                # Only handle command-not-found in the main server
-                if not ctx.guild or ctx.guild.id != self.bot.settings.league_guild_id:
-                    return
+    async def _dispatch_error(
+        self,
+        ctx: commands.Context,
+        error: commands.CommandError,
+    ) -> None:
+        """Route a command error to its specific handler."""
+        if isinstance(error, commands.CommandNotFound):
+            await self._handle_command_not_found(ctx)
+            return
 
-                # Suggest similar commands via fuzzy match
-                invoked = ctx.invoked_with
-                all_cmds = [c.name for c in self.bot.commands if not c.hidden]
-                close = difflib.get_close_matches(invoked, all_cmds, n=3, cutoff=0.6)
-                if close:
-                    suggestions = ", ".join(f"`{self.bot.command_prefix}{c}`" for c in close)
-                    await ctx.send(f"Command not found. Did you mean {suggestions}?")
+        if isinstance(error, commands.CommandOnCooldown):
+            await self._handle_cooldown(ctx, error)
+            return
 
-                error_channel = self.bot.error_channel
-                if isinstance(error_channel, discord.TextChannel) and ctx.guild:
-                    await error_channel.send(
-                        f"------\nCommand not found:\n{ctx.author}, {ctx.author.id}, {ctx.channel}, {ctx.channel.id}, "
-                        f"{ctx.guild}, {ctx.guild.id}, \n{ctx.message.content}\n{ctx.message.jump_url}\n------"
-                    )
-                logger.warning(
-                    "Command not found: %s | guild: %s (%s) | user: %s",
-                    ctx.message.content,
-                    ctx.guild.name if ctx.guild else "DM",
-                    ctx.guild.id if ctx.guild else "N/A",
-                    ctx.author.id,
+        if isinstance(error, (commands.MissingPermissions, commands.NotOwner)):
+            await self._handle_permission_denied(ctx)
+            return
+
+        if isinstance(error, commands.CheckFailure):
+            await self._handle_check_failure(ctx)
+            return
+
+        if isinstance(error, commands.UserInputError):
+            # Usually handled by BaseCog.cog_command_error.
+            # Keep silent here to avoid duplicate messages.
+            return
+
+        if (
+            isinstance(error, commands.CommandInvokeError)
+            and isinstance(error.original, discord.Forbidden)
+        ):
+            logger.debug("Forbidden error, likely blocked by user: %s", error.original)
+            return
+
+        await self._handle_unexpected_error(ctx, error)
+
+    async def _handle_command_not_found(self, ctx: commands.Context) -> None:
+        """Handle unknown commands with optional fuzzy suggestions."""
+        if not ctx.guild or ctx.guild.id != self.bot.settings.league_guild_id:
+            return
+
+        invoked = ctx.invoked_with or ""
+        all_commands = [command.name for command in self.bot.commands if not command.hidden]
+        close_matches = difflib.get_close_matches(
+            invoked,
+            all_commands,
+            n=3,
+            cutoff=0.6,
+        )
+
+        if close_matches:
+            suggestions = ", ".join(
+                f"`{self.bot.command_prefix}{command}`"
+                for command in close_matches
+            )
+            message = f"Command not found. Did you mean {suggestions}?"
+        else:
+            message = "Command not found."
+
+        await ctx.send(
+            embed=red_embed(
+                message,
+                title="Command not found",
+            )
+        )
+
+        await self._log_command_not_found(ctx)
+
+    async def _log_command_not_found(self, ctx: commands.Context) -> None:
+        """Send command-not-found details to the configured error channel."""
+        error_channel = self.bot.error_channel
+
+        if isinstance(error_channel, discord.TextChannel) and ctx.guild:
+            await error_channel.send(
+                "------\n"
+                "Command not found:\n"
+                f"User: {ctx.author} ({ctx.author.id})\n"
+                f"Channel: {ctx.channel} ({ctx.channel.id})\n"
+                f"Guild: {ctx.guild} ({ctx.guild.id})\n"
+                f"Content: {ctx.message.content}\n"
+                f"Jump URL: {ctx.message.jump_url}\n"
+                "------"
+            )
+
+        logger.warning(
+            "Command not found: %s | guild: %s (%s) | user: %s",
+            ctx.message.content,
+            ctx.guild.name if ctx.guild else "DM",
+            ctx.guild.id if ctx.guild else "N/A",
+            ctx.author.id,
+        )
+
+    async def _handle_cooldown(
+        self,
+        ctx: commands.Context,
+        error: commands.CommandOnCooldown,
+    ) -> None:
+        """Handle command cooldown errors."""
+        retry_after = round(error.retry_after)
+
+        await ctx.send(
+            embed=yellow_embed(
+                (
+                    "This command is on cooldown.\n"
+                    f"Try again in `{retry_after}` seconds."
+                ),
+                title="Command on cooldown",
+            )
+        )
+
+        logger.info("Command on cooldown: %s", ctx.message.content)
+
+    async def _handle_permission_denied(self, ctx: commands.Context) -> None:
+        """Handle missing permission and owner-only command errors."""
+        owner_id = self.bot.settings.owner_id
+
+        await ctx.send(
+            embed=red_embed(
+                (
+                    "You do not have permission to use this command.\n\n"
+                    f"If you think this is a mistake, contact <@{owner_id}>."
+                ),
+                title="Permission denied",
+            )
+        )
+
+    async def _handle_check_failure(self, ctx: commands.Context) -> None:
+        """Handle generic check failures."""
+        message = self._get_check_fail_message(ctx)
+
+        await ctx.send(
+            embed=red_embed(
+                message or "You do not have permission to use this command.",
+                title="Permission denied",
+            )
+        )
+
+    def _get_check_fail_message(self, ctx: commands.Context) -> str | None:
+        """Return a custom fail message from command checks, if present."""
+        if not ctx.command:
+            return None
+
+        for check in ctx.command.checks:
+            if hasattr(check, "fail_msg"):
+                return check.fail_msg
+
+        return None
+
+    async def _handle_unexpected_error(
+        self,
+        ctx: commands.Context,
+        error: commands.CommandError,
+    ) -> None:
+        """Handle unexpected command errors."""
+        logger.error(
+            "Unhandled command error in command %s",
+            ctx.command,
+            exc_info=error,
+        )
+
+        if isinstance(ctx.channel, discord.TextChannel):
+            await ctx.send(
+                embed=red_embed(
+                    "An unexpected error occurred. Please try again later.",
+                    title="Unexpected error",
                 )
-
-            elif isinstance(error, commands.CommandOnCooldown):
-                if isinstance(ctx.channel, discord.TextChannel):
-                    await ctx.send(f"This command is on cooldown. Try again in {round(error.retry_after)} seconds.")
-                logger.info("Command on cooldown: %s", ctx.message.content)
-
-            elif isinstance(error, (commands.MissingPermissions, commands.NotOwner)):
-                quote = random.choice(PERMISSION_DENIED_QUOTES)
-                owner_id = self.bot.settings.owner_id
-                await ctx.send(
-                    f"You don't have permission to use that command. "
-                    f"Please contact <@{owner_id}> for any trouble.\n\n*{quote}*"
-                )
-
-            elif isinstance(error, commands.CheckFailure):
-                # Look for fail_msg metadata on the check predicate
-                msg = None
-                if ctx.command:
-                    for check in ctx.command.checks:
-                        if hasattr(check, "fail_msg"):
-                            msg = check.fail_msg
-                            break
-                await ctx.send(msg or "You don't have permission to use this command.")
-
-            elif isinstance(error, commands.UserInputError):
-                # Already handled by BaseCog.cog_command_error — don't double-message
-                return
-
-            else:
-                # Silently drop Forbidden from users who blocked the bot
-                if isinstance(error, commands.CommandInvokeError) and isinstance(error.original, discord.Forbidden):
-                    logger.debug("Forbidden error (likely blocked): %s", error.original)
-                    return
-                logger.error("Unhandled error: %s in command %s", error, ctx.command)
-                if isinstance(ctx.channel, discord.TextChannel):
-                    await ctx.send("An unexpected error occurred. Please try again later.")
-        except discord.HTTPException:
-            pass
+            )
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: commands.Bot) -> None:
+    """Load the global error handler cog."""
     await bot.add_cog(ErrorHandler(bot))
