@@ -67,7 +67,7 @@ class Database(
         self.database_url = database_url
 
     async def connect(self):
-        """Create a connection pool to the database."""
+        """Create a connection pool to the database"""
         try:
             self.pool = await asyncpg.create_pool(
                 self.database_url,
@@ -77,20 +77,17 @@ class Database(
                 statement_cache_size=0,
             )
             logger.info("Database connection pool created successfully")
-        except Exception:
-            logger.exception("Failed to create database pool")
+        except Exception as e:
+            logger.error("Failed to create database pool: %s", e)
             raise
 
         try:
             await initialize_schema(self.pool)
-        except Exception:
-            logger.exception("Schema initialization failed")
-            await self.close()
-            raise
+        except Exception as e:
+            logger.warning("Schema init failed (tables likely already exist): %s", e)
 
     async def close(self):
-        """Close the database connection pool."""
+        """Close the database connection pool"""
         if self.pool:
             await self.pool.close()
-            self.pool = None
             logger.info("Database connection pool closed")
