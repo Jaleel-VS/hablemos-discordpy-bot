@@ -6,7 +6,7 @@ from random import choice
 
 from discord import Embed, File
 
-from base_cog import COLORS as colors
+from cogs.utils.embeds import EMBED_COLORS
 
 _COG_DIR = Path(__file__).resolve().parent
 
@@ -94,7 +94,7 @@ def _create_embed_content(result: GameResult) -> tuple[str, str]:
 
 def _get_fallback_embed(result: GameResult) -> Embed:
     """Create a fallback embed when no image is available."""
-    embed = Embed(color=choice(colors))
+    embed = Embed(color=choice(EMBED_COLORS))
     title, description = _create_embed_content(result)
     embed.title = title
     embed.description = description
