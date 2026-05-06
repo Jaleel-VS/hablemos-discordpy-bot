@@ -5,12 +5,12 @@ import logging
 from typing import TYPE_CHECKING
 
 from discord.ext.commands import (
+    BadArgument,
     CheckFailure,
     Cog,
-    CommandOnCooldown,
     CommandNotFound,
+    CommandOnCooldown,
     MissingRequiredArgument,
-    BadArgument,
     UserInputError,
 )
 
@@ -83,7 +83,7 @@ class BaseCog(Cog):
             )
 
         else:
-            logger.exception(
+            logger.error(
                 "Unhandled command error in channel %s",
                 getattr(ctx, "channel", None),
                 exc_info=error,
