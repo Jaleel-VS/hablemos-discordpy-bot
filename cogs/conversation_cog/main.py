@@ -11,7 +11,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from base_cog import COLORS, BaseCog
+from base_cog import BaseCog
+from cogs.utils.embeds import EMBED_COLORS
 
 from .conversation_data import (
     CATEGORIES,
@@ -270,7 +271,7 @@ class ConversationCog(BaseCog):
         embed = discord.Embed(
             title=f"{category_emoji} {category_name} Conversation",
             description=f"**Scenario:** {conversation['scenario_intro']}",
-            color=random.choice(COLORS)
+            color=random.choice(EMBED_COLORS)
         )
 
         # Add conversation
