@@ -8,42 +8,121 @@ from discord.ext.commands import (
     CheckFailure,
     Cog,
     CommandOnCooldown,
+    CommandNotFound,
+    MissingRequiredArgument,
+    BadArgument,
     UserInputError,
 )
+
+from cogs.utils.embeds import red_embed
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
-COLORS = [0x57F287, 0xED4245, 0xEB459E, 0xFEE75C, 0xf47fff, 0x7289da, 0xe74c3c,
-          0xe67e22, 0xf1c40f, 0xe91e63, 0x9b59b6,
-          0x3498db, 0x2ecc71, 0x1abc9c, ]
 
 class BaseCog(Cog):
-    """Base class for all cogs"""
+    """Base class for all cogs."""
+
     def __init__(self, bot: Hablemos):
         self.bot = bot
 
     async def cog_command_error(self, ctx, error):
-        """Handle errors for commands in this cog"""
-        if getattr(ctx, 'error_handled', False):
+        """Handle errors for commands in this cog."""
+        if getattr(ctx, "error_handled", False):
             return
+
+        error = getattr(error, "original", error)
+
+        if isinstance(error, CommandNotFound):
+            return
+
         if isinstance(error, CommandOnCooldown):
-            await ctx.send(f"⏱️ Command is on cooldown. Try again in {error.retry_after:.1f} seconds.")
+            await ctx.send(
+                embed=red_embed(
+                    (
+                        "Este comando está en cooldown.\n"
+                        f"Intenta nuevamente en `{error.retry_after:.1f}` segundos."
+                    ),
+                    title="Error de cooldown",
+                )
+            )
+
         elif isinstance(error, CheckFailure):
-            # Look for fail_msg metadata on the check predicate
-            msg = None
-            if ctx.command:
-                for check in ctx.command.checks:
-                    if hasattr(check, "fail_msg"):
-                        msg = check.fail_msg
-                        break
-            await ctx.send(msg or "You don't have permission to use this command.")
+            msg = self._get_check_fail_message(ctx)
+            await ctx.send(
+                embed=red_embed(
+                    msg or "No tienes permiso para usar este comando.",
+                    title="Permiso denegado",
+                )
+            )
+
+        elif isinstance(error, MissingRequiredArgument):
+            await ctx.send(
+                embed=red_embed(
+                    self._format_usage(ctx),
+                    title="Falta un argumento",
+                )
+            )
+
+        elif isinstance(error, BadArgument):
+            await ctx.send(
+                embed=red_embed(
+                    self._format_usage(ctx),
+                    title="Argumento inválido",
+                )
+            )
+
         elif isinstance(error, UserInputError):
-            usage = f"Usage: `{ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}`" if ctx.command else ""
-            await ctx.send(f"Invalid input: {error}\n{usage}")
+            await ctx.send(
+                embed=red_embed(
+                    self._format_usage(ctx),
+                    title="Entrada inválida",
+                )
+            )
+
         else:
-            logger.error('An error occurred: %s in %s', error, ctx.channel)
+            logger.exception(
+                "Unhandled command error in channel %s",
+                getattr(ctx, "channel", None),
+                exc_info=error,
+            )
+            await ctx.send(
+                embed=red_embed(
+                    "Ocurrió un error interno al ejecutar el comando.",
+                    title="Error interno",
+                )
+            )
+            ctx.error_handled = True
             raise error
+
         ctx.error_handled = True
+
+    def _get_check_fail_message(self, ctx) -> str | None:
+        """Return custom fail message from command checks, if present."""
+        if not ctx.command:
+            return None
+
+        for check in ctx.command.checks:
+            if hasattr(check, "fail_msg"):
+                return check.fail_msg
+
+        return None
+
+    def _format_usage(self, ctx) -> str:
+        """Return a safe usage message for invalid command input."""
+        if not ctx.command:
+            return "La entrada entregada no es válida."
+
+        signature = ctx.command.signature
+        command_name = ctx.command.qualified_name
+        usage = f"{ctx.prefix}{command_name}"
+
+        if signature:
+            usage = f"{usage} {signature}"
+
+        return (
+            "La entrada entregada no es válida.\n\n"
+            f"Uso correcto:\n`{usage}`"
+        )
