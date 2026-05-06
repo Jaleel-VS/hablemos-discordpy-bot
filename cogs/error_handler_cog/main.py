@@ -138,21 +138,26 @@ class ErrorHandler(BaseCog):
         await self._log_command_not_found(ctx)
 
     async def _log_command_not_found(self, ctx: commands.Context) -> None:
-        """Send command-not-found details to the configured error channel."""
-        error_channel = self.bot.error_channel
+    """Send redacted command-not-found details to the configured error channel."""
+    error_channel = self.bot.error_channel
 
-        if isinstance(error_channel, discord.TextChannel) and ctx.guild:
-            await error_channel.send(
-                "------\n"
-                "Command not found:\n"
-                f"User: {ctx.author} ({ctx.author.id})\n"
-                f"Channel: {ctx.channel} ({ctx.channel.id})\n"
-                f"Guild: {ctx.guild} ({ctx.guild.id})\n"
-                f"Content: {ctx.message.content}\n"
-                f"Jump URL: {ctx.message.jump_url}\n"
-                "------"
-            )
+    if isinstance(error_channel, discord.TextChannel) and ctx.guild:
+        await error_channel.send(
+            "------\n"
+            "Command not found:\n"
+            f"Guild ID: {ctx.guild.id}\n"
+            f"Channel ID: {ctx.channel.id}\n"
+            f"Message length: {len(ctx.message.content)}\n"
+            "Content: [redacted]\n"
+            "------"
+        )
 
+    logger.warning(
+        "Command not found | guild_id=%s | channel_id=%s | message_length=%s",
+        ctx.guild.id if ctx.guild else "DM",
+        ctx.channel.id,
+        len(ctx.message.content),
+    )
         logger.warning(
             "Command not found: %s | guild: %s (%s) | user: %s",
             ctx.message.content,
