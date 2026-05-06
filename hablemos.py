@@ -39,11 +39,11 @@ class Hablemos(Bot):
         self.error_channel = None
         self.db = Database(settings.database_url)
 
-async def close(self):
-    try:
-        await self.db.close()
-    finally:
-        await super().close()
+    async def close(self):
+        try:
+            await self.db.close()
+        finally:
+            await super().close()
 
     async def setup_hook(self):
         for attempt in range(5):
@@ -52,24 +52,29 @@ async def close(self):
                 logger.info("Database connected successfully")
                 break
             except Exception:
-                logger.warning("DB not ready, attempt %s/5", attempt + 1, exc_info=True)
+                logger.warning(
+                    "DB not ready, attempt %s/5",
+                    attempt + 1,
+                    exc_info=True,
+                )
                 if attempt < 4:
                     await asyncio.sleep(2 ** attempt)
-else:
-    logger.critical("Database unavailable after 5 retries — shutting down")
-    await self.close()
-    raise RuntimeError("Database unavailable after 5 retries")
+        else:
+            logger.critical("Database unavailable after 5 retries — shutting down")
+            await self.close()
+            raise RuntimeError("Database unavailable after 5 retries")
 
-        # Load disabled cogs set for filtering
         try:
             disabled = await self.db.get_disabled_cogs()
         except Exception:
+            logger.exception("Failed to load disabled cogs; continuing with all cogs enabled")
             disabled = set()
 
         for ext in discover_extensions():
             if ext in disabled:
                 logger.info("Skipping disabled extension: %s", ext)
                 continue
+
             try:
                 await asyncio.wait_for(self.load_extension(ext), timeout=30)
                 logger.info("Loaded extension: %s", ext)
@@ -78,7 +83,7 @@ else:
             except Exception:
                 logger.error("Failed to load extension %s", ext, exc_info=True)
 
-        # on_app_command_completion is a client event, not a tree attribute
+    # on_app_command_completion is a client event, not a tree attribute
 
     async def on_ready(self):
         guild_id = self.settings.bot_playground_guild_id
