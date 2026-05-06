@@ -51,6 +51,8 @@ STAFF_ROLE_IDS: Final[set[int]] = {
     )
 }
 
+
+# Modify this to add specific people to trigger the command
 STAFF_USER_IDS: Final[set[int]] = {
     int(user_id)
     for user_id in get_list_env(
