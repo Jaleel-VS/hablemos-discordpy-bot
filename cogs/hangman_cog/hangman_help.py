@@ -137,7 +137,7 @@ def create_final_embed(player_name: str, words: list[str], category: str, won: b
     file_path, filename = image_data
     file = File(file_path, filename=filename)
 
-    embed = Embed(color=choice(colors))
+    embed = Embed(color=choice(EMBED_COLORS))
     title, description = _create_embed_content(result)
     embed.title = title
     embed.description = description
