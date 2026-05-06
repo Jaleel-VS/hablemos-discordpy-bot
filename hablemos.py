@@ -39,8 +39,10 @@ class Hablemos(Bot):
         self.error_channel = None
         self.db = Database(settings.database_url)
 
-    async def close(self):
+async def close(self):
+    try:
         await self.db.close()
+    finally:
         await super().close()
 
     async def setup_hook(self):
@@ -53,9 +55,10 @@ class Hablemos(Bot):
                 logger.warning("DB not ready, attempt %s/5", attempt + 1, exc_info=True)
                 if attempt < 4:
                     await asyncio.sleep(2 ** attempt)
-        else:
-            logger.error("Database unavailable after 5 retries — aborting setup")
-            return
+else:
+    logger.critical("Database unavailable after 5 retries — shutting down")
+    await self.close()
+    raise RuntimeError("Database unavailable after 5 retries")
 
         # Load disabled cogs set for filtering
         try:
