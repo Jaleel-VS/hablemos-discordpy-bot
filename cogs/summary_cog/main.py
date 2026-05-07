@@ -30,13 +30,16 @@ class SummaryCog(BaseCog):
     @commands.command(name='summarize', aliases=['summary', 'sum'])
     @commands.has_permissions(manage_messages=True)
     @commands.cooldown(1, 30, commands.BucketType.user)
-    async def summarize(self, ctx, start_link: str, end_link: str):
+    async def summarize(self, ctx, start_link: str, end_link: str, *, topic: str | None = None):
         """
         Summarize a conversation between two message links.
 
         Usage:
-            $summarize <start_link> <end_link>
             $sum <start_link> <end_link>
+            $sum <start_link> <end_link> <topic>
+
+        When a topic is provided, the summary focuses only on messages
+        related to that topic and includes evidence links.
 
         Right-click a message > Copy Message Link to get links.
         """
@@ -71,9 +74,10 @@ class SummaryCog(BaseCog):
             return
 
         # Check cache
-        cached = self.cache.get(start_channel, start_id, end_id)
+        cache_key_suffix = f":{topic}" if topic else ""
+        cached = self.cache.get(start_channel, start_id, end_id, suffix=cache_key_suffix)
         if cached:
-            embed = self._build_embed(cached, 0, None, None, from_cache=True)
+            embed = self._build_embed(cached, 0, None, None, from_cache=True, topic=topic)
             await ctx.send(ctx.author.mention, embed=embed)
             return
 
@@ -104,6 +108,7 @@ class SummaryCog(BaseCog):
                         'author': msg.author.display_name,
                         'content': msg.content,
                         'timestamp': msg.created_at,
+                        'link': f"https://discord.com/channels/{ctx.guild.id}/{start_channel}/{msg.id}",
                     })
 
             # Include start and end messages themselves if they're from users
@@ -113,6 +118,7 @@ class SummaryCog(BaseCog):
                         'author': boundary_msg.author.display_name,
                         'content': boundary_msg.content,
                         'timestamp': boundary_msg.created_at,
+                        'link': f"https://discord.com/channels/{ctx.guild.id}/{start_channel}/{boundary_msg.id}",
                     })
 
             # Sort by timestamp (boundary messages were appended at the end)
@@ -122,10 +128,14 @@ class SummaryCog(BaseCog):
                 await processing.edit(content="No user messages found in that range.")
                 return
 
-            await processing.edit(content=f"Summarizing {len(messages)} messages...")
+            status = f"Summarizing {len(messages)} messages"
+            if topic:
+                status += f" (focused on: {topic})"
+            status += "..."
+            await processing.edit(content=status)
 
             try:
-                summary = await self.gemini.generate_summary(messages)
+                summary = await self.gemini.generate_summary(messages, topic=topic)
             except Exception as e:
                 logger.error("Gemini API error: %s", e, exc_info=True)
                 error_str = str(e).lower()
@@ -137,11 +147,11 @@ class SummaryCog(BaseCog):
                     await processing.edit(content="Failed to generate summary. Try again later.")
                 return
 
-            self.cache.set(start_channel, start_id, end_id, summary)
+            self.cache.set(start_channel, start_id, end_id, summary, suffix=cache_key_suffix)
 
             start_time = messages[0]['timestamp'].strftime('%Y-%m-%d %H:%M')
             end_time = messages[-1]['timestamp'].strftime('%Y-%m-%d %H:%M')
-            embed = self._build_embed(summary, len(messages), start_time, end_time)
+            embed = self._build_embed(summary, len(messages), start_time, end_time, topic=topic)
             await processing.edit(content=ctx.author.mention, embed=embed)
 
         except discord.Forbidden:
@@ -152,21 +162,136 @@ class SummaryCog(BaseCog):
 
     def _build_embed(self, summary: str, count: int,
                      start_time: str | None, end_time: str | None,
-                     from_cache: bool = False) -> discord.Embed:
+                     from_cache: bool = False,
+                     topic: str | None = None) -> discord.Embed:
+        title = "Conversation Summary"
+        if topic:
+            title = f"Evidence: {topic}"
+
         embed = discord.Embed(
-            title="Conversation Summary",
+            title=title,
             description=summary[:4000],
             color=random.choice(COLORS),
         )
         if not from_cache:
             embed.add_field(name="Messages", value=str(count), inline=True)
             embed.add_field(name="Range", value=f"{start_time} to {end_time}", inline=True)
+        if topic:
+            embed.add_field(name="Topic", value=topic, inline=False)
 
         footer = "AI-generated summary"
         if from_cache:
             footer += " (cached)"
         embed.set_footer(text=footer)
         return embed
+
+    @commands.command(name='sumtopics', aliases=['sum_topics', 'sumfind'])
+    @commands.has_permissions(manage_messages=True)
+    @commands.cooldown(1, 30, commands.BucketType.user)
+    async def sumtopics(self, ctx, start_link: str, end_link: str):
+        """
+        Suggest focused topics to investigate in a message range.
+
+        Usage:
+            $sumtopics <start_link> <end_link>
+
+        Returns actionable prompts you can pass to $sum as a topic.
+        """
+        start_guild, start_channel, start_id = parse_message_link(start_link)
+        end_guild, end_channel, end_id = parse_message_link(end_link)
+
+        if not all([start_guild, start_channel, start_id]):
+            await ctx.send("Invalid start message link.")
+            return
+        if not all([end_guild, end_channel, end_id]):
+            await ctx.send("Invalid end message link.")
+            return
+
+        if start_channel != end_channel:
+            await ctx.send("Both links must be from the same channel.")
+            return
+        if ctx.guild.id != start_guild:
+            await ctx.send("Those messages are from a different server.")
+            return
+
+        if start_id > end_id:
+            start_id, end_id = end_id, start_id
+
+        channel = self.bot.get_channel(start_channel)
+        if not channel:
+            await ctx.send("I can't access that channel.")
+            return
+
+        processing = await ctx.send("Fetching messages...")
+
+        try:
+            try:
+                start_msg = await channel.fetch_message(start_id)
+                end_msg = await channel.fetch_message(end_id)
+            except discord.NotFound:
+                await processing.edit(content="One or both messages were not found.")
+                return
+            except discord.Forbidden:
+                await processing.edit(content="I don't have permission to access that channel.")
+                return
+
+            messages = []
+            async for msg in channel.history(
+                limit=MAX_MESSAGES,
+                after=start_msg,
+                before=end_msg,
+                oldest_first=True,
+            ):
+                if not msg.author.bot and msg.content.strip():
+                    messages.append({
+                        'author': msg.author.display_name,
+                        'content': msg.content,
+                        'timestamp': msg.created_at,
+                    })
+
+            for boundary_msg in (start_msg, end_msg):
+                if not boundary_msg.author.bot and boundary_msg.content.strip():
+                    messages.append({
+                        'author': boundary_msg.author.display_name,
+                        'content': boundary_msg.content,
+                        'timestamp': boundary_msg.created_at,
+                    })
+
+            messages.sort(key=lambda m: m['timestamp'])
+
+            if not messages:
+                await processing.edit(content="No user messages found in that range.")
+                return
+
+            await processing.edit(content=f"Analyzing {len(messages)} messages for topics...")
+
+            try:
+                result = await self.gemini.suggest_topics(messages)
+            except Exception as e:
+                logger.error("Gemini API error in sumtopics: %s", e, exc_info=True)
+                error_str = str(e).lower()
+                if any(k in error_str for k in ('rate', 'quota', '429')):
+                    await processing.edit(content="API rate limit reached. Try again in a few minutes.")
+                elif 'safety' in error_str or 'blocked' in error_str:
+                    await processing.edit(content="Blocked by content policy.")
+                else:
+                    await processing.edit(content="Failed to generate topics. Try again later.")
+                return
+
+            embed = discord.Embed(
+                title="Suggested Topics",
+                description=result[:4000],
+                color=random.choice(COLORS),
+            )
+            embed.add_field(name="Messages analyzed", value=str(len(messages)), inline=True)
+            embed.set_footer(text="Use these as topics with $sum <start> <end> <topic>")
+            await processing.edit(content=ctx.author.mention, embed=embed)
+
+        except discord.Forbidden:
+            await processing.edit(content="I don't have permission to access that channel.")
+        except Exception as e:
+            logger.error("Unexpected error in sumtopics: %s", e, exc_info=True)
+            await processing.edit(content="An unexpected error occurred.")
 
     @commands.command(name='summary_stats', aliases=['sum_stats'])
     @commands.is_owner()
@@ -198,7 +323,7 @@ class SummaryCog(BaseCog):
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.send(f"Cooldown. Try again in {error.retry_after:.0f}s.")
         elif isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send("Usage: `$summarize <start_link> <end_link>`")
+            await ctx.send("Usage: `$sum <start_link> <end_link> [topic]`")
         else:
             await super().cog_command_error(ctx, error)
 

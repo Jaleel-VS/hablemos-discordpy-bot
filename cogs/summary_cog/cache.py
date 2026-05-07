@@ -14,12 +14,12 @@ class SummaryCache:
         self._cache: dict[str, dict] = {}
         self._stats = {'hits': 0, 'misses': 0, 'stores': 0, 'evictions': 0}
 
-    def _key(self, channel_id: int, start_id: int, end_id: int) -> str:
-        return f"{channel_id}:{start_id}:{end_id}"
+    def _key(self, channel_id: int, start_id: int, end_id: int, suffix: str = "") -> str:
+        return f"{channel_id}:{start_id}:{end_id}{suffix}"
 
-    def get(self, channel_id: int, start_id: int, end_id: int) -> str | None:
+    def get(self, channel_id: int, start_id: int, end_id: int, suffix: str = "") -> str | None:
         """Get cached summary, or None if missing/expired."""
-        key = self._key(channel_id, start_id, end_id)
+        key = self._key(channel_id, start_id, end_id, suffix)
         entry = self._cache.get(key)
 
         if entry is None:
@@ -35,9 +35,9 @@ class SummaryCache:
         self._stats['hits'] += 1
         return entry['data']
 
-    def set(self, channel_id: int, start_id: int, end_id: int, summary: str) -> None:
+    def set(self, channel_id: int, start_id: int, end_id: int, summary: str, suffix: str = "") -> None:
         """Cache a summary."""
-        key = self._key(channel_id, start_id, end_id)
+        key = self._key(channel_id, start_id, end_id, suffix)
         # Evict oldest entries if at capacity
         while len(self._cache) >= self.max_size and key not in self._cache:
             oldest = min(self._cache, key=lambda k: self._cache[k]['ts'])
