@@ -26,7 +26,7 @@ FOCUSED_PROMPT = """You are a Discord moderation assistant. A moderator wants to
 **Your task:**
 1. Read through the messages carefully. Identify ONLY messages that are genuinely relevant to the topic above.
 2. For each relevant message, output it in this exact format:
-   - **[Author]** said: "quote" — [evidence]({message_link})
+   - **[Author]** said: "quote" — [evidence]({{message_link}})
 3. After listing the evidence, write a brief (2-3 sentence) summary of what happened regarding this topic.
 
 Rules:
