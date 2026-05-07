@@ -535,6 +535,101 @@ class AdminCog(BaseCog):
         await status.edit(content=f"✅ Exported {len(messages)} messages from {target.mention}.")
         await ctx.send(file=file)
 
+    @commands.command(name='fetchrange', aliases=['fetchr'])
+    @commands.is_owner()
+    async def fetch_range(self, ctx: commands.Context, start_link: str, end_link: str):
+        """Export messages between two message links. Usage: $fetchrange <start_link> <end_link>"""
+        from cogs.summary_cog.message_parser import parse_message_link
+
+        start_guild, start_channel, start_id = parse_message_link(start_link)
+        end_guild, end_channel, end_id = parse_message_link(end_link)
+
+        if not all([start_guild, start_channel, start_id]):
+            await ctx.send("Invalid start message link.")
+            return
+        if not all([end_guild, end_channel, end_id]):
+            await ctx.send("Invalid end message link.")
+            return
+        if start_channel != end_channel:
+            await ctx.send("Both links must be from the same channel.")
+            return
+        if ctx.guild and ctx.guild.id != start_guild:
+            await ctx.send("Those messages are from a different server.")
+            return
+
+        if start_id > end_id:
+            start_id, end_id = end_id, start_id
+
+        channel = self.bot.get_channel(start_channel)
+        if not channel:
+            await ctx.send("I can't access that channel.")
+            return
+
+        status = await ctx.send(f"⏳ Fetching messages from {channel.mention}...")
+
+        try:
+            start_msg = await channel.fetch_message(start_id)
+            end_msg = await channel.fetch_message(end_id)
+        except discord.NotFound:
+            await status.edit(content="❌ One or both messages were not found.")
+            return
+        except discord.Forbidden:
+            await status.edit(content="❌ No permission to read that channel.")
+            return
+
+        try:
+            messages: list[discord.Message] = [start_msg]
+            async for msg in channel.history(
+                limit=1000, after=start_msg, before=end_msg, oldest_first=True,
+            ):
+                messages.append(msg)
+            messages.append(end_msg)
+        except discord.Forbidden:
+            await status.edit(content="❌ No permission to read that channel.")
+            return
+        except discord.HTTPException:
+            logger.exception("Failed to fetch history for %s", channel.id)
+            await status.edit(content="❌ Failed to fetch messages.")
+            return
+
+        if not messages:
+            await status.edit(content="ℹ️ No messages found.")
+            return
+
+        guild_id = ctx.guild.id if ctx.guild else 0
+        lines = [f"# {channel.name}\n", f"Exported {len(messages)} messages\n\n---\n"]
+
+        for msg in messages:
+            jump = f"https://discord.com/channels/{guild_id}/{channel.id}/{msg.id}"
+            ts = int(msg.created_at.timestamp())
+            header = f"**{msg.author.display_name}** (@{msg.author.name}) — <t:{ts}:f>"
+            lines.append(f"### [{header}]({jump})\n")
+
+            if msg.content:
+                lines.append(f"{msg.content}\n")
+
+            for embed in msg.embeds:
+                lines.append(f"```json\n{embed.to_dict()}\n```\n")
+
+            for attachment in msg.attachments:
+                lines.append(f"📎 [{attachment.filename}]({attachment.url})\n")
+
+            if msg.stickers:
+                sticker_names = ", ".join(s.name for s in msg.stickers)
+                lines.append(f"🏷️ Stickers: {sticker_names}\n")
+
+            if msg.reference and msg.reference.message_id:
+                ref_jump = f"https://discord.com/channels/{guild_id}/{channel.id}/{msg.reference.message_id}"
+                lines.append(f"-# ↩️ Reply to [{msg.reference.message_id}]({ref_jump})\n")
+
+            lines.append("---\n")
+
+        content = "\n".join(lines).encode()
+        filename = f"{channel.name}_{len(messages)}msgs.md"
+        file = discord.File(__import__('io').BytesIO(content), filename=filename)
+        await status.edit(content=f"✅ Exported {len(messages)} messages from {channel.mention}.")
+        await ctx.send(file=file)
+
     # ── Raw embed output ──
 
     @commands.command(name='rawembed')
