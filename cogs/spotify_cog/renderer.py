@@ -8,8 +8,12 @@ from PIL import Image, ImageDraw, ImageFont
 FONT_DIR = Path(__file__).resolve().parent
 SPOTIFY_LOGO = Path(__file__).resolve().parent / "spotify_logo.png"
 
-# Card dimensions — render at 2x for crisp text, resize at end
-SCALE = 2
+# Card dimensions — render at 3x for crisp text, resize at end.
+# 3x is the sweet spot: noticeably smoother than 2x super-sampling,
+# without the memory/CPU cost of 4x. When libraqm is installed on the
+# deploy host, Pillow automatically uses the RAQM layout engine for
+# proper kerning and sub-pixel positioning — no code change needed.
+SCALE = 3
 WIDTH = 580 * SCALE
 HEIGHT = 200 * SCALE
 PADDING = 20 * SCALE
@@ -93,7 +97,7 @@ async def render_nowplaying(
     if album_art_url:
         art = await _fetch_image(album_art_url)
         if art:
-            art = art.resize((ART_SIZE, ART_SIZE), Image.LANCZOS)
+            art = art.resize((ART_SIZE, ART_SIZE), Image.Resampling.LANCZOS)
             art = _round_corners(art, 8 * SCALE)
             card.paste(art, (art_x, art_y), art)
 
@@ -114,24 +118,46 @@ async def render_nowplaying(
     if SPOTIFY_LOGO.exists():
         logo = Image.open(SPOTIFY_LOGO).convert("RGBA")
         logo_size = 28 * SCALE
-        logo = logo.resize((logo_size, logo_size), Image.LANCZOS)
+        logo = logo.resize((logo_size, logo_size), Image.Resampling.LANCZOS)
         card.paste(logo, (WIDTH - PADDING - logo_size, PADDING), logo)
 
-    # Draw text
+    # Draw text.
+    #
+    # ``anchor="la"`` means "left edge, ascender line" — the y-coordinate
+    # we pass is the top of the tallest glyph, independent of the font's
+    # internal baseline quirks. This gives consistent vertical spacing
+    # across fonts/weights and avoids the 1-2 px jitter that Pillow's
+    # default ("la" is not the default) can produce between lines.
     white = (255, 255, 255)
     white_dim = (255, 255, 255, 180)
 
     text_y = PADDING + 16 * SCALE
-    draw.text((text_x, text_y), f"{listener} is listening to", fill=white_dim, font=label_font)
+    draw.text(
+        (text_x, text_y),
+        f"{listener} is listening to",
+        fill=white_dim, font=label_font, anchor="la",
+    )
 
     text_y += 28 * SCALE
-    draw.text((text_x, text_y), title_text, fill=white, font=title_font)
+    draw.text(
+        (text_x, text_y),
+        title_text,
+        fill=white, font=title_font, anchor="la",
+    )
 
     text_y += 36 * SCALE
-    draw.text((text_x, text_y), artist_text, fill=white, font=artist_font)
+    draw.text(
+        (text_x, text_y),
+        artist_text,
+        fill=white, font=artist_font, anchor="la",
+    )
 
     text_y += 26 * SCALE
-    draw.text((text_x, text_y), album_text, fill=white_dim, font=album_font)
+    draw.text(
+        (text_x, text_y),
+        album_text,
+        fill=white_dim, font=album_font, anchor="la",
+    )
 
     # Round corners
     card = _round_corners(card, CORNER_RADIUS)
@@ -140,8 +166,11 @@ async def render_nowplaying(
     flat = Image.new("RGBA", card.size, (r, g, b, 255))
     flat.paste(card, mask=card.split()[3])
 
-    # Downscale to output size with antialiasing
-    flat = flat.resize((OUTPUT_WIDTH, OUTPUT_WIDTH * HEIGHT // WIDTH), Image.LANCZOS)
+    # Downscale to output size with antialiasing.
+    flat = flat.resize(
+        (OUTPUT_WIDTH, OUTPUT_WIDTH * HEIGHT // WIDTH),
+        Image.Resampling.LANCZOS,
+    )
 
     buf = BytesIO()
     flat.save(buf, "PNG")

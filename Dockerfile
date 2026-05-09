@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     xvfb \
     fonts-liberation \
     fontconfig \
+    libraqm0 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
