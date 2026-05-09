@@ -115,13 +115,13 @@ class MetricsMixin(DatabaseMixin):
                     INSERT INTO metrics_daily (date, command_name, cog_name, uses, unique_users, failures)
                     SELECT invoked_at::date AS date,
                            command_name,
-                           cog_name,
+                           MIN(cog_name) AS cog_name,
                            COUNT(*) AS uses,
                            COUNT(DISTINCT user_id) AS unique_users,
                            COUNT(*) FILTER (WHERE failed) AS failures
                     FROM command_metrics
                     WHERE invoked_at < NOW() - MAKE_INTERVAL(days => $1)
-                    GROUP BY invoked_at::date, command_name, cog_name
+                    GROUP BY invoked_at::date, command_name
                     ON CONFLICT (date, command_name) DO UPDATE
                     SET uses = metrics_daily.uses + EXCLUDED.uses,
                         unique_users = GREATEST(metrics_daily.unique_users, EXCLUDED.unique_users),
