@@ -585,7 +585,47 @@ Rounds last 2 weeks. Top performers earn a champion role!"""
             if last_round_recipients:
                 preview_footer = f"\n\n---\n**ℹ️ On Cooldown (from last round):** {', '.join(f'<@{uid}>' for uid in last_round_recipients)}"
 
-            await ctx.send(preview_header + message + preview_footer)
+            # Render a preview of the podium image too, so admins can
+            # eyeball the final visual before a round actually ends.
+            from cogs.league_cog.league_helper.round_end_image import (
+                render_round_end,
+            )
+            from cogs.league_cog.rounds import enrich_top_entries
+
+            spanish_enriched = enrich_top_entries(
+                spanish_top[:6], bot=self.bot,
+                last_round_recipients=last_round_recipients,
+            )
+            english_enriched = enrich_top_entries(
+                english_top[:6], bot=self.bot,
+                last_round_recipients=last_round_recipients,
+            )
+            image_file: discord.File | None = None
+            try:
+                buf = await asyncio.to_thread(
+                    render_round_end,
+                    round_number=round_number,
+                    spanish_top=spanish_enriched,
+                    english_top=english_enriched,
+                )
+                image_file = discord.File(buf, filename="round_end_preview.png")
+            except Exception as e:
+                logger.error(
+                    "Preview: round-end image render failed: %s",
+                    e, exc_info=True,
+                )
+
+            if image_file is not None:
+                await ctx.send(
+                    preview_header + message + preview_footer,
+                    file=image_file,
+                    allowed_mentions=discord.AllowedMentions.none(),
+                )
+            else:
+                await ctx.send(
+                    preview_header + message + preview_footer,
+                    allowed_mentions=discord.AllowedMentions.none(),
+                )
             logger.info("Admin %s previewed round %s announcement", ctx.author, round_number)
 
         except Exception as e:

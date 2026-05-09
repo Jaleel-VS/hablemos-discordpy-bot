@@ -1,4 +1,5 @@
 """Round lifecycle management — end processing, winner selection, announcements."""
+import asyncio
 import logging
 from datetime import UTC, datetime, timedelta
 
@@ -9,8 +10,38 @@ from cogs.league_cog.config import (
     LEAGUE_GUILD_ID,
     WINNER_CHANNEL_ID,
 )
+from cogs.league_cog.league_helper.round_end_image import render_round_end
 
 logger = logging.getLogger(__name__)
+
+
+def enrich_top_entries(
+    entries: list[dict],
+    *,
+    bot,
+    last_round_recipients: set,
+) -> list[dict]:
+    """Attach ``avatar_url`` and ``is_previous_winner`` to raw leaderboard rows.
+
+    Avatars are resolved from the bot's user cache; uncached users fall
+    back to a ``None`` URL which the image renderer turns into a default
+    avatar. Keeping this pure-python (no ``await``) means the caller can
+    run the whole render — enrichment + drawing — inside one
+    ``asyncio.to_thread`` hop.
+    """
+    out: list[dict] = []
+    for e in entries:
+        user = bot.get_user(e["user_id"])
+        avatar_url = str(user.display_avatar.url) if user else None
+        out.append({
+            "rank": int(e["rank"]),
+            "user_id": e["user_id"],
+            "username": e["username"],
+            "total_score": int(e["total_score"]),
+            "avatar_url": avatar_url,
+            "is_previous_winner": e["user_id"] in last_round_recipients,
+        })
+    return out
 
 
 def get_eligible_champions(top_list: list, cooldown_set: set, count: int = 3) -> list:
@@ -166,7 +197,39 @@ async def process_round_end(bot, current_round: dict) -> dict:
                 english_champions=english_champions,
                 last_round_recipients=last_round_recipients,
             )
-            await channel.send(message)
+
+            # Render the podium image. We use the top 6 of each league
+            # (top 3 on the podium, ranks 4-6 as runner-up cards).
+            # Rendering hits requests.get() for avatars, so keep it
+            # off the event loop.
+            spanish_enriched = enrich_top_entries(
+                spanish_top[:6], bot=bot,
+                last_round_recipients=last_round_recipients,
+            )
+            english_enriched = enrich_top_entries(
+                english_top[:6], bot=bot,
+                last_round_recipients=last_round_recipients,
+            )
+            image_file: discord.File | None = None
+            try:
+                buf = await asyncio.to_thread(
+                    render_round_end,
+                    round_number=round_number,
+                    spanish_top=spanish_enriched,
+                    english_top=english_enriched,
+                )
+                image_file = discord.File(buf, filename="round_end.png")
+            except Exception as e:
+                # Never block the text announcement on image-render failures.
+                logger.error(
+                    "Failed to render round-end image for round %s: %s",
+                    round_number, e, exc_info=True,
+                )
+
+            if image_file is not None:
+                await channel.send(message, file=image_file)
+            else:
+                await channel.send(message)
             logger.info("Announced round %s winners in channel %s", round_number, WINNER_CHANNEL_ID)
         else:
             logger.error("Could not find winner announcement channel %s", WINNER_CHANNEL_ID)

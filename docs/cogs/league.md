@@ -61,7 +61,8 @@ Owner-only. All under the `$league` group. See
 - **`seedrole`** — seed the last-round role recipients set (used during
   role-cooldown setup).
 - **`preview`** — dry-run the round-end announcement without pinging or
-  mutating state.
+  making DB changes. Renders the same podium image as the real
+  announcement so admins can eyeball the final visual ahead of time.
 - **`reminder [#channel]`** — post a persistent "Join the League!"
   button + embed.
 - **`recent [limit]`** (aliases: `joiners`, `joins`) — last N first-time
@@ -110,8 +111,11 @@ A `tasks.loop` runs every 1 minute (configurable via
    - Add champion role to this round's top 3 eligible (skip anyone who
      won last round).
 5. Mark new role recipients in `leaderboard_round_recipients`.
-6. Post announcement to configured `WINNER_CHANNEL_ID` with leaderboard
-   + pings.
+6. Post announcement to configured `WINNER_CHANNEL_ID` with the
+   round-end podium image (top 3 on the podium, ranks 4–6 as
+   runner-up cards, both leagues stacked). The text announcement still
+   carries the pings; the image is purely visual. Image render
+   failures are logged and skipped — they never block the text post.
 7. Create next round (start now, end next Sunday noon).
 
 ### Persistent join button
