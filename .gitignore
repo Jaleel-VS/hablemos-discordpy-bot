@@ -8,6 +8,8 @@ cogs/utils/unused_old
 database/
 bot_config.py
 *.log
+.cache/
+scripts/bee_preview_*.png
 .python-version
 *.sql
 .DS_Store
