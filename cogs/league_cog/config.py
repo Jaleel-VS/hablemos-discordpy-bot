@@ -8,7 +8,7 @@ used throughout the league cog to make them easy to find and modify.
 from dataclasses import dataclass
 from typing import Final
 
-from config import get_int_env
+from config import get_int_env, get_list_env
 
 # =============================================================================
 # DISCORD SERVER CONFIGURATION
@@ -65,6 +65,31 @@ class ScoringConfig:
 
 # Instantiate as a constant
 SCORING = ScoringConfig()
+
+# =============================================================================
+# PER-CHANNEL POINT MULTIPLIERS
+# =============================================================================
+
+# Channels where each counted message earns extra points. The multiplier
+# is applied to ``SCORING.POINTS_PER_MESSAGE`` and rounded up, so at the
+# current base of 1 pt/msg a beginner channel awards 2 pts/msg. Keep the
+# multiplier itself (not a hardcoded +1 bonus) so the math still behaves
+# if ``POINTS_PER_MESSAGE`` is ever bumped.
+#
+# The defaults are the server's beginner channels; override via the
+# ``LEAGUE_BEGINNER_CHANNEL_IDS`` env var (comma-separated IDs) if the
+# list needs tweaking without a redeploy.
+_BEGINNER_CHANNEL_DEFAULTS: Final[list[str]] = [
+    "1414221788765880330",
+    "243858509123289089",
+    "243858546746327050",
+]
+BEGINNER_CHANNEL_IDS: Final[frozenset[int]] = frozenset(
+    int(cid) for cid in get_list_env(
+        "LEAGUE_BEGINNER_CHANNEL_IDS", _BEGINNER_CHANNEL_DEFAULTS,
+    )
+)
+BEGINNER_CHANNEL_MULTIPLIER: Final[float] = 1.25
 
 # =============================================================================
 # ANTI-SPAM / RATE LIMITING

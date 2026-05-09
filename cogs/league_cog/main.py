@@ -32,6 +32,7 @@ from cogs.league_cog.rounds import (
     ensure_round_exists,
     process_round_end,
 )
+from cogs.league_cog.scoring import points_for_message
 from cogs.league_cog.utils import detect_message_language
 from cogs.league_cog.views import LeagueJoinView
 
@@ -736,7 +737,7 @@ class LeagueCog(BaseCog):
                 user_id=message.author.id,
                 activity_type='message',
                 channel_id=message.channel.id,
-                points=SCORING.POINTS_PER_MESSAGE,
+                points=points_for_message(message.channel.id),
                 round_id=current_round['round_id'],
                 message_id=message.id
             )

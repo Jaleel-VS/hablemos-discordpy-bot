@@ -20,6 +20,10 @@ Key mechanics:
 - **Anti-spam**: 60-second cooldown per channel, 100-message daily cap,
   10-character minimum length.
 - **Scoring**: 1 point per message + 5 bonus points per active day.
+  Beginner channels (configured via `LEAGUE_BEGINNER_CHANNEL_IDS`)
+  apply a 1.25× multiplier with ceiling rounding, so at the current
+  base of 1 pt/msg a message in a beginner channel earns 2 points
+  instead of 1.
 - **Role requirements**: Must have exactly one learning role (Spanish or
   English) and must not be native in that language.
 - **Channel exclusions**: Admins can exclude channels (e.g., bot spam
@@ -91,8 +95,11 @@ Every message in the league guild triggers a scoring check:
 3. **Language detection** (`langdetect`):
    - Detects language of the message body.
    - Matches user's learning language?
-4. **Record activity**: insert row into `leaderboard_activity`, increment
-   in-memory cooldown cache, invalidate leaderboard cache.
+4. **Record activity**: compute points via
+   `scoring.points_for_message(channel_id)` (applies the
+   beginner-channel multiplier when relevant), insert row into
+   `leaderboard_activity`, increment in-memory cooldown cache,
+   invalidate leaderboard cache.
 
 Errors are logged server-side; the user never sees a failure message
 (silent success/skip).
@@ -148,6 +155,7 @@ See [`../database.md`](../database.md) for query methods (all in
 | `CHAMPION_ROLE_ID` | `cogs/league_cog/config.py` | (baked-in) | Role awarded to top 3 per league. |
 | `ROLES.*` | `cogs/league_cog/config.py` | (baked-in) | Native/learner role IDs (used for validation). |
 | `SCORING.*` | `cogs/league_cog/config.py` | 1 pt/msg, 5 pt/day | Scoring multipliers. |
+| `BEGINNER_CHANNEL_IDS` | `cogs/league_cog/config.py` (override via `LEAGUE_BEGINNER_CHANNEL_IDS`) | 3 channels | Channels awarded `BEGINNER_CHANNEL_MULTIPLIER` (currently 1.25×, rounded up). |
 | `RATE_LIMITS.*` | `cogs/league_cog/config.py` | 60s cooldown, 100 msg/day cap | Anti-spam thresholds. |
 | `ROUNDS.*` | `cogs/league_cog/config.py` | 7-day rounds, 1-min checks | Round duration and check frequency. |
 | `LANGUAGE.LANGDETECT_SEED` | `cogs/league_cog/config.py` | `0` | Seed for consistent `langdetect` results. |
