@@ -51,6 +51,26 @@ class LeaderboardMixin(DatabaseMixin):
         )
         return row['opted_in'] if row else False
 
+    async def get_recent_joiners(self, limit: int = 10) -> list:
+        """Return the most recent first-time joiners of the league.
+
+        ``joined_at`` is set on initial insert and preserved across
+        re-joins (the upsert only touches ``updated_at``), so this is a
+        meaningful “new user” signal rather than a recency-of-any-change
+        signal. Banned users are excluded.
+        """
+        return await self._fetch(
+            '''
+            SELECT user_id, username, learning_spanish, learning_english,
+                   opted_in, joined_at, updated_at
+            FROM leaderboard_users
+            WHERE banned = FALSE
+            ORDER BY joined_at DESC
+            LIMIT $1
+            ''',
+            limit,
+        )
+
     async def is_user_banned(self, user_id: int) -> bool:
         """Check if user is banned from leaderboard"""
         row = await self._fetchrow(

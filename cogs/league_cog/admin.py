@@ -48,8 +48,42 @@ Earn points by chatting in your target language channels. The more active you ar
 
 Rounds last 2 weeks. Top performers earn a champion role!"""
         await ctx.send(
-            "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole|preview|reminder> [target]`"
+            "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole|preview|reminder|recent> [target]`"
         )
+
+    @league_admin.command(name="recent", aliases=["joiners", "joins"])
+    @commands.is_owner()
+    async def recent(self, ctx: commands.Context, limit: int = 10):
+        """Show the most recent first-time league joiners. Usage: `$league recent [limit]`"""
+        limit = max(1, min(limit, 25))
+        rows = await self.bot.db.get_recent_joiners(limit)
+
+        if not rows:
+            return await ctx.send("ℹ️ No league joiners recorded yet.")
+
+        lines: list[str] = []
+        for i, row in enumerate(rows, 1):
+            if row['learning_spanish']:
+                flag = "🇪🇸"
+            elif row['learning_english']:
+                flag = "🇬🇧"
+            else:
+                flag = "❓"
+            status = "" if row['opted_in'] else " · *left*"
+            joined_ts = int(row['joined_at'].timestamp())
+            lines.append(
+                f"**{i}.** {flag} <@{row['user_id']}> (`{row['username']}`) "
+                f"· <t:{joined_ts}:R>{status}"
+            )
+
+        embed = Embed(
+            title=f"🆕 Recent League Joiners (last {len(rows)})",
+            description="\n".join(lines),
+            color=discord.Color.blue(),
+        )
+        embed.set_footer(text="Ordered by first-time join timestamp. Banned users hidden.")
+        await ctx.send(embed=embed, allowed_mentions=discord.AllowedMentions.none())
+        logger.info("Admin %s viewed last %d league joiners", ctx.author, len(rows))
 
     @league_admin.command(name="reminder")
     @commands.is_owner()
