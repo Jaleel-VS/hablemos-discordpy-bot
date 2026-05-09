@@ -563,6 +563,65 @@ class CrosswordCog(BaseCog):
         if err:
             await interaction.followup.send(err, ephemeral=True)
 
+    @commands.command(name="cwl", aliases=["cwleaderboard"])
+    @commands.guild_only()
+    @commands.cooldown(1, 10, commands.BucketType.channel)
+    async def cwleaderboard(self, ctx: commands.Context, scope: str = "all") -> None:
+        """Show the crossword leaderboard for this server.
+
+        Usage:
+          `$cwl`        — lifetime (default)
+          `$cwl <N>`    — last N days (1–365)
+          `$cwl week`   — last 7 days
+          `$cwl month`  — last 30 days
+
+        DM games are excluded. Ranking is by total words solved across
+        games played in this server.
+        """
+        scope_lc = scope.lower()
+        if scope_lc in ("all", "lifetime", "∞"):
+            days: int | None = None
+            window_label = "all time"
+        elif scope_lc == "week":
+            days, window_label = 7, "last 7d"
+        elif scope_lc == "month":
+            days, window_label = 30, "last 30d"
+        else:
+            try:
+                days = max(1, min(int(scope_lc), 365))
+            except ValueError:
+                return await ctx.send("❌ Usage: `$cwl [days|week|month|all]`")
+            window_label = f"last {days}d"
+
+        rows = await self.bot.db.crossword_get_top_solvers(
+            days=days, limit=10, guild_id=ctx.guild.id,
+        )
+
+        if not rows:
+            return await ctx.send(
+                f"🧩 No crossword games played here yet ({window_label}). "
+                f"Try `$crossword`!"
+            )
+
+        medals = {1: "🥇", 2: "🥈", 3: "🥉"}
+        lines: list[str] = []
+        for i, r in enumerate(rows, 1):
+            member = ctx.guild.get_member(r["user_id"])
+            name = member.display_name if member else (r["display_name"] or str(r["user_id"]))
+            prefix = medals.get(i, f"**{i}.**")
+            lines.append(
+                f"{prefix} **{name}** — {int(r['words_solved']):,} words · "
+                f"{int(r['games'])} game{'s' if r['games'] != 1 else ''}"
+            )
+
+        embed = Embed(
+            title=f"🏆 Crossword Leaderboard ({window_label})",
+            description="\n".join(lines),
+            color=discord.Color.gold(),
+        )
+        embed.set_footer(text="Ranked by total words solved · use $crossword to play")
+        await ctx.send(embed=embed, allowed_mentions=discord.AllowedMentions.none())
+
     @commands.command(name="cwtimeout")
     @commands.is_owner()
     async def set_timeout(self, ctx: commands.Context, seconds: int = GAME_TIMEOUT_SECONDS):

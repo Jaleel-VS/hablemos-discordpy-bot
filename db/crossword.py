@@ -281,20 +281,41 @@ class CrosswordMixin(DatabaseMixin):
         }
 
     async def crossword_get_top_solvers(
-        self, days: int | None = 30, limit: int = 10,
+        self, days: int | None = 30, limit: int = 10, guild_id: int | None = None,
     ) -> list:
-        """Top players by total words solved over a window."""
-        if days is None:
-            join_where = ""
-            args: tuple = (limit,)
-            limit_placeholder = "$1"
-        else:
-            join_where = (
-                "JOIN crossword_games g ON g.game_id = p.game_id "
-                "AND g.started_at >= NOW() - MAKE_INTERVAL(days => $1)"
+        """Top players by total words solved over a window.
+
+        ``guild_id`` scopes the leaderboard to a single guild (used by the
+        public ``$cwl`` leaderboard). ``None`` includes every game, which
+        is what the admin ``$cwstats`` view wants.
+        """
+        args: list = []
+        joins = ""
+        wheres: list[str] = []
+
+        if days is not None:
+            args.append(days)
+            wheres.append(
+                f"g.started_at >= NOW() - MAKE_INTERVAL(days => ${len(args)})"
             )
-            args = (days, limit)
-            limit_placeholder = "$2"
+        if guild_id is not None:
+            args.append(guild_id)
+            wheres.append(f"g.guild_id = ${len(args)}")
+
+        if wheres:
+            joins = (
+                "JOIN crossword_games g ON g.game_id = p.game_id AND "
+                + " AND ".join(wheres)
+            )
+        elif days is None and guild_id is None:
+            # No filters at all — skip the join entirely for a lifetime,
+            # cross-guild view (the original fast path).
+            joins = ""
+        else:  # pragma: no cover — defensive; above branches cover both cases
+            joins = ""
+
+        args.append(limit)
+        limit_placeholder = f"${len(args)}"
 
         return await self._fetch(
             f'''
@@ -304,8 +325,9 @@ class CrosswordMixin(DatabaseMixin):
                    COUNT(*)::int             AS games,
                    COUNT(*) FILTER (WHERE p.is_starter)::int AS games_started
             FROM crossword_participants p
-            {join_where}
+            {joins}
             GROUP BY p.user_id
+            HAVING SUM(p.words_solved) > 0
             ORDER BY words_solved DESC, games DESC
             LIMIT {limit_placeholder}
             ''',
