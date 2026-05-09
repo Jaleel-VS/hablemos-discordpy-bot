@@ -69,7 +69,7 @@ Owner-only. All under the `$league` group. See
 - **`topchannels [days]`** (alias: `topchans`) — top 15 channels by
   message volume over a window (flags excluded channels with 🚫).
 - **`heatmap [days]`** (alias: `hm`) — 7×24 day-of-week × hour activity
-  heatmap (UTC) using block-shading.
+  heatmap (UTC), rendered as a PNG with seaborn.
 
 ## Listeners & flows
 

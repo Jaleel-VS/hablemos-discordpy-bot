@@ -29,7 +29,7 @@ for the feature itself.
 | `$league reminder [#channel]` | Post the public "Join the League!" embed with the persistent join button. Defaults to the current channel. |
 | `$league recent [limit]` (aliases: `joiners`, `joins`) | Show the N most recent first-time joiners. Default 10, max 25. |
 | `$league topchannels [days]` (alias: `topchans`) | Top 15 channels by counted-message volume over a window. Flags excluded channels with 🚫. |
-| `$league heatmap [days]` (alias: `hm`) | 7×24 day-of-week × hour activity heatmap rendered with block-shading. UTC. |
+| `$league heatmap [days]` (alias: `hm`) | 7×24 day-of-week × hour activity heatmap rendered as a PNG (seaborn). UTC. |
 
 ## Crossword admin (owner-only)
 

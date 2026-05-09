@@ -4,6 +4,7 @@ Language League Admin Cog
 This module contains all admin-only commands for managing and auditing
 the Language League system. All commands require bot owner permissions.
 """
+import asyncio
 import logging
 import re
 import time
@@ -96,53 +97,38 @@ Rounds last 2 weeks. Top performers earn a champion role!"""
         rows = await self.bot.db.get_activity_heatmap(days=days)
 
         # Build 7x24 grid. Postgres DOW: 0=Sunday … 6=Saturday.
-        # Re-order rows so Monday appears first (more natural for humans).
+        # The renderer handles Mon-first reordering itself.
         grid = [[0] * 24 for _ in range(7)]
         for r in rows:
             grid[r['dow']][r['hour']] = r['cnt']
 
         peak = max((max(row) for row in grid), default=0)
         if peak == 0:
-            return await ctx.send(f"ℹ️ No counted activity in the last {days} day(s).")
+            return await ctx.send(
+                f"ℹ️ No counted activity in the last {days} day(s)."
+            )
 
-        shades = "·░▒▓█"  # 0, ≤25%, ≤50%, ≤75%, >75%
+        # Lazy import so matplotlib/seaborn load only when this command
+        # is actually invoked, not at bot startup.
+        from cogs.league_cog.league_helper.heatmap_image import render_heatmap
 
-        def cell(n: int) -> str:
-            if n == 0:
-                return shades[0]
-            ratio = n / peak
-            if ratio <= 0.25:
-                return shades[1]
-            if ratio <= 0.50:
-                return shades[2]
-            if ratio <= 0.75:
-                return shades[3]
-            return shades[4]
-
-        # Mon, Tue, Wed, Thu, Fri, Sat, Sun (remap from Postgres DOW 0..6)
-        dow_order = [1, 2, 3, 4, 5, 6, 0]
-        dow_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-
-        header = "     " + " ".join(f"{h:02d}"[0] for h in range(24))
-        header2 = "     " + " ".join(f"{h:02d}"[1] for h in range(24))
-
-        body_lines = []
-        for label, dow in zip(dow_labels, dow_order, strict=True):
-            row_cells = " ".join(cell(grid[dow][h]) for h in range(24))
-            body_lines.append(f"{label}  {row_cells}")
-
-        legend = f"\nLegend: `{shades[0]}` 0  `{shades[1]}` low  `{shades[2]}` med  `{shades[3]}` high  `{shades[4]}` peak ({peak:,})"
-
-        description = "```\n" + "\n".join([header, header2, *body_lines]) + "\n```" + legend
+        # Rendering is CPU-bound (~200-400 ms) — push it off the event
+        # loop so we don't stall other cogs' message handlers.
+        buf = await asyncio.to_thread(
+            render_heatmap, grid, days=days, peak=peak,
+        )
+        file = discord.File(buf, filename="league_heatmap.png")
 
         embed = Embed(
             title=f"🔥 League Activity Heatmap (last {days}d)",
-            description=description,
             color=discord.Color.blue(),
         )
+        embed.set_image(url="attachment://league_heatmap.png")
         embed.set_footer(text="Times are UTC · hours across, weekdays down")
-        await ctx.send(embed=embed)
-        logger.info("Admin %s viewed heatmap (%dd, peak=%d)", ctx.author, days, peak)
+        await ctx.send(embed=embed, file=file)
+        logger.info(
+            "Admin %s viewed heatmap (%dd, peak=%d)", ctx.author, days, peak,
+        )
 
     @league_admin.command(name="recent", aliases=["joiners", "joins"])
     @commands.is_owner()

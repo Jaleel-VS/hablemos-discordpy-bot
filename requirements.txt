@@ -19,6 +19,10 @@ langdetect~=1.0
 Pillow~=12.1
 imgkit~=1.2
 
+# Plotting (league heatmap, future visualizations)
+matplotlib~=3.10
+seaborn~=0.13
+
 # Spaced Repetition
 fsrs~=6.3
 
