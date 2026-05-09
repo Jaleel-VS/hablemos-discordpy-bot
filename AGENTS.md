@@ -65,6 +65,13 @@ Always use `self.bot.db` (the shared `Database` instance). All queries go throug
 - Constants: UPPER_SNAKE_CASE
 - Config values from env vars: use centralized helpers from `config.py` (`get_int_env`, `get_str_env`, `get_required_env`, `get_list_env`) — not raw `os.getenv()`
 
+### Documentation
+
+Any commit that changes a command, schema, flow, or env var must update
+the relevant file under `docs/` in the same commit. See
+[`docs/CONTRIBUTING.md`](./docs/CONTRIBUTING.md) for the full rule and
+when-to-update table.
+
 ### Security
 - No hardcoded tokens, secrets, or database URLs — always use environment variables
 - No PII in log output
