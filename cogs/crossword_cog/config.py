@@ -9,6 +9,19 @@ WORDS_PER_GAME_MIN: Final[int] = 4
 WORDS_PER_GAME_MAX: Final[int] = 6
 MAX_PLACEMENT_ATTEMPTS: Final[int] = 200
 
+# Word validation
+MAX_WORD_LENGTH: Final[int] = 13
+MIN_WORD_LENGTH: Final[int] = 3
+MAX_GUESS_LENGTH: Final[int] = 50
+MIN_GUESS_LENGTH: Final[int] = 2
+
+# Timeout watcher
+TIMEOUT_CHECK_INTERVAL: Final[int] = 30  # Check every 30 seconds
+
+# Grid generation
+GRID_REDUCE_THRESHOLD: Final[int] = 20  # Attempts before reducing word count
+GRID_REDUCE_INTERVAL: Final[int] = 10   # How often to reduce after threshold
+
 
 @dataclass(frozen=True)
 class DifficultyConfig:

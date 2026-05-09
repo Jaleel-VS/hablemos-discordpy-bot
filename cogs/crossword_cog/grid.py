@@ -10,7 +10,11 @@ import random
 import unicodedata
 from dataclasses import dataclass, field
 
-from .config import MAX_PLACEMENT_ATTEMPTS
+from .config import (
+    GRID_REDUCE_INTERVAL,
+    GRID_REDUCE_THRESHOLD,
+    MAX_PLACEMENT_ATTEMPTS,
+)
 
 
 @dataclass(frozen=True)
@@ -148,16 +152,31 @@ def generate_grid(words: list[str]) -> Grid | None:
     original_indices = [i for i, _ in ordered]
     sorted_words = [w for _, w in ordered]
 
-    for _ in range(MAX_PLACEMENT_ATTEMPTS):
+    for attempt in range(MAX_PLACEMENT_ATTEMPTS):
         grid = Grid()
 
+        # Smarter retry: progressively shrink the word list after many
+        # failed attempts. Each time we cross a GRID_REDUCE_INTERVAL
+        # boundary past the threshold we drop one more word (longest
+        # words are hardest to place, so we drop from the tail of the
+        # length-sorted list). Always keep at least 3 words placed so
+        # the caller still gets a usable puzzle.
+        if attempt > GRID_REDUCE_THRESHOLD:
+            steps = (attempt - GRID_REDUCE_THRESHOLD) // GRID_REDUCE_INTERVAL
+            reduce_by = min(steps, len(sorted_words) - 3)
+            current_words = (
+                sorted_words[:-reduce_by] if reduce_by > 0 else sorted_words
+            )
+        else:
+            current_words = sorted_words
+
         # Place first word horizontally at origin
-        first = sorted_words[0]
+        first = current_words[0]
         grid.place(first, 0, 0, "across")
 
         success = True
-        for idx in range(1, len(sorted_words)):
-            word = sorted_words[idx]
+        for idx in range(1, len(current_words)):
+            word = current_words[idx]
             # Alternate preferred direction
             preferred = "down" if idx % 2 == 1 else "across"
             alt = "across" if preferred == "down" else "down"

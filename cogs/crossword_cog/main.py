@@ -1,12 +1,15 @@
 """Crossword cog — mini crossword puzzles for language practice."""
 import asyncio
+import contextlib
 import logging
 import random
 import time
 import unicodedata
 import uuid
+from dataclasses import dataclass
 from datetime import UTC, datetime
 
+import asyncpg
 import discord
 from discord import Embed, File, Interaction, app_commands
 from discord.ext import commands
@@ -18,6 +21,10 @@ from .config import (
     DEFAULT_LANGUAGE,
     DIFFICULTIES,
     GAME_TIMEOUT_SECONDS,
+    MAX_GUESS_LENGTH,
+    MAX_WORD_LENGTH,
+    MIN_GUESS_LENGTH,
+    TIMEOUT_CHECK_INTERVAL,
     WORDS_PER_GAME_MAX,
     WORDS_PER_GAME_MIN,
 )
@@ -28,6 +35,25 @@ from .words import WordEntry, load_words_from_db, pick_words
 logger = logging.getLogger(__name__)
 
 LANG_LABELS = {"es": "🇪🇸 Español", "en": "🇬🇧 English"}
+
+
+@dataclass(frozen=True)
+class SolveAttempt:
+    """Result of trying to solve a word."""
+
+    text: str
+    normalized: str
+    matched_idx: int | None
+    is_valid_guess: bool  # False if too short/long or contains invalid chars
+
+
+@dataclass(frozen=True)
+class HintResult:
+    """Result of using a hint."""
+
+    success: bool
+    word: str | None
+    reason: str | None  # Why hint failed (e.g., "max_hints_reached")
 
 
 def _normalize(text: str) -> str:
@@ -94,20 +120,52 @@ class CrosswordGame:
         entry = self.entries[idx]
         return entry.clue_es if self.language == "es" else entry.clue_en
 
-    def try_solve(self, text: str) -> int | None:
-        """Try to match *text* against unsolved words. Return index or None."""
+    def try_solve(self, text: str) -> SolveAttempt:
+        """Try to match *text* against unsolved words. Return attempt result."""
+        # Validate guess format
+        if len(text) < MIN_GUESS_LENGTH or len(text) > MAX_GUESS_LENGTH:
+            return SolveAttempt(
+                text=text,
+                normalized="",
+                matched_idx=None,
+                is_valid_guess=False,
+            )
+
         norm = _normalize(text)
+        if not norm:  # Empty after normalization
+            return SolveAttempt(
+                text=text,
+                normalized=norm,
+                matched_idx=None,
+                is_valid_guess=False,
+            )
+
         for idx, _pw in enumerate(self.grid.placed):
             if idx in self.solved:
                 continue
             if _normalize(self.get_answer(idx)) == norm:
-                return idx
-        return None
+                return SolveAttempt(
+                    text=text,
+                    normalized=norm,
+                    matched_idx=idx,
+                    is_valid_guess=True,
+                )
 
-    def use_hint(self) -> str | None:
-        """Reveal one random unrevealed cell. Returns the word hint was for, or None."""
+        return SolveAttempt(
+            text=text,
+            normalized=norm,
+            matched_idx=None,
+            is_valid_guess=True,
+        )
+
+    def use_hint(self) -> HintResult:
+        """Reveal one random unrevealed cell. Returns result with word or failure reason."""
         if self.hints_used >= 2:
-            return None
+            return HintResult(
+                success=False,
+                word=None,
+                reason="max_hints_reached",
+            )
         # Collect all cells already visible (solved words + pre-revealed)
         visible: set[tuple[int, int]] = set(self.revealed_cells.keys())
         for sidx in self.solved:
@@ -126,8 +184,16 @@ class CrosswordGame:
                 self.revealed_cells[(r, c)] = pw.word[pos]
                 self.hints_used += 1
                 self.word_hints.add(idx)
-                return self.get_answer(idx)
-        return None
+                return HintResult(
+                    success=True,
+                    word=self.get_answer(idx),
+                    reason=None,
+                )
+        return HintResult(
+            success=False,
+            word=None,
+            reason="no_hidden_cells",
+        )
 
     def build_clues_text(self, *, show_answers: bool = False) -> str:
         """Build the clue list for the embed."""
@@ -305,8 +371,10 @@ class CrosswordCog(BaseCog):
         super().__init__(bot)
         self._active: dict[int, CrosswordGame] = {}
         self._locks: dict[int, asyncio.Lock] = {}
-        self._watchers: dict[int, asyncio.Task] = {}
         self._words: list[WordEntry] = []
+        self._timeout_watcher_task: asyncio.Task | None = None
+        # Test/debug hook: overrides GAME_TIMEOUT_SECONDS when set.
+        self._timeout_override: float | None = None
 
     async def cog_load(self) -> None:
         """Load word pool from the database on startup, then notify any
@@ -314,6 +382,10 @@ class CrosswordCog(BaseCog):
         self._words = await load_words_from_db(self.bot.db.pool)
         logger.info("Crossword cog loaded with %s words", len(self._words))
         await self._recover_interrupted_games()
+        # Start global timeout watcher
+        self._timeout_watcher_task = asyncio.create_task(
+            self._global_timeout_watcher()
+        )
 
     async def _recover_interrupted_games(self) -> None:
         """Post a “game interrupted” notice for each stale active-game row.
@@ -325,7 +397,7 @@ class CrosswordCog(BaseCog):
         """
         try:
             rows = await self.bot.db.crossword_get_all_active_games()
-        except Exception:
+        except asyncpg.PostgresError:
             logger.exception("Failed to fetch interrupted crossword games")
             return
 
@@ -345,7 +417,7 @@ class CrosswordCog(BaseCog):
             finally:
                 try:
                     await self.bot.db.crossword_clear_active_game(channel_id)
-                except Exception:
+                except asyncpg.PostgresError:
                     logger.exception(
                         "Failed to clear interrupted crossword row for channel %s",
                         channel_id,
@@ -420,16 +492,77 @@ class CrosswordCog(BaseCog):
                 started_at=row["started_at"],
                 ended_at=datetime.now(UTC),
             )
-        except Exception:
-            logger.debug(
+        except asyncpg.PostgresError:
+            logger.warning(
                 "Failed to record interrupted crossword game for channel %s",
                 channel_id, exc_info=True,
             )
+
+    async def _global_timeout_watcher(self) -> None:
+        """Periodically check all active games and end those past timeout.
+
+        Replaces the old pattern of one task per game, reducing resource
+        overhead when many games are active. Timeout precision is bounded
+        by ``TIMEOUT_CHECK_INTERVAL`` (games may end up to that many
+        seconds late — acceptable for a word game).
+        """
+        while True:
+            try:
+                await asyncio.sleep(TIMEOUT_CHECK_INTERVAL)
+                now = time.monotonic()
+                timeout = self._timeout_override or GAME_TIMEOUT_SECONDS
+
+                # Snapshot candidate channels WITHOUT awaiting inside the
+                # iteration, so we don't race dict mutation.
+                to_end: list[int] = [
+                    cid for cid, game in self._active.items()
+                    if now - game.started_at > timeout
+                ]
+
+                # End timed-out games. Each end is guarded by the per-channel
+                # lock + a re-check under the lock so we can't race a solver
+                # or a quit that is already ending the same game.
+                for channel_id in to_end:
+                    lock = self._get_lock(channel_id)
+                    try:
+                        async with lock:
+                            game = self._active.get(channel_id)
+                            if game is None:
+                                continue
+                            # Re-check under lock using the same timeout
+                            # value to avoid ending a game whose timer was
+                            # effectively reset (shouldn't happen today,
+                            # but keeps the watcher correct).
+                            if time.monotonic() - game.started_at <= timeout:
+                                continue
+                            await self._end_game(channel_id, completed=False)
+                    except Exception:
+                        logger.exception(
+                            "_global_timeout_watcher: failed to end game in #%s",
+                            channel_id,
+                        )
+
+            except asyncio.CancelledError:
+                logger.info("Crossword timeout watcher cancelled")
+                break
+            except Exception:
+                logger.exception("_global_timeout_watcher: unexpected error")
+                # Continue watching despite errors
 
     def _get_lock(self, channel_id: int) -> asyncio.Lock:
         if channel_id not in self._locks:
             self._locks[channel_id] = asyncio.Lock()
         return self._locks[channel_id]
+
+    def _remove_game(self, channel_id: int) -> CrosswordGame | None:
+        """Pop a game and its lock atomically. Returns the game or None.
+
+        Callers that are currently holding the lock remain safe: they hold
+        a reference to the Lock object, and the next ``_get_lock`` call
+        will mint a fresh lock for a fresh game.
+        """
+        self._locks.pop(channel_id, None)
+        return self._active.pop(channel_id, None)
 
     async def _start_game(
         self, channel: discord.abc.Messageable, channel_id: int,
@@ -493,7 +626,7 @@ class CrosswordCog(BaseCog):
                 total_words=len(game.grid.placed),
                 game_id=game.game_id,
             )
-        except Exception:
+        except asyncpg.PostgresError:
             logger.exception(
                 "Failed to persist crossword active-game snapshot for #%s",
                 channel_id,
@@ -506,7 +639,6 @@ class CrosswordCog(BaseCog):
             except discord.HTTPException:
                 logger.warning("Failed to join thread #%s", channel_id)
 
-        self._watchers[channel_id] = self.bot.loop.create_task(self._timeout_watcher(channel_id))
         return None
 
     @commands.command(name="crossword", aliases=["cw"])
@@ -828,8 +960,10 @@ class CrosswordCog(BaseCog):
 
         channel_id = message.channel.id
 
-        game = self._active.get(channel_id)
-        if game is None:
+        # Cheap pre-check without the lock: if nothing is active here,
+        # bail before we pay the lock + context-parsing cost on every
+        # message in every channel.
+        if channel_id not in self._active:
             return
 
         # Ignore command invocations
@@ -838,54 +972,131 @@ class CrosswordCog(BaseCog):
             return
 
         text = message.content.strip()
-        if not text or len(text) < 2 or len(text) > 50:
+        if (
+            not text
+            or len(text) < MIN_GUESS_LENGTH
+            or len(text) > MAX_GUESS_LENGTH
+        ):
             return
 
-        # Quit command — starter or members with manage_messages can end the game
-        if text.lower() == "quit":
-            can_quit = (
-                message.author.id == game.starter_id
-                or getattr(message.channel.permissions_for(message.author), "manage_messages", False)
-            )
-            if can_quit:
-                logger.info("Crossword quit by %s in #%s", message.author, channel_id)
-                quit_game = self._active.pop(channel_id, None)
-                self._locks.pop(channel_id, None)
-                watcher = self._watchers.pop(channel_id, None)
-                if watcher and not watcher.done():
-                    watcher.cancel()
-                if quit_game is not None:
-                    await self._persist_game_outcome(
-                        quit_game,
-                        truly_solved=set(quit_game.solvers.keys()),
-                        completion="quit",
-                    )
-                try:
-                    await self.bot.db.crossword_clear_active_game(channel_id)
-                except Exception:
-                    logger.debug(
-                        "Failed to clear crossword active-game row on quit",
-                        exc_info=True,
-                    )
-                await message.add_reaction("👋")
-                await message.channel.send("🧩 Crossword cancelled.")
+        # Serialize all mutations of a single game: concurrent solvers,
+        # hints, quits, and the timeout watcher all contend for this lock.
+        # Discord API sends happen inside the lock so per-channel updates
+        # stay ordered — that's fine because Discord itself serializes
+        # messages in a channel anyway.
+        async with self._get_lock(channel_id):
+            game = self._active.get(channel_id)
+            if game is None:
+                # Another coroutine (watcher / quit) ended the game while
+                # we were waiting for the lock.
                 return
 
-        # Give up — owner-only, end game early but show answers (like timeout)
-        if text.lower() in ("giveup", "give up", "reveal"):
-            if message.author.id == game.starter_id:
-                logger.info("Crossword give-up by %s in #%s", message.author, channel_id)
-                await message.add_reaction("🏳️")
-                await self._end_game(channel_id, completed=False)
-            return
+            # Quit command — starter or members with manage_messages can end the game
+            if text.lower() == "quit":
+                can_quit = (
+                    message.author.id == game.starter_id
+                    or getattr(message.channel.permissions_for(message.author), "manage_messages", False)
+                )
+                if can_quit:
+                    logger.info("Crossword quit by %s in #%s", message.author, channel_id)
+                    quit_game = self._remove_game(channel_id)
+                    if quit_game is not None:
+                        await self._persist_game_outcome(
+                            quit_game,
+                            truly_solved=set(quit_game.solvers.keys()),
+                            completion="quit",
+                        )
+                    try:
+                        await self.bot.db.crossword_clear_active_game(channel_id)
+                    except asyncpg.PostgresError:
+                        logger.warning(
+                            "DB error clearing crossword active-game row on quit in #%s",
+                            channel_id, exc_info=True,
+                        )
+                    except Exception:
+                        logger.exception(
+                            "Unexpected error clearing crossword active-game row on quit in #%s",
+                            channel_id,
+                        )
+                    await message.add_reaction("👋")
+                    await message.channel.send("🧩 Crossword cancelled.")
+                    return
 
-        # Hint — reveal one letter, max 2 per game
-        if text.lower() == "!hint":
-            word = game.use_hint()
-            if word is None:
-                await message.add_reaction("🚫")
+            # Give up — owner-only, end game early but show answers (like timeout)
+            if text.lower() in ("giveup", "give up", "reveal"):
+                if message.author.id == game.starter_id:
+                    logger.info("Crossword give-up by %s in #%s", message.author, channel_id)
+                    await message.add_reaction("🏳️")
+                    await self._end_game(channel_id, completed=False)
+                return
+
+            # Hint — reveal one letter, max 2 per game
+            if text.lower() == "!hint":
+                hint_result = game.use_hint()
+                if not hint_result.success:
+                    await message.add_reaction("🚫")
+                else:
+                    await message.add_reaction("💡")
+                    try:
+                        if game.use_v2:
+                            view, file = _build_v2_view(game)
+                            msg = await message.channel.send(view=view, file=file)
+                        else:
+                            embed = game.build_embed()
+                            img = game.render()
+                            msg = await message.channel.send(embed=embed, file=img)
+                        game.message = msg
+                    except discord.HTTPException as e:
+                        logger.warning(
+                            "Failed to post hint update in #%s: %s",
+                            channel_id, e,
+                        )
+                return
+
+            attempt = game.try_solve(text)
+
+            # Invalid guess format (too short/long)
+            if not attempt.is_valid_guess:
+                return
+
+            # Wrong answer
+            if attempt.matched_idx is None:
+                # Only react ❌ on single-word messages (likely intentional guesses)
+                if " " not in text and len(text) <= MAX_WORD_LENGTH:
+                    await message.add_reaction("❌")
+                return
+
+            # Correct answer!
+            idx = attempt.matched_idx
+            game.solved.add(idx)
+            game.solvers[idx] = message.author.display_name
+            game.solver_ids[idx] = message.author.id
+            game.word_solved_at[idx] = time.monotonic() - game.started_at
+            game.scores[message.author.id] = game.scores.get(message.author.id, 0) + 1
+            game.scores_names[message.author.id] = message.author.display_name
+            pw = game.grid.placed[idx]
+
+            try:
+                await self.bot.db.crossword_bump_solved(channel_id)
+            except asyncpg.PostgresError as e:
+                logger.warning(
+                    "DB error bumping solved_count in #%s: %s",
+                    channel_id, e,
+                )
+            except Exception:
+                logger.exception("Unexpected error bumping solved_count")
+
+            logger.info(
+                "Crossword word %s solved by %s in #%s",
+                pw.number, message.author, channel_id,
+            )
+
+            await message.add_reaction("✅")
+
+            if game.all_solved:
+                elapsed = game.elapsed
+                await self._end_game(channel_id, completed=True, elapsed=elapsed)
             else:
-                await message.add_reaction("💡")
                 try:
                     if game.use_v2:
                         view, file = _build_v2_view(game)
@@ -896,62 +1107,13 @@ class CrosswordCog(BaseCog):
                         msg = await message.channel.send(embed=embed, file=img)
                     game.message = msg
                 except discord.HTTPException:
-                    pass
-            return
-
-        idx = game.try_solve(text)
-        if idx is None:
-            # Only react ❌ on single-word messages (likely intentional guesses)
-            if " " not in text and len(text) <= 13:
-                await message.add_reaction("❌")
-            return
-
-        # Correct answer!
-        game.solved.add(idx)
-        game.solvers[idx] = message.author.display_name
-        game.solver_ids[idx] = message.author.id
-        game.word_solved_at[idx] = time.monotonic() - game.started_at
-        game.scores[message.author.id] = game.scores.get(message.author.id, 0) + 1
-        game.scores_names[message.author.id] = message.author.display_name
-        pw = game.grid.placed[idx]
-
-        try:
-            await self.bot.db.crossword_bump_solved(channel_id)
-        except Exception:
-            logger.debug("Failed to bump crossword solved_count", exc_info=True)
-
-        logger.info(
-            "Crossword word %s solved by %s in #%s",
-            pw.number, message.author, channel_id,
-        )
-
-        await message.add_reaction("✅")
-
-        if game.all_solved:
-            elapsed = game.elapsed
-            await self._end_game(channel_id, completed=True, elapsed=elapsed)
-        else:
-            try:
-                if game.use_v2:
-                    view, file = _build_v2_view(game)
-                    msg = await message.channel.send(view=view, file=file)
-                else:
-                    embed = game.build_embed()
-                    img = game.render()
-                    msg = await message.channel.send(embed=embed, file=img)
-                game.message = msg
-            except discord.HTTPException:
-                logger.warning("Failed to post updated crossword in #%s", channel_id)
+                    logger.warning("Failed to post updated crossword in #%s", channel_id)
 
     async def _end_game(
         self, channel_id: int, *, completed: bool, elapsed: float = 0,
     ) -> None:
         """End a game and post results."""
-        game = self._active.pop(channel_id, None)
-        self._locks.pop(channel_id, None)
-        watcher = self._watchers.pop(channel_id, None)
-        if watcher and not watcher.done() and watcher is not asyncio.current_task():
-            watcher.cancel()
+        game = self._remove_game(channel_id)
         if game is None:
             return
 
@@ -979,31 +1141,57 @@ class CrosswordCog(BaseCog):
             )
 
             channel = self.bot.get_channel(channel_id) or (game.message and game.message.channel)
-            logger.info("DEBUG end-game COMPLETED: v2=%s ch_type=%s", game.use_v2, type(channel).__name__ if channel else "None")
             if channel:
-                if game.use_v2:
-                    view = discord.ui.LayoutView()
-                    file = game.render()
-                    view.add_item(discord.ui.Container(
-                        discord.ui.TextDisplay(
-                            f"## 🧩 Crossword Complete! 🎉\n"
-                            f"Solved in **{minutes}m {seconds}s**\n\n{solver_text}"
-                        ),
-                        discord.ui.MediaGallery(
-                            discord.MediaGalleryItem(media="attachment://crossword.png"),
-                        ),
-                        accent_colour=discord.Color.green(),
-                    ))
-                    await channel.send(view=view, file=file)
-                else:
-                    embed = Embed(
-                        title="🧩 Crossword Complete! 🎉",
-                        description=f"Solved in **{minutes}m {seconds}s**\n\n{solver_text}",
-                        color=discord.Color.green(),
+                try:
+                    if game.use_v2:
+                        try:
+                            view = discord.ui.LayoutView()
+                            file = game.render()
+                            view.add_item(discord.ui.Container(
+                                discord.ui.TextDisplay(
+                                    f"## 🧩 Crossword Complete! 🎉\n"
+                                    f"Solved in **{minutes}m {seconds}s**\n\n{solver_text}"
+                                ),
+                                discord.ui.MediaGallery(
+                                    discord.MediaGalleryItem(media="attachment://crossword.png"),
+                                ),
+                                accent_colour=discord.Color.green(),
+                            ))
+                            await channel.send(view=view, file=file)
+                        except (discord.HTTPException, discord.NotFound) as e:
+                            logger.warning(
+                                "V2 render failed for completion in #%s, falling back to embed: %s",
+                                channel_id, e,
+                            )
+                            # Fallback to embed
+                            game.use_v2 = False
+                            embed = Embed(
+                                title="🧩 Crossword Complete! 🎉",
+                                description=f"Solved in **{minutes}m {seconds}s**\n\n{solver_text}",
+                                color=discord.Color.green(),
+                            )
+                            img = game.render()
+                            embed.set_image(url="attachment://crossword.png")
+                            await channel.send(embed=embed, file=img)
+                    else:
+                        embed = Embed(
+                            title="🧩 Crossword Complete! 🎉",
+                            description=f"Solved in **{minutes}m {seconds}s**\n\n{solver_text}",
+                            color=discord.Color.green(),
+                        )
+                        img = game.render()
+                        embed.set_image(url="attachment://crossword.png")
+                        await channel.send(embed=embed, file=img)
+                except discord.HTTPException as e:
+                    logger.error(
+                        "Failed to send completion message in #%s: %s",
+                        channel_id, e,
                     )
-                    img = game.render()
-                    embed.set_image(url="attachment://crossword.png")
-                    await channel.send(embed=embed, file=img)
+                except Exception:
+                    logger.exception(
+                        "Unexpected error sending completion message in #%s",
+                        channel_id,
+                    )
         else:
             for idx in range(len(game.grid.placed)):
                 game.solved.add(idx)
@@ -1012,20 +1200,30 @@ class CrosswordCog(BaseCog):
             total = len(game.grid.placed)
 
             channel = self.bot.get_channel(channel_id) or (game.message and game.message.channel)
-            logger.info("DEBUG end-game TIMEOUT: v2=%s ch_type=%s", game.use_v2, type(channel).__name__ if channel else "None")
             if channel:
-                # Always use embed for timeout — v2 LayoutView hangs from asyncio.Task
-                embed = Embed(
-                    title="🧩 Crossword — Time's Up! ⏱️",
-                    description=game.build_clues_text(show_answers=True),
-                    color=discord.Color.orange(),
-                )
-                img = game.render()
-                embed.set_image(url="attachment://crossword.png")
-                await channel.send(
-                    f"⏱️ **Time's up!** {solved_count}/{total} words solved. Here are the answers:",
-                    embed=embed, file=img,
-                )
+                try:
+                    # Always use embed for timeout — simpler and more reliable
+                    embed = Embed(
+                        title="🧩 Crossword — Time's Up! ⏱️",
+                        description=game.build_clues_text(show_answers=True),
+                        color=discord.Color.orange(),
+                    )
+                    img = game.render()
+                    embed.set_image(url="attachment://crossword.png")
+                    await channel.send(
+                        f"⏱️ **Time's up!** {solved_count}/{total} words solved. Here are the answers:",
+                        embed=embed, file=img,
+                    )
+                except discord.HTTPException as e:
+                    logger.error(
+                        "Failed to send timeout message in #%s: %s",
+                        channel_id, e,
+                    )
+                except Exception:
+                    logger.exception(
+                        "Unexpected error sending timeout message in #%s",
+                        channel_id,
+                    )
 
         # Persist normalized game outcome (games + participants + word events)
         await self._persist_game_outcome(
@@ -1038,8 +1236,8 @@ class CrosswordCog(BaseCog):
         # for a game that actually ended cleanly.
         try:
             await self.bot.db.crossword_clear_active_game(channel_id)
-        except Exception:
-            logger.debug(
+        except asyncpg.PostgresError:
+            logger.warning(
                 "Failed to clear crossword active-game row for #%s",
                 channel_id, exc_info=True,
             )
@@ -1106,25 +1304,24 @@ class CrosswordCog(BaseCog):
                 participants=participants,
                 word_events=word_events,
             )
-        except Exception:
+        except asyncpg.PostgresError:
             logger.exception(
                 "Failed to persist crossword outcome for game %s", game.game_id,
             )
-
-    async def _timeout_watcher(self, channel_id: int) -> None:
-        """End the game after the timeout period."""
-        timeout = getattr(self, '_timeout_override', GAME_TIMEOUT_SECONDS)
-        await asyncio.sleep(timeout)
-        if channel_id in self._active:
-            try:
-                await self._end_game(channel_id, completed=False)
-            except Exception:
-                logger.exception("_timeout_watcher: _end_game raised for #%s", channel_id)
-        else:
-            logger.info("_timeout_watcher: game already ended for #%s", channel_id)
+        except Exception:
+            logger.exception(
+                "Unexpected error persisting crossword outcome for game %s",
+                game.game_id,
+            )
 
     async def cog_unload(self) -> None:
         """Clean up active games on cog unload."""
+        # Cancel global timeout watcher
+        if self._timeout_watcher_task and not self._timeout_watcher_task.done():
+            self._timeout_watcher_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await self._timeout_watcher_task
+
         if self._active:
             logger.warning(
                 "Crossword cog unloading with %d active game(s): %s",
@@ -1132,9 +1329,6 @@ class CrosswordCog(BaseCog):
             )
         self._active.clear()
         self._locks.clear()
-        for task in self._watchers.values():
-            task.cancel()
-        self._watchers.clear()
 
 
 async def setup(bot: commands.Bot) -> None:

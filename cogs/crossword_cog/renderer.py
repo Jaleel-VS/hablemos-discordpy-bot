@@ -1,6 +1,7 @@
 """Render a crossword grid as a PNG image using Pillow."""
 from __future__ import annotations
 
+from functools import lru_cache
 from io import BytesIO
 from pathlib import Path
 
@@ -27,6 +28,7 @@ REVEALED_COLOR = (170, 170, 170)
 FONT_DIR = Path(__file__).resolve().parent.parent / "league_cog" / "league_helper" / "fonts"
 
 
+@lru_cache(maxsize=8)
 def _get_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
     """Load Helvetica or fall back to default."""
     font_path = FONT_DIR / "HelveticaNeue-Roman.ttf"
@@ -58,6 +60,7 @@ def render_grid(
     img = Image.new("RGB", (width, height), BG_COLOR)
     draw = ImageDraw.Draw(img)
 
+    # _get_font is lru_cached, so repeated calls don't re-open the font file.
     letter_font = _get_font(LETTER_FONT_SIZE)
     number_font = _get_font(NUMBER_FONT_SIZE)
 
