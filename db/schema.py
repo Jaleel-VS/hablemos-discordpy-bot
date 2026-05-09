@@ -619,6 +619,82 @@ async def initialize_schema(pool):
             )
         ''')
 
+        # Migration: carry the canonical game_id so an interrupted game
+        # can be logged against crossword_games.
+        await conn.execute('''
+            ALTER TABLE crossword_active_games
+            ADD COLUMN IF NOT EXISTS game_id UUID
+        ''')
+
+        # Crossword games (one row per completed/ended game) — tier 1 metrics.
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS crossword_games (
+                game_id         UUID PRIMARY KEY,
+                guild_id        BIGINT,
+                channel_id      BIGINT NOT NULL,
+                starter_id      BIGINT NOT NULL,
+                difficulty      VARCHAR(16) NOT NULL,
+                language        VARCHAR(2) NOT NULL,
+                total_words     INT NOT NULL,
+                words_solved    INT NOT NULL DEFAULT 0,
+                hints_used      INT NOT NULL DEFAULT 0,
+                completion      VARCHAR(16) NOT NULL,
+                started_at      TIMESTAMPTZ NOT NULL,
+                ended_at        TIMESTAMPTZ NOT NULL,
+                elapsed_seconds REAL NOT NULL
+            )
+        ''')
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_cw_games_started
+            ON crossword_games(started_at)
+        ''')
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_cw_games_channel
+            ON crossword_games(channel_id)
+        ''')
+
+        # Crossword participants — one row per (game, user).
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS crossword_participants (
+                game_id       UUID NOT NULL REFERENCES crossword_games(game_id) ON DELETE CASCADE,
+                user_id       BIGINT NOT NULL,
+                display_name  TEXT NOT NULL,
+                words_solved  INT NOT NULL DEFAULT 0,
+                is_starter    BOOLEAN NOT NULL DEFAULT FALSE,
+                PRIMARY KEY (game_id, user_id)
+            )
+        ''')
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_cw_participants_user
+            ON crossword_participants(user_id)
+        ''')
+
+        # Crossword word-level events — tier 2 metrics.
+        # One row per word in a game, capturing whether it was solved,
+        # by whom, how long it took, and whether a hint revealed a cell
+        # inside it. Used for word-list difficulty tuning.
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS crossword_word_events (
+                id               SERIAL PRIMARY KEY,
+                game_id          UUID NOT NULL REFERENCES crossword_games(game_id) ON DELETE CASCADE,
+                word             TEXT NOT NULL,
+                language         VARCHAR(2) NOT NULL,
+                difficulty       VARCHAR(16) NOT NULL,
+                solved           BOOLEAN NOT NULL,
+                solved_by        BIGINT,
+                seconds_to_solve REAL,
+                had_hint         BOOLEAN NOT NULL DEFAULT FALSE
+            )
+        ''')
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_cw_events_word
+            ON crossword_word_events(word, language)
+        ''')
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_cw_events_game
+            ON crossword_word_events(game_id)
+        ''')
+
         # Dictation sentences table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS dictation_sentences (

@@ -4,6 +4,8 @@ import logging
 import random
 import time
 import unicodedata
+import uuid
+from datetime import UTC, datetime
 
 import discord
 from discord import Embed, File, Interaction, app_commands
@@ -54,9 +56,20 @@ class CrosswordGame:
         self.difficulty = difficulty
         self.solved: set[int] = set()
         self.solvers: dict[int, str] = {}
+        # Parallel to ``solvers``: user_id per solved word, used for metrics.
+        self.solver_ids: dict[int, int] = {}
+        # Monotonic seconds from game start when each word was solved.
+        self.word_solved_at: dict[int, float] = {}
+        # Word indices that received a hint-revealed cell.
+        self.word_hints: set[int] = set()
         self.revealed_cells: dict[tuple[int, int], str] = {}
         self.started_at = time.monotonic()
+        # Wall-clock start for DB persistence.
+        self.started_at_wall: datetime = datetime.now(UTC)
         self.starter_id: int = 0
+        self.channel_id: int = 0
+        self.guild_id: int | None = None
+        self.game_id: uuid.UUID = uuid.uuid4()
         self.use_v2: bool = False
         self.message: discord.Message | None = None
         self.hints_used: int = 0
@@ -112,6 +125,7 @@ class CrosswordGame:
                 pos, r, c = random.choice(hidden)
                 self.revealed_cells[(r, c)] = pw.word[pos]
                 self.hints_used += 1
+                self.word_hints.add(idx)
                 return self.get_answer(idx)
         return None
 
@@ -390,6 +404,28 @@ class CrosswordCog(BaseCog):
                 "Failed to send interrupt notice for channel %s", channel_id,
             )
 
+        # Log an 'interrupted' row in crossword_games so stats reflect
+        # restart-induced losses. No participant / word-event detail is
+        # available here — we only have what the active-game snapshot saved.
+        try:
+            await self.bot.db.crossword_record_interrupted(
+                game_id=row["game_id"],
+                guild_id=row["guild_id"],
+                channel_id=channel_id,
+                starter_id=starter_id,
+                difficulty=row["difficulty"],
+                language=row["language"],
+                total_words=total,
+                words_solved=solved,
+                started_at=row["started_at"],
+                ended_at=datetime.now(UTC),
+            )
+        except Exception:
+            logger.debug(
+                "Failed to record interrupted crossword game for channel %s",
+                channel_id, exc_info=True,
+            )
+
     def _get_lock(self, channel_id: int) -> asyncio.Lock:
         if channel_id not in self._locks:
             self._locks[channel_id] = asyncio.Lock()
@@ -415,6 +451,8 @@ class CrosswordCog(BaseCog):
             self._active[channel_id] = game
 
         game.starter_id = author.id
+        game.channel_id = channel_id
+        game.guild_id = getattr(getattr(channel, "guild", None), "id", None)
         # Components v2 not supported in DMs
         game.use_v2 = use_v2 and getattr(channel, "guild", None) is not None
         logger.info(
@@ -453,6 +491,7 @@ class CrosswordCog(BaseCog):
                 language=lang,
                 difficulty=diff,
                 total_words=len(game.grid.placed),
+                game_id=game.game_id,
             )
         except Exception:
             logger.exception(
@@ -553,16 +592,20 @@ class CrosswordCog(BaseCog):
 
         stats = await self.bot.db.crossword_get_stats(days=days)
         totals = stats["totals"]
-        plays = int(totals.get("plays") or 0)
+        players = stats["players"]
+        games = int(totals.get("games") or 0)
 
-        if plays == 0:
-            return await ctx.send(f"ℹ️ No crossword plays recorded ({window_label}).")
+        if games == 0:
+            return await ctx.send(f"ℹ️ No crossword games recorded ({window_label}).")
 
         breakdown = stats["breakdown"]
         top = await self.bot.db.crossword_get_top_solvers(days=days, limit=10)
 
-        full = int(totals.get("full_completions") or 0)
-        completion_rate = (full / plays * 100) if plays else 0.0
+        completed = int(totals.get("completed") or 0)
+        timed_out = int(totals.get("timed_out") or 0)
+        quit_ct = int(totals.get("quit") or 0)
+        interrupted = int(totals.get("interrupted") or 0)
+        completion_rate = (completed / games * 100) if games else 0.0
         avg_ratio = float(totals.get("avg_completion_ratio") or 0) * 100
         avg_secs = float(totals.get("avg_completion_seconds") or 0)
         avg_min, avg_sec = divmod(int(avg_secs), 60)
@@ -572,14 +615,26 @@ class CrosswordCog(BaseCog):
             color=discord.Color.blurple(),
         )
         embed.add_field(
-            name="📊 Totals",
+            name="📊 Games",
             value=(
-                f"**Plays:** {plays:,} (participations)\n"
-                f"**Unique players:** {int(totals.get('unique_players') or 0):,}\n"
+                f"**Games played:** {games:,}\n"
+                f"**Unique players:** {int(players.get('unique_players') or 0):,}\n"
+                f"**Avg participants/game:** {float(players.get('avg_participants_per_game') or 0):.1f}\n"
                 f"**Words solved:** {int(totals.get('total_words_solved') or 0):,}\n"
                 f"**Avg completion:** {avg_ratio:.1f}%\n"
-                f"**Full completions:** {full:,} ({completion_rate:.1f}%)\n"
-                f"**Avg time (full):** {avg_min}m {avg_sec:02d}s"
+                f"**Avg time (full):** {avg_min}m {avg_sec:02d}s\n"
+                f"**Total hints used:** {int(totals.get('total_hints') or 0):,} "
+                f"(avg {float(totals.get('avg_hints_per_game') or 0):.2f}/game)"
+            ),
+            inline=False,
+        )
+        embed.add_field(
+            name="🏁 Completion",
+            value=(
+                f"✅ Completed: **{completed}** ({completion_rate:.1f}%)\n"
+                f"⏱️ Timed out: **{timed_out}**\n"
+                f"👋 Quit: **{quit_ct}**\n"
+                f"⚠️ Interrupted: **{interrupted}**"
             ),
             inline=False,
         )
@@ -590,24 +645,120 @@ class CrosswordCog(BaseCog):
                 diff_cfg = DIFFICULTIES.get(r["difficulty"])
                 diff_label = diff_cfg.label if diff_cfg else r["difficulty"]
                 lang_label = LANG_LABELS.get(r["language"], r["language"])
+                b_games = int(r["games"])
+                b_completed = int(r["completed"])
+                rate = (b_completed / b_games * 100) if b_games else 0.0
                 lines.append(
                     f"• {diff_label} · {lang_label} — "
-                    f"{int(r['plays']):,} plays, {int(r['unique_players']):,} players"
+                    f"{b_games:,} games, {b_completed} completed ({rate:.0f}%)"
                 )
             embed.add_field(name="🔹 Breakdown", value="\n".join(lines), inline=False)
 
         if top:
             lines = [
                 f"**{i}.** {r['display_name']} — {int(r['words_solved']):,} words · "
-                f"{int(r['plays'])} plays · {int(r['full_completions'])} completed"
+                f"{int(r['games'])} games · {int(r['games_started'])} started"
                 for i, r in enumerate(top, 1)
             ]
             embed.add_field(name="🏅 Top Solvers", value="\n".join(lines), inline=False)
 
         await ctx.send(embed=embed, allowed_mentions=discord.AllowedMentions.none())
         logger.info(
-            "Admin %s viewed cwstats (%s, %d plays)",
-            ctx.author, window_label, plays,
+            "Admin %s viewed cwstats (%s, %d games)",
+            ctx.author, window_label, games,
+        )
+
+    @commands.command(name="cwwords")
+    @commands.is_owner()
+    async def cwwords(
+        self,
+        ctx: commands.Context,
+        mode: str = "hardest",
+        language: str = "",
+        limit: int = 15,
+    ) -> None:
+        """Owner-only: show per-word solve-rate stats from game data.
+
+        Usage:
+          `$cwwords hardest [lang] [limit]` — lowest solve rate first
+          `$cwwords easiest [lang] [limit]` — highest solve rate first
+          `$cwwords unseen  <lang> [limit]` — word-list entries that never appeared
+
+        `lang` is optional for hardest/easiest, required for unseen; use
+        `es` or `en`.
+        """
+        mode = mode.lower()
+        lang_arg = language.lower() if language else None
+        if lang_arg in ("english",):
+            lang_arg = "en"
+        elif lang_arg in ("spanish",):
+            lang_arg = "es"
+        if lang_arg not in (None, "es", "en"):
+            return await ctx.send("❌ Language must be `es` or `en`.")
+        limit = max(1, min(limit, 25))
+
+        if mode in ("hardest", "easiest"):
+            rows = await self.bot.db.crossword_get_word_difficulty(
+                language=lang_arg,
+                order=mode,
+                min_appearances=3,
+                limit=limit,
+            )
+            if not rows:
+                return await ctx.send(
+                    "ℹ️ Not enough per-word data yet — need words that have "
+                    "appeared in at least 3 games."
+                )
+            lines: list[str] = []
+            for i, r in enumerate(rows, 1):
+                rate = float(r["solve_rate"]) * 100
+                avg_sec = r["avg_solve_seconds"]
+                avg_str = (
+                    f" · avg {int(avg_sec)}s" if avg_sec is not None else ""
+                )
+                hints = int(r["hint_assists"])
+                hint_str = f" · {hints} hint-assist{'s' if hints != 1 else ''}" if hints else ""
+                lang_tag = LANG_LABELS.get(r["language"], r["language"])
+                lines.append(
+                    f"**{i}.** `{r['word']}` ({lang_tag} · {r['difficulty']}) — "
+                    f"{rate:.0f}% solved ({int(r['solves'])}/{int(r['appearances'])})"
+                    f"{avg_str}{hint_str}"
+                )
+            title_scope = "" if lang_arg is None else f" · {LANG_LABELS.get(lang_arg, lang_arg)}"
+            embed = Embed(
+                title=f"🔍 Word difficulty — {mode}{title_scope}",
+                description="\n".join(lines),
+                color=discord.Color.blurple(),
+            )
+            embed.set_footer(text="Includes only words that appeared in ≥3 games.")
+            return await ctx.send(embed=embed)
+
+        if mode == "unseen":
+            if lang_arg is None:
+                return await ctx.send(
+                    "❌ `unseen` requires a language: `$cwwords unseen es` or `en`."
+                )
+            rows = await self.bot.db.crossword_get_unseen_words(
+                language=lang_arg, limit=limit,
+            )
+            if not rows:
+                return await ctx.send(
+                    "✅ Every word in the list has appeared at least once."
+                )
+            lines = [
+                f"• `{r['word']}` ({r['difficulty']} · {r['theme']})"
+                for r in rows
+            ]
+            embed = Embed(
+                title=f"👀 Unseen words — {LANG_LABELS.get(lang_arg, lang_arg)}",
+                description="\n".join(lines),
+                color=discord.Color.blurple(),
+            )
+            embed.set_footer(text="Words in the list that have never appeared in a game.")
+            return await ctx.send(embed=embed)
+
+        await ctx.send(
+            "❌ Usage: `$cwwords <hardest|easiest|unseen> [lang] [limit]`"
         )
 
     @commands.Cog.listener()
@@ -639,11 +790,17 @@ class CrosswordCog(BaseCog):
             )
             if can_quit:
                 logger.info("Crossword quit by %s in #%s", message.author, channel_id)
-                self._active.pop(channel_id, None)
+                quit_game = self._active.pop(channel_id, None)
                 self._locks.pop(channel_id, None)
                 watcher = self._watchers.pop(channel_id, None)
                 if watcher and not watcher.done():
                     watcher.cancel()
+                if quit_game is not None:
+                    await self._persist_game_outcome(
+                        quit_game,
+                        truly_solved=set(quit_game.solvers.keys()),
+                        completion="quit",
+                    )
                 try:
                     await self.bot.db.crossword_clear_active_game(channel_id)
                 except Exception:
@@ -693,6 +850,8 @@ class CrosswordCog(BaseCog):
         # Correct answer!
         game.solved.add(idx)
         game.solvers[idx] = message.author.display_name
+        game.solver_ids[idx] = message.author.id
+        game.word_solved_at[idx] = time.monotonic() - game.started_at
         game.scores[message.author.id] = game.scores.get(message.author.id, 0) + 1
         game.scores_names[message.author.id] = message.author.display_name
         pw = game.grid.placed[idx]
@@ -742,6 +901,10 @@ class CrosswordCog(BaseCog):
             "Crossword ended in #%s (%s, %d/%d solved, %.1fs)",
             channel_id, outcome, len(game.solved), len(game.grid.placed), game.elapsed,
         )
+
+        # Capture the truly-solved set now, BEFORE the timeout branch
+        # mutates game.solved to force-reveal unsolved words for display.
+        truly_solved: set[int] = set(game.solvers.keys())
 
         if completed:
             minutes = int(elapsed // 60)
@@ -805,8 +968,12 @@ class CrosswordCog(BaseCog):
                     embed=embed, file=img,
                 )
 
-        # Persist scores silently
-        await self._save_scores(game, channel_id)
+        # Persist normalized game outcome (games + participants + word events)
+        await self._persist_game_outcome(
+            game,
+            truly_solved=truly_solved,
+            completion="completed" if completed else "timeout",
+        )
 
         # Clear the active-game row so we don't fire an interrupt notice
         # for a game that actually ended cleanly.
@@ -818,25 +985,72 @@ class CrosswordCog(BaseCog):
                 channel_id, exc_info=True,
             )
 
-    async def _save_scores(self, game: CrosswordGame, channel_id: int) -> None:
-        """Persist per-user scores to the database."""
-        if not game.scores:
-            return
-        channel = self.bot.get_channel(channel_id) or (game.message and game.message.channel)
-        guild_id = getattr(getattr(channel, "guild", None), "id", 0)
-        total = len(game.grid.placed)
+    async def _persist_game_outcome(
+        self, game: CrosswordGame, *, truly_solved: set[int], completion: str,
+    ) -> None:
+        """Write one game row + participant rows + word-event rows.
+
+        Swallows exceptions so persistence failures never abort the user
+        flow. Uses ``truly_solved`` (derived from ``game.solvers``) as the
+        source of truth because the timeout branch of :meth:`_end_game`
+        mutates ``game.solved`` for display purposes.
+        """
         try:
-            for user_id, words_solved in game.scores.items():
-                display_name = game.scores_names.get(user_id, str(user_id))
-                await self.bot.db.pool.execute(
-                    """INSERT INTO crossword_scores
-                       (user_id, display_name, guild_id, words_solved, total_words, difficulty, language, elapsed_seconds)
-                       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)""",
-                    user_id, display_name, guild_id, words_solved, total,
-                    game.difficulty, game.language, game.elapsed,
-                )
+            ended_at = datetime.now(UTC)
+
+            participants: list[dict] = []
+            per_user_solved: dict[int, int] = {}
+            per_user_name: dict[int, str] = {}
+            for widx in truly_solved:
+                uid = game.solver_ids.get(widx)
+                if uid is None:
+                    continue
+                per_user_solved[uid] = per_user_solved.get(uid, 0) + 1
+                per_user_name[uid] = game.solvers.get(widx, str(uid))
+            # Starter is always a participant even if they solved nothing.
+            if game.starter_id and game.starter_id not in per_user_solved:
+                per_user_solved[game.starter_id] = 0
+                per_user_name.setdefault(game.starter_id, str(game.starter_id))
+            for uid, count in per_user_solved.items():
+                participants.append({
+                    "user_id": uid,
+                    "display_name": per_user_name.get(uid, str(uid)),
+                    "words_solved": count,
+                    "is_starter": uid == game.starter_id,
+                })
+
+            word_events: list[dict] = []
+            for widx, _pw in enumerate(game.grid.placed):
+                solved = widx in truly_solved
+                word_events.append({
+                    "word": game.get_answer(widx),
+                    "solved": solved,
+                    "solved_by": game.solver_ids.get(widx) if solved else None,
+                    "seconds_to_solve": game.word_solved_at.get(widx) if solved else None,
+                    "had_hint": widx in game.word_hints,
+                })
+
+            await self.bot.db.crossword_persist_game_outcome(
+                game_id=game.game_id,
+                guild_id=game.guild_id,
+                channel_id=game.channel_id,
+                starter_id=game.starter_id,
+                difficulty=game.difficulty,
+                language=game.language,
+                total_words=len(game.grid.placed),
+                words_solved=len(truly_solved),
+                hints_used=game.hints_used,
+                completion=completion,
+                started_at=game.started_at_wall,
+                ended_at=ended_at,
+                elapsed_seconds=game.elapsed,
+                participants=participants,
+                word_events=word_events,
+            )
         except Exception:
-            logger.debug("Failed to save crossword scores", exc_info=True)
+            logger.exception(
+                "Failed to persist crossword outcome for game %s", game.game_id,
+            )
 
     async def _timeout_watcher(self, channel_id: int) -> None:
         """End the game after the timeout period."""
