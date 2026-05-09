@@ -106,9 +106,33 @@ class TicketsCog(BaseCog):
 
             if open_threads:
                 lines = [await _format_thread(t, open_tags) for t in open_threads]
-                value = "\n".join(lines)
-                if len(value) > 900:
-                    value = value[:896] + "\n..."
+                # Truncate at last complete ticket entry to avoid cutting off mid-entry
+                MAX_LENGTH = 900
+                truncated_lines = []
+                char_count = 0
+                omitted = 0
+                
+                for entry in lines:
+                    # Check if adding this entry would exceed limit
+                    # +1 for the newline that will join entries
+                    entry_length = len(entry) + (1 if truncated_lines else 0)
+                    if char_count + entry_length <= MAX_LENGTH:
+                        truncated_lines.append(entry)
+                        char_count += entry_length
+                    else:
+                        omitted += 1
+                
+                value = "\n".join(truncated_lines)
+                if omitted > 0:
+                    suffix = f"\n-# ...and {omitted} more"
+                    # Ensure suffix fits
+                    if len(value) + len(suffix) > MAX_LENGTH:
+                        # Remove last entry to make room
+                        truncated_lines.pop()
+                        omitted += 1
+                        value = "\n".join(truncated_lines) + suffix
+                    else:
+                        value += suffix
             else:
                 value = "No open tickets 🎉"
 
