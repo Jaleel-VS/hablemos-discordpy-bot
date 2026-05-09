@@ -598,6 +598,27 @@ async def initialize_schema(pool):
             ON crossword_scores(user_id)
         ''')
 
+        # Crossword active games table
+        # One row per in-flight game, used to detect and notify interrupted
+        # games on bot restart. Rows are inserted on game start, updated on
+        # each correct solve, and deleted on natural end (completion, quit,
+        # timeout, or interrupt recovery).
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS crossword_active_games (
+                channel_id   BIGINT PRIMARY KEY,
+                starter_id   BIGINT NOT NULL,
+                guild_id     BIGINT,
+                is_dm        BOOLEAN NOT NULL DEFAULT FALSE,
+                message_id   BIGINT,
+                language     VARCHAR(2) NOT NULL,
+                difficulty   VARCHAR(16) NOT NULL,
+                solved_count INT NOT NULL DEFAULT 0,
+                total_words  INT NOT NULL,
+                started_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        ''')
+
         # Dictation sentences table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS dictation_sentences (

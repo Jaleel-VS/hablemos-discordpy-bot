@@ -238,8 +238,11 @@ def _build_game(
             (e.word_es if language == "es" else e.word_en) for e in entries
         ]
 
-        # Filter out multi-word answers (can't place on grid)
-        valid = [(aw, e) for aw, e in zip(answer_words, entries, strict=True) if " " not in aw]
+        # Filter out multi-word or overly long answers (can't place on grid)
+        valid = [
+            (aw, e) for aw, e in zip(answer_words, entries, strict=True)
+            if " " not in aw and len(aw) <= 13
+        ]
         if len(valid) < 3:
             continue
         answer_words = [aw for aw, _ in valid]
@@ -292,9 +295,100 @@ class CrosswordCog(BaseCog):
         self._words: list[WordEntry] = []
 
     async def cog_load(self) -> None:
-        """Load word pool from the database on startup."""
+        """Load word pool from the database on startup, then notify any
+        players whose games were interrupted by a previous bot shutdown."""
         self._words = await load_words_from_db(self.bot.db.pool)
         logger.info("Crossword cog loaded with %s words", len(self._words))
+        await self._recover_interrupted_games()
+
+    async def _recover_interrupted_games(self) -> None:
+        """Post a “game interrupted” notice for each stale active-game row.
+
+        Resolves the original channel (guild channel / thread / DM) and
+        sends a single message explaining the interruption, then deletes
+        the row. Best-effort: failures per row are logged but don't stop
+        processing of the others.
+        """
+        try:
+            rows = await self.bot.db.crossword_get_all_active_games()
+        except Exception:
+            logger.exception("Failed to fetch interrupted crossword games")
+            return
+
+        if not rows:
+            return
+
+        logger.info("Recovering %d interrupted crossword game(s)", len(rows))
+        for row in rows:
+            channel_id = row["channel_id"]
+            try:
+                await self._notify_interrupted(row)
+            except Exception:
+                logger.exception(
+                    "Failed to notify interrupted crossword game in channel %s",
+                    channel_id,
+                )
+            finally:
+                try:
+                    await self.bot.db.crossword_clear_active_game(channel_id)
+                except Exception:
+                    logger.exception(
+                        "Failed to clear interrupted crossword row for channel %s",
+                        channel_id,
+                    )
+
+    async def _notify_interrupted(self, row) -> None:
+        """Send a single interrupt-recovery message for one stale game row."""
+        channel_id: int = row["channel_id"]
+        starter_id: int = row["starter_id"]
+        is_dm: bool = row["is_dm"]
+        solved: int = row["solved_count"]
+        total: int = row["total_words"]
+        lang_label = LANG_LABELS.get(row["language"], row["language"])
+        diff_cfg = DIFFICULTIES.get(row["difficulty"])
+        diff_label = diff_cfg.label if diff_cfg else row["difficulty"]
+
+        # Resolve a Messageable: guild channel/thread via cache, DM via user.
+        target: discord.abc.Messageable | None = None
+        if not is_dm:
+            target = self.bot.get_channel(channel_id)
+            if target is None:
+                # Thread may be uncached; try to fetch.
+                try:
+                    target = await self.bot.fetch_channel(channel_id)
+                except (discord.NotFound, discord.Forbidden, discord.HTTPException):
+                    target = None
+
+        if target is None:
+            # Either a DM or a channel we can't see anymore — DM the starter.
+            try:
+                user = await self.bot.fetch_user(starter_id)
+                target = await user.create_dm()
+            except (discord.NotFound, discord.Forbidden, discord.HTTPException):
+                logger.warning(
+                    "Could not reach channel %s or starter %s to notify interrupt",
+                    channel_id, starter_id,
+                )
+                return
+
+        embed = Embed(
+            title="⚠️ Crossword interrupted",
+            description=(
+                f"Your crossword was interrupted by a bot restart and "
+                f"couldn't be resumed. Sorry about that!\n\n"
+                f"**Progress:** {solved}/{total} words solved\n"
+                f"**Puzzle:** {diff_label} · {lang_label}\n\n"
+                f"Run `/crossword` (or `$crossword`) to start a new one."
+            ),
+            color=discord.Color.orange(),
+        )
+
+        try:
+            await target.send(embed=embed)
+        except (discord.Forbidden, discord.HTTPException):
+            logger.warning(
+                "Failed to send interrupt notice for channel %s", channel_id,
+            )
 
     def _get_lock(self, channel_id: int) -> asyncio.Lock:
         if channel_id not in self._locks:
@@ -344,6 +438,27 @@ class CrosswordCog(BaseCog):
                 msg = await channel.send(embed=embed, file=img)
 
         game.message = msg
+
+        # Persist a minimal snapshot so we can notify the player if the
+        # bot restarts before the game ends.
+        is_dm = getattr(channel, "guild", None) is None
+        guild_id = getattr(getattr(channel, "guild", None), "id", None)
+        try:
+            await self.bot.db.crossword_save_active_game(
+                channel_id=channel_id,
+                starter_id=author.id,
+                guild_id=guild_id,
+                is_dm=is_dm,
+                message_id=getattr(msg, "id", None),
+                language=lang,
+                difficulty=diff,
+                total_words=len(game.grid.placed),
+            )
+        except Exception:
+            logger.exception(
+                "Failed to persist crossword active-game snapshot for #%s",
+                channel_id,
+            )
 
         # Threads need an explicit join() so the bot receives on_message events
         if isinstance(channel, discord.Thread):
@@ -450,6 +565,13 @@ class CrosswordCog(BaseCog):
                 watcher = self._watchers.pop(channel_id, None)
                 if watcher and not watcher.done():
                     watcher.cancel()
+                try:
+                    await self.bot.db.crossword_clear_active_game(channel_id)
+                except Exception:
+                    logger.debug(
+                        "Failed to clear crossword active-game row on quit",
+                        exc_info=True,
+                    )
                 await message.add_reaction("👋")
                 await message.channel.send("🧩 Crossword cancelled.")
                 return
@@ -485,7 +607,7 @@ class CrosswordCog(BaseCog):
         idx = game.try_solve(text)
         if idx is None:
             # Only react ❌ on single-word messages (likely intentional guesses)
-            if " " not in text and len(text) <= 12:
+            if " " not in text and len(text) <= 13:
                 await message.add_reaction("❌")
             return
 
@@ -495,6 +617,11 @@ class CrosswordCog(BaseCog):
         game.scores[message.author.id] = game.scores.get(message.author.id, 0) + 1
         game.scores_names[message.author.id] = message.author.display_name
         pw = game.grid.placed[idx]
+
+        try:
+            await self.bot.db.crossword_bump_solved(channel_id)
+        except Exception:
+            logger.debug("Failed to bump crossword solved_count", exc_info=True)
 
         logger.info(
             "Crossword word %s solved by %s in #%s",
@@ -601,6 +728,16 @@ class CrosswordCog(BaseCog):
 
         # Persist scores silently
         await self._save_scores(game, channel_id)
+
+        # Clear the active-game row so we don't fire an interrupt notice
+        # for a game that actually ended cleanly.
+        try:
+            await self.bot.db.crossword_clear_active_game(channel_id)
+        except Exception:
+            logger.debug(
+                "Failed to clear crossword active-game row for #%s",
+                channel_id, exc_info=True,
+            )
 
     async def _save_scores(self, game: CrosswordGame, channel_id: int) -> None:
         """Persist per-user scores to the database."""
