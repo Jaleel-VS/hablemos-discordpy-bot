@@ -49,6 +49,7 @@ Owner-only. Defined directly in `main.py`.
 | `$cwtimeout <seconds>` | Override the crossword timeout for the remaining bot process lifetime. Useful for testing. |
 | `$cwstats [days\|all]` | Aggregate crossword stats: games, participants, completion breakdown (completed/timeout/quit/interrupted), hints usage, top solvers. |
 | `$cwwords <hardest\|easiest\|unseen> [lang] [limit]` | Per-word solve-rate analysis. `unseen` requires a language; others filter optionally. Displays word, solve rate, times seen, avg solve time. |
+| `$cwchart [lang] [days] [min_appearances]` (alias: `cwscatter`) | Scatter plot of per-word solve rate vs average solve time (hue = difficulty, size = appearances). PNG rendered with seaborn. `days=0` means all time; default `min_appearances=3`. |
 
 ## Listeners & flows
 

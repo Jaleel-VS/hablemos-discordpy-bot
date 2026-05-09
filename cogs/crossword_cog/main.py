@@ -952,6 +952,81 @@ class CrosswordCog(BaseCog):
             "❌ Usage: `$cwwords <hardest|easiest|unseen> [lang] [limit]`"
         )
 
+    @commands.command(name="cwchart", aliases=["cwscatter"])
+    @commands.is_owner()
+    async def cwchart(
+        self,
+        ctx: commands.Context,
+        language: str = "",
+        days: int = 0,
+        min_appearances: int = 3,
+    ) -> None:
+        """Owner-only: scatter plot of per-word solve rate vs avg solve time.
+
+        Usage: `$cwchart [lang] [days] [min_appearances]`
+          `lang`: `es`, `en`, or empty for both.
+          `days`: lookback window; 0 = all time (default).
+          `min_appearances`: minimum games a word must appear in to be
+            plotted (default 3).
+        """
+        lang_arg: str | None = language.lower() if language else None
+        if lang_arg in ("english",):
+            lang_arg = "en"
+        elif lang_arg in ("spanish",):
+            lang_arg = "es"
+        if lang_arg not in (None, "es", "en"):
+            return await ctx.send("❌ Language must be `es`, `en`, or empty.")
+
+        days_arg: int | None = days if days > 0 else None
+        min_appearances = max(1, min(min_appearances, 50))
+
+        # Pull enough rows to be visually interesting without making the
+        # chart a wall of dots. 100 is plenty for a 7-day window and
+        # still fits comfortably at 150 DPI.
+        rows = await self.bot.db.crossword_get_word_difficulty(
+            language=lang_arg,
+            order="hardest",
+            min_appearances=min_appearances,
+            limit=100,
+            days=days_arg,
+        )
+
+        if not rows:
+            return await ctx.send(
+                "ℹ️ Not enough per-word data yet — need words with at "
+                f"least {min_appearances} appearances."
+            )
+
+        from .charts import render_word_difficulty
+        buf = await asyncio.to_thread(
+            render_word_difficulty,
+            list(rows),
+            language=lang_arg,
+            days=days_arg,
+        )
+        file = discord.File(buf, filename="crossword_word_difficulty.png")
+
+        scope_bits: list[str] = []
+        if lang_arg:
+            scope_bits.append(LANG_LABELS.get(lang_arg, lang_arg))
+        scope_bits.append(f"last {days_arg}d" if days_arg else "all time")
+        embed = Embed(
+            title="🔍 Word difficulty — " + " · ".join(scope_bits),
+            color=discord.Color.blurple(),
+        )
+        embed.set_image(url="attachment://crossword_word_difficulty.png")
+        embed.set_footer(
+            text=(
+                f"{len(rows)} words · min {min_appearances} appearances · "
+                "hue = difficulty, size = appearances"
+            ),
+        )
+        await ctx.send(embed=embed, file=file)
+        logger.info(
+            "Owner %s viewed cwchart (lang=%s days=%s rows=%d)",
+            ctx.author, lang_arg, days_arg, len(rows),
+        )
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
         """Listen for answers in channels with active games."""

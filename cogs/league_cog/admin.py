@@ -63,28 +63,50 @@ Rounds last 2 weeks. Top performers earn a champion role!"""
         rows = await self.bot.db.get_top_activity_channels(days=days, limit=15)
 
         if not rows:
-            return await ctx.send(f"ℹ️ No counted activity in the last {days} day(s).")
-
-        excluded = {r['channel_id'] for r in await self.bot.db.get_excluded_channels()}
-        total = sum(r['msg_count'] for r in rows)
-
-        lines: list[str] = []
-        for i, row in enumerate(rows, 1):
-            share = row['msg_count'] / total * 100 if total else 0
-            tag = " 🚫" if row['channel_id'] in excluded else ""
-            lines.append(
-                f"**{i}.** <#{row['channel_id']}>{tag} — "
-                f"{row['msg_count']:,} msgs · {row['unique_users']} users · {share:.1f}%"
+            return await ctx.send(
+                f"ℹ️ No counted activity in the last {days} day(s)."
             )
+
+        excluded_ids = {
+            r['channel_id']
+            for r in await self.bot.db.get_excluded_channels()
+        }
+
+        # Resolve human-friendly channel labels. Uncached / deleted
+        # channels fall back to "#<id>" so the chart still renders.
+        channel_labels: dict[int, str] = {}
+        for r in rows:
+            cid = r['channel_id']
+            ch = ctx.guild.get_channel(cid) if ctx.guild else None
+            channel_labels[cid] = f"#{ch.name}" if ch else f"#{cid}"
+
+        # Lazy import + offload rendering off the event loop.
+        from cogs.league_cog.league_helper.topchannels_image import (
+            render_top_channels,
+        )
+        buf = await asyncio.to_thread(
+            render_top_channels,
+            list(rows),
+            channel_labels=channel_labels,
+            excluded_ids=excluded_ids,
+            days=days,
+        )
+        file = discord.File(buf, filename="league_topchannels.png")
 
         embed = Embed(
             title=f"📊 Top League Channels (last {days}d)",
-            description="\n".join(lines),
             color=discord.Color.blue(),
         )
-        embed.set_footer(text="🚫 = currently excluded from tracking")
-        await ctx.send(embed=embed, allowed_mentions=discord.AllowedMentions.none())
-        logger.info("Admin %s viewed topchannels (%dd, %d rows)", ctx.author, days, len(rows))
+        embed.set_image(url="attachment://league_topchannels.png")
+        embed.set_footer(text="🔴 red bars = currently excluded from tracking")
+        await ctx.send(
+            embed=embed, file=file,
+            allowed_mentions=discord.AllowedMentions.none(),
+        )
+        logger.info(
+            "Admin %s viewed topchannels (%dd, %d rows)",
+            ctx.author, days, len(rows),
+        )
 
     @league_admin.command(name="heatmap", aliases=["hm"])
     @commands.is_owner()

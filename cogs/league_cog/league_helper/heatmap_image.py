@@ -1,45 +1,19 @@
 """Render the league activity heatmap as a PNG using seaborn.
 
-The helper is deliberately self-contained and lazy-imports matplotlib
-and seaborn on first call so the bot's cold-start isn't paying for
-plotting libraries that are only touched by an owner-only admin command.
-
-Why a dedicated module:
-
-* Keeps ``admin.py`` focused on command wiring; drawing lives here.
-* Ensures the Agg backend is configured *before* ``matplotlib.pyplot``
-  is imported anywhere in the process (required for headless
-  containers; setting it after pyplot is a no-op on most backends).
-* Gives us one place to tweak colors, DPI, and labels as the bot's
-  visual style evolves.
+The helper lazy-imports matplotlib and seaborn on first call so the
+bot's cold-start isn't paying for plotting libraries that are only
+touched by an owner-only admin command. Backend selection lives in
+:mod:`cogs.utils.plotting` so every chart helper converges on the
+same Agg configuration.
 """
 from __future__ import annotations
 
 import logging
 from io import BytesIO
 
+from cogs.utils.plotting import configure_backend
+
 logger = logging.getLogger(__name__)
-
-# Matplotlib is imported lazily inside render_heatmap(). The first call
-# pays the ~1 s import cost; subsequent calls reuse the loaded modules.
-_BACKEND_CONFIGURED = False
-
-
-def _configure_backend() -> None:
-    """Force the non-interactive Agg backend exactly once.
-
-    Must run before ``matplotlib.pyplot`` is imported anywhere in the
-    process. Safe to call repeatedly — the ``force=True`` flag makes
-    matplotlib swap backends even if one was already selected, and the
-    module-level guard keeps the work to a single call.
-    """
-    global _BACKEND_CONFIGURED
-    if _BACKEND_CONFIGURED:
-        return
-    import matplotlib
-    matplotlib.use("Agg", force=True)
-    _BACKEND_CONFIGURED = True
-
 
 # Day-of-week layout: Postgres' DOW is 0=Sun..6=Sat; humans read Mon-first.
 _DOW_ORDER = [1, 2, 3, 4, 5, 6, 0]
@@ -66,7 +40,7 @@ def render_heatmap(
     Returns:
         A ``BytesIO`` positioned at 0, ready to hand to ``discord.File``.
     """
-    _configure_backend()
+    configure_backend()
 
     # Lazy-import after backend selection so pyplot picks up Agg.
     import matplotlib.pyplot as plt

@@ -67,7 +67,8 @@ Owner-only. All under the `$league` group. See
 - **`recent [limit]`** (aliases: `joiners`, `joins`) — last N first-time
   joiners (default 10, max 25).
 - **`topchannels [days]`** (alias: `topchans`) — top 15 channels by
-  message volume over a window (flags excluded channels with 🚫).
+  message volume over a window, rendered as a horizontal bar chart
+  PNG (excluded channels shown in red).
 - **`heatmap [days]`** (alias: `hm`) — 7×24 day-of-week × hour activity
   heatmap (UTC), rendered as a PNG with seaborn.
 

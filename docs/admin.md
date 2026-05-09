@@ -28,7 +28,7 @@ for the feature itself.
 | `$league preview` | Dry-run the round-end announcement without pinging or mutating state. |
 | `$league reminder [#channel]` | Post the public "Join the League!" embed with the persistent join button. Defaults to the current channel. |
 | `$league recent [limit]` (aliases: `joiners`, `joins`) | Show the N most recent first-time joiners. Default 10, max 25. |
-| `$league topchannels [days]` (alias: `topchans`) | Top 15 channels by counted-message volume over a window. Flags excluded channels with 🚫. |
+| `$league topchannels [days]` (alias: `topchans`) | Top 15 channels by counted-message volume over a window, rendered as a horizontal bar chart. Excluded channels shown in red. |
 | `$league heatmap [days]` (alias: `hm`) | 7×24 day-of-week × hour activity heatmap rendered as a PNG (seaborn). UTC. |
 
 ## Crossword admin (owner-only)
@@ -41,6 +41,7 @@ Defined directly in `crossword_cog/main.py`. See
 | `$cwtimeout <seconds>` | Override the crossword timeout for the remaining lifetime of the bot process. Useful for testing. |
 | `$cwstats [days\|all]` | Aggregate crossword stats: games, participants, completion breakdown (completed/timeout/quit/interrupted), hints usage, top solvers. |
 | `$cwwords <hardest\|easiest\|unseen> [lang] [limit]` | Per-word solve-rate analysis. `unseen` requires a language; others filter optionally. |
+| `$cwchart [lang] [days] [min_appearances]` (alias: `cwscatter`) | Scatter plot of per-word solve rate vs average solve time. Rendered as a PNG (seaborn). |
 
 ## `$cog` (group, owner-only)
 
