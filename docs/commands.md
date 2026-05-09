@@ -45,28 +45,122 @@ See [`cogs/introduce.md`](./cogs/introduce.md) for the full feature.
 | `/exchange delete` | Delete your own exchange-partner post. |
 | `/exchange repost` | Repost your exchange post (cooldown applies). |
 
-## Other cogs
+## Conjugation
 
-> TODO: commands for the cogs below still need to be documented. Each
-> cog gets a row here and a deep-dive under [`cogs/`](./cogs/).
+See [`cogs/conjugation.md`](./cogs/conjugation.md) for the full feature.
 
-- `ask_cog`
-- `conjugation_cog`
-- `conversation_cog`
-- `convo_starter_cog`
-- `dictation_cog`
-- `dictionary_cog`
-- `general_cog`
-- `hangman_cog`
-- `hol_cog`
-- `intro_cog` (distinct from `introduce_cog`)
-- `practice_cog`
-- `practice_test_cog`
-- `quote_generator_cog`
-- `spotify_cog`
-- `summary_cog`
-- `tasks_cog`
-- `vocab_cog`
+| Command | Description |
+|---------|-------------|
+| `/conjugate [mode] [tense]` | Interactive Spanish verb conjugation practice. Modes: `learn`, `test`. Tenses: `presente`, `pretérito`, `imperfecto`, `futuro`, `condicional`, and more. |
+
+## Conversation
+
+See [`cogs/conversation.md`](./cogs/conversation.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `$conversation <category> [level] [language] [length]` / `$convo` | Generate an AI conversation for practice. Categories: `general`, `travel`, `food`, etc. Levels: `beginner`, `intermediate`, `advanced`. |
+
+## Conversation Starter
+
+See [`cogs/convo_starter.md`](./cogs/convo_starter.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `$topic [category]` / `$top` | Post a random bilingual discussion topic. Categories: `general`, `phil`, `would`, `other`. |
+| `$lst` / `$list` | List available topic categories. |
+
+## Dictation
+
+See [`cogs/dictation.md`](./cogs/dictation.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `/dictation <language> <level>` | Audio listening exercise. Listen to a clip and type what you hear. Scored 0–4. |
+
+## Dictionary
+
+See [`cogs/dictionary.md`](./cogs/dictionary.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `$define <word> [source]` / `$def` | Look up a word across multiple dictionary sources (Merriam-Webster, Wiktionary, Oxford, Cambridge). |
+
+## General
+
+See [`cogs/general.md`](./cogs/general.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `/help [category]` | View all commands or a specific cog's commands. |
+| `/info` | Show bot info: uptime, guilds, latency, code stats. |
+| `/ping` | Latency check. |
+| `$invite` | Post the bot invite link. |
+
+## Hangman
+
+See [`cogs/hangman.md`](./cogs/hangman.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `$hangman [category]` / `$hm` / `$hang` | Start a Spanish hangman game. Categories: `animales`, `profesiones`, `ciudades`. Type letters to guess, `quit` to exit (starter only). |
+
+## Higher or Lower
+
+See [`cogs/hol.md`](./cogs/hol.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `$hol` / `$higherloower` | Guess which search term is more popular. Interactive button game. |
+
+## Practice
+
+See [`cogs/practice.md`](./cogs/practice.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `/practice [mode] [due_only]` | Cloze sentence practice with spaced repetition (FSRS). Modes: `learn`, `test`. |
+| `/practice_stats` | Show your practice stats: total cards, new/learning/review counts, cards due. |
+
+## Practice Test (Prototype)
+
+See [`cogs/practice_test.md`](./cogs/practice_test.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `$practice` | Prototype Components V2 practice flow (hardcoded sample cards, no persistence). |
+
+## Quote Generator
+
+See [`cogs/quote_generator.md`](./cogs/quote_generator.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `$quote <message_link>` / `$q` | Generate a styled quote image from a message (style 1). |
+| `$quote2 <message_link>` / `$q2` | Style 2 quote image. |
+| `$quote3 <message_link>` / `$q3` | Style 3 quote image. |
+| `$quotemulti <message_links...>` / `$qm` | Multi-message quote (up to 10 messages). |
+
+## Spotify
+
+See [`cogs/spotify.md`](./cogs/spotify.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `/nowplaying [@user]` | Show what you (or another user) are listening to on Spotify. Displays track, artist, album, progress bar, and album art. |
+
+## Vocab
+
+See [`cogs/vocab.md`](./cogs/vocab.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `/vocab add` | Add a personal vocab note (modal form). |
+| `/vocab list [language] [limit]` | List your notes (default 10, max 50). |
+| `/vocab search <query>` | Search your notes by word or translation. |
+| `/vocab delete <note_id>` | Delete a note by ID. |
+| `/vocab export [language]` | Export notes as CSV. |
+| `/vocab stats` | Show note counts by language. |
 
 ## Conventions
 
