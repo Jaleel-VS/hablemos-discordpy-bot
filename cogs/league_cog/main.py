@@ -33,6 +33,7 @@ from cogs.league_cog.rounds import (
     process_round_end,
 )
 from cogs.league_cog.utils import detect_message_language
+from cogs.league_cog.views import LeagueJoinView
 
 # Set seed for consistent language detection results
 DetectorFactory.seed = LANGUAGE.LANGDETECT_SEED
@@ -78,6 +79,11 @@ class LeagueCog(BaseCog):
         self._opted_in_users: set[int] = set()
         self._banned_users: set[int] = set()
         self._excluded_channels: set[int] = set()
+        # Register the persistent join-button view once so clicks keep working
+        # across restarts (stable custom_id + timeout=None). Guarded so cog
+        # reloads don't stack duplicate views in ``bot.persistent_views``.
+        if not any(isinstance(v, LeagueJoinView) for v in bot.persistent_views):
+            bot.add_view(LeagueJoinView(bot))
         self.check_round_end.start()  # Start scheduled task
 
     async def cog_load(self):
@@ -260,61 +266,96 @@ class LeagueCog(BaseCog):
             'error_message': None
         }
 
+    async def perform_join(self, member: Member) -> Embed:
+        """Run the league-join flow for a member and return the result embed.
+
+        Shared between the ``/league join`` slash command and the persistent
+        join button so both entry points behave identically. Callers are
+        responsible for sending the returned embed (typically ephemerally);
+        this method never touches ``interaction.response``.
+        """
+        # Banned users cannot (re-)join.
+        if member.id in self._banned_users:
+            return Embed(
+                title="❌ Banned from the league",
+                description=(
+                    "You are currently banned from the Language League and "
+                    "cannot join. If you believe this is a mistake, please "
+                    "contact a moderator."
+                ),
+                color=discord.Color.red(),
+            )
+
+        # Friendly short-circuit for users already in the league.
+        if member.id in self._opted_in_users:
+            learning = await self.bot.db.get_user_learning_languages(member.id)
+            if learning.get('learning_spanish'):
+                league_name = "Spanish League 🇪🇸"
+            elif learning.get('learning_english'):
+                league_name = "English League 🇬🇧"
+            else:
+                league_name = "Language League"
+            return Embed(
+                title="✅ You're already in the league!",
+                description=(
+                    f"You're currently competing in the **{league_name}**.\n\n"
+                    f"Use `/league stats` to track your progress or "
+                    f"`/league view` to see the leaderboard!"
+                ),
+                color=discord.Color.green(),
+            )
+
+        # Validate roles
+        validation = await self.validate_user_roles(member)
+        if not validation['valid']:
+            return Embed(
+                description=validation['error_message'],
+                color=discord.Color.red(),
+            )
+
+        # Join league (upsert — safe if a stale cache miss happens)
+        await self.bot.db.leaderboard_join(
+            user_id=member.id,
+            username=str(member),
+            learning_spanish=validation['learning_spanish'],
+            learning_english=validation['learning_english'],
+        )
+
+        # Update in-memory cache
+        self._opted_in_users.add(member.id)
+        logger.info("User %s (%s) joined Language League", member, member.id)
+
+        league_name = "Spanish League 🇪🇸" if validation['learning_spanish'] else "English League 🇬🇧"
+        language_name = "Spanish" if validation['learning_spanish'] else "English"
+
+        return Embed(
+            title="✅ Welcome to the Language League!",
+            description=(
+                f"You're now competing in the **{league_name}**!\n\n"
+                f"📝 **How it works:**\n"
+                f"• Only messages in **{language_name}** will count\n"
+                f"• Messages must be at least {RATE_LIMITS.MIN_MESSAGE_LENGTH} characters\n"
+                f"• {RATE_LIMITS.MESSAGE_COOLDOWN_SECONDS // 60}-minute cooldown per channel (no spam!)\n"
+                f"• Max {RATE_LIMITS.DAILY_MESSAGE_CAP} counted messages per day\n"
+                f"• +{SCORING.ACTIVE_DAY_BONUS_MULTIPLIER} bonus points for each active day\n\n"
+                f"Use `/league stats` to track your progress!\n\n"
+                f"Good luck! 🎯"
+            ),
+            color=discord.Color.green(),
+        )
+
     @league_group.command(name="join", description="Join the Language League")
     async def league_join(self, interaction: Interaction):
         """Join the Language League (opt-in)"""
         try:
-            # Validate roles
-            validation = await self.validate_user_roles(interaction.user)
-
-            if not validation['valid']:
-                embed = Embed(
-                    description=validation['error_message'],
-                    color=discord.Color.red()
-                )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
-                return
-
-            # Join league
-            await self.bot.db.leaderboard_join(
-                user_id=interaction.user.id,
-                username=str(interaction.user),
-                learning_spanish=validation['learning_spanish'],
-                learning_english=validation['learning_english']
-            )
-
-            # Build success message
-            league_name = "Spanish League 🇪🇸" if validation['learning_spanish'] else "English League 🇬🇧"
-            language_name = "Spanish" if validation['learning_spanish'] else "English"
-
-            embed = Embed(
-                title="✅ Welcome to the Language League!",
-                description=(
-                    f"You're now competing in the **{league_name}**!\n\n"
-                    f"📝 **How it works:**\n"
-                    f"• Only messages in **{language_name}** will count\n"
-                    f"• Messages must be at least {RATE_LIMITS.MIN_MESSAGE_LENGTH} characters\n"
-                    f"• {RATE_LIMITS.MESSAGE_COOLDOWN_SECONDS // 60}-minute cooldown per channel (no spam!)\n"
-                    f"• Max {RATE_LIMITS.DAILY_MESSAGE_CAP} counted messages per day\n"
-                    f"• +{SCORING.ACTIVE_DAY_BONUS_MULTIPLIER} bonus points for each active day\n\n"
-                    f"Use `/league stats` to track your progress!\n\n"
-                    f"Good luck! 🎯"
-                ),
-                color=discord.Color.green()
-            )
-
+            embed = await self.perform_join(interaction.user)
             await interaction.response.send_message(embed=embed, ephemeral=True)
-            logger.info("User %s (%s) joined Language League", interaction.user, interaction.user.id)
-
-            # Update in-memory cache
-            self._opted_in_users.add(interaction.user.id)
-
         except Exception as e:
             logger.error("Error in league join: %s", e, exc_info=True)
             embed = Embed(
                 title="❌ Error",
                 description="Failed to join Language League. Please try again later.",
-                color=discord.Color.red()
+                color=discord.Color.red(),
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 

@@ -23,6 +23,7 @@ from cogs.league_cog.utils import (
     UNICODE_EMOJI_PATTERN,
     detect_message_language,
 )
+from cogs.league_cog.views import LeagueJoinView
 
 logger = logging.getLogger(__name__)
 
@@ -47,8 +48,43 @@ Earn points by chatting in your target language channels. The more active you ar
 
 Rounds last 2 weeks. Top performers earn a champion role!"""
         await ctx.send(
-            "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole|preview> [target]`"
+            "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole|preview|reminder> [target]`"
         )
+
+    @league_admin.command(name="reminder")
+    @commands.is_owner()
+    async def reminder(self, ctx: commands.Context, channel: discord.TextChannel | None = None):
+        """Post a public “Join the League” reminder embed with a persistent button.
+
+        Usage: `$league reminder [#channel]` — defaults to the current channel.
+        """
+        if ctx.guild is None or ctx.guild.id != LEAGUE_GUILD_ID:
+            return await ctx.send("❌ This command can only be used in the league guild.")
+
+        target = channel or ctx.channel
+        if not isinstance(target, discord.TextChannel) or target.guild.id != LEAGUE_GUILD_ID:
+            return await ctx.send("❌ Target channel must be a text channel in the league guild.")
+
+        embed = Embed(
+            title="🏆 Join the Language League!",
+            description=(
+                "Chat in Spanish or English, earn points, win a champion role.\n\n"
+                "Click below to join. Requires a native role + a learning role."
+            ),
+            color=discord.Color.gold(),
+        )
+
+        try:
+            await target.send(embed=embed, view=LeagueJoinView(self.bot))
+        except discord.Forbidden:
+            return await ctx.send(f"❌ I don't have permission to post in {target.mention}.")
+        except discord.HTTPException:
+            logger.exception("Failed to send league reminder in %s", target.id)
+            return await ctx.send("❌ Failed to send reminder. Check logs.")
+
+        if target.id != ctx.channel.id:
+            await ctx.send(f"✅ Reminder posted in {target.mention}.")
+        logger.info("Admin %s posted league reminder in #%s (%s)", ctx.author, target.name, target.id)
 
     @league_admin.command(name="ban")
     @commands.is_owner()
