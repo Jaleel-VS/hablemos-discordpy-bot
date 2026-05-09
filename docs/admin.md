@@ -42,11 +42,72 @@ Defined directly in `crossword_cog/main.py`. See
 | `$cwstats [days\|all]` | Aggregate crossword stats: games, participants, completion breakdown (completed/timeout/quit/interrupted), hints usage, top solvers. |
 | `$cwwords <hardest\|easiest\|unseen> [lang] [limit]` | Per-word solve-rate analysis. `unseen` requires a language; others filter optionally. |
 
-## Other cogs
+## `$cog` (group, owner-only)
 
-> TODO: enumerate admin commands for:
-> `admin_cog`, `database_cog`, `error_handler_cog`, `interactions_cog`,
-> `relay_cog`, `summary_cog`, `tickets_cog`, `website_manager_cog`.
+Cog management. See [`cogs/admin.md`](./cogs/admin.md) for the full feature.
+
+| Subcommand | Description |
+|-----------|-------------|
+| `$cog list` | List all cogs and their status (loaded, disabled, unloaded, protected). |
+| `$cog enable <name>` | Enable and load a cog. |
+| `$cog disable <name>` | Disable and unload a cog (protected cogs cannot be disabled). |
+| `$cog reload <name>` | Reload a cog. |
+
+## `$metrics` (group, owner-only)
+
+Bot usage metrics. See [`cogs/admin.md`](./cogs/admin.md) for the full feature.
+
+| Subcommand | Description |
+|-----------|-------------|
+| `$metrics [days]` | Command usage summary (default 7 days, max 90). |
+| `$metrics hours [days]` | Usage by hour (UTC), rendered as a bar chart. |
+| `$metrics user @someone [days]` | Top commands for a user. |
+| `$metrics retention` | Show table sizes and retention policy. |
+| `$metrics cleanup` | Manually trigger the daily cleanup task. |
+
+## `$task` (group, manage_guild)
+
+Task management. See [`cogs/tasks.md`](./cogs/tasks.md) for the full feature.
+
+| Subcommand | Description |
+|-----------|-------------|
+| `/task create` | Open a modal to create a task. |
+| `/task list [status] [assignee]` | List tasks (filtered by status/assignee). |
+| `/task board` | Show a kanban-style board with all tasks grouped by status. |
+| `/task delete <task_id>` | Delete a task by ID. |
+
+## `$introtracker` (group, manage_messages)
+
+Introduction cooldown enforcement. See [`cogs/intro.md`](./cogs/intro.md) for the full feature.
+
+| Subcommand | Description |
+|-----------|-------------|
+| `$introtracker add <channel_id>` | Track a channel for intro cooldown enforcement. |
+| `$introtracker remove <channel_id>` | Stop tracking a channel. |
+| `$introtracker list` | List all tracked channels. |
+
+## Owner-only utilities
+
+See [`cogs/admin.md`](./cogs/admin.md), [`cogs/database.md`](./cogs/database.md), [`cogs/relay.md`](./cogs/relay.md), and [`cogs/tickets.md`](./cogs/tickets.md) for full details.
+
+| Command | Description | Permissions |
+|---------|-------------|-------------|
+| `$ask <question>` | Ask Gemini anything. | Owner-only |
+| `$note <content>` / `$addnote` | Add a personal note to the database. | Owner-only |
+| `$shownote <id>` / `$getnote` / `$readnote` | View a note by ID. | Owner-only |
+| `$notes [limit]` / `$mynotes` / `$listnotes` | List your recent notes (default 5, max 20). | Owner-only |
+| `$deletenote <id>` / `$delnote` / `$removenote` | Delete a note you own. | Owner-only |
+| `$parrot [guild_id] [channel_id] <message>` | Relay a message to another guild/channel. | Owner-only |
+| `$fetch [#channel] [count]` | Export messages as markdown (default 50, max 500). In a thread with no args, exports all. | Owner-only |
+| `$fetchrange <start_link> <end_link>` / `$fetchr` | Export messages between two links (max 1000). | Owner-only |
+| `$rawembed <message_link>` | Show raw embed JSON from a message. | Owner-only |
+| `$sync [guild_id]` | Sync slash commands globally or to a guild. | Owner-only |
+| `$mystats` | List all guilds the bot is in, sorted by member count. | Owner-only |
+| `$leave <guild_id>` | Leave a guild by ID. | Owner-only |
+| `$vcenrich <message_link>` | Parse a Rai voice-join log and render with avatars. | `manage_messages` |
+| **VC Enrich** (context menu) | Right-click a Rai voice log, select "VC Enrich" → posts to enrich channel. | `manage_messages` |
+| `$tickets` | Show open tickets across forum channels. | `manage_messages` |
+| `$summarize <start_link> <end_link> [topic]` / `$sum` | Summarize a conversation with Gemini (max 500 messages). | `manage_messages` |
 
 ## Permission model
 
