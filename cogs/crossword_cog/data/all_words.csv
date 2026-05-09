@@ -121,9 +121,7 @@ celaje,skyscape,Aspecto del cielo con nubes coloridas,Appearance of the sky with
 ojo,eye,Órgano de la visión,Organ used for seeing,cuerpo,beginner
 nariz,nose,Parte de la cara para oler,Facial feature used for smelling,cuerpo,beginner
 boca,mouth,Se usa para hablar y comer,Used for speaking and eating,cuerpo,beginner
-oreja,ear,Parte externa del oído,Outer part of the hearing organ,cuerpo,beginner
 mano,hand,Extremidad con cinco dedos,Extremity with five fingers,cuerpo,beginner
-pie,foot,Parte inferior de la pierna,Lower part of the leg,cuerpo,beginner
 dedo,finger,Cada una de las partes de la mano,Each of the parts of the hand,cuerpo,beginner
 brazo,arm,Extremidad superior del cuerpo,Upper limb of the body,cuerpo,beginner
 pierna,leg,Extremidad inferior del cuerpo,Lower limb of the body,cuerpo,beginner
@@ -256,7 +254,6 @@ dorado,golden,Color brillante del oro,Bright color of gold,colores,advanced
 plata,silver,Color brillante del metal precioso,Bright color of the precious metal,colores,advanced
 crema,cream,Color blanco amarillento suave,Soft yellowish white color,colores,advanced
 lila,lilac,Color violeta pálido como la flor,Pale violet color like the flower,colores,advanced
-celeste,sky,Color azul claro como el cielo,Light blue color like the sky,colores,beginner
 turquesa,teal,Color azul verdoso como la piedra,Blue-green color like the stone,colores,advanced
 ocre,ochre,Color terroso entre amarillo y marrón,Earthy color between yellow and brown,colores,advanced
 cobre,copper,Color rojizo como el metal conductor,Reddish color like the conductive metal,colores,advanced
@@ -379,7 +376,6 @@ joven,young,De poca edad o reciente,Of little age or recent,adjetivos,beginner
 sabio,wise,Que posee gran conocimiento y prudencia,That possesses great knowledge and prudence,adjetivos,advanced
 torpe,clumsy,Que carece de habilidad o destreza,That lacks ability or dexterity,adjetivos,advanced
 vago,lazy,Que evita el trabajo o el esfuerzo,That avoids work or effort,adjetivos,advanced
-bravo,brave,Valiente y con mucho coraje,Courageous and with much bravery,adjetivos,beginner
 timido,shy,Que siente vergüenza o inseguridad social,That feels embarrassment or social insecurity,adjetivos,advanced
 amable,kind,Que trata a los demás con cortesía,That treats others with courtesy,adjetivos,beginner
 humilde,humble,Que no presume de sus cualidades,That does not boast of its qualities,adjetivos,advanced
@@ -445,7 +441,6 @@ dentista,dentist,Profesional que cuida los dientes,Professional who takes care o
 granjero,farmer,Persona que cultiva la tierra,Person who cultivates the land,profesiones,beginner
 barbero,barber,Persona que corta el cabello,Person who cuts hair,profesiones,beginner
 atleta,athlete,Persona que practica deportes,Person who practices sports,profesiones,beginner
-poeta,poet,Persona que escribe poesía,Person who writes poetry,profesiones,advanced
 espia,spy,Persona que obtiene información secreta,Person who obtains secret information,profesiones,advanced
 monje,monk,Hombre religioso que vive en un monasterio,Religious man who lives in a monastery,profesiones,advanced
 buzo,diver,Persona que se sumerge en el agua,Person who submerges in water,profesiones,advanced
@@ -457,7 +452,6 @@ valiente,brave,Persona que no tiene miedo al peligro,Person who is not afraid of
 cobarde,coward,Persona que huye del peligro,Person who runs from danger,personalidad,advanced
 honesto,honest,Persona que siempre dice la verdad,Person who always tells the truth,personalidad,beginner
 leal,loyal,Persona fiel a sus amigos y familia,Person faithful to friends and family,personalidad,beginner
-celoso,jealous,Persona que siente envidia o celos,Person who feels envy or jealousy,personalidad,advanced
 astuto,cunning,Persona muy lista y calculadora,Person who is very clever and calculating,personalidad,advanced
 necio,foolish,Persona que actúa sin pensar,Person who acts without thinking,personalidad,advanced
 audaz,bold,Persona que se atreve a todo,Person who dares to do anything,personalidad,advanced
@@ -532,7 +526,6 @@ champan,bubbly,Vino espumoso francés para celebrar,French sparkling wine for ce
 coctel,cocktail,Mezcla creativa de licores y jugos,Creative mix of liquors and juices,bebidas,advanced
 tisana,tisane,Infusión de hierbas sin cafeína para relajarse,Caffeine-free herbal infusion to relax,bebidas,advanced
 mazamorra,porridge,Bebida espesa de maíz morado típica de Perú,Thick purple corn drink typical of Peru,bebidas,advanced
-limon,lemon,Cítrico ácido amarillo para hacer limonada,Sour yellow citrus to make lemonade,frutas,beginner
 pera,pear,Fruta verde y jugosa con forma de campana,Green juicy fruit shaped like a bell,frutas,beginner
 uva,grape,Fruta pequeña que crece en racimos,Small fruit that grows in clusters,frutas,beginner
 fresa,berry,Fruta roja pequeña con semillas por fuera,Small red fruit with seeds on the outside,frutas,beginner
@@ -551,7 +544,6 @@ nispero,loquat,Fruta pequeña anaranjada de sabor agridulce,Small orange fruit w
 mandarina,mandarin,Cítrico pequeño fácil de pelar y muy dulce,Small citrus easy to peel and very sweet,frutas,beginner
 tamarindo,tamarind,Fruta tropical ácida usada en dulces y aguas,Sour tropical fruit used in candies and drinks,frutas,advanced
 tomate,tomato,Fruto rojo esencial en ensaladas y salsas,Red fruit essential in salads and sauces,verduras,beginner
-papa,potato,Tubérculo que se fríe para hacer papas fritas,Tuber that is fried to make french fries,verduras,beginner
 cebolla,onion,Vegetal que te hace llorar al cortarlo,Vegetable that makes you cry when you cut it,verduras,beginner
 ajo,garlic,Bulbo aromático pequeño que da sabor a todo,Small aromatic bulb that flavors everything,verduras,beginner
 maiz,corn,Grano amarillo que se usa para tortillas,Yellow grain used for tortillas,verduras,beginner
@@ -639,7 +631,6 @@ paraguas,umbrella,Objeto plegable para protegerse de lluvia,Foldable object for 
 almohada,pillow,Objeto blando para apoyar la cabeza,Soft object for resting the head,objetos,beginner
 sabana,sheet,Tela grande que cubre la cama,Large fabric that covers the bed,objetos,beginner
 cepillo,brush,Objeto con cerdas para el cabello,Object with bristles for hair,objetos,beginner
-peine,comb,Objeto con dientes para peinar,Object with teeth for combing,objetos,beginner
 esponja,sponge,Material poroso para lavar platos,Porous material for washing dishes,objetos,advanced
 bandeja,tray,Superficie plana para servir alimentos,Flat surface for serving food,objetos,advanced
 florero,vase,Recipiente decorativo para flores,Decorative container for flowers,objetos,advanced
@@ -744,7 +735,6 @@ negocio,business,Actividad comercial con fines de lucro,Commercial activity for 
 ingreso,income,Dinero que entra por trabajo o ventas,Money coming in from work or sales,trabajo,advanced
 archivo,archive,Lugar donde se guardan documentos importantes,Place where important documents are stored,trabajo,advanced
 permiso,permit,Autorización para ausentarse del trabajo,Authorization to be absent from work,trabajo,advanced
-planilla,form,Documento con campos para llenar información,Document with fields to fill in information,trabajo,advanced
 proyecto,project,Plan organizado para lograr un objetivo laboral,Organized plan to achieve a work objective,trabajo,advanced
 gestion,process,Conjunto de acciones para administrar recursos,Set of actions to manage resources,trabajo,advanced
 trato,deal,Acuerdo comercial entre dos partes,Commercial agreement between two parties,trabajo,advanced
@@ -753,7 +743,6 @@ dato,data,Información procesada por una computadora,Information processed by a 
 clave,password,Código secreto para acceder a una cuenta,Secret code to access an account,tecnologia,beginner
 sitio,site,Página o lugar en internet,Page or place on the internet,tecnologia,beginner
 disco,disk,Dispositivo para almacenar datos digitales,Device for storing digital data,tecnologia,beginner
-tecla,key,Botón individual en un teclado,Individual button on a keyboard,tecnologia,beginner
 icono,icon,Imagen pequeña que representa una aplicación,Small image representing an application,tecnologia,beginner
 enlace,link,Conexión que lleva a otra página web,Connection that leads to another web page,tecnologia,beginner
 correo,email,Mensaje electrónico enviado por internet,Electronic message sent over the internet,tecnologia,beginner
@@ -807,7 +796,6 @@ marco,frame,Borde decorativo que rodea un cuadro,Decorative border surrounding a
 trazo,stroke,Línea hecha con un instrumento de dibujo,Line made with a drawing instrument,arte,beginner
 arcilla,clay,Material moldeable usado en escultura,Moldable material used in sculpture,arte,beginner
 tinta,ink,Líquido de color usado para escribir o dibujar,Colored liquid used for writing or drawing,arte,beginner
-oleo,oil,Técnica de pintura con pigmentos y aceite,Painting technique with pigments and oil,arte,beginner
 galeria,gallery,Espacio dedicado a exhibir arte,Space dedicated to exhibiting art,arte,beginner
 boceto,sketch,Dibujo rápido y preliminar de una obra,Quick preliminary drawing of a work,arte,advanced
 grabado,etching,Técnica de impresión sobre metal o madera,Printing technique on metal or wood,arte,advanced
@@ -888,7 +876,6 @@ auto,car,Vehículo de cuatro ruedas con motor,Four-wheeled vehicle with an engin
 tren,train,Vehículo que circula sobre rieles,Vehicle that runs on rails,transporte,beginner
 avion,plane,Aeronave con alas que vuela por el cielo,Winged aircraft that flies through the sky,transporte,beginner
 barco,ship,Embarcación grande que navega por el mar,Large vessel that sails the sea,transporte,beginner
-moto,bike,Vehículo de dos ruedas con motor,Two-wheeled vehicle with an engine,transporte,beginner
 bote,boat,Embarcación pequeña para navegar,Small vessel for sailing,transporte,beginner
 rueda,wheel,Pieza circular que permite rodar,Circular piece that allows rolling,transporte,beginner
 motor,engine,Máquina que genera movimiento,Machine that generates movement,transporte,beginner
@@ -1110,7 +1097,6 @@ danza,dancing,Expresión artística con movimiento,Artistic expression through m
 mascara,mask,Objeto que cubre el rostro,An object that covers the face,cultura,advanced
 carnaval,carnival,Fiesta popular antes de cuaresma,Popular festival before Lent,cultura,advanced
 sarape,serape,Manta colorida mexicana tradicional,Traditional colorful Mexican blanket,cultura,advanced
-corrida,bullfight,Espectáculo taurino tradicional,Traditional bullfighting spectacle,cultura,advanced
 leyenda,legend,Historia tradicional transmitida oralmente,A traditional story passed down orally,cultura,advanced
 copla,verse,Composición poética popular cantada,A popular sung poetic composition,cultura,advanced
 trova,ballad,Canción poética tradicional,Traditional poetic song,cultura,advanced
@@ -1151,7 +1137,6 @@ ramo,bouquet,Conjunto de flores cortadas,Bundle of cut flowers,jardin,beginner
 surco,furrow,Línea cavada en la tierra para sembrar,Line dug in soil for planting,jardin,advanced
 vivero,nursery,Lugar donde se cultivan plantas para vender,Place where plants are grown for sale,jardin,advanced
 dalia,dahlia,Flor grande con muchos pétalos,Large flower with many petals,jardin,advanced
-trepar,climb,Lo que hacen las plantas enredaderas,What climbing plants do,jardin,advanced
 cocinar,cook,Preparar alimentos con calor,To prepare food with heat,cocinar,beginner
 hervir,boil,Calentar líquido hasta hacer burbujas,To heat liquid until it bubbles,cocinar,beginner
 freir,fry,Cocinar en aceite caliente,To cook in hot oil,cocinar,beginner
@@ -1159,12 +1144,10 @@ asar,roast,Cocinar con calor seco en el horno,To cook with dry heat in the oven,
 batir,beat,Mezclar rápidamente con un tenedor,To mix rapidly with a fork,cocinar,beginner
 picar,chop,Cortar en trozos pequeños,To cut into small pieces,cocinar,beginner
 pelar,peel,Quitar la piel de una fruta o verdura,To remove the skin of a fruit or vegetable,cocinar,beginner
-rallar,grate,Desmenuzar con un rallador,To shred with a grater,cocinar,advanced
 mezclar,mix,Combinar ingredientes juntos,To combine ingredients together,cocinar,beginner
 hornear,bake,Cocinar en el horno con calor seco,To cook in the oven with dry heat,cocinar,beginner
 guisar,stew,Cocinar lentamente en salsa,To cook slowly in sauce,cocinar,advanced
 saltear,saute,Cocinar rápido en poco aceite,To cook quickly in little oil,cocinar,advanced
-colar,strain,Separar líquido de sólido con un colador,To separate liquid from solid with a strainer,cocinar,advanced
 marinar,marinate,Dejar reposar en una mezcla de sabores,To let rest in a flavor mixture,cocinar,advanced
 amasar,knead,Trabajar la masa con las manos,To work dough with your hands,cocinar,advanced
 tostar,toast,Dorar con calor seco,To brown with dry heat,cocinar,beginner
@@ -1280,7 +1263,6 @@ trol,troll,Persona que provoca en línea,Person who provokes others online,inter
 nerfear,nerf,Reducir el poder de algo en un juego,To reduce the power of something in a game,internet,advanced
 farmear,farm,Repetir acciones para obtener recursos,To repeat actions to obtain resources,internet,advanced
 bugear,bug,Causar un error en un programa o juego,To cause an error in a program or game,internet,advanced
-rankear,rank,Subir de posición en clasificaciones,To climb in rankings,internet,advanced
 banear,ban,Prohibir acceso a un usuario,To prohibit access to a user,internet,advanced
 lootear,loot,Recoger objetos de enemigos derrotados,To collect items from defeated enemies,internet,advanced
 campear,camp,Quedarse quieto esperando enemigos,To stay still waiting for enemies,internet,advanced
@@ -1424,7 +1406,6 @@ cabuare,owl,Ave nocturna con grandes ojos y cabeza giratoria,Nocturnal bird with
 azulejo,bluebird,Ave pequeña con plumaje azul brillante y canto melodioso,Small bird with bright blue feathers and melodic song,aves,advanced
 fragata,frigate bird,Ave marina con alas largas y vuelo majestuoso,Seabird with long wings and majestic flight,aves,advanced
 zumo,juice,Líquido natural de frutas exprimidas,Fresh pressed fruit liquid,bebidas,beginner
-te,tea,Infusión caliente con hojas,Hot drink made from leaves,bebidas,beginner
 cidra,cider,Bebida fermentada de manzana,Fermented apple drink,bebidas,beginner
 wiski,whiskey,Licor fuerte de cereales,Strong grain alcohol,bebidas,beginner
 mosto,grape must,Jugo de uva antes de fermentar,Unfermented grape juice,bebidas,beginner
@@ -1473,7 +1454,6 @@ biomasa,biomass,Cantidad total de materia orgánica en un sistema,Total amount o
 radiación,radiation,Emisión de energía en forma de ondas o partículas,Energy emission in form of waves or particles,ciencia,advanced
 edificio,building,Construcción grande con muchas ventanas,Large structure with multiple floors,ciudad,beginner
 tunel,tunnel,Paso subterráneo bajo tierra o montaña,Underground passage through mountain or ground,ciudad,beginner
-parada,stop,Lugar donde se detienen los transportes,Place where public transport stops,ciudad,beginner
 estatua,statue,Figura de persona hecha en piedra,Stone sculpture of a person,ciudad,beginner
 centro,center,Punto medio o zona principal de algo,Middle or main area of a place,ciudad,beginner
 alcalde,mayor,Líder político que gobierna una ciudad,Top municipal authority elected by citizens,ciudad,advanced
@@ -1791,13 +1771,11 @@ manejar,to handle,Controlar una situación con habilidad,Skillfully controlling 
 chancho,pig,Animal sucio o persona poco limpia,Dirty animal or untidy person,modismos,advanced
 güevo,egg,Palabra coloquial con varios significados,Colloquial word with multiple meanings,modismos,advanced
 perico,parrot,Ave parlante o referencia a la cocaína,Talking bird or cocaine reference,modismos,advanced
-quilombo,mess,Situación complicada o desordenada,Complicated or messy situation,modismos,advanced
 cachar,to understand,Comprender algo de manera rápida,To quickly comprehend something,modismos,advanced
 cuesco,pit,Núcleo o parte central de algo,Core or central part of something,modismos,advanced
 tumbao,groove,Ritmo musical especial en salsa,Special musical rhythm in salsa,modismos,advanced
 melodia,melody,Secuencia de notas que forma una línea musical,Sequence of musical notes that creates a tune,musica,beginner
 notas,notes,Símbolos que representan sonidos musicales,Symbols that represent musical sounds,musica,beginner
-pop,pop music,Género musical moderno y popular,Modern and popular music genre,musica,beginner
 rock,rock music,Estilo musical con guitarra eléctrica,Music style with electric guitar,musica,beginner
 solfeo,sight-reading,Técnica para leer y cantar partituras musicales,Technique for reading and singing musical scores,musica,advanced
 armonia,harmony,Combinación simultánea de sonidos que produce un efecto musical,Simultaneous combination of sounds producing a musical effect,musica,advanced
@@ -1878,7 +1856,6 @@ dios,god,Ser supremo en quien creen los creyentes,Supreme being worshipped by be
 rezar,to pray,Hablar con Dios en silencio o en voz alta,Communicate with God silently or aloud,religion,beginner
 fe,faith,Creencia profunda en algo espiritual,Deep belief in something spiritual,religion,beginner
 oracion,prayer,Palabras dirigidas a Dios con esperanza,Words directed to God with hope,religion,beginner
-relig,religious,Persona que cree y practica una religión,Person who believes and practices a religion,religion,beginner
 capill,chapel,Pequeño lugar de culto dentro de una iglesia,Small place of worship inside a church,religion,beginner
 santos,saints,Personas muy buenas reconocidas por la iglesia,Very good people recognized by the church,religion,beginner
 creer,to believe,Tener fe y confianza en algo espiritual,Have faith and trust in something spiritual,religion,beginner
@@ -1925,15 +1902,11 @@ pantalla,screen,Superficie donde se muestran imágenes en un dispositivo,Surface
 teclado,keyboard,Instrumento para escribir en computadoras y teléfonos,Tool for typing on computers and phones,tecnologia,beginner
 bateria,battery,Fuente de energía para dispositivos electrónicos,Power source for electronic devices,tecnologia,beginner
 camara,camera,Aparato para tomar fotos y videos,Device for taking photos and videos,tecnologia,beginner
-chico,small,Persona o cosa de tamaño pequeño,Small person or thing,apariencia,beginner
-peptido,peptide,Cadena corta de aminoácidos unidos por enlaces peptídicos,Short chain of amino acids linked by peptide bonds,ciencia,advanced
 verduras,vegetables,Productos agrícolas frescos cultivados en huerta,Fresh agricultural products grown in garden,comida,advanced
 bebidas,drinks,Líquidos preparados para consumir con o sin alcohol,Liquid preparations to drink with or without alcohol,comida,advanced
-novenario,nine-day mourning,Periodo de nueve días de duelo tras un fallecimiento,Nine-day mourning period after someone's death,cultura,advanced
 astronau,astronaut,Persona que viaja al espacio exterior,Person who travels in outer space,espacio,beginner
 homoptro,homopteran,Insectos con alas uniformes y aparato bucal picador,Insect group with uniform wings and piercing mouthparts,insectos,advanced
 detergir,to cleanse,Acción de limpiar profundamente algo sucio,Action of thoroughly cleaning something,limpieza,advanced
-chorizo,sausage,Embutido tradicional con múltiples significados,Traditional sausage with multiple meanings,modismos,advanced
 cuidar,care,Atender y proteger la salud de alguien,Provide medical attention and protection,medicina,beginner
 toser,cough,Expulsar aire con fuerza desde los pulmones,Forcefully expel air from lungs,medicina,beginner
 curar,heal,Recuperar la salud después de una enfermedad,Recover from illness or injury,medicina,beginner
@@ -1954,16 +1927,6 @@ hepatico,hepatic,Relacionado con el hígado,Concerning the liver,medicina,advanc
 genetico,genetic,Vinculado a la herencia y los genes,Related to heredity and genes,medicina,advanced
 parasito,parasite,Organismo que vive a expensas de otro,Organism living at the expense of another,medicina,advanced
 alergeno,allergen,Sustancia que provoca reacción alérgica,Substance triggering allergic reaction,medicina,advanced
-reposo,rest,Descanso para recuperarse,Rest to recover,salud,beginner
-oliva,olive,Color verde oscuro como la aceituna,Dark green color like the olive fruit,colores,advanced
-lino,linen,Tela fresca hecha de la planta del lino,Cool fabric made from the flax plant,materiales,beginner
-tedio,boredom,Aburrimiento profundo y persistente,Deep and persistent boredom,emociones,advanced
-dormir,sleep,Descansar en estado de sueño,To rest in a state of sleep,verbos,beginner
-bajar,descend,Ir hacia abajo o descender,To go downward or descend,verbos,beginner
-flaco,thin,Persona muy delgada,Very thin person,apariencia,beginner
-canoso,gray,Persona con cabello blanco o gris,Person with white or gray hair,apariencia,advanced
-toronja,citrus,Cítrico grande y amargo de color rosado,Large bitter citrus of pink color,frutas,advanced
-palmito,palm,Corazón tierno de la palmera usado en ensaladas,Tender heart of the palm tree used in salads,verduras,advanced
 ley,law,Regla oficial que todos deben seguir,Official rule that governs society,leyes,beginner
 multa,fine,Pago que se hace por romper una regla,Monetary penalty for breaking a rule,leyes,beginner
 delito,crime,Acción contra las normas que merece castigo,Illegal action that deserves punishment,leyes,beginner
@@ -3001,22 +2964,7 @@ clapeta,clapperboard,Herramienta para sincronizar audio y video durante grabaci�
 horizonte,horizon,Línea visual donde parece unirse el cielo con la Tierra,Visual line where sky appears to meet Earth,astronomia,advanced
 fotosfera,photosphere,Capa visible de una estrella que emite luz,Visible layer of a star emitting light,astronomia,advanced
 musica,music,Materia donde aprendes ritmo y melodía,Subject where you learn rhythm and melody,escuela,beginner
-celular,phone,Teléfono móvil con funciones inteligentes,Mobile phone with smart features,tecnologia,beginner
-dorsal,number,Número en la camiseta de un jugador,Number on a player's jersey,deportes,advanced
-oruga,larva,Larva que se convierte en mariposa,Larva that becomes a butterfly,insectos,beginner
-estrella,starfish,Criatura marina con forma de estrella,Sea creature shaped like a star,marinos,beginner
-desvelo,worry,Preocupación que no deja descansar,Worry that doesn't let you rest,sentimientos,advanced
-apego,bond,Vínculo emocional fuerte con algo o alguien,Strong emotional bond with something or someone,sentimientos,advanced
-penon,rock,Roca grande que sobresale del terreno,A large prominent rock formation,geografia,advanced
 comida,food,Alimento que se consume,Nourishment that is eaten,cultura,beginner
-regar,water,Dar agua a las plantas,To give water to plants,jardin,beginner
-aspirar,vacuum,Limpiar con una aspiradora,To clean with a vacuum cleaner,limpieza,beginner
-currar,work,Trabajar duro en el empleo,To work hard at a job,jerga,advanced
-finde,weekend,Fin de semana abreviado,Abbreviated weekend,jerga,advanced
-bronca,fight,Pelea o discusión acalorada,Fight or heated argument,jerga,advanced
-chollo,bargain,Oferta increíble o ganga,Incredible deal or bargain,jerga,advanced
-vuelta,turn,Giro en expresiones de cambio,Turn in expressions about change,modismos,advanced
-hostear,host,Alojar o ser anfitrión de un servidor,To host or run a server,internet,advanced
 ecliptica,ecliptic,Trayectoria aparente del Sol en la esfera celeste durante un año,Apparent path of the Sun across the celestial sphere,astronomia,advanced
 eliptica,elliptical,Trayectoria curva que describe el movimiento orbital,Oval-shaped path of celestial body movement,astronomia,advanced
 teluria,telluric,Relacionado con los procesos y características de la Tierra,Pertaining to Earth's geological or terrestrial properties,astronomia,advanced
