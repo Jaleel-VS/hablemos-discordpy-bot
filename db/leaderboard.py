@@ -71,6 +71,47 @@ class LeaderboardMixin(DatabaseMixin):
             limit,
         )
 
+    async def get_top_activity_channels(self, days: int = 30, limit: int = 15) -> list:
+        """Return channels with the most counted league messages over a window.
+
+        Banned users and already-excluded channels are left in the raw counts
+        so the caller can still see, e.g., a recently-excluded channel that
+        was the top contributor before exclusion. Callers may filter further.
+        """
+        return await self._fetch(
+            '''
+            SELECT channel_id,
+                   COUNT(*)                 AS msg_count,
+                   COUNT(DISTINCT user_id)  AS unique_users,
+                   MAX(created_at)          AS last_activity
+            FROM leaderboard_activity
+            WHERE created_at >= NOW() - MAKE_INTERVAL(days => $1)
+              AND channel_id IS NOT NULL
+            GROUP BY channel_id
+            ORDER BY msg_count DESC
+            LIMIT $2
+            ''',
+            days, limit,
+        )
+
+    async def get_activity_heatmap(self, days: int = 30) -> list:
+        """Return (dow, hour, count) rows for a day-of-week × hour heatmap.
+
+        ``dow`` is Postgres ``EXTRACT(DOW FROM ...)`` — 0=Sunday … 6=Saturday.
+        Times are in the database session timezone (UTC on Railway).
+        """
+        return await self._fetch(
+            '''
+            SELECT EXTRACT(DOW  FROM created_at)::int AS dow,
+                   EXTRACT(HOUR FROM created_at)::int AS hour,
+                   COUNT(*)                           AS cnt
+            FROM leaderboard_activity
+            WHERE created_at >= NOW() - MAKE_INTERVAL(days => $1)
+            GROUP BY dow, hour
+            ''',
+            days,
+        )
+
     async def is_user_banned(self, user_id: int) -> bool:
         """Check if user is banned from leaderboard"""
         row = await self._fetchrow(

@@ -48,8 +48,101 @@ Earn points by chatting in your target language channels. The more active you ar
 
 Rounds last 2 weeks. Top performers earn a champion role!"""
         await ctx.send(
-            "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole|preview|reminder|recent> [target]`"
+            "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole|preview|reminder|recent|topchannels|heatmap> [target]`"
         )
+
+    @league_admin.command(name="topchannels", aliases=["topchans"])
+    @commands.is_owner()
+    async def topchannels(self, ctx: commands.Context, days: int = 30):
+        """Show channels that produced the most counted league messages.
+
+        Usage: `$league topchannels [days]` (default 30, 1–365)
+        """
+        days = max(1, min(days, 365))
+        rows = await self.bot.db.get_top_activity_channels(days=days, limit=15)
+
+        if not rows:
+            return await ctx.send(f"ℹ️ No counted activity in the last {days} day(s).")
+
+        excluded = {r['channel_id'] for r in await self.bot.db.get_excluded_channels()}
+        total = sum(r['msg_count'] for r in rows)
+
+        lines: list[str] = []
+        for i, row in enumerate(rows, 1):
+            share = row['msg_count'] / total * 100 if total else 0
+            tag = " 🚫" if row['channel_id'] in excluded else ""
+            lines.append(
+                f"**{i}.** <#{row['channel_id']}>{tag} — "
+                f"{row['msg_count']:,} msgs · {row['unique_users']} users · {share:.1f}%"
+            )
+
+        embed = Embed(
+            title=f"📊 Top League Channels (last {days}d)",
+            description="\n".join(lines),
+            color=discord.Color.blue(),
+        )
+        embed.set_footer(text="🚫 = currently excluded from tracking")
+        await ctx.send(embed=embed, allowed_mentions=discord.AllowedMentions.none())
+        logger.info("Admin %s viewed topchannels (%dd, %d rows)", ctx.author, days, len(rows))
+
+    @league_admin.command(name="heatmap", aliases=["hm"])
+    @commands.is_owner()
+    async def heatmap(self, ctx: commands.Context, days: int = 30):
+        """Show a 7×24 activity heatmap (day-of-week × hour) over a window.
+
+        Usage: `$league heatmap [days]` (default 30, 1–365)
+        """
+        days = max(1, min(days, 365))
+        rows = await self.bot.db.get_activity_heatmap(days=days)
+
+        # Build 7x24 grid. Postgres DOW: 0=Sunday … 6=Saturday.
+        # Re-order rows so Monday appears first (more natural for humans).
+        grid = [[0] * 24 for _ in range(7)]
+        for r in rows:
+            grid[r['dow']][r['hour']] = r['cnt']
+
+        peak = max((max(row) for row in grid), default=0)
+        if peak == 0:
+            return await ctx.send(f"ℹ️ No counted activity in the last {days} day(s).")
+
+        shades = "·░▒▓█"  # 0, ≤25%, ≤50%, ≤75%, >75%
+
+        def cell(n: int) -> str:
+            if n == 0:
+                return shades[0]
+            ratio = n / peak
+            if ratio <= 0.25:
+                return shades[1]
+            if ratio <= 0.50:
+                return shades[2]
+            if ratio <= 0.75:
+                return shades[3]
+            return shades[4]
+
+        # Mon, Tue, Wed, Thu, Fri, Sat, Sun (remap from Postgres DOW 0..6)
+        dow_order = [1, 2, 3, 4, 5, 6, 0]
+        dow_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+        header = "     " + " ".join(f"{h:02d}"[0] for h in range(24))
+        header2 = "     " + " ".join(f"{h:02d}"[1] for h in range(24))
+
+        body_lines = []
+        for label, dow in zip(dow_labels, dow_order, strict=True):
+            row_cells = " ".join(cell(grid[dow][h]) for h in range(24))
+            body_lines.append(f"{label}  {row_cells}")
+
+        legend = f"\nLegend: `{shades[0]}` 0  `{shades[1]}` low  `{shades[2]}` med  `{shades[3]}` high  `{shades[4]}` peak ({peak:,})"
+
+        description = "```\n" + "\n".join([header, header2, *body_lines]) + "\n```" + legend
+
+        embed = Embed(
+            title=f"🔥 League Activity Heatmap (last {days}d)",
+            description=description,
+            color=discord.Color.blue(),
+        )
+        embed.set_footer(text="Times are UTC · hours across, weekdays down")
+        await ctx.send(embed=embed)
+        logger.info("Admin %s viewed heatmap (%dd, peak=%d)", ctx.author, days, peak)
 
     @league_admin.command(name="recent", aliases=["joiners", "joins"])
     @commands.is_owner()

@@ -531,6 +531,85 @@ class CrosswordCog(BaseCog):
         self._timeout_override = seconds
         await ctx.send(f"⏱️ Crossword timeout set to **{seconds}s**.")
 
+    @commands.command(name="cwstats")
+    @commands.is_owner()
+    async def cwstats(self, ctx: commands.Context, scope: str = "30") -> None:
+        """Owner-only: show aggregate crossword stats.
+
+        Usage:
+          `$cwstats`        — last 30 days
+          `$cwstats <N>`    — last N days (1–365)
+          `$cwstats all`    — lifetime
+        """
+        if scope.lower() in ("all", "lifetime", "∞"):
+            days: int | None = None
+            window_label = "lifetime"
+        else:
+            try:
+                days = max(1, min(int(scope), 365))
+            except ValueError:
+                return await ctx.send("❌ Usage: `$cwstats [days|all]`")
+            window_label = f"last {days}d"
+
+        stats = await self.bot.db.crossword_get_stats(days=days)
+        totals = stats["totals"]
+        plays = int(totals.get("plays") or 0)
+
+        if plays == 0:
+            return await ctx.send(f"ℹ️ No crossword plays recorded ({window_label}).")
+
+        breakdown = stats["breakdown"]
+        top = await self.bot.db.crossword_get_top_solvers(days=days, limit=10)
+
+        full = int(totals.get("full_completions") or 0)
+        completion_rate = (full / plays * 100) if plays else 0.0
+        avg_ratio = float(totals.get("avg_completion_ratio") or 0) * 100
+        avg_secs = float(totals.get("avg_completion_seconds") or 0)
+        avg_min, avg_sec = divmod(int(avg_secs), 60)
+
+        embed = Embed(
+            title=f"🧩 Crossword Stats ({window_label})",
+            color=discord.Color.blurple(),
+        )
+        embed.add_field(
+            name="📊 Totals",
+            value=(
+                f"**Plays:** {plays:,} (participations)\n"
+                f"**Unique players:** {int(totals.get('unique_players') or 0):,}\n"
+                f"**Words solved:** {int(totals.get('total_words_solved') or 0):,}\n"
+                f"**Avg completion:** {avg_ratio:.1f}%\n"
+                f"**Full completions:** {full:,} ({completion_rate:.1f}%)\n"
+                f"**Avg time (full):** {avg_min}m {avg_sec:02d}s"
+            ),
+            inline=False,
+        )
+
+        if breakdown:
+            lines = []
+            for r in breakdown:
+                diff_cfg = DIFFICULTIES.get(r["difficulty"])
+                diff_label = diff_cfg.label if diff_cfg else r["difficulty"]
+                lang_label = LANG_LABELS.get(r["language"], r["language"])
+                lines.append(
+                    f"• {diff_label} · {lang_label} — "
+                    f"{int(r['plays']):,} plays, {int(r['unique_players']):,} players"
+                )
+            embed.add_field(name="🔹 Breakdown", value="\n".join(lines), inline=False)
+
+        if top:
+            lines = [
+                f"**{i}.** {r['display_name']} — {int(r['words_solved']):,} words · "
+                f"{int(r['plays'])} plays · {int(r['full_completions'])} completed"
+                for i, r in enumerate(top, 1)
+            ]
+            embed.add_field(name="🏅 Top Solvers", value="\n".join(lines), inline=False)
+
+        await ctx.send(embed=embed, allowed_mentions=discord.AllowedMentions.none())
+        logger.info(
+            "Admin %s viewed cwstats (%s, %d plays)",
+            ctx.author, window_label, plays,
+        )
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
         """Listen for answers in channels with active games."""
