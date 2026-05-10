@@ -705,15 +705,17 @@ class LeagueCog(BaseCog):
             if not self.check_message_cooldown(message.author.id, message.channel.id):
                 return  # Too soon, don't count
 
+            # Language detection: Only count messages in the language being learned.
+            # Done before the daily-cap DB query because it's free and rejects the
+            # majority of messages (short, emoji-only, mixed, undetectable).
+            detected_lang = detect_message_language(message.content)
+            if not detected_lang:
+                return  # Could not detect language or message too short
+
             # Anti-spam: Check daily cap
             daily_count = await self.bot.db.get_daily_message_count(message.author.id)
             if daily_count >= RATE_LIMITS.DAILY_MESSAGE_CAP:
                 return  # Hit daily cap
-
-            # Language detection: Only count messages in the language being learned
-            detected_lang = detect_message_language(message.content)
-            if not detected_lang:
-                return  # Could not detect language or message too short
 
             # Get what language(s) the user is learning
             learning = await self.bot.db.get_user_learning_languages(message.author.id)
