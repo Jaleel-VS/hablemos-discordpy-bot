@@ -17,7 +17,7 @@ Key mechanics:
 
 - **Language detection** via `langdetect`. Only messages in the target
   language count (no code-switching or off-topic chatter).
-- **Anti-spam**: 60-second cooldown per channel, 100-message daily cap,
+- **Anti-spam**: 30-second cooldown per channel, 200-message daily cap,
   10-character minimum length.
 - **Scoring**: 1 point per message + 5 bonus points per active day.
   Beginner channels (configured via `LEAGUE_BEGINNER_CHANNEL_IDS`)
@@ -90,8 +90,8 @@ Every message in the league guild triggers a scoring check:
    - Author is a member (not a bot, webhook, etc.)?
 2. **Quality checks**:
    - Message ≥10 characters (after stripping custom/Unicode emoji)?
-   - User hasn't hit the 100-message daily cap?
-   - 60-second channel cooldown elapsed?
+   - User hasn't hit the 200-message daily cap?
+   - 30-second channel cooldown elapsed?
 3. **Language detection** (`langdetect`):
    - Detects language of the message body.
    - Matches user's learning language?
@@ -156,7 +156,7 @@ See [`../database.md`](../database.md) for query methods (all in
 | `ROLES.*` | `cogs/league_cog/config.py` | (baked-in) | Native/learner role IDs (used for validation). |
 | `SCORING.*` | `cogs/league_cog/config.py` | 1 pt/msg, 5 pt/day | Scoring multipliers. |
 | `BEGINNER_CHANNEL_IDS` | `cogs/league_cog/config.py` (override via `LEAGUE_BEGINNER_CHANNEL_IDS`) | 3 channels | Channels awarded `BEGINNER_CHANNEL_MULTIPLIER` (currently 1.25×, rounded up). |
-| `RATE_LIMITS.*` | `cogs/league_cog/config.py` | 60s cooldown, 100 msg/day cap | Anti-spam thresholds. |
+| `RATE_LIMITS.*` | `cogs/league_cog/config.py` | 30s cooldown, 200 msg/day cap | Anti-spam thresholds. |
 | `ROUNDS.*` | `cogs/league_cog/config.py` | 7-day rounds, 1-min checks | Round duration and check frequency. |
 | `LANGUAGE.LANGDETECT_SEED` | `cogs/league_cog/config.py` | `0` | Seed for consistent `langdetect` results. |
 
@@ -177,7 +177,7 @@ All IDs accept environment variable overrides via helpers from
   use `TIMESTAMPTZ` — this table predates that convention. See
   [`../playbook.md`](../playbook.md) for migration guidance if the drift
   becomes problematic.
-- **Daily cap reset**: The 100-message daily cap resets at midnight UTC
+- **Daily cap reset**: The 200-message daily cap resets at midnight UTC
   (keyed on `DATE(created_at)`). Users in other timezones may see the
   cap reset at odd hours.
 - **Role cooldown**: Users who win in round N cannot earn the champion

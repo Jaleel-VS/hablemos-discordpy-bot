@@ -8,7 +8,7 @@ Built with discord.py 2.x, PostgreSQL (asyncpg), and Google Gemini. Deployed on 
 
 - **AI Conversations** — Practice with realistic dialogues powered by Google Gemini
 - **AI Ask** — Owner-only freeform Gemini Q&A with paginated, public/private responses
-- **Language League** — Competitive leaderboard system with biweekly rounds and consistency rewards
+- **Language League** — Competitive leaderboard system with weekly rounds and consistency rewards
 - **Vocabulary Tools** — Personal vocab notes with search, export, and SRS practice
 - **Interactive Games** — Conjugation practice, Hangman, conversation starters
 - **Moderation Tools** — AI-powered conversation summaries, introduction tracking, ticket overview
@@ -82,7 +82,7 @@ Clozemaster-style spaced repetition using your saved vocab notes.
 
 ### Language League
 
-Opt-in competitive system that tracks language practice activity across biweekly rounds.
+Opt-in competitive system that tracks language practice activity across weekly rounds.
 
 | Command | Description |
 |---------|-------------|

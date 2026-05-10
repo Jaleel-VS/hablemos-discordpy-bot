@@ -49,7 +49,7 @@ Adding a new domain:
 - `leaderboard_activity` — one row per counted message.
 - `leaderboard_excluded_channels` — channels ignored by activity
   tracking.
-- `leaderboard_rounds` — biweekly round history.
+- `leaderboard_rounds` — weekly round history.
 - `leaderboard_round_recipients` — per-round role recipients (for
   cooldown logic).
 

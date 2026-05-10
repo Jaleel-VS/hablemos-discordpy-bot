@@ -100,10 +100,10 @@ class RateLimitConfig:
     """Configuration for anti-spam and rate limiting."""
 
     # Cooldown between counted messages in the same channel (seconds)
-    MESSAGE_COOLDOWN_SECONDS: int = 60  # 1 minute
+    MESSAGE_COOLDOWN_SECONDS: int = 30  # 30 seconds
 
     # Maximum messages that count toward score per day
-    DAILY_MESSAGE_CAP: int = 100
+    DAILY_MESSAGE_CAP: int = 200
 
     # Minimum message length to count (characters)
     MIN_MESSAGE_LENGTH: int = 10

@@ -336,7 +336,7 @@ class LeagueCog(BaseCog):
                 f"📝 **How it works:**\n"
                 f"• Only messages in **{language_name}** will count\n"
                 f"• Messages must be at least {RATE_LIMITS.MIN_MESSAGE_LENGTH} characters\n"
-                f"• {RATE_LIMITS.MESSAGE_COOLDOWN_SECONDS // 60}-minute cooldown per channel (no spam!)\n"
+                f"• {RATE_LIMITS.MESSAGE_COOLDOWN_SECONDS}-second cooldown per channel (no spam!)\n"
                 f"• Max {RATE_LIMITS.DAILY_MESSAGE_CAP} counted messages per day\n"
                 f"• +{SCORING.ACTIVE_DAY_BONUS_MULTIPLIER} bonus points for each active day\n\n"
                 f"Use `/league stats` to track your progress!\n\n"

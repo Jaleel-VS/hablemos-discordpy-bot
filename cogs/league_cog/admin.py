@@ -47,7 +47,7 @@ Earn points by chatting in your target language channels. The more active you ar
 **Your stats:** `/league stats`
 **Leave:** `/league leave`
 
-Rounds last 2 weeks. Top performers earn a champion role!"""
+Rounds last 1 week. Top performers earn a champion role!"""
         await ctx.send(
             "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole|preview|reminder|recent|topchannels|heatmap> [target]`"
         )
