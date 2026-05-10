@@ -88,18 +88,24 @@ Every message in the league guild triggers a scoring check:
    - User opted in?
    - User not banned?
    - Author is a member (not a bot, webhook, etc.)?
-2. **Quality checks**:
-   - Message ≥10 characters (after stripping custom/Unicode emoji)?
-   - User hasn't hit the 200-message daily cap?
-   - 30-second channel cooldown elapsed?
-3. **Language detection** (`langdetect`):
-   - Detects language of the message body.
-   - Matches user's learning language?
+2. **Cooldown & language**:
+   - 30-second channel cooldown elapsed? (in-memory)
+   - Language detection (`langdetect`, CPU-local) succeeds and matches
+     the user's learning language? The learning-language map is
+     cached in memory, refreshed on join/leave.
+3. **Daily cap**:
+   - User hasn't hit the 200-message daily cap? (DB `COUNT(*)`, the
+     only read query on the hot path.)
 4. **Record activity**: compute points via
    `scoring.points_for_message(channel_id)` (applies the
    beginner-channel multiplier when relevant), insert row into
-   `leaderboard_activity`, increment in-memory cooldown cache,
-   invalidate leaderboard cache.
+   `leaderboard_activity` (using the cached `current_round`, refreshed
+   every minute by `check_round_end`), update in-memory cooldown
+   cache, invalidate leaderboard cache.
+
+Language detection runs *before* the daily-cap DB query because it's
+free and rejects the majority of messages (short, emoji-only, mixed,
+undetectable), which saves a query per rejected message.
 
 Errors are logged server-side; the user never sees a failure message
 (silent success/skip).

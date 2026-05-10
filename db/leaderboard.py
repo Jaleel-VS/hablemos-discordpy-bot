@@ -120,9 +120,15 @@ class LeaderboardMixin(DatabaseMixin):
         return row['banned'] if row else False
 
     async def get_all_opted_in_users(self) -> list:
-        """Get all opted-in user IDs for cache warming"""
+        """Get all opted-in users (with learning flags) for cache warming.
+
+        Returns ``user_id``, ``learning_spanish``, and ``learning_english``
+        so callers can warm both the opt-in set and the per-user learning
+        map from a single query.
+        """
         return await self._fetch(
-            'SELECT user_id FROM leaderboard_users WHERE opted_in = TRUE'
+            'SELECT user_id, learning_spanish, learning_english '
+            'FROM leaderboard_users WHERE opted_in = TRUE'
         )
 
     async def get_all_banned_users(self) -> list:

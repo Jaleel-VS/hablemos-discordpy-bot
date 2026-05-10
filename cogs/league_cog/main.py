@@ -80,6 +80,13 @@ class LeagueCog(BaseCog):
         self._opted_in_users: set[int] = set()
         self._banned_users: set[int] = set()
         self._excluded_channels: set[int] = set()
+        # Per-user learning languages: {user_id: {'learning_spanish': bool, 'learning_english': bool}}
+        # Refreshed on join/leave. Stale on Discord role changes until user re-runs /league join
+        # (same staleness as the DB row, so no new bug surface).
+        self._user_learning: dict[int, dict[str, bool]] = {}
+        # Current active round, refreshed by the check_round_end task every minute
+        # and immediately after a round transition. None until cog_load finishes.
+        self._current_round: dict | None = None
         # Register the persistent join-button view once so clicks keep working
         # across restarts (stable custom_id + timeout=None). Guarded so cog
         # reloads don't stack duplicate views in ``bot.persistent_views``.
@@ -93,10 +100,17 @@ class LeagueCog(BaseCog):
         await self._warm_caches()
 
     async def _warm_caches(self):
-        """Load opt-in, ban, and excluded channel data into memory"""
+        """Load opt-in, ban, excluded channel, learning-language, and current-round data into memory"""
         try:
             opted = await self.bot.db.get_all_opted_in_users()
             self._opted_in_users = {r['user_id'] for r in opted}
+            self._user_learning = {
+                r['user_id']: {
+                    'learning_spanish': r['learning_spanish'],
+                    'learning_english': r['learning_english'],
+                }
+                for r in opted
+            }
 
             banned = await self.bot.db.get_all_banned_users()
             self._banned_users = {r['user_id'] for r in banned}
@@ -104,9 +118,14 @@ class LeagueCog(BaseCog):
             excluded = await self.bot.db.get_excluded_channels()
             self._excluded_channels = {r['channel_id'] for r in excluded}
 
+            self._current_round = await self.bot.db.get_current_round()
+
             logger.info(
-                "League caches warmed: %s opted-in, %s banned, %s excluded channels",
-                len(self._opted_in_users), len(self._banned_users), len(self._excluded_channels),
+                "League caches warmed: %s opted-in, %s banned, %s excluded channels, round=%s",
+                len(self._opted_in_users),
+                len(self._banned_users),
+                len(self._excluded_channels),
+                self._current_round['round_id'] if self._current_round else None,
             )
         except Exception as e:
             logger.error("Failed to warm league caches: %s", e, exc_info=True)
@@ -120,6 +139,7 @@ class LeagueCog(BaseCog):
         """Scheduled task to check if current round has ended."""
         try:
             current_round = await self.bot.db.get_current_round()
+            self._current_round = current_round
             if not current_round:
                 return
 
@@ -131,6 +151,9 @@ class LeagueCog(BaseCog):
             if now >= end_date:
                 logger.info("Round %s has ended, processing...", current_round['round_id'])
                 await self._process_round_end(current_round)
+                # Round-end creates a new round; refresh the cache immediately
+                # so on_message picks it up without waiting for the next tick.
+                self._current_round = await self.bot.db.get_current_round()
 
             self.cleanup_old_cooldowns()
         except Exception as e:
@@ -289,7 +312,7 @@ class LeagueCog(BaseCog):
 
         # Friendly short-circuit for users already in the league.
         if member.id in self._opted_in_users:
-            learning = await self.bot.db.get_user_learning_languages(member.id)
+            learning = self._user_learning.get(member.id, {})
             if learning.get('learning_spanish'):
                 league_name = "Spanish League 🇪🇸"
             elif learning.get('learning_english'):
@@ -324,6 +347,10 @@ class LeagueCog(BaseCog):
 
         # Update in-memory cache
         self._opted_in_users.add(member.id)
+        self._user_learning[member.id] = {
+            'learning_spanish': validation['learning_spanish'],
+            'learning_english': validation['learning_english'],
+        }
         logger.info("User %s (%s) joined Language League", member, member.id)
 
         league_name = "Spanish League 🇪🇸" if validation['learning_spanish'] else "English League 🇬🇧"
@@ -388,6 +415,7 @@ class LeagueCog(BaseCog):
 
             # Update in-memory cache
             self._opted_in_users.discard(interaction.user.id)
+            self._user_learning.pop(interaction.user.id, None)
 
         except Exception as e:
             logger.error("Error in league leave: %s", e, exc_info=True)
@@ -717,8 +745,10 @@ class LeagueCog(BaseCog):
             if daily_count >= RATE_LIMITS.DAILY_MESSAGE_CAP:
                 return  # Hit daily cap
 
-            # Get what language(s) the user is learning
-            learning = await self.bot.db.get_user_learning_languages(message.author.id)
+            # Get what language(s) the user is learning (from in-memory cache)
+            learning = self._user_learning.get(message.author.id)
+            if not learning:
+                return  # Not in cache (race with leave); skip
 
             # Check if message is in the language they're learning
             is_valid_message = False
@@ -728,8 +758,8 @@ class LeagueCog(BaseCog):
             if not is_valid_message:
                 return  # Message not in the language they're learning
 
-            # Get current round
-            current_round = await self.bot.db.get_current_round()
+            # Get current round (from in-memory cache, refreshed by check_round_end task)
+            current_round = self._current_round
             if not current_round:
                 logger.warning("No active round found, cannot record activity")
                 return
