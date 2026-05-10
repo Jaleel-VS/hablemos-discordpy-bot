@@ -267,15 +267,30 @@ class QuoteGenerator(BaseCog):
                 timeout=30,
             )
             await ctx.send(content=ctx.author.mention, file=File(img_path))
+        except Forbidden:
+            logger.warning(
+                "Missing permissions to send quote image in channel %s (guild %s)",
+                ctx.channel.id,
+                ctx.guild.id if ctx.guild else "DM",
+            )
         except HTTPException:
             logger.exception("Failed to send quote image")
-            await ctx.send(embed=red_embed("Something went wrong sending the image."))
+            try:
+                await ctx.send(embed=red_embed("Something went wrong sending the image."))
+            except Forbidden:
+                logger.warning("Also missing permissions to send error embed in channel %s", ctx.channel.id)
         except TimeoutError:
             logger.warning("Quote image generation timed out for %s", ctx.author)
-            await ctx.send(embed=red_embed("Image generation timed out. Please try again."))
+            try:
+                await ctx.send(embed=red_embed("Image generation timed out. Please try again."))
+            except Forbidden:
+                logger.warning("Missing permissions to send timeout embed in channel %s", ctx.channel.id)
         except Exception:
             logger.exception("Failed to generate quote image")
-            await ctx.send(embed=red_embed("Something went wrong generating the image."))
+            try:
+                await ctx.send(embed=red_embed("Something went wrong generating the image."))
+            except Forbidden:
+                logger.warning("Missing permissions to send error embed in channel %s", ctx.channel.id)
         finally:
             if img_path:
                 Path(img_path).unlink(missing_ok=True)
