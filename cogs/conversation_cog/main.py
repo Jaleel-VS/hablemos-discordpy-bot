@@ -98,8 +98,10 @@ class ConversationCog(BaseCog):
             level = params['level']
             category = params['category']
 
-            # Check daily limit (2 per day) - moderators are exempt
-            is_moderator = ctx.author.guild_permissions.manage_messages
+            # Check daily limit (2 per day) - moderators are exempt.
+            # In DMs, ctx.author is a User (no guild_permissions), so default to False.
+            guild_perms = getattr(ctx.author, 'guild_permissions', None)
+            is_moderator = bool(guild_perms and guild_perms.manage_messages)
             if not is_moderator:
                 daily_limit = 2
                 usage = await self.bot.db.check_daily_limit(ctx.author.id, daily_limit)
