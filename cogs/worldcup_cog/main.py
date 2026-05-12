@@ -6,7 +6,7 @@ from discord.ext import commands
 
 from base_cog import BaseCog
 
-from .views import TeamSelectView
+from .views import WorldCupMenuView
 
 logger = logging.getLogger(__name__)
 
@@ -17,11 +17,13 @@ class WorldCup(BaseCog):
     def __init__(self, bot: commands.Bot) -> None:
         super().__init__(bot)
 
-    @app_commands.command(name="equipo", description="Elige el equipo que vas a apoyar en el Mundial")
+    @app_commands.command(name="worldcup", description="Manage your World Cup team role")
     @app_commands.guild_only()
-    async def equipo(self, interaction: Interaction) -> None:
-        """Show a paginated select menu of World Cup team roles."""
+    async def worldcup(self, interaction: Interaction) -> None:
+        """Show the World Cup team menu."""
         guild = interaction.guild
+        member = interaction.user
+
         teams = sorted(
             [r for r in guild.roles if r.name.startswith("Team ")],
             key=lambda r: r.name,
@@ -29,14 +31,16 @@ class WorldCup(BaseCog):
 
         if not teams:
             await interaction.response.send_message(
-                "No hay roles de equipos configurados todavía. Pídele a un staff que los cree.",
+                "No team roles are configured yet. Ask a staff member to set them up.",
                 ephemeral=True,
             )
             return
 
-        view = TeamSelectView(teams=teams, user_id=interaction.user.id)
+        current_team = next((r for r in member.roles if r.name.startswith("Team ")), None)
+
+        view = WorldCupMenuView(teams=teams, user_id=member.id, current_team=current_team)
         await interaction.response.send_message(
-            "Selecciona tu equipo del Mundial:",
+            "What would you like to do?",
             view=view,
             ephemeral=True,
         )

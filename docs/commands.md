@@ -14,7 +14,7 @@ commands are shown as `/name`.
 
 | Command | Description |
 |---------|-------------|
-| `/equipo` | Pick the World Cup team you want to support. Assigns the matching `Team <X>` role (removes any previous team role). Logs the assignment to `#world-cup-log`. |
+| `/worldcup` | Manage your World Cup team role. Shows a menu to pick a team (paginated select) or remove your current team. Remove button only appears if you already have a team role. Logs all changes to `#world-cup-log`. |
 
 ## Language League
 
