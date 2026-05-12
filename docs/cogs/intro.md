@@ -20,6 +20,10 @@ for a traditional text-based introductions channel.
 | `$introtracker add <channel_id>` | Track a channel for intro cooldown enforcement. | `manage_messages` |
 | `$introtracker remove <channel_id>` | Stop tracking a channel. | `manage_messages` |
 | `$introtracker list` | List all tracked channels. | `manage_messages` |
+| `$introtracker alertchannel #channel` | Set the staff alert channel. | `manage_messages` |
+| `$introtracker warnchannel #channel` | Set the user warning channel. | `manage_messages` |
+| `$resetintro <user_id>` (alias: `$clearintro`) | Clear a user's intro history so they can post again. | `manage_messages` **or** Server Staff role (`258819531193974784`) |
+| `$introexempt <user_id>` | Exempt a user from intro tracking. | `manage_messages` |
 
 ## Configuration
 

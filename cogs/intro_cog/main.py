@@ -11,7 +11,13 @@ from discord import (
     NotFound,
 )
 from discord.ext import commands
-from discord.ext.commands import Bot, Cog, has_permissions
+from discord.ext.commands import (
+    Bot,
+    Cog,
+    check_any,
+    has_any_role,
+    has_permissions,
+)
 
 from base_cog import BaseCog
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
@@ -21,6 +27,7 @@ from .config import (
     DEFAULT_WARN_CHANNEL_ID,
     EXEMPT_ROLE_IDS,
     INTRO_COOLDOWN_DAYS,
+    RESETINTRO_ROLE_ID,
     SETTING_ALERT_CHANNEL,
     SETTING_WARN_CHANNEL,
 )
@@ -224,7 +231,7 @@ class IntroductionTracker(BaseCog):
         logger.info("Intro warn channel set to %s by %s", channel.id, ctx.author)
 
     @commands.command(aliases=['clearintro'])
-    @has_permissions(manage_messages=True)
+    @check_any(has_permissions(manage_messages=True), has_any_role(RESETINTRO_ROLE_ID))
     async def resetintro(self, ctx: commands.Context, user_id: int | None = None):
         """Clear a user's introduction history so they can post again."""
         if user_id is None:
