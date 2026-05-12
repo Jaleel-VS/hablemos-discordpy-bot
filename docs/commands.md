@@ -10,6 +10,12 @@ commands are shown as `/name`.
 > must update this file in the same commit. See
 > [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
+## World Cup
+
+| Command | Description |
+|---------|-------------|
+| `/equipo` | Pick the World Cup team you want to support. Assigns the matching `Team <X>` role (removes any previous team role). Logs the assignment to `#world-cup-log`. |
+
 ## Language League
 
 See [`cogs/league.md`](./cogs/league.md) for the full feature.
