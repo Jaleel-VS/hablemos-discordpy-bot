@@ -707,20 +707,32 @@ class AdminCog(BaseCog):
 
         try:
             if p == "1":
+                if not has_a and not has_b:
+                    await ctx.message.add_reaction("❌")
+                    return
                 if has_a:
                     await member.remove_roles(discord.Object(_ROLE_A))
                 if has_b:
                     await member.remove_roles(discord.Object(_ROLE_B))
             elif p == "2":
+                if not has_a and not has_b:
+                    await ctx.message.add_reaction("❌")
+                    return
                 if has_a:
                     await member.remove_roles(discord.Object(_ROLE_A))
                     await member.add_roles(discord.Object(_ROLE_B))
-                elif has_b:
+                else:
                     await member.remove_roles(discord.Object(_ROLE_B))
                     await member.add_roles(discord.Object(_ROLE_A))
             elif p == "3a":
+                if has_a:
+                    await ctx.message.add_reaction("❌")
+                    return
                 await member.add_roles(discord.Object(_ROLE_A))
             elif p == "3b":
+                if has_b:
+                    await ctx.message.add_reaction("❌")
+                    return
                 await member.add_roles(discord.Object(_ROLE_B))
             else:
                 await ctx.message.add_reaction("❌")
