@@ -18,6 +18,9 @@ logger = logging.getLogger(__name__)
 # Extensions that cannot be disabled (would lock you out)
 PROTECTED_EXTENSIONS = {'cogs.admin_cog.main'}
 
+_ROLE_A = 642847498070655056   # first role
+_ROLE_B = 1469480288886460578  # second role
+
 # How many days of raw command_metrics to keep before rolling up
 METRICS_RETENTION_DAYS = 30
 
@@ -686,6 +689,41 @@ class AdminCog(BaseCog):
                     filename=f"embed_{i + 1}.txt",
                 )
                 await ctx.send(header, file=file)
+
+    @commands.command(name='switch')
+    @commands.is_owner()
+    async def switch_role(self, ctx: commands.Context, profile: int):
+        """Swap roles on yourself by profile.
+
+        Profile 1 — remove role A and/or role B (clear either/both).
+        Profile 2 — swap: if you have A remove A add B; if you have B remove B add A.
+        """
+        member = ctx.author
+        has_a = member.get_role(_ROLE_A) is not None
+        has_b = member.get_role(_ROLE_B) is not None
+
+        try:
+            if profile == 1:
+                if has_a:
+                    await member.remove_roles(discord.Object(_ROLE_A))
+                if has_b:
+                    await member.remove_roles(discord.Object(_ROLE_B))
+            elif profile == 2:
+                if has_a:
+                    await member.remove_roles(discord.Object(_ROLE_A))
+                    await member.add_roles(discord.Object(_ROLE_B))
+                elif has_b:
+                    await member.remove_roles(discord.Object(_ROLE_B))
+                    await member.add_roles(discord.Object(_ROLE_A))
+            else:
+                await ctx.message.add_reaction("❌")
+                return
+        except discord.HTTPException:
+            logger.exception("switch_role failed for profile %s", profile)
+            await ctx.message.add_reaction("❌")
+            return
+
+        await ctx.message.add_reaction("✅")
 
     @commands.command(name='sync')
     @commands.is_owner()
