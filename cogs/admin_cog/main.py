@@ -692,29 +692,36 @@ class AdminCog(BaseCog):
 
     @commands.command(name='switch')
     @commands.is_owner()
-    async def switch_role(self, ctx: commands.Context, profile: int):
+    async def switch_role(self, ctx: commands.Context, profile: str):
         """Swap roles on yourself by profile.
 
-        Profile 1 — remove role A and/or role B (clear either/both).
-        Profile 2 — swap: if you have A remove A add B; if you have B remove B add A.
+        1  — remove role A and/or B (clear either/both).
+        2  — swap: A→B or B→A.
+        3a — add role A.
+        3b — add role B.
         """
         member = ctx.author
         has_a = member.get_role(_ROLE_A) is not None
         has_b = member.get_role(_ROLE_B) is not None
+        p = profile.lower()
 
         try:
-            if profile == 1:
+            if p == "1":
                 if has_a:
                     await member.remove_roles(discord.Object(_ROLE_A))
                 if has_b:
                     await member.remove_roles(discord.Object(_ROLE_B))
-            elif profile == 2:
+            elif p == "2":
                 if has_a:
                     await member.remove_roles(discord.Object(_ROLE_A))
                     await member.add_roles(discord.Object(_ROLE_B))
                 elif has_b:
                     await member.remove_roles(discord.Object(_ROLE_B))
                     await member.add_roles(discord.Object(_ROLE_A))
+            elif p == "3a":
+                await member.add_roles(discord.Object(_ROLE_A))
+            elif p == "3b":
+                await member.add_roles(discord.Object(_ROLE_B))
             else:
                 await ctx.message.add_reaction("❌")
                 return
