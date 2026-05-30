@@ -89,6 +89,19 @@ Introduction cooldown enforcement. See [`cogs/intro.md`](./cogs/intro.md) for th
 | `$resetintro <user_id>` (alias: `$clearintro`) | Clear a user's intro history. Allowed with `manage_messages` **or** the Server Staff role (`258819531193974784`). |
 | `$introexempt <user_id>` | Exempt a user from intro tracking (requires `manage_messages`). |
 
+## `$wcpredict` (group, owner-only)
+
+World Cup predictions admin. See [`cogs/wcpredict.md`](./cogs/wcpredict.md)
+for the full feature.
+
+| Subcommand | Description |
+|-----------|-------------|
+| `$wcpredict setdeadline <ISO\|epoch>` | Set the prediction lock timestamp. Accepts ISO-8601 (e.g. `2026-06-11T18:00:00Z`) or a Unix epoch in seconds. |
+| `$wcpredict cleardeadline` | Remove the deadline (predictions become editable again). |
+| `$wcpredict setwinner <team>` | Record the actual champion (role mention, role ID, or `Brazil` / `Team Brazil`). Triggers grading and posts a summary to `#world-cup-log`. |
+| `$wcpredict clearwinner` | Reset the recorded champion (un-grades the leaderboard). |
+| `$wcpredict stats` | Show participation totals and per-team distribution. |
+
 ## Owner-only utilities
 
 See [`cogs/admin.md`](./cogs/admin.md), [`cogs/database.md`](./cogs/database.md), [`cogs/relay.md`](./cogs/relay.md), and [`cogs/tickets.md`](./cogs/tickets.md) for full details.

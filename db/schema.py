@@ -735,4 +735,21 @@ async def initialize_schema(pool):
             ON dictation_scores(sentence_id)
         ''')
 
+        # World Cup predictions table
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS wc_predictions (
+                user_id      BIGINT PRIMARY KEY,
+                guild_id     BIGINT NOT NULL,
+                team_role_id BIGINT NOT NULL,
+                team_name    TEXT   NOT NULL,
+                created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_wc_predictions_team
+            ON wc_predictions(team_role_id)
+        ''')
+
         logger.info("Database schema initialized")

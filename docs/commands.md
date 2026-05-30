@@ -15,6 +15,9 @@ commands are shown as `/name`.
 | Command | Description |
 |---------|-------------|
 | `/worldcup` | Manage your World Cup team role. Shows a menu to pick a team (paginated select) or remove your current team. Remove button only appears if you already have a team role. Logs all changes to `#world-cup-log`. |
+| `/wcpredict set` | Save (or change) your private prediction for who will win the World Cup. Locks at the configured deadline. See [`cogs/wcpredict.md`](./cogs/wcpredict.md). |
+| `/wcpredict view` | Show your current prediction (ephemeral). |
+| `/wcpredict leaderboard` | Pre-grading: per-team pick distribution. After an admin records the champion: full standings with ✅/❌ per user. |
 
 ## Language League
 

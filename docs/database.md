@@ -41,6 +41,7 @@ Adding a new domain:
 | `TasksMixin` (`tasks.py`) | Task / to-do persistence |
 | `DictationMixin` (`dictation.py`) | Dictation puzzles & scores |
 | `CrosswordMixin` (`crossword.py`) | Crossword games, participants, word events, active-game recovery |
+| `WCPredictionsMixin` (`predictions.py`) | World Cup champion predictions |
 
 ## Key tables
 
@@ -90,6 +91,15 @@ Adding a new domain:
 > TODO: document tables owned by `conversations`, `vocab`, `quotes`,
 > `practice`, `interactions`, `tasks`, `dictation`, `notes`, `settings`
 > mixins.
+
+### World Cup predictions
+- `wc_predictions` — one row per user (`user_id` PK). Stores the picked
+  `Team X` role ID (`team_role_id`), a denormalized `team_name`
+  snapshot, the owning `guild_id`, and `created_at` / `updated_at`.
+  Indexed on `team_role_id` for distribution queries. The deadline
+  (`wc_predict.deadline_ts`) and actual champion
+  (`wc_predict.winner_role_id`) live in `bot_settings` rather than a
+  dedicated table. See [`cogs/wcpredict.md`](./cogs/wcpredict.md).
 
 ## Querying conventions
 

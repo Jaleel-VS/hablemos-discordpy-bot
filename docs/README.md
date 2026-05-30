@@ -50,6 +50,7 @@ change. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules.
 - [Tickets (`tickets_cog`)](./cogs/tickets.md)
 - [Vocab (`vocab_cog`)](./cogs/vocab.md)
 - [Website Manager (`website_manager_cog`)](./cogs/website_manager.md)
+- [World Cup Predictions (`wcpredict_cog`)](./cogs/wcpredict.md)
 
 ## Relationship to `AGENTS.md`
 
