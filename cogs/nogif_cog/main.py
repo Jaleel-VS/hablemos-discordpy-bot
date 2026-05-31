@@ -89,7 +89,7 @@ class NoGif(BaseCog):
             mentionable=False,
             hoist=False,
         )
-        await self.bot.db.set_bot_setting(setting_key, str(role.id))
+        await self.bot.db.set_bot_setting(setting_key, role.id)
         logger.info("Created '%s' role (id=%s) in guild %s", NOGIF_ROLE_NAME, role.id, guild.id)
 
         await self._apply_overwrites(guild, role)
