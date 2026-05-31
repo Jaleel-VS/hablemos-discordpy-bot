@@ -1,8 +1,11 @@
-"""World Cup predictions cog — `/wcpredict` slash command group.
+"""World Cup predictions cog — `/wcpredict` slash commands + `$wcfixtures` prefix command.
 
 Lets users save a private prediction for the World Cup champion, view
 their own pick, and (after the admin grades the result) see a leaderboard
 of correct picks. Predictions lock at a configurable deadline.
+
+`$wcfixtures` (alias `$wcf`) shows a paginated embed of all 104 World Cup
+fixtures. An optional argument jumps to a group, team, or stage.
 """
 import logging
 from datetime import UTC, datetime
@@ -20,6 +23,7 @@ from .config import (
     SETTING_KEY_WINNER,
     WC_PREDICT_DEFAULT_DEADLINE_TS,
 )
+from .fixtures_view import FixturesView, build_embed, resolve_page
 from .scoring import score_prediction
 from .views import WCPredictMenuView
 
@@ -225,6 +229,23 @@ class WCPredict(BaseCog):
         if len(winners) > 25 or len(losers) > 25:
             embed.set_footer(text="Showing first 25 of each group.")
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    # ---------- $wcfixtures ----------
+
+    @commands.command(name="wcfixtures", aliases=["wcf"])
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def wcfixtures(self, ctx: commands.Context, *, query: str = "") -> None:
+        """Show a paginated list of all 104 World Cup 2026 fixtures.
+
+        Optional argument jumps to a specific section:
+          $wcf A          — Group A
+          $wcf brazil     — whichever group Brazil is in
+          $wcf r32        — Round of 32
+          $wcf semi       — Semifinals / 3rd / Final
+        """
+        page = resolve_page(query) if query.strip() else 0
+        view = FixturesView(invoker_id=ctx.author.id, page=page)
+        await ctx.send(embed=build_embed(page), view=view)
 
 
 async def setup(bot: commands.Bot) -> None:

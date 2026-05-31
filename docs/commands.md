@@ -18,6 +18,7 @@ commands are shown as `/name`.
 | `/wcpredict set` | Save (or change) your private prediction for who will win the World Cup. Locks at the configured deadline. See [`cogs/wcpredict.md`](./cogs/wcpredict.md). |
 | `/wcpredict view` | Show your current prediction (ephemeral). |
 | `/wcpredict leaderboard` | Pre-grading: per-team pick distribution. After an admin records the champion: full standings with ✅/❌ per user. |
+| `$wcfixtures` (alias `$wcf`) | Paginated embed of all 104 World Cup 2026 fixtures (17 pages: Groups A–L, R32, R16, QF, Semis/Final). Each page shows flag emojis, kick-off time (ET), venue and city. Optional argument jumps to a specific section — e.g. `$wcf A`, `$wcf brasil`, `$wcf alemania`, `$wcf r32`, `$wcf semi`. Accepts English and Spanish team names. |
 
 ## Language League
 
