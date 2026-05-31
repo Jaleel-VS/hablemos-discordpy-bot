@@ -526,7 +526,7 @@ async def initialize_schema(pool):
             ON conjugation_verbs(category)
         ''')
 
-        # Conjugation forms table (one row per verb × tense × pronoun)
+        # Conjugation forms table (one row per verb x tense x pronoun)
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS conjugation_forms (
                 id SERIAL PRIMARY KEY,
@@ -750,6 +750,22 @@ async def initialize_schema(pool):
         await conn.execute('''
             CREATE INDEX IF NOT EXISTS idx_wc_predictions_team
             ON wc_predictions(team_role_id)
+        ''')
+
+        # No-GIF restrictions table
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS nogif_restrictions (
+                id          SERIAL PRIMARY KEY,
+                user_id     BIGINT NOT NULL,
+                guild_id    BIGINT NOT NULL,
+                expires_at  TIMESTAMPTZ NOT NULL,
+                UNIQUE (user_id, guild_id)
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_nogif_guild
+            ON nogif_restrictions(guild_id)
         ''')
 
         logger.info("Database schema initialized")

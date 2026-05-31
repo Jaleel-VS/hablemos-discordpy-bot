@@ -107,6 +107,13 @@ See [`cogs/general.md`](./cogs/general.md) for the full feature.
 | `/ping` | Latency check. |
 | `$invite` | Post the bot invite link. |
 
+## Moderation
+
+| Command | Description |
+|---------|-------------|
+| `$nogif @user <duration>` | Temporarily block a member from sending GIFs/embeds by assigning the `Sin GIFs` role. Duration format: `30s`, `10m`, `2h`, `1d` (max 30 days). Requires `Manage Roles`. The bot creates the role and sets `embed_links=False` channel overwrites automatically on first use. Restriction survives bot restarts. |
+| `$ungif @user` | Lift a no-GIF restriction early. Requires `Manage Roles`. |
+
 ## Hangman
 
 See [`cogs/hangman.md`](./cogs/hangman.md) for the full feature.

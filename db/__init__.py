@@ -39,6 +39,7 @@ from db.interactions import InteractionsMixin
 from db.introductions import IntroductionsMixin
 from db.leaderboard import LeaderboardMixin
 from db.metrics import MetricsMixin
+from db.nogif import NoGifMixin
 from db.notes import NotesMixin
 from db.practice import PracticeMixin
 from db.predictions import WCPredictionsMixin
@@ -65,6 +66,7 @@ class Database(
     DictationMixin,
     CrosswordMixin,
     WCPredictionsMixin,
+    NoGifMixin,
 ):
     def __init__(self, database_url: str):
         self.pool: asyncpg.Pool | None = None
