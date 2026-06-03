@@ -8,10 +8,9 @@ import logging
 import time
 from collections.abc import Callable
 from datetime import UTC, date, datetime
-from pathlib import Path
 
 import discord
-from discord import Embed, File, Interaction, Member, app_commands
+from discord import Embed, Interaction, Member, app_commands
 from discord.ext import commands, tasks
 from langdetect import DetectorFactory
 
@@ -536,55 +535,45 @@ class LeagueCog(BaseCog):
                             'user_id': interaction.user.id
                         }
 
-            # Generate leaderboard image
-            image_path = await asyncio.wait_for(
-                asyncio.to_thread(
-                    generate_leaderboard_image,
-                    leaderboard_data=enriched_data,
-                    board_type=board,
-                    round_info={
-                        'round_number': current_round['round_number'],
-                        'end_date': current_round['end_date']
-                    },
-                ),
+            # Generate leaderboard image (returns BytesIO — no temp file needed)
+            buf = await asyncio.wait_for(
+                asyncio.to_thread(generate_leaderboard_image, enriched_data),
                 timeout=30,
             )
 
-            try:
-                # Create embed
-                board_emoji = DISPLAY.get_emoji(board)
-                board_title = DISPLAY.get_name(board)
-                embed = Embed(
-                    title=f"{board_emoji} {board_title}",
-                    color=discord.Color.gold()
+            # Caption text shown below the image in the Components V2 container
+            board_emoji = DISPLAY.get_emoji(board)
+            board_title = DISPLAY.get_name(board)
+            end_date = current_round['end_date']
+            if end_date.tzinfo is None:
+                end_date = end_date.replace(tzinfo=UTC)
+            caption_lines = [
+                f"## {board_emoji} {board_title}",
+                f"-# Round {current_round['round_number']} • Ends {end_date.strftime('%Y-%m-%d %H:%M')} UTC",
+            ]
+            if requester_stats and requester_stats['rank'] > SCORING.LEADERBOARD_DISPLAY_LIMIT:
+                caption_lines.append(
+                    f"📍 Your rank: **#{requester_stats['rank']}** "
+                    f"• {requester_stats['total_score']} pts "
+                    f"• {requester_stats['active_days']} active days"
                 )
 
-                # Set the leaderboard image in the embed
-                file = File(image_path, filename="leaderboard.png")
-                embed.set_image(url="attachment://leaderboard.png")
-
-                # Add requester's rank if outside top rankings
-                if requester_stats and requester_stats['rank'] > SCORING.LEADERBOARD_DISPLAY_LIMIT:
-                    embed.add_field(
-                        name="📍 Your Rank",
-                        value=f"**#{requester_stats['rank']}** • {requester_stats['total_score']} pts • {requester_stats['active_days']} active days",
-                        inline=False
-                    )
-
-                # Show round end date in footer
-                end_date = current_round['end_date']
-                if end_date.tzinfo is None:
-                    end_date = end_date.replace(tzinfo=UTC)
-
-                embed.set_footer(text=f"Round {current_round['round_number']} • Ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC")
-
-                # Send embed with image attached
-                await interaction.followup.send(file=file, embed=embed)
-
-                logger.info("User %s viewed %s league (Pillow image)", interaction.user, board)
-            finally:
-                # Clean up temp file
-                Path(image_path).unlink(missing_ok=True)
+            file = discord.File(buf, filename="leaderboard.png")
+            view = discord.ui.LayoutView()
+            view.add_item(discord.ui.Container(
+                discord.ui.MediaGallery(
+                    discord.MediaGalleryItem(media="attachment://leaderboard.png"),
+                ),
+                discord.ui.Separator(visible=False),
+                discord.ui.TextDisplay("\n".join(caption_lines)),
+            ))
+            try:
+                await interaction.followup.send(view=view, file=file)
+            except discord.HTTPException:
+                # Components V2 not available — fall back to plain image
+                buf.seek(0)
+                await interaction.followup.send(file=discord.File(buf, filename="leaderboard.png"))
+            logger.info("User %s viewed %s league", interaction.user, board)
 
         except Exception as e:
             logger.error("Error viewing league: %s", e, exc_info=True)
