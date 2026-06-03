@@ -34,6 +34,7 @@ from cogs.league_cog.rounds import (
 from cogs.league_cog.scoring import points_for_message
 from cogs.league_cog.utils import detect_message_language
 from cogs.league_cog.views import LeagueJoinView
+from cogs.utils.flags import random_english_flag, random_spanish_flag
 
 # Set seed for consistent language detection results
 DetectorFactory.seed = LANGUAGE.LANGDETECT_SEED
@@ -542,7 +543,14 @@ class LeagueCog(BaseCog):
             )
 
             # Caption text shown below the image in the Components V2 container
-            board_emoji = DISPLAY.get_emoji(board)
+            # Pick a random flag for the caption — better representation of
+            # all Spanish/English-speaking countries than a fixed 🇪🇸/🇬🇧.
+            if board == 'spanish':
+                board_emoji = random_spanish_flag()
+            elif board == 'english':
+                board_emoji = random_english_flag()
+            else:
+                board_emoji = DISPLAY.get_emoji(board)
             board_title = DISPLAY.get_name(board)
             end_date = current_round['end_date']
             if end_date.tzinfo is None:
