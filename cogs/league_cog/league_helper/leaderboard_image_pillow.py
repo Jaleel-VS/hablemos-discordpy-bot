@@ -230,6 +230,14 @@ def generate_leaderboard_image(leaderboard_data: list[dict]) -> BytesIO:
     buf.seek(0)
     return buf
 
+# ---------------------------------------------------------------------------
+# Public aliases — consumed by round_end_image.py
+# ---------------------------------------------------------------------------
+create_default_avatar = _default_avatar
+download_avatar = _download_avatar
+draw_gradient_rect = _gradient_rect
+get_font = _font
+
 
 if __name__ == "__main__":
     sample_data = [
