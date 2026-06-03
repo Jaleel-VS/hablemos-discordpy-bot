@@ -7,7 +7,7 @@ import functools
 import logging
 import time
 from collections.abc import Callable
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 import discord
@@ -72,8 +72,8 @@ class LeagueCog(BaseCog):
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
-        # In-memory cooldown cache: {user_id: {channel_id: timestamp}}
-        self.message_cooldowns = {}
+        # In-memory cooldown cache: (user_id, channel_id) → last_counted_timestamp
+        self._cooldowns: dict[tuple[int, int], float] = {}
         # Leaderboard cache: {cache_key: (data, timestamp)}
         self._leaderboard_cache: dict[str, tuple[list, datetime]] = {}
         # In-memory caches to avoid DB hits on every message
@@ -84,6 +84,11 @@ class LeagueCog(BaseCog):
         # Refreshed on join/leave. Stale on Discord role changes until user re-runs /league join
         # (same staleness as the DB row, so no new bug surface).
         self._user_learning: dict[int, dict[str, bool]] = {}
+        # Daily message counter: user_id → (date, count).
+        # Resets automatically when the stored date differs from today.
+        # On bot restart the count resets — at most a day's worth of extra
+        # messages could be counted before the cap kicks in again, acceptable.
+        self._daily_counts: dict[int, tuple[date, int]] = {}
         # Current active round, refreshed by the check_round_end task every minute
         # and immediately after a round transition. None until cog_load finishes.
         self._current_round: dict | None = None
@@ -212,7 +217,7 @@ class LeagueCog(BaseCog):
             }
         """
         # Get user's role IDs
-        user_role_ids = [role.id for role in member.roles]
+        user_role_ids = {role.id for role in member.roles}
 
         # Check what roles they have
         has_english_native = ROLES.ENGLISH_NATIVE in user_role_ids
@@ -466,20 +471,14 @@ class LeagueCog(BaseCog):
                 await interaction.followup.send(embed=embed, ephemeral=True)
                 return
 
-            # Batch query: get all previous winners at once (instead of N queries)
-            user_ids = [entry['user_id'] for entry in rankings]
-            previous_winners = await self.bot.db.get_previous_winners(user_ids)
-
-            # Enrich leaderboard data with avatars and winner status
+            # Enrich leaderboard data with avatars
             enriched_data = []
             for entry in rankings:
                 try:
-                    # Fetch member to get avatar
                     member = interaction.guild.get_member(entry['user_id'])
                     if member and member.display_avatar:
                         avatar_url = str(member.display_avatar.url)
                     else:
-                        # Fallback to default Discord avatar
                         default_num = entry['user_id'] % 5
                         avatar_url = f"https://cdn.discordapp.com/embed/avatars/{default_num}.png"
 
@@ -490,11 +489,9 @@ class LeagueCog(BaseCog):
                         'total_score': entry['total_score'],
                         'active_days': entry['active_days'],
                         'avatar_url': avatar_url,
-                        'is_previous_winner': entry['user_id'] in previous_winners
                     })
                 except Exception as e:
                     logger.error("Error enriching user %s: %s", entry['user_id'], e)
-                    # Add entry with default avatar on error
                     default_num = entry['user_id'] % 5
                     enriched_data.append({
                         'rank': entry['rank'],
@@ -503,7 +500,6 @@ class LeagueCog(BaseCog):
                         'total_score': entry['total_score'],
                         'active_days': entry['active_days'],
                         'avatar_url': f"https://cdn.discordapp.com/embed/avatars/{default_num}.png",
-                        'is_previous_winner': False
                     })
 
             # Check if requester is in top rankings
@@ -569,11 +565,9 @@ class LeagueCog(BaseCog):
 
                 # Add requester's rank if outside top rankings
                 if requester_stats and requester_stats['rank'] > SCORING.LEADERBOARD_DISPLAY_LIMIT:
-                    requester_has_won = requester_stats['user_id'] in previous_winners or await self.bot.db.has_user_won_before(requester_stats['user_id'])
-                    star = "⭐ " if requester_has_won else ""
                     embed.add_field(
                         name="📍 Your Rank",
-                        value=f"{star}**#{requester_stats['rank']}** • {requester_stats['total_score']} pts • {requester_stats['active_days']} active days",
+                        value=f"**#{requester_stats['rank']}** • {requester_stats['total_score']} pts • {requester_stats['active_days']} active days",
                         inline=False
                     )
 
@@ -644,12 +638,8 @@ class LeagueCog(BaseCog):
             is_self = target == interaction.user
             title = "📊 Your League Stats" if is_self else f"📊 {target.display_name}'s League Stats"
 
-            # Check if user has won before
-            has_won = await self.bot.db.has_user_won_before(target.id)
-            star = " ⭐" if has_won else ""
-
             embed = Embed(
-                title=title + star,
+                title=title,
                 description=f"**Round {current_round['round_number']}**",
                 color=discord.Color.blue()
             )
@@ -740,9 +730,8 @@ class LeagueCog(BaseCog):
             if not detected_lang:
                 return  # Could not detect language or message too short
 
-            # Anti-spam: Check daily cap
-            daily_count = await self.bot.db.get_daily_message_count(message.author.id)
-            if daily_count >= RATE_LIMITS.DAILY_MESSAGE_CAP:
+            # Anti-spam: Check daily cap (in-memory, no DB hit)
+            if not self._check_and_increment_daily(message.author.id):
                 return  # Hit daily cap
 
             # Get what language(s) the user is learning (from in-memory cache)
@@ -780,40 +769,35 @@ class LeagueCog(BaseCog):
         except Exception as e:
             logger.error("Error in league message tracking: %s", e, exc_info=True)
 
+    def _check_and_increment_daily(self, user_id: int) -> bool:
+        """Return True if user is under the daily cap, incrementing their count.
+
+        Automatically resets when the stored date differs from today (UTC).
+        No DB access.
+        """
+        today = datetime.now(UTC).date()
+        entry = self._daily_counts.get(user_id)
+        if entry and entry[0] == today:
+            if entry[1] >= RATE_LIMITS.DAILY_MESSAGE_CAP:
+                return False
+            self._daily_counts[user_id] = (today, entry[1] + 1)
+        else:
+            self._daily_counts[user_id] = (today, 1)
+        return True
+
     def check_message_cooldown(self, user_id: int, channel_id: int) -> bool:
-        """Check if enough time has passed since last counted message"""
-        now = time.time()
-        cooldown_seconds = RATE_LIMITS.MESSAGE_COOLDOWN_SECONDS
+        """Return True if enough time has passed since the last counted message."""
+        ts = self._cooldowns.get((user_id, channel_id))
+        return ts is None or (time.time() - ts) >= RATE_LIMITS.MESSAGE_COOLDOWN_SECONDS
 
-        if user_id not in self.message_cooldowns:
-            return True
+    def update_message_cooldown(self, user_id: int, channel_id: int) -> None:
+        """Record the current time as the last counted message timestamp."""
+        self._cooldowns[(user_id, channel_id)] = time.time()
 
-        if channel_id not in self.message_cooldowns[user_id]:
-            return True
-
-        last_time = self.message_cooldowns[user_id][channel_id]
-        return (now - last_time) >= cooldown_seconds
-
-    def update_message_cooldown(self, user_id: int, channel_id: int):
-        """Update the last message time for cooldown tracking"""
-        if user_id not in self.message_cooldowns:
-            self.message_cooldowns[user_id] = {}
-
-        self.message_cooldowns[user_id][channel_id] = time.time()
-
-    def cleanup_old_cooldowns(self):
-        """Remove expired cooldown entries to prevent memory leak"""
-        # Remove entries older than 2x the cooldown period (well expired)
-        cutoff = time.time() - (RATE_LIMITS.MESSAGE_COOLDOWN_SECONDS * 2)
-
-        for user_id in list(self.message_cooldowns.keys()):
-            for channel_id in list(self.message_cooldowns[user_id].keys()):
-                if self.message_cooldowns[user_id][channel_id] < cutoff:
-                    del self.message_cooldowns[user_id][channel_id]
-
-            # Remove user entry if no channels remain
-            if not self.message_cooldowns[user_id]:
-                del self.message_cooldowns[user_id]
+    def cleanup_old_cooldowns(self) -> None:
+        """Evict expired cooldown entries to prevent unbounded memory growth."""
+        cutoff = time.time() - RATE_LIMITS.MESSAGE_COOLDOWN_SECONDS * 2
+        self._cooldowns = {k: v for k, v in self._cooldowns.items() if v >= cutoff}
 
 async def setup(bot):
     """Setup function to add the cog to the bot"""

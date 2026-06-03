@@ -15,31 +15,23 @@ from cogs.league_cog.league_helper.round_end_image import render_round_end
 logger = logging.getLogger(__name__)
 
 
-def enrich_top_entries(
-    entries: list[dict],
-    *,
-    bot,
-    last_round_recipients: set,
-) -> list[dict]:
-    """Attach ``avatar_url`` and ``is_previous_winner`` to raw leaderboard rows.
+def enrich_top_entries(entries: list[dict], *, bot) -> list[dict]:
+    """Attach ``avatar_url`` to raw leaderboard rows.
 
     Avatars are resolved from the bot's user cache; uncached users fall
-    back to a ``None`` URL which the image renderer turns into a default
-    avatar. Keeping this pure-python (no ``await``) means the caller can
-    run the whole render — enrichment + drawing — inside one
-    ``asyncio.to_thread`` hop.
+    back to ``None`` which the image renderer turns into a default avatar.
+    Keeping this pure-python (no ``await``) means the caller can run the
+    whole render — enrichment + drawing — inside one ``asyncio.to_thread`` hop.
     """
     out: list[dict] = []
     for e in entries:
         user = bot.get_user(e["user_id"])
-        avatar_url = str(user.display_avatar.url) if user else None
         out.append({
             "rank": int(e["rank"]),
             "user_id": e["user_id"],
             "username": e["username"],
             "total_score": int(e["total_score"]),
-            "avatar_url": avatar_url,
-            "is_previous_winner": e["user_id"] in last_round_recipients,
+            "avatar_url": str(user.display_avatar.url) if user else None,
         })
     return out
 
@@ -202,14 +194,8 @@ async def process_round_end(bot, current_round: dict) -> dict:
             # (top 3 on the podium, ranks 4-6 as runner-up cards).
             # Rendering hits requests.get() for avatars, so keep it
             # off the event loop.
-            spanish_enriched = enrich_top_entries(
-                spanish_top[:6], bot=bot,
-                last_round_recipients=last_round_recipients,
-            )
-            english_enriched = enrich_top_entries(
-                english_top[:6], bot=bot,
-                last_round_recipients=last_round_recipients,
-            )
+            spanish_enriched = enrich_top_entries(spanish_top[:6], bot=bot)
+            english_enriched = enrich_top_entries(english_top[:6], bot=bot)
             image_file: discord.File | None = None
             try:
                 buf = await asyncio.to_thread(

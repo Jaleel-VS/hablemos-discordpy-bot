@@ -1,5 +1,7 @@
 
 """Database mixin for Language League leaderboard queries."""
+import asyncio
+
 from db import DatabaseMixin
 
 
@@ -166,7 +168,7 @@ class LeaderboardMixin(DatabaseMixin):
         return count or 0
 
     async def get_user_stats(self, user_id: int, round_id: int | None = None) -> dict | None:
-        """Get leaderboard stats for a specific user in a specific round"""
+        """Get leaderboard stats for a specific user in a specific round."""
         if round_id is None:
             current_round = await self.get_current_round()
             if not current_round:
@@ -176,63 +178,119 @@ class LeaderboardMixin(DatabaseMixin):
             round_id_value = int(round_id)
 
         async with self._pool().acquire() as conn:
-            user_row = await conn.fetchrow('''
-                SELECT username, learning_spanish, learning_english
-                FROM leaderboard_users
-                WHERE user_id = $1 AND opted_in = TRUE AND banned = FALSE
-            ''', user_id)
-            if not user_row:
+            # Single query: user metadata + round aggregates
+            row = await conn.fetchrow('''
+                SELECT lu.username, lu.learning_spanish, lu.learning_english,
+                       COALESCE(SUM(la.points), 0)              AS total_points,
+                       COUNT(DISTINCT DATE(la.created_at))      AS active_days
+                FROM leaderboard_users lu
+                LEFT JOIN leaderboard_activity la
+                       ON la.user_id = lu.user_id AND la.round_id = $2
+                WHERE lu.user_id = $1 AND lu.opted_in = TRUE AND lu.banned = FALSE
+                GROUP BY lu.username, lu.learning_spanish, lu.learning_english
+            ''', user_id, round_id_value)
+            if not row:
                 return None
 
-            stats_row = await conn.fetchrow('''
-                SELECT COALESCE(SUM(points), 0) as total_points,
-                       COUNT(DISTINCT DATE(created_at)) as active_days
-                FROM leaderboard_activity
-                WHERE user_id = $1 AND round_id = $2
-            ''', user_id, round_id_value)
+            total_points = int(row['total_points'] or 0)
+            active_days = int(row['active_days'] or 0)
+            total_score = total_points + active_days * 5
 
-            total_points = stats_row['total_points'] or 0
-            active_days = stats_row['active_days'] or 0
-            total_score = total_points + (active_days * 5)
+            # Fetch relevant ranks concurrently — each call acquires its own
+            # pool connection, so they run in parallel rather than serially.
+            rank_tasks = {
+                'combined': self._get_user_rank(user_id, 'combined', round_id_value),
+            }
+            if row['learning_spanish']:
+                rank_tasks['spanish'] = self._get_user_rank(user_id, 'spanish', round_id_value)
+            if row['learning_english']:
+                rank_tasks['english'] = self._get_user_rank(user_id, 'english', round_id_value)
 
-            rank_spanish = rank_english = None
-            if user_row['learning_spanish']:
-                rank_spanish = await self._get_user_rank(conn, user_id, 'spanish', round_id_value)
-            if user_row['learning_english']:
-                rank_english = await self._get_user_rank(conn, user_id, 'english', round_id_value)
-            rank_combined = await self._get_user_rank(conn, user_id, 'combined', round_id_value)
+            keys = list(rank_tasks)
+            results = await asyncio.gather(*rank_tasks.values())
+            ranks = dict(zip(keys, results, strict=True))
 
             return {
-                'username': user_row['username'],
-                'total_points': total_points, 'active_days': active_days,
+                'username': row['username'],
+                'total_points': total_points,
+                'active_days': active_days,
                 'total_score': total_score,
-                'rank_spanish': rank_spanish, 'rank_english': rank_english,
-                'rank_combined': rank_combined,
+                'rank_spanish': ranks.get('spanish'),
+                'rank_english': ranks.get('english'),
+                'rank_combined': ranks.get('combined'),
             }
 
-    async def _get_user_rank(self, conn, user_id: int, board_type: str, round_id: int) -> int | None:
-        """Helper to get user rank on a specific leaderboard for a specific round"""
-        where_clause = "lu.learning_spanish = TRUE" if board_type == 'spanish' else (
-            "lu.learning_english = TRUE" if board_type == 'english' else "TRUE"
-        )
-        row = await conn.fetchrow(f'''
-            WITH user_stats AS (
-                SELECT lu.user_id,
-                       COALESCE(SUM(la.points), 0) as total_points,
-                       COUNT(DISTINCT DATE(la.created_at)) as active_days
-                FROM leaderboard_users lu
-                LEFT JOIN leaderboard_activity la ON lu.user_id = la.user_id AND la.round_id = $2
-                WHERE lu.opted_in = TRUE AND lu.banned = FALSE AND {where_clause}
-                GROUP BY lu.user_id
-            ),
-            ranked_users AS (
-                SELECT user_id,
-                       (total_points + (active_days * 5)) as total_score,
-                       RANK() OVER (ORDER BY (total_points + (active_days * 5)) DESC) as rank
-                FROM user_stats
-            )
-            SELECT rank FROM ranked_users WHERE user_id = $1
-        ''', user_id, round_id)
+    async def _get_user_rank(self, user_id: int, board_type: str, round_id: int) -> int | None:
+        """Return the rank of ``user_id`` on the given leaderboard for ``round_id``.
+
+        Uses static per-board queries so Postgres can cache a plan for each shape.
+        """
+        if board_type == 'spanish':
+            sql = '''
+                WITH user_stats AS (
+                    SELECT lu.user_id,
+                           COALESCE(SUM(la.points), 0)          AS total_points,
+                           COUNT(DISTINCT DATE(la.created_at))  AS active_days
+                    FROM leaderboard_users lu
+                    LEFT JOIN leaderboard_activity la
+                           ON la.user_id = lu.user_id AND la.round_id = $2
+                    WHERE lu.opted_in = TRUE AND lu.banned = FALSE
+                      AND lu.learning_spanish = TRUE
+                    GROUP BY lu.user_id
+                ),
+                ranked AS (
+                    SELECT user_id,
+                           RANK() OVER (
+                               ORDER BY (total_points + active_days * 5) DESC
+                           ) AS rank
+                    FROM user_stats
+                )
+                SELECT rank FROM ranked WHERE user_id = $1
+            '''
+        elif board_type == 'english':
+            sql = '''
+                WITH user_stats AS (
+                    SELECT lu.user_id,
+                           COALESCE(SUM(la.points), 0)          AS total_points,
+                           COUNT(DISTINCT DATE(la.created_at))  AS active_days
+                    FROM leaderboard_users lu
+                    LEFT JOIN leaderboard_activity la
+                           ON la.user_id = lu.user_id AND la.round_id = $2
+                    WHERE lu.opted_in = TRUE AND lu.banned = FALSE
+                      AND lu.learning_english = TRUE
+                    GROUP BY lu.user_id
+                ),
+                ranked AS (
+                    SELECT user_id,
+                           RANK() OVER (
+                               ORDER BY (total_points + active_days * 5) DESC
+                           ) AS rank
+                    FROM user_stats
+                )
+                SELECT rank FROM ranked WHERE user_id = $1
+            '''
+        else:  # combined
+            sql = '''
+                WITH user_stats AS (
+                    SELECT lu.user_id,
+                           COALESCE(SUM(la.points), 0)          AS total_points,
+                           COUNT(DISTINCT DATE(la.created_at))  AS active_days
+                    FROM leaderboard_users lu
+                    LEFT JOIN leaderboard_activity la
+                           ON la.user_id = lu.user_id AND la.round_id = $2
+                    WHERE lu.opted_in = TRUE AND lu.banned = FALSE
+                    GROUP BY lu.user_id
+                ),
+                ranked AS (
+                    SELECT user_id,
+                           RANK() OVER (
+                               ORDER BY (total_points + active_days * 5) DESC
+                           ) AS rank
+                    FROM user_stats
+                )
+                SELECT rank FROM ranked WHERE user_id = $1
+            '''
+        row = await self._fetchrow(sql, user_id, round_id)
         return row['rank'] if row else None
 
     async def get_leaderboard(self, board_type: str, limit: int = 10, round_id: int | None = None) -> list[dict]:
@@ -298,31 +356,32 @@ class LeaderboardMixin(DatabaseMixin):
         return [dict(row) for row in rows]
 
     async def get_league_admin_stats(self) -> dict:
-        """Get admin statistics for the Language League"""
-        async with self._pool().acquire() as conn:
-            total = await conn.fetchval('''
-                SELECT COUNT(*) FROM leaderboard_users WHERE opted_in = TRUE AND banned = FALSE
-            ''')
-            spanish = await conn.fetchval('''
-                SELECT COUNT(*) FROM leaderboard_users
-                WHERE opted_in = TRUE AND banned = FALSE AND learning_spanish = TRUE
-            ''')
-            english = await conn.fetchval('''
-                SELECT COUNT(*) FROM leaderboard_users
-                WHERE opted_in = TRUE AND banned = FALSE AND learning_english = TRUE
-            ''')
-            banned = await conn.fetchval(
-                'SELECT COUNT(*) FROM leaderboard_users WHERE banned = TRUE'
-            )
-            msgs = await conn.fetchval('''
-                SELECT COUNT(*) FROM leaderboard_activity
-                WHERE created_at > NOW() - INTERVAL '30 days'
-            ''')
-            return {
-                'total_users': total, 'spanish_learners': spanish,
-                'english_learners': english, 'banned_users': banned,
-                'total_messages_30d': msgs,
-            }
+        """Get admin statistics for the Language League."""
+        # Two queries instead of five: leaderboard_users is a single table scan
+        # with FILTER aggregates; leaderboard_activity is a separate table.
+        row = await self._fetchrow('''
+            SELECT
+                COUNT(*) FILTER (WHERE opted_in = TRUE AND banned = FALSE)
+                    AS total_users,
+                COUNT(*) FILTER (WHERE opted_in = TRUE AND banned = FALSE AND learning_spanish = TRUE)
+                    AS spanish_learners,
+                COUNT(*) FILTER (WHERE opted_in = TRUE AND banned = FALSE AND learning_english = TRUE)
+                    AS english_learners,
+                COUNT(*) FILTER (WHERE banned = TRUE)
+                    AS banned_users
+            FROM leaderboard_users
+        ''')
+        msgs = await self._fetchval('''
+            SELECT COUNT(*) FROM leaderboard_activity
+            WHERE created_at > NOW() - INTERVAL '30 days'
+        ''')
+        return {
+            'total_users': row['total_users'],
+            'spanish_learners': row['spanish_learners'],
+            'english_learners': row['english_learners'],
+            'banned_users': row['banned_users'],
+            'total_messages_30d': msgs,
+        }
 
     # Round management
 
@@ -351,33 +410,21 @@ class LeaderboardMixin(DatabaseMixin):
         return True
 
     async def save_round_winners(self, round_id: int, winners_data: list) -> None:
-        """Save round winners to database"""
+        """Save round winners to database."""
         async with self._pool().acquire() as conn:
-            for winner in winners_data:
-                await conn.execute('''
-                    INSERT INTO league_round_winners
+            await conn.executemany(
+                '''
+                INSERT INTO league_round_winners
                     (round_id, user_id, username, league_type, rank, total_score, active_days)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7)
-                ''', round_id, winner['user_id'], winner['username'],
-                winner['league_type'], winner['rank'], winner['total_score'], winner['active_days'])
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
+                ''',
+                [
+                    (round_id, w['user_id'], w['username'], w['league_type'],
+                     w['rank'], w['total_score'], w['active_days'])
+                    for w in winners_data
+                ],
+            )
 
-    async def has_user_won_before(self, user_id: int) -> bool:
-        """Check if user has ever won first place in any league"""
-        row = await self._fetchrow('''
-            SELECT COUNT(*) as count FROM league_round_winners
-            WHERE user_id = $1 AND rank = 1
-        ''', user_id)
-        return row['count'] > 0 if row else False
-
-    async def get_previous_winners(self, user_ids: list[int]) -> set[int]:
-        """Get set of user_ids who have won first place before (batch query)"""
-        if not user_ids:
-            return set()
-        rows = await self._fetch('''
-            SELECT DISTINCT user_id FROM league_round_winners
-            WHERE user_id = ANY($1) AND rank = 1
-        ''', user_ids)
-        return {row['user_id'] for row in rows}
 
     async def get_round_by_id(self, round_id: int) -> dict | None:
         """Get round details by ID"""
@@ -402,18 +449,22 @@ class LeaderboardMixin(DatabaseMixin):
             return {row['user_id'] for row in rows}
 
     async def mark_role_recipients(self, round_id: int, user_ids: list[int]) -> None:
-        """Mark which users received the champion role for a round"""
+        """Mark which users received the champion role for a round."""
         if not user_ids:
             return
         async with self._pool().acquire() as conn:
-            for user_id in user_ids:
-                await conn.execute('''
-                    INSERT INTO league_role_recipients (round_id, user_id)
-                    VALUES ($1, $2) ON CONFLICT (round_id, user_id) DO NOTHING
-                ''', round_id, user_id)
+            await conn.executemany(
+                '''
+                INSERT INTO league_role_recipients (round_id, user_id)
+                VALUES ($1, $2) ON CONFLICT (round_id, user_id) DO NOTHING
+                ''',
+                [(round_id, uid) for uid in user_ids],
+            )
 
     async def seed_role_recipients(self, user_ids: list[int]) -> None:
         """Seed role recipients for the most recent completed round."""
+        if not user_ids:
+            return
         async with self._pool().acquire() as conn:
             last_round = await conn.fetchrow('''
                 SELECT round_id FROM league_rounds
@@ -421,11 +472,13 @@ class LeaderboardMixin(DatabaseMixin):
             ''')
             if not last_round:
                 return
-            for user_id in user_ids:
-                await conn.execute('''
-                    INSERT INTO league_role_recipients (round_id, user_id)
-                    VALUES ($1, $2) ON CONFLICT (round_id, user_id) DO NOTHING
-                ''', last_round['round_id'], user_id)
+            await conn.executemany(
+                '''
+                INSERT INTO league_role_recipients (round_id, user_id)
+                VALUES ($1, $2) ON CONFLICT (round_id, user_id) DO NOTHING
+                ''',
+                [(last_round['round_id'], uid) for uid in user_ids],
+            )
 
     async def get_recent_user_activity(self, user_id: int, limit: int = 3) -> list:
         """Get a user's most recent counted messages from leaderboard_activity."""

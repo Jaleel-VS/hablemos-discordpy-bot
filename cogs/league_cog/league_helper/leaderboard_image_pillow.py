@@ -133,21 +133,6 @@ def get_rank_emoji(rank: int) -> str:
     """Get rank number"""
     return f"#{rank}"
 
-def draw_star(draw: ImageDraw.ImageDraw, center: tuple[int, int], size: int, color: tuple, outline_color: tuple | None = None):
-    """Draw a 5-pointed star at the given center position"""
-    import math
-    cx, cy = center
-    points = []
-    for i in range(10):
-        # Alternate between outer and inner radius
-        radius = size if i % 2 == 0 else size * 0.4
-        # Start from top (-90 degrees) and go clockwise
-        angle = math.radians(-90 + i * 36)
-        x = cx + radius * math.cos(angle)
-        y = cy + radius * math.sin(angle)
-        points.append((x, y))
-
-    draw.polygon(points, fill=color, outline=outline_color)
 
 def generate_leaderboard_image(
     leaderboard_data: list[dict],
@@ -165,7 +150,7 @@ def generate_leaderboard_image(
             - total_score (int)
             - active_days (int)
             - avatar_url (str)
-            - is_previous_winner (bool)
+
 
         board_type: 'spanish' | 'english' | 'combined'
 
@@ -193,13 +178,11 @@ def generate_leaderboard_image(
 
     # Draw entries
     y_offset = PADDING
-
     for entry in leaderboard_data:
         rank = entry['rank']
         username = entry['username']
         total_score = entry['total_score']
         avatar_url = entry['avatar_url']
-        is_winner = entry['is_previous_winner']
 
         # Get colors for this rank
         bg_color1, bg_color2 = get_rank_colors(rank)
@@ -261,18 +244,9 @@ def generate_leaderboard_image(
         username_bbox = draw.textbbox((0, 0), username, font=username_font)
         username_y = y_offset + (ENTRY_HEIGHT - 10) // 2 - (username_bbox[3] - username_bbox[1]) // 2
 
-        # Draw star icon if previous winner
-        if is_winner:
-            star_size = 10
-            star_x = username_x + star_size
-            star_y = username_y + (username_bbox[3] - username_bbox[1]) // 2
-            # Gold star with darker outline
-            draw_star(draw, (star_x, star_y), star_size, color=(255, 215, 0), outline_color=(200, 160, 0))
-            username_x += star_size * 2 + 8  # Offset username after star
-
         # Truncate username if too long
         username_text = username
-        max_username_width = 380 if is_winner else 400  # Slightly less width if star is shown
+        max_username_width = 400
         if draw.textlength(username_text, font=username_font) > max_username_width:
             while draw.textlength(username_text + "...", font=username_font) > max_username_width and len(username_text) > 10:
                 username_text = username_text[:-1]
@@ -306,7 +280,6 @@ if __name__ == "__main__":
             'total_score': 500,
             'active_days': 14,
             'avatar_url': 'https://cdn.discordapp.com/embed/avatars/0.png',
-            'is_previous_winner': True
         },
         {
             'rank': 2,
@@ -315,7 +288,6 @@ if __name__ == "__main__":
             'total_score': 450,
             'active_days': 12,
             'avatar_url': 'https://cdn.discordapp.com/embed/avatars/1.png',
-            'is_previous_winner': False
         },
         {
             'rank': 3,
@@ -324,7 +296,6 @@ if __name__ == "__main__":
             'total_score': 400,
             'active_days': 11,
             'avatar_url': 'https://cdn.discordapp.com/embed/avatars/2.png',
-            'is_previous_winner': False
         },
     ]
 

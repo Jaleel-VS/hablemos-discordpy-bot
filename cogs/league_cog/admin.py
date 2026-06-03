@@ -592,14 +592,8 @@ Rounds last 1 week. Top performers earn a champion role!"""
             )
             from cogs.league_cog.rounds import enrich_top_entries
 
-            spanish_enriched = enrich_top_entries(
-                spanish_top[:6], bot=self.bot,
-                last_round_recipients=last_round_recipients,
-            )
-            english_enriched = enrich_top_entries(
-                english_top[:6], bot=self.bot,
-                last_round_recipients=last_round_recipients,
-            )
+            spanish_enriched = enrich_top_entries(spanish_top[:6], bot=self.bot)
+            english_enriched = enrich_top_entries(english_top[:6], bot=self.bot)
             image_file: discord.File | None = None
             try:
                 buf = await asyncio.to_thread(
