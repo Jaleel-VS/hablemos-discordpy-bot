@@ -105,6 +105,12 @@ when-to-update table.
 - Don't use raw `pool.acquire()` + inline SQL in cog files — add query methods to DB mixins
 - Don't call `tree.sync()` in `on_ready` — use the `$sync` owner command instead
 
+### Refactoring Safety
+- Before renaming or deleting any function, class, or constant, check all call sites with `lsp references` — a symbol used by another module will cause an `ImportError` at bot startup even if tests pass
+- When rewriting a module that other modules import from, explicitly grep or search for the old public names before removing them
+- After any rename, run `pytest tests/test_smoke.py` — it imports every cog and db mixin and will catch `ImportError: cannot import name 'X'` immediately
+- If you must break a public name, add an alias in the same commit: `new_name = _private_impl; old_name = _private_impl`
+
 ## Git
 
 ### Commit Messages
