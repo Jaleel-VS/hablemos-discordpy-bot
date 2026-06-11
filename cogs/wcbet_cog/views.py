@@ -349,8 +349,16 @@ class BetPanelView(ui.LayoutView):
             self._match_select = select
             children.append(ui.ActionRow(select))
 
+            selected = next(
+                (f for f in self._fixtures if f["match_id"] == self.selected_match_id),
+                None,
+            )
             outcome_buttons: list[ui.Button] = []
             for outcome, (emoji, label) in OUTCOME_BUTTONS.items():
+                if selected is not None and outcome != "draw":
+                    team = selected["home"] if outcome == "home" else selected["away"]
+                    label = team
+                    emoji = TEAM_FLAGS.get(team, emoji)
                 button = ui.Button(
                     label=label,
                     emoji=emoji,
