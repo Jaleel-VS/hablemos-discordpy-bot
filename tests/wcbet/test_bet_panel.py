@@ -147,6 +147,138 @@ async def test_odds_drift_blocks_commit(fake_bot, interaction, clock, fake_odds)
     assert fake_bot.db.place_calls[0]["odds"] == Decimal("7.00")
 
 
+async def test_odds_fetch_blip_keeps_armed_price(fake_bot, interaction, clock, fake_odds):
+    """A failed re-fetch must not silently reprice a real bet to flat 1.5."""
+    fake_odds[1] = MATCH_1_ODDS
+    panel = await _armed_panel(fake_bot, outcome="away", stake=500)  # armed @ 8.50
+
+    fake_odds.clear()  # simulate ESPN returning no odds for this match
+    await panel._on_place_bet(interaction)
+
+    assert fake_bot.db.place_calls == []  # not committed at the flat fallback
+    assert panel._armed_odds == Decimal("8.50")  # armed price preserved
+    assert panel.notice is not None and "refresh" in panel.notice.lower()
+
+    # Odds come back; a retry commits at the real price.
+    fake_odds[1] = MATCH_1_ODDS
+    await panel._on_place_bet(interaction)
+    assert fake_bot.db.place_calls[0]["odds"] == Decimal("8.50")
+
+
+async def test_flat_armed_bet_commits_despite_missing_odds(fake_bot, interaction, clock):
+    """A bet armed at the flat fallback still commits when no line exists."""
+    panel = await _armed_panel(fake_bot, outcome="away", stake=500)  # flat 1.5
+
+    await panel._on_place_bet(interaction)
+
+    assert fake_bot.db.place_calls[0]["odds"] == WCBET_ODDS
+
+
+async def test_blip_surfaces_fallback_button(fake_bot, interaction, clock, fake_odds):
+    fake_odds[1] = MATCH_1_ODDS
+    panel = await _armed_panel(fake_bot, outcome="away", stake=500)  # armed @ 8.50
+    assert panel._fallback_button is None  # no blip yet
+
+    fake_odds.clear()  # ESPN blip
+    await panel._on_place_bet(interaction)
+
+    assert panel._odds_blip is True
+    assert panel._fallback_button is not None
+    assert str(WCBET_ODDS) in panel._fallback_button.label
+    assert fake_bot.db.place_calls == []  # nothing committed yet
+
+
+async def test_fallback_button_commits_at_flat_odds(fake_bot, interaction, clock, fake_odds):
+    fake_odds[1] = MATCH_1_ODDS
+    panel = await _armed_panel(fake_bot, outcome="away", stake=500)  # armed @ 8.50
+    fake_odds.clear()
+    await panel._on_place_bet(interaction)  # trips the blip guard
+
+    await panel._on_place_fallback(interaction)
+
+    assert fake_bot.db.place_calls[0]["odds"] == WCBET_ODDS  # conscious downgrade
+    assert panel.selected_match_id is None  # stepper reset on success
+    assert panel._odds_blip is False
+
+
+async def test_blip_clears_on_successful_retry(fake_bot, interaction, clock, fake_odds):
+    fake_odds[1] = MATCH_1_ODDS
+    panel = await _armed_panel(fake_bot, outcome="away", stake=500)
+    fake_odds.clear()
+    await panel._on_place_bet(interaction)  # blip
+    assert panel._odds_blip is True
+
+    fake_odds[1] = MATCH_1_ODDS  # odds come back
+    await panel._on_place_bet(interaction)  # retry commits at the real price
+
+    assert fake_bot.db.place_calls[0]["odds"] == Decimal("8.50")
+    assert panel._odds_blip is False
+    assert panel._fallback_button is None
+
+
+# ── panel rendering (step hint, focused card, bet slip) ─────────────────────
+
+def _text(panel: views.BetPanelView) -> str:
+    """Concatenate every TextDisplay in the panel's container."""
+    import discord
+
+    container = panel.children[0]
+    return "\n".join(
+        item.content
+        for item in container.children
+        if isinstance(item, discord.ui.TextDisplay)
+    )
+
+
+async def test_step_hint_tracks_progress(fake_bot, clock, fake_odds):
+    fake_odds[1] = MATCH_1_ODDS
+    panel = await _open_panel(fake_bot)
+    assert "Step 1 of 3" in _text(panel)
+
+    panel.selected_match_id = 1
+    await panel.refresh()
+    assert "Step 2 of 3" in _text(panel)
+
+    panel.selected_outcome = "away"
+    await panel.refresh()
+    assert "Step 3 of 3" in _text(panel)
+
+    panel.selected_stake = 500
+    await panel.refresh()
+    assert "Ready" in _text(panel)
+
+
+async def test_match_list_collapses_to_focused_card(fake_bot, clock, fake_odds):
+    fake_odds[1] = MATCH_1_ODDS
+    panel = await _open_panel(fake_bot)
+    # Pre-selection: both of today's matches are listed.
+    text = _text(panel)
+    assert "Mexico" in text and "South Korea" in text
+
+    panel.selected_match_id = 1
+    await panel.refresh()
+    text = _text(panel)
+    # Focused card for match 1 only; the other match drops out of the prose.
+    assert "### " in text and "Mexico" in text
+    assert "South Korea" not in text
+
+
+async def test_bet_slip_summarises_selection(fake_bot, clock, fake_odds):
+    fake_odds[1] = MATCH_1_ODDS
+    panel = await _open_panel(fake_bot)
+    panel.selected_match_id = 1
+    panel.selected_outcome = "away"  # 8.50
+    await panel.refresh()
+    assert "Bet slip" in _text(panel)
+    assert "add a stake" in _text(panel)
+
+    panel.selected_stake = 500
+    await panel.refresh()
+    text = _text(panel)
+    assert "Bet slip" in text
+    assert "4,250" in text  # payout(500, 8.50)
+
+
 # ── stepper state & pricing ──────────────────────────────────────────────────
 
 async def test_stepper_gating(fake_bot, clock):

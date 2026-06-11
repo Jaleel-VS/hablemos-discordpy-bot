@@ -260,6 +260,9 @@ class BetPanelView(ui.LayoutView):
         self.selected_outcome: str | None = None
         self.selected_stake: int | None = None
         self.show_history = False
+        # Set when a live-odds re-fetch fails at placement; surfaces the
+        # explicit "place at fallback odds" escape hatch.
+        self._odds_blip = False
 
         self._fixtures: list[Fixture] = []
         self._pending: dict[int, object] = {}
@@ -272,6 +275,7 @@ class BetPanelView(ui.LayoutView):
         self._outcome_buttons: dict[str, ui.Button] = {}
         self._stake_select: ui.Select | None = None
         self._place_button: ui.Button | None = None
+        self._fallback_button: ui.Button | None = None
 
     async def interaction_check(self, interaction: Interaction) -> bool:
         return interaction.user.id == self.user_id
@@ -294,6 +298,9 @@ class BetPanelView(ui.LayoutView):
     async def refresh(self) -> None:
         """Recompute fixtures, odds, and the user's bets, then rebuild."""
         now = _now_utc()
+        # The fallback button is tied to one specific blip; any path that
+        # re-fetches odds (selection change, retry) clears it.
+        self._odds_blip = False
         self._fixtures = betting.bettable_fixtures(now)
         valid_ids = {f["match_id"] for f in self._fixtures}
         if self.selected_match_id is not None and self.selected_match_id not in valid_ids:
@@ -325,6 +332,73 @@ class BetPanelView(ui.LayoutView):
             header += f"\n-# {self.notice}"
         return header
 
+    def _step_hint(self, selected: Fixture | None) -> str:
+        """One-line 'do this next' nudge keyed to the current selection."""
+        if selected is None:
+            return "-# Step 1 of 3 — pick a match below."
+        if self.selected_outcome is None:
+            return "-# Step 2 of 3 — who wins? (home / draw / away)"
+        if self.selected_stake is None:
+            return "-# Step 3 of 3 — choose your stake."
+        return "-# Ready — review your slip and press **Place bet**."
+
+    def _match_list_lines(self) -> list[str]:
+        """Compact 'today's matches' list shown before a match is chosen.
+
+        Once a match is selected the focused slip replaces this, so the
+        same matches are never listed twice.
+        """
+        lines: list[str] = []
+        for fixture in self._fixtures:
+            ts = int(betting.kickoff_utc(fixture).timestamp())
+            odds = self._odds_for(fixture["match_id"])
+            lines.append(
+                f"**{_team_label(fixture['home'])}** vs "
+                f"**{_team_label(fixture['away'])}** — kickoff <t:{ts}:t>\n"
+                f"-# odds {odds['home']} / {odds['draw']} / {odds['away']}"
+            )
+            bet = self._pending.get(fixture["match_id"])
+            if bet is not None:
+                lines.append(
+                    f"-# 🎟️ you have {bet['stake']:,} @ {bet['odds']} on "
+                    f"{_outcome_label(bet['outcome'], fixture)}"
+                )
+        return lines
+
+    def _slip_lines(self, selected: Fixture, selected_odds: MatchOdds) -> list[str]:
+        """Focused card for the selected match: kickoff, your current bet,
+        and a running bet-slip summary that fills in as steps complete.
+        """
+        ts = int(betting.kickoff_utc(selected).timestamp())
+        lines = [
+            f"### {_team_label(selected['home'])} vs {_team_label(selected['away'])}",
+            f"-# Group {selected['group']} · kickoff <t:{ts}:R> "
+            f"· odds {selected_odds['home']} / {selected_odds['draw']} "
+            f"/ {selected_odds['away']}",
+        ]
+        existing = self._pending.get(selected["match_id"])
+        if existing is not None:
+            lines.append(
+                f"-# 🎟️ current bet: {existing['stake']:,} @ {existing['odds']} on "
+                f"**{_outcome_label(existing['outcome'], selected)}** "
+                "— placing again replaces it."
+            )
+
+        # Running bet slip — only the parts chosen so far.
+        if self.selected_outcome is not None:
+            pick = _outcome_label(self.selected_outcome, selected)
+            price = selected_odds[self.selected_outcome]
+            if self.selected_stake is not None:
+                win = betting.payout(self.selected_stake, price)
+                slip = (
+                    f"🧾 **Bet slip:** {self.selected_stake:,} on **{pick}** "
+                    f"@ **{price}** → win **{win:,}**"
+                )
+            else:
+                slip = f"🧾 **Bet slip:** **{pick}** @ **{price}** — add a stake."
+            lines.append(slip)
+        return lines
+
     def _rebuild(self) -> None:
         """Clear and re-add all items from current state."""
         self.clear_items()
@@ -332,6 +406,7 @@ class BetPanelView(ui.LayoutView):
         self._outcome_buttons = {}
         self._stake_select = None
         self._place_button = None
+        self._fallback_button = None
         self._armed_odds = None
 
         if self.show_history:
@@ -345,23 +420,25 @@ class BetPanelView(ui.LayoutView):
                 "No more bettable matches today — come back tomorrow!",
             ))
         else:
-            lines: list[str] = []
-            for fixture in self._fixtures:
-                ts = int(betting.kickoff_utc(fixture).timestamp())
-                marker = "▶️ " if fixture["match_id"] == self.selected_match_id else ""
-                odds = self._odds_for(fixture["match_id"])
-                lines.append(
-                    f"{marker}**{_team_label(fixture['home'])}** vs "
-                    f"**{_team_label(fixture['away'])}** — kickoff <t:{ts}:t>\n"
-                    f"-# odds {odds['home']} / {odds['draw']} / {odds['away']}"
-                )
-                bet = self._pending.get(fixture["match_id"])
-                if bet is not None:
-                    lines.append(
-                        f"-# you have {bet['stake']:,} @ {bet['odds']} on "
-                        f"{_outcome_label(bet['outcome'], fixture)}"
-                    )
-            children.append(ui.TextDisplay("\n".join(lines)))
+            selected = next(
+                (f for f in self._fixtures if f["match_id"] == self.selected_match_id),
+                None,
+            )
+            selected_odds = (
+                self._odds_for(selected["match_id"]) if selected is not None else None
+            )
+
+            # Step nudge so it is always obvious what to do next.
+            children.append(ui.TextDisplay(self._step_hint(selected)))
+
+            # Before a match is chosen: a compact list of today's matches.
+            # After: a focused slip for that one match (no duplicate listing).
+            if selected is None:
+                children.append(ui.TextDisplay("\n".join(self._match_list_lines())))
+            else:
+                children.append(ui.TextDisplay("\n".join(
+                    self._slip_lines(selected, selected_odds),
+                )))
             children.append(ui.Separator())
 
             select = ui.Select(
@@ -380,13 +457,6 @@ class BetPanelView(ui.LayoutView):
             self._match_select = select
             children.append(ui.ActionRow(select))
 
-            selected = next(
-                (f for f in self._fixtures if f["match_id"] == self.selected_match_id),
-                None,
-            )
-            selected_odds = (
-                self._odds_for(selected["match_id"]) if selected is not None else None
-            )
             outcome_buttons: list[ui.Button] = []
             for outcome, (emoji, label) in OUTCOME_BUTTONS.items():
                 if selected is not None and outcome != "draw":
@@ -456,8 +526,12 @@ class BetPanelView(ui.LayoutView):
                 self._armed_odds = pick_odds
                 win = betting.payout(self.selected_stake, pick_odds)
                 place_label = f"Place {self.selected_stake:,} → win {win:,}"
+            elif pick_odds is not None:
+                place_label = "Place bet — pick a stake"
+            elif self.selected_match_id is not None:
+                place_label = "Place bet — pick an outcome"
             else:
-                place_label = "Place bet…"
+                place_label = "Place bet — pick a match"
             place = ui.Button(
                 label=place_label,
                 emoji="💸",
@@ -469,7 +543,21 @@ class BetPanelView(ui.LayoutView):
 
             my_bets = ui.Button(label="My bets", emoji="📜", style=ButtonStyle.secondary)
             my_bets.callback = self._on_my_bets
-            children.append(ui.ActionRow(place, my_bets))
+            children.append(ui.Separator())
+
+            # After a live-odds re-fetch failure, offer an explicit opt-in to
+            # bet at the flat fallback price instead of being blocked.
+            if self._odds_blip and armed:
+                fallback = ui.Button(
+                    label=f"Place @ {WCBET_ODDS}",
+                    emoji="⚠️",
+                    style=ButtonStyle.danger,
+                )
+                fallback.callback = self._on_place_fallback
+                self._fallback_button = fallback
+                children.append(ui.ActionRow(place, fallback, my_bets))
+            else:
+                children.append(ui.ActionRow(place, my_bets))
 
         self.add_item(ui.Container(*children, accent_colour=Color.blurple()))
 
@@ -564,14 +652,34 @@ class BetPanelView(ui.LayoutView):
         stake = self.selected_stake
         armed = self._armed_odds
         if fixture is None or outcome is None or stake is None or armed is None:
+            self._odds_blip = False
             await self.refresh()
             await interaction.response.edit_message(view=self)
             return
 
         match_id = fixture["match_id"]
         current_map = await espn.fetch_match_odds([fixture])
-        current = current_map.get(match_id, _flat_odds())[outcome]
+        fresh = current_map.get(match_id)
+        if fresh is None and armed != WCBET_ODDS:
+            # We armed at a real DraftKings price but the re-fetch returned
+            # nothing for this match. That is almost always a transient ESPN
+            # blip, not the line being pulled — silently dropping to the flat
+            # 1.5 fallback would quietly reprice an underdog bet downward.
+            # Skip refresh() (it would re-fetch the now-empty odds and clobber
+            # the armed price); just surface the notice so a retry stays at
+            # the armed price, and expose the explicit fallback button.
+            self._odds_blip = True
+            self.notice = (
+                "Couldn't refresh the live odds just now — press **Place bet** "
+                f"to retry at your armed price (**{armed}**), or use "
+                f"**Place @ {WCBET_ODDS}** to bet at the fallback price."
+            )
+            self._rebuild()
+            await interaction.response.edit_message(view=self)
+            return
+        current = (fresh or _flat_odds())[outcome]
         if current != armed:
+            self._odds_blip = False
             self.notice = (
                 f"Odds moved **{armed} → {current}** — confirm again at the "
                 "new price."
@@ -580,9 +688,34 @@ class BetPanelView(ui.LayoutView):
             await interaction.response.edit_message(view=self)
             return
 
+        await self._commit_bet(interaction, fixture, outcome, stake, current)
+
+    async def _on_place_fallback(self, interaction: Interaction) -> None:
+        """Commit at the flat fallback odds — a conscious downgrade the user
+        opts into when live odds are unreachable."""
+        fixture = self._selected_fixture(_now_utc())
+        outcome = self.selected_outcome
+        stake = self.selected_stake
+        if fixture is None or outcome is None or stake is None:
+            self._odds_blip = False
+            await self.refresh()
+            await interaction.response.edit_message(view=self)
+            return
+        await self._commit_bet(interaction, fixture, outcome, stake, WCBET_ODDS)
+
+    async def _commit_bet(
+        self,
+        interaction: Interaction,
+        fixture: Fixture,
+        outcome: str,
+        stake: int,
+        odds: Decimal,
+    ) -> None:
+        """Place the bet at `odds` and reset the stepper on success."""
+        match_id = fixture["match_id"]
         try:
             new_balance = await self.bot.db.place_wc_bet(
-                self.user_id, self.guild_id, match_id, outcome, stake, current,
+                self.user_id, self.guild_id, match_id, outcome, stake, odds,
             )
         except InsufficientBalanceError:
             self.notice = "Not enough coins for that stake."
@@ -590,10 +723,10 @@ class BetPanelView(ui.LayoutView):
             self.notice = "That match was already settled — your bet was not placed."
         else:
             self.balance = new_balance
-            win = betting.payout(stake, current)
+            win = betting.payout(stake, odds)
             self.notice = (
                 f"Bet placed: **{stake:,}** on **{_outcome_label(outcome, fixture)}** "
-                f"@ **{current}** — pays **{win:,}** if it lands. "
+                f"@ **{odds}** — pays **{win:,}** if it lands. "
                 f"New balance: **{new_balance:,}**."
             )
             self.selected_match_id = None
@@ -601,9 +734,10 @@ class BetPanelView(ui.LayoutView):
             self.selected_stake = None
             logger.info(
                 "User %s bet %s @ %s on %s in match %s",
-                self.user_id, stake, current, outcome, match_id,
+                self.user_id, stake, odds, outcome, match_id,
             )
-            await _log_bet(interaction, fixture, outcome, stake, current)
+            await _log_bet(interaction, fixture, outcome, stake, odds)
+        self._odds_blip = False
         await self.refresh()
         await interaction.response.edit_message(view=self)
 

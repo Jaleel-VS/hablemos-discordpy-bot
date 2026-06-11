@@ -9,17 +9,24 @@ correct results. Results arrive via the ESPN poller or manual entry.
 
 `$wcbet` posts a public message with a single button. Anyone who clicks
 it gets their **own ephemeral panel** — a Components V2
-(`discord.ui.LayoutView`) stepper showing their balance, today's
+(`discord.ui.LayoutView`) stepper showing their balance, a step hint
+(`Step 1 of 3 — pick a match`), and their pending bets. The flow is a
+guided sequential chain: before a match is chosen it lists today's
 bettable matches (with flags, localized `<t:…:t>` kickoff times, and the
-current 1X2 odds line), and their pending bets. The flow is fully
-in-panel sequential chaining: select a match → outcome buttons reprice
-to e.g. `🇲🇽 Mexico · 1.43 / 🤝 Draw · 4.40 / 🇿🇦 South Africa · 8.50` →
-a stake select whose **option labels carry the exact payout**
-(`500 → pays 4,250`, `All in (9,500) → pays 80,750`) → the Place button
-is the final live preview (`Place 500 → win 4,250`). `Custom amount…`
-is the only popup; it just sets the stake and re-arms the panel — it
-never commits. Every step re-validates kickoff server-side; a match
-that starts mid-flow drops out and resets the selection.
+current 1X2 odds line); once a match is selected that list **collapses
+into a focused match card** so the same matches are never listed twice.
+Pick a match → outcome buttons reprice to e.g. `🇲🇽 Mexico · 1.43 / 🤝
+Draw · 4.40 / 🇿🇦 South Africa · 8.50` → a stake select whose **option
+labels carry the exact payout** (`500 → pays 4,250`, `All in (9,500) →
+pays 80,750`). A running **bet slip** line summarizes the selection as
+it fills in (`🧾 Bet slip: 500 on South Africa @ 8.50 → win 4,250`), and
+the Place button is the final live preview (`Place 500 → win 4,250`);
+while incomplete it states what's missing (`Place bet — pick an
+outcome`). If the selected match already has a pending bet, the card
+notes it will be replaced. `Custom amount…` is the only popup; it just
+sets the stake and re-arms the panel — it never commits. Every step
+re-validates kickoff server-side; a match that starts mid-flow drops out
+and resets the selection.
 
 Odds are DraftKings close lines parsed from the same ESPN scoreboard
 payload the results poller uses (`results.parse_event_odds` /
@@ -27,11 +34,15 @@ payload the results poller uses (`results.parse_event_odds` /
 The odds at **placement** are snapshotted on the bet row and are what
 settlement pays — later drift never changes an existing bet. Committing
 re-resolves the price: if it moved from what the Place button displayed,
-the click is refused with `Odds moved 4.40 → 4.20 — confirm again`.
-Matches without a published line (or fetch failures) fall back to flat
-`WCBET_ODDS` (1.5) for all three outcomes — never a mix of real and
-fallback legs. Payout math is pure integer arithmetic
-(`stake * int(odds * 100) // 100`).
+the click is refused with `Odds moved 4.40 → 4.20 — confirm again`. If
+the bet was armed at a **real** line but the re-fetch returns nothing
+(an ESPN blip), the panel does **not** silently downgrade to the flat
+fallback — it keeps the armed price for a retry and surfaces an explicit
+`Place @ 1.5` button so the user can consciously opt into the fallback
+instead of being blocked. Matches with no published line (or a
+persistent fetch failure) fall back to flat `WCBET_ODDS` (1.5) for all
+three outcomes — never a mix of real and fallback legs. Payout math is
+pure integer arithmetic (`stake * int(odds * 100) // 100`).
 
 Each user has one bet per match, replaceable until kickoff — replacing
 refunds the old stake and deducts the new one in a single DB
@@ -120,6 +131,10 @@ See [`../database.md`](../database.md#world-cup-betting).
 - **Odds drift**: the Place button commits at re-resolved odds and
   refuses if the price moved from what it displayed (re-arms at the new
   price instead). Settlement always pays each bet's **stored** odds.
+- **Odds-fetch blip**: if a bet armed at a real DraftKings price hits a
+  failed re-fetch at placement, it is **not** repriced to the flat 1.5
+  fallback. The armed price is kept for a retry and a `Place @ 1.5`
+  button appears so the downgrade is an explicit user choice.
 - **Kickoff race**: every panel step re-checks `bettable_fixtures(now)`;
   a commit after kickoff is rejected and the selection resets.
 - **Replace semantics**: replacing a bet refunds the old stake *inside*
