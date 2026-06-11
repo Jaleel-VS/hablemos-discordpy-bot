@@ -10,6 +10,7 @@ offset (EDT holds for the entire June–July 2026 tournament window).
 """
 import re
 from datetime import UTC, datetime, timedelta, timezone
+from decimal import Decimal
 from typing import Literal
 
 from cogs.wcpredict_cog.fixtures import GROUP_STAGE_FIXTURES, Fixture
@@ -58,9 +59,30 @@ def outcome_from_score(home: int, away: int) -> Outcome:
     return "draw"
 
 
-def payout(stake: int) -> int:
-    """Coins credited for a winning bet: floor(stake * 1.5), integer math."""
-    return stake * 3 // 2
+def payout(stake: int, odds: Decimal) -> int:
+    """Coins credited for a winning bet: floor(stake * odds).
+
+    Pure integer arithmetic via hundredths — floats never touch money.
+    """
+    return stake * int(odds * 100) // 100
+
+
+# Stake quick-pick amounts offered in the panel (filtered to balance).
+STAKE_PRESETS = (100, 250, 500, 1_000, 2_500, 5_000)
+
+
+def stake_presets(balance: int) -> list[int]:
+    """Preset stakes affordable at `balance`, plus an all-in amount.
+
+    The balance itself is appended when it is not already a preset, so
+    there is always an "all in" choice (empty list when broke).
+    """
+    if balance < 1:
+        return []
+    amounts = [preset for preset in STAKE_PRESETS if preset <= balance]
+    if balance not in amounts:
+        amounts.append(balance)
+    return amounts
 
 
 def parse_score(raw: str) -> tuple[int, int] | None:

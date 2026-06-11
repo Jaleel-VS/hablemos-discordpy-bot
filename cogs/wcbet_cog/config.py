@@ -1,10 +1,12 @@
 """World Cup betting cog configuration.
 
 Reuses the World Cup log channel from `cogs.worldcup_cog.config` so all
-World Cup activity routes to the same place. The odds constant is a
-display/snapshot value only — payout math is pure integer arithmetic in
-`cogs.wcbet_cog.betting.payout`.
+World Cup activity routes to the same place. Live odds come from
+DraftKings via ESPN (see `espn.py`); `WCBET_ODDS` is the flat fallback
+when a match has no line.
 """
+from decimal import Decimal
+
 from cogs.worldcup_cog.config import WORLD_CUP_LOG_CHANNEL_ID
 from config import get_int_env
 
@@ -14,9 +16,10 @@ WCBET_STARTING_BALANCE: int = 10_000
 # Coins granted on the first `$wcbet` interaction of each UTC day.
 WCBET_DAILY_ALLOWANCE: int = 500
 
-# Flat odds, stored per-bet for future variable odds. Display only:
-# the actual payout is computed as `stake * 3 // 2` (see betting.payout).
-WCBET_ODDS: float = 1.5
+# Fallback odds when DraftKings has not priced a match (or the fetch
+# fails); also the snapshot stored on such bets. Payouts are computed
+# as floor(stake * odds) in integer math (see betting.payout).
+WCBET_ODDS: Decimal = Decimal("1.5")
 
 # Results poller mode. 0 (default) = propose: post the finished score to
 # the log channel with the `$wcbetadmin result` command to run. 1 = auto:

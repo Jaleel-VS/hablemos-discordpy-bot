@@ -7,6 +7,7 @@ fixtures referenced by ``match_id`` are the real 2026 rows from
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from decimal import Decimal
 
 import pytest
 
@@ -18,6 +19,7 @@ from cogs.wcbet_cog.betting import (
     parse_score,
     parse_stake,
     payout,
+    stake_presets,
 )
 from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, Fixture
 
@@ -125,17 +127,43 @@ def test_outcome_from_score(home: int, away: int, expected: str) -> None:
 
 
 @pytest.mark.parametrize(
-    ("stake", "expected"),
+    ("stake", "odds", "expected"),
     [
-        (100, 150),
-        (101, 151),  # floor(151.5)
-        (1, 1),      # floor(1.5)
-        (2, 3),
-        (10_000, 15_000),
+        (100, Decimal("1.5"), 150),
+        (101, Decimal("1.5"), 151),   # floor(151.5)
+        (1, Decimal("1.5"), 1),       # floor(1.5)
+        (2, Decimal("1.5"), 3),
+        (10_000, Decimal("1.5"), 15_000),
+        (3, Decimal("4.40"), 13),     # floor(13.2)
+        (500, Decimal("8.50"), 4_250),
+        (7, Decimal("2.00"), 14),
     ],
 )
-def test_payout_floors(stake: int, expected: int) -> None:
-    assert payout(stake) == expected
+def test_payout_floors(stake: int, odds: Decimal, expected: int) -> None:
+    assert payout(stake, odds) == expected
+
+
+# ── stake_presets ────────────────────────────────────────────────────────────
+
+
+def test_stake_presets_broke_user() -> None:
+    assert stake_presets(0) == []
+
+
+def test_stake_presets_small_balance_is_all_in_only() -> None:
+    assert stake_presets(50) == [50]
+
+
+def test_stake_presets_filters_and_appends_all_in() -> None:
+    assert stake_presets(1_337) == [100, 250, 500, 1_000, 1_337]
+
+
+def test_stake_presets_no_duplicate_when_balance_is_a_preset() -> None:
+    assert stake_presets(500) == [100, 250, 500]
+
+
+def test_stake_presets_full_spread() -> None:
+    assert stake_presets(10_000) == [100, 250, 500, 1_000, 2_500, 5_000, 10_000]
 
 
 # ── parse_score ──────────────────────────────────────────────────────────────

@@ -1,26 +1,41 @@
 # World Cup Betting (`wcbet_cog`)
 
-Virtual-coin betting on World Cup 2026 group-stage matches: opt in for a
-starting balance, bet on today's matches until kickoff, get paid 1.5x
-for correct results. Settlement is manual (owner records scores).
+Virtual-coin betting on World Cup 2026 group-stage matches at **real
+bookmaker odds** (DraftKings via ESPN): opt in for a starting balance,
+bet on today's matches until kickoff, get paid `floor(stake × odds)` for
+correct results. Results arrive via the ESPN poller or manual entry.
 
 ## Overview
 
 `$wcbet` posts a public message with a single button. Anyone who clicks
 it gets their **own ephemeral panel** — a Components V2
 (`discord.ui.LayoutView`) stepper showing their balance, today's
-bettable matches (with flags and localized `<t:…:t>` kickoff times), and
-their pending bets. The flow is: select a match → pick 🏠 Home / 🤝 Draw
-/ ✈️ Away → "Place bet…" opens a one-field stake modal. Every step
-re-validates kickoff server-side; a match that starts mid-flow drops out
-of the panel and resets the selection.
+bettable matches (with flags, localized `<t:…:t>` kickoff times, and the
+current 1X2 odds line), and their pending bets. The flow is fully
+in-panel sequential chaining: select a match → outcome buttons reprice
+to e.g. `🇲🇽 Mexico · 1.43 / 🤝 Draw · 4.40 / 🇿🇦 South Africa · 8.50` →
+a stake select whose **option labels carry the exact payout**
+(`500 → pays 4,250`, `All in (9,500) → pays 80,750`) → the Place button
+is the final live preview (`Place 500 → win 4,250`). `Custom amount…`
+is the only popup; it just sets the stake and re-arms the panel — it
+never commits. Every step re-validates kickoff server-side; a match
+that starts mid-flow drops out and resets the selection.
 
-Betting is win/lose/draw only with flat hardcoded odds (1.5x). Stakes
-are deducted when the bet is placed; a correct bet credits
-`floor(stake × 1.5)` back (net +0.5x). Each user has one bet per match,
-replaceable until kickoff — replacing refunds the old stake and deducts
-the new one in a single DB transaction. Group stage only for now;
-knockout rounds and live data are deferred.
+Odds are DraftKings close lines parsed from the same ESPN scoreboard
+payload the results poller uses (`results.parse_event_odds` /
+`match_odds`), cached in 10-minute buckets (`espn.fetch_match_odds`).
+The odds at **placement** are snapshotted on the bet row and are what
+settlement pays — later drift never changes an existing bet. Committing
+re-resolves the price: if it moved from what the Place button displayed,
+the click is refused with `Odds moved 4.40 → 4.20 — confirm again`.
+Matches without a published line (or fetch failures) fall back to flat
+`WCBET_ODDS` (1.5) for all three outcomes — never a mix of real and
+fallback legs. Payout math is pure integer arithmetic
+(`stake * int(odds * 100) // 100`).
+
+Each user has one bet per match, replaceable until kickoff — replacing
+refunds the old stake and deducts the new one in a single DB
+transaction. Group stage only for now; knockout rounds are deferred.
 
 The fixture data is shared with `$wcfixtures` and `/wcpredict` —
 `cogs/wcpredict_cog/fixtures.py` is the single source of truth (times
@@ -95,15 +110,18 @@ See [`../database.md`](../database.md#world-cup-betting).
 |--------------------|----------|---------|---------|
 | `WCBET_STARTING_BALANCE` | `cogs/wcbet_cog/config.py` | 10,000 | Coins granted on opt-in. |
 | `WCBET_DAILY_ALLOWANCE` | `cogs/wcbet_cog/config.py` | 500 | Lazy daily top-up. |
-| `WCBET_ODDS` | `cogs/wcbet_cog/config.py` | 1.5 | Display/odds snapshot; payout math is integer `stake * 3 // 2` in `betting.py`. |
+| `WCBET_ODDS` | `cogs/wcbet_cog/config.py` | Decimal 1.5 | Fallback odds when no DraftKings line exists; payout math is `floor(stake × odds)` in `betting.payout`. |
 | `WORLD_CUP_LOG_CHANNEL_ID` | `cogs/worldcup_cog/config.py` (re-exported as `WCBET_LOG_CHANNEL_ID`) | baked-in | Bet/settlement log channel, shared with all World Cup cogs. |
 | `WCBET_AUTO_SETTLE` | env, read in `cogs/wcbet_cog/config.py` | 0 (propose) | 1 = poller settles bets itself; 0 = it only posts the command to run. |
 | `WCBET_RESULTS_POLL_MINUTES` | env, read in `cogs/wcbet_cog/config.py` | 5 | Poll interval for the results loop. |
 
 ## Known edge cases & gotchas
 
-- **Kickoff race**: the stake modal can sit open past kickoff; `on_submit`
-  re-checks `bettable_fixtures(now)` and rejects with a notice.
+- **Odds drift**: the Place button commits at re-resolved odds and
+  refuses if the price moved from what it displayed (re-arms at the new
+  price instead). Settlement always pays each bet's **stored** odds.
+- **Kickoff race**: every panel step re-checks `bettable_fixtures(now)`;
+  a commit after kickoff is rejected and the selection resets.
 - **Replace semantics**: replacing a bet refunds the old stake *inside*
   the placement transaction — balance can legally exceed the displayed
   one mid-flight, never go negative.
@@ -120,8 +138,10 @@ See [`../database.md`](../database.md#world-cup-betting).
 - `$wcbettest` — owner-only entrypoint while the public command is
   gated. To go live: uncomment the `$wcbet` block in
   `cogs/wcbet_cog/main.py` (and optionally remove `wcbettest`).
-- Unit tests: `pytest tests/wcbet/` — pure logic (`test_betting.py`)
-  and panel/modal behavior with fakes (`test_bet_panel.py`).
+- Unit tests: `pytest tests/wcbet/` — pure logic (`test_betting.py`),
+  ESPN parsing incl. odds (`test_results.py`), and panel/stepper
+  behavior with fakes (`test_bet_panel.py`; the odds fetch is stubbed
+  via the autouse `fake_odds` fixture).
 
 ## Related
 

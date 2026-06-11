@@ -1,11 +1,18 @@
-"""Tests for the pure ESPN results helpers (`cogs.wcbet_cog.results`)."""
+"""Tests for the pure ESPN results + odds helpers (`cogs.wcbet_cog.results`)."""
 from datetime import UTC, datetime, timedelta
+from decimal import Decimal
+
+import pytest
 
 from cogs.wcbet_cog.betting import kickoff_utc
 from cogs.wcbet_cog.results import (
     RESULT_WINDOW,
+    MatchOdds,
+    american_to_decimal,
     fixtures_awaiting_result,
+    match_odds,
     match_results,
+    parse_event_odds,
 )
 from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID
 
@@ -140,3 +147,100 @@ def test_real_window_now_is_naive_safe() -> None:
     now = datetime(2026, 6, 12, 3, 0, tzinfo=UTC)
     ids = {f["match_id"] for f in fixtures_awaiting_result(now, set())}
     assert 2 in ids  # 02:00Z kickoff + 1h
+
+
+# ── odds parsing ─────────────────────────────────────────────────────────────
+
+def _odds_block(
+    home_ml: str = "-235",
+    away_ml: str = "+750",
+    draw_ml: int = 340,
+) -> dict:
+    """Minimal ESPN odds object as found in competitions[0]['odds'][0]."""
+    return {
+        "provider": {"name": "DraftKings"},
+        "moneyline": {
+            "home": {"close": {"odds": home_ml}},
+            "away": {"close": {"odds": away_ml}},
+        },
+        "drawOdds": {"moneyLine": draw_ml},
+    }
+
+
+def _event_with_odds(fixture, odds_block: dict | None) -> dict:
+    event = _espn_event(fixture, 0, 0, completed=False)
+    if odds_block is not None:
+        event["competitions"][0]["odds"] = [odds_block]
+    return event
+
+
+@pytest.mark.parametrize(
+    ("moneyline", "expected"),
+    [
+        (-235, Decimal("1.43")),
+        (340, Decimal("4.40")),
+        (750, Decimal("8.50")),
+        (-100, Decimal("2.00")),
+        (100, Decimal("2.00")),
+        (-110, Decimal("1.91")),  # 1.909… rounds half-up
+    ],
+)
+def test_american_to_decimal(moneyline: int, expected: Decimal) -> None:
+    assert american_to_decimal(moneyline) == expected
+
+
+def test_american_to_decimal_rejects_zero() -> None:
+    with pytest.raises(ValueError):
+        american_to_decimal(0)
+
+
+def test_parse_event_odds_full_line() -> None:
+    event = _event_with_odds(MATCH_2, _odds_block())
+    assert parse_event_odds(event) == MatchOdds(
+        home=Decimal("1.43"), draw=Decimal("4.40"), away=Decimal("8.50"),
+    )
+
+
+def test_parse_event_odds_falls_back_to_open() -> None:
+    block = _odds_block()
+    block["moneyline"]["home"] = {"open": {"odds": "-170"}}
+    odds = parse_event_odds(_event_with_odds(MATCH_2, block))
+    assert odds is not None and odds["home"] == Decimal("1.59")
+
+
+@pytest.mark.parametrize("missing", ["home", "away"])
+def test_parse_event_odds_missing_moneyline_leg(missing: str) -> None:
+    block = _odds_block()
+    del block["moneyline"][missing]
+    assert parse_event_odds(_event_with_odds(MATCH_2, block)) is None
+
+
+def test_parse_event_odds_missing_draw_leg() -> None:
+    block = _odds_block()
+    del block["drawOdds"]
+    assert parse_event_odds(_event_with_odds(MATCH_2, block)) is None
+
+
+def test_parse_event_odds_no_odds_at_all() -> None:
+    assert parse_event_odds(_event_with_odds(MATCH_2, None)) is None
+
+
+def test_parse_event_odds_garbage_moneyline() -> None:
+    block = _odds_block(home_ml="soon™")
+    assert parse_event_odds(_event_with_odds(MATCH_2, block)) is None
+
+
+def test_match_odds_maps_to_match_id() -> None:
+    payload = {"events": [_event_with_odds(MATCH_2, _odds_block())]}
+    odds = match_odds(payload, [MATCH_2])
+    assert odds == {2: MatchOdds(
+        home=Decimal("1.43"), draw=Decimal("4.40"), away=Decimal("8.50"),
+    )}
+
+
+def test_match_odds_skips_unpriced_and_unmatched() -> None:
+    payload = {"events": [
+        _event_with_odds(MATCH_2, None),               # no line yet
+        _event_with_odds(MATCH_12, _odds_block()),     # not in fixtures arg
+    ]}
+    assert match_odds(payload, [MATCH_2]) == {}

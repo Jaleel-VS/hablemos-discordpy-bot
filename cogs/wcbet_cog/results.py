@@ -10,6 +10,7 @@ Kept free of Discord/DB/network so it can be exercised in isolation;
 fetching and announcing live in `main.py`.
 """
 from datetime import UTC, datetime, timedelta
+from decimal import ROUND_HALF_UP, Decimal
 from typing import TypedDict
 
 from cogs.wcpredict_cog.fixtures import GROUP_STAGE_FIXTURES, Fixture
@@ -84,12 +85,18 @@ def _parse_event(event: dict) -> tuple[datetime, str, str, int, int] | None:
     return kickoff, home, away, home_score, away_score
 
 
+def _fixture_index(fixtures: list[Fixture]) -> dict[tuple[datetime, str, str], int]:
+    """Index fixtures by the (kickoff UTC, home, away) identity ESPN
+    events are matched on."""
+    return {
+        (kickoff_utc(f), f["home"], f["away"]): f["match_id"] for f in fixtures
+    }
+
+
 def match_results(payload: dict, awaiting: list[Fixture]) -> list[MatchResult]:
     """Map completed events in an ESPN scoreboard payload onto the
     fixtures we are waiting on. Unmatched/unfinished events are ignored."""
-    index: dict[tuple[datetime, str, str], int] = {}
-    for fixture in awaiting:
-        index[(kickoff_utc(fixture), fixture["home"], fixture["away"])] = fixture["match_id"]
+    index = _fixture_index(awaiting)
 
     results: list[MatchResult] = []
     events = payload.get("events")
@@ -106,3 +113,93 @@ def match_results(payload: dict, awaiting: list[Fixture]) -> list[MatchResult]:
                 MatchResult(match_id=match_id, home_score=home_score, away_score=away_score)
             )
     return results
+
+
+# ── Odds (DraftKings via the same scoreboard payload) ─────────────────────────
+
+class MatchOdds(TypedDict):
+    """Decimal 1X2 odds for one match."""
+
+    home: Decimal
+    draw: Decimal
+    away: Decimal
+
+
+def american_to_decimal(moneyline: int) -> Decimal:
+    """Convert American moneyline odds to decimal odds (2dp, half-up).
+
+    -235 → 1.43, +340 → 4.40, +750 → 8.50, ±100 → 2.00.
+    """
+    if moneyline == 0:
+        raise ValueError("moneyline cannot be 0")
+    if moneyline < 0:
+        decimal_odds = 1 + Decimal(100) / Decimal(-moneyline)
+    else:
+        decimal_odds = 1 + Decimal(moneyline) / Decimal(100)
+    return decimal_odds.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+
+def _moneyline(leg: dict) -> int:
+    """Extract a side's moneyline from `close` (falling back to `open`)."""
+    for key in ("close", "open"):
+        node = leg.get(key)
+        if isinstance(node, dict) and "odds" in node:
+            return int(str(node["odds"]).replace("+", ""))
+    raise KeyError("no close/open odds")
+
+
+def parse_event_odds(event: dict) -> MatchOdds | None:
+    """Extract decimal 1X2 odds from one ESPN event, or None.
+
+    All-or-nothing: a missing or malformed leg disqualifies the whole
+    match (mixed real/fallback prices would misprice the missing leg).
+    """
+    try:
+        odds = event["competitions"][0]["odds"][0]
+        moneyline = odds["moneyline"]
+        home_ml = _moneyline(moneyline["home"])
+        away_ml = _moneyline(moneyline["away"])
+        draw_ml = int(odds["drawOdds"]["moneyLine"])
+        return MatchOdds(
+            home=american_to_decimal(home_ml),
+            draw=american_to_decimal(draw_ml),
+            away=american_to_decimal(away_ml),
+        )
+    except (KeyError, IndexError, TypeError, ValueError):
+        return None
+
+
+def _event_key(event: dict) -> tuple[datetime, str, str] | None:
+    """The (kickoff UTC, home, away) identity of an event, or None."""
+    try:
+        kickoff = datetime.strptime(event["date"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=UTC)
+        teams: dict[str, str] = {}
+        for competitor in event["competitions"][0]["competitors"]:
+            teams[competitor["homeAway"]] = _normalize(competitor["team"]["displayName"])
+        return kickoff, teams["home"], teams["away"]
+    except (KeyError, IndexError, TypeError, ValueError):
+        return None
+
+
+def match_odds(payload: dict, fixtures: list[Fixture]) -> dict[int, MatchOdds]:
+    """Map ESPN events to per-match decimal odds for the given fixtures.
+
+    Matches without (complete) odds are simply absent — callers fall
+    back to the flat default.
+    """
+    index = _fixture_index(fixtures)
+    out: dict[int, MatchOdds] = {}
+    events = payload.get("events")
+    if not isinstance(events, list):
+        return out
+    for event in events:
+        key = _event_key(event)
+        if key is None:
+            continue
+        match_id = index.get(key)
+        if match_id is None:
+            continue
+        odds = parse_event_odds(event)
+        if odds is not None:
+            out[match_id] = odds
+    return out

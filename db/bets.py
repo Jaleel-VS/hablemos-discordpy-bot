@@ -1,6 +1,7 @@
 """Database mixin for World Cup betting (wallets, bets, match results)."""
 from collections.abc import Callable
 from datetime import date
+from decimal import Decimal
 
 import asyncpg
 
@@ -151,13 +152,14 @@ class WCBetsMixin(DatabaseMixin):
         home_score: int,
         away_score: int,
         outcome: str,
-        payout_fn: Callable[[int], int],
+        payout_fn: Callable[[int, Decimal], int],
     ) -> dict:
         """Settle every pending bet on a match in one transaction.
 
         Records the result row (raising MatchAlreadySettledError on a
         duplicate), marks bets won/lost, and credits winners' wallets with
-        payout_fn(stake). Returns {"winners", "losers", "total_paid"}.
+        payout_fn(stake, odds) at each bet's stored odds snapshot.
+        Returns {"winners", "losers", "total_paid"}.
         """
         async with self._pool().acquire() as conn, conn.transaction():
             try:
@@ -170,7 +172,7 @@ class WCBetsMixin(DatabaseMixin):
             except asyncpg.UniqueViolationError as exc:
                 raise MatchAlreadySettledError(str(match_id)) from exc
             bets = await conn.fetch(
-                'SELECT user_id, outcome, stake FROM wc_bets '
+                'SELECT user_id, outcome, stake, odds FROM wc_bets '
                 "WHERE match_id = $1 AND status = 'pending' FOR UPDATE",
                 match_id,
             )
@@ -179,7 +181,7 @@ class WCBetsMixin(DatabaseMixin):
             total_paid = 0
             for bet in bets:
                 if bet['outcome'] == outcome:
-                    amount = payout_fn(bet['stake'])
+                    amount = payout_fn(bet['stake'], bet['odds'])
                     await conn.execute(
                         'UPDATE wc_bet_wallets '
                         'SET balance = balance + $2, updated_at = NOW() '

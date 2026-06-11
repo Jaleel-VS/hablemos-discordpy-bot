@@ -140,3 +140,23 @@ def clock(monkeypatch: pytest.MonkeyPatch) -> dict[str, datetime]:
     holder = {"now": datetime(2026, 6, 11, 16, 0, tzinfo=UTC)}
     monkeypatch.setattr(views, "_now_utc", lambda: holder["now"])
     return holder
+
+
+@pytest.fixture(autouse=True)
+def fake_odds(monkeypatch: pytest.MonkeyPatch) -> dict[int, Any]:
+    """Stub the ESPN odds fetch — tests never touch the network.
+
+    Empty by default (panel falls back to flat odds); tests insert
+    `match_id -> MatchOdds` entries to simulate live DraftKings lines.
+    """
+    holder: dict[int, Any] = {}
+
+    async def fetch(fixtures: list) -> dict[int, Any]:
+        return {
+            f["match_id"]: holder[f["match_id"]]
+            for f in fixtures
+            if f["match_id"] in holder
+        }
+
+    monkeypatch.setattr(views.espn, "fetch_match_odds", fetch)
+    return holder

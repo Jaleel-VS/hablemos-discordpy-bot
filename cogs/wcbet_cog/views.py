@@ -3,15 +3,20 @@
 Follows the `$wt` pattern (`cogs/interactions_cog/main.py`): a prefix
 command sends a small public button prompt (`OpenBetPanelView`); clicking
 it opens a personal **ephemeral** Components V2 panel (`BetPanelView`)
-that rebuilds itself in place on every step. The stake is collected with
-a single-field modal (`StakeModal`).
+that rebuilds itself in place on every step: match → outcome → stake →
+confirm. Stake amounts are picked from a select whose options carry the
+exact payout at the selected outcome's odds; `StakeModal` survives only
+as the "Custom amount…" escape hatch and never commits a bet itself.
 
 Every callback re-validates against `betting.bettable_fixtures` so a
-match that kicked off mid-flow disappears and the selection resets.
+match that kicked off mid-flow disappears and the selection resets. The
+Place button commits at re-resolved odds and refuses if the price moved
+from what it displayed.
 """
 import contextlib
 import logging
 from datetime import UTC, datetime
+from decimal import Decimal
 
 import discord
 from discord import (
@@ -28,13 +33,14 @@ from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, Fixture
 from cogs.wcpredict_cog.fixtures_view import TEAM_FLAGS
 from db.bets import InsufficientBalanceError, MatchAlreadySettledError
 
-from . import betting
+from . import betting, espn
 from .config import (
     WCBET_DAILY_ALLOWANCE,
     WCBET_LOG_CHANNEL_ID,
     WCBET_ODDS,
     WCBET_STARTING_BALANCE,
 )
+from .results import MatchOdds
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +57,11 @@ STATUS_EMOJI: dict[str, str] = {
     "lost": "❌",
     "void": "↩️",
 }
+
+
+def _flat_odds() -> MatchOdds:
+    """Fallback odds when DraftKings has no line for a match."""
+    return MatchOdds(home=WCBET_ODDS, draw=WCBET_ODDS, away=WCBET_ODDS)
 
 
 def _now_utc() -> datetime:
@@ -89,6 +100,7 @@ async def _log_bet(
     fixture: Fixture,
     outcome: str,
     stake: int,
+    odds: Decimal,
 ) -> None:
     """Log a placed bet to the World Cup log channel."""
     if interaction.guild is None:
@@ -100,7 +112,7 @@ async def _log_bet(
     embed = discord.Embed(color=discord.Color.blurple())
     embed.set_thumbnail(url=interaction.user.display_avatar.url)
     embed.description = (
-        f"**{interaction.user}** bet **{stake:,}** coins on "
+        f"**{interaction.user}** bet **{stake:,}** coins @ **{odds}** on "
         f"**{_outcome_label(outcome, fixture)}** in "
         f"{_team_label(fixture['home'])} vs {_team_label(fixture['away'])} "
         f"(match {fixture['match_id']})."
@@ -184,8 +196,9 @@ class OptInView(ui.LayoutView):
                 "## 🎰 World Cup betting\n"
                 "Bet virtual coins on today's group-stage matches — pick a "
                 "match, an outcome (home / draw / away), and a stake. "
-                f"Correct bets pay **{WCBET_ODDS}x**; you can replace a bet "
-                "any time before kickoff.\n"
+                "Payouts follow real bookmaker odds (DraftKings via ESPN), "
+                "so underdogs pay big; you can replace a bet any time "
+                "before kickoff.\n"
                 f"-# Opting in grants a one-time **{WCBET_STARTING_BALANCE:,}** "
                 f"coins, plus **+{WCBET_DAILY_ALLOWANCE}** on your first visit "
                 "each day."
@@ -245,14 +258,19 @@ class BetPanelView(ui.LayoutView):
         self.notice = notice
         self.selected_match_id: int | None = None
         self.selected_outcome: str | None = None
+        self.selected_stake: int | None = None
         self.show_history = False
 
         self._fixtures: list[Fixture] = []
         self._pending: dict[int, object] = {}
         self._history: list = []
+        self._odds: dict[int, MatchOdds] = {}
+        # Odds the Place button displayed when armed — drift guard.
+        self._armed_odds: Decimal | None = None
         # Rebuilt-item references (also used by tests to assert state).
         self._match_select: ui.Select | None = None
         self._outcome_buttons: dict[str, ui.Button] = {}
+        self._stake_select: ui.Select | None = None
         self._place_button: ui.Button | None = None
 
     async def interaction_check(self, interaction: Interaction) -> bool:
@@ -269,15 +287,24 @@ class BetPanelView(ui.LayoutView):
                 return fixture
         return None
 
+    def _odds_for(self, match_id: int) -> MatchOdds:
+        """Decimal odds for a match, falling back to the flat default."""
+        return self._odds.get(match_id, _flat_odds())
+
     async def refresh(self) -> None:
-        """Recompute bettable fixtures + the user's bets, then rebuild."""
+        """Recompute fixtures, odds, and the user's bets, then rebuild."""
         now = _now_utc()
         self._fixtures = betting.bettable_fixtures(now)
         valid_ids = {f["match_id"] for f in self._fixtures}
         if self.selected_match_id is not None and self.selected_match_id not in valid_ids:
             self.selected_match_id = None
             self.selected_outcome = None
+            self.selected_stake = None
             self.notice = "That match has kicked off — pick another."
+        if self.selected_stake is not None and self.selected_stake > self.balance:
+            self.selected_stake = None
+
+        self._odds = await espn.fetch_match_odds(self._fixtures)
 
         self._pending = {}
         for fixture in self._fixtures:
@@ -303,7 +330,9 @@ class BetPanelView(ui.LayoutView):
         self.clear_items()
         self._match_select = None
         self._outcome_buttons = {}
+        self._stake_select = None
         self._place_button = None
+        self._armed_odds = None
 
         if self.show_history:
             self._rebuild_history()
@@ -320,14 +349,16 @@ class BetPanelView(ui.LayoutView):
             for fixture in self._fixtures:
                 ts = int(betting.kickoff_utc(fixture).timestamp())
                 marker = "▶️ " if fixture["match_id"] == self.selected_match_id else ""
+                odds = self._odds_for(fixture["match_id"])
                 lines.append(
                     f"{marker}**{_team_label(fixture['home'])}** vs "
-                    f"**{_team_label(fixture['away'])}** — kickoff <t:{ts}:t>"
+                    f"**{_team_label(fixture['away'])}** — kickoff <t:{ts}:t>\n"
+                    f"-# odds {odds['home']} / {odds['draw']} / {odds['away']}"
                 )
                 bet = self._pending.get(fixture["match_id"])
                 if bet is not None:
                     lines.append(
-                        f"-# you have {bet['stake']:,} on "
+                        f"-# you have {bet['stake']:,} @ {bet['odds']} on "
                         f"{_outcome_label(bet['outcome'], fixture)}"
                     )
             children.append(ui.TextDisplay("\n".join(lines)))
@@ -353,12 +384,17 @@ class BetPanelView(ui.LayoutView):
                 (f for f in self._fixtures if f["match_id"] == self.selected_match_id),
                 None,
             )
+            selected_odds = (
+                self._odds_for(selected["match_id"]) if selected is not None else None
+            )
             outcome_buttons: list[ui.Button] = []
             for outcome, (emoji, label) in OUTCOME_BUTTONS.items():
                 if selected is not None and outcome != "draw":
                     team = selected["home"] if outcome == "home" else selected["away"]
                     label = team
                     emoji = TEAM_FLAGS.get(team, emoji)
+                if selected_odds is not None:
+                    label = f"{label} · {selected_odds[outcome]}"
                 button = ui.Button(
                     label=label,
                     emoji=emoji,
@@ -374,11 +410,59 @@ class BetPanelView(ui.LayoutView):
                 outcome_buttons.append(button)
             children.append(ui.ActionRow(*outcome_buttons))
 
+            # Stake select: payouts live in the option labels, priced at
+            # the selected outcome's odds.
+            pick_odds = (
+                selected_odds[self.selected_outcome]
+                if selected_odds is not None and self.selected_outcome is not None
+                else None
+            )
+            if pick_odds is not None:
+                amounts = betting.stake_presets(self.balance)
+                if self.selected_stake is not None and self.selected_stake not in amounts:
+                    amounts.insert(0, self.selected_stake)
+                stake_options = [
+                    SelectOption(
+                        label=(
+                            f"All in ({amount:,}) → pays "
+                            f"{betting.payout(amount, pick_odds):,}"
+                            if amount == self.balance
+                            else f"{amount:,} → pays {betting.payout(amount, pick_odds):,}"
+                        ),
+                        value=str(amount),
+                        default=amount == self.selected_stake,
+                    )
+                    for amount in amounts
+                ]
+                stake_options.append(
+                    SelectOption(label="Custom amount…", value="custom", emoji="✏️")
+                )
+            else:
+                stake_options = [SelectOption(label="—", value="none")]
+            stake_select = ui.Select(
+                placeholder=(
+                    "Choose your stake…" if pick_odds is not None
+                    else "Pick an outcome first"
+                ),
+                options=stake_options,
+                disabled=pick_odds is None,
+            )
+            stake_select.callback = self._make_stake_callback(stake_select)
+            self._stake_select = stake_select
+            children.append(ui.ActionRow(stake_select))
+
+            armed = pick_odds is not None and self.selected_stake is not None
+            if armed:
+                self._armed_odds = pick_odds
+                win = betting.payout(self.selected_stake, pick_odds)
+                place_label = f"Place {self.selected_stake:,} → win {win:,}"
+            else:
+                place_label = "Place bet…"
             place = ui.Button(
-                label="Place bet…",
+                label=place_label,
                 emoji="💸",
                 style=ButtonStyle.primary,
-                disabled=self.selected_match_id is None or self.selected_outcome is None,
+                disabled=not armed,
             )
             place.callback = self._on_place_bet
             self._place_button = place
@@ -404,8 +488,8 @@ class BetPanelView(ui.LayoutView):
                 )
                 status = bet["status"]
                 line = (
-                    f"{STATUS_EMOJI.get(status, '•')} **{bet['stake']:,}** on "
-                    f"**{outcome_label}** — {match_label}"
+                    f"{STATUS_EMOJI.get(status, '•')} **{bet['stake']:,}** "
+                    f"@ {bet['odds']} on **{outcome_label}** — {match_label}"
                 )
                 if status == "won" and bet["payout"] is not None:
                     line += f" (paid **{bet['payout']:,}**)"
@@ -454,13 +538,74 @@ class BetPanelView(ui.LayoutView):
 
         return callback
 
+    def _make_stake_callback(self, select: ui.Select):
+        async def callback(interaction: Interaction) -> None:
+            value = select.values[0] if select.values else None
+            if value == "custom":
+                await interaction.response.send_modal(StakeModal(self))
+                return
+            try:
+                stake = int(value)
+            except (TypeError, ValueError):
+                stake = None
+            if stake is not None and not 1 <= stake <= self.balance:
+                stake = None
+            self.selected_stake = stake
+            self.notice = None
+            await self.refresh()
+            await interaction.response.edit_message(view=self)
+
+        return callback
+
     async def _on_place_bet(self, interaction: Interaction) -> None:
+        """Commit the armed bet at freshly resolved odds (drift-guarded)."""
         fixture = self._selected_fixture(_now_utc())
-        if fixture is None or self.selected_outcome is None:
+        outcome = self.selected_outcome
+        stake = self.selected_stake
+        armed = self._armed_odds
+        if fixture is None or outcome is None or stake is None or armed is None:
             await self.refresh()
             await interaction.response.edit_message(view=self)
             return
-        await interaction.response.send_modal(StakeModal(self))
+
+        match_id = fixture["match_id"]
+        current_map = await espn.fetch_match_odds([fixture])
+        current = current_map.get(match_id, _flat_odds())[outcome]
+        if current != armed:
+            self.notice = (
+                f"Odds moved **{armed} → {current}** — confirm again at the "
+                "new price."
+            )
+            await self.refresh()
+            await interaction.response.edit_message(view=self)
+            return
+
+        try:
+            new_balance = await self.bot.db.place_wc_bet(
+                self.user_id, self.guild_id, match_id, outcome, stake, current,
+            )
+        except InsufficientBalanceError:
+            self.notice = "Not enough coins for that stake."
+        except MatchAlreadySettledError:
+            self.notice = "That match was already settled — your bet was not placed."
+        else:
+            self.balance = new_balance
+            win = betting.payout(stake, current)
+            self.notice = (
+                f"Bet placed: **{stake:,}** on **{_outcome_label(outcome, fixture)}** "
+                f"@ **{current}** — pays **{win:,}** if it lands. "
+                f"New balance: **{new_balance:,}**."
+            )
+            self.selected_match_id = None
+            self.selected_outcome = None
+            self.selected_stake = None
+            logger.info(
+                "User %s bet %s @ %s on %s in match %s",
+                self.user_id, stake, current, outcome, match_id,
+            )
+            await _log_bet(interaction, fixture, outcome, stake, current)
+        await self.refresh()
+        await interaction.response.edit_message(view=self)
 
     async def _on_my_bets(self, interaction: Interaction) -> None:
         self.show_history = True
@@ -478,8 +623,13 @@ class BetPanelView(ui.LayoutView):
 
 # ── Stake modal ───────────────────────────────────────────────────────────────
 
-class StakeModal(ui.Modal, title="Stake"):
-    """Single-field modal collecting the stake for the selected bet."""
+class StakeModal(ui.Modal, title="Custom stake"):
+    """Single-field modal for custom stake amounts.
+
+    Never commits a bet — it sets the panel's `selected_stake` and
+    re-renders, so custom amounts get the same preview-then-confirm
+    treatment as the preset picks.
+    """
 
     def __init__(self, panel: BetPanelView) -> None:
         super().__init__()
@@ -499,43 +649,8 @@ class StakeModal(ui.Modal, title="Stake"):
                 "Couldn't read that stake — enter a whole number between 1 "
                 "and your balance, or 'all'."
             )
-            await panel.refresh()
-            await interaction.response.edit_message(view=panel)
-            return
-
-        fixture = panel._selected_fixture(_now_utc())
-        outcome = panel.selected_outcome
-        if fixture is None or outcome is None:
-            panel.selected_match_id = None
-            panel.selected_outcome = None
-            panel.notice = "That match has kicked off — your bet was not placed."
-            await panel.refresh()
-            await interaction.response.edit_message(view=panel)
-            return
-
-        try:
-            new_balance = await panel.bot.db.place_wc_bet(
-                panel.user_id, panel.guild_id, fixture["match_id"],
-                outcome, stake, WCBET_ODDS,
-            )
-        except InsufficientBalanceError:
-            panel.notice = "Not enough coins for that stake."
-        except MatchAlreadySettledError:
-            panel.notice = "That match was already settled — your bet was not placed."
         else:
-            panel.balance = new_balance
-            panel.selected_match_id = None
-            panel.selected_outcome = None
-            panel.notice = (
-                f"Bet placed: **{stake:,}** on **{_outcome_label(outcome, fixture)}** — "
-                f"potential payout **{betting.payout(stake):,}**. "
-                f"New balance: **{new_balance:,}**."
-            )
-            logger.info(
-                "wcbet: user %s bet %s on %s (match %s)",
-                panel.user_id, stake, outcome, fixture["match_id"],
-            )
-            await _log_bet(interaction, fixture, outcome, stake)
-
+            panel.selected_stake = stake
+            panel.notice = None
         await panel.refresh()
         await interaction.response.edit_message(view=panel)

@@ -14,7 +14,6 @@ wins races safely (the result row insert is the duplicate guard).
 import logging
 from datetime import UTC, datetime
 
-import aiohttp
 import discord
 from discord.ext import commands, tasks
 
@@ -22,7 +21,7 @@ from base_cog import BaseCog
 from cogs.utils.embeds import green_embed
 from db.bets import MatchAlreadySettledError
 
-from . import betting, results
+from . import betting, espn, results
 from .admin import WCBetAdmin
 from .config import (
     WCBET_AUTO_SETTLE,
@@ -32,8 +31,6 @@ from .config import (
 from .views import OpenBetPanelView
 
 logger = logging.getLogger(__name__)
-
-FETCH_TIMEOUT_SECONDS = 15
 
 
 class WCBet(BaseCog):
@@ -99,29 +96,11 @@ class WCBet(BaseCog):
         # ESPN's `dates` param is the ET calendar date — same convention
         # as our fixture rows, so the fixture date strings are reusable.
         for date_str in sorted({f["date"].replace("-", "") for f in awaiting}):
-            payload = await self._fetch_scoreboard(date_str)
+            payload = await espn.fetch_scoreboard(date_str)
             if payload is None:
                 continue
             for result in results.match_results(payload, awaiting):
                 await self._handle_result(result)
-
-    async def _fetch_scoreboard(self, date_str: str) -> dict | None:
-        url = results.ESPN_SCOREBOARD_URL.format(date=date_str)
-        timeout = aiohttp.ClientTimeout(total=FETCH_TIMEOUT_SECONDS)
-        try:
-            async with (
-                aiohttp.ClientSession(timeout=timeout) as session,
-                session.get(url) as response,
-            ):
-                if response.status != 200:
-                    logger.warning(
-                        "ESPN scoreboard returned HTTP %s for %s", response.status, date_str,
-                    )
-                    return None
-                return await response.json()
-        except (aiohttp.ClientError, TimeoutError) as exc:
-            logger.warning("ESPN scoreboard fetch failed for %s: %s", date_str, exc)
-            return None
 
     async def _handle_result(self, result: results.MatchResult) -> None:
         """Settle or propose a finished match, depending on the mode flag."""
