@@ -58,13 +58,13 @@ class WCBet(BaseCog):
         )
         view.prompt_message = prompt
 
-    # Public entrypoint — enable once testing is complete (see $wcbettest):
-    # @commands.command(name="wcbet")
-    # @commands.cooldown(1, 5, commands.BucketType.user)
-    # @commands.guild_only()
-    # async def wcbet(self, ctx: commands.Context) -> None:
-    #     """Open the World Cup betting panel."""
-    #     await self._send_prompt(ctx)
+    # Public entrypoint.
+    @commands.command(name="wcbet")
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.guild_only()
+    async def wcbet(self, ctx: commands.Context) -> None:
+        """Open the World Cup betting panel."""
+        await self._send_prompt(ctx)
 
     @commands.command(name="wcbettest")
     @commands.is_owner()

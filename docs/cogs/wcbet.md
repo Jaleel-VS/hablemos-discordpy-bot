@@ -59,8 +59,8 @@ match numbers).
 
 | Command | Description | Permissions | Cooldown |
 |---------|-------------|-------------|----------|
-| `$wcbet` | Post the public betting prompt. **Currently disabled** (commented out in `main.py`) pending testing. | None | 5s/user (when enabled) |
-| `$wcbettest` | Identical flow, live now for pre-release testing. | Owner-only | — |
+| `$wcbet` | Post the public betting prompt. | None | 5s/user |
+| `$wcbettest` | Identical flow; owner-only, retained for testing. | Owner-only | — |
 
 ### Admin commands
 
@@ -150,9 +150,8 @@ See [`../database.md`](../database.md#world-cup-betting).
 
 ## Testing & debugging
 
-- `$wcbettest` — owner-only entrypoint while the public command is
-  gated. To go live: uncomment the `$wcbet` block in
-  `cogs/wcbet_cog/main.py` (and optionally remove `wcbettest`).
+- `$wcbettest` — owner-only entrypoint, retained alongside the public
+  `$wcbet` command for testing.
 - Unit tests: `pytest tests/wcbet/` — pure logic (`test_betting.py`),
   ESPN parsing incl. odds (`test_results.py`), and panel/stepper
   behavior with fakes (`test_bet_panel.py`; the odds fetch is stubbed
