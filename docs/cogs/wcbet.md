@@ -26,7 +26,8 @@ outcome`). If the selected match already has a pending bet, the card
 notes it will be replaced. `Custom amount…` is the only popup; it just
 sets the stake and re-arms the panel — it never commits. Every step
 re-validates kickoff server-side; a match that starts mid-flow drops out
-and resets the selection.
+and resets the selection. A **Close** button dismisses the panel; the
+`My bets` view lists the user's bet history with **Back**/**Close**.
 
 Odds are DraftKings close lines parsed from the same ESPN scoreboard
 payload the results poller uses (`results.parse_event_odds` /
@@ -144,7 +145,11 @@ See [`../database.md`](../database.md#world-cup-betting).
   June–July window); `betting.kickoff_utc` converts to aware UTC. "Today"
   is the **ET** calendar date.
 - **Ephemeral panels**: each clicker gets an independent panel; the
-  public prompt button is intentionally not user-locked.
+  public prompt button is intentionally **not** user-locked and stays
+  reusable so several people can each open their own panel (unlike the
+  one-shot `$wt` chooser). The panel has a **Close** button that
+  collapses it to a short notice; otherwise it expires on the 600s
+  timeout.
 - **V2 constraints**: LayoutView messages cannot carry `content=`/embeds;
   the panel is view-only. The prompt message uses a classic `ui.View`.
 

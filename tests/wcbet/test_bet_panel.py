@@ -216,6 +216,22 @@ async def test_blip_clears_on_successful_retry(fake_bot, interaction, clock, fak
     assert panel._fallback_button is None
 
 
+async def test_close_collapses_panel(fake_bot, interaction, clock):
+    import discord
+
+    panel = await _open_panel(fake_bot)
+    await panel._on_close(interaction)
+
+    assert panel.is_finished()  # view stopped
+    assert interaction.response.edited  # message re-rendered
+    text = "\n".join(
+        item.content
+        for item in panel.children[0].children
+        if isinstance(item, discord.ui.TextDisplay)
+    )
+    assert "closed" in text.lower()
+
+
 # ── panel rendering (step hint, focused card, bet slip) ─────────────────────
 
 def _text(panel: views.BetPanelView) -> str:

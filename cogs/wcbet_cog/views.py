@@ -543,6 +543,8 @@ class BetPanelView(ui.LayoutView):
 
             my_bets = ui.Button(label="My bets", emoji="📜", style=ButtonStyle.secondary)
             my_bets.callback = self._on_my_bets
+            close = ui.Button(label="Close", emoji="✖️", style=ButtonStyle.secondary)
+            close.callback = self._on_close
             children.append(ui.Separator())
 
             # After a live-odds re-fetch failure, offer an explicit opt-in to
@@ -555,9 +557,9 @@ class BetPanelView(ui.LayoutView):
                 )
                 fallback.callback = self._on_place_fallback
                 self._fallback_button = fallback
-                children.append(ui.ActionRow(place, fallback, my_bets))
+                children.append(ui.ActionRow(place, fallback, my_bets, close))
             else:
-                children.append(ui.ActionRow(place, my_bets))
+                children.append(ui.ActionRow(place, my_bets, close))
 
         self.add_item(ui.Container(*children, accent_colour=Color.blurple()))
 
@@ -588,12 +590,14 @@ class BetPanelView(ui.LayoutView):
 
         back = ui.Button(label="Back", emoji="↩️", style=ButtonStyle.secondary)
         back.callback = self._on_back
+        close = ui.Button(label="Close", emoji="✖️", style=ButtonStyle.secondary)
+        close.callback = self._on_close
         self.add_item(ui.Container(
             ui.TextDisplay(f"## 📜 My bets\n💰 Balance: **{self.balance:,}** coins"),
             ui.Separator(),
             ui.TextDisplay(body),
             ui.Separator(),
-            ui.ActionRow(back),
+            ui.ActionRow(back, close),
             accent_colour=Color.blurple(),
         ))
 
@@ -749,6 +753,18 @@ class BetPanelView(ui.LayoutView):
     async def _on_back(self, interaction: Interaction) -> None:
         self.show_history = False
         await self.refresh()
+        await interaction.response.edit_message(view=self)
+
+    async def _on_close(self, interaction: Interaction) -> None:
+        """Dismiss the personal panel, collapsing it to a short notice."""
+        self.clear_items()
+        self.add_item(ui.Container(
+            ui.TextDisplay(
+                "🎰 Betting panel closed — run `$wcbet` again to reopen."
+            ),
+            accent_colour=Color.blurple(),
+        ))
+        self.stop()
         await interaction.response.edit_message(view=self)
 
     async def on_timeout(self) -> None:
