@@ -102,6 +102,18 @@ for the full feature.
 | `$wcpredict clearwinner` | Reset the recorded champion (un-grades the leaderboard). |
 | `$wcpredict stats` | Show participation totals and per-team distribution. |
 
+## `$wcbetadmin` (group, owner-only)
+
+World Cup betting admin. See [`cogs/wcbet.md`](./cogs/wcbet.md) for the
+full feature.
+
+| Subcommand | Description |
+|-----------|-------------|
+| `$wcbetadmin result <match_id> <score>` | Record a final score (e.g. `$wcbetadmin result 1 2-1`; also accepts `2:1` / `2 1`). Derives home/draw/away, settles every pending bet on the match atomically (winners credited `floor(stake × 1.5)`), and posts a summary to `#world-cup-log`. Rejects duplicates. |
+| `$wcbetadmin void <match_id>` | Refund all pending stakes on a match and mark the bets void (postponements/abandonments). |
+| `$wcbetadmin stats` | Wallet count, pending bets, total coins staked, top balance. |
+| `$wcbettest` | Owner-only test entrypoint for the user flow while the public `$wcbet` is disabled (defined in `main.py`, not part of this group). |
+
 ## Owner-only utilities
 
 See [`cogs/admin.md`](./cogs/admin.md), [`cogs/database.md`](./cogs/database.md), [`cogs/relay.md`](./cogs/relay.md), and [`cogs/tickets.md`](./cogs/tickets.md) for full details.

@@ -768,4 +768,47 @@ async def initialize_schema(pool):
             ON nogif_restrictions(guild_id)
         ''')
 
+        # World Cup betting tables
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS wc_bet_wallets (
+                user_id             BIGINT PRIMARY KEY,
+                guild_id            BIGINT NOT NULL,
+                balance             BIGINT NOT NULL,
+                last_allowance_date DATE,
+                created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS wc_bets (
+                user_id    BIGINT NOT NULL REFERENCES wc_bet_wallets(user_id),
+                match_id   INTEGER NOT NULL,
+                guild_id   BIGINT NOT NULL,
+                outcome    TEXT NOT NULL CHECK (outcome IN ('home','draw','away')),
+                stake      INTEGER NOT NULL CHECK (stake > 0),
+                odds       NUMERIC(5,2) NOT NULL,
+                status     TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','won','lost','void')),
+                payout     INTEGER,
+                placed_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                settled_at TIMESTAMPTZ,
+                PRIMARY KEY (user_id, match_id)
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_wc_bets_match_status
+            ON wc_bets(match_id, status)
+        ''')
+
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS wc_match_results (
+                match_id   INTEGER PRIMARY KEY,
+                home_score INTEGER NOT NULL,
+                away_score INTEGER NOT NULL,
+                outcome    TEXT NOT NULL,
+                settled_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        ''')
+
         logger.info("Database schema initialized")

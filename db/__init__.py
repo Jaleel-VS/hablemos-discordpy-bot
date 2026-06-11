@@ -31,6 +31,7 @@ class DatabaseMixin:
         async with self._pool().acquire() as conn:
             return await conn.execute(query, *args)
 
+from db.bets import WCBetsMixin
 from db.conversations import ConversationsMixin
 from db.crossword import CrosswordMixin
 from db.dictation import DictationMixin
@@ -66,6 +67,7 @@ class Database(
     DictationMixin,
     CrosswordMixin,
     WCPredictionsMixin,
+    WCBetsMixin,
     NoGifMixin,
 ):
     def __init__(self, database_url: str):

@@ -101,6 +101,20 @@ Adding a new domain:
   (`wc_predict.winner_role_id`) live in `bot_settings` rather than a
   dedicated table. See [`cogs/wcpredict.md`](./cogs/wcpredict.md).
 
+### World Cup betting
+- `wc_bet_wallets` — one row per opted-in user (`user_id` PK). Coin
+  `balance` (starts at 10,000), `last_allowance_date` for the race-safe
+  daily +500 claim, `guild_id`, timestamps.
+- `wc_bets` — PK `(user_id, match_id)`: one editable bet per user per
+  match. `outcome` (`home`/`draw`/`away`), `stake`, `odds` snapshot
+  (NUMERIC), `status` (`pending`/`won`/`lost`/`void`), `payout`,
+  `placed_at`/`settled_at`. Indexed on `(match_id, status)` for
+  settlement. Balance changes and bet writes always share one
+  transaction (`WCBetsMixin` in `db/bets.py`).
+- `wc_match_results` — one row per settled match (`match_id` PK):
+  final score, derived outcome, `settled_at`. The insert doubles as the
+  duplicate-settlement guard. See [`cogs/wcbet.md`](./cogs/wcbet.md).
+
 ## Querying conventions
 
 - Use the `_fetch` / `_fetchrow` / `_fetchval` / `_execute` helpers
