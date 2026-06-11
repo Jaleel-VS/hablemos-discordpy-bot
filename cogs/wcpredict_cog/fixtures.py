@@ -147,7 +147,7 @@ FIXTURES: list[Fixture] = [
     },
     {
         "match_id": 16, "stage": "Group Stage", "group": "C",
-        "date": "2026-06-19", "time_et": "21:00",
+        "date": "2026-06-19", "time_et": "20:30",
         "home": "Brazil", "away": "Haiti",
         "venue": "Lincoln Financial Field", "city": "Philadelphia",
     },
@@ -172,15 +172,15 @@ FIXTURES: list[Fixture] = [
         "venue": "SoFi Stadium", "city": "Inglewood",
     },
     {
-        # 00:00 ET = 9 pm PT — evening kickoff at a Vancouver venue
+        # 00:00 ET Jun 14 = 9 pm PT Jun 13 — evening kickoff at a Vancouver venue
         "match_id": 20, "stage": "Group Stage", "group": "D",
-        "date": "2026-06-13", "time_et": "00:00",
+        "date": "2026-06-14", "time_et": "00:00",
         "home": "Australia", "away": "Türkiye",
         "venue": "BC Place", "city": "Vancouver",
     },
     {
         "match_id": 21, "stage": "Group Stage", "group": "D",
-        "date": "2026-06-19", "time_et": "00:00",
+        "date": "2026-06-19", "time_et": "23:00",
         "home": "Türkiye", "away": "Paraguay",
         "venue": "Levi's Stadium", "city": "Santa Clara",
     },
@@ -261,9 +261,9 @@ FIXTURES: list[Fixture] = [
         "venue": "NRG Stadium", "city": "Houston",
     },
     {
-        # 00:00 ET = 11 pm CDT at a Mexican venue
+        # 00:00 ET Jun 21 = 11 pm CDT Jun 20 at a Mexican venue
         "match_id": 34, "stage": "Group Stage", "group": "F",
-        "date": "2026-06-20", "time_et": "00:00",
+        "date": "2026-06-21", "time_et": "00:00",
         "home": "Tunisia", "away": "Japan",
         "venue": "Estadio BBVA", "city": "Guadalupe",
     },
@@ -396,9 +396,9 @@ FIXTURES: list[Fixture] = [
 
     # ── GROUP J ──────────────────────────────────────────────────────────────
     {
-        # 00:00 ET = 9 pm PT — evening kickoff at a Santa Clara venue
+        # 00:00 ET Jun 17 = 9 pm PT Jun 16 — evening kickoff at a Santa Clara venue
         "match_id": 55, "stage": "Group Stage", "group": "J",
-        "date": "2026-06-16", "time_et": "00:00",
+        "date": "2026-06-17", "time_et": "00:00",
         "home": "Austria", "away": "Jordan",
         "venue": "Levi's Stadium", "city": "Santa Clara",
     },
