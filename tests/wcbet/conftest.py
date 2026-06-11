@@ -32,9 +32,13 @@ class FakeDB:
         self.place_error: Exception | None = None
         self.created_wallets: list[tuple[int, int, int]] = []
         self.allowance_result: int | None = None
+        self.banned: bool = False
 
     async def get_wc_wallet(self, user_id: int) -> dict[str, Any] | None:
         return self.wallet
+
+    async def is_wc_bet_banned(self, user_id: int) -> bool:
+        return self.banned
 
     async def create_wc_wallet(
         self, user_id: int, guild_id: int, starting_balance: int,

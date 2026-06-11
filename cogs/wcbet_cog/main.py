@@ -28,6 +28,7 @@ from .config import (
     WCBET_LOG_CHANNEL_ID,
     WCBET_RESULTS_POLL_MINUTES,
 )
+from .mod import WCBetMod
 from .views import OpenBetPanelView
 
 logger = logging.getLogger(__name__)
@@ -157,3 +158,4 @@ class WCBet(BaseCog):
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(WCBet(bot))
     await bot.add_cog(WCBetAdmin(bot))
+    await bot.add_cog(WCBetMod(bot))

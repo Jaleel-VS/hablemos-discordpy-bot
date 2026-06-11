@@ -811,4 +811,14 @@ async def initialize_schema(pool):
             )
         ''')
 
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS wc_bet_bans (
+                user_id    BIGINT PRIMARY KEY,
+                guild_id   BIGINT NOT NULL,
+                banned_by  BIGINT NOT NULL,
+                reason     TEXT,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        ''')
+
         logger.info("Database schema initialized")

@@ -232,6 +232,29 @@ async def test_close_collapses_panel(fake_bot, interaction, clock):
     assert "closed" in text.lower()
 
 
+# ── betting ban gate ─────────────────────────────────────────────
+
+async def test_banned_user_cannot_open_panel(fake_bot, interaction):
+    fake_bot.db.banned = True
+    view = views.OpenBetPanelView(fake_bot)
+
+    await view._open_for(interaction)
+
+    assert interaction.response.sent  # got the ban notice
+    assert "banned" in interaction.response.sent[0]["content"].lower()
+    assert fake_bot.db.created_wallets == []  # no wallet created
+
+
+async def test_unbanned_user_opens_panel(fake_bot, interaction, clock):
+    fake_bot.db.banned = False
+    view = views.OpenBetPanelView(fake_bot)
+
+    await view._open_for(interaction)
+
+    assert interaction.response.sent  # panel sent, no ban block
+    assert "banned" not in str(interaction.response.sent[0]).lower()
+
+
 # ── panel rendering (step hint, focused card, bet slip) ─────────────────────
 
 def _text(panel: views.BetPanelView) -> str:

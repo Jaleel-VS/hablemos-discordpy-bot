@@ -112,7 +112,21 @@ full feature.
 | `$wcbetadmin result <match_id> <score>` | Record a final score (e.g. `$wcbetadmin result 1 2-1`; also accepts `2:1` / `2 1`). Derives home/draw/away, settles every pending bet on the match atomically (winners credited `floor(stake × 1.5)`), and posts a summary to `#world-cup-log`. Rejects duplicates. |
 | `$wcbetadmin void <match_id>` | Refund all pending stakes on a match and mark the bets void (postponements/abandonments). |
 | `$wcbetadmin stats` | Wallet count, pending bets, total coins staked, top balance. |
-| `$wcbettest` | Owner-only test entrypoint for the user flow while the public `$wcbet` is disabled (defined in `main.py`, not part of this group). |
+| `$wcbettest` | Owner-only test entrypoint for the user flow, retained alongside the public `$wcbet` (defined in `main.py`, not part of this group). |
+
+## `$wcbetmod` (group, `manage_messages`)
+
+Moderator tier for World Cup betting — per-user tools, a step below the
+owner-only `$wcbetadmin` (which owns match-wide settlement). All actions
+log to `#world-cup-log`. See [`cogs/wcbet.md`](./cogs/wcbet.md).
+
+| Subcommand | Description |
+|-----------|-------------|
+| `$wcbetmod user <@user>` | Read-only summary: balance, pending bets/stake, lifetime won/lost/void, ban status. |
+| `$wcbetmod ban <@user> [reason]` | Ban a user from opening the betting panel. |
+| `$wcbetmod unban <@user>` | Lift a betting ban. |
+| `$wcbetmod give <@user> <amount>` | Grant coins (confirmation prompt + loud log). Capped at 1,000,000 per action. |
+| `$wcbetmod take <@user> <amount>` | Deduct coins (confirmation prompt + loud log); balance clamps at 0. |
 
 ## Owner-only utilities
 

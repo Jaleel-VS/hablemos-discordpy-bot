@@ -114,6 +114,9 @@ Adding a new domain:
 - `wc_match_results` — one row per settled match (`match_id` PK):
   final score, derived outcome, `settled_at`. The insert doubles as the
   duplicate-settlement guard. See [`cogs/wcbet.md`](./cogs/wcbet.md).
+- `wc_bet_bans` — one row per user banned from betting (`user_id` PK):
+  `guild_id`, `banned_by`, optional `reason`, `created_at`. Checked at
+  panel entry; managed by the `$wcbetmod` moderator group.
 
 ## Querying conventions
 

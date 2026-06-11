@@ -141,7 +141,20 @@ class OpenBetPanelView(ui.View):
 
     @ui.button(label="Make prediction", emoji="🎰", style=ButtonStyle.primary)
     async def open_panel(self, interaction: Interaction, button: ui.Button) -> None:
+        await self._open_for(interaction)
+
+    async def _open_for(self, interaction: Interaction) -> None:
+        """Open the personal panel for the clicker (extracted for testing)."""
         user_id = interaction.user.id
+        if await self.bot.db.is_wc_bet_banned(user_id):
+            await interaction.response.send_message(
+                content=(
+                    "🚫 You're banned from World Cup betting. Contact a moderator "
+                    "if you think this is a mistake."
+                ),
+                ephemeral=True,
+            )
+            return
         wallet = await self.bot.db.get_wc_wallet(user_id)
         if wallet is None:
             optin = OptInView(self.bot, user_id=user_id, guild_id=interaction.guild_id)

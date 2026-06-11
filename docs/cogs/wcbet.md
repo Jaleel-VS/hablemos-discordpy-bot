@@ -67,16 +67,33 @@ match numbers).
 
 See [`../admin.md`](../admin.md#wcbetadmin-group-owner-only) —
 `$wcbetadmin result <match_id> <score>`, `$wcbetadmin void <match_id>`,
-`$wcbetadmin stats`.
+`$wcbetadmin stats` (owner-only, match-wide settlement).
+
+### Moderator commands (`manage_messages`)
+
+`$wcbetmod` (separate `mod.py`) is a per-user tier below the owner-only
+admin group. All actions log to `#world-cup-log`. See
+[`../admin.md`](../admin.md#wcbetmod-group-manage_messages).
+
+| Command | Description |
+|---------|-------------|
+| `$wcbetmod user <@user>` | Read-only wallet/bet summary + ban status. |
+| `$wcbetmod ban <@user> [reason]` / `unban` | Block/allow a user opening the panel. |
+| `$wcbetmod give` / `take <@user> <amount>` | Adjust a balance (confirm prompt + loud log; cap 1,000,000; balance clamps ≥ 0). |
+
+Match results and match-wide voids stay owner-only — they move everyone's
+coins at once, too much blast radius for the mod tier.
 
 ## Flows
 
 **Opt-in / daily allowance** (lazy, no scheduled task):
 
 1. User clicks 🎰 on the public prompt.
-2. No wallet → ephemeral opt-in panel; the button creates the wallet
+2. If the user is **banned** (`wc_bet_bans`, set via `$wcbetmod ban`),
+   they get an ephemeral refusal and no wallet is created.
+3. No wallet → ephemeral opt-in panel; the button creates the wallet
    with 10,000 coins and swaps to the betting panel.
-3. Wallet exists → a race-safe single `UPDATE … WHERE
+4. Wallet exists → a race-safe single `UPDATE … WHERE
    last_allowance_date IS DISTINCT FROM $today RETURNING balance` grants
    +500 once per UTC day; the panel shows a notice when it fires.
 
@@ -113,6 +130,7 @@ See [`../admin.md`](../admin.md#wcbetadmin-group-owner-only) —
 | `wc_bet_wallets` | `WCBetsMixin` (`db/bets.py`) | Per-user coin balance + `last_allowance_date`. |
 | `wc_bets` | `WCBetsMixin` | PK `(user_id, match_id)`; outcome, stake, odds snapshot, status, payout. |
 | `wc_match_results` | `WCBetsMixin` | Final score per settled match; doubles as the duplicate-settlement guard. |
+| `wc_bet_bans` | `WCBetsMixin` | Users banned from betting (`user_id` PK); checked at panel entry, managed by `$wcbetmod`. |
 
 See [`../database.md`](../database.md#world-cup-betting).
 

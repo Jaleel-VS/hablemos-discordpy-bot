@@ -259,3 +259,99 @@ class WCBetsMixin(DatabaseMixin):
             'total_staked': int(row['total_staked']),
             'top_balance': int(row['top_balance']) if row['top_balance'] is not None else None,
         }
+
+    # ---------- moderation (manage_messages tier) ----------
+
+    async def get_wc_user_summary(self, user_id: int) -> dict | None:
+        """Return a moderation summary for one user, or None with no wallet.
+
+        Aggregates wallet balance, pending-bet count/stake, and lifetime
+        won/lost/void tallies in a single round-trip.
+        """
+        row = await self._fetchrow(
+            '''
+            SELECT
+                w.balance,
+                w.guild_id,
+                w.last_allowance_date,
+                (SELECT COUNT(*) FROM wc_bets b
+                 WHERE b.user_id = w.user_id AND b.status = 'pending') AS pending,
+                (SELECT COALESCE(SUM(stake), 0) FROM wc_bets b
+                 WHERE b.user_id = w.user_id AND b.status = 'pending') AS pending_stake,
+                (SELECT COUNT(*) FROM wc_bets b
+                 WHERE b.user_id = w.user_id AND b.status = 'won') AS won,
+                (SELECT COALESCE(SUM(payout), 0) FROM wc_bets b
+                 WHERE b.user_id = w.user_id AND b.status = 'won') AS won_payout,
+                (SELECT COUNT(*) FROM wc_bets b
+                 WHERE b.user_id = w.user_id AND b.status = 'lost') AS lost,
+                (SELECT COUNT(*) FROM wc_bets b
+                 WHERE b.user_id = w.user_id AND b.status = 'void') AS void
+            FROM wc_bet_wallets w WHERE w.user_id = $1
+            ''',
+            user_id,
+        )
+        if row is None:
+            return None
+        return {
+            'balance': int(row['balance']),
+            'guild_id': int(row['guild_id']),
+            'last_allowance_date': row['last_allowance_date'],
+            'pending': int(row['pending']),
+            'pending_stake': int(row['pending_stake']),
+            'won': int(row['won']),
+            'won_payout': int(row['won_payout']),
+            'lost': int(row['lost']),
+            'void': int(row['void']),
+        }
+
+    async def adjust_wc_balance(self, user_id: int, delta: int) -> int | None:
+        """Add `delta` coins to a wallet (negative to deduct), clamped to >= 0.
+
+        Single locked transaction. Returns the new balance, or None if the
+        user has no wallet.
+        """
+        async with self._pool().acquire() as conn, conn.transaction():
+            balance = await conn.fetchval(
+                'SELECT balance FROM wc_bet_wallets WHERE user_id = $1 FOR UPDATE',
+                user_id,
+            )
+            if balance is None:
+                return None
+            new_balance = max(0, balance + delta)
+            await conn.execute(
+                'UPDATE wc_bet_wallets '
+                'SET balance = $2, updated_at = NOW() WHERE user_id = $1',
+                user_id, new_balance,
+            )
+            return new_balance
+
+    async def set_wc_bet_ban(
+        self, user_id: int, guild_id: int, banned_by: int, reason: str | None,
+    ) -> None:
+        """Ban (or re-ban) a user from the betting panel."""
+        await self._execute(
+            '''
+            INSERT INTO wc_bet_bans (user_id, guild_id, banned_by, reason)
+            VALUES ($1, $2, $3, $4)
+            ON CONFLICT (user_id) DO UPDATE
+            SET guild_id   = EXCLUDED.guild_id,
+                banned_by  = EXCLUDED.banned_by,
+                reason     = EXCLUDED.reason,
+                created_at = NOW()
+            ''',
+            user_id, guild_id, banned_by, reason,
+        )
+
+    async def remove_wc_bet_ban(self, user_id: int) -> bool:
+        """Lift a betting ban. Return True if a ban was removed."""
+        result = await self._execute(
+            'DELETE FROM wc_bet_bans WHERE user_id = $1', user_id,
+        )
+        return result.endswith(' 1')
+
+    async def is_wc_bet_banned(self, user_id: int) -> bool:
+        """Return True if the user is banned from betting."""
+        value = await self._fetchval(
+            'SELECT 1 FROM wc_bet_bans WHERE user_id = $1', user_id,
+        )
+        return value is not None
