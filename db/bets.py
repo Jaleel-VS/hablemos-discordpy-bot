@@ -231,6 +231,11 @@ class WCBetsMixin(DatabaseMixin):
                 total_refunded += bet['stake']
             return {'refunded': refunded, 'total_refunded': total_refunded}
 
+    async def get_wc_settled_match_ids(self) -> set[int]:
+        """Return the match_ids that already have a recorded result."""
+        rows = await self._fetch('SELECT match_id FROM wc_match_results')
+        return {row['match_id'] for row in rows}
+
     async def wc_bet_stats(self, guild_id: int) -> dict:
         """Return aggregate betting stats for a guild."""
         row = await self._fetchrow(

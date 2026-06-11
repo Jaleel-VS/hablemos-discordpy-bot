@@ -53,7 +53,7 @@ See [`../admin.md`](../admin.md#wcbetadmin-group-owner-only) —
    last_allowance_date IS DISTINCT FROM $today RETURNING balance` grants
    +500 once per UTC day; the panel shows a notice when it fires.
 
-**Settlement** (owner, after full time):
+**Settlement** — manual command or the ESPN results poller:
 
 1. `$wcbetadmin result 1 2-1` → score parsed (`2-1` / `2:1` / `2 1`),
    outcome derived (`home`).
@@ -61,6 +61,23 @@ See [`../admin.md`](../admin.md#wcbetadmin-group-owner-only) —
    bets locked `FOR UPDATE`, winners credited `payout(stake)`, statuses
    flipped to `won`/`lost`.
 3. Summary embed in the invoking channel + log to `#world-cup-log`.
+
+**Results poller** (`tasks.loop`, every `WCBET_RESULTS_POLL_MINUTES`):
+
+1. Skips entirely unless an unsettled group-stage match is inside its
+   post-kickoff window (kickoff → +6h), so idle traffic is zero.
+2. Fetches ESPN's free, key-less scoreboard JSON
+   (`site.api.espn.com/...scoreboard?dates=YYYYMMDD` — the `dates` param
+   uses the ET calendar date, same convention as `fixtures.py`).
+3. Completed events are mapped to our `match_id` by exact
+   `(kickoff UTC, home, away)` after normalizing five team-name
+   spellings (`results.TEAM_NAME_ALIASES`) — a mismatch can never settle
+   the wrong match; it just doesn't match.
+4. Default **propose mode**: posts the finished score + ready-to-run
+   `$wcbetadmin result …` command to `#world-cup-log` (once per match
+   per process). With `WCBET_AUTO_SETTLE=1` it settles directly through
+   the same transaction as the manual command and announces a summary;
+   a manual settlement racing it simply wins (duplicate guard).
 
 ## Database tables
 
@@ -80,6 +97,8 @@ See [`../database.md`](../database.md#world-cup-betting).
 | `WCBET_DAILY_ALLOWANCE` | `cogs/wcbet_cog/config.py` | 500 | Lazy daily top-up. |
 | `WCBET_ODDS` | `cogs/wcbet_cog/config.py` | 1.5 | Display/odds snapshot; payout math is integer `stake * 3 // 2` in `betting.py`. |
 | `WORLD_CUP_LOG_CHANNEL_ID` | `cogs/worldcup_cog/config.py` (re-exported as `WCBET_LOG_CHANNEL_ID`) | baked-in | Bet/settlement log channel, shared with all World Cup cogs. |
+| `WCBET_AUTO_SETTLE` | env, read in `cogs/wcbet_cog/config.py` | 0 (propose) | 1 = poller settles bets itself; 0 = it only posts the command to run. |
+| `WCBET_RESULTS_POLL_MINUTES` | env, read in `cogs/wcbet_cog/config.py` | 5 | Poll interval for the results loop. |
 
 ## Known edge cases & gotchas
 

@@ -2,23 +2,55 @@
 
 Group-stage match betting with virtual coins: opt in once for a starting
 balance, pick today's match + outcome + stake from a Components V2
-stepper, and get paid 1.5x on correct bets. Settlement is manual via the
-owner-only `$wcbetadmin` group (see `admin.py`).
+stepper, and get paid 1.5x on correct bets.
+
+Results arrive via a polling task that watches ESPN's free scoreboard
+endpoint while a match is in its post-kickoff window. By default it only
+*proposes* the settlement command in the log channel; set
+`WCBET_AUTO_SETTLE=1` to let it settle bets itself. Manual settlement via
+the owner-only `$wcbetadmin` group (see `admin.py`) always works and
+wins races safely (the result row insert is the duplicate guard).
 """
 import logging
+from datetime import UTC, datetime
 
-from discord.ext import commands
+import aiohttp
+import discord
+from discord.ext import commands, tasks
 
 from base_cog import BaseCog
+from cogs.utils.embeds import green_embed
+from db.bets import MatchAlreadySettledError
 
+from . import betting, results
 from .admin import WCBetAdmin
+from .config import (
+    WCBET_AUTO_SETTLE,
+    WCBET_LOG_CHANNEL_ID,
+    WCBET_RESULTS_POLL_MINUTES,
+)
 from .views import OpenBetPanelView
 
 logger = logging.getLogger(__name__)
 
+FETCH_TIMEOUT_SECONDS = 15
+
 
 class WCBet(BaseCog):
     """`$wcbet` — World Cup match betting with virtual coins."""
+
+    def __init__(self, bot: commands.Bot) -> None:
+        super().__init__(bot)
+        # Matches already proposed in the log channel this process, so
+        # propose mode does not repeat itself every poll.
+        self._proposed: set[int] = set()
+        self.poll_results.change_interval(minutes=WCBET_RESULTS_POLL_MINUTES)
+        self.poll_results.start()
+
+    async def cog_unload(self) -> None:
+        self.poll_results.cancel()
+
+    # ---------- commands ----------
 
     async def _send_prompt(self, ctx: commands.Context) -> None:
         """Send the public button prompt that opens a personal panel."""
@@ -43,6 +75,104 @@ class WCBet(BaseCog):
     async def wcbettest(self, ctx: commands.Context) -> None:
         """Open the World Cup betting panel (owner-only test entrypoint)."""
         await self._send_prompt(ctx)
+
+    # ---------- results polling ----------
+
+    @tasks.loop(minutes=5)
+    async def poll_results(self) -> None:
+        """Poll ESPN for finished matches we have not settled yet."""
+        try:
+            await self._poll_results_once()
+        except Exception:
+            logger.exception("World Cup results poll failed")
+
+    @poll_results.before_loop
+    async def before_poll_results(self) -> None:
+        await self.bot.wait_until_ready()
+
+    async def _poll_results_once(self) -> None:
+        now = datetime.now(UTC)
+        settled = await self.bot.db.get_wc_settled_match_ids()
+        awaiting = results.fixtures_awaiting_result(now, settled)
+        if not awaiting:
+            return
+        # ESPN's `dates` param is the ET calendar date — same convention
+        # as our fixture rows, so the fixture date strings are reusable.
+        for date_str in sorted({f["date"].replace("-", "") for f in awaiting}):
+            payload = await self._fetch_scoreboard(date_str)
+            if payload is None:
+                continue
+            for result in results.match_results(payload, awaiting):
+                await self._handle_result(result)
+
+    async def _fetch_scoreboard(self, date_str: str) -> dict | None:
+        url = results.ESPN_SCOREBOARD_URL.format(date=date_str)
+        timeout = aiohttp.ClientTimeout(total=FETCH_TIMEOUT_SECONDS)
+        try:
+            async with (
+                aiohttp.ClientSession(timeout=timeout) as session,
+                session.get(url) as response,
+            ):
+                if response.status != 200:
+                    logger.warning(
+                        "ESPN scoreboard returned HTTP %s for %s", response.status, date_str,
+                    )
+                    return None
+                return await response.json()
+        except (aiohttp.ClientError, TimeoutError) as exc:
+            logger.warning("ESPN scoreboard fetch failed for %s: %s", date_str, exc)
+            return None
+
+    async def _handle_result(self, result: results.MatchResult) -> None:
+        """Settle or propose a finished match, depending on the mode flag."""
+        match_id = result["match_id"]
+        home_score, away_score = result["home_score"], result["away_score"]
+        fixture = next(
+            (f for f in betting.GROUP_STAGE_FIXTURES if f["match_id"] == match_id), None,
+        )
+        if fixture is None:
+            return
+        label = f"{fixture['home']} {home_score}–{away_score} {fixture['away']}"
+
+        if not WCBET_AUTO_SETTLE:
+            if match_id in self._proposed:
+                return
+            self._proposed.add(match_id)
+            await self._announce(
+                f"🏁 **Match #{match_id} finished:** {label}\n"
+                f"Settle with `$wcbetadmin result {match_id} {home_score}-{away_score}`",
+            )
+            return
+
+        outcome = betting.outcome_from_score(home_score, away_score)
+        try:
+            summary = await self.bot.db.settle_wc_match(
+                match_id, home_score, away_score, outcome, payout_fn=betting.payout,
+            )
+        except MatchAlreadySettledError:
+            return  # manual settlement won the race — nothing to do
+        logger.info(
+            "Auto-settled match %s (%s): %s won, %s lost, %s coins paid",
+            match_id, label, summary["winners"], summary["losers"], summary["total_paid"],
+        )
+        await self._announce(
+            embed=green_embed(
+                f"🏁 **Match settled automatically** — {label}\n"
+                f"✅ {summary['winners']} won · ❌ {summary['losers']} lost · "
+                f"💰 {summary['total_paid']:,} coins paid",
+            ),
+        )
+
+    async def _announce(self, content: str | None = None, *, embed=None) -> None:
+        """Post to the World Cup log channel, tolerating a missing channel."""
+        channel = self.bot.get_channel(WCBET_LOG_CHANNEL_ID)
+        if channel is None:
+            logger.warning("World Cup log channel %s not found", WCBET_LOG_CHANNEL_ID)
+            return
+        try:
+            await channel.send(content=content, embed=embed)
+        except (discord.Forbidden, discord.HTTPException) as exc:
+            logger.error("Failed to post to log channel %s: %s", WCBET_LOG_CHANNEL_ID, exc)
 
 
 async def setup(bot: commands.Bot) -> None:
