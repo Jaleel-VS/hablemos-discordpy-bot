@@ -179,6 +179,7 @@ class WCBetsMixin(DatabaseMixin):
             winners = 0
             losers = 0
             total_paid = 0
+            bet_details: list[dict] = []
             for bet in bets:
                 if bet['outcome'] == outcome:
                     amount = payout_fn(bet['stake'], bet['odds'])
@@ -195,6 +196,7 @@ class WCBetsMixin(DatabaseMixin):
                     )
                     winners += 1
                     total_paid += amount
+                    bet_details.append({'user_id': bet['user_id'], 'won': True, 'payout': amount})
                 else:
                     await conn.execute(
                         "UPDATE wc_bets SET status = 'lost', payout = 0, "
@@ -202,7 +204,8 @@ class WCBetsMixin(DatabaseMixin):
                         bet['user_id'], match_id,
                     )
                     losers += 1
-            return {'winners': winners, 'losers': losers, 'total_paid': total_paid}
+                    bet_details.append({'user_id': bet['user_id'], 'won': False, 'payout': 0})
+            return {'winners': winners, 'losers': losers, 'total_paid': total_paid, 'bets': bet_details}
 
     async def void_wc_match(self, match_id: int) -> dict:
         """Refund every pending stake on a match and mark the bets void.
@@ -237,6 +240,20 @@ class WCBetsMixin(DatabaseMixin):
         """Return the match_ids that already have a recorded result."""
         rows = await self._fetch('SELECT match_id FROM wc_match_results')
         return {row['match_id'] for row in rows}
+
+    async def get_wc_pending_unsettled(self) -> list[dict]:
+        """Return match_ids that have pending bets but no result row yet."""
+        rows = await self._fetch(
+            '''
+            SELECT b.match_id, COUNT(*) AS bet_count, SUM(b.stake) AS total_staked
+            FROM wc_bets b
+            WHERE b.status = 'pending'
+              AND b.match_id NOT IN (SELECT match_id FROM wc_match_results)
+            GROUP BY b.match_id
+            ORDER BY b.match_id
+            '''
+        )
+        return [dict(r) for r in rows]
 
     async def wc_bet_stats(self, guild_id: int) -> dict:
         """Return aggregate betting stats for a guild."""

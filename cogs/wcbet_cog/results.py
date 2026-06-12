@@ -22,9 +22,8 @@ ESPN_SCOREBOARD_URL = (
     "scoreboard?dates={date}"
 )
 
-# How long after kickoff we keep looking for a result before giving up
-# (regulation + stoppage + generous slack; group stage has no extra time).
-RESULT_WINDOW = timedelta(hours=6)
+# 30h covers overnight bot restarts and any reasonable ESPN reporting delay.
+RESULT_WINDOW = timedelta(hours=30)
 
 # ESPN displayName -> our fixtures.py name. Verified against all 72
 # group-stage events: these five are the only differences.

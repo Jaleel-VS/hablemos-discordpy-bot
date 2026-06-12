@@ -33,10 +33,14 @@ WCBET_RESULTS_POLL_MINUTES: int = get_int_env("WCBET_RESULTS_POLL_MINUTES", 5)
 # Re-exported so the cog only imports from one place.
 WCBET_LOG_CHANNEL_ID: int = WORLD_CUP_LOG_CHANNEL_ID
 
+# Channel where per-player win/loss mentions are posted after settlement.
+WCBET_NOTIFICATION_CHANNEL_ID: int = get_int_env("WCBET_NOTIFICATION_CHANNEL_ID", 247135634265735168)
+
 __all__ = [
     "WCBET_AUTO_SETTLE",
     "WCBET_DAILY_ALLOWANCE",
     "WCBET_LOG_CHANNEL_ID",
+    "WCBET_NOTIFICATION_CHANNEL_ID",
     "WCBET_ODDS",
     "WCBET_RESULTS_POLL_MINUTES",
     "WCBET_STARTING_BALANCE",

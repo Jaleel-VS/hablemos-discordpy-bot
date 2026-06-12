@@ -97,6 +97,22 @@ def parse_score(raw: str) -> tuple[int, int] | None:
     return int(match.group(1)), int(match.group(2))
 
 
+def format_player_results(bets: list[dict]) -> str | None:
+    """Format per-player win/loss lines for posting in the log channel.
+
+    Returns a newline-joined string of mentions, or None if there are no bets.
+    """
+    if not bets:
+        return None
+    lines = [
+        f"🏆 <@{b['user_id']}> won **{b['payout']:,}** coins"
+        if b["won"]
+        else f"💸 <@{b['user_id']}> lost their stake"
+        for b in bets
+    ]
+    return "\n".join(lines)
+
+
 def parse_stake(raw: str, balance: int) -> int | None:
     """Parse a stake: an int in ``[1, balance]``, or ``all`` for the balance.
 

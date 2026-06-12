@@ -15,7 +15,8 @@ from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, Fixture
 from db.bets import MatchAlreadySettledError
 
 from . import betting
-from .config import WCBET_LOG_CHANNEL_ID
+from .betting import format_player_results
+from .config import WCBET_LOG_CHANNEL_ID, WCBET_NOTIFICATION_CHANNEL_ID
 
 logger = logging.getLogger(__name__)
 
@@ -117,6 +118,20 @@ class WCBetAdmin(BaseCog):
 
     # ---------- stats ----------
 
+    @wcbetadmin.command(name="pending")
+    @commands.is_owner()
+    async def pending(self, ctx: commands.Context) -> None:
+        """List matches with pending bets that have no result recorded yet."""
+        rows = await self.bot.db.get_wc_pending_unsettled()
+        if not rows:
+            await ctx.send(embed=green_embed("No pending unsettled bets."))
+            return
+        lines = [
+            f"Match **{r['match_id']}** — {r['bet_count']} bet(s), {int(r['total_staked']):,} staked"
+            for r in rows
+        ]
+        await ctx.send(embed=blue_embed("**Pending unsettled bets:**\n" + "\n".join(lines)))
+
     @wcbetadmin.command(name="stats")
     @commands.is_owner()
     async def stats(self, ctx: commands.Context) -> None:
@@ -179,3 +194,13 @@ class WCBetAdmin(BaseCog):
                 "Failed to send settlement log to channel %s: %s",
                 WCBET_LOG_CHANNEL_ID, exc,
             )
+        player_msg = format_player_results(summary.get("bets", []))
+        if player_msg:
+            notify = guild.get_channel(WCBET_NOTIFICATION_CHANNEL_ID)
+            if notify is None:
+                logger.warning("wcbet notification channel %s not found", WCBET_NOTIFICATION_CHANNEL_ID)
+                return
+            try:
+                await notify.send(player_msg)
+            except (discord.Forbidden, discord.HTTPException) as exc:
+                logger.error("Failed to post player results to channel %s: %s", WCBET_NOTIFICATION_CHANNEL_ID, exc)

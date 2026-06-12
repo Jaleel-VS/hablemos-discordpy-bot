@@ -22,10 +22,12 @@ from cogs.utils.embeds import green_embed
 from db.bets import MatchAlreadySettledError
 
 from . import betting, espn, results
+from .betting import format_player_results
 from .admin import WCBetAdmin
 from .config import (
     WCBET_AUTO_SETTLE,
     WCBET_LOG_CHANNEL_ID,
+    WCBET_NOTIFICATION_CHANNEL_ID,
     WCBET_RESULTS_POLL_MINUTES,
 )
 from .mod import WCBetMod
@@ -142,17 +144,20 @@ class WCBet(BaseCog):
                 f"💰 {summary['total_paid']:,} coins paid",
             ),
         )
+        player_msg = format_player_results(summary.get("bets", []))
+        if player_msg:
+            await self._announce(player_msg, channel_id=WCBET_NOTIFICATION_CHANNEL_ID)
 
-    async def _announce(self, content: str | None = None, *, embed=None) -> None:
-        """Post to the World Cup log channel, tolerating a missing channel."""
-        channel = self.bot.get_channel(WCBET_LOG_CHANNEL_ID)
+    async def _announce(self, content: str | None = None, *, embed=None, channel_id: int = WCBET_LOG_CHANNEL_ID) -> None:
+        """Post to a World Cup channel, tolerating a missing channel."""
+        channel = self.bot.get_channel(channel_id)
         if channel is None:
-            logger.warning("World Cup log channel %s not found", WCBET_LOG_CHANNEL_ID)
+            logger.warning("World Cup channel %s not found", channel_id)
             return
         try:
             await channel.send(content=content, embed=embed)
         except (discord.Forbidden, discord.HTTPException) as exc:
-            logger.error("Failed to post to log channel %s: %s", WCBET_LOG_CHANNEL_ID, exc)
+            logger.error("Failed to post to channel %s: %s", channel_id, exc)
 
 
 async def setup(bot: commands.Bot) -> None:
