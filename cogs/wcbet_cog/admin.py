@@ -14,7 +14,7 @@ from cogs.utils.embeds import blue_embed, green_embed, red_embed
 from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, Fixture
 from db.bets import MatchAlreadySettledError
 
-from . import betting
+from . import betting, espn, results
 from .betting import format_player_results
 from .config import WCBET_LOG_CHANNEL_ID, WCBET_NOTIFICATION_CHANNEL_ID
 
@@ -37,12 +37,13 @@ class WCBetAdmin(BaseCog):
 
     @wcbetadmin.command(name="result")
     @commands.is_owner()
-    async def result(self, ctx: commands.Context, match_id: int, *, score: str) -> None:
+    async def result(self, ctx: commands.Context, match_id: int, *, score: str | None = None) -> None:
         """Record a final score and settle all pending bets on the match.
 
+        Omit score to auto-fetch from ESPN.
         Examples:
+            $wcbetadmin result 1
             $wcbetadmin result 1 2-1
-            $wcbetadmin result 2 0:0
         """
         if ctx.guild is None:
             await ctx.send(embed=red_embed("Run this in the league guild."))
@@ -55,15 +56,31 @@ class WCBetAdmin(BaseCog):
             )
             return
 
-        parsed = betting.parse_score(score)
-        if parsed is None:
-            await ctx.send(
-                embed=red_embed(
-                    "Couldn't parse that score. Use `<home>-<away>`, e.g. `2-1`.",
-                ),
-            )
-            return
-        home_score, away_score = parsed
+        if score is None:
+            date_str = fixture["date"].replace("-", "")
+            payload = await espn.fetch_scoreboard(date_str)
+            if payload is None:
+                await ctx.send(embed=red_embed("ESPN fetch failed — provide the score manually."))
+                return
+            matches = results.match_results(payload, [fixture])
+            if not matches:
+                await ctx.send(
+                    embed=red_embed(
+                        f"Match `{match_id}` not found or not completed on ESPN yet. "
+                        "Provide the score manually."
+                    )
+                )
+                return
+            home_score, away_score = matches[0]["home_score"], matches[0]["away_score"]
+        else:
+            parsed = betting.parse_score(score)
+            if parsed is None:
+                await ctx.send(
+                    embed=red_embed("Couldn't parse that score. Use `<home>-<away>`, e.g. `2-1`."),
+                )
+                return
+            home_score, away_score = parsed
+
         outcome = betting.outcome_from_score(home_score, away_score)
 
         try:
