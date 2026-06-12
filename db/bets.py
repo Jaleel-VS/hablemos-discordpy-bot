@@ -1,4 +1,5 @@
 """Database mixin for World Cup betting (wallets, bets, match results)."""
+import logging
 from collections.abc import Callable
 from datetime import date
 from decimal import Decimal
@@ -6,6 +7,8 @@ from decimal import Decimal
 import asyncpg
 
 from db import DatabaseMixin
+
+logger = logging.getLogger(__name__)
 
 
 class InsufficientBalanceError(Exception):
@@ -18,6 +21,26 @@ class MatchAlreadySettledError(Exception):
 
 class WCBetsMixin(DatabaseMixin):
     """Queries for the `wc_bet_wallets`, `wc_bets`, and `wc_match_results` tables."""
+
+    async def _log_balance_event(
+        self,
+        conn,
+        user_id: int,
+        delta: int,
+        balance: int,
+        event: str,
+        match_id: int | None = None,
+    ) -> None:
+        """Insert one row into wc_balance_log inside an existing transaction."""
+        await conn.execute(
+            'INSERT INTO wc_balance_log (user_id, delta, balance, event, match_id) '
+            'VALUES ($1, $2, $3, $4, $5)',
+            user_id, delta, balance, event, match_id,
+        )
+        logger.info(
+            "wc_balance_log user=%s event=%s delta=%s balance=%s match=%s",
+            user_id, event, delta, balance, match_id,
+        )
 
     async def get_wc_wallet(self, user_id: int):
         """Return the user's wallet row, or None if they haven't opted in."""
@@ -47,20 +70,22 @@ class WCBetsMixin(DatabaseMixin):
     ) -> int | None:
         """Credit the daily allowance once per day. Return the new balance,
         or None if already claimed today (or no wallet exists).
-
-        Race-safe by construction: a single conditional UPDATE.
         """
-        return await self._fetchval(
-            '''
-            UPDATE wc_bet_wallets
-            SET balance = balance + $2,
-                last_allowance_date = $3,
-                updated_at = NOW()
-            WHERE user_id = $1 AND last_allowance_date IS DISTINCT FROM $3
-            RETURNING balance
-            ''',
-            user_id, amount, today,
-        )
+        async with self._pool().acquire() as conn, conn.transaction():
+            new_balance = await conn.fetchval(
+                '''
+                UPDATE wc_bet_wallets
+                SET balance = balance + $2,
+                    last_allowance_date = $3,
+                    updated_at = NOW()
+                WHERE user_id = $1 AND last_allowance_date IS DISTINCT FROM $3
+                RETURNING balance
+                ''',
+                user_id, amount, today,
+            )
+            if new_balance is not None:
+                await self._log_balance_event(conn, user_id, amount, new_balance, 'daily_allowance')
+            return new_balance
 
     async def place_wc_bet(
         self,
@@ -119,6 +144,7 @@ class WCBetsMixin(DatabaseMixin):
                 ''',
                 user_id, match_id, guild_id, outcome, stake, odds,
             )
+            await self._log_balance_event(conn, user_id, -stake, new_balance, 'bet_placed', match_id)
             return new_balance
 
     async def get_wc_user_bets(self, user_id: int, status: str | None = None) -> list:
@@ -183,12 +209,17 @@ class WCBetsMixin(DatabaseMixin):
             for bet in bets:
                 if bet['outcome'] == outcome:
                     amount = payout_fn(bet['stake'], bet['odds'])
-                    await conn.execute(
+                    new_balance = await conn.fetchval(
                         'UPDATE wc_bet_wallets '
                         'SET balance = balance + $2, updated_at = NOW() '
-                        'WHERE user_id = $1',
+                        'WHERE user_id = $1 RETURNING balance',
                         bet['user_id'], amount,
                     )
+                    if new_balance is None:
+                        logger.error(
+                            "wc settle: wallet not found for user %s match %s — payout %s not credited",
+                            bet['user_id'], match_id, amount,
+                        )
                     await conn.execute(
                         "UPDATE wc_bets SET status = 'won', payout = $3, "
                         'settled_at = NOW() WHERE user_id = $1 AND match_id = $2',
@@ -197,6 +228,10 @@ class WCBetsMixin(DatabaseMixin):
                     winners += 1
                     total_paid += amount
                     bet_details.append({'user_id': bet['user_id'], 'won': True, 'payout': amount})
+                    if new_balance is not None:
+                        await self._log_balance_event(
+                            conn, bet['user_id'], amount, new_balance, 'bet_won', match_id,
+                        )
                 else:
                     await conn.execute(
                         "UPDATE wc_bets SET status = 'lost', payout = 0, "
@@ -221,10 +256,10 @@ class WCBetsMixin(DatabaseMixin):
             refunded = 0
             total_refunded = 0
             for bet in bets:
-                await conn.execute(
+                new_balance = await conn.fetchval(
                     'UPDATE wc_bet_wallets '
                     'SET balance = balance + $2, updated_at = NOW() '
-                    'WHERE user_id = $1',
+                    'WHERE user_id = $1 RETURNING balance',
                     bet['user_id'], bet['stake'],
                 )
                 await conn.execute(
@@ -234,12 +269,26 @@ class WCBetsMixin(DatabaseMixin):
                 )
                 refunded += 1
                 total_refunded += bet['stake']
+                if new_balance is not None:
+                    await self._log_balance_event(
+                        conn, bet['user_id'], bet['stake'], new_balance, 'bet_refund', match_id,
+                    )
             return {'refunded': refunded, 'total_refunded': total_refunded}
 
     async def get_wc_settled_match_ids(self) -> set[int]:
         """Return the match_ids that already have a recorded result."""
         rows = await self._fetch('SELECT match_id FROM wc_match_results')
         return {row['match_id'] for row in rows}
+
+    async def get_wc_balance_history(self, user_id: int, limit: int = 15) -> list[dict]:
+        """Return the most recent balance log entries for a user."""
+        rows = await self._fetch(
+            'SELECT delta, balance, event, match_id, created_at '
+            'FROM wc_balance_log WHERE user_id = $1 '
+            'ORDER BY created_at DESC LIMIT $2',
+            user_id, limit,
+        )
+        return [dict(r) for r in rows]
 
     async def get_wc_pending_unsettled(self) -> list[dict]:
         """Return match_ids that have pending bets but no result row yet."""

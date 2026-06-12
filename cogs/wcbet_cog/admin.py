@@ -149,6 +149,22 @@ class WCBetAdmin(BaseCog):
         ]
         await ctx.send(embed=blue_embed("**Pending unsettled bets:**\n" + "\n".join(lines)))
 
+    @wcbetadmin.command(name="history")
+    @commands.is_owner()
+    async def history(self, ctx: commands.Context, user: discord.Member) -> None:
+        """Show the last 15 balance events for a user."""
+        rows = await self.bot.db.get_wc_balance_history(user.id)
+        if not rows:
+            await ctx.send(embed=blue_embed(f"No balance history for {user.display_name}."))
+            return
+        lines = [
+            f"`{r['created_at'].strftime('%m-%d %H:%M')}` "
+            f"{'%+d' % r['delta']} → **{r['balance']:,}** `{r['event']}`"
+            + (f" match {r['match_id']}" if r['match_id'] else "")
+            for r in rows
+        ]
+        await ctx.send(embed=blue_embed(f"**{user.display_name} balance history:**\n" + "\n".join(lines)))
+
     @wcbetadmin.command(name="stats")
     @commands.is_owner()
     async def stats(self, ctx: commands.Context) -> None:

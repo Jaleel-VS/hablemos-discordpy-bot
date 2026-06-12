@@ -821,4 +821,21 @@ async def initialize_schema(pool):
             )
         ''')
 
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS wc_balance_log (
+                id         BIGSERIAL PRIMARY KEY,
+                user_id    BIGINT NOT NULL,
+                delta      BIGINT NOT NULL,
+                balance    BIGINT NOT NULL,
+                event      TEXT NOT NULL,
+                match_id   INTEGER,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_wc_balance_log_user
+            ON wc_balance_log(user_id, created_at)
+        ''')
+
         logger.info("Database schema initialized")
