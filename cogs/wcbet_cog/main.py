@@ -18,7 +18,7 @@ import discord
 from discord.ext import commands, tasks
 
 from base_cog import BaseCog
-from cogs.utils.embeds import green_embed
+from cogs.utils.embeds import blue_embed, green_embed
 from db.bets import MatchAlreadySettledError
 
 from . import betting, espn, results
@@ -75,6 +75,21 @@ class WCBet(BaseCog):
     async def wcbettest(self, ctx: commands.Context) -> None:
         """Open the World Cup betting panel (owner-only test entrypoint)."""
         await self._send_prompt(ctx)
+
+    @commands.command(name="wcbettop")
+    @commands.cooldown(1, 10, commands.BucketType.channel)
+    @commands.guild_only()
+    async def wcbettop(self, ctx: commands.Context) -> None:
+        """Show the top 10 World Cup betting balances."""
+        rows = await self.bot.db.get_wc_top_balances(ctx.guild.id)
+        if not rows:
+            await ctx.send(embed=blue_embed("No wallets yet."))
+            return
+        lines = [
+            f"{i}. <@{r['user_id']}> — **{r['balance']:,}** coins"
+            for i, r in enumerate(rows, 1)
+        ]
+        await ctx.send(embed=blue_embed("🏆 **WC Betting Leaderboard**\n" + "\n".join(lines)))
 
     # ---------- results polling ----------
 

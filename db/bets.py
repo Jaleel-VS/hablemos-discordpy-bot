@@ -255,6 +255,15 @@ class WCBetsMixin(DatabaseMixin):
         )
         return [dict(r) for r in rows]
 
+    async def get_wc_top_balances(self, guild_id: int, limit: int = 10) -> list[dict]:
+        """Return the top wallets by balance for a guild."""
+        rows = await self._fetch(
+            'SELECT user_id, balance FROM wc_bet_wallets '
+            'WHERE guild_id = $1 ORDER BY balance DESC LIMIT $2',
+            guild_id, limit,
+        )
+        return [dict(r) for r in rows]
+
     async def wc_bet_stats(self, guild_id: int) -> dict:
         """Return aggregate betting stats for a guild."""
         row = await self._fetchrow(
