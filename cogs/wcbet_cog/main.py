@@ -159,7 +159,7 @@ class WCBet(BaseCog):
                 f"💰 {summary['total_paid']:,} coins paid",
             ),
         )
-        player_msg = format_player_results(summary.get("bets", []))
+        player_msg = format_player_results(summary.get("bets", []), label=label)
         if player_msg:
             await self._announce(player_msg, channel_id=WCBET_NOTIFICATION_CHANNEL_ID)
 

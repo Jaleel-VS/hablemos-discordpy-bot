@@ -97,8 +97,8 @@ def parse_score(raw: str) -> tuple[int, int] | None:
     return int(match.group(1)), int(match.group(2))
 
 
-def format_player_results(bets: list[dict]) -> str | None:
-    """Format per-player win/loss lines for posting in the log channel.
+def format_player_results(bets: list[dict], label: str | None = None) -> str | None:
+    """Format per-player win/loss lines for posting in the notification channel.
 
     Returns a newline-joined string of mentions, or None if there are no bets.
     """
@@ -110,6 +110,8 @@ def format_player_results(bets: list[dict]) -> str | None:
         else f"💸 <@{b['user_id']}> lost their stake"
         for b in bets
     ]
+    if label:
+        lines.insert(0, f"🏁 **{label}**")
     return "\n".join(lines)
 
 

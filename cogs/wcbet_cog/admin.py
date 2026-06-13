@@ -227,7 +227,10 @@ class WCBetAdmin(BaseCog):
                 "Failed to send settlement log to channel %s: %s",
                 WCBET_LOG_CHANNEL_ID, exc,
             )
-        player_msg = format_player_results(summary.get("bets", []))
+        player_msg = format_player_results(
+            summary.get("bets", []),
+            label=f"{fixture['home']} {home_score}–{away_score} {fixture['away']}",
+        )
         if player_msg:
             notify = guild.get_channel(WCBET_NOTIFICATION_CHANNEL_ID)
             if notify is None:
