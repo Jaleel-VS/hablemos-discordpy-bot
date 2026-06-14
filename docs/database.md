@@ -104,7 +104,7 @@ Adding a new domain:
 ### World Cup betting
 - `wc_bet_wallets` — one row per opted-in user (`user_id` PK). Coin
   `balance` (starts at 10,000), `last_allowance_date` for the race-safe
-  daily +500 claim, `guild_id`, timestamps.
+  daily +2,500 claim, `guild_id`, timestamps.
 - `wc_bets` — PK `(user_id, match_id)`: one editable bet per user per
   match. `outcome` (`home`/`draw`/`away`), `stake`, `odds` snapshot
   (NUMERIC), `status` (`pending`/`won`/`lost`/`void`), `payout`,

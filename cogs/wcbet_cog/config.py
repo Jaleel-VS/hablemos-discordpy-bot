@@ -14,7 +14,7 @@ from config import get_int_env
 WCBET_STARTING_BALANCE: int = 10_000
 
 # Coins granted on the first `$wcbet` interaction of each UTC day.
-WCBET_DAILY_ALLOWANCE: int = 500
+WCBET_DAILY_ALLOWANCE: int = 2_500
 
 # Fallback odds when DraftKings has not priced a match (or the fetch
 # fails); also the snapshot stored on such bets. Payouts are computed

@@ -112,7 +112,7 @@ coins at once, too much blast radius for the mod tier.
    with 10,000 coins and swaps to the betting panel.
 4. Wallet exists → a race-safe single `UPDATE … WHERE
    last_allowance_date IS DISTINCT FROM $today RETURNING balance` grants
-   +500 once per UTC day; the panel shows a notice when it fires.
+   +2,500 once per UTC day; the panel shows a notice when it fires.
 
 **Settlement** — manual command or the ESPN results poller:
 
@@ -156,7 +156,7 @@ See [`../database.md`](../database.md#world-cup-betting).
 | Constant / Env Var | Location | Default | Purpose |
 |--------------------|----------|---------|---------|
 | `WCBET_STARTING_BALANCE` | `cogs/wcbet_cog/config.py` | 10,000 | Coins granted on opt-in. |
-| `WCBET_DAILY_ALLOWANCE` | `cogs/wcbet_cog/config.py` | 500 | Lazy daily top-up. |
+| `WCBET_DAILY_ALLOWANCE` | `cogs/wcbet_cog/config.py` | 2,500 | Lazy daily top-up. |
 | `WCBET_ODDS` | `cogs/wcbet_cog/config.py` | Decimal 1.5 | Fallback odds when no DraftKings line exists; payout math is `floor(stake × odds)` in `betting.payout`. |
 | `WORLD_CUP_LOG_CHANNEL_ID` | `cogs/worldcup_cog/config.py` (re-exported as `WCBET_LOG_CHANNEL_ID`) | baked-in | Bet/settlement log channel, shared with all World Cup cogs. |
 | `WCBET_AUTO_SETTLE` | env, read in `cogs/wcbet_cog/config.py` | 0 (propose) | 1 = poller settles bets itself; 0 = it only posts the command to run. |
