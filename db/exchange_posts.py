@@ -46,6 +46,25 @@ class ExchangePostsMixin(DatabaseMixin):
             result["post_data"] = json.loads(result["post_data"])
         return result
 
+    async def get_all_exchange_posts(self) -> list[dict]:
+        """Return every active exchange post (for matchmaking).
+
+        Each dict has user_id, message_id, channel_id, posted_at, and
+        post_data (decoded from JSONB to a dict, or None).
+        """
+        import json
+        rows = await self._fetch(
+            """SELECT user_id, message_id, channel_id, post_data, posted_at
+               FROM exchange_posts""",
+        )
+        results: list[dict] = []
+        for row in rows:
+            item = dict(row)
+            if item.get("post_data") and isinstance(item["post_data"], str):
+                item["post_data"] = json.loads(item["post_data"])
+            results.append(item)
+        return results
+
     async def delete_exchange_post(self, user_id: int) -> bool:
         """Delete a user's exchange post record."""
         result = await self._execute(
