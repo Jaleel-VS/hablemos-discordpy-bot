@@ -88,6 +88,7 @@ when-to-update table.
 - Real-time data tracking via `on_message` listeners with DB persistence (prefer over on-demand API scanning)
 - Deduplicate shared logic into module-level helper functions or shared utilities
 - Use `pathlib.Path` for file system operations — not `os.path` or `os.listdir`
+- Pillow renderers super-sample at `S` then LANCZOS-downsample; `get_font` already multiplies size by `S`, so scale every coordinate/offset by `S` too (see [`docs/architecture.md`](./docs/architecture.md#image-rendering-pillow))
 - Slash command syncing is manual via `$sync` — never auto-sync in `on_ready`
 
 ### Patterns to Avoid

@@ -94,6 +94,32 @@ See [`deployment.md`](./deployment.md) for the full env var list.
 - **On-message listeners** are used for incrementally-tracked state
   (league activity, crossword answers) rather than scanning history.
 
+## Image rendering (Pillow)
+
+Several cogs render PNGs with Pillow (`league_cog`, `quote_generator_cog`,
+`crossword_cog`, `spotify_cog`). They share a **super-sample then
+downsample** scheme for crisp text on HiDPI Discord clients: render the
+whole canvas at an internal multiple of the display size, then
+LANCZOS-downsample on save.
+
+- `cogs/league_cog/league_helper/leaderboard_image_pillow.py` is the
+  reference implementation. It defines `SCALE`, `OUTPUT_SCALE`, and
+  `S = SCALE * OUTPUT_SCALE` (= 6), renders everything at `S`, then
+  resizes to `OUTPUT_SCALE` (a 2x export) before saving.
+
+> **Gotcha — `get_font` already multiplies by `S`.** The font helper
+> (`_font`, aliased as `get_font`) computes `pt = size * S` internally.
+> It only produces correctly-sized text on a canvas that is itself
+> rendered at `S`. If you reuse `get_font` on a 1x canvas, every font
+> comes out `S` (6x) too large while coordinates stay nominal — the
+> layout jumbles (giant text overflowing small pedestals/cards). This
+> bit `round_end_image.py`: the fix was to scale the whole canvas + all
+> layout constants/offsets by `S` and downsample by `SCALE` at the end.
+> When adding or refactoring a Pillow renderer that imports these
+> helpers, scale **every** coordinate, size, radius, and offset by `S`,
+> or don't use `get_font` at all (load `ImageFont.truetype` directly at
+> literal sizes).
+
 ## Error handling
 
 - `cogs/error_handler_cog/` posts command failures to a configured
