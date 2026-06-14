@@ -29,8 +29,9 @@ show errors or no "I'm online" message.
 
 ### Checks
 
-1. **Database connection**: Check Railway logs for `asyncpg` connection
-   errors. The bot retries DB connection 5 times with exponential
+1. **Database connection**: Check the logs for `asyncpg` connection
+   errors (`python scripts/railway_logs.py --filter asyncpg`). The bot
+   retries DB connection 5 times with exponential
    backoff (see `setup_hook` in `hablemos.py`). If all retries fail,
    the bot exits.
    - Verify `DATABASE_URL` env var is set and correct.
@@ -131,10 +132,11 @@ automatically.
    to a technical issue.
 3. Players can now start a new game.
 
-> **Prevention**: If crossword games frequently get stuck, check Railway
+> **Prevention**: If crossword games frequently get stuck, check the
 > logs for `asyncio` task cancellation errors or timeout-related
-> exceptions. The timeout watcher is robust, but ungraceful restarts
-> (OOM kills, SIGKILL) can orphan game state.
+> exceptions (`python scripts/railway_logs.py --filter asyncio`). The
+> timeout watcher is robust, but ungraceful restarts (OOM kills,
+> SIGKILL) can orphan game state.
 
 ## Slash commands not syncing
 
@@ -245,8 +247,8 @@ announcement was posted in the winner channel.
 
 ### Diagnosis
 
-1. Check Railway logs for errors in `check_round_end` task (runs every
-   1 minute).
+1. Check the logs for errors in `check_round_end` task (runs every
+   1 minute): `python scripts/railway_logs.py --filter check_round_end`.
 2. Common causes:
    - `WINNER_CHANNEL_ID` is wrong or the bot lacks permissions to post
      in that channel.
@@ -350,7 +352,9 @@ but the match never gets a result row.
 - **Backing up and restoring the database**: (Railway has automated
   backups; document the restore process once tested.)
 - **Monitoring metrics and alerting**: (Future: integrate with a
-  metrics/logging service. For now, Railway logs + manual checks.)
+  metrics/logging service, or ship logs to Axiom/BetterStack via the
+  Locomotive sidecar for persistent search + alerts. For now: pull logs
+  on demand with `scripts/railway_logs.py` and manual checks.)
 
 ## Related
 
