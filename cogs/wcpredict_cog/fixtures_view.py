@@ -8,10 +8,16 @@ Builds 17 embed pages from the static fixtures data:
   - Page  17:    Semifinals, Third Place Playoff, Final
 """
 
+from datetime import UTC, datetime, timedelta, timezone
+
 from discord import ButtonStyle, Color, Embed, Interaction
 from discord.ui import Button, View
 
 from .fixtures import FIXTURE_BY_ID, FIXTURES, GROUPS, Fixture
+
+# Fixed Eastern Daylight Time offset for the tournament window (UTC-4),
+# matching wcbet's kick-off handling.
+_ET_OFFSET = timezone(timedelta(hours=-4))
 
 # ── Flag emoji mapping ────────────────────────────────────────────────────────
 
@@ -245,20 +251,28 @@ def _fmt_date(date_str: str) -> str:
     return f"{months[int(m) - 1]} {int(d):02d}"
 
 
-def _fmt_time(time_et: str) -> str:
-    """'15:00' → '15:00 ET', '00:00' → '00:00 ET', 'TBD' → 'TBD'"""
-    return time_et if time_et == "TBD" else f"{time_et} ET"
+def _kickoff_ts(fixture: Fixture) -> int | None:
+    """Unix timestamp for the fixture kick-off, or None if the time is TBD.
+
+    The kick-off is stored as an Eastern date + time; the tournament runs
+    during EDT (UTC-4). Returns an epoch suitable for a Discord ``<t:>``
+    timestamp, which renders in each viewer's own timezone.
+    """
+    if fixture["time_et"] == "TBD":
+        return None
+    local = datetime.strptime(f"{fixture['date']} {fixture['time_et']}", "%Y-%m-%d %H:%M")
+    return int(local.replace(tzinfo=_ET_OFFSET).astimezone(UTC).timestamp())
 
 
 def _match_line(fixture: Fixture) -> str:
     """Single formatted line for one match."""
-    date = _fmt_date(fixture["date"])
-    time = _fmt_time(fixture["time_et"])
     home = _team_label(fixture["home"])
     away = _team_label(fixture["away"])
     venue = fixture["venue"]
     city = fixture["city"]
-    return f"`{date} · {time}`\n{home} **vs** {away}\n-# {venue} · {city}"
+    ts = _kickoff_ts(fixture)
+    when = f"<t:{ts}:f>" if ts is not None else f"`{_fmt_date(fixture['date'])} · TBD`"
+    return f"{when}\n{home} **vs** {away}\n-# {venue} · {city}"
 
 
 def build_embed(page: int) -> Embed:
