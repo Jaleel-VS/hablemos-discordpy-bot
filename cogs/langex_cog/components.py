@@ -1,30 +1,22 @@
 """Components V2 layout for a posted language-exchange profile.
 
 A profile is a ``LayoutView`` (Container → Sections/TextDisplays) rather
-than a flat embed, giving an avatar accessory and an in-post **Contact**
-button. The Contact button is a :class:`discord.ui.DynamicItem`: its
-``custom_id`` encodes the poster's user id, so it works on every profile
-message and survives restarts without tracking each message.
+than a flat embed, giving an avatar accessory and a clean card layout.
 """
 from __future__ import annotations
 
 import logging
-import re
 
 import discord
-from discord import ButtonStyle, Color, Interaction, Member
+from discord import Color, Member
 from discord.ui import (
-    Button,
     Container,
-    DynamicItem,
     LayoutView,
     Section,
     Separator,
     TextDisplay,
     Thumbnail,
 )
-
-from cogs.utils.embeds import red_embed
 
 from .config import (
     COLOR_BOTH_NATIVE,
@@ -42,10 +34,8 @@ from .i18n import t
 
 logger = logging.getLogger(__name__)
 
-
 def _lookup(options: list[tuple[str, str]], value: str | None) -> str:
     return next((label for label, v in options if v == value), value or "—")
-
 
 def _color_for_member(member: Member) -> Color:
     role_ids = {r.id for r in member.roles}
@@ -58,42 +48,6 @@ def _color_for_member(member: Member) -> Color:
     if has_en:
         return COLOR_ENGLISH_NATIVE
     return COLOR_OTHER_NATIVE
-
-
-class ContactButton(DynamicItem[Button], template=r"langex:contact:(?P<user_id>\d+)"):
-    """Per-profile Contact button. Pings the presser and the poster in-channel."""
-
-    def __init__(self, poster_id: int):
-        self.poster_id = poster_id
-        super().__init__(
-            Button(
-                label="Contact",
-                style=ButtonStyle.success,
-                emoji="📩",
-                custom_id=f"langex:contact:{poster_id}",
-            )
-        )
-
-    @classmethod
-    async def from_custom_id(cls, interaction: Interaction, item: Button, match: re.Match[str]):
-        return cls(int(match["user_id"]))
-
-    async def callback(self, interaction: Interaction) -> None:
-        presser = interaction.user
-        if presser.id == self.poster_id:
-            await interaction.response.send_message(
-                embed=red_embed("That's your own profile 🙂"), ephemeral=True,
-            )
-            return
-
-        await interaction.response.send_message(
-            content=(
-                f"🤝 <@{presser.id}> wants to do a language exchange with <@{self.poster_id}>! "
-                f"Say hi and sort out the details."
-            ),
-            allowed_mentions=discord.AllowedMentions(users=True),
-        )
-
 
 def build_profile_view(data: dict, user: discord.User | discord.Member) -> LayoutView:
     """Build the Components V2 profile card for the feed channel."""
@@ -135,12 +89,7 @@ def build_profile_view(data: dict, user: discord.User | discord.Member) -> Layou
 
     container.add_item(Separator())
     contact_hint = t("post_contact_dm", lang) if data.get("prefer_dm", True) else t("post_contact_tag", lang)
-    container.add_item(
-        Section(
-            TextDisplay(f"<@{data['user_id']}> · -# {contact_hint}"),
-            accessory=ContactButton(int(data["user_id"])),
-        )
-    )
+    container.add_item(TextDisplay(f"<@{data['user_id']}> · -# {contact_hint}"))
 
     view = LayoutView(timeout=None)
     view.add_item(container)

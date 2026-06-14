@@ -82,15 +82,8 @@ Profiles are posted as a `LayoutView` (not a flat embed):
 - a `Section` with the header (name, speaks/learning/level, region) and
   the user's **avatar as a thumbnail accessory**,
 - `TextDisplay` blocks for About / Looking for / Interests,
-- a footer `Section` with the poster's **mention** and a **📩 Contact**
-  button accessory.
-
-The Contact button is a `discord.ui.DynamicItem` whose `custom_id`
-encodes the poster's user id (`langex:contact:<user_id>`), so it works on
-every profile message and survives restarts without tracking each
-message. Pressing it posts a public in-channel message pinging both the
-presser and the poster to kick off the exchange (a presser can't contact
-their own profile).
+- a footer `TextDisplay` with the poster's **mention** and their
+  preferred contact method (DM vs. server tag).
 
 ## Database tables
 
@@ -116,9 +109,6 @@ their own profile).
 - **`LangExPanelView`**: three buttons with custom IDs `langex:post`,
   `langex:find`, `langex:delete`. Registered once in `__init__` via
   `bot.add_view(...)`, guarded against duplicate registration.
-- **`ContactButton`** (`DynamicItem`, template
-  `langex:contact:(?P<user_id>\d+)`): the per-profile Contact button.
-  Registered once via `bot.add_dynamic_items(ContactButton)`.
 
 ## Known edge cases & gotchas
 

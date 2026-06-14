@@ -20,7 +20,6 @@ from discord.ext import commands
 from base_cog import BaseCog
 from cogs.utils.embeds import green_embed, red_embed
 
-from .components import ContactButton
 from .config import PANEL_CHANNEL_ID
 from .i18n import t
 from .views import LangExPanelView, _delete_message
@@ -36,9 +35,6 @@ class LangExCog(BaseCog):
         # Register the persistent panel once so the buttons survive restarts.
         if not any(isinstance(v, LangExPanelView) for v in bot.persistent_views):
             bot.add_view(LangExPanelView(bot))
-        # Register the per-profile Contact button (dynamic custom_id) so it
-        # keeps working on every posted profile across restarts.
-        bot.add_dynamic_items(ContactButton)
 
     @commands.command(name="langexpanel")
     @commands.has_permissions(manage_guild=True)
