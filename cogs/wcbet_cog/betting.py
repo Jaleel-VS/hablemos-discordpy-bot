@@ -38,15 +38,18 @@ def kickoff_utc(fixture: Fixture) -> datetime:
 
 
 def bettable_fixtures(now_utc: datetime) -> list[Fixture]:
-    """Group-stage fixtures dated today in ET that have not kicked off.
+    """Group-stage fixtures that have not kicked off and kick off within 24 hours.
+
+    Using a lookahead window instead of ET-date comparison handles midnight-ET
+    kickoffs (e.g. match 20) that fall on the next calendar day in ET.
 
     ``now_utc`` must be timezone-aware.
     """
-    today_et = now_utc.astimezone(ET_OFFSET).date().isoformat()
+    cutoff = now_utc + timedelta(hours=24)
     return [
         fixture
         for fixture in GROUP_STAGE_FIXTURES
-        if fixture["date"] == today_et and kickoff_utc(fixture) > now_utc
+        if now_utc < kickoff_utc(fixture) <= cutoff
     ]
 
 

@@ -6,7 +6,7 @@ fixtures referenced by ``match_id`` are the real 2026 rows from
 """
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 import pytest
@@ -63,12 +63,11 @@ def test_kickoff_utc_tbd_raises() -> None:
 def test_bettable_fixtures_invariants() -> None:
     now = _utc(2026, 6, 11, 12)  # 08:00 ET, before any June 11 kick-off
     fixtures = bettable_fixtures(now)
-    today_et = now.astimezone(ET_OFFSET).date().isoformat()
     assert fixtures, "June 11 has scheduled group-stage matches"
     for fixture in fixtures:
         assert fixture["group"] is not None
-        assert fixture["date"] == today_et
         assert kickoff_utc(fixture) > now
+        assert kickoff_utc(fixture) <= now + timedelta(hours=24)
 
 
 def test_bettable_fixtures_excludes_started_matches() -> None:
@@ -79,8 +78,8 @@ def test_bettable_fixtures_excludes_started_matches() -> None:
     assert 2 in ids
 
 
-def test_bettable_fixtures_et_date_filter_excludes_other_days() -> None:
-    # 12:00 UTC on June 10 ET — tournament hasn't started; no June 11 rows leak in.
+def test_bettable_fixtures_excludes_far_future() -> None:
+    # 12:00 UTC on June 10 — tournament hasn't started and June 11 is >24h away.
     ids = {f["match_id"] for f in bettable_fixtures(_utc(2026, 6, 10, 12))}
     assert 1 not in ids
     assert 2 not in ids
@@ -91,14 +90,22 @@ def test_bettable_fixtures_utc_midnight_is_still_et_evening() -> None:
     fixtures = bettable_fixtures(_utc(2026, 6, 12, 1))
     ids = {f["match_id"] for f in fixtures}
     assert 2 in ids
-    for fixture in fixtures:
-        assert fixture["date"] == "2026-06-11"
 
 
 def test_bettable_fixtures_late_et_evening_after_last_kickoff() -> None:
-    # 2026-06-12 03:00 UTC = 2026-06-11 23:00 ET: still June 11 in ET,
-    # but every June 11 match (latest 22:00 ET) has kicked off.
-    assert bettable_fixtures(_utc(2026, 6, 12, 3)) == []
+    # 2026-06-12 03:00 UTC = 2026-06-11 23:00 ET: every June 11 match has kicked off.
+    # But June 12 matches (e.g. match 7 at 19:00 UTC) are within 24h, so they appear.
+    ids = {f["match_id"] for f in bettable_fixtures(_utc(2026, 6, 12, 3))}
+    assert 1 not in ids  # match 1 already kicked off
+    assert 2 not in ids  # match 2 already kicked off
+    assert 7 in ids      # match 7 kicks off in ~16h
+
+
+def test_bettable_fixtures_midnight_et_kickoff_visible_day_before() -> None:
+    # Match 20 kicks off at 04:00 UTC Jun 14 (00:00 ET).
+    # At 05:00 UTC Jun 13 (01:00 ET Jun 13) it's within 24h — should be bettable.
+    ids = {f["match_id"] for f in bettable_fixtures(_utc(2026, 6, 13, 5))}
+    assert 20 in ids
 
 
 def test_bettable_fixtures_et_midnight_rolls_to_next_day() -> None:
