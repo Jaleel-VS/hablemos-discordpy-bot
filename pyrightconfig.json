@@ -1,0 +1,20 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "error",
+  "include": [
+    "cogs",
+    "db",
+    "scripts",
+    "tests",
+    "hablemos.py",
+    "base_cog.py",
+    "config.py",
+    "logger.py"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    ".venv"
+  ]
+}
