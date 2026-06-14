@@ -556,6 +556,8 @@ class BetPanelView(ui.LayoutView):
 
             my_bets = ui.Button(label="My bets", emoji="📜", style=ButtonStyle.secondary)
             my_bets.callback = self._on_my_bets
+            share = ui.Button(label="Share bets", emoji="📣", style=ButtonStyle.secondary)
+            share.callback = self._on_share_bets
             close = ui.Button(label="Close", emoji="✖️", style=ButtonStyle.secondary)
             close.callback = self._on_close
             children.append(ui.Separator())
@@ -570,9 +572,9 @@ class BetPanelView(ui.LayoutView):
                 )
                 fallback.callback = self._on_place_fallback
                 self._fallback_button = fallback
-                children.append(ui.ActionRow(place, fallback, my_bets, close))
+                children.append(ui.ActionRow(place, fallback, my_bets, share, close))
             else:
-                children.append(ui.ActionRow(place, my_bets, close))
+                children.append(ui.ActionRow(place, my_bets, share, close))
 
         self.add_item(ui.Container(*children, accent_colour=Color.blurple()))
 
@@ -757,6 +759,30 @@ class BetPanelView(ui.LayoutView):
         self._odds_blip = False
         await self.refresh()
         await interaction.response.edit_message(view=self)
+
+    async def _on_share_bets(self, interaction: Interaction) -> None:
+        """Post the user's pending bets publicly to the channel."""
+        pending = await self.bot.db.get_wc_user_bets(self.user_id, status="pending")
+        if not pending:
+            await interaction.response.send_message(
+                "You have no open bets to share.", ephemeral=True,
+            )
+            return
+        lines = []
+        for bet in pending:
+            fixture = FIXTURE_BY_ID.get(bet["match_id"])
+            if fixture is None:
+                continue
+            ts = int(betting.kickoff_utc(fixture).timestamp())
+            win = betting.payout(bet["stake"], bet["odds"])
+            lines.append(
+                f"• {_team_label(fixture['home'])} vs {_team_label(fixture['away'])} "
+                f"<t:{ts}:t> — **{_outcome_label(bet['outcome'], fixture)}** "
+                f"{bet['stake']:,} @ {bet['odds']} → wins **{win:,}**"
+            )
+        msg = f"🎰 **{interaction.user.display_name}'s bets:**\n" + "\n".join(lines)
+        await interaction.channel.send(msg)
+        await interaction.response.send_message("Shared!", ephemeral=True)
 
     async def _on_my_bets(self, interaction: Interaction) -> None:
         self.show_history = True
