@@ -84,6 +84,27 @@ no command required.
 - Per-module loggers via `logging.getLogger(__name__)`. Never
   `print()`.
 
+### Querying Railway logs programmatically
+
+Railway has no native log drain and only ~7 days of in-app retention.
+To pull recent runtime logs into your terminal (grep/jq-friendly) use
+`scripts/railway_logs.py`, which hits Railway's public GraphQL API:
+
+```bash
+export RAILWAY_TOKEN="..."            # railway.com/account/tokens (account token)
+export RAILWAY_SERVICE_ID="..."       # Cmd/Ctrl+K in dashboard → Copy Service ID
+export RAILWAY_ENVIRONMENT_ID="..."   # … → Copy Environment ID
+
+python scripts/railway_logs.py --limit 1000 | grep "poll failed"
+python scripts/railway_logs.py --filter "@level:error" --json
+```
+
+It resolves the latest deployment automatically. The Railway GraphQL
+schema shifts occasionally; if a field is rejected the script prints the
+exact GraphQL error naming it, which makes the fix obvious. For
+*persistent* searchable history, deploy the Locomotive sidecar to ship
+logs to Axiom/BetterStack instead.
+
 ## Local development
 
 > TODO: document the local workflow — `.env` file, running against a
