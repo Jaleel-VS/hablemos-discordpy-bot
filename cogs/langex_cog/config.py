@@ -14,11 +14,13 @@ from config import get_int_env
 # CHANNELS
 
 # Channel hosting the persistent panel (Post / Find buttons).
-PANEL_CHANNEL_ID: Final[int] = get_int_env("LANGEX_PANEL_CHANNEL_ID", 588691365307875328)
+# NOTE: temporarily pointed at a test channel while the feature is in
+# testing — change back to the real langex channel before going live.
+PANEL_CHANNEL_ID: Final[int] = get_int_env("LANGEX_PANEL_CHANNEL_ID", 1515639236164980778)
 
-# Channel where profile embeds are posted (the browsable feed). Defaults
-# to the panel channel so a single channel works out of the box.
-FEED_CHANNEL_ID: Final[int] = get_int_env("LANGEX_FEED_CHANNEL_ID", 588691365307875328)
+# Channel where profile embeds are posted (the browsable feed). Also a
+# test channel for now (see note above).
+FEED_CHANNEL_ID: Final[int] = get_int_env("LANGEX_FEED_CHANNEL_ID", 1515641245471473704)
 
 # Channel for audit-log embeds (post/update/delete). Reuses the introduce
 # audit channel by default.

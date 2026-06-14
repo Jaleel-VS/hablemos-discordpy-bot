@@ -36,7 +36,7 @@ Defaults come from `config.py` (`load_settings`) or from a cog's own
 | `ALMIGHTY_TRIGGER_CHANNEL_ID` | baked-in | Channel hosting the persistent Almighty submission button. |
 | `ALMIGHTY_FEED_CHANNEL_ID` | baked-in | Channel where Almighty form submissions are posted. |
 | `LANGEX_PANEL_CHANNEL_ID` | baked-in | Channel hosting the persistent language-exchange panel. |
-| `LANGEX_FEED_CHANNEL_ID` | baked-in | Channel where language-exchange profile embeds are posted (defaults to the panel channel). |
+| `LANGEX_FEED_CHANNEL_ID` | baked-in | Channel where language-exchange profile embeds are posted. |
 | `LANGEX_AUDIT_CHANNEL_ID` | baked-in | Audit-log channel for language-exchange post/remove. |
 
 > **Rule:** never hardcode a new guild/channel/role ID inside a cog.
