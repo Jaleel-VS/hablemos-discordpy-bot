@@ -332,13 +332,17 @@ class WCBetsMixin(DatabaseMixin):
             match_id, outcome,
         )
         # Parlays still pending that have a leg on this match are candidates.
+        # Use an IN-subquery (not JOIN + DISTINCT) so we can lock the rows:
+        # Postgres forbids FOR UPDATE together with DISTINCT.
         candidates = await conn.fetch(
             '''
-            SELECT DISTINCT p.id, p.user_id, p.stake, p.combined_odds
+            SELECT p.id, p.user_id, p.stake, p.combined_odds
             FROM wc_parlays p
-            JOIN wc_parlay_legs l ON l.parlay_id = p.id
-            WHERE p.status = 'pending' AND l.match_id = $1
-            FOR UPDATE OF p
+            WHERE p.status = 'pending'
+              AND p.id IN (
+                  SELECT parlay_id FROM wc_parlay_legs WHERE match_id = $1
+              )
+            FOR UPDATE
             ''',
             match_id,
         )
@@ -414,13 +418,17 @@ class WCBetsMixin(DatabaseMixin):
                         conn, bet['user_id'], bet['stake'], new_balance, 'bet_refund', match_id,
                     )
             # Void any pending parlay with a leg on this match and refund its stake.
+            # IN-subquery (not JOIN + DISTINCT) so the rows can be locked:
+            # Postgres forbids FOR UPDATE together with DISTINCT.
             parlays = await conn.fetch(
                 '''
-                SELECT DISTINCT p.id, p.user_id, p.stake
+                SELECT p.id, p.user_id, p.stake
                 FROM wc_parlays p
-                JOIN wc_parlay_legs l ON l.parlay_id = p.id
-                WHERE p.status = 'pending' AND l.match_id = $1
-                FOR UPDATE OF p
+                WHERE p.status = 'pending'
+                  AND p.id IN (
+                      SELECT parlay_id FROM wc_parlay_legs WHERE match_id = $1
+                  )
+                FOR UPDATE
                 ''',
                 match_id,
             )
