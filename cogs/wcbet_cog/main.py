@@ -22,7 +22,7 @@ from cogs.utils.embeds import blue_embed, green_embed
 from db.bets import MatchAlreadySettledError
 
 from . import betting, espn, results
-from .betting import format_player_results
+from .betting import format_parlay_results, format_player_results
 from .admin import WCBetAdmin
 from .config import (
     WCBET_AUTO_SETTLE,
@@ -217,6 +217,9 @@ class WCBet(BaseCog):
         player_msg = format_player_results(summary.get("bets", []), label=label)
         if player_msg:
             await self._announce(player_msg, channel_id=WCBET_NOTIFICATION_CHANNEL_ID)
+        parlay_msg = format_parlay_results(summary.get("parlays", []))
+        if parlay_msg:
+            await self._announce(parlay_msg, channel_id=WCBET_NOTIFICATION_CHANNEL_ID)
 
     async def _announce(self, content: str | None = None, *, embed=None, channel_id: int = WCBET_LOG_CHANNEL_ID) -> None:
         """Post to a World Cup channel, tolerating a missing channel."""

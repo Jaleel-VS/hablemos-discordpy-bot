@@ -14,8 +14,11 @@ import pytest
 from cogs.wcbet_cog.betting import (
     ET_OFFSET,
     bettable_fixtures,
+    combined_odds,
+    current_streak,
     kickoff_utc,
     outcome_from_score,
+    parlay_payout,
     parse_score,
     parse_stake,
     payout,
@@ -148,6 +151,37 @@ def test_outcome_from_score(home: int, away: int, expected: str) -> None:
 )
 def test_payout_floors(stake: int, odds: Decimal, expected: int) -> None:
     assert payout(stake, odds) == expected
+
+
+def test_combined_odds_product() -> None:
+    assert combined_odds([Decimal("1.43"), Decimal("2.15")]) == Decimal("3.07")
+    assert combined_odds([Decimal("2.00"), Decimal("2.00"), Decimal("2.00")]) == Decimal("8.00")
+
+
+def test_combined_odds_empty_is_identity() -> None:
+    assert combined_odds([]) == Decimal("1.00")
+
+
+def test_parlay_payout_floors() -> None:
+    # 5000 * (1.43 * 2.15 = 3.0745 -> 3.07) = 15350
+    assert parlay_payout(5_000, [Decimal("1.43"), Decimal("2.15")]) == 15_350
+
+
+def test_parlay_payout_single_leg_matches_payout() -> None:
+    # A 1-leg parlay must agree with a plain single bet.
+    assert parlay_payout(500, [Decimal("1.50")]) == payout(500, Decimal("1.50"))
+
+
+def test_current_streak_wins() -> None:
+    assert current_streak(["won", "won", "lost", "won"]) == ("won", 2)
+
+
+def test_current_streak_losses() -> None:
+    assert current_streak(["lost", "lost", "lost", "won"]) == ("lost", 3)
+
+
+def test_current_streak_empty() -> None:
+    assert current_streak([]) is None
 
 
 # ── stake_presets ────────────────────────────────────────────────────────────

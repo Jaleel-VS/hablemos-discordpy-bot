@@ -147,6 +147,74 @@ class WCBetsMixin(DatabaseMixin):
             await self._log_balance_event(conn, user_id, -stake, new_balance, 'bet_placed', match_id)
             return new_balance
 
+    async def place_wc_parlay(
+        self, user_id: int, guild_id: int, stake: int, legs: list[dict],
+    ) -> int:
+        """Place a parlay (2+ legs) in one transaction. Returns the new balance.
+
+        ``legs`` is a list of {match_id, outcome, odds}. The combined odds are
+        computed as the product of leg odds. Raises InsufficientBalanceError
+        if the balance can't cover the stake.
+        """
+        product = Decimal(1)
+        for leg in legs:
+            product *= Decimal(str(leg['odds']))
+        combined = product.quantize(Decimal('0.01'))
+        async with self._pool().acquire() as conn, conn.transaction():
+            balance = await conn.fetchval(
+                'SELECT balance FROM wc_bet_wallets WHERE user_id = $1 FOR UPDATE',
+                user_id,
+            )
+            if balance is None:
+                raise InsufficientBalanceError('no wallet')
+            if balance < stake:
+                raise InsufficientBalanceError(f'{balance} < {stake}')
+            new_balance = balance - stake
+            await conn.execute(
+                'UPDATE wc_bet_wallets '
+                'SET balance = $2, updated_at = NOW() WHERE user_id = $1',
+                user_id, new_balance,
+            )
+            parlay_id = await conn.fetchval(
+                'INSERT INTO wc_parlays (user_id, guild_id, stake, combined_odds) '
+                'VALUES ($1, $2, $3, $4) RETURNING id',
+                user_id, guild_id, stake, combined,
+            )
+            for leg in legs:
+                await conn.execute(
+                    'INSERT INTO wc_parlay_legs (parlay_id, match_id, outcome, odds) '
+                    'VALUES ($1, $2, $3, $4)',
+                    parlay_id, leg['match_id'], leg['outcome'], Decimal(str(leg['odds'])),
+                )
+            await self._log_balance_event(conn, user_id, -stake, new_balance, 'parlay_placed')
+            return new_balance
+
+    async def get_wc_user_parlays(self, user_id: int, status: str | None = None) -> list[dict]:
+        """Return the user's parlays (with legs), optionally filtered by status."""
+        if status is None:
+            parlays = await self._fetch(
+                'SELECT id, stake, combined_odds, status, payout, placed_at '
+                'FROM wc_parlays WHERE user_id = $1 ORDER BY placed_at DESC',
+                user_id,
+            )
+        else:
+            parlays = await self._fetch(
+                'SELECT id, stake, combined_odds, status, payout, placed_at '
+                'FROM wc_parlays WHERE user_id = $1 AND status = $2 ORDER BY placed_at DESC',
+                user_id, status,
+            )
+        out: list[dict] = []
+        for p in parlays:
+            legs = await self._fetch(
+                'SELECT match_id, outcome, odds, result FROM wc_parlay_legs '
+                'WHERE parlay_id = $1 ORDER BY match_id',
+                p['id'],
+            )
+            row = dict(p)
+            row['legs'] = [dict(leg) for leg in legs]
+            out.append(row)
+        return out
+
     async def get_wc_user_bets(self, user_id: int, status: str | None = None) -> list:
         """Return the user's bets, optionally filtered by status, newest first."""
         if status is None:
@@ -240,7 +308,79 @@ class WCBetsMixin(DatabaseMixin):
                     )
                     losers += 1
                     bet_details.append({'user_id': bet['user_id'], 'won': False, 'payout': 0})
-            return {'winners': winners, 'losers': losers, 'total_paid': total_paid, 'bets': bet_details}
+            parlays = await self._settle_parlay_legs(conn, match_id, outcome, payout_fn)
+            return {
+                'winners': winners, 'losers': losers, 'total_paid': total_paid,
+                'bets': bet_details, 'parlays': parlays,
+            }
+
+    async def _settle_parlay_legs(
+        self, conn, match_id: int, outcome: str, payout_fn: Callable[[int, Decimal], int],
+    ) -> list[dict]:
+        """Resolve parlay legs on a settled match and settle completed parlays.
+
+        Runs inside settle_wc_match's transaction. A parlay is lost the moment
+        any leg loses; it wins only once every leg has won. Returns summaries
+        of parlays that settled in this call (for announcing).
+        """
+        await conn.execute(
+            '''
+            UPDATE wc_parlay_legs SET result =
+                CASE WHEN outcome = $2 THEN 'won' ELSE 'lost' END
+            WHERE match_id = $1 AND result IS NULL
+            ''',
+            match_id, outcome,
+        )
+        # Parlays still pending that have a leg on this match are candidates.
+        candidates = await conn.fetch(
+            '''
+            SELECT DISTINCT p.id, p.user_id, p.stake, p.combined_odds
+            FROM wc_parlays p
+            JOIN wc_parlay_legs l ON l.parlay_id = p.id
+            WHERE p.status = 'pending' AND l.match_id = $1
+            FOR UPDATE OF p
+            ''',
+            match_id,
+        )
+        settled: list[dict] = []
+        for p in candidates:
+            legs = await conn.fetch(
+                'SELECT result FROM wc_parlay_legs WHERE parlay_id = $1', p['id'],
+            )
+            results = [leg['result'] for leg in legs]
+            if 'lost' in results:
+                await conn.execute(
+                    "UPDATE wc_parlays SET status = 'lost', payout = 0, "
+                    'settled_at = NOW() WHERE id = $1',
+                    p['id'],
+                )
+                settled.append({
+                    'user_id': p['user_id'], 'won': False, 'payout': 0,
+                    'stake': p['stake'], 'odds': p['combined_odds'],
+                })
+            elif all(r == 'won' for r in results):
+                amount = payout_fn(p['stake'], p['combined_odds'])
+                new_balance = await conn.fetchval(
+                    'UPDATE wc_bet_wallets '
+                    'SET balance = balance + $2, updated_at = NOW() '
+                    'WHERE user_id = $1 RETURNING balance',
+                    p['user_id'], amount,
+                )
+                await conn.execute(
+                    "UPDATE wc_parlays SET status = 'won', payout = $2, "
+                    'settled_at = NOW() WHERE id = $1',
+                    p['id'], amount,
+                )
+                if new_balance is not None:
+                    await self._log_balance_event(
+                        conn, p['user_id'], amount, new_balance, 'parlay_won',
+                    )
+                settled.append({
+                    'user_id': p['user_id'], 'won': True, 'payout': amount,
+                    'stake': p['stake'], 'odds': p['combined_odds'],
+                })
+            # else: still has pending legs — leave it.
+        return settled
 
     async def void_wc_match(self, match_id: int) -> dict:
         """Refund every pending stake on a match and mark the bets void.
@@ -272,6 +412,34 @@ class WCBetsMixin(DatabaseMixin):
                 if new_balance is not None:
                     await self._log_balance_event(
                         conn, bet['user_id'], bet['stake'], new_balance, 'bet_refund', match_id,
+                    )
+            # Void any pending parlay with a leg on this match and refund its stake.
+            parlays = await conn.fetch(
+                '''
+                SELECT DISTINCT p.id, p.user_id, p.stake
+                FROM wc_parlays p
+                JOIN wc_parlay_legs l ON l.parlay_id = p.id
+                WHERE p.status = 'pending' AND l.match_id = $1
+                FOR UPDATE OF p
+                ''',
+                match_id,
+            )
+            for p in parlays:
+                new_balance = await conn.fetchval(
+                    'UPDATE wc_bet_wallets '
+                    'SET balance = balance + $2, updated_at = NOW() '
+                    'WHERE user_id = $1 RETURNING balance',
+                    p['user_id'], p['stake'],
+                )
+                await conn.execute(
+                    "UPDATE wc_parlays SET status = 'void', settled_at = NOW() WHERE id = $1",
+                    p['id'],
+                )
+                refunded += 1
+                total_refunded += p['stake']
+                if new_balance is not None:
+                    await self._log_balance_event(
+                        conn, p['user_id'], p['stake'], new_balance, 'parlay_refund', match_id,
                     )
             return {'refunded': refunded, 'total_refunded': total_refunded}
 

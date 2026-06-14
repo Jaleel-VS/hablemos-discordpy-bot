@@ -61,7 +61,24 @@ match numbers).
 | Command | Description | Permissions | Cooldown |
 |---------|-------------|-------------|----------|
 | `$wcbet` | Post the public betting prompt. | None | 5s/user |
+| `$wcbettop` | Show the top 10 betting balances. | None | 10s/channel |
+| `$wcbetme [@user]` | Show a betting profile card (balance+rank, net profit, W/L, win rate, biggest win, longest odds, streak). | None | 5s/user |
 | `$wcbettest` | Identical flow; owner-only, retained for testing. | Owner-only | — |
+
+### Panel buttons
+
+The ephemeral panel offers **My bets**, **Share bets** (posts your open
+singles + parlays publicly), **Parlay** (opens the parlay builder), and
+**Close**.
+
+### Parlays (accumulators)
+
+The **Parlay** button opens a builder where you stake once on **2-5 legs**
+(one outcome per match). Combined odds are the product of each leg's odds,
+so payouts compound fast. All legs must win; the parlay loses the moment any
+leg loses. Per-leg odds are snapshotted at placement. A voided match refunds
+any parlay containing it (whole-parlay void). Parlay results announce to the
+notification channel alongside single-bet results.
 
 ### Admin commands
 

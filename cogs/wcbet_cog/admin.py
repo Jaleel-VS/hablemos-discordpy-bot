@@ -15,7 +15,7 @@ from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, Fixture
 from db.bets import MatchAlreadySettledError
 
 from . import betting, espn, results
-from .betting import format_player_results
+from .betting import format_parlay_results, format_player_results
 from .config import WCBET_LOG_CHANNEL_ID, WCBET_NOTIFICATION_CHANNEL_ID
 
 logger = logging.getLogger(__name__)
@@ -231,12 +231,19 @@ class WCBetAdmin(BaseCog):
             summary.get("bets", []),
             label=f"{fixture['home']} {home_score}–{away_score} {fixture['away']}",
         )
-        if player_msg:
+        parlay_msg = format_parlay_results(summary.get("parlays", []))
+        if player_msg or parlay_msg:
             notify = guild.get_channel(WCBET_NOTIFICATION_CHANNEL_ID)
             if notify is None:
                 logger.warning("wcbet notification channel %s not found", WCBET_NOTIFICATION_CHANNEL_ID)
                 return
-            try:
-                await notify.send(player_msg)
-            except (discord.Forbidden, discord.HTTPException) as exc:
-                logger.error("Failed to post player results to channel %s: %s", WCBET_NOTIFICATION_CHANNEL_ID, exc)
+            for msg in (player_msg, parlay_msg):
+                if not msg:
+                    continue
+                try:
+                    await notify.send(msg)
+                except (discord.Forbidden, discord.HTTPException) as exc:
+                    logger.error(
+                        "Failed to post results to channel %s: %s",
+                        WCBET_NOTIFICATION_CHANNEL_ID, exc,
+                    )

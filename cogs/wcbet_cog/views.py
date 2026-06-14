@@ -558,6 +558,8 @@ class BetPanelView(ui.LayoutView):
             my_bets.callback = self._on_my_bets
             share = ui.Button(label="Share bets", emoji="📣", style=ButtonStyle.secondary)
             share.callback = self._on_share_bets
+            parlay = ui.Button(label="Parlay", emoji="🎰", style=ButtonStyle.secondary)
+            parlay.callback = self._on_open_parlay
             close = ui.Button(label="Close", emoji="✖️", style=ButtonStyle.secondary)
             close.callback = self._on_close
             children.append(ui.Separator())
@@ -574,7 +576,7 @@ class BetPanelView(ui.LayoutView):
                 self._fallback_button = fallback
                 children.append(ui.ActionRow(place, fallback, my_bets, share, close))
             else:
-                children.append(ui.ActionRow(place, my_bets, share, close))
+                children.append(ui.ActionRow(place, my_bets, share, parlay, close))
 
         self.add_item(ui.Container(*children, accent_colour=Color.blurple()))
 
@@ -761,9 +763,10 @@ class BetPanelView(ui.LayoutView):
         await interaction.response.edit_message(view=self)
 
     async def _on_share_bets(self, interaction: Interaction) -> None:
-        """Post the user's pending bets publicly to the channel."""
+        """Post the user's pending bets and parlays publicly to the channel."""
         pending = await self.bot.db.get_wc_user_bets(self.user_id, status="pending")
-        if not pending:
+        parlays = await self.bot.db.get_wc_user_parlays(self.user_id, status="pending")
+        if not pending and not parlays:
             await interaction.response.send_message(
                 "You have no open bets to share.", ephemeral=True,
             )
@@ -780,9 +783,33 @@ class BetPanelView(ui.LayoutView):
                 f"<t:{ts}:t> — **{_outcome_label(bet['outcome'], fixture)}** "
                 f"{bet['stake']:,} @ {bet['odds']} → wins **{win:,}**"
             )
+        for p in parlays:
+            lines.append(self._format_parlay_share_line(p))
         msg = f"🎰 **{interaction.user.display_name}'s bets:**\n" + "\n".join(lines)
         await interaction.channel.send(msg)
         await interaction.response.send_message("Shared!", ephemeral=True)
+
+    @staticmethod
+    def _format_parlay_share_line(p: dict) -> str:
+        """One-line public summary of a pending parlay."""
+        leg_bits = []
+        for leg in p["legs"]:
+            fixture = FIXTURE_BY_ID.get(leg["match_id"])
+            pick = _outcome_label(leg["outcome"], fixture) if fixture else leg["outcome"]
+            leg_bits.append(pick)
+        win = betting.payout(p["stake"], p["combined_odds"])
+        return (
+            f"🎰 **Parlay** ({len(p['legs'])} legs @ {p['combined_odds']}x): "
+            f"{' + '.join(leg_bits)} — {p['stake']:,} → wins **{win:,}**"
+        )
+
+    async def _on_open_parlay(self, interaction: Interaction) -> None:
+        """Swap the ephemeral panel to the parlay builder."""
+        view = ParlayPanelView(
+            self.bot, user_id=self.user_id, guild_id=self.guild_id, balance=self.balance,
+        )
+        await view.refresh()
+        await interaction.response.edit_message(view=view)
 
     async def _on_my_bets(self, interaction: Interaction) -> None:
         self.show_history = True
@@ -811,6 +838,288 @@ class BetPanelView(ui.LayoutView):
 
 
 # ── Stake modal ───────────────────────────────────────────────────────────────
+
+class ParlayPanelView(ui.LayoutView):
+    """Ephemeral parlay builder: add 2-5 legs (match + outcome), one stake.
+
+    Committed legs render as text; only the in-progress leg uses components,
+    keeping within Discord's 5-action-row budget. Combined odds = product of
+    leg odds. Place re-validates every leg is still bettable.
+    """
+
+    MIN_LEGS = 2
+    MAX_LEGS = 5
+
+    def __init__(
+        self, bot: commands.Bot, *, user_id: int, guild_id: int, balance: int,
+    ) -> None:
+        super().__init__(timeout=600)
+        self.bot = bot
+        self.user_id = user_id
+        self.guild_id = guild_id
+        self.balance = balance
+        self.notice: str | None = None
+        # Committed legs: list of {match_id, outcome, odds}.
+        self.legs: list[dict] = []
+        # In-progress leg selection.
+        self.sel_match_id: int | None = None
+        self.sel_outcome: str | None = None
+        self.stake: int | None = None
+        self._fixtures: list[Fixture] = []
+        self._odds: dict[int, MatchOdds] = {}
+
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        return interaction.user.id == self.user_id
+
+    def _odds_for(self, match_id: int) -> MatchOdds:
+        return self._odds.get(match_id, _flat_odds())
+
+    def _combined(self) -> Decimal:
+        return betting.combined_odds([Decimal(str(leg["odds"])) for leg in self.legs])
+
+    async def refresh(self) -> None:
+        now = _now_utc()
+        self._fixtures = betting.bettable_fixtures(now)
+        valid = {f["match_id"] for f in self._fixtures}
+        # Drop legs whose match has kicked off.
+        before = len(self.legs)
+        self.legs = [leg for leg in self.legs if leg["match_id"] in valid]
+        if len(self.legs) != before:
+            self.notice = "A leg's match kicked off and was removed."
+        if self.sel_match_id is not None and self.sel_match_id not in valid:
+            self.sel_match_id = None
+            self.sel_outcome = None
+        if self.stake is not None and self.stake > self.balance:
+            self.stake = None
+        self._odds = await espn.fetch_match_odds(self._fixtures)
+        self._rebuild()
+
+    def _leg_match_ids(self) -> set[int]:
+        return {leg["match_id"] for leg in self.legs}
+
+    def _slip_lines(self) -> list[str]:
+        if not self.legs:
+            return ["-# No legs yet — pick a match and outcome, then **Add leg**."]
+        lines = [f"**Legs ({len(self.legs)}/{self.MAX_LEGS}):**"]
+        for leg in self.legs:
+            fixture = FIXTURE_BY_ID.get(leg["match_id"])
+            pick = _outcome_label(leg["outcome"], fixture) if fixture else leg["outcome"]
+            lines.append(f"• {pick} @ {leg['odds']}")
+        combined = self._combined()
+        line = f"**Combined odds: {combined}x**"
+        if self.stake is not None:
+            line += f" — {self.stake:,} → win **{betting.payout(self.stake, combined):,}**"
+        lines.append(line)
+        return lines
+
+    def _rebuild(self) -> None:
+        self.clear_items()
+        header = f"## 🎰 Build a parlay\n💰 Balance: **{self.balance:,}** coins"
+        if self.notice:
+            header += f"\n-# {self.notice}"
+        children: list[ui.Item] = [
+            ui.TextDisplay(header),
+            ui.Separator(),
+            ui.TextDisplay("\n".join(self._slip_lines())),
+            ui.Separator(),
+        ]
+
+        # Matches not already in the slip.
+        available = [f for f in self._fixtures if f["match_id"] not in self._leg_match_ids()]
+        can_add_more = len(self.legs) < self.MAX_LEGS
+
+        if available and can_add_more:
+            select = ui.Select(
+                placeholder="Add a match…",
+                options=[
+                    SelectOption(
+                        label=f"{f['home']} vs {f['away']}",
+                        value=str(f["match_id"]),
+                        description=f"Group {f['group']} — {f['time_et']} ET",
+                        default=f["match_id"] == self.sel_match_id,
+                    )
+                    for f in available[:25]
+                ],
+            )
+            select.callback = self._make_match_cb(select)
+            children.append(ui.ActionRow(select))
+
+            sel_fixture = FIXTURE_BY_ID.get(self.sel_match_id) if self.sel_match_id else None
+            sel_odds = self._odds_for(self.sel_match_id) if self.sel_match_id else None
+            outcome_buttons = []
+            for outcome, (emoji, lbl) in OUTCOME_BUTTONS.items():
+                label = lbl
+                if sel_fixture is not None and outcome != "draw":
+                    team = sel_fixture["home"] if outcome == "home" else sel_fixture["away"]
+                    label = team
+                    emoji = TEAM_FLAGS.get(team, emoji)
+                if sel_odds is not None:
+                    label = f"{label} · {sel_odds[outcome]}"
+                btn = ui.Button(
+                    label=label, emoji=emoji,
+                    style=ButtonStyle.success if outcome == self.sel_outcome else ButtonStyle.secondary,
+                    disabled=self.sel_match_id is None,
+                )
+                btn.callback = self._make_outcome_cb(outcome)
+                outcome_buttons.append(btn)
+            children.append(ui.ActionRow(*outcome_buttons))
+
+            add = ui.Button(
+                label="Add leg", emoji="➕", style=ButtonStyle.primary,
+                disabled=self.sel_match_id is None or self.sel_outcome is None,
+            )
+            add.callback = self._on_add_leg
+            children.append(ui.ActionRow(add))
+
+        # Stake select + place, enabled once at MIN_LEGS.
+        ready = len(self.legs) >= self.MIN_LEGS
+        if ready:
+            amounts = betting.stake_presets(self.balance)
+            if self.stake is not None and self.stake not in amounts:
+                amounts.insert(0, self.stake)
+            combined = self._combined()
+            stake_options = [
+                SelectOption(
+                    label=(
+                        f"All in ({a:,}) → pays {betting.payout(a, combined):,}"
+                        if a == self.balance
+                        else f"{a:,} → pays {betting.payout(a, combined):,}"
+                    ),
+                    value=str(a),
+                    default=a == self.stake,
+                )
+                for a in amounts
+            ]
+            stake_select = ui.Select(placeholder="Choose your stake…", options=stake_options)
+            stake_select.callback = self._make_stake_cb(stake_select)
+            children.append(ui.ActionRow(stake_select))
+
+        armed = ready and self.stake is not None
+        place_label = (
+            f"Place {self.stake:,} → win {betting.payout(self.stake, self._combined()):,}"
+            if armed else f"Place parlay — need ≥{self.MIN_LEGS} legs + stake"
+        )
+        place = ui.Button(
+            label=place_label, emoji="💸", style=ButtonStyle.primary, disabled=not armed,
+        )
+        place.callback = self._on_place
+        clear = ui.Button(label="Clear", emoji="🗑️", style=ButtonStyle.secondary, disabled=not self.legs)
+        clear.callback = self._on_clear
+        cancel = ui.Button(label="Cancel", emoji="✖️", style=ButtonStyle.secondary)
+        cancel.callback = self._on_cancel
+        children.append(ui.ActionRow(place, clear, cancel))
+
+        self.add_item(ui.Container(*children, accent_colour=Color.gold()))
+
+    def _make_match_cb(self, select: ui.Select):
+        async def cb(interaction: Interaction) -> None:
+            try:
+                self.sel_match_id = int(select.values[0]) if select.values else None
+            except ValueError:
+                self.sel_match_id = None
+            self.sel_outcome = None
+            self.notice = None
+            await self.refresh()
+            await interaction.response.edit_message(view=self)
+        return cb
+
+    def _make_outcome_cb(self, outcome: str):
+        async def cb(interaction: Interaction) -> None:
+            if self.sel_match_id is not None:
+                self.sel_outcome = outcome
+                self.notice = None
+            await self.refresh()
+            await interaction.response.edit_message(view=self)
+        return cb
+
+    async def _on_add_leg(self, interaction: Interaction) -> None:
+        if self.sel_match_id is None or self.sel_outcome is None:
+            await interaction.response.edit_message(view=self)
+            return
+        odds = self._odds_for(self.sel_match_id)[self.sel_outcome]
+        self.legs.append({
+            "match_id": self.sel_match_id, "outcome": self.sel_outcome, "odds": odds,
+        })
+        self.sel_match_id = None
+        self.sel_outcome = None
+        self.notice = None
+        await self.refresh()
+        await interaction.response.edit_message(view=self)
+
+    def _make_stake_cb(self, select: ui.Select):
+        async def cb(interaction: Interaction) -> None:
+            value = select.values[0] if select.values else None
+            try:
+                stake = int(value)
+            except (TypeError, ValueError):
+                stake = None
+            if stake is not None and not 1 <= stake <= self.balance:
+                stake = None
+            self.stake = stake
+            self.notice = None
+            await self.refresh()
+            await interaction.response.edit_message(view=self)
+        return cb
+
+    async def _on_clear(self, interaction: Interaction) -> None:
+        self.legs = []
+        self.sel_match_id = None
+        self.sel_outcome = None
+        self.stake = None
+        self.notice = None
+        await self.refresh()
+        await interaction.response.edit_message(view=self)
+
+    async def _on_place(self, interaction: Interaction) -> None:
+        now = _now_utc()
+        valid = {f["match_id"] for f in betting.bettable_fixtures(now)}
+        if (
+            len(self.legs) < self.MIN_LEGS
+            or self.stake is None
+            or any(leg["match_id"] not in valid for leg in self.legs)
+        ):
+            self.notice = "A leg expired or the parlay is incomplete — review and retry."
+            await self.refresh()
+            await interaction.response.edit_message(view=self)
+            return
+        try:
+            new_balance = await self.bot.db.place_wc_parlay(
+                self.user_id, self.guild_id, self.stake, self.legs,
+            )
+        except InsufficientBalanceError:
+            self.notice = "Not enough coins for that stake."
+            await self.refresh()
+            await interaction.response.edit_message(view=self)
+            return
+        combined = self._combined()
+        win = betting.payout(self.stake, combined)
+        logger.info(
+            "User %s placed parlay: %s legs @ %s, stake %s",
+            self.user_id, len(self.legs), combined, self.stake,
+        )
+        self.balance = new_balance
+        staked = self.stake
+        self.legs = []
+        self.stake = None
+        self.notice = (
+            f"🎰 Parlay placed: {staked:,} @ **{combined}x** — wins **{win:,}** "
+            f"if all legs land. New balance: **{new_balance:,}**."
+        )
+        await self.refresh()
+        await interaction.response.edit_message(view=self)
+
+    async def _on_cancel(self, interaction: Interaction) -> None:
+        self.clear_items()
+        self.add_item(ui.Container(
+            ui.TextDisplay("🎰 Parlay builder closed — run `$wcbet` again to reopen."),
+            accent_colour=Color.gold(),
+        ))
+        self.stop()
+        await interaction.response.edit_message(view=self)
+
+    async def on_timeout(self) -> None:
+        logger.debug("ParlayPanelView timed out for user %s", self.user_id)
+
 
 class StakeModal(ui.Modal, title="Custom stake"):
     """Single-field modal for custom stake amounts.

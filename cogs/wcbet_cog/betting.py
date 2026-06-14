@@ -70,6 +70,27 @@ def payout(stake: int, odds: Decimal) -> int:
     return stake * int(odds * 100) // 100
 
 
+def combined_odds(odds: list[Decimal]) -> Decimal:
+    """Product of decimal odds for a parlay, quantized to 2dp.
+
+    Empty list returns Decimal('1.00') (identity). Uses Decimal throughout
+    so the price never touches a float.
+    """
+    product = Decimal(1)
+    for o in odds:
+        product *= o
+    return product.quantize(Decimal("0.01"))
+
+
+def parlay_payout(stake: int, odds: list[Decimal]) -> int:
+    """Coins credited for a winning parlay: floor(stake * combined_odds).
+
+    Reuses the same hundredths integer math as ``payout`` against the
+    pre-combined price, so a single bet and a 1-leg parlay agree.
+    """
+    return payout(stake, combined_odds(odds))
+
+
 # Stake quick-pick amounts offered in the panel (filtered to balance).
 STAKE_PRESETS = (100, 250, 500, 1_000, 2_500, 5_000)
 
@@ -132,6 +153,25 @@ def format_player_results(bets: list[dict], label: str | None = None) -> str | N
     ]
     if label:
         lines.insert(0, f"🏁 **{label}**")
+    return "\n".join(lines)
+
+
+def format_parlay_results(parlays: list[dict]) -> str | None:
+    """Format settled-parlay announcement lines, or None if empty.
+
+    Each parlay dict has user_id, won, payout, stake, odds.
+    """
+    if not parlays:
+        return None
+    lines = []
+    for p in parlays:
+        if p["won"]:
+            lines.append(
+                f"🎰 **Parlay landed!** <@{p['user_id']}> "
+                f"{p['stake']:,} → **{p['payout']:,}** @ {p['odds']}x"
+            )
+        else:
+            lines.append(f"💥 **Parlay busted** <@{p['user_id']}> ({p['stake']:,} lost)")
     return "\n".join(lines)
 
 

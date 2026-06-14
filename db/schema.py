@@ -838,4 +838,41 @@ async def initialize_schema(pool):
             ON wc_balance_log(user_id, created_at)
         ''')
 
+        # World Cup parlays (accumulator bets — multiple legs, all must win)
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS wc_parlays (
+                id            BIGSERIAL PRIMARY KEY,
+                user_id       BIGINT NOT NULL REFERENCES wc_bet_wallets(user_id),
+                guild_id      BIGINT NOT NULL,
+                stake         INTEGER NOT NULL CHECK (stake > 0),
+                combined_odds NUMERIC(8,2) NOT NULL,
+                status        TEXT NOT NULL DEFAULT 'pending'
+                              CHECK (status IN ('pending','won','lost','void')),
+                payout        INTEGER,
+                placed_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                settled_at    TIMESTAMPTZ
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_wc_parlays_user
+            ON wc_parlays(user_id, status)
+        ''')
+
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS wc_parlay_legs (
+                parlay_id BIGINT NOT NULL REFERENCES wc_parlays(id) ON DELETE CASCADE,
+                match_id  INTEGER NOT NULL,
+                outcome   TEXT NOT NULL CHECK (outcome IN ('home','draw','away')),
+                odds      NUMERIC(5,2) NOT NULL,
+                result    TEXT CHECK (result IN ('won','lost')),
+                PRIMARY KEY (parlay_id, match_id)
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_wc_parlay_legs_match
+            ON wc_parlay_legs(match_id)
+        ''')
+
         logger.info("Database schema initialized")
