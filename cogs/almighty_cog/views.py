@@ -43,12 +43,19 @@ class SubmissionModal(Modal, title="New submission"):
         self.bot = bot
 
     async def on_submit(self, interaction: Interaction) -> None:
+        # Acknowledge first so the modal always closes within Discord's 3s
+        # window, even if the feed post is slow or fails. We edit this
+        # ephemeral message afterwards to report the real outcome.
+        await interaction.response.send_message(
+            embed=Embed(description="⏳ Submitting…", color=Color.blurple()),
+            ephemeral=True,
+        )
+
         feed = self.bot.get_channel(FEED_CHANNEL_ID)
         if not isinstance(feed, discord.abc.Messageable):
             logger.error("Almighty feed channel %s unavailable", FEED_CHANNEL_ID)
-            await interaction.response.send_message(
+            await interaction.edit_original_response(
                 embed=red_embed("The feed channel is unavailable right now. Try again later."),
-                ephemeral=True,
             )
             return
 
@@ -66,23 +73,34 @@ class SubmissionModal(Modal, title="New submission"):
             await feed.send(embed=embed)
         except discord.Forbidden:
             logger.error("Missing permissions to post in Almighty feed channel %s", FEED_CHANNEL_ID)
-            await interaction.response.send_message(
+            await interaction.edit_original_response(
                 embed=red_embed("I can't post in the feed channel. Ask an admin to check my permissions."),
-                ephemeral=True,
             )
             return
         except discord.HTTPException as exc:
             logger.error("Failed to relay Almighty submission: %s", exc, exc_info=True)
-            await interaction.response.send_message(
+            await interaction.edit_original_response(
                 embed=red_embed("Something went wrong sending your submission. Try again later."),
-                ephemeral=True,
             )
             return
 
-        await interaction.response.send_message(
+        await interaction.edit_original_response(
             embed=Embed(description="✅ Submitted!", color=Color.green()),
-            ephemeral=True,
         )
+
+    async def on_error(self, interaction: Interaction, error: Exception) -> None:
+        # Backstop: any unhandled error in on_submit lands here. Make sure
+        # the interaction is acknowledged so the user never sees a silent
+        # "interaction failed" with the modal stuck open.
+        logger.error("Almighty submission modal error: %s", error, exc_info=True)
+        message = red_embed("Something went wrong. Please try again later.")
+        try:
+            if interaction.response.is_done():
+                await interaction.edit_original_response(embed=message)
+            else:
+                await interaction.response.send_message(embed=message, ephemeral=True)
+        except discord.HTTPException:
+            pass
 
 
 class TriggerView(discord.ui.View):

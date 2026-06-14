@@ -53,9 +53,17 @@ No `on_message` listeners. The flow is button-driven:
 
 ## Known edge cases & gotchas
 
+- **Slow/failed feed post**: `on_submit` acknowledges the interaction
+  *first* (ephemeral "⏳ Submitting…") so the modal always closes within
+  Discord's 3-second window, then edits that message to the final result
+  (✅ or an error). This avoids a "This interaction failed" if the feed
+  send is slow or rate-limited.
 - **Missing/forbidden feed channel**: if the feed channel is unavailable
-  or the bot lacks permission to post there, the submitter gets an
-  ephemeral error and the submission is dropped (logged server-side).
+  or the bot lacks permission to post there, the submitter sees an
+  ephemeral error (logged server-side) and the submission is dropped.
+- **Unexpected errors**: `SubmissionModal.on_error` is a backstop that
+  acknowledges the interaction on any unhandled exception, so the modal
+  never hangs open silently.
 - **No persistence of submissions**: submissions live only as messages
   in the feed channel — there's no DB record yet. Add a table if history
   or editing is needed later.
