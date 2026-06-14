@@ -53,6 +53,7 @@ def _gql(token: str, query: str, variables: dict | None = None) -> dict:
         headers={
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
+            "User-Agent": "hablemos-bot-logs/1.0 (+https://github.com/Jaleel-VS/hablemos-discordpy-bot)",
         },
         method="POST",
     )
@@ -74,22 +75,20 @@ def discover(token: str) -> None:
     """
     query = """
     query {
-      me {
-        projects {
-          edges {
-            node {
-              id
-              name
-              services { edges { node { id name } } }
-              environments { edges { node { id name } } }
-            }
+      projects {
+        edges {
+          node {
+            id
+            name
+            services { edges { node { id name } } }
+            environments { edges { node { id name } } }
           }
         }
       }
     }
     """
     data = _gql(token, query)
-    projects = data["me"]["projects"]["edges"]
+    projects = data["projects"]["edges"]
     if not projects:
         print("No projects found for this token.")
         return
