@@ -24,6 +24,7 @@ change. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules.
 > template in [`cogs/_template.md`](./cogs/_template.md).
 
 - [Admin (`admin_cog`)](./cogs/admin.md)
+- [Almighty (`almighty_cog`)](./cogs/almighty.md)
 - [Ask (`ask_cog`)](./cogs/ask.md)
 - [Conjugation (`conjugation_cog`)](./cogs/conjugation.md)
 - [Conversation (`conversation_cog`)](./cogs/conversation.md)

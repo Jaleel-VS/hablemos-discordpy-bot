@@ -77,6 +77,15 @@ Task management. See [`cogs/tasks.md`](./cogs/tasks.md) for the full feature.
 | `/task board` | Show a kanban-style board with all tasks grouped by status. |
 | `/task delete <task_id>` | Delete a task by ID. |
 
+## `$almightypanel` (manage_guild)
+
+Post the persistent submission button into the trigger channel. See
+[`cogs/almighty.md`](./cogs/almighty.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `$almightypanel` | Post the persistent "Submit" button; opens a form that relays to the feed channel. |
+
 ## `$introtracker` (group, manage_messages)
 
 Introduction cooldown enforcement. See [`cogs/intro.md`](./cogs/intro.md) for the full feature.
