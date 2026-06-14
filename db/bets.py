@@ -304,6 +304,57 @@ class WCBetsMixin(DatabaseMixin):
         )
         return [dict(r) for r in rows]
 
+    async def get_wc_user_profile(self, user_id: int, guild_id: int) -> dict:
+        """Aggregate betting profile: record, win rate inputs, net profit, rank.
+
+        All derived from wc_bets + wc_bet_wallets — no profile is stored.
+        """
+        agg = await self._fetchrow(
+            '''
+            SELECT
+                COUNT(*)                                              AS total_bets,
+                COUNT(*) FILTER (WHERE status = 'won')                AS wins,
+                COUNT(*) FILTER (WHERE status = 'lost')               AS losses,
+                COUNT(*) FILTER (WHERE status = 'pending')            AS pending,
+                COALESCE(SUM(stake) FILTER (WHERE status = 'pending'), 0) AS pending_staked,
+                COALESCE(SUM(payout) FILTER (WHERE status = 'won'), 0)    AS total_won,
+                COALESCE(SUM(stake) FILTER (WHERE status IN ('won','lost')), 0) AS settled_staked,
+                COALESCE(MAX(payout) FILTER (WHERE status = 'won'), 0)    AS biggest_win,
+                COALESCE(MAX(odds) FILTER (WHERE status = 'won'), 0)      AS longest_odds_won
+            FROM wc_bets WHERE user_id = $1
+            ''',
+            user_id,
+        )
+        wallet = await self._fetchrow(
+            'SELECT balance FROM wc_bet_wallets WHERE user_id = $1', user_id,
+        )
+        balance = int(wallet['balance']) if wallet else 0
+        rank = await self._fetchval(
+            'SELECT COUNT(*) + 1 FROM wc_bet_wallets '
+            'WHERE guild_id = $1 AND balance > $2',
+            guild_id, balance,
+        )
+        # Recent settled outcomes (newest first) for streak detection.
+        streak_rows = await self._fetch(
+            "SELECT status FROM wc_bets WHERE user_id = $1 "
+            "AND status IN ('won','lost') ORDER BY settled_at DESC LIMIT 20",
+            user_id,
+        )
+        return {
+            'total_bets': int(agg['total_bets']),
+            'wins': int(agg['wins']),
+            'losses': int(agg['losses']),
+            'pending': int(agg['pending']),
+            'pending_staked': int(agg['pending_staked']),
+            'total_won': int(agg['total_won']),
+            'settled_staked': int(agg['settled_staked']),
+            'biggest_win': int(agg['biggest_win']),
+            'longest_odds_won': agg['longest_odds_won'],
+            'balance': balance,
+            'rank': int(rank) if rank is not None else None,
+            'recent_settled': [r['status'] for r in streak_rows],
+        }
+
     async def get_wc_top_balances(self, guild_id: int, limit: int = 10) -> list[dict]:
         """Return the top wallets by balance for a guild."""
         rows = await self._fetch(

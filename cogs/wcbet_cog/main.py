@@ -36,6 +36,49 @@ from .views import OpenBetPanelView
 logger = logging.getLogger(__name__)
 
 
+def _build_profile_embed(member: discord.Member, p: dict) -> discord.Embed:
+    """Render a betting profile dict into a stats card embed."""
+    settled = p["wins"] + p["losses"]
+    win_rate = f"{round(100 * p['wins'] / settled)}%" if settled else "—"
+    net = p["total_won"] - p["settled_staked"]
+    rank = f" (#{p['rank']})" if p["rank"] else ""
+    streak = betting.current_streak(p["recent_settled"])
+
+    embed = discord.Embed(
+        title=f"📊 {member.display_name}'s betting profile",
+        color=discord.Color.blurple(),
+    )
+    embed.set_thumbnail(url=member.display_avatar.url)
+    embed.add_field(name="💰 Balance", value=f"{p['balance']:,}{rank}", inline=True)
+    embed.add_field(name="📈 Net profit", value=f"{net:+,}", inline=True)
+    embed.add_field(
+        name="🎯 Record",
+        value=f"{p['wins']}W · {p['losses']}L ({win_rate})",
+        inline=True,
+    )
+    if p["pending"]:
+        embed.add_field(
+            name="🎟️ Pending",
+            value=f"{p['pending']} bet(s) · {p['pending_staked']:,} staked",
+            inline=True,
+        )
+    if p["biggest_win"]:
+        embed.add_field(name="🏆 Biggest win", value=f"{p['biggest_win']:,}", inline=True)
+    if p["longest_odds_won"]:
+        embed.add_field(
+            name="🐎 Longest odds won",
+            value=f"{p['longest_odds_won']}x",
+            inline=True,
+        )
+    if streak is not None:
+        status, count = streak
+        if count >= 2:
+            emoji = "🔥" if status == "won" else "🥶"
+            word = "win" if status == "won" else "loss"
+            embed.set_footer(text=f"{emoji} {count}-{word} streak")
+    return embed
+
+
 class WCBet(BaseCog):
     """`$wcbet` — World Cup match betting with virtual coins."""
 
@@ -90,6 +133,18 @@ class WCBet(BaseCog):
             for i, r in enumerate(rows, 1)
         ]
         await ctx.send(embed=blue_embed("🏆 **WC Betting Leaderboard**\n" + "\n".join(lines)))
+
+    @commands.command(name="wcbetme")
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.guild_only()
+    async def wcbetme(self, ctx: commands.Context, member: discord.Member | None = None) -> None:
+        """Show your (or another member's) World Cup betting profile."""
+        target = member or ctx.author
+        profile = await self.bot.db.get_wc_user_profile(target.id, ctx.guild.id)
+        if profile["total_bets"] == 0 and profile["balance"] == 0:
+            await ctx.send(embed=blue_embed(f"{target.display_name} hasn't placed any bets yet."))
+            return
+        await ctx.send(embed=_build_profile_embed(target, profile))
 
     # ---------- results polling ----------
 

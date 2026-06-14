@@ -100,6 +100,23 @@ def parse_score(raw: str) -> tuple[int, int] | None:
     return int(match.group(1)), int(match.group(2))
 
 
+def current_streak(recent_settled: list[str]) -> tuple[str, int] | None:
+    """Return (status, count) of the current win/loss streak, or None.
+
+    ``recent_settled`` is newest-first statuses ('won'/'lost'). Walks until
+    the status flips.
+    """
+    if not recent_settled:
+        return None
+    head = recent_settled[0]
+    count = 0
+    for status in recent_settled:
+        if status != head:
+            break
+        count += 1
+    return head, count
+
+
 def format_player_results(bets: list[dict], label: str | None = None) -> str | None:
     """Format per-player win/loss lines for posting in the notification channel.
 
