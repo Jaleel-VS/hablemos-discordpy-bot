@@ -72,6 +72,16 @@ the relevant file under `docs/` in the same commit. See
 [`docs/CONTRIBUTING.md`](./docs/CONTRIBUTING.md) for the full rule and
 when-to-update table.
 
+### Diagnosing failures
+
+When something is broken in production (bot won't start, a feature is
+stuck, bets not paying out, etc.), start with the runbook
+[`docs/playbook.md`](./docs/playbook.md) — it has per-symptom diagnosis
+and recovery steps. To read production logs programmatically (grep for
+errors, tracebacks, a specific event), use `scripts/railway_logs.py`
+(see [`docs/deployment.md`](./docs/deployment.md#querying-railway-logs-programmatically)).
+When you resolve a new failure mode, add it to the playbook.
+
 ### Security
 - No hardcoded tokens, secrets, or database URLs — always use environment variables
 - No PII in log output
