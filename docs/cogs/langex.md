@@ -11,8 +11,8 @@ buttons:
 - **Post / update profile** — an ephemeral select step (language you
   speak, language you want to learn, your level, region) followed by a
   short details modal (about you, what you're looking for, interests).
-  Posts a profile embed to the feed channel and stores the structured
-  data.
+  Posts a **Components V2 profile card** to the feed channel and stores
+  the structured data.
 - **Find a partner** — ranks people who are a *mutual* match for you and
   shows up to 10, each with a jump link to their post. Ephemeral.
 - **Delete my profile** — removes your posted message and your record.
@@ -74,6 +74,24 @@ candidates, the score adds:
 
 Ties break by most-recent post, then user ID (stable ordering).
 
+## Posted profile card (Components V2)
+
+Profiles are posted as a `LayoutView` (not a flat embed):
+
+- a `Container` with a native-language accent color,
+- a `Section` with the header (name, speaks/learning/level, region) and
+  the user's **avatar as a thumbnail accessory**,
+- `TextDisplay` blocks for About / Looking for / Interests,
+- a footer `Section` with the poster's **mention** and a **📩 Contact**
+  button accessory.
+
+The Contact button is a `discord.ui.DynamicItem` whose `custom_id`
+encodes the poster's user id (`langex:contact:<user_id>`), so it works on
+every profile message and survives restarts without tracking each
+message. Pressing it posts a public in-channel message pinging both the
+presser and the poster to kick off the exchange (a presser can't contact
+their own profile).
+
 ## Database tables
 
 | Table | Owns | Description |
@@ -98,6 +116,9 @@ Ties break by most-recent post, then user ID (stable ordering).
 - **`LangExPanelView`**: three buttons with custom IDs `langex:post`,
   `langex:find`, `langex:delete`. Registered once in `__init__` via
   `bot.add_view(...)`, guarded against duplicate registration.
+- **`ContactButton`** (`DynamicItem`, template
+  `langex:contact:(?P<user_id>\d+)`): the per-profile Contact button.
+  Registered once via `bot.add_dynamic_items(ContactButton)`.
 
 ## Known edge cases & gotchas
 

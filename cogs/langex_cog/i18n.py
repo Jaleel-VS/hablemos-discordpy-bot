@@ -110,6 +110,10 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
     },
     "find_jump": {"en": "jump ➜", "es": "ir ➜"},
 
+    # Posted profile card
+    "post_contact_dm": {"en": "prefers DMs", "es": "prefiere MD"},
+    "post_contact_tag": {"en": "prefers a server tag", "es": "prefiere mención en el servidor"},
+
     # Delete
     "delete_ok": {"en": "🗑️ Your profile was removed.", "es": "🗑️ Tu perfil fue eliminado."},
     "delete_none": {"en": "You don't have a profile to delete.", "es": "No tienes un perfil que borrar."},

@@ -11,8 +11,8 @@ from discord.ui import Label, Modal, TextInput
 
 from cogs.utils.embeds import green_embed, red_embed
 
+from .components import build_profile_view
 from .config import FEED_CHANNEL_ID
-from .embeds import build_profile_embed
 from .i18n import t
 
 logger = logging.getLogger(__name__)
@@ -86,7 +86,7 @@ class DetailsModal(Modal):
             await interaction.edit_original_response(embed=red_embed(t("post_failed", self.lang)))
             return
 
-        embed = build_profile_embed(data, interaction.user)
+        view = build_profile_view(data, interaction.user)
 
         # Replace any existing post message so there's one live post per user.
         existing = await self.bot.db.get_exchange_post(interaction.user.id)
@@ -94,7 +94,7 @@ class DetailsModal(Modal):
             await _delete_message(self.bot, existing.get("channel_id"), existing.get("message_id"))
 
         try:
-            msg = await feed.send(embed=embed)
+            msg = await feed.send(view=view)
         except discord.Forbidden:
             logger.error("Missing permissions to post in langex feed channel %s", FEED_CHANNEL_ID)
             await interaction.edit_original_response(embed=red_embed(t("post_failed", self.lang)))
