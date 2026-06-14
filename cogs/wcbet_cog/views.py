@@ -912,6 +912,15 @@ class ParlayPanelView(ui.LayoutView):
         lines.append(line)
         return lines
 
+    def _step_hint(self) -> str:
+        """State-aware 'do this next' nudge, mirroring the single-bet panel."""
+        if len(self.legs) < self.MIN_LEGS:
+            need = self.MIN_LEGS - len(self.legs)
+            return f"-# Add {need} more leg(s) — pick a match, then tap an outcome."
+        if self.stake is None:
+            return "-# **Pick a stake** below to enable Place."
+        return "-# Ready — hit **Place parlay**."
+
     def _rebuild(self) -> None:
         self.clear_items()
         header = f"## 🎰 Build a parlay\n💰 Balance: **{self.balance:,}** coins"
@@ -921,6 +930,7 @@ class ParlayPanelView(ui.LayoutView):
             ui.TextDisplay(header),
             ui.Separator(),
             ui.TextDisplay("\n".join(self._slip_lines())),
+            ui.TextDisplay(self._step_hint()),
             ui.Separator(),
         ]
 
@@ -997,9 +1007,9 @@ class ParlayPanelView(ui.LayoutView):
         place.callback = self._on_place
         clear = ui.Button(label="Clear", emoji="🗑️", style=ButtonStyle.secondary, disabled=not self.legs)
         clear.callback = self._on_clear
-        cancel = ui.Button(label="Cancel", emoji="✖️", style=ButtonStyle.secondary)
-        cancel.callback = self._on_cancel
-        children.append(ui.ActionRow(place, clear, cancel))
+        back = ui.Button(label="Back", emoji="↩️", style=ButtonStyle.secondary)
+        back.callback = self._on_back
+        children.append(ui.ActionRow(place, clear, back))
 
         self.add_item(ui.Container(*children, accent_colour=Color.gold()))
 
@@ -1093,14 +1103,14 @@ class ParlayPanelView(ui.LayoutView):
         await self.refresh()
         await interaction.response.edit_message(view=self)
 
-    async def _on_cancel(self, interaction: Interaction) -> None:
-        self.clear_items()
-        self.add_item(ui.Container(
-            ui.TextDisplay("🎰 Parlay builder closed — run `$wcbet` again to reopen."),
-            accent_colour=Color.gold(),
-        ))
+    async def _on_back(self, interaction: Interaction) -> None:
+        """Swap back to the single-bet panel (non-destructive)."""
+        panel = BetPanelView(
+            self.bot, user_id=self.user_id, guild_id=self.guild_id, balance=self.balance,
+        )
+        await panel.refresh()
         self.stop()
-        await interaction.response.edit_message(view=self)
+        await interaction.response.edit_message(view=panel)
 
     async def on_timeout(self) -> None:
         logger.debug("ParlayPanelView timed out for user %s", self.user_id)
