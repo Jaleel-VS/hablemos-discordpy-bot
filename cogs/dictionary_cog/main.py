@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import re
 from dataclasses import dataclass
+from typing import ClassVar
 from urllib.parse import quote
 
 import aiohttp
@@ -32,7 +33,7 @@ class DefinitionResult:
 class DictionaryCog(BaseCog):
     """Look up words in selected dictionary sources."""
 
-    SOURCES: dict[str, str] = {
+    SOURCES: ClassVar[dict[str, str]] = {
         "web": "Merriam-Webster",
         "wiktionary": "Wiktionary",
         "oxf": "Oxford",
@@ -40,7 +41,7 @@ class DictionaryCog(BaseCog):
         "cambridge": "Cambridge",
     }
 
-    SOURCE_ALIASES: dict[str, str] = {
+    SOURCE_ALIASES: ClassVar[dict[str, str]] = {
         "wikt": "wiktionary",
         "wiki": "wiktionary",
         "ox": "oxf",
@@ -74,10 +75,12 @@ class DictionaryCog(BaseCog):
             ),
         }
 
-        async with aiohttp.ClientSession(timeout=timeout, headers=headers) as session:
-            async with session.get(url) as response:
-                response.raise_for_status()
-                return await response.text()
+        async with (
+            aiohttp.ClientSession(timeout=timeout, headers=headers) as session,
+            session.get(url) as response,
+        ):
+            response.raise_for_status()
+            return await response.text()
 
     async def _define_wiktionary(
         self,

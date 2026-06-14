@@ -16,6 +16,7 @@ ignore = [
     "E501",    # line too long — handled by formatter
     "RUF001",  # ambiguous unicode — we use emoji intentionally
     "RUF002",  # ambiguous unicode in docstrings
+    "RUF003",  # ambiguous unicode in comments — math/dash glyphs intentional
 ]
 
 [lint.isort]

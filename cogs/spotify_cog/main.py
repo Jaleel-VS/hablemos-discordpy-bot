@@ -7,7 +7,15 @@ from typing import Optional
 
 import aiohttp
 import discord
-from discord import Color, File, HTTPException, Member, Spotify, app_commands, ui
+from discord import (
+    Color,
+    File,
+    HTTPException,
+    Member,
+    Spotify,
+    app_commands,
+    ui,
+)
 from discord.ext import commands
 from PIL import Image
 

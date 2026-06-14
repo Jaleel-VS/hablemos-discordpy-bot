@@ -111,7 +111,7 @@ class TicketsCog(BaseCog):
                 truncated_lines = []
                 char_count = 0
                 omitted = 0
-                
+
                 for entry in lines:
                     # Check if adding this entry would exceed limit
                     # +1 for the newline that will join entries
@@ -121,7 +121,7 @@ class TicketsCog(BaseCog):
                         char_count += entry_length
                     else:
                         omitted += 1
-                
+
                 value = "\n".join(truncated_lines)
                 if omitted > 0:
                     suffix = f"\n-# ...and {omitted} more"
