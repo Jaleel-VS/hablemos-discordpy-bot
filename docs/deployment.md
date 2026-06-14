@@ -92,8 +92,12 @@ To pull recent runtime logs into your terminal (grep/jq-friendly) use
 
 ```bash
 export RAILWAY_TOKEN="..."            # railway.com/account/tokens (account token)
-export RAILWAY_SERVICE_ID="..."       # Cmd/Ctrl+K in dashboard → Copy Service ID
-export RAILWAY_ENVIRONMENT_ID="..."   # … → Copy Environment ID
+
+# Find your IDs (or use Cmd/Ctrl+K → Copy Service/Environment ID in the dashboard):
+python scripts/railway_logs.py --discover
+
+export RAILWAY_SERVICE_ID="..."
+export RAILWAY_ENVIRONMENT_ID="..."
 
 python scripts/railway_logs.py --limit 1000 | grep "poll failed"
 python scripts/railway_logs.py --filter "@level:error" --json

@@ -11,9 +11,12 @@ Setup
 
        export RAILWAY_TOKEN="..."
 
-2. Find the service + environment IDs (Cmd/Ctrl+K in the dashboard →
-   "Copy Service ID" / "Copy Environment ID") and export them, or pass
-   them as flags:
+2. Find the service + environment IDs. Either run discovery:
+
+       python scripts/railway_logs.py --discover
+
+   or copy them from the dashboard (Cmd/Ctrl+K → "Copy Service ID" /
+   "Copy Environment ID"). Then export them, or pass them as flags:
 
        export RAILWAY_SERVICE_ID="..."
        export RAILWAY_ENVIRONMENT_ID="..."
@@ -64,6 +67,45 @@ def _gql(token: str, query: str, variables: dict | None = None) -> dict:
     return payload["data"]
 
 
+def discover(token: str) -> None:
+    """Print every project → service → environment with their IDs.
+
+    Doubles as a connectivity/token check.
+    """
+    query = """
+    query {
+      me {
+        projects {
+          edges {
+            node {
+              id
+              name
+              services { edges { node { id name } } }
+              environments { edges { node { id name } } }
+            }
+          }
+        }
+      }
+    }
+    """
+    data = _gql(token, query)
+    projects = data["me"]["projects"]["edges"]
+    if not projects:
+        print("No projects found for this token.")
+        return
+    for pe in projects:
+        proj = pe["node"]
+        print(f"\nProject: {proj['name']}  (id: {proj['id']})")
+        print("  Services:")
+        for se in proj["services"]["edges"]:
+            s = se["node"]
+            print(f"    - {s['name']:<24} {s['id']}")
+        print("  Environments:")
+        for ee in proj["environments"]["edges"]:
+            e = ee["node"]
+            print(f"    - {e['name']:<24} {e['id']}")
+
+
 def latest_deployment_id(token: str, service_id: str, environment_id: str) -> str:
     """Return the most recent deployment id for a service in an environment."""
     query = """
@@ -108,6 +150,8 @@ def main() -> int:
                    help="Environment ID (or set RAILWAY_ENVIRONMENT_ID).")
     p.add_argument("--deployment", default=os.getenv("RAILWAY_DEPLOYMENT_ID"),
                    help="Deployment ID (skips lookup; or set RAILWAY_DEPLOYMENT_ID).")
+    p.add_argument("--discover", action="store_true",
+                   help="List your projects/services/environments with IDs, then exit.")
     p.add_argument("--limit", type=int, default=200, help="Max log lines (default 200).")
     p.add_argument("--filter", default=None,
                    help='Railway log filter, e.g. "@level:error" or free text.')
@@ -117,6 +161,10 @@ def main() -> int:
     token = os.getenv("RAILWAY_TOKEN")
     if not token:
         raise SystemExit("Set RAILWAY_TOKEN (https://railway.com/account/tokens).")
+
+    if args.discover:
+        discover(token)
+        return 0
 
     deployment_id = args.deployment
     if not deployment_id:
