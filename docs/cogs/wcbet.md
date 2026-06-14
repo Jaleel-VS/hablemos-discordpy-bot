@@ -196,6 +196,12 @@ See [`../database.md`](../database.md#world-cup-betting).
   ESPN parsing incl. odds (`test_results.py`), and panel/stepper
   behavior with fakes (`test_bet_panel.py`; the odds fetch is stubbed
   via the autouse `fake_odds` fixture).
+- `test_sql_guards.py` scans the `db/` SQL for Postgres-invalid patterns
+  (e.g. `FOR UPDATE` with `DISTINCT`) that the fakes can't catch.
+- `test_settlement_integration.py` exercises settlement/void against a
+  **real** Postgres, including matches that have parlay legs. Skipped
+  unless `TEST_DATABASE_URL` points at a throwaway database:
+  `TEST_DATABASE_URL=postgresql://localhost/wcbet_test pytest tests/wcbet/test_settlement_integration.py`
 
 ## Related
 
