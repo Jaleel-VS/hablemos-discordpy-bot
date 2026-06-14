@@ -40,6 +40,7 @@ change. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules.
 - [Interactions (`interactions_cog`)](./cogs/interactions.md)
 - [Intro (`intro_cog`)](./cogs/intro.md)
 - [Introduce (`introduce_cog`)](./cogs/introduce.md)
+- [Language Exchange (`langex_cog`)](./cogs/langex.md)
 - [Language League (`league_cog`)](./cogs/league.md)
 - [Practice (`practice_cog`)](./cogs/practice.md)
 - [Practice Test (`practice_test_cog`)](./cogs/practice_test.md)

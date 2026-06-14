@@ -47,7 +47,7 @@ See [`cogs/crossword.md`](./cogs/crossword.md) for the full feature.
 | In-game: `giveup` / `reveal` | Starter-only: end the game and show answers. |
 | In-game: `!hint` | Reveal one random letter (max 2 per game). |
 
-## Introductions & exchange posts
+## Introductions
 
 See [`cogs/introduce.md`](./cogs/introduce.md) for the full feature.
 
@@ -55,8 +55,12 @@ See [`cogs/introduce.md`](./cogs/introduce.md) for the full feature.
 |---------|-------------|
 | `/introduce` | Start the introduction flow (modal-based). Must be used in the configured command channel. |
 | `$introduce` | Posts a persistent "Introduce Yourself" button in the command channel. |
-| `/exchange delete` | Delete your own exchange-partner post. |
-| `/exchange repost` | Repost your exchange post (cooldown applies). |
+
+## Language exchange
+
+See [`cogs/langex.md`](./cogs/langex.md) for the full feature. All user
+interaction is through the persistent panel buttons (Post / update
+profile, Find a partner, Delete my profile) placed by `$langexpanel`.
 
 ## Conjugation
 

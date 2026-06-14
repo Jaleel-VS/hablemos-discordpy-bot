@@ -35,6 +35,9 @@ Defaults come from `config.py` (`load_settings`) or from a cog's own
 | `WC_PREDICT_DEFAULT_DEADLINE_TS` | `0` | Optional fallback prediction lock time as a Unix epoch (seconds). `bot_settings.wc_predict.deadline_ts` overrides when set via `$wcpredict setdeadline`. |
 | `ALMIGHTY_TRIGGER_CHANNEL_ID` | baked-in | Channel hosting the persistent Almighty submission button. |
 | `ALMIGHTY_FEED_CHANNEL_ID` | baked-in | Channel where Almighty form submissions are posted. |
+| `LANGEX_PANEL_CHANNEL_ID` | baked-in | Channel hosting the persistent language-exchange panel. |
+| `LANGEX_FEED_CHANNEL_ID` | baked-in | Channel where language-exchange profile embeds are posted (defaults to the panel channel). |
+| `LANGEX_AUDIT_CHANNEL_ID` | baked-in | Audit-log channel for language-exchange post/remove. |
 
 > **Rule:** never hardcode a new guild/channel/role ID inside a cog.
 > Add it to the relevant `config.py` (root or cog-local) with a

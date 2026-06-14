@@ -1,9 +1,9 @@
 """Tests for the pure language-exchange match-scoring engine."""
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from cogs.langex_cog.matching import Match, rank_matches
 
-NOW = datetime(2026, 6, 14, tzinfo=timezone.utc)
+NOW = datetime(2026, 6, 14, tzinfo=UTC)
 
 
 def _post(user_id, offer, seek, *, level="B1", region="north_america",

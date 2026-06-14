@@ -86,6 +86,16 @@ Post the persistent submission button into the trigger channel. See
 |---------|-------------|
 | `$almightypanel` | Post the persistent submission panel (Submit + Categorize buttons); opens forms that relay to the feed channel. |
 
+## `$langexpanel` / `$langexremove`
+
+Language-exchange admin. See [`cogs/langex.md`](./cogs/langex.md) for the
+full feature.
+
+| Command | Description | Permissions |
+|---------|-------------|-------------|
+| `$langexpanel` | Post the persistent panel (Post / Find / Delete buttons). | `manage_guild` |
+| `$langexremove <user>` | Remove a user's language-exchange profile (message + record). | `manage_messages` |
+
 ## `$introtracker` (group, manage_messages)
 
 Introduction cooldown enforcement. See [`cogs/intro.md`](./cogs/intro.md) for the full feature.
@@ -165,6 +175,6 @@ See [`cogs/admin.md`](./cogs/admin.md), [`cogs/database.md`](./cogs/database.md)
 - `@commands.is_owner()` is the default gate for admin commands —
   checks against `BOT_OWNER_ID` from env.
 - A few commands use `@commands.has_permissions(manage_messages=True)`
-  for mods (e.g. `/exchange remove`, `$exchangereset`).
+  for mods (e.g. `$langexremove`, `$introtracker`).
 - Slash-command equivalents of admin commands are rare; most admin
   tooling stays prefix-based.

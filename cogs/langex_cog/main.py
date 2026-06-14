@@ -22,7 +22,7 @@ from cogs.utils.embeds import green_embed, red_embed
 
 from .config import PANEL_CHANNEL_ID
 from .i18n import t
-from .views import LangExPanelView
+from .views import LangExPanelView, _delete_message
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +56,18 @@ class LangExCog(BaseCog):
             await ctx.send(embed=red_embed("I can't post in the panel channel. Check my permissions there."))
             return
         await ctx.send(embed=green_embed("Posted the language-exchange panel."))
+
+    @commands.command(name="langexremove")
+    @commands.has_permissions(manage_messages=True)
+    async def remove_profile(self, ctx: commands.Context, user: discord.Member):
+        """[Mod] Remove a user's language-exchange profile (message + record)."""
+        post = await self.bot.db.get_exchange_post(user.id)
+        if not post:
+            await ctx.send(embed=red_embed(f"{user.mention} has no active profile."))
+            return
+        await _delete_message(self.bot, post.get("channel_id"), post.get("message_id"))
+        await self.bot.db.delete_exchange_post(user.id)
+        await ctx.send(embed=green_embed(f"Removed {user.mention}'s language-exchange profile."))
 
 
 async def setup(bot: commands.Bot):
