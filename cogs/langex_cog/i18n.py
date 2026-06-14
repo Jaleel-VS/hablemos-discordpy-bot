@@ -83,6 +83,9 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "es": "¿Cómo quieres practicar? (opcional)",
     },
     "card_methods": {"en": "Open to", "es": "Disponible para"},
+    "card_speaks": {"en": "Speaks", "es": "Habla"},
+    "card_learning": {"en": "Learning", "es": "Aprende"},
+    "card_region": {"en": "Region", "es": "Región"},
 
     # Posting result
     "posted_ok": {

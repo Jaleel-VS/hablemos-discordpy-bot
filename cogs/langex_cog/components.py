@@ -63,11 +63,16 @@ def build_profile_view(data: dict, user: discord.User | discord.Member) -> Layou
     seek_flag = LANG_FLAGS.get(data.get("seek_lang", ""), "🌐")
     level = data.get("seek_level") or "—"
     region = _lookup(REGIONS, data.get("region"))
+    # REGIONS labels carry a leading globe emoji; drop it since the bullet
+    # already shows one.
+    if region and region[0] in ("🌎", "🌍", "🌏"):
+        region = region.split(" ", 1)[-1]
 
-    header = (
-        f"## {user.display_name}\n"
-        f"{offer_flag} **Speaks** {offer}  ·  {seek_flag} **Learning** {seek} ({level})\n"
-        f"🌍 {region}"
+    header = f"## {user.display_name}"
+    facts = (
+        f"• {offer_flag} **{t('card_speaks', lang)}:** {offer}\n"
+        f"• {seek_flag} **{t('card_learning', lang)}:** {seek} ({level})\n"
+        f"• 🌍 **{t('card_region', lang)}:** {region}"
     )
 
     container = Container(accent_colour=color)
@@ -77,6 +82,7 @@ def build_profile_view(data: dict, user: discord.User | discord.Member) -> Layou
             accessory=Thumbnail(user.display_avatar.url),
         )
     )
+    container.add_item(TextDisplay(facts))
     container.add_item(Separator())
 
     if data.get("about_text"):

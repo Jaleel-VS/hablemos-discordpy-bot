@@ -80,8 +80,10 @@ Ties break by most-recent post, then user ID (stable ordering).
 Profiles are posted as a `LayoutView` (not a flat embed):
 
 - a `Container` with a native-language accent color,
-- a `Section` with the header (name, speaks/learning/level, region) and
-  the user's **avatar as a thumbnail accessory**,
+- a `Section` with the name as the header and the user's **avatar as a
+  thumbnail accessory**,
+- a `TextDisplay` with the speaks / learning (+ level) / region facts as
+  a bulleted list,
 - `TextDisplay` blocks for About / Looking for / Interests, and the
   practice methods the user is open to (voice / text / video), if any,
 - a footer `TextDisplay` with the poster's **mention** and their
