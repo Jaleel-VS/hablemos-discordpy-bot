@@ -2,6 +2,24 @@
 
 Runbook for diagnosing and recovering from common failure modes.
 
+## Reading production logs
+
+Many checks below say "check Railway logs." Railway has only ~7 days of
+in-app retention and no native log drain, so to grep/query logs (from a
+script or an agent session) use the puller, which hits Railway's public
+GraphQL API:
+
+```bash
+# RAILWAY_TOKEN / RAILWAY_SERVICE_ID / RAILWAY_ENVIRONMENT_ID must be set
+# (see deployment.md → "Querying Railway logs programmatically";
+#  run `python scripts/railway_logs.py --discover` to find the IDs).
+python scripts/railway_logs.py --limit 1000 | grep "poll failed"
+python scripts/railway_logs.py --filter "@level:error" --json
+```
+
+It resolves the latest deployment automatically. See
+[`deployment.md`](./deployment.md) for setup and token notes.
+
 ## Bot won't start
 
 ### Symptom
@@ -251,6 +269,70 @@ announcement was posted in the winner channel.
 > **Prevention**: Test round-end logic with `$league preview` (dry-run,
 > no mutation) before the actual round end. Verify the winner channel
 > and champion role exist.
+
+## World Cup bets not settling / payouts stuck
+
+### Symptom
+
+A finished match's bets stay `pending` — users report they "haven't been
+paid out." The results poller runs every `WCBET_RESULTS_POLL_MINUTES`
+but the match never gets a result row.
+
+### Diagnosis
+
+1. **Is it actually unsettled?** Check for a result row and pending bets:
+   ```sql
+   SELECT * FROM wc_match_results WHERE match_id = <id>;
+   SELECT match_id, status, COUNT(*), SUM(stake)
+   FROM wc_bets WHERE match_id = <id> GROUP BY match_id, status;
+   ```
+   `get_wc_pending_unsettled()` (used by `$wcbetadmin`) lists all
+   matches with pending bets and no result.
+2. **Does ESPN have the match completed?** The poller settles only when
+   it matches a completed ESPN event by exact `(kickoff_utc, home,
+   away)`. If the match isn't really finished, manual settlement is
+   expected — not a bug. Verify via the scoreboard:
+   `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=YYYYMMDD`
+   (the ET calendar date, same as the fixture's `date`).
+3. **Is the poller erroring?** Check the logs:
+   ```bash
+   python scripts/railway_logs.py --limit 1000 | grep "poll failed"
+   ```
+   A repeating `World Cup results poll failed` traceback means the
+   poll→settle path is throwing every cycle (and rolling back, so no
+   payout lands). The settlement runs in one transaction, so a late
+   failure rolls back the credits too — the same `bet_won` log lines
+   reappearing every poll is the tell.
+4. **Is it a settle-mode issue?** `WCBET_AUTO_SETTLE=0` (default) only
+   *proposes* a settle (`$wcbetadmin result …`) in the log channel; it
+   doesn't auto-pay. Set `WCBET_AUTO_SETTLE=1` to settle automatically.
+   Env changes need a redeploy — the value is read once at startup.
+
+> **Gotcha (fixed 2026-06-14):** `settle_wc_match` / `void_wc_match`
+> selected candidate parlays with `SELECT DISTINCT … FOR UPDATE`, which
+> Postgres rejects (`FeatureNotSupportedError: FOR UPDATE is not allowed
+> with DISTINCT clause`). Any match with a parlay leg crashed mid-
+> transaction and never settled. `tests/wcbet/test_sql_guards.py` now
+> guards against `FOR UPDATE` + `DISTINCT` in the db layer; the fakes
+> can't catch Postgres-only SQL errors, so also run the real-Postgres
+> integration tests (`python scripts/run_pg_integration_tests.py`, needs
+> the Docker daemon) when touching settlement SQL.
+
+### Recovery
+
+1. **Settle manually** (works regardless of poller state — it's a direct
+   command, not the loop):
+   ```bash
+   $wcbetadmin result <match_id> <home>-<away>
+   ```
+   e.g. `$wcbetadmin result 25 7-1`. This settles every pending bet on
+   the match at its stored odds, pays winners, resolves parlay legs, and
+   announces it.
+2. If the poller was crashing, deploy the fix and **redeploy** — the
+   poller catches up on its next run (settles all backlogged matches
+   when `WCBET_AUTO_SETTLE=1`).
+3. To refund instead of settle (e.g. abandoned match):
+   `$wcbetadmin void <match_id>`.
 
 ## TODOs
 
