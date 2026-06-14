@@ -15,3 +15,12 @@ TRIGGER_CHANNEL_ID: Final[int] = get_int_env("ALMIGHTY_TRIGGER_CHANNEL_ID", 1515
 
 # Channel where submitted forms are posted.
 FEED_CHANNEL_ID: Final[int] = get_int_env("ALMIGHTY_FEED_CHANNEL_ID", 1515641245471473704)
+
+# Category options offered by the radio-group form. (label, description).
+# Between 2 and 10 entries per the RadioGroup component limit.
+CATEGORIES: Final[list[tuple[str, str]]] = [
+    ("Question", "Ask something"),
+    ("Idea", "Suggest an improvement"),
+    ("Bug", "Report something broken"),
+    ("Other", "Anything else"),
+]

@@ -84,7 +84,7 @@ Post the persistent submission button into the trigger channel. See
 
 | Command | Description |
 |---------|-------------|
-| `$almightypanel` | Post the persistent "Submit" button; opens a form that relays to the feed channel. |
+| `$almightypanel` | Post the persistent submission panel (Submit + Categorize buttons); opens forms that relay to the feed channel. |
 
 ## `$introtracker` (group, manage_messages)
 
