@@ -86,8 +86,7 @@ Profiles are posted as a `LayoutView` (not a flat embed):
   a bulleted list,
 - `TextDisplay` blocks for About / Looking for / Interests, and the
   practice methods the user is open to (voice / text / video), if any,
-- a footer `TextDisplay` with the poster's **mention** and their
-  preferred contact method (DM vs. server tag).
+- a footer `TextDisplay` with the poster's **mention**.
 
 ## Database tables
 

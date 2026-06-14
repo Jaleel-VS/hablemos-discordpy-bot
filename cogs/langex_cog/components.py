@@ -101,8 +101,7 @@ def build_profile_view(data: dict, user: discord.User | discord.Member) -> Layou
         container.add_item(TextDisplay(f"**{t('card_methods', lang)}** {chips}"))
 
     container.add_item(Separator())
-    contact_hint = t("post_contact_dm", lang) if data.get("prefer_dm", True) else t("post_contact_tag", lang)
-    container.add_item(TextDisplay(f"<@{data['user_id']}> · -# {contact_hint}"))
+    container.add_item(TextDisplay(f"<@{data['user_id']}>"))
 
     view = LayoutView(timeout=None)
     view.add_item(container)
