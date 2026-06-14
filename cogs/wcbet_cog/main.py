@@ -22,8 +22,8 @@ from cogs.utils.embeds import blue_embed, green_embed
 from db.bets import MatchAlreadySettledError
 
 from . import betting, espn, results
-from .betting import format_parlay_results, format_player_results
 from .admin import WCBetAdmin
+from .betting import format_parlay_results, format_player_results
 from .config import (
     WCBET_AUTO_SETTLE,
     WCBET_LOG_CHANNEL_ID,

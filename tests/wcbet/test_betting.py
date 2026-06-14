@@ -12,7 +12,6 @@ from decimal import Decimal
 import pytest
 
 from cogs.wcbet_cog.betting import (
-    ET_OFFSET,
     bettable_fixtures,
     combined_odds,
     current_streak,

@@ -159,7 +159,7 @@ class WCBetAdmin(BaseCog):
             return
         lines = [
             f"`{r['created_at'].strftime('%m-%d %H:%M')}` "
-            f"{'%+d' % r['delta']} → **{r['balance']:,}** `{r['event']}`"
+            f"{r['delta']:+d} → **{r['balance']:,}** `{r['event']}`"
             + (f" match {r['match_id']}" if r['match_id'] else "")
             for r in rows
         ]
