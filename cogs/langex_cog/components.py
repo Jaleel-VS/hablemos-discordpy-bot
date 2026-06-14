@@ -23,6 +23,7 @@ from .config import (
     COLOR_ENGLISH_NATIVE,
     COLOR_OTHER_NATIVE,
     COLOR_SPANISH_NATIVE,
+    CONTACT_METHODS,
     ENGLISH_NATIVE_ROLE_ID,
     LANG_FLAGS,
     OFFER_LANGUAGES,
@@ -86,6 +87,12 @@ def build_profile_view(data: dict, user: discord.User | discord.Member) -> Layou
         container.add_item(TextDisplay(f"**⭐ Looking for**\n{want}"))
     if data.get("interests"):
         container.add_item(TextDisplay(f"**🎯 Interests** {str(data['interests'])[:500]}"))
+
+    methods = data.get("contact_methods") or []
+    if methods:
+        labels = {value: label for label, value in CONTACT_METHODS}
+        chips = " · ".join(labels.get(m, m) for m in methods)
+        container.add_item(TextDisplay(f"**{t('card_methods', lang)}** {chips}"))
 
     container.add_item(Separator())
     contact_hint = t("post_contact_dm", lang) if data.get("prefer_dm", True) else t("post_contact_tag", lang)

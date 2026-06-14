@@ -113,6 +113,16 @@ DM_OPTIONS: Final[list[tuple[str, str]]] = [
     ("No — tag me in the server", "no"),
 ]
 
+# How the user wants to practice. Multi-select, optional. Each tuple is
+# (label, value); ``value`` is stored in post_data["contact_methods"].
+# Video is a stated preference only — Discord components can't start a
+# call.
+CONTACT_METHODS: Final[list[tuple[str, str]]] = [
+    ("🎙️ Voice chat", "voice"),
+    ("💬 Text chat", "text"),
+    ("📹 Video chat", "video"),
+]
+
 # MATCHING WEIGHTS (see matching.py)
 
 MATCH_RESULT_LIMIT: Final[int] = 10

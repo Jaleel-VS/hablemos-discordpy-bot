@@ -78,6 +78,11 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "en": "e.g. gaming, music, history, cooking — helps matching.",
         "es": "p.ej. videojuegos, música, historia, cocina — ayuda a emparejar.",
     },
+    "modal_methods_label": {
+        "en": "How do you want to practice? (optional)",
+        "es": "¿Cómo quieres practicar? (opcional)",
+    },
+    "card_methods": {"en": "Open to", "es": "Disponible para"},
 
     # Posting result
     "posted_ok": {

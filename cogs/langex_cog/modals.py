@@ -5,14 +5,14 @@ import logging
 import re
 
 import discord
-from discord import Interaction, TextStyle
+from discord import CheckboxGroupOption, Interaction, TextStyle
 from discord.ext import commands
-from discord.ui import Label, Modal, TextInput
+from discord.ui import CheckboxGroup, Label, Modal, TextInput
 
 from cogs.utils.embeds import green_embed, red_embed
 
 from .components import build_profile_view
-from .config import FEED_CHANNEL_ID
+from .config import CONTACT_METHODS, FEED_CHANNEL_ID
 from .i18n import t
 
 logger = logging.getLogger(__name__)
@@ -51,14 +51,25 @@ class DetailsModal(Modal):
             max_length=300,
             required=False,
         )
+        self.methods = CheckboxGroup(
+            required=False,
+            min_values=0,
+            max_values=len(CONTACT_METHODS),
+            options=[
+                CheckboxGroupOption(label=label, value=value)
+                for label, value in CONTACT_METHODS
+            ],
+        )
         self.add_item(Label(text=t("modal_about_label", lang), component=self.about))
         self.add_item(Label(text=t("modal_want_label", lang), component=self.want))
         self.add_item(Label(text=t("modal_interests_label", lang), component=self.interests))
+        self.add_item(Label(text=t("modal_methods_label", lang), component=self.methods))
 
     async def on_submit(self, interaction: Interaction) -> None:
         about = str(self.about.value)
         want = str(self.want.value)
         interests = str(self.interests.value) if self.interests.value else ""
+        methods = list(self.methods.values)
 
         if _contains_url(about, want, interests):
             await interaction.response.send_message(
@@ -72,6 +83,7 @@ class DetailsModal(Modal):
             "about_text": about,
             "want_text": want,
             "interests": interests,
+            "contact_methods": methods,
             "lang": self.lang,
         }
 

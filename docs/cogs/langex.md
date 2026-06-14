@@ -10,9 +10,10 @@ buttons:
 
 - **Post / update profile** — an ephemeral select step (language you
   speak, language you want to learn, your level, region) followed by a
-  short details modal (about you, what you're looking for, interests).
-  Posts a **Components V2 profile card** to the feed channel and stores
-  the structured data.
+  short details modal (about you, what you're looking for, interests,
+  and how you want to practice — voice / text / video). Posts a
+  **Components V2 profile card** to the feed channel and stores the
+  structured data.
 - **Find a partner** — ranks people who are a *mutual* match for you and
   shows up to 10, each with a jump link to their post. Ephemeral.
 - **Delete my profile** — removes your posted message and your record.
@@ -81,7 +82,8 @@ Profiles are posted as a `LayoutView` (not a flat embed):
 - a `Container` with a native-language accent color,
 - a `Section` with the header (name, speaks/learning/level, region) and
   the user's **avatar as a thumbnail accessory**,
-- `TextDisplay` blocks for About / Looking for / Interests,
+- `TextDisplay` blocks for About / Looking for / Interests, and the
+  practice methods the user is open to (voice / text / video), if any,
 - a footer `TextDisplay` with the poster's **mention** and their
   preferred contact method (DM vs. server tag).
 
@@ -89,7 +91,7 @@ Profiles are posted as a `LayoutView` (not a flat embed):
 
 | Table | Owns | Description |
 |-------|------|-------------|
-| `exchange_posts` | `ExchangePostsMixin` | One active profile per user: `user_id`, `message_id`, `channel_id`, `posted_at`, `post_data` (JSONB with offer/seek language, level, region, DM preference, about/looking-for/interests text). |
+| `exchange_posts` | `ExchangePostsMixin` | One active profile per user: `user_id`, `message_id`, `channel_id`, `posted_at`, `post_data` (JSONB with offer/seek language, level, region, DM preference, about/looking-for/interests text, and `contact_methods` — a list of voice/text/video). |
 
 `get_all_exchange_posts()` returns every row for the matcher. See
 [`../database.md`](../database.md).
