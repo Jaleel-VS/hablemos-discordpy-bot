@@ -202,6 +202,9 @@ See [`../database.md`](../database.md#world-cup-betting).
   **real** Postgres, including matches that have parlay legs. Skipped
   unless `TEST_DATABASE_URL` points at a throwaway database:
   `TEST_DATABASE_URL=postgresql://localhost/wcbet_test pytest tests/wcbet/test_settlement_integration.py`
+  Or, with the Docker daemon running, one command spins up a throwaway
+  Postgres, runs them, and tears it down:
+  `python scripts/run_pg_integration_tests.py`
 
 ## Related
 
