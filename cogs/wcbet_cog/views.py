@@ -899,7 +899,7 @@ class ParlayPanelView(ui.LayoutView):
 
     def _slip_lines(self) -> list[str]:
         if not self.legs:
-            return ["-# No legs yet — pick a match and outcome, then **Add leg**."]
+            return ["-# No legs yet — pick a match, then tap an outcome to add a leg."]
         lines = [f"**Legs ({len(self.legs)}/{self.MAX_LEGS}):**"]
         for leg in self.legs:
             fixture = FIXTURE_BY_ID.get(leg["match_id"])
@@ -956,20 +956,12 @@ class ParlayPanelView(ui.LayoutView):
                 if sel_odds is not None:
                     label = f"{label} · {sel_odds[outcome]}"
                 btn = ui.Button(
-                    label=label, emoji=emoji,
-                    style=ButtonStyle.success if outcome == self.sel_outcome else ButtonStyle.secondary,
+                    label=label, emoji=emoji, style=ButtonStyle.secondary,
                     disabled=self.sel_match_id is None,
                 )
                 btn.callback = self._make_outcome_cb(outcome)
                 outcome_buttons.append(btn)
             children.append(ui.ActionRow(*outcome_buttons))
-
-            add = ui.Button(
-                label="Add leg", emoji="➕", style=ButtonStyle.primary,
-                disabled=self.sel_match_id is None or self.sel_outcome is None,
-            )
-            add.callback = self._on_add_leg
-            children.append(ui.ActionRow(add))
 
         # Stake select + place, enabled once at MIN_LEGS.
         ready = len(self.legs) >= self.MIN_LEGS
@@ -1025,26 +1017,19 @@ class ParlayPanelView(ui.LayoutView):
 
     def _make_outcome_cb(self, outcome: str):
         async def cb(interaction: Interaction) -> None:
-            if self.sel_match_id is not None:
-                self.sel_outcome = outcome
+            # Clicking an outcome adds the leg immediately (no separate
+            # Add-leg step) — keeps the builder within Discord's 5-row limit.
+            if self.sel_match_id is not None and self.sel_match_id not in self._leg_match_ids():
+                odds = self._odds_for(self.sel_match_id)[outcome]
+                self.legs.append({
+                    "match_id": self.sel_match_id, "outcome": outcome, "odds": odds,
+                })
+                self.sel_match_id = None
+                self.sel_outcome = None
                 self.notice = None
             await self.refresh()
             await interaction.response.edit_message(view=self)
         return cb
-
-    async def _on_add_leg(self, interaction: Interaction) -> None:
-        if self.sel_match_id is None or self.sel_outcome is None:
-            await interaction.response.edit_message(view=self)
-            return
-        odds = self._odds_for(self.sel_match_id)[self.sel_outcome]
-        self.legs.append({
-            "match_id": self.sel_match_id, "outcome": self.sel_outcome, "odds": odds,
-        })
-        self.sel_match_id = None
-        self.sel_outcome = None
-        self.notice = None
-        await self.refresh()
-        await interaction.response.edit_message(view=self)
 
     def _make_stake_cb(self, select: ui.Select):
         async def cb(interaction: Interaction) -> None:
