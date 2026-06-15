@@ -75,14 +75,34 @@ def build_profile_view(data: dict, user: discord.User | discord.Member) -> Layou
         f"• 🌍 **{t('card_region', lang)}:** {region}"
     )
 
+    # Member detail line shown under the name, beside the avatar. Discord
+    # timestamp markdown localises the date/relative text per viewer.
+    detail_parts: list[str] = []
+    joined_at = getattr(user, "joined_at", None)
+    if joined_at is not None:
+        ts = int(joined_at.timestamp())
+        detail_parts.append(f"📅 **{t('card_joined', lang)}:** <t:{ts}:D>")
+    created_at = getattr(user, "created_at", None)
+    if created_at is not None:
+        ts = int(created_at.timestamp())
+        detail_parts.append(f"🌟 **{t('card_member_since', lang)}:** <t:{ts}:R>")
+    detail_line = "\n".join(f"-# {p}" for p in detail_parts)
+
+    # Build the header block so the name, member details, and language facts
+    # all sit beside the avatar — this fills the vertical space the tall
+    # Thumbnail would otherwise leave blank next to a one-line header.
+    header_block = header
+    if detail_line:
+        header_block += f"\n{detail_line}"
+    header_block += f"\n\n{facts}"
+
     container = Container(accent_colour=color)
     container.add_item(
         Section(
-            TextDisplay(header),
+            TextDisplay(header_block),
             accessory=Thumbnail(user.display_avatar.url),
         )
     )
-    container.add_item(TextDisplay(facts))
     container.add_item(Separator())
 
     if data.get("about_text"):
@@ -97,7 +117,7 @@ def build_profile_view(data: dict, user: discord.User | discord.Member) -> Layou
     methods = data.get("contact_methods") or []
     if methods:
         labels = {value: label for label, value in CONTACT_METHODS}
-        chips = " · ".join(labels.get(m, m) for m in methods)
+        chips = " · ".join(str(labels.get(m, m)) for m in methods if m)
         container.add_item(TextDisplay(f"**{t('card_methods', lang)}** {chips}"))
 
     container.add_item(Separator())

@@ -86,6 +86,8 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
     "card_speaks": {"en": "Speaks", "es": "Habla"},
     "card_learning": {"en": "Learning", "es": "Aprende"},
     "card_region": {"en": "Region", "es": "Región"},
+    "card_joined": {"en": "Joined", "es": "Se unió"},
+    "card_member_since": {"en": "Member since", "es": "Miembro desde"},
 
     # Posting result
     "posted_ok": {

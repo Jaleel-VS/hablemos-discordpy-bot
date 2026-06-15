@@ -80,10 +80,14 @@ Ties break by most-recent post, then user ID (stable ordering).
 Profiles are posted as a `LayoutView` (not a flat embed):
 
 - a `Container` with a native-language accent color,
-- a `Section` with the name as the header and the user's **avatar as a
-  thumbnail accessory**,
-- a `TextDisplay` with the speaks / learning (+ level) / region facts as
-  a bulleted list,
+- a `Section` whose header block sits beside the user's **avatar as a
+  thumbnail accessory** and contains:
+  - the display name as the header,
+  - a small detail line with the server **join date** (`member.joined_at`)
+    and **account age / member-since** (`member.created_at`), rendered with
+    Discord timestamp markdown so each viewer sees their own locale/timezone,
+  - the speaks / learning (+ level) / region facts as a bulleted list
+    (moved into the Section to fill the space beside the tall avatar),
 - `TextDisplay` blocks for About / Looking for / Interests, and the
   practice methods the user is open to (voice / text / video), if any,
 - a footer `TextDisplay` with the poster's **mention**.
