@@ -23,11 +23,31 @@ from .config import (
     SETTING_KEY_WINNER,
     WC_PREDICT_DEFAULT_DEADLINE_TS,
 )
-from .fixtures_view import FixturesView, build_embed, resolve_page
+from .fixtures_view import (
+    FilteredFixturesView,
+    FixturesView,
+    build_embed,
+    build_filtered_page_embed,
+    filtered_page_count,
+    fixtures_for_date,
+    fixtures_for_next_days,
+    fixtures_for_today,
+    fixtures_for_tomorrow,
+    resolve_page,
+)
 from .scoring import score_prediction
 from .views import WCPredictMenuView
 
 logger = logging.getLogger(__name__)
+
+TEMPORAL_QUERY_ALIASES = {
+    "today": "today",
+    "tod": "today",
+    "tomorrow": "tomorrow",
+    "tmr": "tomorrow",
+    "week": "week",
+    "7d": "week",
+}
 
 
 def _team_roles(guild: discord.Guild) -> list[discord.Role]:
@@ -70,6 +90,75 @@ class WCPredict(BaseCog):
     async def _get_winner_role_id(self) -> int | None:
         value = await self.bot.db.get_bot_setting(SETTING_KEY_WINNER)
         return int(value) if value else None
+
+    def _resolve_temporal_query(self, query: str) -> str | None:
+        """Return the canonical temporal query for a supported shortcut."""
+        normalized = query.strip().lower()
+        return TEMPORAL_QUERY_ALIASES.get(normalized)
+
+    def _parse_fixture_date_query(self, query: str) -> str | None:
+        """Return an ISO fixture date if the query is a valid YYYY-MM-DD string."""
+        normalized = query.strip()
+        try:
+            parsed = datetime.strptime(normalized, "%Y-%m-%d")
+        except ValueError:
+            return None
+        return parsed.date().isoformat()
+
+    def _build_temporal_fixtures_response(
+        self,
+        query: str,
+        invoker_id: int,
+    ) -> tuple[Embed, discord.ui.View | None] | None:
+        """Return a filtered fixtures response for supported temporal shortcuts."""
+        normalized = self._resolve_temporal_query(query)
+        if normalized is None:
+            return None
+
+        if normalized == "today":
+            title = "⚽ World Cup fixtures today"
+            fixtures = fixtures_for_today()
+        elif normalized == "tomorrow":
+            title = "⚽ World Cup fixtures tomorrow"
+            fixtures = fixtures_for_tomorrow()
+        else:
+            title = "⚽ World Cup fixtures this week"
+            fixtures = fixtures_for_next_days(7)
+
+        if filtered_page_count(fixtures) > 1:
+            view = FilteredFixturesView(invoker_id=invoker_id, title=title, fixtures=fixtures)
+            return build_filtered_page_embed(title, fixtures, 0), view
+
+        return build_filtered_page_embed(title, fixtures, 0), None
+
+    def _build_date_fixtures_response(
+        self,
+        query: str,
+        invoker_id: int,
+    ) -> tuple[Embed, discord.ui.View | None] | None:
+        """Return a filtered fixtures response for an explicit ISO date query."""
+        date_query = self._parse_fixture_date_query(query)
+        if date_query is None:
+            return None
+
+        title = f"⚽ World Cup fixtures for {date_query}"
+        fixtures = fixtures_for_date(date_query)
+
+        if filtered_page_count(fixtures) > 1:
+            view = FilteredFixturesView(invoker_id=invoker_id, title=title, fixtures=fixtures)
+            return build_filtered_page_embed(title, fixtures, 0), view
+
+        return build_filtered_page_embed(title, fixtures, 0), None
+
+    def _unknown_wcfixtures_embed(self, query: str) -> Embed:
+        """Return a helpful error embed for unknown fixture queries."""
+        return red_embed(
+            f"I couldn't find a fixtures section matching `{query}`.\n\n"
+            "Try one of these:\n"
+            "`$wcf A` ` $wcf brazil` ` $wcf alemania` ` $wcf r32` ` $wcf semi`\n"
+            "`$wcf today` ` $wcf tod` ` $wcf tomorrow` ` $wcf tmr` ` $wcf week` ` $wcf 7d`"
+            "\n`$wcf 2026-06-18`"
+        )
 
     # ---------- /wcpredict set ----------
 
@@ -242,8 +331,31 @@ class WCPredict(BaseCog):
           $wcf brazil     — whichever group Brazil is in
           $wcf r32        — Round of 32
           $wcf semi       — Semifinals / 3rd / Final
+          $wcf today      — today's fixtures in ET
+          $wcf tod        — alias for today
+          $wcf tomorrow   — tomorrow's fixtures in ET
+          $wcf tmr        — alias for tomorrow
+          $wcf week       — fixtures over the next 7 ET days
+          $wcf 7d         — alias for week
+          $wcf 2026-06-18 — fixtures for an explicit ET date
         """
+        temporal_response = self._build_temporal_fixtures_response(query, ctx.author.id)
+        if temporal_response is not None:
+            embed, view = temporal_response
+            await ctx.send(embed=embed, view=view)
+            return
+
+        date_response = self._build_date_fixtures_response(query, ctx.author.id)
+        if date_response is not None:
+            embed, view = date_response
+            await ctx.send(embed=embed, view=view)
+            return
+
         page = resolve_page(query) if query.strip() else 0
+        if query.strip() and page is None:
+            await ctx.send(embed=self._unknown_wcfixtures_embed(query.strip()))
+            return
+
         view = FixturesView(invoker_id=ctx.author.id, page=page)
         await ctx.send(embed=build_embed(page), view=view)
 
@@ -251,4 +363,3 @@ class WCPredict(BaseCog):
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(WCPredict(bot))
     await bot.add_cog(WCPredictAdmin(bot))
-

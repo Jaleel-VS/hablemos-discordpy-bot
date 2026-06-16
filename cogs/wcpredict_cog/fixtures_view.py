@@ -6,6 +6,9 @@ Builds 17 embed pages from the static fixtures data:
   - Page  15:    Round of 16
   - Page  16:    Quarterfinals
   - Page  17:    Semifinals, Third Place Playoff, Final
+
+Also provides filtered embed builders for temporal shortcuts like
+``$wcf today`` and ``$wcf week``.
 """
 
 from datetime import UTC, datetime, timedelta, timezone
@@ -185,12 +188,13 @@ _late_ids = [
 _PAGES.append(("🏆  Semifinals · 3rd Place · Final", _LATE_KO_COLOR, _late_ids))
 
 TOTAL_PAGES = len(_PAGES)  # 17
+FILTERED_PAGE_SIZE = 8
 
 
 # ── Jump-target resolution ────────────────────────────────────────────────────
 
-def resolve_page(query: str) -> int:
-    """Return a 0-based page index for a user query, or 0 if unrecognised.
+def resolve_page(query: str) -> int | None:
+    """Return a 0-based page index for a user query, or None if unrecognised.
 
     Accepts:
     - A single group letter: "A"–"L"
@@ -230,7 +234,7 @@ def resolve_page(query: str) -> int:
                 if canonical in teams:
                     return "ABCDEFGHIJKL".index(grp)
 
-    return 0
+    return None
 
 
 # ── Embed builder ─────────────────────────────────────────────────────────────
@@ -249,6 +253,43 @@ def _fmt_date(date_str: str) -> str:
     ]
     _, m, d = date_str.split("-")
     return f"{months[int(m) - 1]} {int(d):02d}"
+
+
+def _today_et() -> datetime:
+    """Return the current datetime in tournament ET (UTC-4)."""
+    return datetime.now(UTC).astimezone(_ET_OFFSET)
+
+
+def fixtures_for_et_day(target: datetime) -> list[Fixture]:
+    """Return fixtures whose stored ET date matches the target ET day."""
+    target_date = target.date().isoformat()
+    return [fixture for fixture in FIXTURES if fixture["date"] == target_date]
+
+
+def fixtures_for_date(date_str: str) -> list[Fixture]:
+    """Return fixtures whose stored ET date matches an ISO date string."""
+    return [fixture for fixture in FIXTURES if fixture["date"] == date_str]
+
+
+def fixtures_for_today() -> list[Fixture]:
+    """Return fixtures scheduled for today in ET."""
+    return fixtures_for_et_day(_today_et())
+
+
+def fixtures_for_tomorrow() -> list[Fixture]:
+    """Return fixtures scheduled for tomorrow in ET."""
+    return fixtures_for_et_day(_today_et() + timedelta(days=1))
+
+
+def fixtures_for_next_days(days: int) -> list[Fixture]:
+    """Return fixtures scheduled from today through the next ``days`` ET days."""
+    start = _today_et().date()
+    end = start + timedelta(days=max(days - 1, 0))
+    return [
+        fixture
+        for fixture in FIXTURES
+        if start <= datetime.strptime(fixture["date"], "%Y-%m-%d").date() <= end
+    ]
 
 
 def _kickoff_ts(fixture: Fixture) -> int | None:
@@ -271,7 +312,11 @@ def _match_line(fixture: Fixture) -> str:
     venue = fixture["venue"]
     city = fixture["city"]
     ts = _kickoff_ts(fixture)
-    when = f"<t:{ts}:f>" if ts is not None else f"`{_fmt_date(fixture['date'])} · TBD`"
+    when = (
+        f"<t:{ts}:f> [<t:{ts}:R>]"
+        if ts is not None
+        else f"`{_fmt_date(fixture['date'])} · TBD`"
+    )
     return f"{when}\n{home} **vs** {away}\n-# {venue} · {city}"
 
 
@@ -301,6 +346,57 @@ def build_embed(page: int) -> Embed:
             f"Page {page + 1}/{TOTAL_PAGES}  ·  "
             "Use ◀ ▶ to navigate  ·  "
             "$wcf [group/team/stage] to jump"
+        )
+    )
+    return embed
+
+
+def build_filtered_embed(title: str, fixtures: list[Fixture]) -> Embed:
+    """Build a one-off embed for an arbitrary fixture subset."""
+    embed = Embed(title=title, color=Color.blurple())
+
+    if not fixtures:
+        embed.description = "No World Cup matches scheduled in that time window."
+        return embed
+
+    lines: list[str] = []
+    current_date: str | None = None
+
+    for fixture in fixtures:
+        if fixture["date"] != current_date:
+            current_date = fixture["date"]
+            if lines:
+                lines.append("")
+            lines.append(f"**{_fmt_date(current_date)}**")
+            lines.append("")
+
+        lines.append(_match_line(fixture))
+        lines.append("")
+
+    embed.description = "\n".join(lines).rstrip()
+    embed.set_footer(text="All kickoff dates are based on tournament ET (UTC-4).")
+    return embed
+
+
+def filtered_page_count(fixtures: list[Fixture]) -> int:
+    """Return the number of pages needed for a filtered fixture list."""
+    return max(1, (len(fixtures) + FILTERED_PAGE_SIZE - 1) // FILTERED_PAGE_SIZE)
+
+
+def build_filtered_page_embed(title: str, fixtures: list[Fixture], page: int) -> Embed:
+    """Build one page of a filtered fixture subset."""
+    if not fixtures:
+        return build_filtered_embed(title, fixtures)
+
+    total_pages = filtered_page_count(fixtures)
+    safe_page = max(0, min(page, total_pages - 1))
+    start = safe_page * FILTERED_PAGE_SIZE
+    end = start + FILTERED_PAGE_SIZE
+    embed = build_filtered_embed(title, fixtures[start:end])
+    embed.set_footer(
+        text=(
+            f"Page {safe_page + 1}/{total_pages}  ·  "
+            "All kickoff dates are based on tournament ET (UTC-4)."
         )
     )
     return embed
@@ -360,6 +456,78 @@ class FixturesView(View):
         self.page = min(TOTAL_PAGES - 1, self.page + 1)
         self._rebuild()
         await interaction.response.edit_message(embed=build_embed(self.page), view=self)
+
+    async def on_timeout(self) -> None:
+        """Disable buttons when the view expires."""
+        for item in self.children:
+            if isinstance(item, Button):
+                item.disabled = True
+
+
+class FilteredFixturesView(View):
+    """Paginated ◀/▶ navigator for filtered fixture subsets."""
+
+    def __init__(
+        self,
+        invoker_id: int,
+        title: str,
+        fixtures: list[Fixture],
+        page: int = 0,
+        timeout: float = 300,
+    ) -> None:
+        super().__init__(timeout=timeout)
+        self.invoker_id = invoker_id
+        self.title = title
+        self.fixtures = fixtures
+        self.page = page
+        self._rebuild()
+
+    def _rebuild(self) -> None:
+        self.clear_items()
+        total_pages = filtered_page_count(self.fixtures)
+
+        prev_btn = Button(
+            label="◀",
+            style=ButtonStyle.secondary,
+            disabled=self.page <= 0,
+            row=0,
+        )
+        prev_btn.callback = self._prev
+        self.add_item(prev_btn)
+
+        next_btn = Button(
+            label="▶",
+            style=ButtonStyle.secondary,
+            disabled=self.page >= total_pages - 1,
+            row=0,
+        )
+        next_btn.callback = self._next
+        self.add_item(next_btn)
+
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        if interaction.user.id != self.invoker_id:
+            await interaction.response.send_message(
+                "Only the person who ran this command can flip pages.",
+                ephemeral=True,
+            )
+            return False
+        return True
+
+    async def _prev(self, interaction: Interaction) -> None:
+        self.page = max(0, self.page - 1)
+        self._rebuild()
+        await interaction.response.edit_message(
+            embed=build_filtered_page_embed(self.title, self.fixtures, self.page),
+            view=self,
+        )
+
+    async def _next(self, interaction: Interaction) -> None:
+        self.page = min(filtered_page_count(self.fixtures) - 1, self.page + 1)
+        self._rebuild()
+        await interaction.response.edit_message(
+            embed=build_filtered_page_embed(self.title, self.fixtures, self.page),
+            view=self,
+        )
 
     async def on_timeout(self) -> None:
         """Disable buttons when the view expires."""
