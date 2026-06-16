@@ -92,7 +92,7 @@ class AskCog(BaseCog):
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
         self.client = genai.Client(api_key=bot.settings.gemini_api_key)
-        self.model_name = 'gemini-2.0-flash-lite'
+        self.model_name = 'gemini-3-flash'
 
     def _call_gemini(self, question: str):
         """Sync Gemini call — run in executor for timeout support."""

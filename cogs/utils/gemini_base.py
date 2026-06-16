@@ -17,7 +17,7 @@ _shared_rate_limiter = RateLimiter(requests_per_minute=15)
 class BaseGeminiClient:
     """Base class for Gemini API clients with async support and retry logic."""
 
-    def __init__(self, api_key: str, model: str = "gemini-2.0-flash-lite"):
+    def __init__(self, api_key: str, model: str = "gemini-2.5-flash-lite"):
         self.client = genai.Client(api_key=api_key)
         self.model = model
 
