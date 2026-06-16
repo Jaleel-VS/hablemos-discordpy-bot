@@ -466,6 +466,44 @@ class WCBetsMixin(DatabaseMixin):
         )
         return [dict(r) for r in rows]
 
+    async def get_wc_pending_market_board(self, match_ids: list[int]) -> dict[int, dict[str, dict[str, int]]]:
+        """Return pending single-bet aggregates per match/outcome.
+
+        Shape:
+            {
+                match_id: {
+                    outcome: {"bettors": int, "staked": int},
+                },
+            }
+        """
+        if not match_ids:
+            return {}
+
+        rows = await self._fetch(
+            '''
+            SELECT
+                match_id,
+                outcome,
+                COUNT(*) AS bettors,
+                COALESCE(SUM(stake), 0) AS staked
+            FROM wc_bets
+            WHERE status = 'pending'
+              AND match_id = ANY($1::INT[])
+            GROUP BY match_id, outcome
+            ORDER BY match_id, outcome
+            ''',
+            match_ids,
+        )
+
+        board: dict[int, dict[str, dict[str, int]]] = {}
+        for row in rows:
+            match_board = board.setdefault(int(row['match_id']), {})
+            match_board[str(row['outcome'])] = {
+                'bettors': int(row['bettors']),
+                'staked': int(row['staked']),
+            }
+        return board
+
     async def get_wc_pending_unsettled(self) -> list[dict]:
         """Return match_ids that have pending bets but no result row yet."""
         rows = await self._fetch(

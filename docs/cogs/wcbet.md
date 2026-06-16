@@ -63,6 +63,8 @@ match numbers).
 | `$wcbet` | Post the public betting prompt. | None | 5s/user |
 | `$wcbettop` | Show the top 10 betting balances. | None | 10s/channel |
 | `$wcbetme [@user]` | Show a betting profile card (balance+rank, net profit, W/L, win rate, biggest win, longest odds, streak). | None | 5s/user |
+| `$wcbethistory` | Show your recent wallet-event history from `wc_balance_log` (allowances, bets, wins, refunds, resulting balance, relative timestamps). | None | 5s/user |
+| `$wcbetboard` | Show a public market board for currently bettable matches: odds, coins staked on home/draw/away, and bettor counts. Singles only; parlays excluded. | None | 10s/channel |
 | `$wcbettest` | Identical flow; owner-only, retained for testing. | Owner-only | — |
 
 ### Panel buttons

@@ -22,6 +22,8 @@ commands are shown as `/name`.
 | `$wcbet` | World Cup match betting with virtual coins at **real DraftKings odds**. Posts a public button; clicking opens **your own** ephemeral betting panel (Components V2 stepper): opt in once for 10,000 coins, pick one of today's group-stage matches (until kickoff), choose an outcome (priced buttons, e.g. `South Africa · 8.50`), then a stake from a select whose options show the exact payout. Correct bets pay `floor(stake × odds)`; one editable bet per match; +2,500 daily allowance claimed lazily. Build multi-match **parlays** (2-5 legs, all must win, odds multiply) via the panel's Parlay button. See [`cogs/wcbet.md`](./cogs/wcbet.md). |
 | `$wcbettop` | Top 10 World Cup betting balances. |
 | `$wcbetme [@user]` | Betting profile card: balance + rank, net profit, W/L record, win rate, biggest win, longest winning odds, and current streak. |
+| `$wcbethistory` | Your recent World Cup betting balance history: daily allowance, bets placed, wins, refunds, parlay events, resulting balance, and relative timestamps. |
+| `$wcbetboard` | Public market board for the currently bettable matches: current odds plus aggregate pending singles on home/draw/away (coins staked and bettor counts). |
 
 ## Language League
 

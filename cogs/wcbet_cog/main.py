@@ -13,12 +13,15 @@ wins races safely (the result row insert is the duplicate guard).
 """
 import logging
 from datetime import UTC, datetime
+from decimal import Decimal
 
 import discord
+from discord import ui
 from discord.ext import commands, tasks
 
 from base_cog import BaseCog
 from cogs.utils.embeds import blue_embed, green_embed
+from cogs.wcpredict_cog.fixtures_view import TEAM_FLAGS
 from db.bets import MatchAlreadySettledError
 
 from . import betting, espn, results
@@ -34,6 +37,26 @@ from .mod import WCBetMod
 from .views import OpenBetPanelView
 
 logger = logging.getLogger(__name__)
+
+BOARD_PAGE_SIZE = 4
+HISTORY_PAGE_SIZE = 12
+
+EVENT_LABELS = {
+    'daily_allowance': 'Daily allowance',
+    'bet_placed': 'Bet placed',
+    'bet_won': 'Bet won',
+    'bet_refund': 'Bet void/refund',
+    'parlay_placed': 'Parlay placed',
+    'parlay_won': 'Parlay won',
+    'parlay_refund': 'Parlay refund',
+}
+
+OUTCOME_ORDER = ('home', 'draw', 'away')
+
+
+def _fallback_board_odds() -> dict[str, Decimal]:
+    """Flat fallback odds for board rendering when ESPN has no line."""
+    return {'home': Decimal('1.50'), 'draw': Decimal('1.50'), 'away': Decimal('1.50')}
 
 
 def _build_profile_embed(member: discord.Member, p: dict) -> discord.Embed:
@@ -77,6 +100,134 @@ def _build_profile_embed(member: discord.Member, p: dict) -> discord.Embed:
             word = "win" if status == "won" else "loss"
             embed.set_footer(text=f"{emoji} {count}-{word} streak")
     return embed
+
+
+def _team_label(name: str) -> str:
+    """Return 'FLAG Name' for known teams, or just 'Name' otherwise."""
+    flag = TEAM_FLAGS.get(name, "")
+    return f"{flag} {name}".strip()
+
+
+def _market_row(board: dict[str, dict[str, int]], outcome: str) -> tuple[int, int]:
+    """Return (bettors, staked) for one outcome from a board row."""
+    row = board.get(outcome, {})
+    return int(row.get('bettors', 0)), int(row.get('staked', 0))
+
+
+def _history_event_label(event: str) -> str:
+    """Friendly label for a balance log event key."""
+    return EVENT_LABELS.get(event, event.replace('_', ' ').title())
+
+
+def _history_line(entry: dict) -> str:
+    """Render one balance-log entry as a compact line."""
+    ts = int(entry['created_at'].timestamp())
+    delta = int(entry['delta'])
+    sign = '+' if delta > 0 else ''
+    match_suffix = f" · match {entry['match_id']}" if entry['match_id'] is not None else ''
+    return (
+        f"• **{_history_event_label(entry['event'])}** {sign}{delta:,}"
+        f" → balance **{entry['balance']:,}**{match_suffix} [<t:{ts}:R>]"
+    )
+
+
+def _build_history_page(member: discord.Member, history: list[dict], page: int) -> ui.LayoutView:
+    """Build a Components V2 history view for one page of balance events."""
+    total_pages = max(1, (len(history) + HISTORY_PAGE_SIZE - 1) // HISTORY_PAGE_SIZE)
+    safe_page = max(0, min(page, total_pages - 1))
+    start = safe_page * HISTORY_PAGE_SIZE
+    end = start + HISTORY_PAGE_SIZE
+    rows = history[start:end]
+    body = "\n".join(_history_line(row) for row in rows) if rows else "No balance events yet."
+
+    view = ui.LayoutView(timeout=300)
+    children: list[ui.Item] = [
+        ui.TextDisplay(f"## 📜 {member.display_name}'s betting history"),
+        ui.TextDisplay(body),
+    ]
+
+    if total_pages > 1:
+        prev_btn = ui.Button(label='◀', style=discord.ButtonStyle.secondary, disabled=safe_page <= 0)
+        next_btn = ui.Button(
+            label='▶', style=discord.ButtonStyle.secondary, disabled=safe_page >= total_pages - 1,
+        )
+
+        async def prev_cb(interaction: discord.Interaction) -> None:
+            await interaction.response.edit_message(view=_build_history_page(member, history, safe_page - 1))
+
+        async def next_cb(interaction: discord.Interaction) -> None:
+            await interaction.response.edit_message(view=_build_history_page(member, history, safe_page + 1))
+
+        prev_btn.callback = prev_cb
+        next_btn.callback = next_cb
+        children.extend([
+            ui.Separator(),
+            ui.ActionRow(prev_btn, next_btn),
+            ui.TextDisplay(f"-# Page {safe_page + 1}/{total_pages}"),
+        ])
+
+    view.add_item(ui.Container(*children, accent_colour=discord.Color.blurple()))
+    return view
+
+
+def _build_board_page(fixtures: list[dict], page: int) -> ui.LayoutView:
+    """Build a Components V2 market board page for current bettable fixtures."""
+    total_pages = max(1, (len(fixtures) + BOARD_PAGE_SIZE - 1) // BOARD_PAGE_SIZE)
+    safe_page = max(0, min(page, total_pages - 1))
+    start = safe_page * BOARD_PAGE_SIZE
+    end = start + BOARD_PAGE_SIZE
+
+    view = ui.LayoutView(timeout=300)
+    children: list[ui.Item] = [ui.TextDisplay("## 🎰 WC betting board")]
+
+    page_rows = fixtures[start:end]
+    if not page_rows:
+        children.append(ui.TextDisplay("No current bettable matches."))
+    else:
+        blocks: list[str] = []
+        for row in page_rows:
+            fixture = row['fixture']
+            odds = row['odds']
+            board = row['board']
+            ts = int(betting.kickoff_utc(fixture).timestamp())
+            home_bettors, home_staked = _market_row(board, 'home')
+            draw_bettors, draw_staked = _market_row(board, 'draw')
+            away_bettors, away_staked = _market_row(board, 'away')
+            total_pool = home_staked + draw_staked + away_staked
+            blocks.append(
+                "\n".join([
+                    f"### {_team_label(fixture['home'])} vs {_team_label(fixture['away'])}",
+                    f"-# kickoff <t:{ts}:f> [<t:{ts}:R>] · odds {odds['home']} / {odds['draw']} / {odds['away']}",
+                    f"🏠 {_team_label(fixture['home'])}: **{home_staked:,}** coins · {home_bettors} bettor(s)",
+                    f"🤝 Draw: **{draw_staked:,}** coins · {draw_bettors} bettor(s)",
+                    f"✈️ {_team_label(fixture['away'])}: **{away_staked:,}** coins · {away_bettors} bettor(s)",
+                    f"-# Total pool: **{total_pool:,}** coins",
+                ])
+            )
+        children.append(ui.TextDisplay("\n\n".join(blocks)))
+
+    if total_pages > 1:
+        prev_btn = ui.Button(label='◀', style=discord.ButtonStyle.secondary, disabled=safe_page <= 0)
+        next_btn = ui.Button(
+            label='▶', style=discord.ButtonStyle.secondary, disabled=safe_page >= total_pages - 1,
+        )
+
+        async def prev_cb(interaction: discord.Interaction) -> None:
+            await interaction.response.edit_message(view=_build_board_page(fixtures, safe_page - 1))
+
+        async def next_cb(interaction: discord.Interaction) -> None:
+            await interaction.response.edit_message(view=_build_board_page(fixtures, safe_page + 1))
+
+        prev_btn.callback = prev_cb
+        next_btn.callback = next_cb
+        children.extend([
+            ui.Separator(),
+            ui.ActionRow(prev_btn, next_btn),
+            ui.TextDisplay(f"-# Page {safe_page + 1}/{total_pages}"),
+        ])
+
+    view.add_item(ui.Container(*children, accent_colour=discord.Color.gold()))
+    return view
 
 
 class WCBet(BaseCog):
@@ -145,6 +296,41 @@ class WCBet(BaseCog):
             await ctx.send(embed=blue_embed(f"{target.display_name} hasn't placed any bets yet."))
             return
         await ctx.send(embed=_build_profile_embed(target, profile))
+
+    @commands.command(name="wcbethistory")
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.guild_only()
+    async def wcbethistory(self, ctx: commands.Context) -> None:
+        """Show your recent World Cup betting balance history."""
+        history = await self.bot.db.get_wc_balance_history(ctx.author.id)
+        await ctx.send(view=_build_history_page(ctx.author, history, 0))
+
+    @commands.command(name="wcbetboard")
+    @commands.cooldown(1, 10, commands.BucketType.channel)
+    @commands.guild_only()
+    async def wcbetboard(self, ctx: commands.Context) -> None:
+        """Show aggregate pending singles for the current bettable matches."""
+        fixtures = betting.bettable_fixtures(datetime.now(UTC))
+        if not fixtures:
+            await ctx.send(view=_build_board_page([], 0))
+            return
+
+        odds_map = await espn.fetch_match_odds(fixtures)
+        board_map = await self.bot.db.get_wc_pending_market_board(
+            [fixture['match_id'] for fixture in fixtures],
+        )
+        rows = [
+            {
+                'fixture': fixture,
+                'odds': odds_map.get(fixture['match_id']),
+                'board': board_map.get(fixture['match_id'], {}),
+            }
+            for fixture in fixtures
+        ]
+        for row in rows:
+            if row['odds'] is None:
+                row['odds'] = _fallback_board_odds()
+        await ctx.send(view=_build_board_page(rows, 0))
 
     # ---------- results polling ----------
 
