@@ -22,6 +22,7 @@ review, relearning) based on performance.
 | Env Var | Location | Default | Purpose |
 |---------|----------|---------|---------|
 | `GEMINI_API_KEY` | Root `config.py` | unset | **Required** for generating new cards on-demand. |
+| `GEMINI_PRACTICE_MODEL` | resolved by `cogs/utils/gemini/` | falls back to `GEMINI_DEFAULT_MODEL`, then `gemini-3.5-flash` | Per-feature model override for sentence generation. |
 
 ## Implementation notes
 
@@ -31,8 +32,19 @@ review, relearning) based on performance.
 - `build_question_view`, `build_result_view`, and `build_summary_view`
   (in `views.py`) provide the UI.
 - FSRS scheduling logic is in `srs.py` (`review_card` function).
-- New cards are generated on-demand via Gemini (see
-  `gemini.py`/`PracticeGeminiClient`).
+- New cards are seeded via
+  ``await self.bot.gemini.run(PRACTICE_SENTENCE_PROMPT, PracticeWord(...))``
+  (see [`../architecture.md`](../architecture.md#gemini-deep-module)).
+  ``PRACTICE_SENTENCE_PROMPT`` lives in ``prompts.py`` and owns the
+  full pipeline: format the sentence template, validate that Gemini's
+  response contains the target word (word-boundary regex,
+  case-insensitive), and build the cloze blank by substituting
+  ``___`` for the matched span. If the response doesn't contain the
+  word, ``parse`` returns ``None`` and the card is skipped.
+- ``GeminiError`` raised by the runtime (404, 429, 5xx after retry)
+  is caught per word in ``$practice seed`` so a transient failure
+  on one word doesn't abort the batch — it logs a warning and the
+  word is counted as failed in the progress UI.
 - Seed words are in `seed_words.py` (`SEED_WORDS` list).
 
 ## Database tables

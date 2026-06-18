@@ -69,8 +69,15 @@ class Prompt[I, O]:
         """Render the prompt template with ``inp``. Override in subclass."""
         raise NotImplementedError
 
-    def parse(self, text: str) -> O:
-        """Parse the Gemini response text into ``O``. Override in subclass."""
+    def parse(self, text: str, inp: I) -> O:
+        """Parse the Gemini response into ``O``.
+
+        Receives both the response text and the original input so
+        post-processing that needs the prompt's input (e.g. the
+        original word for a cloze-blank substitution) stays inside
+        the prompt module rather than leaking into the cog.
+        Override in subclass.
+        """
         raise NotImplementedError
 
 
@@ -115,7 +122,7 @@ class Gemini:
         text = await self._call_with_retry(
             feature=prompt.feature, model=model, prompt=rendered, config=config,
         )
-        return prompt.parse(text)
+        return prompt.parse(text, inp)
 
     async def _generate_content(
         self,

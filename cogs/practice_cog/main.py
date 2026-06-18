@@ -11,8 +11,9 @@ from discord import Embed, Interaction, app_commands
 from discord.ext import commands
 
 from base_cog import BaseCog
+from cogs.utils.gemini import GeminiError
 
-from .gemini import PracticeGeminiClient
+from .prompts import PRACTICE_SENTENCE_PROMPT, PracticeWord
 from .seed_words import SEED_WORDS
 from .session import PracticeCard, PracticeMode, PracticeSession
 from .srs import review_card
@@ -40,13 +41,7 @@ class PracticeCog(BaseCog):
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
         self.active_sessions: dict[int, PracticeSession] = {}
-
-        try:
-            self.gemini = PracticeGeminiClient(api_key=bot.settings.gemini_api_key)
-            logger.info("PracticeCog initialized successfully")
-        except ValueError as e:
-            logger.error("Failed to initialize PracticeCog: %s", e)
-            raise
+        logger.info("PracticeCog initialized successfully")
 
     def _purge_stale_sessions(self) -> None:
         """Remove sessions older than SESSION_TTL."""
@@ -125,7 +120,17 @@ class PracticeCog(BaseCog):
                 continue
 
             # Generate sentence using Gemini
-            result = await self.gemini.generate_sentence(word, translation, language)
+            try:
+                result = await self.bot.gemini.run(
+                    PRACTICE_SENTENCE_PROMPT,
+                    PracticeWord(word=word, translation=translation, language=language),
+                )
+            except GeminiError as e:
+                logger.warning(
+                    "Practice Gemini error word=%s code=%s: %s",
+                    word, e.code, e.message,
+                )
+                result = None
 
             if result:
                 sentence, sentence_with_blank = result
@@ -550,8 +555,8 @@ class PracticeCog(BaseCog):
 
 async def setup(bot):
     """Required setup function for loading the cog"""
-    if not bot.settings.gemini_api_key:
-        logger.info("GEMINI_API_KEY not set — PracticeCog will not load")
+    if bot.gemini is None:
+        logger.info("bot.gemini is None — PracticeCog will not load")
         return
     await bot.add_cog(PracticeCog(bot))
     logger.info("PracticeCog loaded successfully")

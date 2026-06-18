@@ -20,7 +20,7 @@ class AskPrompt(Prompt[str, str]):
     def render(self, question: str) -> str:
         return question
 
-    def parse(self, text: str) -> str:
+    def parse(self, text: str, inp: str) -> str:
         return text
 
 

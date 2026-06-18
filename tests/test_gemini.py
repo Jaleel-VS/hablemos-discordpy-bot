@@ -11,6 +11,7 @@ import pytest
 from google.genai import errors as genai_errors
 
 from cogs.ask_cog.prompts import ASK_PROMPT, AskPrompt
+from cogs.practice_cog.prompts import PRACTICE_SENTENCE_PROMPT, PracticeWord
 from cogs.summary_cog.prompts import (
     FOCUSED_SUMMARY_PROMPT,
     SUGGEST_TOPICS_PROMPT,
@@ -68,7 +69,7 @@ class _NoFeaturePrompt(Prompt[str, str]):
     def render(self, inp: str) -> str:
         return inp
 
-    def parse(self, text: str) -> str:
+    def parse(self, text: str, inp: str) -> str:
         return text
 
 
@@ -204,13 +205,13 @@ async def test_run_round_trip_renders_and_parses():
         feature = "double"
         def render(self, inp: str) -> str:
             return f"prompt({inp})"
-        def parse(self, text: str) -> str:
-            return text * 2
+        def parse(self, text: str, inp: str) -> str:
+            return f"{text}|{inp}"  # demonstrates inp is available in parse
 
     g = _TestGemini(actions=["xyz"])
     result = await g.run(_DoublePrompt(), "in")
 
-    assert result == "xyzxyz"
+    assert result == "xyz|in"
     assert g.calls[0]["prompt"] == "prompt(in)"
 
 
@@ -220,7 +221,7 @@ async def test_run_round_trip_renders_and_parses():
 def test_ask_prompt_passthrough():
     assert ASK_PROMPT.feature == "ask"
     assert ASK_PROMPT.render("hello world") == "hello world"
-    assert ASK_PROMPT.parse("response text") == "response text"
+    assert ASK_PROMPT.parse("response text", "hello world") == "response text"
     assert isinstance(ASK_PROMPT, AskPrompt)
 
 
@@ -265,8 +266,9 @@ def test_summary_prompt_rejects_empty_after_dropping():
 
 
 def test_summary_prompt_parse_returns_placeholder_on_empty():
-    assert SUMMARY_PROMPT.parse("") == "Failed to generate summary."
-    assert SUMMARY_PROMPT.parse("actual response") == "actual response"
+    msgs = [_msg("alice", "hi")]
+    assert SUMMARY_PROMPT.parse("", msgs) == "Failed to generate summary."
+    assert SUMMARY_PROMPT.parse("actual response", msgs) == "actual response"
 
 
 def test_focused_summary_prompt_includes_topic_and_msg_links():
@@ -310,3 +312,79 @@ def test_summary_prompts_share_feature_slug():
     assert SUMMARY_PROMPT.feature == "summary"
     assert FOCUSED_SUMMARY_PROMPT.feature == "summary"
     assert SUGGEST_TOPICS_PROMPT.feature == "summary"
+
+
+# ---------- Practice prompt ----------
+
+
+def test_practice_sentence_prompt_renders_with_language_name():
+    rendered = PRACTICE_SENTENCE_PROMPT.render(
+        PracticeWord(word="hablar", translation="to speak", language="spanish"),
+    )
+    assert "Spanish" in rendered
+    assert '"hablar"' in rendered
+    assert "to speak" in rendered
+
+    rendered_en = PRACTICE_SENTENCE_PROMPT.render(
+        PracticeWord(word="speak", translation="hablar", language="english"),
+    )
+    assert "English" in rendered_en
+
+
+def test_practice_parse_returns_sentence_and_cloze():
+    inp = PracticeWord(word="hablar", translation="to speak", language="spanish")
+    text = "Mi hermana puede hablar tres idiomas diferentes."
+    result = PRACTICE_SENTENCE_PROMPT.parse(text, inp)
+
+    assert result is not None
+    sentence, cloze = result
+    assert sentence == text
+    assert cloze == "Mi hermana puede ___ tres idiomas diferentes."
+
+
+def test_practice_parse_strips_whitespace():
+    inp = PracticeWord(word="book", translation="libro", language="english")
+    result = PRACTICE_SENTENCE_PROMPT.parse(
+        "\n  I read a book yesterday.  \n", inp,
+    )
+    assert result == ("I read a book yesterday.", "I read a ___ yesterday.")
+
+
+def test_practice_parse_word_boundary_match_only():
+    # "book" should match the standalone word, not "booking" or "cookbook".
+    inp = PracticeWord(word="book", translation="libro", language="english")
+    result = PRACTICE_SENTENCE_PROMPT.parse(
+        "My cookbook has a booking for tonight.", inp,
+    )
+    # No standalone "book" — reject.
+    assert result is None
+
+
+def test_practice_parse_case_insensitive_match():
+    inp = PracticeWord(word="hablar", translation="to speak", language="spanish")
+    text = "Hablar bien requiere mucha pr\u00e1ctica."
+    result = PRACTICE_SENTENCE_PROMPT.parse(text, inp)
+
+    assert result is not None
+    sentence, cloze = result
+    assert sentence == text
+    # The matched form ("Hablar") was replaced with the blank.
+    assert cloze == "___ bien requiere mucha pr\u00e1ctica."
+
+
+def test_practice_parse_returns_none_when_word_missing():
+    inp = PracticeWord(word="hablar", translation="to speak", language="spanish")
+    result = PRACTICE_SENTENCE_PROMPT.parse(
+        "Esta oraci\u00f3n no tiene la palabra clave.", inp,
+    )
+    assert result is None
+
+
+def test_practice_parse_returns_none_on_empty_text():
+    inp = PracticeWord(word="hablar", translation="to speak", language="spanish")
+    assert PRACTICE_SENTENCE_PROMPT.parse("", inp) is None
+    assert PRACTICE_SENTENCE_PROMPT.parse("   ", inp) is None
+
+
+def test_practice_prompt_feature_slug():
+    assert PRACTICE_SENTENCE_PROMPT.feature == "practice"

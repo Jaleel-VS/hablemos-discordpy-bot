@@ -147,7 +147,7 @@ class SummaryPrompt(Prompt[MessageDicts, str]):
             messages="\n".join(_format_plain(msgs)),
         )
 
-    def parse(self, text: str) -> str:
+    def parse(self, text: str, inp: MessageDicts) -> str:
         return text or "Failed to generate summary."
 
 
@@ -170,7 +170,7 @@ class FocusedSummaryPrompt(Prompt[FocusedSummaryInput, str]):
             messages="\n".join(_format_with_links(msgs)),
         )
 
-    def parse(self, text: str) -> str:
+    def parse(self, text: str, inp: FocusedSummaryInput) -> str:
         return text or "Failed to generate summary."
 
 
@@ -192,7 +192,7 @@ class SuggestTopicsPrompt(Prompt[MessageDicts, str]):
             messages="\n".join(_format_plain(msgs)),
         )
 
-    def parse(self, text: str) -> str:
+    def parse(self, text: str, inp: MessageDicts) -> str:
         return text or "Failed to generate topic suggestions."
 
 
