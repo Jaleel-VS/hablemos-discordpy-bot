@@ -8,10 +8,16 @@ import discord
 from discord.ext import commands
 
 from base_cog import COLORS, BaseCog
+from cogs.utils.gemini import GeminiError
 
 from .cache import SummaryCache
-from .gemini_client import GeminiClient
 from .message_parser import parse_message_link
+from .prompts import (
+    FOCUSED_SUMMARY_PROMPT,
+    SUGGEST_TOPICS_PROMPT,
+    SUMMARY_PROMPT,
+    FocusedSummaryInput,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +29,6 @@ class SummaryCog(BaseCog):
 
     def __init__(self, bot):
         super().__init__(bot)
-        self.gemini = GeminiClient(api_key=bot.settings.gemini_api_key)
         self.cache = SummaryCache(ttl_seconds=3600)
         logger.info("SummaryCog initialized successfully")
 
@@ -135,16 +140,16 @@ class SummaryCog(BaseCog):
             await processing.edit(content=status)
 
             try:
-                summary = await self.gemini.generate_summary(messages, topic=topic)
-            except Exception as e:
-                logger.error("Gemini API error: %s", e, exc_info=True)
-                error_str = str(e).lower()
-                if any(k in error_str for k in ('rate', 'quota', '429')):
-                    await processing.edit(content="API rate limit reached. Try again in a few minutes.")
-                elif 'safety' in error_str or 'blocked' in error_str:
-                    await processing.edit(content="Summary blocked by content policy.")
+                if topic:
+                    summary = await self.bot.gemini.run(
+                        FOCUSED_SUMMARY_PROMPT,
+                        FocusedSummaryInput(messages=messages, topic=topic),
+                    )
                 else:
-                    await processing.edit(content="Failed to generate summary. Try again later.")
+                    summary = await self.bot.gemini.run(SUMMARY_PROMPT, messages)
+            except GeminiError as e:
+                logger.warning("Summary Gemini error code=%s: %s", e.code, e.message)
+                await processing.edit(content=e.user_message)
                 return
 
             self.cache.set(start_channel, start_id, end_id, summary, suffix=cache_key_suffix)
@@ -266,16 +271,10 @@ class SummaryCog(BaseCog):
             await processing.edit(content=f"Analyzing {len(messages)} messages for topics...")
 
             try:
-                result = await self.gemini.suggest_topics(messages)
-            except Exception as e:
-                logger.error("Gemini API error in sumtopics: %s", e, exc_info=True)
-                error_str = str(e).lower()
-                if any(k in error_str for k in ('rate', 'quota', '429')):
-                    await processing.edit(content="API rate limit reached. Try again in a few minutes.")
-                elif 'safety' in error_str or 'blocked' in error_str:
-                    await processing.edit(content="Blocked by content policy.")
-                else:
-                    await processing.edit(content="Failed to generate topics. Try again later.")
+                result = await self.bot.gemini.run(SUGGEST_TOPICS_PROMPT, messages)
+            except GeminiError as e:
+                logger.warning("Sumtopics Gemini error code=%s: %s", e.code, e.message)
+                await processing.edit(content=e.user_message)
                 return
 
             embed = discord.Embed(
@@ -329,7 +328,7 @@ class SummaryCog(BaseCog):
 
 
 async def setup(bot):
-    if not bot.settings.gemini_api_key:
-        logger.info("GEMINI_API_KEY not set — SummaryCog will not load")
+    if bot.gemini is None:
+        logger.info("bot.gemini is None — SummaryCog will not load")
         return
     await bot.add_cog(SummaryCog(bot))

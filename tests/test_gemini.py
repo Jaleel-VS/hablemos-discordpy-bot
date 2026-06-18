@@ -5,10 +5,18 @@ overriding ``_generate_content`` in a test subclass.
 """
 from __future__ import annotations
 
+from datetime import datetime
+
 import pytest
 from google.genai import errors as genai_errors
 
 from cogs.ask_cog.prompts import ASK_PROMPT, AskPrompt
+from cogs.summary_cog.prompts import (
+    FOCUSED_SUMMARY_PROMPT,
+    SUGGEST_TOPICS_PROMPT,
+    SUMMARY_PROMPT,
+    FocusedSummaryInput,
+)
 from cogs.utils.gemini import Gemini, GeminiError, Prompt
 from cogs.utils.rate_limiter import RateLimiter
 
@@ -214,3 +222,91 @@ def test_ask_prompt_passthrough():
     assert ASK_PROMPT.render("hello world") == "hello world"
     assert ASK_PROMPT.parse("response text") == "response text"
     assert isinstance(ASK_PROMPT, AskPrompt)
+
+
+# ---------- Summary prompts ----------
+
+
+def _msg(author: str, content: str, hour: int = 12, minute: int = 0, link: str | None = None) -> dict:
+    m = {
+        "author": author,
+        "content": content,
+        "timestamp": datetime(2026, 1, 1, hour, minute),
+    }
+    if link is not None:
+        m["link"] = link
+    return m
+
+
+def test_summary_prompt_render_includes_count_and_window():
+    rendered = SUMMARY_PROMPT.render([
+        _msg("alice", "hello", hour=10),
+        _msg("bob", "world", hour=11),
+    ])
+    assert "2 messages between" in rendered
+    assert "2026-01-01 10:00" in rendered
+    assert "2026-01-01 11:00" in rendered
+    assert "alice: hello" in rendered
+    assert "bob: world" in rendered
+
+
+def test_summary_prompt_drops_empty_content():
+    rendered = SUMMARY_PROMPT.render([
+        _msg("alice", "   ", hour=10),  # only whitespace, dropped
+        _msg("bob", "hello", hour=11),
+    ])
+    assert "1 messages between" in rendered
+    assert "alice" not in rendered
+
+
+def test_summary_prompt_rejects_empty_after_dropping():
+    with pytest.raises(ValueError, match="empty"):
+        SUMMARY_PROMPT.render([_msg("alice", "   ")])
+
+
+def test_summary_prompt_parse_returns_placeholder_on_empty():
+    assert SUMMARY_PROMPT.parse("") == "Failed to generate summary."
+    assert SUMMARY_PROMPT.parse("actual response") == "actual response"
+
+
+def test_focused_summary_prompt_includes_topic_and_msg_links():
+    inp = FocusedSummaryInput(
+        messages=[
+            _msg("alice", "discusses topic", link="https://discord.com/channels/1/2/3"),
+            _msg("bob", "replies", link="https://discord.com/channels/1/2/4"),
+        ],
+        topic="alice's behavior",
+    )
+    rendered = FOCUSED_SUMMARY_PROMPT.render(inp)
+    assert "alice's behavior" in rendered
+    assert "[MSG_LINK:https://discord.com/channels/1/2/3]" in rendered
+    assert "[MSG_LINK:https://discord.com/channels/1/2/4]" in rendered
+
+
+def test_focused_summary_prompt_handles_messages_without_link():
+    inp = FocusedSummaryInput(
+        messages=[_msg("alice", "hello")],  # no link key
+        topic="general",
+    )
+    rendered = FOCUSED_SUMMARY_PROMPT.render(inp)
+    # Template prose mentions "MSG_LINK"; only the bracketed form
+    # "[MSG_LINK:...]" appears when a message actually carries a link.
+    assert "[MSG_LINK:" not in rendered
+    assert "alice: hello" in rendered
+
+
+def test_suggest_topics_prompt_renders_plain():
+    rendered = SUGGEST_TOPICS_PROMPT.render([
+        _msg("alice", "hello", hour=9),
+        _msg("bob", "hi", hour=10),
+    ])
+    assert "hello" in rendered
+    assert "hi" in rendered
+    assert "[MSG_LINK:" not in rendered  # plain format only
+
+
+def test_summary_prompts_share_feature_slug():
+    # All three resolve GEMINI_SUMMARY_MODEL via the same feature key.
+    assert SUMMARY_PROMPT.feature == "summary"
+    assert FOCUSED_SUMMARY_PROMPT.feature == "summary"
+    assert SUGGEST_TOPICS_PROMPT.feature == "summary"
