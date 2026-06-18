@@ -24,6 +24,7 @@ Defaults come from `config.py` (`load_settings`) or from a cog's own
 | `LEAGUE_GUILD_ID` | baked-in | The guild where the Language League runs. |
 | `BOT_OWNER_ID` | baked-in | Owner ID for `@commands.is_owner()`. |
 | `GEMINI_API_KEY` | unset | Optional; enables Gemini-backed features (quote generator, summary, etc.). |
+| `GEMINI_ASK_MODEL` | `gemini-3.5-flash` | Gemini model id used by `$ask`. See [`./cogs/ask.md`](./cogs/ask.md). |
 | `ENVIRONMENT` | `production` | Purely informational, printed on boot. |
 | `WEBSITE_API_URL` | baked-in | Companion website API endpoint. |
 | `CONVO_SPA_CHANNELS` | baked-in list | Conversation-starter channel allowlist. |

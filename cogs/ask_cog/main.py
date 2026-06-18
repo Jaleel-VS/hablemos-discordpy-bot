@@ -7,10 +7,13 @@ import logging
 import discord
 from discord.ext import commands
 from google import genai
+from google.genai import errors as genai_errors
 from google.genai import types
 
 from base_cog import BaseCog
 from cogs.utils.visibility import VisibilityView as BaseVisibilityView
+
+from .config import MODEL_NAME
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +49,27 @@ def split_response(text: str) -> list[str]:
 
     return pages
 
+
+def _client_error_message(err: genai_errors.ClientError) -> str:
+    """Map a Gemini ClientError to a friendly user-facing message.
+
+    See https://googleapis.github.io/python-genai/ for the error
+    hierarchy. The integer ``code`` is the HTTP status returned by the
+    API.
+    """
+    code = getattr(err, 'code', None)
+    if code == 400:
+        return "Gemini rejected the request. Try rephrasing your question."
+    if code in (401, 403):
+        return "Gemini auth failed. The API key may be invalid or lack permission."
+    if code == 404:
+        return "Configured Gemini model is unavailable. Set `GEMINI_ASK_MODEL` to a supported model."
+    if code == 429:
+        return "Rate limited by Gemini. Try again in a minute."
+    msg = (getattr(err, 'message', None) or '').lower()
+    if any(k in msg for k in ('safety', 'blocked')):
+        return "Response blocked by content policy."
+    return "Gemini rejected the request. Please try again later."
 
 def _build_ask_embed(pages: list[str], question: str, page_idx: int = 0) -> discord.Embed:
     title = question[:256]
@@ -92,7 +116,7 @@ class AskCog(BaseCog):
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
         self.client = genai.Client(api_key=bot.settings.gemini_api_key)
-        self.model_name = 'gemini-3-flash'
+        self.model_name = MODEL_NAME
 
     def _call_gemini(self, question: str):
         """Sync Gemini call — run in executor for timeout support."""
@@ -160,13 +184,20 @@ class AskCog(BaseCog):
             msg = await processing.edit(content="Ready. How do you want to send it?", view=view)
             view.prompt_message = msg or processing
 
+        except genai_errors.ClientError as e:
+            logger.error("Ask Gemini client error (code=%s): %s", e.code, e, exc_info=True)
+            await processing.edit(content=_client_error_message(e))
+        except genai_errors.ServerError as e:
+            logger.error("Ask Gemini server error (code=%s): %s", e.code, e, exc_info=True)
+            await processing.edit(content="Gemini is having trouble right now. Please try again in a moment.")
+        except genai_errors.APIError as e:
+            logger.error("Ask Gemini API error (code=%s): %s", getattr(e, 'code', '?'), e, exc_info=True)
+            await processing.edit(content="Something went wrong talking to Gemini. Please try again later.")
         except Exception as e:
             logger.error("Ask command error: %s", e, exc_info=True)
             error_str = str(e).lower()
             if any(k in error_str for k in ('safety', 'blocked')):
                 await processing.edit(content="Response blocked by content policy.")
-            elif any(k in error_str for k in ('rate', 'quota', '429')):
-                await processing.edit(content="Rate limited. Try again in a minute.")
             else:
                 await processing.edit(content="Something went wrong. Please try again later.")
 
