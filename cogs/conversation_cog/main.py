@@ -12,6 +12,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from base_cog import COLORS, BaseCog
+from cogs.utils.gemini import GeminiError
 
 from .conversation_data import (
     CATEGORIES,
@@ -21,7 +22,7 @@ from .conversation_data import (
     LEVEL_ALIASES,
     LEVELS,
 )
-from .gemini_client import ConversationGeminiClient
+from .prompts import CONVERSATION_PROMPT, ConversationInput
 
 logger = logging.getLogger(__name__)
 
@@ -31,12 +32,7 @@ class ConversationCog(BaseCog):
     def __init__(self, bot):
         super().__init__(bot)
         self._background_tasks: set[asyncio.Task] = set()
-        try:
-            self.gemini = ConversationGeminiClient(api_key=bot.settings.gemini_api_key)
-            logger.info("ConversationCog initialized successfully")
-        except ValueError as e:
-            logger.error("Failed to initialize ConversationCog: %s", e)
-            raise
+        logger.info("ConversationCog initialized successfully")
 
     def _resolve_args(self, language: str | None, level: str | None, category: str | None) -> dict | None:
         """Resolve and validate language/level/category, applying alias lookup and defaults."""
@@ -203,20 +199,33 @@ class ConversationCog(BaseCog):
                 scenario = random.choice(scenarios)
 
                 # Generate conversation
-                conversation_data = await self.gemini.generate_conversation(
-                    language, level, category, scenario
-                )
+                try:
+                    parsed = await self.bot.gemini.run(
+                        CONVERSATION_PROMPT,
+                        ConversationInput(
+                            language=language,
+                            level=level,
+                            category=category,
+                            scenario=scenario,
+                        ),
+                    )
+                except GeminiError as e:
+                    logger.warning(
+                        "Conversation Gemini error %s/%s/%s code=%s: %s",
+                        language, level, category, e.code, e.message,
+                    )
+                    parsed = None
 
-                if conversation_data:
+                if parsed is not None:
                     # Save to database
                     await self.bot.db.add_conversation(
                         language=language,
                         level=level,
                         category=category,
-                        scenario_intro=conversation_data['scenario'],
-                        speaker1_name=conversation_data['speaker1'],
-                        speaker2_name=conversation_data['speaker2'],
-                        conversation_text=conversation_data['conversation']
+                        scenario_intro=parsed.scenario,
+                        speaker1_name=parsed.speaker1,
+                        speaker2_name=parsed.speaker2,
+                        conversation_text=parsed.conversation,
                     )
                     success_count += 1
                     logger.info("Generated conversation %s/%s for %s/%s/%s", i+1, count, language, level, category)
@@ -491,7 +500,7 @@ class ConversationCog(BaseCog):
 
 async def setup(bot):
     """Required setup function for loading the cog"""
-    if not bot.settings.gemini_api_key:
-        logger.info("GEMINI_API_KEY not set — ConversationCog will not load")
+    if bot.gemini is None:
+        logger.info("bot.gemini is None — ConversationCog will not load")
         return
     await bot.add_cog(ConversationCog(bot))

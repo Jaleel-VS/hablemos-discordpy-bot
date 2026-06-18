@@ -100,10 +100,10 @@ cogs/utils/gemini/
   4xx errors surface immediately (404 is a config bug, 401/403 won't fix
   itself, 429 carries its own user-facing "try again in a minute" message).
 
-> **Migration status.** `ask_cog` is the first cog on the new seam.
-> `summary_cog`, `practice_cog`, and `conversation_cog` still use the
-> legacy `cogs/utils/gemini_base.py` (`BaseGeminiClient` + per-cog
-> subclasses) and will migrate one cog per PR.
+> **Migration status.** All Gemini-using cogs (`ask_cog`,
+> `summary_cog`, `practice_cog`, `conversation_cog`) are on the new
+> seam. The legacy `cogs/utils/gemini_base.py` and the per-cog
+> `*GeminiClient` files have been removed.
 
 ## Configuration
 

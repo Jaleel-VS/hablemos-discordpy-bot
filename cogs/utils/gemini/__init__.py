@@ -80,6 +80,16 @@ class Prompt[I, O]:
         """
         raise NotImplementedError
 
+    def resolve_temperature(self, inp: I) -> float:
+        """Per-input temperature override hook.
+
+        Defaults to the class-level :attr:`temperature` constant. Override
+        when generation temperature should vary with the input (e.g.
+        difficulty level), keeping the variation table next to the
+        prompt rather than at the call site.
+        """
+        return self.temperature
+
 
 class Gemini:
     """Single deep module for all Gemini calls."""
@@ -114,7 +124,7 @@ class Gemini:
         rendered = prompt.render(inp)
         model = self._resolve_model(prompt)
         config = types.GenerateContentConfig(
-            temperature=prompt.temperature,
+            temperature=prompt.resolve_temperature(inp),
             top_p=prompt.top_p,
             top_k=prompt.top_k,
             max_output_tokens=prompt.max_output_tokens,

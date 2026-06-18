@@ -11,6 +11,11 @@ import pytest
 from google.genai import errors as genai_errors
 
 from cogs.ask_cog.prompts import ASK_PROMPT, AskPrompt
+from cogs.conversation_cog.prompts import (
+    CONVERSATION_PROMPT,
+    ConversationInput,
+    ParsedConversation,
+)
 from cogs.practice_cog.prompts import PRACTICE_SENTENCE_PROMPT, PracticeWord
 from cogs.summary_cog.prompts import (
     FOCUSED_SUMMARY_PROMPT,
@@ -388,3 +393,136 @@ def test_practice_parse_returns_none_on_empty_text():
 
 def test_practice_prompt_feature_slug():
     assert PRACTICE_SENTENCE_PROMPT.feature == "practice"
+
+
+# ---------- Conversation prompt ----------
+
+
+_CONVO_INP = ConversationInput(
+    language="spanish",
+    level="beginner",
+    category="restaurant",
+    scenario="You are ordering food at a family restaurant",
+)
+
+
+_HAPPY_RESPONSE = """SCENARIO: Est\u00e1s ordenando comida en un restaurante familiar
+SPEAKER1: Ana (mesera)
+SPEAKER2: Miguel (cliente)
+CONVERSATION:
+Ana: Buenas tardes. \u00bfEst\u00e1 listo para ordenar?
+Miguel: S\u00ed, por favor. \u00bfQu\u00e9 me recomienda?
+Ana: El pollo asado es muy popular hoy.
+Miguel: Perfecto, tomar\u00e9 eso.
+Ana: \u00bfY para tomar?
+Miguel: Una limonada, gracias.
+Ana: Enseguida se lo traigo.
+Miguel: Muchas gracias."""
+
+
+def test_conversation_prompt_render_includes_language_level_category_and_scenario():
+    rendered = CONVERSATION_PROMPT.render(_CONVO_INP)
+    assert "Spanish" in rendered
+    assert "Beginner" in rendered
+    assert "Restaurant" in rendered
+    assert _CONVO_INP.scenario in rendered
+
+
+def test_conversation_prompt_temperature_varies_by_level():
+    # 0.7 / 0.8 / 0.9 from conversation_data.LEVELS
+    assert CONVERSATION_PROMPT.resolve_temperature(_CONVO_INP) == 0.7
+    intermediate = ConversationInput(
+        language="spanish", level="intermediate",
+        category="restaurant", scenario="x",
+    )
+    advanced = ConversationInput(
+        language="spanish", level="advanced",
+        category="restaurant", scenario="x",
+    )
+    assert CONVERSATION_PROMPT.resolve_temperature(intermediate) == 0.8
+    assert CONVERSATION_PROMPT.resolve_temperature(advanced) == 0.9
+
+
+def test_conversation_parse_happy_path():
+    result = CONVERSATION_PROMPT.parse(_HAPPY_RESPONSE, _CONVO_INP)
+    assert isinstance(result, ParsedConversation)
+    assert result.scenario == "Est\u00e1s ordenando comida en un restaurante familiar"
+    assert result.speaker1 == "Ana (mesera)"
+    assert result.speaker2 == "Miguel (cliente)"
+    # All eight CONVERSATION lines preserved, joined with newlines.
+    assert result.conversation.count("\n") == 7
+    assert result.conversation.startswith("Ana: Buenas tardes")
+    assert result.conversation.endswith("Miguel: Muchas gracias.")
+
+
+def test_conversation_parse_returns_none_when_scenario_missing():
+    bad = _HAPPY_RESPONSE.replace(
+        "SCENARIO: Est\u00e1s ordenando comida en un restaurante familiar\n",
+        "",
+    )
+    assert CONVERSATION_PROMPT.parse(bad, _CONVO_INP) is None
+
+
+def test_conversation_parse_returns_none_when_speaker1_missing():
+    bad = _HAPPY_RESPONSE.replace("SPEAKER1: Ana (mesera)\n", "")
+    assert CONVERSATION_PROMPT.parse(bad, _CONVO_INP) is None
+
+
+def test_conversation_parse_returns_none_when_speaker2_missing():
+    bad = _HAPPY_RESPONSE.replace("SPEAKER2: Miguel (cliente)\n", "")
+    assert CONVERSATION_PROMPT.parse(bad, _CONVO_INP) is None
+
+
+def test_conversation_parse_returns_none_when_no_conversation_lines():
+    text = "SCENARIO: x\nSPEAKER1: a\nSPEAKER2: b\nCONVERSATION:\n"
+    assert CONVERSATION_PROMPT.parse(text, _CONVO_INP) is None
+
+
+def test_conversation_parse_accepts_short_conversation_with_warning(caplog):
+    # Less than 6 lines logs a warning but still returns a result.
+    text = (
+        "SCENARIO: x\n"
+        "SPEAKER1: a\n"
+        "SPEAKER2: b\n"
+        "CONVERSATION:\n"
+        "a: hi\n"
+        "b: hello\n"
+    )
+    with caplog.at_level("WARNING"):
+        result = CONVERSATION_PROMPT.parse(text, _CONVO_INP)
+    assert isinstance(result, ParsedConversation)
+    assert "Short conversation" in caplog.text
+
+
+def test_conversation_parse_returns_none_on_empty_text():
+    assert CONVERSATION_PROMPT.parse("", _CONVO_INP) is None
+
+
+def test_conversation_parse_returns_none_on_unstructured_text():
+    # No SCENARIO/SPEAKER prefixes anywhere.
+    text = "This is just a plain paragraph. No structure at all."
+    assert CONVERSATION_PROMPT.parse(text, _CONVO_INP) is None
+
+
+def test_conversation_parse_strips_whitespace_around_fields():
+    text = (
+        "SCENARIO:    leading and trailing whitespace   \n"
+        "   SPEAKER1:    Ana    \n"
+        "SPEAKER2:Bob\n"
+        "CONVERSATION:\n"
+        "Ana: hi\n"
+        "Bob: hello\n"
+        "Ana: bye\n"
+        "Bob: bye\n"
+        "Ana: cheers\n"
+        "Bob: cheers\n"
+    )
+    result = CONVERSATION_PROMPT.parse(text, _CONVO_INP)
+    assert isinstance(result, ParsedConversation)
+    assert result.scenario == "leading and trailing whitespace"
+    assert result.speaker1 == "Ana"
+    assert result.speaker2 == "Bob"
+
+
+def test_conversation_prompt_feature_slug():
+    assert CONVERSATION_PROMPT.feature == "conversation"

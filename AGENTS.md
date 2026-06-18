@@ -28,7 +28,7 @@ cogs/utils/          — Shared utilities
   embeds.py          — Reusable embed helpers (green_embed, red_embed, etc.)
   rate_limiter.py    — Shared RateLimiter for API calls
   discovery.py       — Cog auto-discovery helpers
-  gemini_base.py     — Shared Gemini AI client base
+  gemini/            — Gemini deep module (Prompt[I,O], Gemini.run, GeminiError)
 ```
 
 ### Cog Loading
