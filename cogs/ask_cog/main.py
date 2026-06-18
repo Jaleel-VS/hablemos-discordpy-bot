@@ -6,14 +6,12 @@ import logging
 
 import discord
 from discord.ext import commands
-from google import genai
-from google.genai import errors as genai_errors
-from google.genai import types
 
 from base_cog import BaseCog
+from cogs.utils.gemini import GeminiError
 from cogs.utils.visibility import VisibilityView as BaseVisibilityView
 
-from .config import MODEL_NAME
+from .prompts import ASK_PROMPT
 
 logger = logging.getLogger(__name__)
 
@@ -49,27 +47,6 @@ def split_response(text: str) -> list[str]:
 
     return pages
 
-
-def _client_error_message(err: genai_errors.ClientError) -> str:
-    """Map a Gemini ClientError to a friendly user-facing message.
-
-    See https://googleapis.github.io/python-genai/ for the error
-    hierarchy. The integer ``code`` is the HTTP status returned by the
-    API.
-    """
-    code = getattr(err, 'code', None)
-    if code == 400:
-        return "Gemini rejected the request. Try rephrasing your question."
-    if code in (401, 403):
-        return "Gemini auth failed. The API key may be invalid or lack permission."
-    if code == 404:
-        return "Configured Gemini model is unavailable. Set `GEMINI_ASK_MODEL` to a supported model."
-    if code == 429:
-        return "Rate limited by Gemini. Try again in a minute."
-    msg = (getattr(err, 'message', None) or '').lower()
-    if any(k in msg for k in ('safety', 'blocked')):
-        return "Response blocked by content policy."
-    return "Gemini rejected the request. Please try again later."
 
 def _build_ask_embed(pages: list[str], question: str, page_idx: int = 0) -> discord.Embed:
     title = question[:256]
@@ -113,22 +90,6 @@ class PageView(discord.ui.View):
 class AskCog(BaseCog):
     """Owner-only Gemini Q&A."""
 
-    def __init__(self, bot: commands.Bot):
-        super().__init__(bot)
-        self.client = genai.Client(api_key=bot.settings.gemini_api_key)
-        self.model_name = MODEL_NAME
-
-    def _call_gemini(self, question: str):
-        """Sync Gemini call — run in executor for timeout support."""
-        return self.client.models.generate_content(
-            model=self.model_name,
-            contents=question,
-            config=types.GenerateContentConfig(
-                temperature=0.7,
-                max_output_tokens=4096,
-            ),
-        )
-
     @commands.command(name='ask')
     @commands.is_owner()
     async def ask(self, ctx: commands.Context, *, question: str):
@@ -137,73 +98,64 @@ class AskCog(BaseCog):
 
         Usage: $ask <question>
         """
+        if self.bot.gemini is None:
+            await ctx.send("Gemini is not configured on this bot.")
+            return
+
         processing = await ctx.send("Thinking...")
 
         try:
-            # Wrap sync Gemini call in executor with timeout
-            loop = asyncio.get_running_loop()
-            try:
-                response = await asyncio.wait_for(
-                    loop.run_in_executor(None, self._call_gemini, question),
-                    timeout=GEMINI_TIMEOUT,
-                )
-            except TimeoutError:
-                await processing.edit(content=f"Gemini didn't respond within {GEMINI_TIMEOUT}s. Try again.")
-                return
-
-            text = response.text
-            if not text:
-                await processing.edit(content="Gemini returned an empty response.")
-                return
-
-            pages = split_response(text)
-
-            def _embed_kwargs():
-                if len(pages) == 1:
-                    return {'embed': _build_ask_embed(pages, question)}
-                pv = PageView(pages, question, ctx.author.id)
-                return {'embed': pv.build_embed(), 'view': pv}
-
-            async def on_public(cmd_msg):
-                kwargs = {**_embed_kwargs(), 'mention_author': False}
-                if cmd_msg:
-                    await cmd_msg.reply(**kwargs)
-                else:
-                    kwargs.pop('mention_author', None)
-                    await ctx.channel.send(**kwargs)
-
-            async def on_private(interaction):
-                await interaction.response.send_message(**_embed_kwargs(), ephemeral=True)
-
-            view = BaseVisibilityView(
-                author_id=ctx.author.id,
-                command_message=ctx.message,
-                on_public=on_public,
-                on_private=on_private,
+            text = await asyncio.wait_for(
+                self.bot.gemini.run(ASK_PROMPT, question),
+                timeout=GEMINI_TIMEOUT,
             )
-            msg = await processing.edit(content="Ready. How do you want to send it?", view=view)
-            view.prompt_message = msg or processing
+        except TimeoutError:
+            await processing.edit(content=f"Gemini didn't respond within {GEMINI_TIMEOUT}s. Try again.")
+            return
+        except GeminiError as e:
+            logger.warning("Ask Gemini error code=%s: %s", e.code, e.message)
+            await processing.edit(content=e.user_message)
+            return
+        except Exception:
+            logger.error("Ask command unexpected error", exc_info=True)
+            await processing.edit(content="Something went wrong. Please try again later.")
+            return
 
-        except genai_errors.ClientError as e:
-            logger.error("Ask Gemini client error (code=%s): %s", e.code, e, exc_info=True)
-            await processing.edit(content=_client_error_message(e))
-        except genai_errors.ServerError as e:
-            logger.error("Ask Gemini server error (code=%s): %s", e.code, e, exc_info=True)
-            await processing.edit(content="Gemini is having trouble right now. Please try again in a moment.")
-        except genai_errors.APIError as e:
-            logger.error("Ask Gemini API error (code=%s): %s", getattr(e, 'code', '?'), e, exc_info=True)
-            await processing.edit(content="Something went wrong talking to Gemini. Please try again later.")
-        except Exception as e:
-            logger.error("Ask command error: %s", e, exc_info=True)
-            error_str = str(e).lower()
-            if any(k in error_str for k in ('safety', 'blocked')):
-                await processing.edit(content="Response blocked by content policy.")
+        if not text:
+            await processing.edit(content="Gemini returned an empty response.")
+            return
+
+        pages = split_response(text)
+
+        def _embed_kwargs():
+            if len(pages) == 1:
+                return {'embed': _build_ask_embed(pages, question)}
+            pv = PageView(pages, question, ctx.author.id)
+            return {'embed': pv.build_embed(), 'view': pv}
+
+        async def on_public(cmd_msg):
+            kwargs = {**_embed_kwargs(), 'mention_author': False}
+            if cmd_msg:
+                await cmd_msg.reply(**kwargs)
             else:
-                await processing.edit(content="Something went wrong. Please try again later.")
+                kwargs.pop('mention_author', None)
+                await ctx.channel.send(**kwargs)
+
+        async def on_private(interaction):
+            await interaction.response.send_message(**_embed_kwargs(), ephemeral=True)
+
+        view = BaseVisibilityView(
+            author_id=ctx.author.id,
+            command_message=ctx.message,
+            on_public=on_public,
+            on_private=on_private,
+        )
+        msg = await processing.edit(content="Ready. How do you want to send it?", view=view)
+        view.prompt_message = msg or processing
 
 
 async def setup(bot: commands.Bot):
-    if not bot.settings.gemini_api_key:
-        logger.info("GEMINI_API_KEY not set — AskCog will not load")
+    if bot.gemini is None:
+        logger.info("bot.gemini is None — AskCog will not load")
         return
     await bot.add_cog(AskCog(bot))

@@ -7,6 +7,7 @@ from discord import Game
 from discord.ext.commands import Bot
 
 from cogs.utils.discovery import discover_extensions
+from cogs.utils.gemini import Gemini
 from config import load_settings
 from db import Database
 from logger import setup_logging
@@ -38,6 +39,7 @@ class Hablemos(Bot):
         self.online_channel = None
         self.error_channel = None
         self.db = Database(settings.database_url)
+        self.gemini: Gemini | None = None  # populated in setup_hook
 
     async def close(self):
         await self.db.close()
@@ -56,6 +58,16 @@ class Hablemos(Bot):
         else:
             logger.error("Database unavailable after 5 retries — aborting setup")
             return
+
+        if self.settings.gemini_api_key:
+            try:
+                self.gemini = Gemini(self.settings.gemini_api_key)
+                logger.info("Gemini deep module ready")
+            except Exception:
+                logger.exception("Failed to initialize Gemini — Gemini-using cogs will not load")
+                self.gemini = None
+        else:
+            logger.info("GEMINI_API_KEY not set — Gemini-using cogs will not load")
 
         # Load disabled cogs set for filtering
         try:

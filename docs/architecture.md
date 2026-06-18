@@ -72,6 +72,39 @@ db/
 
 See [`database.md`](./database.md) for the table / mixin map.
 
+## Gemini deep module
+
+Gemini-using cogs go through one shared module: `cogs/utils/gemini/`.
+It owns the `genai.Client` instance, model resolution, rate limiting,
+retry-on-5xx, and HTTP-code-aware error mapping. Cogs never construct
+`genai.Client` themselves.
+
+```
+cogs/utils/gemini/
+  __init__.py        Prompt[I, O] base, Gemini class, run() dispatcher
+  errors.py          GeminiError + user_message_for(APIError)
+```
+
+- `bot.gemini` is a single `Gemini` instance built in `Hablemos.setup_hook`
+  (after the DB connect). If `GEMINI_API_KEY` is unset, `bot.gemini = None`
+  and Gemini-using cogs skip loading.
+- Each Gemini-using cog declares its prompts in `cogs/<feature>_cog/prompts.py`
+  as stateless singletons. A prompt is a `Prompt[I, O]` subclass with a
+  `feature` slug, generation config, and `render` / `parse` methods.
+- Calls look like `await self.bot.gemini.run(MY_PROMPT, inp)`. Failures
+  raise `GeminiError`; cogs catch it and surface `e.user_message`
+  directly to the user.
+- Model resolution: `GEMINI_<FEATURE>_MODEL` → `GEMINI_DEFAULT_MODEL` →
+  `gemini-3.5-flash`. Bump a model at deploy time without touching code.
+- Retry policy: 5xx errors retry up to 3 times with exponential backoff;
+  4xx errors surface immediately (404 is a config bug, 401/403 won't fix
+  itself, 429 carries its own user-facing "try again in a minute" message).
+
+> **Migration status.** `ask_cog` is the first cog on the new seam.
+> `summary_cog`, `practice_cog`, and `conversation_cog` still use the
+> legacy `cogs/utils/gemini_base.py` (`BaseGeminiClient` + per-cog
+> subclasses) and will migrate one cog per PR.
+
 ## Configuration
 
 - All env-driven values live in `config.py`'s `Settings` dataclass.
