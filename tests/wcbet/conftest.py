@@ -6,11 +6,12 @@ frozen clock injected through the `views._now_utc` seam.
 """
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from decimal import Decimal
 from typing import Any
 
 import pytest
 
-from cogs.wcbet_cog import views
+from cogs.wcbet_cog import results, views
 
 USER_ID = 42
 GUILD_ID = 1
@@ -33,6 +34,14 @@ class FakeDB:
         self.created_wallets: list[tuple[int, int, int]] = []
         self.allowance_result: int | None = None
         self.banned: bool = False
+        # House odds multiplier (Decimal); tests can override directly.
+        self.odds_multiplier: Decimal = Decimal("1")
+
+    async def get_wc_odds_multiplier(self) -> Decimal:
+        return self.odds_multiplier
+
+    async def set_wc_odds_multiplier(self, multiplier: Decimal) -> None:
+        self.odds_multiplier = multiplier
 
     async def get_wc_wallet(self, user_id: int) -> dict[str, Any] | None:
         return self.wallet
@@ -55,9 +64,12 @@ class FakeDB:
         return self.user_bets.get(match_id)
 
     async def get_wc_user_bets(
-        self, user_id: int, status: str | None = None,
+        self, user_id: int, status: str | None = None, limit: int | None = None,
     ) -> list[dict[str, Any]]:
-        return list(self.user_bets.values())
+        bets = list(self.user_bets.values())
+        if limit is not None:
+            bets = bets[:limit]
+        return bets
 
     async def place_wc_bet(
         self,
@@ -155,12 +167,18 @@ def fake_odds(monkeypatch: pytest.MonkeyPatch) -> dict[int, Any]:
     """
     holder: dict[int, Any] = {}
 
-    async def fetch(fixtures: list) -> dict[int, Any]:
-        return {
+    async def fetch(fixtures: list, multiplier: Decimal | None = None) -> dict[int, Any]:
+        selected = {
             f["match_id"]: holder[f["match_id"]]
             for f in fixtures
             if f["match_id"] in holder
         }
+        if multiplier is not None and multiplier != 1:
+            selected = {
+                mid: results.apply_odds_multiplier(o, multiplier)
+                for mid, o in selected.items()
+            }
+        return selected
 
     monkeypatch.setattr(views.espn, "fetch_match_odds", fetch)
     return holder

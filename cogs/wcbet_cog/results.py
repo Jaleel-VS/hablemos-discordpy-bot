@@ -124,6 +124,24 @@ class MatchOdds(TypedDict):
     away: Decimal
 
 
+def apply_odds_multiplier(odds: MatchOdds, multiplier: Decimal) -> MatchOdds:
+    """Scale all three legs by `multiplier`, quantized to 2dp (half-up).
+
+    Used to juice the offered lines above ESPN's published prices. Pure
+    Decimal math; the boosted price is what gets displayed, snapshotted,
+    and paid, so the existing snapshot/drift invariants hold unchanged.
+    A multiplier of 1 is the identity.
+    """
+    def scale(value: Decimal) -> Decimal:
+        return (value * multiplier).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+    return MatchOdds(
+        home=scale(odds["home"]),
+        draw=scale(odds["draw"]),
+        away=scale(odds["away"]),
+    )
+
+
 def american_to_decimal(moneyline: int) -> Decimal:
     """Convert American moneyline odds to decimal odds (2dp, half-up).
 

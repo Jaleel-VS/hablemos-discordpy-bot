@@ -7,6 +7,7 @@ because lines move slowly pre-match and the panel re-renders often.
 """
 import logging
 from datetime import UTC, datetime
+from decimal import Decimal
 
 import aiohttp
 
@@ -55,8 +56,16 @@ async def _fetch_odds_bucket(date_str: str, bucket: int) -> dict[int, results.Ma
     return results.match_odds(payload, results.GROUP_STAGE_FIXTURES)
 
 
-async def fetch_match_odds(fixtures: list[Fixture]) -> dict[int, results.MatchOdds]:
-    """Current decimal odds for the given fixtures (10-min cache)."""
+async def fetch_match_odds(
+    fixtures: list[Fixture], multiplier: Decimal | None = None,
+) -> dict[int, results.MatchOdds]:
+    """Current decimal odds for the given fixtures (10-min cache).
+
+    When `multiplier` is given, every published line is scaled by it
+    (the house odds boost) before being returned. The raw ESPN prices
+    stay cached unscaled, so changing the multiplier takes effect on the
+    next render without busting the cache.
+    """
     if not fixtures:
         return {}
     bucket = int(datetime.now(UTC).timestamp()) // ODDS_CACHE_BUCKET_SECONDS
@@ -64,4 +73,10 @@ async def fetch_match_odds(fixtures: list[Fixture]) -> dict[int, results.MatchOd
     for date_str in sorted({f["date"].replace("-", "") for f in fixtures}):
         odds.update(await _fetch_odds_bucket(date_str, bucket))
     wanted = {f["match_id"] for f in fixtures}
-    return {mid: o for mid, o in odds.items() if mid in wanted}
+    selected = {mid: o for mid, o in odds.items() if mid in wanted}
+    if multiplier is not None and multiplier != 1:
+        selected = {
+            mid: results.apply_odds_multiplier(o, multiplier)
+            for mid, o in selected.items()
+        }
+    return selected

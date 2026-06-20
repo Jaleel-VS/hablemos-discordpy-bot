@@ -6,8 +6,8 @@ from decimal import Decimal
 
 from discord import ButtonStyle
 
-from cogs.wcbet_cog import views
-from cogs.wcbet_cog.config import WCBET_ODDS
+from cogs.wcbet_cog import betting, views
+from cogs.wcbet_cog.config import WCBET_MY_BETS_LIMIT, WCBET_ODDS
 from cogs.wcbet_cog.results import MatchOdds
 
 from .conftest import GUILD_ID, USER_ID
@@ -399,3 +399,94 @@ async def test_refresh_resets_selection_when_match_kicks_off(fake_bot, clock):
     assert panel.selected_outcome is None
     assert panel.selected_stake is None
     assert panel.notice is not None and "kicked off" in panel.notice
+
+
+# ── My bets view (history cap) ──────────────────────────────────────────────
+
+def _make_bet(match_id: int) -> dict:
+    """A settled 'lost' bet row shaped like get_wc_user_bets returns."""
+    return {
+        "user_id": USER_ID,
+        "match_id": match_id,
+        "guild_id": GUILD_ID,
+        "outcome": "home",
+        "stake": 500,
+        "odds": Decimal("1.43"),
+        "status": "lost",
+        "payout": None,
+    }
+
+
+async def test_my_bets_renders_all_when_under_cap(fake_bot, clock):
+    panel = await _open_panel(fake_bot)
+    fake_bot.db.user_bets = {i: _make_bet(i) for i in range(1, WCBET_MY_BETS_LIMIT + 1)}
+    panel.show_history = True
+    await panel.refresh()
+    text = _text(panel)
+    # Exactly the cap: every bet shown, no overflow footer.
+    assert text.count("@ 1.43 on") == WCBET_MY_BETS_LIMIT
+    assert "$wcbethistory" not in text
+
+
+async def test_my_bets_caps_and_shows_overflow_footer(fake_bot, clock):
+    panel = await _open_panel(fake_bot)
+    # More than the cap -> only the cap is rendered, footer appears.
+    fake_bot.db.user_bets = {i: _make_bet(i) for i in range(1, WCBET_MY_BETS_LIMIT + 5)}
+    panel.show_history = True
+    await panel.refresh()
+    text = _text(panel)
+    assert text.count("@ 1.43 on") == WCBET_MY_BETS_LIMIT
+    assert f"latest {WCBET_MY_BETS_LIMIT} bets" in text
+    assert "$wcbethistory" in text
+
+
+async def test_my_bets_over_fetches_one_past_cap(fake_bot, clock):
+    """refresh() asks the DB for cap+1 so overflow is detectable in one query."""
+    calls: list[int | None] = []
+    orig = fake_bot.db.get_wc_user_bets
+
+    async def spy(user_id, status=None, limit=None):
+        calls.append(limit)
+        return await orig(user_id, status=status, limit=limit)
+
+    fake_bot.db.get_wc_user_bets = spy
+    panel = await _open_panel(fake_bot)
+    panel.show_history = True
+    await panel.refresh()
+    assert WCBET_MY_BETS_LIMIT + 1 in calls
+
+
+# ── odds multiplier (house boost) ───────────────────────────────────────────
+
+async def test_multiplier_boosts_live_odds_in_panel(fake_bot, clock, fake_odds):
+    fake_odds[1] = MATCH_1_ODDS
+    fake_bot.db.odds_multiplier = Decimal("1.5")
+    panel = await _open_panel(fake_bot)
+    panel.selected_match_id = 1
+    await panel.refresh()
+    # 1.43*1.5=2.15, 4.40*1.5=6.60, 8.50*1.5=12.75
+    assert "2.15" in panel._outcome_buttons["home"].label
+    assert "6.60" in panel._outcome_buttons["draw"].label
+    assert "12.75" in panel._outcome_buttons["away"].label
+
+
+async def test_multiplier_boosts_flat_fallback(fake_bot, clock):
+    # No live odds in holder -> flat fallback (1.5) gets boosted by 2x -> 3.00.
+    fake_bot.db.odds_multiplier = Decimal("2")
+    panel = await _open_panel(fake_bot)
+    panel.selected_match_id = 1
+    await panel.refresh()
+    assert panel._odds_for(1)["home"] == Decimal("3.00")
+
+
+async def test_place_snapshots_boosted_odds(fake_bot, interaction, clock, fake_odds):
+    fake_odds[1] = MATCH_1_ODDS
+    fake_bot.db.odds_multiplier = Decimal("1.5")
+    panel = await _armed_panel(fake_bot, outcome="away", stake=500)
+    # Arm picks up the boosted away price (8.50 -> 12.75).
+    assert panel._armed_odds == Decimal("12.75")
+    await panel._on_place_bet(interaction)
+    placed = fake_bot.db.place_calls[-1]
+    assert placed["odds"] == Decimal("12.75")
+    # payout = floor(500 * 12.75) = 6375
+    assert betting.payout(placed["stake"], placed["odds"]) == 6375

@@ -30,6 +30,13 @@ WCBET_AUTO_SETTLE: bool = get_int_env("WCBET_AUTO_SETTLE", 0) == 1
 # post-kickoff window, so idle traffic is zero).
 WCBET_RESULTS_POLL_MINUTES: int = get_int_env("WCBET_RESULTS_POLL_MINUTES", 5)
 
+# Max bets rendered in the panel's "My bets" view. Discord's Components V2
+# TextDisplay is capped at 4,000 chars; a heavy bettor's full history
+# across the 72-match group stage (plus settled/replaced rows) would blow
+# past that and the whole panel would fail to render. Cap the view and
+# point overflow at `$wcbethistory` for the full wallet log.
+WCBET_MY_BETS_LIMIT: int = 20
+
 # Re-exported so the cog only imports from one place.
 WCBET_LOG_CHANNEL_ID: int = WORLD_CUP_LOG_CHANNEL_ID
 
@@ -40,6 +47,7 @@ __all__ = [
     "WCBET_AUTO_SETTLE",
     "WCBET_DAILY_ALLOWANCE",
     "WCBET_LOG_CHANNEL_ID",
+    "WCBET_MY_BETS_LIMIT",
     "WCBET_NOTIFICATION_CHANNEL_ID",
     "WCBET_ODDS",
     "WCBET_RESULTS_POLL_MINUTES",

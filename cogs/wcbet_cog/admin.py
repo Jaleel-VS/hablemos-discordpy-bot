@@ -5,6 +5,7 @@ Owner-only prefix command group `$wcbetadmin` — record match results
 and view participation stats.
 """
 import logging
+from decimal import Decimal, InvalidOperation
 
 import discord
 from discord.ext import commands
@@ -24,6 +25,10 @@ logger = logging.getLogger(__name__)
 class WCBetAdmin(BaseCog):
     """Owner-only `$wcbetadmin` admin group."""
 
+    # Bounds for the house odds multiplier (`$wcbetadmin multiplier`).
+    _MULTIPLIER_MIN = Decimal("0.5")
+    _MULTIPLIER_MAX = Decimal("10")
+
     def __init__(self, bot: commands.Bot) -> None:
         super().__init__(bot)
 
@@ -31,7 +36,7 @@ class WCBetAdmin(BaseCog):
     @commands.is_owner()
     async def wcbetadmin(self, ctx: commands.Context) -> None:
         """Admin tools for the World Cup betting feature."""
-        await ctx.send("Usage: `$wcbetadmin <result|void|stats>`")
+        await ctx.send("Usage: `$wcbetadmin <result|void|stats|multiplier>`")
 
     # ---------- result ----------
 
@@ -103,6 +108,58 @@ class WCBetAdmin(BaseCog):
             summary["winners"], summary["losers"], summary["total_paid"],
         )
         await self._log_settlement(ctx.guild, fixture, home_score, away_score, summary)
+
+    @wcbetadmin.command(name="multiplier")
+    @commands.is_owner()
+    async def multiplier(
+        self, ctx: commands.Context, value: str | None = None,
+    ) -> None:
+        """Show or set the house odds multiplier applied to all offered lines.
+
+        Affects only NEW bets — already-placed bets keep their snapshotted
+        odds. Boosts both real ESPN lines and the flat fallback.
+        Examples:
+            $wcbetadmin multiplier        → show current
+            $wcbetadmin multiplier 1.5    → juice all odds by 1.5x
+            $wcbetadmin multiplier 1      → reset to no boost
+        """
+        if value is None:
+            current = await self.bot.db.get_wc_odds_multiplier()
+            await ctx.send(
+                embed=blue_embed(
+                    f"Current odds multiplier: **{current}x**\n"
+                    "Set with `$wcbetadmin multiplier <value>` "
+                    f"(allowed range {self._MULTIPLIER_MIN}–{self._MULTIPLIER_MAX}).",
+                ),
+            )
+            return
+
+        try:
+            parsed = Decimal(value).quantize(Decimal("0.01"))
+        except (InvalidOperation, ValueError):
+            await ctx.send(
+                embed=red_embed("Couldn't parse that — give a number like `1.5`."),
+            )
+            return
+
+        if not self._MULTIPLIER_MIN <= parsed <= self._MULTIPLIER_MAX:
+            await ctx.send(
+                embed=red_embed(
+                    f"Multiplier must be between {self._MULTIPLIER_MIN} and "
+                    f"{self._MULTIPLIER_MAX}.",
+                ),
+            )
+            return
+
+        await self.bot.db.set_wc_odds_multiplier(parsed)
+        await ctx.send(
+            embed=green_embed(
+                f"🎲 Odds multiplier set to **{parsed}x**. "
+                "Applies to new bets from now on (existing bets keep their "
+                "locked-in odds).",
+            ),
+        )
+        logger.info("wcbet: odds multiplier set to %s by %s", parsed, ctx.author)
 
     # ---------- void ----------
 

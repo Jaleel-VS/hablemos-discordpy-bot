@@ -22,6 +22,36 @@ class MatchAlreadySettledError(Exception):
 class WCBetsMixin(DatabaseMixin):
     """Queries for the `wc_bet_wallets`, `wc_bets`, and `wc_match_results` tables."""
 
+    # Key in the `bot_settings` KV store holding the odds multiplier as
+    # hundredths (e.g. 150 = 1.50x). Stored as an int because bot_settings
+    # is BIGINT-valued; converted to/from Decimal at the boundary so money
+    # math never touches a float.
+    _ODDS_MULTIPLIER_KEY = "wcbet_odds_multiplier"
+    _ODDS_MULTIPLIER_DEFAULT = Decimal("1.5")
+
+    async def get_wc_odds_multiplier(self) -> Decimal:
+        """Current odds multiplier applied to all offered lines.
+
+        Returns the configured value (Decimal, 2dp) or the default when
+        unset. Reads from the shared `bot_settings` KV store as hundredths.
+        """
+        row = await self._fetchrow(
+            'SELECT setting_value FROM bot_settings WHERE setting_key = $1',
+            self._ODDS_MULTIPLIER_KEY,
+        )
+        if row is None or row["setting_value"] is None:
+            return self._ODDS_MULTIPLIER_DEFAULT
+        return (Decimal(row["setting_value"]) / 100).quantize(Decimal("0.01"))
+
+    async def set_wc_odds_multiplier(self, multiplier: Decimal) -> None:
+        """Persist the odds multiplier (stored as hundredths in bot_settings)."""
+        hundredths = int((multiplier * 100).to_integral_value())
+        await self._execute(
+            'INSERT INTO bot_settings (setting_key, setting_value) VALUES ($1, $2) '
+            'ON CONFLICT (setting_key) DO UPDATE SET setting_value = $2',
+            self._ODDS_MULTIPLIER_KEY, hundredths,
+        )
+
     async def _log_balance_event(
         self,
         conn,
@@ -215,21 +245,27 @@ class WCBetsMixin(DatabaseMixin):
             out.append(row)
         return out
 
-    async def get_wc_user_bets(self, user_id: int, status: str | None = None) -> list:
-        """Return the user's bets, optionally filtered by status, newest first."""
-        if status is None:
-            return await self._fetch(
-                'SELECT user_id, match_id, guild_id, outcome, stake, odds, '
-                'status, payout, placed_at, settled_at '
-                'FROM wc_bets WHERE user_id = $1 ORDER BY placed_at DESC',
-                user_id,
-            )
-        return await self._fetch(
+    async def get_wc_user_bets(
+        self, user_id: int, status: str | None = None, limit: int | None = None,
+    ) -> list:
+        """Return the user's bets, optionally filtered by status, newest first.
+
+        When limit is given, only the most recent ``limit`` rows are returned.
+        """
+        sql = (
             'SELECT user_id, match_id, guild_id, outcome, stake, odds, '
             'status, payout, placed_at, settled_at '
-            'FROM wc_bets WHERE user_id = $1 AND status = $2 ORDER BY placed_at DESC',
-            user_id, status,
+            'FROM wc_bets WHERE user_id = $1'
         )
+        args: list = [user_id]
+        if status is not None:
+            args.append(status)
+            sql += f' AND status = ${len(args)}'
+        sql += ' ORDER BY placed_at DESC'
+        if limit is not None:
+            args.append(limit)
+            sql += f' LIMIT ${len(args)}'
+        return await self._fetch(sql, *args)
 
     async def get_wc_user_bet(self, user_id: int, match_id: int):
         """Return the user's pending bet on a match, or None."""

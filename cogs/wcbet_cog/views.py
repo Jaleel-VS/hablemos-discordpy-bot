@@ -37,6 +37,7 @@ from . import betting, espn
 from .config import (
     WCBET_DAILY_ALLOWANCE,
     WCBET_LOG_CHANNEL_ID,
+    WCBET_MY_BETS_LIMIT,
     WCBET_ODDS,
     WCBET_STARTING_BALANCE,
 )
@@ -59,9 +60,14 @@ STATUS_EMOJI: dict[str, str] = {
 }
 
 
-def _flat_odds() -> MatchOdds:
-    """Fallback odds when DraftKings has no line for a match."""
-    return MatchOdds(home=WCBET_ODDS, draw=WCBET_ODDS, away=WCBET_ODDS)
+def _flat_odds(multiplier: Decimal = Decimal(1)) -> MatchOdds:
+    """Fallback odds when DraftKings has no line, scaled by `multiplier`.
+
+    The boost applies to the flat fallback too, so a match with no
+    published line is juiced consistently with the rest.
+    """
+    boosted = (WCBET_ODDS * multiplier).quantize(Decimal("0.01"))
+    return MatchOdds(home=boosted, draw=boosted, away=boosted)
 
 
 def _now_utc() -> datetime:
@@ -281,6 +287,9 @@ class BetPanelView(ui.LayoutView):
         self._pending: dict[int, object] = {}
         self._history: list = []
         self._odds: dict[int, MatchOdds] = {}
+        # House odds multiplier (1 = no boost); loaded from the DB each
+        # refresh so a mid-session change takes effect on the next render.
+        self._multiplier: Decimal = Decimal(1)
         # Odds the Place button displayed when armed — drift guard.
         self._armed_odds: Decimal | None = None
         # Rebuilt-item references (also used by tests to assert state).
@@ -305,8 +314,8 @@ class BetPanelView(ui.LayoutView):
         return None
 
     def _odds_for(self, match_id: int) -> MatchOdds:
-        """Decimal odds for a match, falling back to the flat default."""
-        return self._odds.get(match_id, _flat_odds())
+        """Decimal odds for a match, falling back to the (boosted) flat default."""
+        return self._odds.get(match_id, _flat_odds(self._multiplier))
 
     async def refresh(self) -> None:
         """Recompute fixtures, odds, and the user's bets, then rebuild."""
@@ -324,7 +333,8 @@ class BetPanelView(ui.LayoutView):
         if self.selected_stake is not None and self.selected_stake > self.balance:
             self.selected_stake = None
 
-        self._odds = await espn.fetch_match_odds(self._fixtures)
+        self._multiplier = await self.bot.db.get_wc_odds_multiplier()
+        self._odds = await espn.fetch_match_odds(self._fixtures, self._multiplier)
 
         self._pending = {}
         for fixture in self._fixtures:
@@ -333,7 +343,12 @@ class BetPanelView(ui.LayoutView):
                 self._pending[fixture["match_id"]] = bet
 
         if self.show_history:
-            self._history = await self.bot.db.get_wc_user_bets(self.user_id)
+            # Fetch one extra row past the display cap so we can tell whether
+            # older bets exist (and show the overflow footer) without a second
+            # query. Discord's TextDisplay caps the body at 4,000 chars.
+            self._history = await self.bot.db.get_wc_user_bets(
+                self.user_id, limit=WCBET_MY_BETS_LIMIT + 1
+            )
 
         self._rebuild()
 
@@ -568,7 +583,7 @@ class BetPanelView(ui.LayoutView):
             # bet at the flat fallback price instead of being blocked.
             if self._odds_blip and armed:
                 fallback = ui.Button(
-                    label=f"Place @ {WCBET_ODDS}",
+                    label=f"Place @ {_flat_odds(self._multiplier)['home']}",
                     emoji="⚠️",
                     style=ButtonStyle.danger,
                 )
@@ -581,10 +596,14 @@ class BetPanelView(ui.LayoutView):
         self.add_item(ui.Container(*children, accent_colour=Color.blurple()))
 
     def _rebuild_history(self) -> None:
-        """Render the user's bet history with a Back button."""
+        """Render the user's bet history (capped) with a Back button."""
         if self._history:
+            # refresh() over-fetches by one; if we got more than the cap, the
+            # extra row signals older bets exist. Render only the cap.
+            overflow = len(self._history) > WCBET_MY_BETS_LIMIT
+            shown = self._history[:WCBET_MY_BETS_LIMIT]
             lines = []
-            for bet in self._history:
+            for bet in shown:
                 fixture = FIXTURE_BY_ID.get(bet["match_id"])
                 match_label = (
                     f"{_team_label(fixture['home'])} vs {_team_label(fixture['away'])}"
@@ -601,6 +620,11 @@ class BetPanelView(ui.LayoutView):
                 if status == "won" and bet["payout"] is not None:
                     line += f" (paid **{bet['payout']:,}**)"
                 lines.append(line)
+            if overflow:
+                lines.append(
+                    f"\n*Showing your latest {WCBET_MY_BETS_LIMIT} bets — "
+                    "use `$wcbethistory` for your full wallet log.*"
+                )
             body = "\n".join(lines)
         else:
             body = "No bets yet — place your first one!"
@@ -679,13 +703,15 @@ class BetPanelView(ui.LayoutView):
             return
 
         match_id = fixture["match_id"]
-        current_map = await espn.fetch_match_odds([fixture])
+        current_map = await espn.fetch_match_odds([fixture], self._multiplier)
         fresh = current_map.get(match_id)
-        if fresh is None and armed != WCBET_ODDS:
+        flat = _flat_odds(self._multiplier)
+        flat_price = flat[outcome]
+        if fresh is None and armed != flat_price:
             # We armed at a real DraftKings price but the re-fetch returned
             # nothing for this match. That is almost always a transient ESPN
             # blip, not the line being pulled — silently dropping to the flat
-            # 1.5 fallback would quietly reprice an underdog bet downward.
+            # fallback would quietly reprice an underdog bet downward.
             # Skip refresh() (it would re-fetch the now-empty odds and clobber
             # the armed price); just surface the notice so a retry stays at
             # the armed price, and expose the explicit fallback button.
@@ -693,12 +719,12 @@ class BetPanelView(ui.LayoutView):
             self.notice = (
                 "Couldn't refresh the live odds just now — press **Place bet** "
                 f"to retry at your armed price (**{armed}**), or use "
-                f"**Place @ {WCBET_ODDS}** to bet at the fallback price."
+                f"**Place @ {flat_price}** to bet at the fallback price."
             )
             self._rebuild()
             await interaction.response.edit_message(view=self)
             return
-        current = (fresh or _flat_odds())[outcome]
+        current = (fresh or flat)[outcome]
         if current != armed:
             self._odds_blip = False
             self.notice = (
@@ -722,7 +748,9 @@ class BetPanelView(ui.LayoutView):
             await self.refresh()
             await interaction.response.edit_message(view=self)
             return
-        await self._commit_bet(interaction, fixture, outcome, stake, WCBET_ODDS)
+        await self._commit_bet(
+            interaction, fixture, outcome, stake, _flat_odds(self._multiplier)[outcome],
+        )
 
     async def _commit_bet(
         self,
@@ -867,12 +895,13 @@ class ParlayPanelView(ui.LayoutView):
         self.stake: int | None = None
         self._fixtures: list[Fixture] = []
         self._odds: dict[int, MatchOdds] = {}
+        self._multiplier: Decimal = Decimal(1)
 
     async def interaction_check(self, interaction: Interaction) -> bool:
         return interaction.user.id == self.user_id
 
     def _odds_for(self, match_id: int) -> MatchOdds:
-        return self._odds.get(match_id, _flat_odds())
+        return self._odds.get(match_id, _flat_odds(self._multiplier))
 
     def _combined(self) -> Decimal:
         return betting.combined_odds([Decimal(str(leg["odds"])) for leg in self.legs])
@@ -891,7 +920,8 @@ class ParlayPanelView(ui.LayoutView):
             self.sel_outcome = None
         if self.stake is not None and self.stake > self.balance:
             self.stake = None
-        self._odds = await espn.fetch_match_odds(self._fixtures)
+        self._multiplier = await self.bot.db.get_wc_odds_multiplier()
+        self._odds = await espn.fetch_match_odds(self._fixtures, self._multiplier)
         self._rebuild()
 
     def _leg_match_ids(self) -> set[int]:

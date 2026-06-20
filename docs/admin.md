@@ -131,6 +131,7 @@ full feature.
 | `$wcbetadmin result <match_id> <score>` | Record a final score (e.g. `$wcbetadmin result 1 2-1`; also accepts `2:1` / `2 1`). Derives home/draw/away, settles every pending bet on the match atomically (winners credited `floor(stake × 1.5)`), and posts a summary to `#world-cup-log`. Rejects duplicates. |
 | `$wcbetadmin void <match_id>` | Refund all pending stakes on a match and mark the bets void (postponements/abandonments). |
 | `$wcbetadmin stats` | Wallet count, pending bets, total coins staked, top balance. |
+| `$wcbetadmin multiplier [value]` | Show or set the house odds multiplier applied to all offered lines (real ESPN lines **and** the flat fallback). No arg shows the current value; `$wcbetadmin multiplier 1.5` juices every price 1.5x; `1` resets to no boost. Allowed range 0.5–10. Affects **new** bets only — already-placed bets keep their snapshotted odds. |
 | `$wcbettest` | Owner-only test entrypoint for the user flow, retained alongside the public `$wcbet` (defined in `main.py`, not part of this group). |
 
 ## `$wcbetmod` (group, `manage_messages`)

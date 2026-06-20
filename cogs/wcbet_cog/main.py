@@ -31,6 +31,7 @@ from .config import (
     WCBET_AUTO_SETTLE,
     WCBET_LOG_CHANNEL_ID,
     WCBET_NOTIFICATION_CHANNEL_ID,
+    WCBET_ODDS,
     WCBET_RESULTS_POLL_MINUTES,
 )
 from .mod import WCBetMod
@@ -54,9 +55,10 @@ EVENT_LABELS = {
 OUTCOME_ORDER = ('home', 'draw', 'away')
 
 
-def _fallback_board_odds() -> dict[str, Decimal]:
-    """Flat fallback odds for board rendering when ESPN has no line."""
-    return {'home': Decimal('1.50'), 'draw': Decimal('1.50'), 'away': Decimal('1.50')}
+def _fallback_board_odds(multiplier: Decimal = Decimal(1)) -> dict[str, Decimal]:
+    """Flat fallback odds for board rendering, scaled by the house multiplier."""
+    boosted = (WCBET_ODDS * multiplier).quantize(Decimal('0.01'))
+    return {'home': boosted, 'draw': boosted, 'away': boosted}
 
 
 def _build_profile_embed(member: discord.Member, p: dict) -> discord.Embed:
@@ -315,7 +317,8 @@ class WCBet(BaseCog):
             await ctx.send(view=_build_board_page([], 0))
             return
 
-        odds_map = await espn.fetch_match_odds(fixtures)
+        multiplier = await self.bot.db.get_wc_odds_multiplier()
+        odds_map = await espn.fetch_match_odds(fixtures, multiplier)
         board_map = await self.bot.db.get_wc_pending_market_board(
             [fixture['match_id'] for fixture in fixtures],
         )
@@ -329,7 +332,7 @@ class WCBet(BaseCog):
         ]
         for row in rows:
             if row['odds'] is None:
-                row['odds'] = _fallback_board_odds()
+                row['odds'] = _fallback_board_odds(multiplier)
         await ctx.send(view=_build_board_page(rows, 0))
 
     # ---------- results polling ----------

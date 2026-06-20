@@ -27,7 +27,10 @@ notes it will be replaced. `Custom amount…` is the only popup; it just
 sets the stake and re-arms the panel — it never commits. Every step
 re-validates kickoff server-side; a match that starts mid-flow drops out
 and resets the selection. A **Close** button dismisses the panel; the
-`My bets` view lists the user's bet history with **Back**/**Close**.
+timeout. The `My bets` view lists the user's bet history with **Back**/**Close**;
+it shows the **latest `WCBET_MY_BETS_LIMIT` (20)** bets to stay within
+Discord's 4,000-char Components V2 `TextDisplay` cap, with a
+`use $wcbethistory` footer when older bets exist.
 
 Odds are DraftKings close lines parsed from the same ESPN scoreboard
 payload the results poller uses (`results.parse_event_odds` /
@@ -44,6 +47,18 @@ instead of being blocked. Matches with no published line (or a
 persistent fetch failure) fall back to flat `WCBET_ODDS` (1.5) for all
 three outcomes — never a mix of real and fallback legs. Payout math is
 pure integer arithmetic (`stake * int(odds * 100) // 100`).
+
+A configurable **house odds multiplier** (`$wcbetadmin multiplier`,
+default 1.5x, stored in `bot_settings` as hundredths) scales every
+offered line above ESPN's published price — applied to both real
+DraftKings lines and the flat fallback at the display/arm boundary
+(`espn.fetch_match_odds` / `results.apply_odds_multiplier` /
+`_flat_odds`). Because the boosted price is what gets displayed, armed,
+snapshotted, and paid, the snapshot/drift invariants below hold
+unchanged. Changing the multiplier only affects **new** bets; existing
+bets keep their locked-in odds. The raw ESPN prices stay cached
+unscaled, so a multiplier change takes effect on the next render without
+busting the odds cache.
 
 Each user has one bet per match, replaceable until kickoff — replacing
 refunds the old stake and deducts the new one in a single DB
@@ -86,7 +101,8 @@ notification channel alongside single-bet results.
 
 See [`../admin.md`](../admin.md#wcbetadmin-group-owner-only) —
 `$wcbetadmin result <match_id> <score>`, `$wcbetadmin void <match_id>`,
-`$wcbetadmin stats` (owner-only, match-wide settlement).
+`$wcbetadmin stats`, `$wcbetadmin multiplier [value]` (owner-only,
+match-wide settlement + odds-boost control).
 
 ### Moderator commands (`manage_messages`)
 
@@ -159,7 +175,9 @@ See [`../database.md`](../database.md#world-cup-betting).
 |--------------------|----------|---------|---------|
 | `WCBET_STARTING_BALANCE` | `cogs/wcbet_cog/config.py` | 10,000 | Coins granted on opt-in. |
 | `WCBET_DAILY_ALLOWANCE` | `cogs/wcbet_cog/config.py` | 2,500 | Lazy daily top-up. |
-| `WCBET_ODDS` | `cogs/wcbet_cog/config.py` | Decimal 1.5 | Fallback odds when no DraftKings line exists; payout math is `floor(stake × odds)` in `betting.payout`. |
+| `WCBET_ODDS` | `cogs/wcbet_cog/config.py` | Decimal 1.5 | Fallback odds when no DraftKings line exists; payout math is `floor(stake × odds)` in `betting.payout`. (The house multiplier scales this too.) |
+| Odds multiplier | `bot_settings` (`wcbet_odds_multiplier`, hundredths) via `$wcbetadmin multiplier` | 1.5 | House boost applied to every offered line (real + fallback). Set/reset at runtime; new bets only. |
+| `WCBET_MY_BETS_LIMIT` | `cogs/wcbet_cog/config.py` | 20 | Max bets rendered in the panel's `My bets` view (Discord's `TextDisplay` is capped at 4,000 chars). Overflow points users at `$wcbethistory`. |
 | `WORLD_CUP_LOG_CHANNEL_ID` | `cogs/worldcup_cog/config.py` (re-exported as `WCBET_LOG_CHANNEL_ID`) | baked-in | Bet/settlement log channel, shared with all World Cup cogs. |
 | `WCBET_AUTO_SETTLE` | env, read in `cogs/wcbet_cog/config.py` | 0 (propose) | 1 = poller settles bets itself; 0 = it only posts the command to run. |
 | `WCBET_RESULTS_POLL_MINUTES` | env, read in `cogs/wcbet_cog/config.py` | 5 | Poll interval for the results loop. |
@@ -169,6 +187,12 @@ See [`../database.md`](../database.md#world-cup-betting).
 - **Odds drift**: the Place button commits at re-resolved odds and
   refuses if the price moved from what it displayed (re-arms at the new
   price instead). Settlement always pays each bet's **stored** odds.
+- **Odds multiplier**: the house boost (`$wcbetadmin multiplier`) scales
+  real lines *and* the flat fallback. It is read fresh on every panel
+  refresh, the drift re-check, parlay legs, and the `$wcbetboard`, so all
+  surfaces agree. Stored as hundredths in `bot_settings`; a value of 1
+  disables the boost. Only new bets are affected — changing it never
+  re-prices a placed bet.
 - **Odds-fetch blip**: if a bet armed at a real DraftKings price hits a
   failed re-fetch at placement, it is **not** repriced to the flat 1.5
   fallback. The armed price is kept for a retry and a `Place @ 1.5`
@@ -189,6 +213,12 @@ See [`../database.md`](../database.md#world-cup-betting).
   timeout.
 - **V2 constraints**: LayoutView messages cannot carry `content=`/embeds;
   the panel is view-only. The prompt message uses a classic `ui.View`.
+- **My bets cap**: the `My bets` view renders only the latest
+  `WCBET_MY_BETS_LIMIT` (20) bets. A heavy bettor's full history across
+  the 72-match group stage (plus settled/replaced rows) would exceed
+  Discord's 4,000-char `TextDisplay` limit and fail the whole panel
+  render; `refresh()` over-fetches one row past the cap to detect
+  overflow and append a `$wcbethistory` footer in a single query.
 
 ## Testing & debugging
 

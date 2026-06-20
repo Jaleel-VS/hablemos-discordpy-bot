@@ -9,6 +9,7 @@ from cogs.wcbet_cog.results import (
     RESULT_WINDOW,
     MatchOdds,
     american_to_decimal,
+    apply_odds_multiplier,
     fixtures_awaiting_result,
     match_odds,
     match_results,
@@ -244,3 +245,28 @@ def test_match_odds_skips_unpriced_and_unmatched() -> None:
         _event_with_odds(MATCH_12, _odds_block()),     # not in fixtures arg
     ]}
     assert match_odds(payload, [MATCH_2]) == {}
+
+
+# ── odds multiplier (house boost) ───────────────────────────────────────────
+
+def test_apply_odds_multiplier_scales_all_legs() -> None:
+    odds = MatchOdds(home=Decimal("1.43"), draw=Decimal("4.40"), away=Decimal("8.50"))
+    boosted = apply_odds_multiplier(odds, Decimal("1.5"))
+    assert boosted == MatchOdds(
+        home=Decimal("2.15"), draw=Decimal("6.60"), away=Decimal("12.75"),
+    )
+
+
+def test_apply_odds_multiplier_identity() -> None:
+    odds = MatchOdds(home=Decimal("1.43"), draw=Decimal("4.40"), away=Decimal("8.50"))
+    assert apply_odds_multiplier(odds, Decimal("1")) == odds
+
+
+def test_apply_odds_multiplier_rounds_half_up() -> None:
+    # 1.43 * 1.05 = 1.5015 -> 1.50 (rounds down); 4.40 * 1.05 = 4.62 exact.
+    odds = MatchOdds(home=Decimal("1.43"), draw=Decimal("4.40"), away=Decimal("2.005"))
+    boosted = apply_odds_multiplier(odds, Decimal("1.05"))
+    assert boosted["home"] == Decimal("1.50")
+    assert boosted["draw"] == Decimal("4.62")
+    # 2.005 * 1.05 = 2.10525 -> 2.11
+    assert boosted["away"] == Decimal("2.11")
