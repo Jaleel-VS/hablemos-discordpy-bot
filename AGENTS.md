@@ -52,11 +52,13 @@ Always use `self.bot.db` (the shared `Database` instance). All queries go throug
 - All code must pass `ruff check` before committing
 
 ### Error Handling
+- Handle values that can be `None` Rust-esque — deal with the absence explicitly at the boundary (guard clause / early return / explicit default, like `unwrap_or`) instead of letting `None` propagate implicitly and fail later. Treat optionals like Rust's `Option`: handle the `None` case deliberately rather than assuming presence.
 - Always bounds-check string/list indexing in parsers — the bot must never crash on user input
 - Wrap Discord API calls (`fetch_message`, `get_channel`, etc.) in try/except with specific exceptions (`NotFound`, `Forbidden`, `HTTPException`)
 - Use `BaseCog.cog_command_error` for cog-level error handling; don't silently swallow exceptions
 - Never leak raw exception messages to users — show a friendly message and log the traceback server-side
 - On hot paths (e.g., `on_message` listeners), suppress repeated errors to avoid log flooding
+- When verifying discord.py behavior/API, check the installed package source in the local `.venv/` first (ground truth for the exact runtime version); only fall back to the discord.py docs online if no local `.venv/` is available
 
 ### Naming
 - Cog directories: `<feature>_cog/`
