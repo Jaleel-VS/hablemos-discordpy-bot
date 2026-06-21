@@ -32,6 +32,10 @@ users to discover what the bot can do.
 - Shows all visible cogs with their slash and prefix commands.
 - Owner-only commands (detected via `@is_owner()` check) are excluded.
 - If `[category]` is provided, shows only that cog's commands.
+- Discord embeds allow at most 25 fields. When there are more visible
+  cogs than fit, the first 24 are shown as fields and the remainder are
+  listed in a final **More categories** field pointing to
+  `/help <category>`.
 - Commands are formatted as `` `/command` — description `` or
   `` `$command` — description ``.
 - Groups (like `/league`) show the group name + description, then

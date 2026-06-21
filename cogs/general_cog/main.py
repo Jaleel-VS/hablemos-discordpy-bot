@@ -142,7 +142,17 @@ class General(BaseCog):
                 ),
                 color=Color.blue(),
             )
-            for cog_name, cog_desc, slash_lines, prefix_lines in entries:
+            # Discord embeds allow at most 25 fields. Reserve one field for
+            # an overflow notice when there are more cogs than will fit.
+            MAX_FIELDS = 25
+            if len(entries) > MAX_FIELDS:
+                shown = entries[: MAX_FIELDS - 1]
+                overflow = entries[MAX_FIELDS - 1 :]
+            else:
+                shown = entries
+                overflow = []
+
+            for cog_name, cog_desc, slash_lines, prefix_lines in shown:
                 field_name, field_value = _build_cog_field(
                     cog_name, cog_desc, slash_lines, prefix_lines,
                 )
@@ -150,6 +160,13 @@ class General(BaseCog):
                 if len(field_value) > 1024:
                     field_value = field_value[:1021] + "…"
                 embed.add_field(name=field_name, value=field_value, inline=False)
+
+            if overflow:
+                more = ", ".join(f"`{name}`" for name, *_ in overflow)
+                value = f"Use `/help <category>` to view:\n{more}"
+                if len(value) > 1024:
+                    value = value[:1021] + "…"
+                embed.add_field(name="More categories", value=value, inline=False)
 
             embed.set_footer(text="Use /help <category> for detailed information")
 
