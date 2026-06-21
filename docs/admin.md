@@ -121,6 +121,18 @@ for the full feature.
 | `$wcpredict clearwinner` | Reset the recorded champion (un-grades the leaderboard). |
 | `$wcpredict stats` | Show participation totals and per-team distribution. |
 
+## `$vocatchadmin` (group, owner-only)
+
+Vocab Catch minigame admin. See [`cogs/vocabcatch.md`](./cogs/vocabcatch.md).
+
+| Subcommand | Description |
+|-----------|-------------|
+| `$vocatchadmin seed` | Seed the starter card pool (no-op if it already has cards). |
+| `$vocatchadmin spawn` | Force a spawn in the **current** channel (must be a configured game channel). |
+| `$vocatchadmin addcard <1-5> "<word_es>" <word_en>` | Add a bidirectional card to the pool. |
+| `$vocatchadmin preview <card_id> [mode]` | Render a card revealed in a mode (`show_es`/`en_to_es`/`es_to_en`) to preview the art. |
+| `$vocatchadmin stats` | Active card count + configured channels and their modes. |
+
 ## `$wcbetadmin` (group, owner-only)
 
 World Cup betting admin. See [`cogs/wcbet.md`](./cogs/wcbet.md) for the

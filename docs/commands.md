@@ -25,6 +25,17 @@ commands are shown as `/name`.
 | `$wcbethistory` | Your recent World Cup betting balance history: daily allowance, bets placed, wins, refunds, parlay events, resulting balance, and relative timestamps. |
 | `$wcbetboard` | Public market board for the currently bettable matches: current odds plus aggregate pending singles on home/draw/away (coins staked and bettor counts). |
 
+## Vocab Catch
+
+Bilingual "catch the card" minigame across three channels (Beginner-EN,
+Beginner-ES, General). See [`cogs/vocabcatch.md`](./cogs/vocabcatch.md).
+
+| Command | Description |
+|---------|-------------|
+| `catch <word>` | (No prefix.) In a spawn channel, catch the active wild card by typing the answer word. The answer language depends on the channel: Beginner-EN shows English → type Spanish; Beginner-ES shows Spanish → type English; General shows Spanish → type Spanish. Accent/case-insensitive, article optional. First correct catch wins. |
+| `$vocadex [@user]` | Show your (or another user's) vocab-card collection: caught words (ES — EN), duplicate counts, and a distinct/total/points footer. |
+| `$vocatchtop` | Leaderboard of top collectors by points (rarer cards score more). |
+
 ## Language League
 
 See [`cogs/league.md`](./cogs/league.md) for the full feature.

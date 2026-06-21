@@ -875,4 +875,47 @@ async def initialize_schema(pool):
             ON wc_parlay_legs(match_id)
         ''')
 
+        # ── Vocab Catch (collectible vocab-card minigame) ──
+        # Curated, shared word bank that cards spawn from. Distinct from
+        # the per-user `vocab_notes` table (personal notes). Cards are
+        # bidirectional: each stores the Spanish and English word plus an
+        # optional example per language, so a channel can prompt in either
+        # language and accept the other as the catch answer.
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS vocab_card_pool (
+                card_id        SERIAL PRIMARY KEY,
+                word_es        TEXT NOT NULL,
+                word_en        TEXT NOT NULL,
+                part_of_speech TEXT,
+                gender         TEXT,
+                example_es     TEXT,
+                example_en     TEXT,
+                rarity         SMALLINT NOT NULL DEFAULT 1
+                               CHECK (rarity BETWEEN 1 AND 5),
+                active         BOOLEAN NOT NULL DEFAULT TRUE
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_vocab_card_pool_active
+            ON vocab_card_pool(active, rarity)
+        ''')
+
+        # Per-user inventory; duplicates increment `count`.
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS vocab_card_catches (
+                user_id      BIGINT NOT NULL,
+                card_id      INTEGER NOT NULL REFERENCES vocab_card_pool(card_id),
+                count        INTEGER NOT NULL DEFAULT 1 CHECK (count > 0),
+                first_caught TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                last_caught  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                PRIMARY KEY (user_id, card_id)
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_vocab_card_catches_user
+            ON vocab_card_catches(user_id)
+        ''')
+
         logger.info("Database schema initialized")

@@ -118,6 +118,18 @@ Adding a new domain:
   `guild_id`, `banned_by`, optional `reason`, `created_at`. Checked at
   panel entry; managed by the `$wcbetmod` moderator group.
 
+### Vocab Catch
+- `vocab_card_pool` — curated, shared **bidirectional** word bank cards
+  spawn from (`card_id` SERIAL PK): `word_es`, `word_en`,
+  `part_of_speech`, `gender`, `example_es`, `example_en`, `rarity`
+  (1-5), `active`. Indexed on `(active, rarity)` for weighted spawns.
+  Distinct from the per-user `vocab_notes` table. The channel mode picks
+  which language is the prompt vs. the catch answer.
+  (`VocabCatchMixin` in `db/vocab_catch.py`.)
+- `vocab_card_catches` — per-user inventory, PK `(user_id, card_id)`:
+  `count` (increments on duplicate catches), `first_caught`/`last_caught`.
+  Indexed on `user_id`. See [`cogs/vocabcatch.md`](./cogs/vocabcatch.md).
+
 ## Querying conventions
 
 - Use the `_fetch` / `_fetchrow` / `_fetchval` / `_execute` helpers

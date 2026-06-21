@@ -49,6 +49,7 @@ from db.schema import initialize_schema
 from db.settings import SettingsMixin
 from db.tasks import TasksMixin
 from db.vocab import VocabMixin
+from db.vocab_catch import VocabCatchMixin
 
 
 class Database(
@@ -69,6 +70,7 @@ class Database(
     WCPredictionsMixin,
     WCBetsMixin,
     NoGifMixin,
+    VocabCatchMixin,
 ):
     def __init__(self, database_url: str):
         self.pool: asyncpg.Pool | None = None
