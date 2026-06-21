@@ -1005,10 +1005,10 @@ class ParlayPanelView(ui.LayoutView):
 
         # Stake select + place, enabled once at MIN_LEGS.
         ready = len(self.legs) >= self.MIN_LEGS
-        if ready:
-            amounts = betting.stake_presets(self.balance)
-            if self.stake is not None and self.stake not in amounts:
-                amounts.insert(0, self.stake)
+        amounts = betting.stake_presets(self.balance) if ready else []
+        if ready and self.stake is not None and self.stake not in amounts:
+            amounts.insert(0, self.stake)
+        if ready and amounts:
             combined = self._combined()
             stake_options = [
                 SelectOption(
@@ -1026,7 +1026,8 @@ class ParlayPanelView(ui.LayoutView):
             stake_select.callback = self._make_stake_cb(stake_select)
             children.append(ui.ActionRow(stake_select))
 
-        armed = ready and self.stake is not None
+        # Broke with enough legs: no stake to offer, so disarm placement.
+        armed = ready and bool(amounts) and self.stake is not None
         place_label = (
             f"Place {self.stake:,} → win {betting.payout(self.stake, self._combined()):,}"
             if armed else f"Place parlay — need ≥{self.MIN_LEGS} legs + stake"

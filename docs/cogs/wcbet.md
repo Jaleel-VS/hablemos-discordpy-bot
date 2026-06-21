@@ -18,7 +18,9 @@ into a focused match card** so the same matches are never listed twice.
 Pick a match → outcome buttons reprice to e.g. `🇲🇽 Mexico · 1.43 / 🤝
 Draw · 4.40 / 🇿🇦 South Africa · 8.50` → a stake select whose **option
 labels carry the exact payout** (`500 → pays 4,250`, `All in (9,500) →
-pays 80,750`). A running **bet slip** line summarizes the selection as
+pays 80,750`). If your balance is `0`, no stake options exist, so the
+stake select is omitted and the Place button stays disarmed (rather
+than rendering an empty select, which Discord rejects). A running **bet slip** line summarizes the selection as
 it fills in (`🧾 Bet slip: 500 on South Africa @ 8.50 → win 4,250`), and
 the Place button is the final live preview (`Place 500 → win 4,250`);
 while incomplete it states what's missing (`Place bet — pick an
