@@ -110,7 +110,11 @@ Adding a new domain:
   (NUMERIC), `status` (`pending`/`won`/`lost`/`void`), `payout`,
   `placed_at`/`settled_at`. Indexed on `(match_id, status)` for
   settlement. Balance changes and bet writes always share one
-  transaction (`WCBetsMixin` in `db/bets.py`).
+  transaction (`WCBetsMixin` in `db/bets.py`). A pending bet can be
+  **cancelled** before kickoff (`cancel_wc_bet`): the row is deleted and
+  the stake refunded in one transaction (logged `bet_cancel`). Pending
+  parlays cancel the same way via `cancel_wc_parlay` (logged
+  `parlay_cancel`).
 - `wc_match_results` — one row per settled match (`match_id` PK):
   final score, derived outcome, `settled_at`. The insert doubles as the
   duplicate-settlement guard. See [`cogs/wcbet.md`](./cogs/wcbet.md).

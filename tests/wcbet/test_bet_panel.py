@@ -490,3 +490,124 @@ async def test_place_snapshots_boosted_odds(fake_bot, interaction, clock, fake_o
     assert placed["odds"] == Decimal("12.75")
     # payout = floor(500 * 12.75) = 6375
     assert betting.payout(placed["stake"], placed["odds"]) == 6375
+
+
+# ── Manage bets (cancel + edit) ─────────────────────────────────────
+
+def _pending_bet(match_id: int, *, stake: int = 500, outcome: str = "home") -> dict:
+    """A pending single bet row shaped like get_wc_user_bet returns."""
+    return {
+        "user_id": USER_ID,
+        "match_id": match_id,
+        "guild_id": GUILD_ID,
+        "outcome": outcome,
+        "stake": stake,
+        "odds": Decimal("1.43"),
+        "status": "pending",
+        "payout": None,
+    }
+
+
+def _pending_parlay(parlay_id: int, *, stake: int = 1_000) -> dict:
+    """A pending parlay (with legs) shaped like get_wc_user_parlays returns."""
+    return {
+        "id": parlay_id,
+        "stake": stake,
+        "combined_odds": Decimal("2.10"),
+        "status": "pending",
+        "payout": None,
+        "legs": [
+            {"match_id": 1, "outcome": "home", "odds": Decimal("1.40"), "result": None},
+            {"match_id": 2, "outcome": "away", "odds": Decimal("1.50"), "result": None},
+        ],
+    }
+
+
+async def _manage_panel(fake_bot):
+    """Open the panel and enter manage mode."""
+    panel = await _open_panel(fake_bot)
+    panel.show_manage = True
+    await panel.refresh()
+    return panel
+
+
+async def test_manage_lists_pending_singles_and_parlays(fake_bot, clock):
+    fake_bot.db.user_bets = {1: _pending_bet(1)}
+    fake_bot.db.user_parlays = [_pending_parlay(7)]
+    panel = await _manage_panel(fake_bot)
+    values = {o.value for o in panel._manage_options()}
+    assert values == {"single:1", "parlay:7"}
+
+
+async def test_manage_empty_state_when_no_bets(fake_bot, clock):
+    panel = await _manage_panel(fake_bot)
+    assert panel._manage_options() == []
+
+
+async def test_manage_cancel_single_refunds(fake_bot, interaction, clock):
+    fake_bot.db.user_bets = {1: _pending_bet(1, stake=500)}
+    panel = await _manage_panel(fake_bot)
+    panel._manage_sel = "single:1"
+    await panel.refresh()
+    await panel._on_manage_cancel(interaction)
+    assert fake_bot.db.cancel_bet_calls == [1]
+    assert panel.balance == 10_500  # 10,000 + 500 refund
+    assert panel._manage_sel is None
+    assert panel.notice is not None and "refunded" in panel.notice
+
+
+async def test_manage_cancel_parlay_refunds(fake_bot, interaction, clock):
+    fake_bot.db.user_parlays = [_pending_parlay(7, stake=1_000)]
+    panel = await _manage_panel(fake_bot)
+    panel._manage_sel = "parlay:7"
+    await panel.refresh()
+    await panel._on_manage_cancel(interaction)
+    assert fake_bot.db.cancel_parlay_calls == [7]
+    assert panel.balance == 11_000  # 10,000 + 1,000 refund
+
+
+async def test_manage_cancel_after_kickoff_rejected(fake_bot, interaction, clock):
+    fake_bot.db.user_bets = {1: _pending_bet(1, stake=500)}
+    panel = await _manage_panel(fake_bot)
+    panel._manage_sel = "single:1"
+    await panel.refresh()
+    # Advance past match 1 kickoff (19:00 UTC) so it is no longer bettable.
+    clock["now"] = datetime(2026, 6, 11, 20, 0, tzinfo=UTC)
+    await panel._on_manage_cancel(interaction)
+    assert fake_bot.db.cancel_bet_calls == []  # never reached the DB
+    assert panel.balance == 10_000  # no refund
+    assert panel.notice is not None and "kicked off" in panel.notice
+
+
+async def test_manage_edit_single_enters_flow(fake_bot, interaction, clock):
+    fake_bot.db.user_bets = {1: _pending_bet(1)}
+    panel = await _manage_panel(fake_bot)
+    panel._manage_sel = "single:1"
+    await panel.refresh()
+    await panel._on_manage_edit(interaction)
+    assert panel.show_manage is False
+    assert panel.selected_match_id == 1
+    assert panel.selected_outcome is None
+    assert panel.selected_stake is None
+
+
+async def test_manage_parlay_has_no_edit_button(fake_bot, clock):
+    fake_bot.db.user_parlays = [_pending_parlay(7)]
+    panel = await _manage_panel(fake_bot)
+    panel._manage_sel = "parlay:7"
+    await panel.refresh()
+    labels = [b.label for b in _walk_buttons(panel)]
+    assert "Cancel bet" in labels
+    assert "Edit" not in labels
+
+
+def _walk_buttons(panel) -> list:
+    """All buttons currently in the panel's component tree."""
+    out = []
+    for item in panel.children:
+        for child in getattr(item, "children", []):
+            for sub in getattr(child, "children", [child]):
+                if hasattr(sub, "label"):
+                    out.append(sub)
+    return out
+

@@ -86,9 +86,33 @@ match numbers).
 
 ### Panel buttons
 
-The ephemeral panel offers **My bets**, **Share bets** (posts your open
-singles + parlays publicly), **Parlay** (opens the parlay builder), and
-**Close**.
+The ephemeral panel offers **My bets**, **Manage** (edit/cancel pending
+bets), **Parlay** (opens the parlay builder), **Share bets** (posts your
+open singles + parlays publicly), and **Close**. The Place button sits on
+its own row so the navigation row never exceeds Discord's five-button cap.
+
+### Managing bets (edit / cancel)
+
+**Manage** opens a view listing every pending **single** and **parlay**
+in a select dropdown (singles 🎯, parlays 🎰). Picking one shows a focused
+card with:
+
+- **✏️ Edit** (singles only) — drops back into the normal match flow with
+  that match pre-selected. Editing re-resolves odds at the **current**
+  price (drift-guarded, same as a fresh placement) and replaces the bet
+  via the existing place-or-replace transaction. Parlays have no Edit —
+  cancel and rebuild instead.
+- **❌ Cancel bet** — refunds the full stake and deletes the pending bet
+  (`cancel_wc_bet`) or parlay + its legs (`cancel_wc_parlay`) in one
+  transaction, logging a `bet_cancel` / `parlay_cancel` wallet event.
+- **↩️ Back** — returns to the main panel.
+
+Cancel is **free until kickoff**: every cancel re-checks
+`bettable_fixtures(now)` server-side, so a single whose match has started
+— or a parlay with *any* leg past kickoff — can no longer be cancelled
+(its stake stays in play). A bet that was settled or voided between the
+list render and the click surfaces a "no longer pending" notice instead
+of double-refunding.
 
 ### Parlays (accumulators)
 
@@ -204,6 +228,14 @@ See [`../database.md`](../database.md#world-cup-betting).
 - **Replace semantics**: replacing a bet refunds the old stake *inside*
   the placement transaction — balance can legally exceed the displayed
   one mid-flight, never go negative.
+- **Cancel & odds-shopping (accepted)**: cancel refunds the full stake
+  before kickoff, so in principle a user could place at one price, watch
+  the line drift up, cancel, and re-bet at the better price for free.
+  This is an accepted trade-off for a virtual-coin game — the friction is
+  high, the "profit" doesn't cash out, and the natural **Edit** path is
+  *not* exploitable (it re-resolves at the current drift-guarded price).
+  The only real abuse — bailing on a bet once the match is underway — is
+  closed by the server-side kickoff re-check on every cancel.
 - **Timezones**: fixture times are ET = UTC−4 fixed (valid for the whole
   June–July window); `betting.kickoff_utc` converts to aware UTC. "Today"
   is the **ET** calendar date.

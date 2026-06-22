@@ -45,6 +45,11 @@ from .results import MatchOdds
 
 logger = logging.getLogger(__name__)
 
+
+class _KickedOff(Exception):
+    """Internal sentinel: a manage action targeted a match past kickoff."""
+
+
 # outcome -> (emoji, button label)
 OUTCOME_BUTTONS: dict[str, tuple[str, str]] = {
     "home": ("🏠", "Home"),
@@ -279,6 +284,12 @@ class BetPanelView(ui.LayoutView):
         self.selected_outcome: str | None = None
         self.selected_stake: int | None = None
         self.show_history = False
+        # Manage-bets view: a select to pick a pending single/parlay, then a
+        # focused card offering Edit (singles) / Cancel. `_manage_sel` holds
+        # the picked bet key, e.g. "single:42" or "parlay:7".
+        self.show_manage = False
+        self._manage_sel: str | None = None
+        self._manage_parlays: list[dict] = []
         # Set when a live-odds re-fetch fails at placement; surfaces the
         # explicit "place at fallback odds" escape hatch.
         self._odds_blip = False
@@ -349,6 +360,16 @@ class BetPanelView(ui.LayoutView):
             self._history = await self.bot.db.get_wc_user_bets(
                 self.user_id, limit=WCBET_MY_BETS_LIMIT + 1
             )
+
+        if self.show_manage:
+            # Pending parlays for the manage list (singles come from
+            # `_pending`, already loaded above). A manage selection whose bet
+            # is no longer pending (settled/voided/kicked off) is dropped.
+            self._manage_parlays = await self.bot.db.get_wc_user_parlays(
+                self.user_id, status="pending"
+            )
+            if self._manage_sel is not None and not self._manage_target_exists():
+                self._manage_sel = None
 
         self._rebuild()
 
@@ -439,6 +460,10 @@ class BetPanelView(ui.LayoutView):
 
         if self.show_history:
             self._rebuild_history()
+            return
+
+        if self.show_manage:
+            self._rebuild_manage()
             return
 
         children: list[ui.Item] = [ui.TextDisplay(self._header()), ui.Separator()]
@@ -571,6 +596,8 @@ class BetPanelView(ui.LayoutView):
 
             my_bets = ui.Button(label="My bets", emoji="📜", style=ButtonStyle.secondary)
             my_bets.callback = self._on_my_bets
+            manage = ui.Button(label="Manage", emoji="🛠️", style=ButtonStyle.secondary)
+            manage.callback = self._on_manage
             share = ui.Button(label="Share bets", emoji="📣", style=ButtonStyle.secondary)
             share.callback = self._on_share_bets
             parlay = ui.Button(label="Parlay", emoji="🎰", style=ButtonStyle.secondary)
@@ -580,7 +607,9 @@ class BetPanelView(ui.LayoutView):
             children.append(ui.Separator())
 
             # After a live-odds re-fetch failure, offer an explicit opt-in to
-            # bet at the flat fallback price instead of being blocked.
+            # bet at the flat fallback price instead of being blocked. The
+            # Place row stands alone; navigation lives on its own row so the
+            # five-button-per-row cap is never exceeded.
             if self._odds_blip and armed:
                 fallback = ui.Button(
                     label=f"Place @ {_flat_odds(self._multiplier)['home']}",
@@ -589,9 +618,10 @@ class BetPanelView(ui.LayoutView):
                 )
                 fallback.callback = self._on_place_fallback
                 self._fallback_button = fallback
-                children.append(ui.ActionRow(place, fallback, my_bets, share, close))
+                children.append(ui.ActionRow(place, fallback))
             else:
-                children.append(ui.ActionRow(place, my_bets, share, parlay, close))
+                children.append(ui.ActionRow(place))
+            children.append(ui.ActionRow(my_bets, manage, parlay, share, close))
 
         self.add_item(ui.Container(*children, accent_colour=Color.blurple()))
 
@@ -641,6 +671,126 @@ class BetPanelView(ui.LayoutView):
             ui.ActionRow(back, close),
             accent_colour=Color.blurple(),
         ))
+
+    # ---------- manage bets ----------
+
+    def _manage_options(self) -> list[SelectOption]:
+        """Select options for every pending single + parlay, newest-ish first.
+
+        Singles come from `_pending` (only matches still bettable), parlays
+        from `_manage_parlays`. Values are keyed `single:<match_id>` /
+        `parlay:<id>` so the callback can route by type.
+        """
+        options: list[SelectOption] = []
+        for match_id, bet in self._pending.items():
+            fixture = FIXTURE_BY_ID.get(match_id)
+            outcome = _outcome_label(bet["outcome"], fixture) if fixture else bet["outcome"]
+            match_label = (
+                f"{fixture['home']} vs {fixture['away']}" if fixture else f"match {match_id}"
+            )
+            options.append(SelectOption(
+                label=f"{bet['stake']:,} @ {bet['odds']} · {outcome}"[:100],
+                description=match_label[:100],
+                value=f"single:{match_id}",
+                default=self._manage_sel == f"single:{match_id}",
+                emoji="🎯",
+            ))
+        for p in self._manage_parlays:
+            n = len(p["legs"])
+            win = betting.payout(p["stake"], p["combined_odds"])
+            options.append(SelectOption(
+                label=f"Parlay · {p['stake']:,} @ {p['combined_odds']} → {win:,}"[:100],
+                description=f"{n} legs"[:100],
+                value=f"parlay:{p['id']}",
+                default=self._manage_sel == f"parlay:{p['id']}",
+                emoji="🎰",
+            ))
+        return options
+
+    def _manage_target_exists(self) -> bool:
+        """True if the focused manage selection is still a live pending bet."""
+        if self._manage_sel is None:
+            return False
+        kind, _, raw = self._manage_sel.partition(":")
+        if kind == "single":
+            return int(raw) in self._pending
+        if kind == "parlay":
+            return any(str(p["id"]) == raw for p in self._manage_parlays)
+        return False
+
+    def _manage_focus_lines(self) -> list[str]:
+        """Detail lines for the focused manage selection."""
+        kind, _, raw = (self._manage_sel or "").partition(":")
+        if kind == "single":
+            bet = self._pending.get(int(raw))
+            if bet is None:
+                return ["That bet is no longer pending."]
+            fixture = FIXTURE_BY_ID.get(int(raw))
+            outcome = _outcome_label(bet["outcome"], fixture) if fixture else bet["outcome"]
+            match_label = (
+                f"{_team_label(fixture['home'])} vs {_team_label(fixture['away'])}"
+                if fixture else f"match {raw}"
+            )
+            win = betting.payout(bet["stake"], bet["odds"])
+            ts = int(betting.kickoff_utc(fixture).timestamp()) if fixture else None
+            kick = f" — kicks off <t:{ts}:R>" if ts else ""
+            return [
+                f"🧾 **{bet['stake']:,}** @ {bet['odds']} on **{outcome}**",
+                f"{match_label}{kick} → wins **{win:,}**",
+            ]
+        if kind == "parlay":
+            p = next((q for q in self._manage_parlays if str(q["id"]) == raw), None)
+            if p is None:
+                return ["That parlay is no longer pending."]
+            return [self._format_parlay_share_line(p)]
+        return []
+
+    def _rebuild_manage(self) -> None:
+        """Render the manage-bets view: a select of pending bets, then a
+        focused card with Edit (singles only) / Cancel."""
+        options = self._manage_options()
+        children: list[ui.Item] = [
+            ui.TextDisplay(f"## 🛠️ Manage your bets\n💰 Balance: **{self.balance:,}** coins"),
+            ui.Separator(),
+        ]
+        if self.notice:
+            children.append(ui.TextDisplay(f"-# {self.notice}"))
+
+        back = ui.Button(label="Back", emoji="↩️", style=ButtonStyle.secondary)
+        back.callback = self._on_manage_back
+        close = ui.Button(label="Close", emoji="✖️", style=ButtonStyle.secondary)
+        close.callback = self._on_close
+
+        if not options:
+            children.append(ui.TextDisplay(
+                "No open bets to manage. Place one, then come back to edit or "
+                "cancel it before kickoff."
+            ))
+            children.append(ui.Separator())
+            children.append(ui.ActionRow(back, close))
+            self.add_item(ui.Container(*children, accent_colour=Color.blurple()))
+            return
+
+        select = ui.Select(placeholder="Select a bet to manage…", options=options)
+        select.callback = self._make_manage_select_callback(select)
+        children.append(ui.ActionRow(select))
+
+        if self._manage_sel is not None and self._manage_target_exists():
+            children.append(ui.TextDisplay("\n".join(self._manage_focus_lines())))
+            is_single = self._manage_sel.startswith("single:")
+            row_buttons: list[ui.Button] = []
+            if is_single:
+                edit = ui.Button(label="Edit", emoji="✏️", style=ButtonStyle.primary)
+                edit.callback = self._on_manage_edit
+                row_buttons.append(edit)
+            cancel = ui.Button(label="Cancel bet", emoji="❌", style=ButtonStyle.danger)
+            cancel.callback = self._on_manage_cancel
+            row_buttons.append(cancel)
+            children.append(ui.Separator())
+            children.append(ui.ActionRow(*row_buttons))
+
+        children.append(ui.ActionRow(back, close))
+        self.add_item(ui.Container(*children, accent_colour=Color.blurple()))
 
     # ---------- callbacks ----------
 
@@ -846,6 +996,92 @@ class BetPanelView(ui.LayoutView):
 
     async def _on_back(self, interaction: Interaction) -> None:
         self.show_history = False
+        await self.refresh()
+        await interaction.response.edit_message(view=self)
+
+    # ---------- manage callbacks ----------
+
+    async def _on_manage(self, interaction: Interaction) -> None:
+        self.show_manage = True
+        self._manage_sel = None
+        self.notice = None
+        await self.refresh()
+        await interaction.response.edit_message(view=self)
+
+    async def _on_manage_back(self, interaction: Interaction) -> None:
+        self.show_manage = False
+        self._manage_sel = None
+        self.notice = None
+        await self.refresh()
+        await interaction.response.edit_message(view=self)
+
+    def _make_manage_select_callback(self, select: ui.Select):
+        async def callback(interaction: Interaction) -> None:
+            self._manage_sel = select.values[0] if select.values else None
+            self.notice = None
+            await self.refresh()
+            await interaction.response.edit_message(view=self)
+        return callback
+
+    async def _on_manage_edit(self, interaction: Interaction) -> None:
+        """Edit a pending single: drop into the normal flow with its match
+        pre-selected. The existing place-or-replace path commits at freshly
+        resolved odds, so editing never lets the user keep a stale price.
+        Parlays have no Edit button (cancel + rebuild instead)."""
+        if self._manage_sel is None or not self._manage_sel.startswith("single:"):
+            await interaction.response.edit_message(view=self)
+            return
+        match_id = int(self._manage_sel.split(":", 1)[1])
+        # Bail back to the list if the match is no longer bettable.
+        if match_id not in {f["match_id"] for f in betting.bettable_fixtures(_now_utc())}:
+            self._manage_sel = None
+            self.notice = "That match has kicked off — can't edit it now."
+            await self.refresh()
+            await interaction.response.edit_message(view=self)
+            return
+        self.show_manage = False
+        self._manage_sel = None
+        self.selected_match_id = match_id
+        self.selected_outcome = None
+        self.selected_stake = None
+        self.notice = "Editing — pick a new outcome/stake to replace this bet."
+        await self.refresh()
+        await interaction.response.edit_message(view=self)
+
+    async def _on_manage_cancel(self, interaction: Interaction) -> None:
+        """Cancel the focused pending bet, refunding the stake. Kickoff is
+        re-checked server-side so a match that started mid-flow can't be
+        cancelled out of."""
+        sel = self._manage_sel
+        if sel is None:
+            await interaction.response.edit_message(view=self)
+            return
+        kind, _, raw = sel.partition(":")
+        bettable = {f["match_id"] for f in betting.bettable_fixtures(_now_utc())}
+        try:
+            if kind == "single":
+                match_id = int(raw)
+                if match_id not in bettable:
+                    raise _KickedOff()
+                self.balance = await self.bot.db.cancel_wc_bet(self.user_id, match_id)
+                self.notice = "Bet cancelled and stake refunded."
+            elif kind == "parlay":
+                parlay_id = int(raw)
+                p = next((q for q in self._manage_parlays if q["id"] == parlay_id), None)
+                if p is not None and any(
+                    leg["match_id"] not in bettable for leg in p["legs"]
+                ):
+                    raise _KickedOff()
+                self.balance = await self.bot.db.cancel_wc_parlay(self.user_id, parlay_id)
+                self.notice = "Parlay cancelled and stake refunded."
+            else:
+                await interaction.response.edit_message(view=self)
+                return
+        except _KickedOff:
+            self.notice = "A match has kicked off — that bet can no longer be cancelled."
+        except MatchAlreadySettledError:
+            self.notice = "That bet is no longer pending."
+        self._manage_sel = None
         await self.refresh()
         await interaction.response.edit_message(view=self)
 

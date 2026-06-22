@@ -28,6 +28,9 @@ class FakeDB:
             "last_allowance_date": None,
         }
         self.user_bets: dict[int, dict[str, Any]] = {}  # match_id -> pending bet row
+        self.user_parlays: list[dict[str, Any]] = []  # pending parlays (with legs)
+        self.cancel_bet_calls: list[int] = []
+        self.cancel_parlay_calls: list[int] = []
         self.place_calls: list[dict[str, Any]] = []
         self.place_result: int = 9_500
         self.place_error: Exception | None = None
@@ -62,6 +65,34 @@ class FakeDB:
 
     async def get_wc_user_bet(self, user_id: int, match_id: int) -> dict[str, Any] | None:
         return self.user_bets.get(match_id)
+
+    async def get_wc_user_parlays(
+        self, user_id: int, status: str | None = None,
+    ) -> list[dict[str, Any]]:
+        return list(self.user_parlays)
+
+    async def cancel_wc_bet(self, user_id: int, match_id: int) -> int:
+        self.cancel_bet_calls.append(match_id)
+        bet = self.user_bets.pop(match_id, None)
+        if bet is None:
+            from db.bets import MatchAlreadySettledError
+            raise MatchAlreadySettledError(str(match_id))
+        if self.wallet is not None:
+            self.wallet["balance"] += bet["stake"]
+            return self.wallet["balance"]
+        return 0
+
+    async def cancel_wc_parlay(self, user_id: int, parlay_id: int) -> int:
+        self.cancel_parlay_calls.append(parlay_id)
+        p = next((q for q in self.user_parlays if q["id"] == parlay_id), None)
+        if p is None:
+            from db.bets import MatchAlreadySettledError
+            raise MatchAlreadySettledError(str(parlay_id))
+        self.user_parlays = [q for q in self.user_parlays if q["id"] != parlay_id]
+        if self.wallet is not None:
+            self.wallet["balance"] += p["stake"]
+            return self.wallet["balance"]
+        return 0
 
     async def get_wc_user_bets(
         self, user_id: int, status: str | None = None, limit: int | None = None,

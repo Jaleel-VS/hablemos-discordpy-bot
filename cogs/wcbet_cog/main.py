@@ -47,9 +47,11 @@ EVENT_LABELS = {
     'bet_placed': 'Bet placed',
     'bet_won': 'Bet won',
     'bet_refund': 'Bet void/refund',
+    'bet_cancel': 'Bet cancelled',
     'parlay_placed': 'Parlay placed',
     'parlay_won': 'Parlay won',
     'parlay_refund': 'Parlay refund',
+    'parlay_cancel': 'Parlay cancelled',
 }
 
 OUTCOME_ORDER = ('home', 'draw', 'away')

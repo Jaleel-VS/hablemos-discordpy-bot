@@ -487,6 +487,79 @@ class WCBetsMixin(DatabaseMixin):
                     )
             return {'refunded': refunded, 'total_refunded': total_refunded}
 
+    async def cancel_wc_bet(self, user_id: int, match_id: int) -> int:
+        """Cancel the user's pending single bet on a match, refunding the stake.
+
+        Deletes the pending row and credits the stake back in one
+        transaction, logging a ``bet_cancel`` balance event. Raises
+        MatchAlreadySettledError if there is no pending bet to cancel (the
+        bet was already settled, voided, or never existed). Returns the new
+        balance. Kickoff is enforced by the caller before this is invoked.
+        """
+        async with self._pool().acquire() as conn, conn.transaction():
+            bet = await conn.fetchrow(
+                'SELECT stake FROM wc_bets '
+                "WHERE user_id = $1 AND match_id = $2 AND status = 'pending' "
+                'FOR UPDATE',
+                user_id, match_id,
+            )
+            if bet is None:
+                raise MatchAlreadySettledError(str(match_id))
+            new_balance = await conn.fetchval(
+                'UPDATE wc_bet_wallets '
+                'SET balance = balance + $2, updated_at = NOW() '
+                'WHERE user_id = $1 RETURNING balance',
+                user_id, bet['stake'],
+            )
+            await conn.execute(
+                'DELETE FROM wc_bets WHERE user_id = $1 AND match_id = $2',
+                user_id, match_id,
+            )
+            # A pending bet always has a wallet row (FK-by-convention), so the
+            # UPDATE ... RETURNING above cannot miss.
+            assert new_balance is not None
+            await self._log_balance_event(
+                conn, user_id, bet['stake'], new_balance, 'bet_cancel', match_id,
+            )
+            return new_balance
+
+    async def cancel_wc_parlay(self, user_id: int, parlay_id: int) -> int:
+        """Cancel the user's pending parlay, refunding the stake.
+
+        Deletes the parlay and its legs and credits the stake back in one
+        transaction, logging a ``parlay_cancel`` balance event. Raises
+        MatchAlreadySettledError if there is no pending parlay to cancel.
+        Returns the new balance. Kickoff is enforced by the caller (a parlay
+        is only cancellable while every leg is still bettable).
+        """
+        async with self._pool().acquire() as conn, conn.transaction():
+            parlay = await conn.fetchrow(
+                'SELECT stake FROM wc_parlays '
+                "WHERE id = $1 AND user_id = $2 AND status = 'pending' "
+                'FOR UPDATE',
+                parlay_id, user_id,
+            )
+            if parlay is None:
+                raise MatchAlreadySettledError(str(parlay_id))
+            new_balance = await conn.fetchval(
+                'UPDATE wc_bet_wallets '
+                'SET balance = balance + $2, updated_at = NOW() '
+                'WHERE user_id = $1 RETURNING balance',
+                user_id, parlay['stake'],
+            )
+            await conn.execute(
+                'DELETE FROM wc_parlay_legs WHERE parlay_id = $1', parlay_id,
+            )
+            await conn.execute(
+                'DELETE FROM wc_parlays WHERE id = $1', parlay_id,
+            )
+            # A pending parlay always has a wallet row, so the UPDATE above hits.
+            assert new_balance is not None
+            await self._log_balance_event(
+                conn, user_id, parlay['stake'], new_balance, 'parlay_cancel',
+            )
+            return new_balance
+
     async def get_wc_settled_match_ids(self) -> set[int]:
         """Return the match_ids that already have a recorded result."""
         rows = await self._fetch('SELECT match_id FROM wc_match_results')
