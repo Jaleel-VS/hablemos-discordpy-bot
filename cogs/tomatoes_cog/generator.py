@@ -1,5 +1,5 @@
+"Generate the animation of throwing tomatoes."
 from pathlib import Path
-
 from PIL import Image, ImageSequence
 
 BASE_DIR = Path(__file__).resolve().parent

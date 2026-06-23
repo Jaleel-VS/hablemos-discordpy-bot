@@ -46,7 +46,7 @@ class TomatoesCog(BaseCog):
         
         profile_picture = user.display_avatar.with_size(512)
         data = BytesIO(await profile_picture.read())
-        base = Image.open(data)
+        base = Image.open(data).convert("RGBA")
         output_path = generate_tomatoes(base)
         await ctx.send(content = user.mention, file=File(output_path))
 
