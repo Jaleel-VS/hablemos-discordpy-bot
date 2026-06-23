@@ -8,8 +8,15 @@ from discord import Color, ui
 from discord.ext import commands
 
 from base_cog import BaseCog
+from cogs.utils.embeds import green_embed, yellow_embed
 
-from .config import ADMIN_FORUM_ID, FILTERED_THREADS, OPEN_TAGS, STAFF_FORUM_ID
+from .config import (
+    ADMIN_FORUM_ID,
+    FILTERED_THREADS,
+    NOTIFY_CHANNEL_ID,
+    OPEN_TAGS,
+    STAFF_FORUM_ID,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +26,11 @@ def _is_open(thread: discord.Thread, open_tag_names: set[str]) -> bool:
     if thread.name.lower() in FILTERED_THREADS:
         return False
     return any(tag.name.lower() in open_tag_names for tag in thread.applied_tags)
+
+
+def _watched_forum_ids() -> set[int]:
+    """Configured ticket forum IDs, excluding unset (0) entries."""
+    return {fid for fid in (STAFF_FORUM_ID, ADMIN_FORUM_ID) if fid != 0}
 
 
 async def _format_thread(thread: discord.Thread, open_tag_names: set[str]) -> str:
@@ -83,9 +95,7 @@ class TicketsCog(BaseCog):
         open_tags = {t.strip().lower() for t in OPEN_TAGS}
         forums = []
 
-        for fid in (STAFF_FORUM_ID, ADMIN_FORUM_ID):
-            if fid == 0:
-                continue
+        for fid in _watched_forum_ids():
             channel = self.bot.get_channel(fid)
             if isinstance(channel, discord.ForumChannel):
                 forums.append(channel)
@@ -144,6 +154,85 @@ class TicketsCog(BaseCog):
             await msg.edit(view=_tickets_view(sections, total))
         except discord.HTTPException:
             logger.exception("Failed to edit tickets message")
+
+    @commands.command(name='ticketsub')
+    @commands.has_permissions(manage_messages=True)
+    async def ticketsub(self, ctx: commands.Context):
+        """
+        Toggle your subscription to new-ticket pings.
+
+        When subscribed, you'll be mentioned in the configured notification
+        channel whenever a new open ticket is opened in a mod forum.
+
+        Usage: $ticketsub
+        """
+        if ctx.guild is None:
+            await ctx.send("This command can only be used in a server.")
+            return
+
+        if NOTIFY_CHANNEL_ID == 0:
+            await ctx.send(
+                "Ticket notifications aren't configured. "
+                "Ask an admin to set `TICKETS_NOTIFY_CHANNEL_ID`."
+            )
+            return
+
+        user_id = ctx.author.id
+        guild_id = ctx.guild.id
+
+        if await self.bot.db.is_ticket_subscribed(user_id, guild_id):
+            await self.bot.db.remove_ticket_subscription(user_id, guild_id)
+            await ctx.send(embed=yellow_embed(
+                "🔕 You'll no longer be pinged when new tickets arrive."
+            ))
+        else:
+            await self.bot.db.add_ticket_subscription(user_id, guild_id)
+            await ctx.send(embed=green_embed(
+                f"🔔 You'll be pinged in <#{NOTIFY_CHANNEL_ID}> when new tickets arrive."
+            ))
+
+    @commands.Cog.listener()
+    async def on_thread_create(self, thread: discord.Thread) -> None:
+        """Ping subscribers when a new ticket is opened in a mod forum."""
+        if NOTIFY_CHANNEL_ID == 0:
+            return
+        if thread.parent_id not in _watched_forum_ids():
+            return
+        # A freshly created thread may not have its tags applied yet, so we
+        # don't gate on the Open tag here — every new ticket is, by
+        # definition, unhandled. We only skip the explicitly filtered ones.
+        if thread.name.lower() in FILTERED_THREADS:
+            return
+
+        guild = thread.guild
+        if guild is None:
+            return
+
+        subscribers = await self.bot.db.get_ticket_subscribers(guild.id)
+        if not subscribers:
+            return
+
+        channel = self.bot.get_channel(NOTIFY_CHANNEL_ID)
+        if not isinstance(channel, discord.abc.Messageable):
+            logger.warning(
+                "Tickets notify channel %s is missing or not messageable",
+                NOTIFY_CHANNEL_ID,
+            )
+            return
+
+        mentions = " ".join(f"<@{uid}>" for uid in subscribers)
+        forum_name = thread.parent.name if thread.parent else "tickets"
+        content = (
+            f"🎫 New ticket in **#{forum_name}**: "
+            f"[{thread.name}]({thread.jump_url})\n{mentions}"
+        )
+        try:
+            await channel.send(
+                content,
+                allowed_mentions=discord.AllowedMentions(users=True),
+            )
+        except (discord.Forbidden, discord.HTTPException):
+            logger.exception("Failed to send new-ticket notification")
 
 
 async def setup(bot: commands.Bot):

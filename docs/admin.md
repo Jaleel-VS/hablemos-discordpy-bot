@@ -181,6 +181,7 @@ See [`cogs/admin.md`](./cogs/admin.md), [`cogs/database.md`](./cogs/database.md)
 | `$vcenrich <message_link>` | Parse a Rai voice-join log and render with avatars. | `manage_messages` |
 | **VC Enrich** (context menu) | Right-click a Rai voice log, select "VC Enrich" → posts to enrich channel. | `manage_messages` |
 | `$tickets` | Show open tickets across forum channels. | `manage_messages` |
+| `$ticketsub` | Toggle new-ticket ping subscription. | `manage_messages` |
 | `$summarize <start_link> <end_link> [topic]` / `$sum` | Summarize a conversation with Gemini (max 500 messages). | `manage_messages` |
 
 ## Permission model

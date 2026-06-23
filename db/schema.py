@@ -918,4 +918,20 @@ async def initialize_schema(pool):
             ON vocab_card_catches(user_id)
         ''')
 
+        # Ticket-arrival subscriptions — mods who opt in to be pinged when a
+        # new moderation ticket (forum thread) is opened.
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS ticket_subscriptions (
+                user_id      BIGINT NOT NULL,
+                guild_id     BIGINT NOT NULL,
+                created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                PRIMARY KEY (user_id, guild_id)
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_ticket_subscriptions_guild
+            ON ticket_subscriptions(guild_id)
+        ''')
+
         logger.info("Database schema initialized")

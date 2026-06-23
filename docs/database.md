@@ -134,6 +134,13 @@ Adding a new domain:
   `count` (increments on duplicate catches), `first_caught`/`last_caught`.
   Indexed on `user_id`. See [`cogs/vocabcatch.md`](./cogs/vocabcatch.md).
 
+### Tickets
+- `ticket_subscriptions` — mods opted in to new-ticket pings, PK
+  `(user_id, guild_id)`: `created_at`. Indexed on `guild_id`. The
+  `on_thread_create` listener loads this per guild and pings subscribers
+  when a new ticket is opened. (`TicketSubsMixin` in `db/ticket_subs.py`.)
+  See [`cogs/tickets.md`](./cogs/tickets.md).
+
 ## Querying conventions
 
 - Use the `_fetch` / `_fetchrow` / `_fetchval` / `_execute` helpers

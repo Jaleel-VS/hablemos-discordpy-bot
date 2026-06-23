@@ -48,6 +48,7 @@ from db.quotes import QuotesMixin
 from db.schema import initialize_schema
 from db.settings import SettingsMixin
 from db.tasks import TasksMixin
+from db.ticket_subs import TicketSubsMixin
 from db.vocab import VocabMixin
 from db.vocab_catch import VocabCatchMixin
 
@@ -71,6 +72,7 @@ class Database(
     WCBetsMixin,
     NoGifMixin,
     VocabCatchMixin,
+    TicketSubsMixin,
 ):
     def __init__(self, database_url: str):
         self.pool: asyncpg.Pool | None = None
