@@ -15,3 +15,4 @@ scripts/bee_preview_*.png
 .DS_Store
 cogs/crossword_cog/data/generated_batch.csv
 cogs/crossword_cog/data/generated_clean.csv
+cogs/tomatoes_cog/output.webp

@@ -194,7 +194,8 @@ class QuoteGenerator(BaseCog):
         # Detect bare message IDs (common mistake)
         if len(user_input) == 1 and user_input[0].isdigit() and not is_reply:
             await ctx.send(embed=red_embed(
-                "That looks like a message ID. Please use a message link or reply instead. "
+                "T
+hat looks like a message ID. Please use a message link or reply instead. "
                 f"See `$help {command_name}` for correct usage."
             ))
             return None
