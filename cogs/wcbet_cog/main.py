@@ -304,10 +304,11 @@ class WCBet(BaseCog):
     @commands.command(name="wcbethistory")
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.guild_only()
-    async def wcbethistory(self, ctx: commands.Context) -> None:
-        """Show your recent World Cup betting balance history."""
-        history = await self.bot.db.get_wc_balance_history(ctx.author.id)
-        await ctx.send(view=_build_history_page(ctx.author, history, 0))
+    async def wcbethistory(self, ctx: commands.Context, member: discord.Member | None = None) -> None:
+        """Show your (or another member's) recent World Cup betting balance history."""
+        target = member or ctx.author
+        history = await self.bot.db.get_wc_balance_history(target.id)
+        await ctx.send(view=_build_history_page(target, history, 0))
 
     @commands.command(name="wcbetboard")
     @commands.cooldown(1, 10, commands.BucketType.channel)
