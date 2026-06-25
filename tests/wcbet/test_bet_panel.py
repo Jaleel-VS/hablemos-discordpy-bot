@@ -7,7 +7,11 @@ from decimal import Decimal
 from discord import ButtonStyle
 
 from cogs.wcbet_cog import betting, views
-from cogs.wcbet_cog.config import WCBET_MY_BETS_LIMIT, WCBET_ODDS
+from cogs.wcbet_cog.config import (
+    WCBET_MAX_PENDING_PARLAYS,
+    WCBET_MY_BETS_LIMIT,
+    WCBET_ODDS,
+)
 from cogs.wcbet_cog.results import MatchOdds
 
 from .conftest import GUILD_ID, USER_ID
@@ -610,4 +614,40 @@ def _walk_buttons(panel) -> list:
                 if hasattr(sub, "label"):
                     out.append(sub)
     return out
+
+
+# ── parlay cap: ephemeral warning, not an inline panel notice ──────────────
+
+
+async def _ready_parlay_panel(fake_bot):
+    """A parlay panel with two legs + a stake, ready to Place."""
+    panel = views.ParlayPanelView(
+        fake_bot, user_id=USER_ID, guild_id=GUILD_ID, balance=10_000,
+    )
+    await panel.refresh()
+    panel.legs = [
+        {"match_id": 1, "outcome": "home", "odds": Decimal("1.43")},
+        {"match_id": 2, "outcome": "home", "odds": Decimal("1.50")},
+    ]
+    panel.stake = 500
+    return panel
+
+
+async def test_parlay_cap_emits_ephemeral_followup(fake_bot, interaction, clock, fake_odds):
+    # Already at the pending cap, so the next Place must be rejected.
+    fake_bot.db.user_parlays = [_pending_parlay(1), _pending_parlay(2)]
+    panel = await _ready_parlay_panel(fake_bot)
+
+    await panel._on_place(interaction)
+
+    # Warning is a separate ephemeral followup, not an inline panel notice.
+    assert len(interaction.followup.sent) == 1
+    msg = interaction.followup.sent[0]
+    assert msg["ephemeral"] is True
+    assert "parlays pending" in msg["content"]
+    assert str(WCBET_MAX_PENDING_PARLAYS) in msg["content"]
+    assert panel.notice is None
+    # The slip is preserved so the user can manage it; nothing was staked.
+    assert len(panel.legs) == 2
+    assert panel.stake == 500
 

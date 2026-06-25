@@ -182,12 +182,23 @@ class FakeResponse:
         self.modals.append(modal)
 
 
+class FakeFollowup:
+    """Captures interaction.followup.send calls (ephemeral notices, etc.)."""
+
+    def __init__(self) -> None:
+        self.sent: list[dict[str, Any]] = []
+
+    async def send(self, content: Any = None, **kwargs: Any) -> None:
+        self.sent.append({"content": content, **kwargs})
+
+
 @dataclass
 class FakeInteraction:
     user: FakeUser = field(default_factory=FakeUser)
     guild: Any = None  # None -> views skip channel logging
     guild_id: int = GUILD_ID
     response: FakeResponse = field(default_factory=FakeResponse)
+    followup: FakeFollowup = field(default_factory=FakeFollowup)
     client: Any = None
 
 

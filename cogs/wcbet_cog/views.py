@@ -1360,12 +1360,15 @@ class ParlayPanelView(ui.LayoutView):
             await interaction.response.edit_message(view=self)
             return
         except TooManyPendingParlaysError:
-            self.notice = (
-                f"You already have {WCBET_MAX_PENDING_PARLAYS} parlays pending — "
-                "let one settle before placing another."
-            )
-            await self.refresh()
+            # Surface the cap as a separate ephemeral followup (not an inline
+            # panel notice) so it reads as a distinct, hard-to-miss warning
+            # and the slip stays untouched for the user to manage.
             await interaction.response.edit_message(view=self)
+            await interaction.followup.send(
+                f"You already have {WCBET_MAX_PENDING_PARLAYS} parlays pending — "
+                "let one settle before placing another.",
+                ephemeral=True,
+            )
             return
         combined = self._combined()
         win = betting.payout(self.stake, combined)

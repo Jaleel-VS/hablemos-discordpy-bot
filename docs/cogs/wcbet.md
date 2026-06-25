@@ -125,8 +125,8 @@ notification channel alongside single-bet results.
 
 To curb parlay-farming, each user may hold at most
 `WCBET_MAX_PENDING_PARLAYS` (default **2**) pending parlays at once;
-placing another while at the cap is rejected with a notice until one
-settles. The limit is enforced authoritatively inside the
+placing another while at the cap is rejected with a separate ephemeral
+warning until one settles. The limit is enforced authoritatively inside the
 `place_wc_parlay` transaction (a `COUNT` under the wallet's `FOR UPDATE`
 lock), so concurrent places can't slip past it.
 
