@@ -318,8 +318,10 @@ class LeaderboardMixin(DatabaseMixin):
             )
             SELECT user_id, username, total_points, active_days,
                    (total_points + (active_days * 5)) as total_score,
-                   RANK() OVER (ORDER BY (total_points + (active_days * 5)) DESC) as rank
-            FROM user_stats ORDER BY total_score DESC LIMIT $1
+                   ROW_NUMBER() OVER (
+                       ORDER BY (total_points + (active_days * 5)) DESC, user_id
+                   ) as rank
+            FROM user_stats ORDER BY total_score DESC, user_id LIMIT $1
         ''', limit, round_id_value)
         return [dict(row) for row in rows]
 

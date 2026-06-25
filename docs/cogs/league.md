@@ -177,6 +177,13 @@ All IDs accept environment variable overrides via helpers from
 
 ## Known edge cases & gotchas
 
+- **Ranking on ties**: `get_leaderboard` numbers positions with
+  `ROW_NUMBER()` (ordered by score desc, then `user_id` as a stable
+  tiebreaker), so positions are always contiguous (1, 2, 3, 4, …). Do
+  **not** switch this back to `RANK()`: `RANK()` leaves gaps after ties
+  (two users tied at 3 → next is 5), and the round-end image draws
+  positions into fixed rank slots, so a gap renders a phantom
+  "— no entry —" card (e.g. rank 4 empty).
 - **Timezone drift**: `leaderboard_activity.created_at` is naive
   `TIMESTAMP` (no `TIMESTAMPTZ`). If you query by date/time windows,
   you'll get results in the DB's timezone (typically UTC). Newer schemas
