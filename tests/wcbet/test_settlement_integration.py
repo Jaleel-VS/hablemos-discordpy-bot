@@ -17,6 +17,7 @@ import pytest
 
 from cogs.wcbet_cog import betting
 from db import Database
+from db.bets import TooManyPendingParlaysError
 
 TEST_DB_URL = os.getenv("TEST_DATABASE_URL")
 
@@ -99,6 +100,41 @@ async def test_settle_match_with_a_parlay_leg(db: Database):
     assert len(won) == 1
     # combined 1.5 * 2.0 = 3.0 → 200 stake → 600 payout
     assert won[0]["payout"] == betting.payout(200, Decimal("3.00"))
+
+
+async def test_place_parlay_rejects_over_pending_cap(db: Database):
+    """With max_pending set, a user can't stack more pending parlays.
+
+    Placing up to the cap succeeds; the next place raises. Once one
+    settles (freeing a slot), placing succeeds again.
+    """
+    user = 102
+    await db.create_wc_wallet(user, GUILD, 10_000)
+
+    legs = [
+        {"match_id": 25, "outcome": "home", "odds": 1.5},
+        {"match_id": 26, "outcome": "home", "odds": 2.0},
+    ]
+    # First two (the cap) succeed.
+    await db.place_wc_parlay(user, GUILD, stake=100, legs=legs, max_pending=2)
+    await db.place_wc_parlay(user, GUILD, stake=100, legs=legs, max_pending=2)
+
+    # Third is rejected and does not debit the wallet.
+    with pytest.raises(TooManyPendingParlaysError):
+        await db.place_wc_parlay(user, GUILD, stake=100, legs=legs, max_pending=2)
+    wallet = await db.get_wc_wallet(user)
+    assert wallet["balance"] == 10_000 - 200  # only the two that landed
+
+    # Settle both legs of one parlay (won) to free a slot.
+    await db.settle_wc_match(25, 1, 0, "home", payout_fn=betting.payout)
+    await db.settle_wc_match(26, 1, 0, "home", payout_fn=betting.payout)
+    pending = await db.get_wc_user_parlays(user, status="pending")
+    assert len(pending) == 0  # both parlays shared the same legs, both settled
+
+    # Slots freed — placing succeeds again.
+    await db.place_wc_parlay(user, GUILD, stake=100, legs=legs, max_pending=2)
+    pending = await db.get_wc_user_parlays(user, status="pending")
+    assert len(pending) == 1
 
 
 async def test_void_match_with_a_parlay_leg(db: Database):

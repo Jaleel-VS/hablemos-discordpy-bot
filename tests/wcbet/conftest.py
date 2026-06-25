@@ -32,8 +32,10 @@ class FakeDB:
         self.cancel_bet_calls: list[int] = []
         self.cancel_parlay_calls: list[int] = []
         self.place_calls: list[dict[str, Any]] = []
+        self.place_parlay_calls: list[dict[str, Any]] = []
         self.place_result: int = 9_500
         self.place_error: Exception | None = None
+        self.place_parlay_error: Exception | None = None
         self.created_wallets: list[tuple[int, int, int]] = []
         self.allowance_result: int | None = None
         self.banned: bool = False
@@ -121,6 +123,29 @@ class FakeDB:
         })
         if self.place_error is not None:
             raise self.place_error
+        return self.place_result
+
+    async def place_wc_parlay(
+        self,
+        user_id: int,
+        guild_id: int,
+        stake: int,
+        legs: list[dict[str, Any]],
+        *,
+        max_pending: int | None = None,
+    ) -> int:
+        self.place_parlay_calls.append({
+            "user_id": user_id,
+            "guild_id": guild_id,
+            "stake": stake,
+            "legs": legs,
+            "max_pending": max_pending,
+        })
+        if max_pending is not None and len(self.user_parlays) >= max_pending:
+            from db.bets import TooManyPendingParlaysError
+            raise TooManyPendingParlaysError(f"{len(self.user_parlays)} >= {max_pending}")
+        if self.place_parlay_error is not None:
+            raise self.place_parlay_error
         return self.place_result
 
 

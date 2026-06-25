@@ -31,12 +31,17 @@ from discord.ext import commands
 
 from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, Fixture
 from cogs.wcpredict_cog.fixtures_view import TEAM_FLAGS
-from db.bets import InsufficientBalanceError, MatchAlreadySettledError
+from db.bets import (
+    InsufficientBalanceError,
+    MatchAlreadySettledError,
+    TooManyPendingParlaysError,
+)
 
 from . import betting, espn
 from .config import (
     WCBET_DAILY_ALLOWANCE,
     WCBET_LOG_CHANNEL_ID,
+    WCBET_MAX_PENDING_PARLAYS,
     WCBET_MY_BETS_LIMIT,
     WCBET_ODDS,
     WCBET_STARTING_BALANCE,
@@ -1347,9 +1352,18 @@ class ParlayPanelView(ui.LayoutView):
         try:
             new_balance = await self.bot.db.place_wc_parlay(
                 self.user_id, self.guild_id, self.stake, self.legs,
+                max_pending=WCBET_MAX_PENDING_PARLAYS,
             )
         except InsufficientBalanceError:
             self.notice = "Not enough coins for that stake."
+            await self.refresh()
+            await interaction.response.edit_message(view=self)
+            return
+        except TooManyPendingParlaysError:
+            self.notice = (
+                f"You already have {WCBET_MAX_PENDING_PARLAYS} parlays pending — "
+                "let one settle before placing another."
+            )
             await self.refresh()
             await interaction.response.edit_message(view=self)
             return

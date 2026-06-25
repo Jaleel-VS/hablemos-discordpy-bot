@@ -16,6 +16,11 @@ WCBET_STARTING_BALANCE: int = 10_000
 # Coins granted on the first `$wcbet` interaction of each UTC day.
 WCBET_DAILY_ALLOWANCE: int = 2_500
 
+# Max parlays a user may have pending (unsettled) at any one time. Caps
+# parlay-farming: a user must let existing parlays settle before stacking
+# more. Enforced authoritatively inside the place_wc_parlay transaction.
+WCBET_MAX_PENDING_PARLAYS: int = get_int_env("WCBET_MAX_PENDING_PARLAYS", 2)
+
 # Fallback odds when DraftKings has not priced a match (or the fetch
 # fails); also the snapshot stored on such bets. Payouts are computed
 # as floor(stake * odds) in integer math (see betting.payout).
@@ -47,6 +52,7 @@ __all__ = [
     "WCBET_AUTO_SETTLE",
     "WCBET_DAILY_ALLOWANCE",
     "WCBET_LOG_CHANNEL_ID",
+    "WCBET_MAX_PENDING_PARLAYS",
     "WCBET_MY_BETS_LIMIT",
     "WCBET_NOTIFICATION_CHANNEL_ID",
     "WCBET_ODDS",

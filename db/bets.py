@@ -19,6 +19,10 @@ class MatchAlreadySettledError(Exception):
     """Raised when settling a match twice or betting on a settled match."""
 
 
+class TooManyPendingParlaysError(Exception):
+    """Raised when a user already has the max number of pending parlays."""
+
+
 class WCBetsMixin(DatabaseMixin):
     """Queries for the `wc_bet_wallets`, `wc_bets`, and `wc_match_results` tables."""
 
@@ -179,12 +183,18 @@ class WCBetsMixin(DatabaseMixin):
 
     async def place_wc_parlay(
         self, user_id: int, guild_id: int, stake: int, legs: list[dict],
+        *, max_pending: int | None = None,
     ) -> int:
         """Place a parlay (2+ legs) in one transaction. Returns the new balance.
 
         ``legs`` is a list of {match_id, outcome, odds}. The combined odds are
         computed as the product of leg odds. Raises InsufficientBalanceError
         if the balance can't cover the stake.
+
+        When ``max_pending`` is given, raises TooManyPendingParlaysError if the
+        user already has that many pending parlays — checked inside the
+        transaction (with FOR UPDATE on the wallet held) so concurrent places
+        can't both slip past the cap.
         """
         product = Decimal(1)
         for leg in legs:
@@ -197,6 +207,14 @@ class WCBetsMixin(DatabaseMixin):
             )
             if balance is None:
                 raise InsufficientBalanceError('no wallet')
+            if max_pending is not None:
+                pending = await conn.fetchval(
+                    "SELECT COUNT(*) FROM wc_parlays "
+                    "WHERE user_id = $1 AND status = 'pending'",
+                    user_id,
+                )
+                if pending >= max_pending:
+                    raise TooManyPendingParlaysError(f'{pending} >= {max_pending}')
             if balance < stake:
                 raise InsufficientBalanceError(f'{balance} < {stake}')
             new_balance = balance - stake
