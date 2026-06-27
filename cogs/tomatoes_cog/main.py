@@ -3,15 +3,15 @@ Tomatoes Cog
 Throw tomatoes at people.
 """
 
-from io import BytesIO
 import logging
+from io import BytesIO
 from pathlib import Path
-from PIL import Image
+
 from discord import File, Forbidden, HTTPException, Message
 from discord.ext.commands import BucketType, Context, command, cooldown
-from base_cog import BaseCog
-from discord.ext import commands
+from PIL import Image
 
+from base_cog import BaseCog
 from cogs.tomatoes_cog.generator import generate_tomatoes
 from cogs.utils.embeds import red_embed
 
@@ -31,12 +31,13 @@ class TomatoesCog(BaseCog):
         `$tomato @Rai`
         Or reply to a message with `$tomato`
         """
+        output_path = None
         try:
             user = None
-            
+
             if len(ctx.message.mentions) > 0:
                 user = ctx.message.mentions[0]
-            elif ctx.message.reference != None:
+            elif ctx.message.reference is not None:
                 resolved_message = ctx.message.reference.resolved
 
                 if isinstance(resolved_message, Message):
@@ -45,7 +46,7 @@ class TomatoesCog(BaseCog):
             if user is None:
                 await ctx.send(embed=red_embed("Please type `$help tomato` for info on correct usage."))
                 return
-            
+
             profile_picture = user.display_avatar.with_size(512)
             data = BytesIO(await profile_picture.read())
             base = Image.open(data).convert("RGBA")
