@@ -78,7 +78,7 @@ match numbers).
 | Command | Description | Permissions | Cooldown |
 |---------|-------------|-------------|----------|
 | `$wcbet` | Post the public betting prompt. | None | 5s/user |
-| `$wcbettop` | Show the top 10 betting balances. | None | 10s/channel |
+| `$wcbettop` | Show the top 10 betting balances. Names render as `Server Nick (username)` resolved server-side (falls back to global username for members who left, then a bare ID only if the account is gone). | None | 10s/channel |
 | `$wcbetme [@user]` | Show a betting profile card (balance+rank, net profit, W/L, win rate, biggest win, longest odds, streak). | None | 5s/user |
 | `$wcbethistory [@user]` | Show recent wallet-event history from `wc_balance_log` for yourself or another member (allowances, bets, wins, refunds, resulting balance, relative timestamps). | `@user` (optional, defaults to you) | 5s/user |
 | `$wcbetboard` | Show a public market board for currently bettable matches: odds, coins staked on home/draw/away, and bettor counts. Singles only; parlays excluded. | None | 10s/channel |

@@ -21,6 +21,7 @@ from discord.ext import commands, tasks
 
 from base_cog import BaseCog
 from cogs.utils.embeds import blue_embed, green_embed
+from cogs.utils.names import resolve_member_labels
 from cogs.wcpredict_cog.fixtures_view import TEAM_FLAGS
 from db.bets import MatchAlreadySettledError
 
@@ -283,8 +284,11 @@ class WCBet(BaseCog):
         if not rows:
             await ctx.send(embed=blue_embed("No wallets yet."))
             return
+        labels = await resolve_member_labels(
+            self.bot, ctx.guild, [r["user_id"] for r in rows],
+        )
         lines = [
-            f"{i}. <@{r['user_id']}> — **{r['balance']:,}** coins"
+            f"{i}. {labels[r['user_id']]} — **{r['balance']:,}** coins"
             for i, r in enumerate(rows, 1)
         ]
         await ctx.send(embed=blue_embed("🏆 **WC Betting Leaderboard**\n" + "\n".join(lines)))
