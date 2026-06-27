@@ -44,7 +44,7 @@ async def fetch_scoreboard(date_str: str) -> dict | None:
 
 @async_cache(maxsize=8)
 async def _fetch_odds_bucket(date_str: str, bucket: int) -> dict[int, results.MatchOdds]:
-    """Odds for every group-stage match on an ET day, keyed by match_id.
+    """Odds for every match on an ET day, keyed by match_id.
 
     `bucket` partitions the LRU cache into time windows (the cache has
     no TTL of its own). Failures return {} — callers fall back to flat
@@ -53,7 +53,7 @@ async def _fetch_odds_bucket(date_str: str, bucket: int) -> dict[int, results.Ma
     payload = await fetch_scoreboard(date_str)
     if payload is None:
         return {}
-    return results.match_odds(payload, results.GROUP_STAGE_FIXTURES)
+    return results.match_odds(payload, results.FIXTURES)
 
 
 async def fetch_match_odds(
@@ -80,3 +80,27 @@ async def fetch_match_odds(
             for mid, o in selected.items()
         }
     return selected
+
+
+async def fetch_knockout_resolutions(
+    unresolved: list[Fixture],
+) -> list[results.KnockoutResolution]:
+    """Resolve knockout teams from ESPN's scheduled events (uncached).
+
+    Fetches the scoreboard for each date the given unresolved knockout
+    fixtures fall on and asks `results.knockout_resolutions` to match them
+    by kickoff, returning only fixtures ESPN has fully decided (both real
+    teams). Uncached so freshly-decided ties are picked up promptly; the
+    set is small (one fetch per knockout date) and only runs while
+    unresolved knockouts remain.
+    """
+    if not unresolved:
+        return []
+    out: list[results.KnockoutResolution] = []
+    for date_str in sorted({f["date"].replace("-", "") for f in unresolved}):
+        payload = await fetch_scoreboard(date_str)
+        if payload is None:
+            continue
+        same_day = [f for f in unresolved if f["date"].replace("-", "") == date_str]
+        out.extend(results.knockout_resolutions(payload, same_day))
+    return out

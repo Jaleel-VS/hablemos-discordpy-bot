@@ -69,15 +69,29 @@ transaction.
 **Knockout rounds.** Group-stage fixtures have fixed teams and are always
 bettable inside the 24h window. Knockout fixtures (Round of 32 onward)
 ship with bracket placeholders ("Winner Group A", "Winner Match 73") and
-are **not** bettable or settleable until an owner resolves their real
-teams with `$wcbetadmin setteam <match_id> <home> vs <away> [@ HH:MM]`.
-Resolutions are persisted in `wc_fixture_overrides` and re-applied to the
-in-memory fixtures on every startup (`WCBet.cog_load`), so they survive
-restarts with no redeploy. `betting.bettable_fixtures` and
-`results.fixtures_awaiting_result` both gate on `is_fixture_resolved`,
-and ESPN settlement matches on the resolved `(kickoff, home, away)` — so
-team names must match ESPN's (`results.TEAM_NAME_ALIASES` covers the few
-spelling differences).
+are **not** bettable or settleable until their real teams are resolved.
+
+Resolution is **automatic**: the results poller (and startup) calls
+`espn.fetch_knockout_resolutions`, which reads ESPN's scheduled bracket
+and matches each upcoming knockout fixture to its ESPN event by kickoff
+time. When ESPN has decided **both** sides of a tie, the bot writes an
+`auto`-sourced row to `wc_fixture_overrides` and applies it in memory, so
+the match becomes bettable with no human action. Only fixtures within
+`WCBET_KNOCKOUT_RESOLVE_LOOKAHEAD_DAYS` (default 3) are queried, so the
+poller doesn't hammer ESPN for rounds weeks away.
+
+An owner can still resolve or correct a pairing manually with
+`$wcbetadmin setteam <match_id> <home> vs <away> [@ HH:MM]`. **Manual
+overrides always win** — auto-resolution never overwrites a `manual` row
+(tracked via the `source` column), so a hand-entered correction sticks
+even if ESPN's data is stale or odd.
+
+Resolutions persist and are re-applied on every startup (`WCBet.cog_load`),
+so they survive restarts. `betting.bettable_fixtures` and
+`results.fixtures_awaiting_result` both gate on `is_fixture_resolved`, and
+ESPN settlement matches on the resolved `(kickoff, home, away)` — so team
+names must match ESPN's (`results.TEAM_NAME_ALIASES` covers the few
+spelling differences, e.g. Ivory Coast → Côte d'Ivoire).
 
 The fixture data is shared with `$wcfixtures` and `/wcpredict` —
 `cogs/wcpredict_cog/fixtures.py` is the single source of truth (times
@@ -214,7 +228,7 @@ coins at once, too much blast radius for the mod tier.
 | `wc_bets` | `WCBetsMixin` | PK `(user_id, match_id)`; outcome, stake, odds snapshot, status, payout. |
 | `wc_match_results` | `WCBetsMixin` | Final score per settled match; doubles as the duplicate-settlement guard. |
 | `wc_bet_bans` | `WCBetsMixin` | Users banned from betting (`user_id` PK); checked at panel entry, managed by `$wcbetmod`. |
-| `wc_fixture_overrides` | `WCBetsMixin` | Resolved knockout pairings (`match_id` PK; `home`, `away`, optional `time_et`). Written by `$wcbetadmin setteam`, overlaid onto the static fixtures at startup. |
+| `wc_fixture_overrides` | `WCBetsMixin` | Resolved knockout pairings (`match_id` PK; `home`, `away`, optional `time_et`, `source` = `manual`\|`auto`). Auto-filled from ESPN's bracket by the poller; `$wcbetadmin setteam` writes `manual` rows that auto-resolution never overwrites. Overlaid onto the static fixtures at startup. |
 
 See [`../database.md`](../database.md#world-cup-betting).
 
@@ -231,6 +245,7 @@ See [`../database.md`](../database.md#world-cup-betting).
 | `WORLD_CUP_LOG_CHANNEL_ID` | `cogs/worldcup_cog/config.py` (re-exported as `WCBET_LOG_CHANNEL_ID`) | baked-in | Bet/settlement log channel, shared with all World Cup cogs. |
 | `WCBET_AUTO_SETTLE` | env, read in `cogs/wcbet_cog/config.py` | 0 (propose) | 1 = poller settles bets itself; 0 = it only posts the command to run. |
 | `WCBET_RESULTS_POLL_MINUTES` | env, read in `cogs/wcbet_cog/config.py` | 5 | Poll interval for the results loop. |
+| `WCBET_KNOCKOUT_RESOLVE_LOOKAHEAD_DAYS` | env, read in `cogs/wcbet_cog/config.py` | 3 | How many days ahead the poller looks when auto-resolving knockout teams from ESPN's bracket. A knockout becomes resolvable only within this horizon. |
 
 ## Known edge cases & gotchas
 

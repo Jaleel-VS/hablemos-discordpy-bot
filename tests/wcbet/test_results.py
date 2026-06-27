@@ -11,6 +11,7 @@ from cogs.wcbet_cog.results import (
     american_to_decimal,
     apply_odds_multiplier,
     fixtures_awaiting_result,
+    knockout_resolutions,
     match_odds,
     match_results,
     parse_event_odds,
@@ -270,3 +271,66 @@ def test_apply_odds_multiplier_rounds_half_up() -> None:
     assert boosted["draw"] == Decimal("4.62")
     # 2.005 * 1.05 = 2.10525 -> 2.11
     assert boosted["away"] == Decimal("2.11")
+
+
+# ── knockout_resolutions ─────────────────────────────────────────────
+# Match 73: Round of 32, ships as "Runner-up Group A" vs "Runner-up Group B".
+MATCH_73 = FIXTURE_BY_ID[73]
+
+
+def _scheduled_event(fixture, home_name: str, away_name: str) -> dict:
+    """A not-yet-played ESPN event with the given competitor display names."""
+    return {
+        "date": kickoff_utc(fixture).strftime("%Y-%m-%dT%H:%MZ"),
+        "competitions": [
+            {
+                "status": {"type": {"completed": False}},
+                "competitors": [
+                    {"homeAway": "home", "team": {"displayName": home_name}},
+                    {"homeAway": "away", "team": {"displayName": away_name}},
+                ],
+            }
+        ],
+    }
+
+
+def test_knockout_resolution_both_teams_real() -> None:
+    payload = {"events": [_scheduled_event(MATCH_73, "Mexico", "Brazil")]}
+    res = knockout_resolutions(payload, [MATCH_73])
+    assert res == [{"match_id": 73, "home": "Mexico", "away": "Brazil"}]
+
+
+def test_knockout_resolution_normalizes_espn_aliases() -> None:
+    # ESPN spells these differently; the alias map maps them to our names.
+    payload = {"events": [_scheduled_event(MATCH_73, "Ivory Coast", "United States")]}
+    res = knockout_resolutions(payload, [MATCH_73])
+    assert res == [{"match_id": 73, "home": "Côte d'Ivoire", "away": "USA"}]
+
+
+def test_knockout_resolution_skips_half_decided() -> None:
+    # ESPN still shows its own placeholder for one side -> not resolvable yet.
+    payload = {"events": [_scheduled_event(MATCH_73, "Mexico", "Group B Runner-up")]}
+    assert knockout_resolutions(payload, [MATCH_73]) == []
+
+
+def test_knockout_resolution_skips_both_placeholders() -> None:
+    payload = {
+        "events": [_scheduled_event(MATCH_73, "Group A Runner-up", "Group B Runner-up")]
+    }
+    assert knockout_resolutions(payload, [MATCH_73]) == []
+
+
+def test_knockout_resolution_matches_by_kickoff_time() -> None:
+    # An event at a different kickoff than the fixture must not match.
+    other = _scheduled_event(FIXTURE_BY_ID[74], "Mexico", "Brazil")
+    assert knockout_resolutions({"events": [other]}, [MATCH_73]) == []
+
+
+def test_knockout_resolution_ignores_malformed_events() -> None:
+    payload = {"events": [{}, {"competitions": []}, None]}
+    assert knockout_resolutions(payload, [MATCH_73]) == []
+
+
+def test_knockout_resolution_empty_payload() -> None:
+    assert knockout_resolutions({}, [MATCH_73]) == []
+    assert knockout_resolutions({"events": "nope"}, [MATCH_73]) == []

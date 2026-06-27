@@ -59,32 +59,56 @@ class WCBetsMixin(DatabaseMixin):
     # ---------- knockout fixture overrides ----------
 
     async def get_wc_fixture_overrides(self) -> list[dict]:
-        """Return all stored knockout fixture overrides.
+        """Return all stored fixture overrides.
 
-        Each row is {match_id, home, away, time_et}. ``time_et`` is None
-        when the override only resolves teams and keeps the shipped time.
-        Loaded once at startup and after each edit to overlay onto the
-        static fixture list.
+        Each row is {match_id, home, away, time_et, source}. ``time_et`` is
+        None when the override only resolves teams and keeps the shipped
+        time; ``source`` is 'manual' or 'auto'. Loaded at startup and after
+        each edit to overlay onto the static fixture list.
         """
         rows = await self._fetch(
-            'SELECT match_id, home, away, time_et FROM wc_fixture_overrides',
+            'SELECT match_id, home, away, time_et, source FROM wc_fixture_overrides',
         )
         return [dict(row) for row in rows]
 
     async def set_wc_fixture_override(
         self, match_id: int, home: str, away: str, time_et: str | None = None,
+        *, source: str = 'manual',
     ) -> None:
         """Persist (or update) the resolved teams for a knockout fixture.
 
         ``time_et`` of None keeps the fixture's shipped kickoff time.
+        ``source`` records the origin ('manual' or 'auto').
         """
         await self._execute(
-            'INSERT INTO wc_fixture_overrides (match_id, home, away, time_et) '
-            'VALUES ($1, $2, $3, $4) '
+            'INSERT INTO wc_fixture_overrides (match_id, home, away, time_et, source) '
+            'VALUES ($1, $2, $3, $4, $5) '
             'ON CONFLICT (match_id) DO UPDATE SET '
-            'home = $2, away = $3, time_et = $4, updated_at = NOW()',
-            match_id, home, away, time_et,
+            'home = $2, away = $3, time_et = $4, source = $5, updated_at = NOW()',
+            match_id, home, away, time_et, source,
         )
+
+    async def set_wc_fixture_override_auto(
+        self, match_id: int, home: str, away: str,
+    ) -> bool:
+        """Insert/update an *auto* (ESPN-sourced) override, never clobbering manual.
+
+        Writes only when no row exists or the existing row's source is
+        'auto'. A 'manual' row is left untouched (manual always wins).
+        Returns True if a row was written, False if a manual row blocked it.
+        Auto overrides never touch ``time_et`` (keep the shipped kickoff).
+        """
+        result = await self._execute(
+            'INSERT INTO wc_fixture_overrides (match_id, home, away, source) '
+            "VALUES ($1, $2, $3, 'auto') "
+            'ON CONFLICT (match_id) DO UPDATE SET '
+            'home = $2, away = $3, updated_at = NOW() '
+            "WHERE wc_fixture_overrides.source = 'auto'",
+            match_id, home, away,
+        )
+        # asyncpg returns 'INSERT 0 1' / 'UPDATE 1' on a write, '...0' when the
+        # WHERE guard blocks an update of a manual row.
+        return result.rstrip().endswith('1')
 
     async def clear_wc_fixture_override(self, match_id: int) -> bool:
         """Delete an override, reverting the fixture to its shipped values.

@@ -347,16 +347,27 @@ Group A", "Winner Match 73"). They are excluded from betting and
 settlement until their real teams are filled in — `bettable_fixtures`
 and `fixtures_awaiting_result` both gate on `is_fixture_resolved`.
 
-**Fix:** as each pairing is decided, resolve it (owner-only):
+**Normally self-healing.** The results poller auto-resolves knockout
+teams from ESPN's scheduled bracket (within
+`WCBET_KNOCKOUT_RESOLVE_LOOKAHEAD_DAYS`, default 3) and on startup, so a
+tie usually populates within a poll tick of ESPN deciding both sides.
+First check the logs for `wcbet: auto-resolved match N -> X vs Y`. If a
+match stays unresolved close to kickoff, ESPN hasn't decided that slot
+yet (e.g. best-third-place still pending) or its event isn't matching by
+kickoff time.
+
+**Manual fix / override:** resolve it yourself (owner-only):
 ```
 $wcbetadmin setteam <match_id> <home> vs <away> [@ HH:MM]
 ```
 e.g. `$wcbetadmin setteam 73 Mexico vs Brazil`. Use exact team names as
-they appear in the group standings; the resolved match becomes bettable
-once it's inside the 24h window, and ESPN settlement matches on the real
-names (`results.TEAM_NAME_ALIASES` bridges the few spelling differences).
-Resolutions persist in `wc_fixture_overrides` and re-apply on restart, so
-you only set each match once. Verify with `$wcf <team>` or `$wcbetboard`.
+they appear in the group standings; manual rows are tagged `manual` and
+are **never** overwritten by auto-resolution. The resolved match becomes
+bettable once it's inside the 24h window, and ESPN settlement matches on
+the real names (`results.TEAM_NAME_ALIASES` bridges the few spelling
+differences). Resolutions persist in `wc_fixture_overrides` and re-apply
+on restart, so you only set each match once. Verify with `$wcf <team>`
+or `$wcbetboard`.
 
 ## TODOs
 

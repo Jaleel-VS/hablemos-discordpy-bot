@@ -12,7 +12,7 @@ the owner-only `$wcbetadmin` group (see `admin.py`) always works and
 wins races safely (the result row insert is the duplicate guard).
 """
 import logging
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 import discord
@@ -22,7 +22,13 @@ from discord.ext import commands, tasks
 from base_cog import BaseCog
 from cogs.utils.embeds import blue_embed, green_embed
 from cogs.utils.names import resolve_member_labels
-from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, apply_fixture_overrides
+from cogs.wcpredict_cog.fixtures import (
+    FIXTURE_BY_ID,
+    KNOCKOUT_FIXTURES,
+    apply_fixture_override,
+    apply_fixture_overrides,
+    is_fixture_resolved,
+)
 from cogs.wcpredict_cog.fixtures_view import TEAM_FLAGS
 from db.bets import MatchAlreadySettledError
 
@@ -31,6 +37,7 @@ from .admin import WCBetAdmin
 from .betting import format_parlay_results, format_player_results
 from .config import (
     WCBET_AUTO_SETTLE,
+    WCBET_KNOCKOUT_RESOLVE_LOOKAHEAD_DAYS,
     WCBET_LOG_CHANNEL_ID,
     WCBET_NOTIFICATION_CHANNEL_ID,
     WCBET_ODDS,
@@ -267,6 +274,60 @@ class WCBet(BaseCog):
         if applied:
             logger.info("wcbet: applied %s knockout fixture override(s)", applied)
 
+        # Pull any knockout pairings ESPN has already decided (e.g. after a
+        # restart mid-tournament) so betting opens without waiting for the
+        # first poll tick.
+        await self._resolve_knockouts_once()
+
+    async def _resolve_knockouts_once(self) -> None:
+        """Auto-resolve knockout teams from ESPN's scheduled bracket.
+
+        For every soon-upcoming knockout fixture still showing placeholders,
+        ask ESPN who is scheduled in that slot; when both sides are decided,
+        persist an 'auto' override (never clobbering a manual one) and apply
+        it in memory so the match becomes bettable. Best-effort — any failure
+        is logged and swallowed so the poller keeps running.
+
+        Only fixtures kicking off within the next few days are queried, so the
+        poller doesn't hammer ESPN for rounds that are still weeks away.
+        """
+        now = datetime.now(UTC)
+        horizon = now + timedelta(days=WCBET_KNOCKOUT_RESOLVE_LOOKAHEAD_DAYS)
+        unresolved: list = []
+        for fixture in KNOCKOUT_FIXTURES:
+            if is_fixture_resolved(fixture):
+                continue
+            try:
+                kickoff = betting.kickoff_utc(fixture)
+            except ValueError:
+                continue
+            if now <= kickoff <= horizon:
+                unresolved.append(fixture)
+        if not unresolved:
+            return
+        try:
+            resolutions = await espn.fetch_knockout_resolutions(unresolved)
+        except Exception:
+            logger.exception("wcbet: knockout auto-resolution fetch failed")
+            return
+        for res in resolutions:
+            try:
+                written = await self.bot.db.set_wc_fixture_override_auto(
+                    res["match_id"], res["home"], res["away"],
+                )
+            except Exception:
+                logger.exception(
+                    "wcbet: failed to persist auto override for match %s",
+                    res["match_id"],
+                )
+                continue
+            if written:
+                apply_fixture_override(res["match_id"], res["home"], res["away"])
+                logger.info(
+                    "wcbet: auto-resolved match %s -> %s vs %s",
+                    res["match_id"], res["home"], res["away"],
+                )
+
     # ---------- commands ----------
 
     async def _send_prompt(self, ctx: commands.Context) -> None:
@@ -376,6 +437,9 @@ class WCBet(BaseCog):
 
     async def _poll_results_once(self) -> None:
         now = datetime.now(UTC)
+        # First pull any newly-decided knockout pairings into the fixture
+        # list so they become bettable; then settle finished matches.
+        await self._resolve_knockouts_once()
         settled = await self.bot.db.get_wc_settled_match_ids()
         awaiting = results.fixtures_awaiting_result(now, settled)
         if not awaiting:

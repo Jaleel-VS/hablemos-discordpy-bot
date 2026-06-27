@@ -13,7 +13,12 @@ from datetime import UTC, datetime, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 from typing import TypedDict
 
-from cogs.wcpredict_cog.fixtures import FIXTURES, Fixture, is_fixture_resolved
+from cogs.wcpredict_cog.fixtures import (
+    FIXTURES,
+    Fixture,
+    is_fixture_resolved,
+    is_placeholder_team,
+)
 
 from .betting import kickoff_utc
 
@@ -119,6 +124,81 @@ def match_results(payload: dict, awaiting: list[Fixture]) -> list[MatchResult]:
                 MatchResult(match_id=match_id, home_score=home_score, away_score=away_score)
             )
     return results
+
+
+# ── Knockout bracket resolution (teams from scheduled ESPN events) ──────────
+class KnockoutResolution(TypedDict):
+    """A knockout fixture whose real teams ESPN has now assigned."""
+
+    match_id: int
+    home: str
+    away: str
+
+
+def _parse_event_teams(event: dict) -> tuple[datetime, str | None, str | None] | None:
+    """Extract (kickoff_utc, home, away) from any ESPN event, finished or not.
+
+    Unlike ``_parse_event`` this does not require completion — it reads the
+    competitor names so the bracket can be resolved before kickoff. A side
+    is returned as None when ESPN still shows its own placeholder there
+    ("Group L Winner", "Third Place Group …"); team names are alias-
+    normalized to our spelling. Returns None on a malformed event.
+    """
+    try:
+        competition = event["competitions"][0]
+        kickoff = datetime.strptime(event["date"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=UTC)
+        sides: dict[str, str] = {}
+        for competitor in competition["competitors"]:
+            sides[competitor["homeAway"]] = _normalize(competitor["team"]["displayName"])
+        home = sides.get("home")
+        away = sides.get("away")
+    except (KeyError, IndexError, TypeError, ValueError):
+        return None
+    # An ESPN placeholder (not one of our 48 real teams) means "undecided".
+    home = None if home is None or is_placeholder_team(home) else home
+    away = None if away is None or is_placeholder_team(away) else away
+    return kickoff, home, away
+
+
+def knockout_resolutions(
+    payload: dict, unresolved: list[Fixture],
+) -> list[KnockoutResolution]:
+    """Match scheduled ESPN events onto unresolved knockout fixtures by kickoff.
+
+    For each fixture in ``unresolved`` whose kickoff matches an ESPN event,
+    returns a resolution only when ESPN gives **both** real (non-placeholder)
+    team names — a half-decided tie (one real team, one placeholder) is left
+    for a later poll. ``unresolved`` should be the knockout fixtures that are
+    not yet fully resolved; the kickoff index uses each fixture's shipped
+    time, which is stable regardless of which teams fill the slot.
+    """
+    by_kickoff: dict[datetime, tuple[str | None, str | None]] = {}
+    events = payload.get("events")
+    if not isinstance(events, list):
+        return []
+    for event in events:
+        parsed = _parse_event_teams(event)
+        if parsed is None:
+            continue
+        kickoff, home, away = parsed
+        by_kickoff[kickoff] = (home, away)
+
+    out: list[KnockoutResolution] = []
+    for fixture in unresolved:
+        try:
+            kickoff = kickoff_utc(fixture)
+        except ValueError:
+            continue
+        teams = by_kickoff.get(kickoff)
+        if teams is None:
+            continue
+        home, away = teams
+        if home is None or away is None:
+            continue
+        out.append(
+            KnockoutResolution(match_id=fixture["match_id"], home=home, away=away)
+        )
+    return out
 
 
 # ── Odds (DraftKings via the same scoreboard payload) ─────────────────────────

@@ -35,6 +35,15 @@ WCBET_AUTO_SETTLE: bool = get_int_env("WCBET_AUTO_SETTLE", 0) == 1
 # post-kickoff window, so idle traffic is zero).
 WCBET_RESULTS_POLL_MINUTES: int = get_int_env("WCBET_RESULTS_POLL_MINUTES", 5)
 
+# How many days ahead the results poller looks when auto-resolving knockout
+# pairings from ESPN's scheduled bracket. Keeps the poller from querying
+# ESPN for rounds that are still weeks out; a knockout becomes resolvable
+# (and bettable) only once it's within this horizon. 3 days comfortably
+# covers the ~1–2 day gap between a round's teams locking in and kickoff.
+WCBET_KNOCKOUT_RESOLVE_LOOKAHEAD_DAYS: int = get_int_env(
+    "WCBET_KNOCKOUT_RESOLVE_LOOKAHEAD_DAYS", 3,
+)
+
 # Max bets rendered in the panel's "My bets" view. Discord's Components V2
 # TextDisplay is capped at 4,000 chars; a heavy bettor's full history
 # across the 72-match group stage (plus settled/replaced rows) would blow
@@ -51,6 +60,7 @@ WCBET_NOTIFICATION_CHANNEL_ID: int = get_int_env("WCBET_NOTIFICATION_CHANNEL_ID"
 __all__ = [
     "WCBET_AUTO_SETTLE",
     "WCBET_DAILY_ALLOWANCE",
+    "WCBET_KNOCKOUT_RESOLVE_LOOKAHEAD_DAYS",
     "WCBET_LOG_CHANNEL_ID",
     "WCBET_MAX_PENDING_PARLAYS",
     "WCBET_MY_BETS_LIMIT",

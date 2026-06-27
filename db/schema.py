@@ -884,16 +884,26 @@ async def initialize_schema(pool):
         # overlays these onto the static fixtures at startup and after each
         # edit, so betting, settlement (ESPN match by real team names), and the
         # `$wcf` display all see the resolved pairing without a redeploy.
-        # time_et NULL keeps the fixture's shipped time.
+        # time_et NULL keeps the fixture's shipped time. `source` records who
+        # set the row: 'manual' ($wcbetadmin setteam) or 'auto' (ESPN bracket
+        # resolver). Auto-resolution only ever updates its own 'auto' rows, so
+        # a manual correction is never clobbered by ESPN.
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS wc_fixture_overrides (
                 match_id   INTEGER PRIMARY KEY,
                 home       TEXT NOT NULL,
                 away       TEXT NOT NULL,
                 time_et    TEXT,
+                source     TEXT NOT NULL DEFAULT 'manual',
                 updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             )
         ''')
+        # Migration: add `source` to overrides created before the auto-resolver
+        # (they were all manual, which is the default).
+        await conn.execute(
+            "ALTER TABLE wc_fixture_overrides "
+            "ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'manual'",
+        )
 
         # ── Vocab Catch (collectible vocab-card minigame) ──
         # Curated, shared word bank that cards spawn from. Distinct from
