@@ -22,6 +22,7 @@ from discord.ext import commands, tasks
 from base_cog import BaseCog
 from cogs.utils.embeds import blue_embed, green_embed
 from cogs.utils.names import resolve_member_labels
+from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, apply_fixture_overrides
 from cogs.wcpredict_cog.fixtures_view import TEAM_FLAGS
 from db.bets import MatchAlreadySettledError
 
@@ -249,6 +250,23 @@ class WCBet(BaseCog):
     async def cog_unload(self) -> None:
         self.poll_results.cancel()
 
+    async def cog_load(self) -> None:
+        """Overlay any stored knockout team overrides onto the fixtures.
+
+        Knockout fixtures ship with bracket placeholders; resolved pairings
+        are persisted in `wc_fixture_overrides` and re-applied here on every
+        startup so betting/settlement survive restarts. Failures are logged
+        but non-fatal — the bot still runs with unresolved knockouts.
+        """
+        try:
+            overrides = await self.bot.db.get_wc_fixture_overrides()
+        except Exception:
+            logger.exception("wcbet: failed to load knockout fixture overrides")
+            return
+        applied = apply_fixture_overrides(overrides)
+        if applied:
+            logger.info("wcbet: applied %s knockout fixture override(s)", applied)
+
     # ---------- commands ----------
 
     async def _send_prompt(self, ctx: commands.Context) -> None:
@@ -375,9 +393,7 @@ class WCBet(BaseCog):
         """Settle or propose a finished match, depending on the mode flag."""
         match_id = result["match_id"]
         home_score, away_score = result["home_score"], result["away_score"]
-        fixture = next(
-            (f for f in betting.GROUP_STAGE_FIXTURES if f["match_id"] == match_id), None,
-        )
+        fixture = FIXTURE_BY_ID.get(match_id)
         if fixture is None:
             return
         label = f"{fixture['home']} {home_score}–{away_score} {fixture['away']}"

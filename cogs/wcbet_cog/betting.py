@@ -13,7 +13,7 @@ from datetime import UTC, datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Literal
 
-from cogs.wcpredict_cog.fixtures import GROUP_STAGE_FIXTURES, Fixture
+from cogs.wcpredict_cog.fixtures import FIXTURES, Fixture, is_fixture_resolved
 
 type Outcome = Literal["home", "draw", "away"]
 
@@ -38,19 +38,30 @@ def kickoff_utc(fixture: Fixture) -> datetime:
 
 
 def bettable_fixtures(now_utc: datetime) -> list[Fixture]:
-    """Group-stage fixtures that have not kicked off and kick off within 24 hours.
+    """Fixtures open for betting: resolved, not kicked off, within 24 hours.
+
+    A fixture is bettable when it has real (non-placeholder) teams, has not
+    kicked off, and kicks off within the next 24 hours. Group-stage rows are
+    always resolved; knockout rows become bettable only once an owner fills
+    in the real teams via `$wcbetadmin setteam` (until then both sides are
+    bracket placeholders and the fixture is skipped).
 
     Using a lookahead window instead of ET-date comparison handles midnight-ET
-    kickoffs (e.g. match 20) that fall on the next calendar day in ET.
+    kickoffs (e.g. match 20) that fall on the next calendar day in ET. Rows
+    with a "TBD" kickoff are skipped defensively.
 
     ``now_utc`` must be timezone-aware.
     """
     cutoff = now_utc + timedelta(hours=24)
-    return [
-        fixture
-        for fixture in GROUP_STAGE_FIXTURES
-        if now_utc < kickoff_utc(fixture) <= cutoff
-    ]
+    out: list[Fixture] = []
+    for fixture in FIXTURES:
+        if not is_fixture_resolved(fixture):
+            continue
+        if fixture["time_et"] == "TBD":
+            continue
+        if now_utc < kickoff_utc(fixture) <= cutoff:
+            out.append(fixture)
+    return out
 
 
 def outcome_from_score(home: int, away: int) -> Outcome:

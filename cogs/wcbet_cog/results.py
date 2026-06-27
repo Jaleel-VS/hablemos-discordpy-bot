@@ -13,7 +13,7 @@ from datetime import UTC, datetime, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 from typing import TypedDict
 
-from cogs.wcpredict_cog.fixtures import GROUP_STAGE_FIXTURES, Fixture
+from cogs.wcpredict_cog.fixtures import FIXTURES, Fixture, is_fixture_resolved
 
 from .betting import kickoff_utc
 
@@ -45,11 +45,18 @@ class MatchResult(TypedDict):
 
 
 def fixtures_awaiting_result(now_utc: datetime, settled_ids: set[int]) -> list[Fixture]:
-    """Group-stage fixtures that have kicked off, are unsettled, and are
-    still within the polling window."""
+    """Resolved fixtures that have kicked off, are unsettled, and are
+    still within the polling window.
+
+    Covers group-stage rows (always resolved) plus knockout rows whose
+    teams have been filled in via `$wcbetadmin setteam`; unresolved
+    knockout placeholders are skipped (no ESPN event to match yet).
+    """
     awaiting: list[Fixture] = []
-    for fixture in GROUP_STAGE_FIXTURES:
+    for fixture in FIXTURES:
         if fixture["match_id"] in settled_ids:
+            continue
+        if not is_fixture_resolved(fixture):
             continue
         try:
             kickoff = kickoff_utc(fixture)

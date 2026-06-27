@@ -140,10 +140,11 @@ full feature.
 
 | Subcommand | Description |
 |-----------|-------------|
-| `$wcbetadmin result <match_id> <score>` | Record a final score (e.g. `$wcbetadmin result 1 2-1`; also accepts `2:1` / `2 1`). Derives home/draw/away, settles every pending bet on the match atomically (winners credited `floor(stake × 1.5)`), and posts a summary to `#world-cup-log`. Rejects duplicates. |
+| `$wcbetadmin result <match_id> <score>` | Record a final score (e.g. `$wcbetadmin result 1 2-1`; also accepts `2:1` / `2 1`). Derives home/draw/away, settles every pending bet on the match atomically (winners credited `floor(stake × odds)`), and posts a summary to `#world-cup-log`. Rejects duplicates. Works for group-stage and **resolved** knockout fixtures (set knockout teams first with `setteam`). |
 | `$wcbetadmin void <match_id>` | Refund all pending stakes on a match and mark the bets void (postponements/abandonments). |
 | `$wcbetadmin stats` | Wallet count, pending bets, total coins staked, top balance. |
 | `$wcbetadmin multiplier [value]` | Show or set the house odds multiplier applied to all offered lines (real ESPN lines **and** the flat fallback). No arg shows the current value; `$wcbetadmin multiplier 1.5` juices every price 1.5x; `1` resets to no boost. Allowed range 0.5–10. Affects **new** bets only — already-placed bets keep their snapshotted odds. |
+| `$wcbetadmin setteam <match_id> <home> vs <away> [@ HH:MM]` | Resolve a knockout fixture's real teams (and optionally override the ET kickoff). Knockout fixtures ship with bracket placeholders and aren't bettable/settleable until resolved. Applies immediately (no redeploy) and persists in `wc_fixture_overrides`. Use exact team names as they appear in the standings, e.g. `$wcbetadmin setteam 73 Mexico vs Brazil` or `$wcbetadmin setteam 89 Spain vs France @ 16:00`. |
 | `$wcbettest` | Owner-only test entrypoint for the user flow, retained alongside the public `$wcbet` (defined in `main.py`, not part of this group). |
 
 ## `$wcbetmod` (group, `manage_messages`)

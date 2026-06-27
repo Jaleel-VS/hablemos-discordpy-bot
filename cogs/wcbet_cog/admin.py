@@ -5,6 +5,7 @@ Owner-only prefix command group `$wcbetadmin` — record match results
 and view participation stats.
 """
 import logging
+import re
 from decimal import Decimal, InvalidOperation
 
 import discord
@@ -12,7 +13,12 @@ from discord.ext import commands
 
 from base_cog import BaseCog
 from cogs.utils.embeds import blue_embed, green_embed, red_embed
-from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, Fixture
+from cogs.wcpredict_cog.fixtures import (
+    FIXTURE_BY_ID,
+    Fixture,
+    apply_fixture_override,
+    is_fixture_resolved,
+)
 from db.bets import MatchAlreadySettledError
 
 from . import betting, espn, results
@@ -20,6 +26,37 @@ from .betting import format_parlay_results, format_player_results
 from .config import WCBET_LOG_CHANNEL_ID, WCBET_NOTIFICATION_CHANNEL_ID
 
 logger = logging.getLogger(__name__)
+
+# Parses a `$wcbetadmin setteam` pairing: "<home> vs <away>" with an
+# optional trailing "@ HH:MM" ET kickoff. "vs" is matched case-insensitively
+# as a whole word so team names containing 's'/'v' are unaffected. Time is
+# 24-hour HH:MM. Team names may contain spaces, accents, and apostrophes.
+_SETTEAM_RE = re.compile(
+    r"^\s*(?P<home>.+?)\s+vs\s+(?P<away>.+?)\s*(?:@\s*(?P<time>\d{1,2}:\d{2}))?\s*$",
+    re.IGNORECASE,
+)
+
+
+def _parse_setteam(text: str) -> tuple[str, str, str | None] | None:
+    """Parse "<home> vs <away> [@ HH:MM]" into (home, away, time_et|None).
+
+    Returns None when the input doesn't contain a " vs " separator or both
+    team names aren't present. The kickoff is validated as 00:00–23:59.
+    """
+    match = _SETTEAM_RE.match(text)
+    if match is None:
+        return None
+    home = match.group("home").strip()
+    away = match.group("away").strip()
+    if not home or not away:
+        return None
+    time_et = match.group("time")
+    if time_et is not None:
+        hours, minutes = (int(part) for part in time_et.split(":"))
+        if not (0 <= hours <= 23 and 0 <= minutes <= 59):
+            return None
+        time_et = f"{hours:02d}:{minutes:02d}"
+    return home, away, time_et
 
 
 class WCBetAdmin(BaseCog):
@@ -54,10 +91,13 @@ class WCBetAdmin(BaseCog):
             await ctx.send(embed=red_embed("Run this in the league guild."))
             return
 
-        fixture = self._group_stage_fixture(match_id)
+        fixture = self._settleable_fixture(match_id)
         if fixture is None:
             await ctx.send(
-                embed=red_embed(f"Match `{match_id}` is not a known group-stage fixture."),
+                embed=red_embed(
+                    f"Match `{match_id}` is unknown or its knockout teams "
+                    "aren't resolved yet — set them with `$wcbetadmin setteam`."
+                ),
             )
             return
 
@@ -161,6 +201,75 @@ class WCBetAdmin(BaseCog):
         )
         logger.info("wcbet: odds multiplier set to %s by %s", parsed, ctx.author)
 
+    # ---------- knockout team resolution ----------
+
+    @wcbetadmin.command(name="setteam")
+    @commands.is_owner()
+    async def setteam(
+        self, ctx: commands.Context, match_id: int, *, teams: str | None = None,
+    ) -> None:
+        """Resolve a knockout fixture's real teams (and optionally kickoff).
+
+        Knockout fixtures ship with bracket placeholders ("Winner Group A")
+        and aren't bettable or settleable until their teams are filled in.
+        This writes the real pairing, applies it immediately (no redeploy),
+        and persists it so it survives restarts. Use exact team names as
+        they appear in the group standings (e.g. "USA", "Côte d'Ivoire").
+
+        Format: `<home> vs <away>` (the literal word "vs" separates sides),
+        with an optional `@ HH:MM` ET kickoff override appended.
+
+        Examples:
+            $wcbetadmin setteam 73 Mexico vs Brazil
+            $wcbetadmin setteam 89 Spain vs France @ 16:00
+        """
+        fixture = FIXTURE_BY_ID.get(match_id)
+        if fixture is None:
+            await ctx.send(embed=red_embed(f"Match `{match_id}` is not a known fixture."))
+            return
+        if fixture["group"] is not None:
+            await ctx.send(
+                embed=red_embed(
+                    f"Match `{match_id}` is a group-stage fixture with fixed "
+                    "teams — setteam is only for knockout pairings."
+                ),
+            )
+            return
+        if teams is None:
+            await ctx.send(
+                embed=red_embed(
+                    "Give the pairing as `<home> vs <away>`, e.g. "
+                    "`$wcbetadmin setteam 73 Mexico vs Brazil`."
+                ),
+            )
+            return
+
+        parsed = _parse_setteam(teams)
+        if parsed is None:
+            await ctx.send(
+                embed=red_embed(
+                    "Couldn't parse that. Use `<home> vs <away>` (optionally "
+                    "`@ HH:MM`), e.g. `Spain vs France @ 16:00`."
+                ),
+            )
+            return
+        home, away, time_et = parsed
+
+        await self.bot.db.set_wc_fixture_override(match_id, home, away, time_et)
+        apply_fixture_override(match_id, home, away, time_et)
+
+        when = f" · kickoff {time_et} ET" if time_et else ""
+        await ctx.send(
+            embed=green_embed(
+                f"🏟️ Match `{match_id}` set to **{home} vs {away}**{when}. "
+                "It's now bettable once inside the 24h window."
+            ),
+        )
+        logger.info(
+            "wcbet: match %s teams set to %s vs %s (time %s) by %s",
+            match_id, home, away, time_et or "unchanged", ctx.author,
+        )
+
     # ---------- void ----------
 
     @wcbetadmin.command(name="void")
@@ -171,10 +280,13 @@ class WCBetAdmin(BaseCog):
             await ctx.send(embed=red_embed("Run this in the league guild."))
             return
 
-        fixture = self._group_stage_fixture(match_id)
+        fixture = self._settleable_fixture(match_id)
         if fixture is None:
             await ctx.send(
-                embed=red_embed(f"Match `{match_id}` is not a known group-stage fixture."),
+                embed=red_embed(
+                    f"Match `{match_id}` is unknown or its knockout teams "
+                    "aren't resolved yet — set them with `$wcbetadmin setteam`."
+                ),
             )
             return
 
@@ -245,10 +357,16 @@ class WCBetAdmin(BaseCog):
     # ---------- helpers ----------
 
     @staticmethod
-    def _group_stage_fixture(match_id: int) -> Fixture | None:
-        """Return the fixture if it exists and is a group-stage match."""
+    def _settleable_fixture(match_id: int) -> Fixture | None:
+        """Return the fixture if it exists and has real (resolved) teams.
+
+        Group-stage fixtures are always resolved. Knockout fixtures are
+        settleable only once their teams have been filled in via
+        `$wcbetadmin setteam` (otherwise both sides are bracket
+        placeholders and there is no ESPN event to match).
+        """
         fixture = FIXTURE_BY_ID.get(match_id)
-        if fixture is None or fixture["group"] is None:
+        if fixture is None or not is_fixture_resolved(fixture):
             return None
         return fixture
 

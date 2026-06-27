@@ -336,6 +336,28 @@ but the match never gets a result row.
 3. To refund instead of settle (e.g. abandoned match):
    `$wcbetadmin void <match_id>`.
 
+## Knockout matches don't show up in `$wcbet`
+
+**Symptom:** group stage ended; the next round's matches never appear in
+the betting panel or `$wcbetboard`, and `$wcbetadmin result` on a
+knockout returns "unknown or its knockout teams aren't resolved yet".
+
+**Cause:** knockout fixtures ship with bracket placeholders ("Winner
+Group A", "Winner Match 73"). They are excluded from betting and
+settlement until their real teams are filled in — `bettable_fixtures`
+and `fixtures_awaiting_result` both gate on `is_fixture_resolved`.
+
+**Fix:** as each pairing is decided, resolve it (owner-only):
+```
+$wcbetadmin setteam <match_id> <home> vs <away> [@ HH:MM]
+```
+e.g. `$wcbetadmin setteam 73 Mexico vs Brazil`. Use exact team names as
+they appear in the group standings; the resolved match becomes bettable
+once it's inside the 24h window, and ESPN settlement matches on the real
+names (`results.TEAM_NAME_ALIASES` bridges the few spelling differences).
+Resolutions persist in `wc_fixture_overrides` and re-apply on restart, so
+you only set each match once. Verify with `$wcf <team>` or `$wcbetboard`.
+
 ## TODOs
 
 > Seed this section as incidents occur or as you discover edge cases

@@ -121,6 +121,11 @@ Adding a new domain:
 - `wc_bet_bans` — one row per user banned from betting (`user_id` PK):
   `guild_id`, `banned_by`, optional `reason`, `created_at`. Checked at
   panel entry; managed by the `$wcbetmod` moderator group.
+- `wc_fixture_overrides` — one row per resolved knockout pairing
+  (`match_id` PK): `home`, `away`, optional `time_et`, `updated_at`.
+  Written by `$wcbetadmin setteam`; overlaid onto the static fixture
+  list at startup (`WCBet.cog_load`) and after each edit so knockout
+  betting/settlement survive restarts. See [`cogs/wcbet.md`](./cogs/wcbet.md).
 
 ### Vocab Catch
 - `vocab_card_pool` — curated, shared **bidirectional** word bank cards

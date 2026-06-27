@@ -875,6 +875,26 @@ async def initialize_schema(pool):
             ON wc_parlay_legs(match_id)
         ''')
 
+        # ── Knockout fixture overrides ──
+        # The 104-match fixture list (cogs/wcpredict_cog/fixtures.py) ships
+        # knockout rows with bracket placeholders ("Winner Group A", "Winner
+        # Match 73") and provisional kickoff times. Once a knockout pairing is
+        # decided, an owner resolves it with `$wcbetadmin setteam`, persisting
+        # the real teams (and optionally a corrected kickoff) here. The bot
+        # overlays these onto the static fixtures at startup and after each
+        # edit, so betting, settlement (ESPN match by real team names), and the
+        # `$wcf` display all see the resolved pairing without a redeploy.
+        # time_et NULL keeps the fixture's shipped time.
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS wc_fixture_overrides (
+                match_id   INTEGER PRIMARY KEY,
+                home       TEXT NOT NULL,
+                away       TEXT NOT NULL,
+                time_et    TEXT,
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        ''')
+
         # ── Vocab Catch (collectible vocab-card minigame) ──
         # Curated, shared word bank that cards spawn from. Distinct from
         # the per-user `vocab_notes` table (personal notes). Cards are

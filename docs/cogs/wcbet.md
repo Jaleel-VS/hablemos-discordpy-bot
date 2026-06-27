@@ -64,7 +64,20 @@ busting the odds cache.
 
 Each user has one bet per match, replaceable until kickoff — replacing
 refunds the old stake and deducts the new one in a single DB
-transaction. Group stage only for now; knockout rounds are deferred.
+transaction.
+
+**Knockout rounds.** Group-stage fixtures have fixed teams and are always
+bettable inside the 24h window. Knockout fixtures (Round of 32 onward)
+ship with bracket placeholders ("Winner Group A", "Winner Match 73") and
+are **not** bettable or settleable until an owner resolves their real
+teams with `$wcbetadmin setteam <match_id> <home> vs <away> [@ HH:MM]`.
+Resolutions are persisted in `wc_fixture_overrides` and re-applied to the
+in-memory fixtures on every startup (`WCBet.cog_load`), so they survive
+restarts with no redeploy. `betting.bettable_fixtures` and
+`results.fixtures_awaiting_result` both gate on `is_fixture_resolved`,
+and ESPN settlement matches on the resolved `(kickoff, home, away)` — so
+team names must match ESPN's (`results.TEAM_NAME_ALIASES` covers the few
+spelling differences).
 
 The fixture data is shared with `$wcfixtures` and `/wcpredict` —
 `cogs/wcpredict_cog/fixtures.py` is the single source of truth (times
@@ -134,8 +147,10 @@ lock), so concurrent places can't slip past it.
 
 See [`../admin.md`](../admin.md#wcbetadmin-group-owner-only) —
 `$wcbetadmin result <match_id> <score>`, `$wcbetadmin void <match_id>`,
-`$wcbetadmin stats`, `$wcbetadmin multiplier [value]` (owner-only,
-match-wide settlement + odds-boost control).
+`$wcbetadmin stats`, `$wcbetadmin multiplier [value]`, and
+`$wcbetadmin setteam <match_id> <home> vs <away> [@ HH:MM]` (resolve a
+knockout pairing) — owner-only, match-wide settlement + odds-boost +
+knockout-team control.
 
 ### Moderator commands (`manage_messages`)
 
@@ -199,6 +214,7 @@ coins at once, too much blast radius for the mod tier.
 | `wc_bets` | `WCBetsMixin` | PK `(user_id, match_id)`; outcome, stake, odds snapshot, status, payout. |
 | `wc_match_results` | `WCBetsMixin` | Final score per settled match; doubles as the duplicate-settlement guard. |
 | `wc_bet_bans` | `WCBetsMixin` | Users banned from betting (`user_id` PK); checked at panel entry, managed by `$wcbetmod`. |
+| `wc_fixture_overrides` | `WCBetsMixin` | Resolved knockout pairings (`match_id` PK; `home`, `away`, optional `time_et`). Written by `$wcbetadmin setteam`, overlaid onto the static fixtures at startup. |
 
 See [`../database.md`](../database.md#world-cup-betting).
 

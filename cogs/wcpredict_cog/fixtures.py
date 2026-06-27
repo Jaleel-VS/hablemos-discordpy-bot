@@ -741,3 +741,71 @@ TEAM_FIXTURES: dict[str, list[int]] = {}
 for _fixture in GROUP_STAGE_FIXTURES:
     for _team in (_fixture["home"], _fixture["away"]):
         TEAM_FIXTURES.setdefault(_team, []).append(_fixture["match_id"])
+
+
+# ── Knockout team resolution (runtime overrides) ────────────────────────────
+# Knockout fixtures ship with bracket placeholders ("Winner Group A",
+# "Winner Match 73", "Best 3rd (...)"). Once a pairing is decided an owner
+# resolves it with `$wcbetadmin setteam`, and the bot overlays the real
+# teams onto these shared dicts in place so every consumer
+# (bettable_fixtures, FIXTURE_BY_ID lookups in views, ESPN result matching,
+# the $wcf display) sees the resolved pairing with no further plumbing.
+
+_REAL_TEAMS: frozenset[str] = frozenset(ALL_TEAMS)
+
+
+def is_placeholder_team(name: str) -> bool:
+    """True when ``name`` is an unresolved bracket placeholder.
+
+    A team is "real" only if it is one of the 48 actual competing sides;
+    anything else ("Winner Group A", "Best 3rd (…)", "Winner Match 73") is
+    a placeholder awaiting resolution.
+    """
+    return name not in _REAL_TEAMS
+
+
+def is_fixture_resolved(fixture: Fixture) -> bool:
+    """True when both sides of ``fixture`` are real, named teams.
+
+    Group-stage fixtures are always resolved. Knockout fixtures are
+    resolved only once an override has filled in both teams.
+    """
+    return not (
+        is_placeholder_team(fixture["home"]) or is_placeholder_team(fixture["away"])
+    )
+
+
+def apply_fixture_override(
+    match_id: int, home: str, away: str, time_et: str | None = None,
+) -> Fixture | None:
+    """Overlay resolved teams (and optional kickoff) onto a fixture in place.
+
+    Mutates the shared ``FIXTURE_BY_ID`` entry (which ``FIXTURES`` and the
+    stage lists reference by identity), so all consumers see the change.
+    Returns the updated fixture, or None when ``match_id`` is unknown.
+    """
+    fixture = FIXTURE_BY_ID.get(match_id)
+    if fixture is None:
+        return None
+    fixture["home"] = home
+    fixture["away"] = away
+    if time_et is not None:
+        fixture["time_et"] = time_et
+    return fixture
+
+
+def apply_fixture_overrides(overrides: list[dict]) -> int:
+    """Apply a batch of stored overrides; return how many matched a fixture.
+
+    ``overrides`` is the list of {match_id, home, away, time_et} rows from
+    the database. Unknown match_ids are skipped. Called once at startup and
+    after each `$wcbetadmin setteam`.
+    """
+    applied = 0
+    for row in overrides:
+        if apply_fixture_override(
+            row["match_id"], row["home"], row["away"], row.get("time_et"),
+        ) is not None:
+            applied += 1
+    return applied
+
