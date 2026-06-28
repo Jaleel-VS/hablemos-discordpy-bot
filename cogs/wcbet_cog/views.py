@@ -29,7 +29,7 @@ from discord import (
 )
 from discord.ext import commands
 
-from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, Fixture
+from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, Fixture, is_knockout
 from cogs.wcpredict_cog.fixtures_view import TEAM_FLAGS
 from db.bets import (
     InsufficientBalanceError,
@@ -517,6 +517,10 @@ class BetPanelView(ui.LayoutView):
 
             outcome_buttons: list[ui.Button] = []
             for outcome, (emoji, label) in OUTCOME_BUTTONS.items():
+                # Knockout matches can't draw (level scores go to penalties),
+                # so don't offer a draw bet once a knockout is selected.
+                if outcome == "draw" and selected is not None and is_knockout(selected):
+                    continue
                 if selected is not None and outcome != "draw":
                     team = selected["home"] if outcome == "home" else selected["away"]
                     label = team
@@ -1229,6 +1233,13 @@ class ParlayPanelView(ui.LayoutView):
             sel_odds = self._odds_for(self.sel_match_id) if self.sel_match_id else None
             outcome_buttons = []
             for outcome, (emoji, lbl) in OUTCOME_BUTTONS.items():
+                # Knockout matches can't draw — hide draw once one is selected.
+                if (
+                    outcome == "draw"
+                    and sel_fixture is not None
+                    and is_knockout(sel_fixture)
+                ):
+                    continue
                 label = lbl
                 if sel_fixture is not None and outcome != "draw":
                     team = sel_fixture["home"] if outcome == "home" else sel_fixture["away"]

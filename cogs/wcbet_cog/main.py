@@ -472,7 +472,19 @@ class WCBet(BaseCog):
             )
             return
 
-        outcome = betting.outcome_from_score(home_score, away_score)
+        outcome = betting.settle_outcome(
+            fixture, home_score, away_score, winner=result.get("winner"),
+        )
+        if outcome is None:
+            # Knockout level after ET with no advancing side reported yet.
+            # Don't settle as a draw — wait for ESPN's shootout result (or a
+            # manual `$wcbetadmin result <id> <h>-<a> pens <home|away>`).
+            logger.warning(
+                "wcbet: match %s (%s) ended level with no knockout winner from "
+                "ESPN yet — deferring settlement",
+                match_id, label,
+            )
+            return
         try:
             summary = await self.bot.db.settle_wc_match(
                 match_id, home_score, away_score, outcome, payout_fn=betting.payout,

@@ -16,7 +16,8 @@ bettable matches (with flags, localized `<t:…:t>` kickoff times, and the
 current 1X2 odds line); once a match is selected that list **collapses
 into a focused match card** so the same matches are never listed twice.
 Pick a match → outcome buttons reprice to e.g. `🇲🇽 Mexico · 1.43 / 🤝
-Draw · 4.40 / 🇿🇦 South Africa · 8.50` → a stake select whose **option
+Draw · 4.40 / 🇿🇦 South Africa · 8.50` (knockout matches omit the Draw
+button — they can't end in a draw) → a stake select whose **option
 labels carry the exact payout** (`500 → pays 4,250`, `All in (9,500) →
 pays 80,750`). If your balance is `0`, no stake options exist, so the
 stake select is omitted and the Place button stays disarmed (rather
@@ -93,6 +94,20 @@ ESPN settlement matches on the resolved `(kickoff, home, away)` — so team
 names must match ESPN's (`results.TEAM_NAME_ALIASES` covers the few
 spelling differences, e.g. Ivory Coast → Côte d'Ivoire).
 
+**No draw on knockouts.** Knockout matches can't end in a draw — a level
+score after extra time is decided on penalties. So once a knockout fixture
+is selected, the betting panel (and the parlay builder) only offer **home /
+away**, no draw button (`fixtures.is_knockout` gates this). Settlement uses
+`betting.settle_outcome`, which for knockouts resolves to the side that
+advanced: a decisive score wins outright, and a level score uses ESPN's
+per-competitor `winner` flag (set on the shootout result). Group-stage
+matches are unchanged — they still settle to home/draw/away off the score.
+
+If a knockout ends level and ESPN hasn't reported the advancing side yet,
+the auto-settler **defers** (logs a warning, settles nothing) rather than
+recording a draw. To settle such a match manually, name the side that won
+the shootout: `$wcbetadmin result <id> 1-1 pens home` (or `pens away`).
+
 The fixture data is shared with `$wcfixtures` and `/wcpredict` —
 `cogs/wcpredict_cog/fixtures.py` is the single source of truth (times
 verified against FIFA/FOX; stored `match_id`s match FIFA's official
@@ -160,7 +175,7 @@ lock), so concurrent places can't slip past it.
 ### Admin commands
 
 See [`../admin.md`](../admin.md#wcbetadmin-group-owner-only) —
-`$wcbetadmin result <match_id> <score>`, `$wcbetadmin void <match_id>`,
+`$wcbetadmin result <match_id> <score> [pens home|away]`, `$wcbetadmin void <match_id>`,
 `$wcbetadmin stats`, `$wcbetadmin multiplier [value]`, and
 `$wcbetadmin setteam <match_id> <home> vs <away> [@ HH:MM]` (resolve a
 knockout pairing) — owner-only, match-wide settlement + odds-boost +

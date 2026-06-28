@@ -13,7 +13,12 @@ from datetime import UTC, datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Literal
 
-from cogs.wcpredict_cog.fixtures import FIXTURES, Fixture, is_fixture_resolved
+from cogs.wcpredict_cog.fixtures import (
+    FIXTURES,
+    Fixture,
+    is_fixture_resolved,
+    is_knockout,
+)
 
 type Outcome = Literal["home", "draw", "away"]
 
@@ -71,6 +76,38 @@ def outcome_from_score(home: int, away: int) -> Outcome:
     if home < away:
         return "away"
     return "draw"
+
+
+def settle_outcome(
+    fixture: Fixture,
+    home_score: int,
+    away_score: int,
+    winner: Outcome | None = None,
+) -> Outcome | None:
+    """Outcome that bets on ``fixture`` settle against.
+
+    Group-stage matches settle straight off the score (a level score is a
+    ``draw``). Knockout matches cannot draw — a level score after extra time
+    is decided on penalties — so they settle to the side that advanced:
+
+    * if the regulation/ET score is decisive, that team wins;
+    * if it is level, the advancing side comes from ``winner`` (ESPN's
+      shootout result, or an admin-supplied side).
+
+    Returns ``None`` for a knockout that ended level with no ``winner``
+    available — the caller must obtain the advancing side before settling
+    (never silently settle such a match as a draw).
+    """
+    if not is_knockout(fixture):
+        return outcome_from_score(home_score, away_score)
+    if home_score > away_score:
+        return "home"
+    if away_score > home_score:
+        return "away"
+    # Level after regulation/ET -> decided on penalties; need the winner.
+    if winner in ("home", "away"):
+        return winner
+    return None
 
 
 def payout(stake: int, odds: Decimal) -> int:

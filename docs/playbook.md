@@ -369,6 +369,27 @@ differences). Resolutions persist in `wc_fixture_overrides` and re-apply
 on restart, so you only set each match once. Verify with `$wcf <team>`
 or `$wcbetboard`.
 
+## A knockout went to penalties — bets won't auto-settle
+
+**Symptom:** a knockout match finished level (e.g. 1–1) and was decided
+on penalties, but the poller logs `ended level with no knockout winner
+from ESPN yet — deferring settlement` and nothing settles.
+
+**Cause:** knockouts can't draw, so settlement needs the side that
+advanced. The poller normally reads ESPN's `winner` flag (set on the
+shootout result), but if ESPN hasn't published it yet, the bot defers
+rather than wrongly recording a draw.
+
+**Fix:** wait a tick for ESPN to flag the winner, or settle manually by
+naming the advancing side:
+```
+$wcbetadmin result <match_id> <score> pens <home|away>
+```
+e.g. `$wcbetadmin result 73 1-1 pens home`. The team that won the
+shootout is paid; the other side and any `draw`-equivalent bets lose.
+(Group-stage matches are unaffected — a level score there settles as a
+draw as normal.)
+
 ## TODOs
 
 > Seed this section as incidents occur or as you discover edge cases

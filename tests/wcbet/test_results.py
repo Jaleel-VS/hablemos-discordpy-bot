@@ -34,8 +34,13 @@ def _espn_event(
     completed: bool = True,
     home_name: str | None = None,
     away_name: str | None = None,
+    winner: str | None = None,
 ) -> dict:
-    """Minimal ESPN scoreboard event for a fixture."""
+    """Minimal ESPN scoreboard event for a fixture.
+
+    ``winner`` ("home"/"away") sets ESPN's per-competitor ``winner`` flag,
+    used for knockout shootouts where the score is level.
+    """
     return {
         "date": kickoff_utc(fixture).strftime("%Y-%m-%dT%H:%MZ"),
         "competitions": [
@@ -45,11 +50,13 @@ def _espn_event(
                     {
                         "homeAway": "home",
                         "score": str(home_score),
+                        "winner": winner == "home",
                         "team": {"displayName": home_name or fixture["home"]},
                     },
                     {
                         "homeAway": "away",
                         "score": str(away_score),
+                        "winner": winner == "away",
                         "team": {"displayName": away_name or fixture["away"]},
                     },
                 ],
@@ -89,7 +96,7 @@ def test_awaiting_excludes_beyond_window() -> None:
 def test_completed_event_maps_to_match_id() -> None:
     payload = {"events": [_espn_event(MATCH_2, 2, 1)]}
     assert match_results(payload, [MATCH_2]) == [
-        {"match_id": 2, "home_score": 2, "away_score": 1}
+        {"match_id": 2, "home_score": 2, "away_score": 1, "winner": None}
     ]
 
 
@@ -101,8 +108,26 @@ def test_unfinished_event_is_ignored() -> None:
 def test_espn_team_name_aliases_are_normalized() -> None:
     payload = {"events": [_espn_event(MATCH_12, 0, 0, home_name="Bosnia-Herzegovina")]}
     assert match_results(payload, [MATCH_12]) == [
-        {"match_id": 12, "home_score": 0, "away_score": 0}
+        {"match_id": 12, "home_score": 0, "away_score": 0, "winner": None}
     ]
+
+
+def test_winner_flag_is_captured() -> None:
+    # A 1-1 knockout decided on penalties: score level, ESPN flags a winner.
+    payload = {"events": [_espn_event(MATCH_2, 1, 1, winner="home")]}
+    assert match_results(payload, [MATCH_2]) == [
+        {"match_id": 2, "home_score": 1, "away_score": 1, "winner": "home"}
+    ]
+
+
+def test_winner_flag_away() -> None:
+    payload = {"events": [_espn_event(MATCH_2, 0, 0, winner="away")]}
+    assert match_results(payload, [MATCH_2])[0]["winner"] == "away"
+
+
+def test_no_winner_flag_leaves_winner_none() -> None:
+    payload = {"events": [_espn_event(MATCH_2, 3, 1)]}
+    assert match_results(payload, [MATCH_2])[0]["winner"] is None
 
 
 def test_event_not_in_awaiting_list_is_ignored() -> None:
@@ -134,7 +159,7 @@ def test_malformed_event_is_skipped() -> None:
     bad_date["date"] = "tomorrow-ish"
     payload = {"events": [{}, {"competitions": []}, bad_score, bad_date, good]}
     assert match_results(payload, [MATCH_2]) == [
-        {"match_id": 2, "home_score": 2, "away_score": 1}
+        {"match_id": 2, "home_score": 2, "away_score": 1, "winner": None}
     ]
 
 

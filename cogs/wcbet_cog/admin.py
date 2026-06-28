@@ -59,6 +59,28 @@ def _parse_setteam(text: str) -> tuple[str, str, str | None] | None:
     return home, away, time_et
 
 
+_RESULT_PENS_RE = re.compile(
+    r"\s+(?:pens?|penalties)\s*[:\s]\s*(?P<side>home|away)\s*$",
+    re.IGNORECASE,
+)
+
+
+def _parse_result_arg(text: str) -> tuple[str, "betting.Outcome | None"]:
+    """Split a result argument into (score_part, penalty_winner|None).
+
+    Accepts an optional trailing shootout marker naming the side that
+    advanced on a level knockout score, e.g. ``"1-1 pens home"`` ->
+    ``("1-1", "home")``. With no marker, returns ``(text, None)``. The
+    score itself is validated later by ``betting.parse_score``.
+    """
+    match = _RESULT_PENS_RE.search(text)
+    if match is None:
+        return text.strip(), None
+    side: betting.Outcome = "home" if match.group("side").lower() == "home" else "away"
+    score_part = text[: match.start()].strip()
+    return score_part, side
+
+
 class WCBetAdmin(BaseCog):
     """Owner-only `$wcbetadmin` admin group."""
 
@@ -83,9 +105,12 @@ class WCBetAdmin(BaseCog):
         """Record a final score and settle all pending bets on the match.
 
         Omit score to auto-fetch from ESPN.
+        Knockout shootouts: on a level score, name the side that advanced
+        with a trailing `pens home` / `pens away`.
         Examples:
             $wcbetadmin result 1
             $wcbetadmin result 1 2-1
+            $wcbetadmin result 73 1-1 pens home
         """
         if ctx.guild is None:
             await ctx.send(embed=red_embed("Run this in the league guild."))
@@ -101,6 +126,7 @@ class WCBetAdmin(BaseCog):
             )
             return
 
+        winner: betting.Outcome | None = None
         if score is None:
             date_str = fixture["date"].replace("-", "")
             payload = await espn.fetch_scoreboard(date_str)
@@ -117,16 +143,33 @@ class WCBetAdmin(BaseCog):
                 )
                 return
             home_score, away_score = matches[0]["home_score"], matches[0]["away_score"]
+            winner = matches[0].get("winner")
         else:
-            parsed = betting.parse_score(score)
+            # Knockout shootouts: allow a trailing `pens <home|away>` to name
+            # the side that advanced on a level score, e.g. `1-1 pens home`.
+            score_part, winner = _parse_result_arg(score)
+            parsed = betting.parse_score(score_part)
             if parsed is None:
                 await ctx.send(
-                    embed=red_embed("Couldn't parse that score. Use `<home>-<away>`, e.g. `2-1`."),
+                    embed=red_embed(
+                        "Couldn't parse that score. Use `<home>-<away>`, e.g. `2-1` "
+                        "(knockout shootout: add `pens home` or `pens away`)."
+                    ),
                 )
                 return
             home_score, away_score = parsed
 
-        outcome = betting.outcome_from_score(home_score, away_score)
+        outcome = betting.settle_outcome(fixture, home_score, away_score, winner=winner)
+        if outcome is None:
+            await ctx.send(
+                embed=red_embed(
+                    f"**{fixture['home']} {home_score}–{away_score} {fixture['away']}** "
+                    "is a knockout that ended level — name the side that advanced "
+                    f"on penalties: `$wcbetadmin result {match_id} {home_score}-"
+                    f"{away_score} pens home` (or `pens away`)."
+                ),
+            )
+            return
 
         try:
             summary = await self.bot.db.settle_wc_match(

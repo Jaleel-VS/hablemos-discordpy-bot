@@ -775,6 +775,17 @@ def is_fixture_resolved(fixture: Fixture) -> bool:
     )
 
 
+def is_knockout(fixture: Fixture) -> bool:
+    """True for knockout-stage fixtures (Round of 32 onward).
+
+    Knockout matches cannot end in a draw — a level score after extra time
+    is decided on penalties — so betting hides the ``draw`` outcome and
+    settlement resolves to the team that advanced. Group-stage fixtures
+    (which carry a ``group``) keep the draw outcome.
+    """
+    return fixture["group"] is None
+
+
 def apply_fixture_override(
     match_id: int, home: str, away: str, time_et: str | None = None,
 ) -> Fixture | None:

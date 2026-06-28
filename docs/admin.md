@@ -140,7 +140,7 @@ full feature.
 
 | Subcommand | Description |
 |-----------|-------------|
-| `$wcbetadmin result <match_id> <score>` | Record a final score (e.g. `$wcbetadmin result 1 2-1`; also accepts `2:1` / `2 1`). Derives home/draw/away, settles every pending bet on the match atomically (winners credited `floor(stake × odds)`), and posts a summary to `#world-cup-log`. Rejects duplicates. Works for group-stage and **resolved** knockout fixtures (set knockout teams first with `setteam`). |
+| `$wcbetadmin result <match_id> <score> [pens home\|away]` | Record a final score (e.g. `$wcbetadmin result 1 2-1`; also accepts `2:1` / `2 1`). Derives the outcome via `settle_outcome`, settles every pending bet on the match atomically (winners credited `floor(stake × odds)`), and posts a summary to `#world-cup-log`. Rejects duplicates. Works for group-stage and **resolved** knockout fixtures (set knockout teams first with `setteam`). **Knockouts can't draw** — on a level score, name the side that advanced on penalties with a trailing `pens home` / `pens away` (e.g. `$wcbetadmin result 73 1-1 pens home`); omitting it on a level knockout score is rejected with a hint. |
 | `$wcbetadmin void <match_id>` | Refund all pending stakes on a match and mark the bets void (postponements/abandonments). |
 | `$wcbetadmin stats` | Wallet count, pending bets, total coins staked, top balance. |
 | `$wcbetadmin multiplier [value]` | Show or set the house odds multiplier applied to all offered lines (real ESPN lines **and** the flat fallback). No arg shows the current value; `$wcbetadmin multiplier 1.5` juices every price 1.5x; `1` resets to no boost. Allowed range 0.5–10. Affects **new** bets only — already-placed bets keep their snapshotted odds. |

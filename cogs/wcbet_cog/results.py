@@ -20,7 +20,7 @@ from cogs.wcpredict_cog.fixtures import (
     is_placeholder_team,
 )
 
-from .betting import kickoff_utc
+from .betting import Outcome, kickoff_utc
 
 ESPN_SCOREBOARD_URL = (
     "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/"
@@ -42,11 +42,17 @@ TEAM_NAME_ALIASES: dict[str, str] = {
 
 
 class MatchResult(TypedDict):
-    """A finished match mapped back to our fixture numbering."""
+    """A finished match mapped back to our fixture numbering.
+
+    ``winner`` is the side ESPN flags as advancing ("home"/"away"), set
+    even when the regulation/ET ``score`` is level (penalty shootout).
+    ``None`` when ESPN exposes no winner (e.g. an ordinary group draw).
+    """
 
     match_id: int
     home_score: int
     away_score: int
+    winner: Outcome | None
 
 
 def fixtures_awaiting_result(now_utc: datetime, settled_ids: set[int]) -> list[Fixture]:
@@ -76,24 +82,34 @@ def _normalize(name: str) -> str:
     return TEAM_NAME_ALIASES.get(name, name)
 
 
-def _parse_event(event: dict) -> tuple[datetime, str, str, int, int] | None:
-    """Extract (kickoff_utc, home, away, home_score, away_score) from one
-    completed ESPN event, or None if it is unfinished or malformed."""
+def _parse_event(
+    event: dict,
+) -> tuple[datetime, str, str, int, int, Outcome | None] | None:
+    """Extract (kickoff_utc, home, away, home_score, away_score, winner) from
+    one completed ESPN event, or None if it is unfinished or malformed.
+
+    ``winner`` is "home"/"away" when ESPN flags an advancing side (set even
+    on a level regulation score decided by penalties), else None.
+    """
     try:
         competition = event["competitions"][0]
         if not competition["status"]["type"]["completed"]:
             return None
         kickoff = datetime.strptime(event["date"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=UTC)
         teams: dict[str, tuple[str, int]] = {}
+        winner: Outcome | None = None
         for competitor in competition["competitors"]:
-            teams[competitor["homeAway"]] = (
+            side = competitor["homeAway"]
+            teams[side] = (
                 _normalize(competitor["team"]["displayName"]),
                 int(competitor["score"]),
             )
+            if competitor.get("winner") is True and side in ("home", "away"):
+                winner = side
         (home, home_score), (away, away_score) = teams["home"], teams["away"]
     except (KeyError, IndexError, TypeError, ValueError):
         return None
-    return kickoff, home, away, home_score, away_score
+    return kickoff, home, away, home_score, away_score, winner
 
 
 def _fixture_index(fixtures: list[Fixture]) -> dict[tuple[datetime, str, str], int]:
@@ -117,11 +133,16 @@ def match_results(payload: dict, awaiting: list[Fixture]) -> list[MatchResult]:
         parsed = _parse_event(event)
         if parsed is None:
             continue
-        kickoff, home, away, home_score, away_score = parsed
+        kickoff, home, away, home_score, away_score, winner = parsed
         match_id = index.get((kickoff, home, away))
         if match_id is not None:
             results.append(
-                MatchResult(match_id=match_id, home_score=home_score, away_score=away_score)
+                MatchResult(
+                    match_id=match_id,
+                    home_score=home_score,
+                    away_score=away_score,
+                    winner=winner,
+                )
             )
     return results
 

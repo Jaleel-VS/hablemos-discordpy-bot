@@ -21,9 +21,10 @@ from cogs.wcbet_cog.betting import (
     parse_score,
     parse_stake,
     payout,
+    settle_outcome,
     stake_presets,
 )
-from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, Fixture
+from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, Fixture, is_knockout
 
 
 def _utc(year: int, month: int, day: int, hour: int, minute: int = 0) -> datetime:
@@ -130,6 +131,47 @@ def test_bettable_fixtures_et_midnight_rolls_to_next_day() -> None:
 )
 def test_outcome_from_score(home: int, away: int, expected: str) -> None:
     assert outcome_from_score(home, away) == expected
+
+
+# ── is_knockout / settle_outcome ──────────────────────────────────────
+GROUP_FIXTURE = FIXTURE_BY_ID[1]    # Group Stage (group is not None)
+KNOCKOUT_FIXTURE = FIXTURE_BY_ID[73]  # Round of 32 (group is None)
+
+
+def test_is_knockout_classifies_by_group() -> None:
+    assert is_knockout(KNOCKOUT_FIXTURE) is True
+    assert is_knockout(GROUP_FIXTURE) is False
+
+
+def test_settle_outcome_group_uses_score_including_draw() -> None:
+    assert settle_outcome(GROUP_FIXTURE, 2, 1) == "home"
+    assert settle_outcome(GROUP_FIXTURE, 0, 3) == "away"
+    assert settle_outcome(GROUP_FIXTURE, 1, 1) == "draw"
+    # A group fixture ignores any winner hint.
+    assert settle_outcome(GROUP_FIXTURE, 1, 1, winner="home") == "draw"
+
+
+def test_settle_outcome_knockout_decisive_score() -> None:
+    assert settle_outcome(KNOCKOUT_FIXTURE, 2, 1) == "home"
+    assert settle_outcome(KNOCKOUT_FIXTURE, 0, 3) == "away"
+
+
+def test_settle_outcome_knockout_level_uses_winner() -> None:
+    # 1-1 after ET, decided on penalties.
+    assert settle_outcome(KNOCKOUT_FIXTURE, 1, 1, winner="home") == "home"
+    assert settle_outcome(KNOCKOUT_FIXTURE, 1, 1, winner="away") == "away"
+
+
+def test_settle_outcome_knockout_never_draws() -> None:
+    # Even a level score must not settle as a draw on a knockout.
+    assert settle_outcome(KNOCKOUT_FIXTURE, 1, 1, winner="home") != "draw"
+    assert settle_outcome(KNOCKOUT_FIXTURE, 2, 2, winner="away") != "draw"
+
+
+def test_settle_outcome_knockout_level_without_winner_is_none() -> None:
+    # No advancing side known yet -> caller must defer, never settle as draw.
+    assert settle_outcome(KNOCKOUT_FIXTURE, 1, 1) is None
+    assert settle_outcome(KNOCKOUT_FIXTURE, 0, 0, winner=None) is None
 
 
 # ── payout ───────────────────────────────────────────────────────────────────

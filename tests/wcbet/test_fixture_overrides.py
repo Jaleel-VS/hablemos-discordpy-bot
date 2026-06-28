@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from cogs.wcbet_cog.admin import _parse_setteam
+from cogs.wcbet_cog.admin import _parse_result_arg, _parse_setteam
 from cogs.wcbet_cog.betting import bettable_fixtures, kickoff_utc
 from cogs.wcpredict_cog.fixtures import (
     FIXTURE_BY_ID,
@@ -160,3 +160,33 @@ def test_parse_setteam_rejects_missing_separator() -> None:
 def test_parse_setteam_rejects_bad_time() -> None:
     assert _parse_setteam("A vs B @ 25:00") is None
     assert _parse_setteam("A vs B @ 12:99") is None
+
+
+# ── _parse_result_arg (knockout shootout marker) ──────────────────────────────
+
+def test_parse_result_arg_plain_score() -> None:
+    assert _parse_result_arg("2-1") == ("2-1", None)
+
+
+def test_parse_result_arg_pens_home() -> None:
+    assert _parse_result_arg("1-1 pens home") == ("1-1", "home")
+
+
+def test_parse_result_arg_pens_away() -> None:
+    assert _parse_result_arg("0-0 pens away") == ("0-0", "away")
+
+
+def test_parse_result_arg_accepts_penalties_and_colon() -> None:
+    assert _parse_result_arg("2-2 penalties away") == ("2-2", "away")
+    assert _parse_result_arg("1-1 pens: home") == ("1-1", "home")
+
+
+def test_parse_result_arg_is_case_insensitive() -> None:
+    assert _parse_result_arg("1-1 PENS Home") == ("1-1", "home")
+
+
+def test_parse_result_arg_ignores_unrelated_trailing_text() -> None:
+    # No recognised pens marker -> whole string is the score part.
+    score, side = _parse_result_arg("2-1 nonsense")
+    assert side is None
+    assert score == "2-1 nonsense"
