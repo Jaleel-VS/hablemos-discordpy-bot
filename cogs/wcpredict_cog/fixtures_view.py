@@ -154,6 +154,16 @@ TEAM_ALIASES: dict[str, str] = {
 
 # ── Page definitions ──────────────────────────────────────────────────────────
 
+def _kickoff_sort_key(fixture: Fixture) -> tuple[str, str]:
+    """Chronological sort key (date, then time) for a fixture.
+
+    TBD kick-offs sort after timed matches on the same day.
+    """
+    time = fixture["time_et"]
+    time_key = "99:99" if time == "TBD" else time
+    return (fixture["date"], time_key)
+
+
 # Each entry is (title, color, list_of_match_ids)
 _GROUP_STAGE_COLOR = Color.blue()
 _R32_COLOR = Color.orange()
@@ -163,27 +173,53 @@ _PAGES: list[tuple[str, Color, list[int]]] = []
 
 # Pages 1-12: one per group
 for _grp in "ABCDEFGHIJKL":
-    _ids = [f["match_id"] for f in FIXTURES if f["group"] == _grp]
+    _ids = [
+        f["match_id"]
+        for f in sorted(
+            (f for f in FIXTURES if f["group"] == _grp), key=_kickoff_sort_key
+        )
+    ]
     _PAGES.append((f"⚽  Group {_grp}", _GROUP_STAGE_COLOR, _ids))
 
 # Pages 13-14: Round of 32 split in half
-_r32_ids = [f["match_id"] for f in FIXTURES if f["stage"] == "Round of 32"]
+_r32_ids = [
+    f["match_id"]
+    for f in sorted(
+        (f for f in FIXTURES if f["stage"] == "Round of 32"), key=_kickoff_sort_key
+    )
+]
 _PAGES.append(("🏆  Round of 32 — Part 1", _R32_COLOR, _r32_ids[:8]))
 _PAGES.append(("🏆  Round of 32 — Part 2", _R32_COLOR, _r32_ids[8:]))
 
 # Page 15: Round of 16
-_r16_ids = [f["match_id"] for f in FIXTURES if f["stage"] == "Round of 16"]
+_r16_ids = [
+    f["match_id"]
+    for f in sorted(
+        (f for f in FIXTURES if f["stage"] == "Round of 16"), key=_kickoff_sort_key
+    )
+]
 _PAGES.append(("🏆  Round of 16", _R32_COLOR, _r16_ids))
 
 # Page 16: Quarterfinals
-_qf_ids = [f["match_id"] for f in FIXTURES if f["stage"] == "Quarterfinal"]
+_qf_ids = [
+    f["match_id"]
+    for f in sorted(
+        (f for f in FIXTURES if f["stage"] == "Quarterfinal"), key=_kickoff_sort_key
+    )
+]
 _PAGES.append(("🏆  Quarterfinals", _LATE_KO_COLOR, _qf_ids))
 
 # Page 17: Semis + 3rd + Final
 _late_ids = [
     f["match_id"]
-    for f in FIXTURES
-    if f["stage"] in {"Semifinal", "Third Place Playoff", "Final"}
+    for f in sorted(
+        (
+            f
+            for f in FIXTURES
+            if f["stage"] in {"Semifinal", "Third Place Playoff", "Final"}
+        ),
+        key=_kickoff_sort_key,
+    )
 ]
 _PAGES.append(("🏆  Semifinals · 3rd Place · Final", _LATE_KO_COLOR, _late_ids))
 
@@ -263,12 +299,18 @@ def _today_et() -> datetime:
 def fixtures_for_et_day(target: datetime) -> list[Fixture]:
     """Return fixtures whose stored ET date matches the target ET day."""
     target_date = target.date().isoformat()
-    return [fixture for fixture in FIXTURES if fixture["date"] == target_date]
+    return sorted(
+        (fixture for fixture in FIXTURES if fixture["date"] == target_date),
+        key=_kickoff_sort_key,
+    )
 
 
 def fixtures_for_date(date_str: str) -> list[Fixture]:
     """Return fixtures whose stored ET date matches an ISO date string."""
-    return [fixture for fixture in FIXTURES if fixture["date"] == date_str]
+    return sorted(
+        (fixture for fixture in FIXTURES if fixture["date"] == date_str),
+        key=_kickoff_sort_key,
+    )
 
 
 def fixtures_for_today() -> list[Fixture]:
@@ -285,11 +327,14 @@ def fixtures_for_next_days(days: int) -> list[Fixture]:
     """Return fixtures scheduled from today through the next ``days`` ET days."""
     start = _today_et().date()
     end = start + timedelta(days=max(days - 1, 0))
-    return [
-        fixture
-        for fixture in FIXTURES
-        if start <= datetime.strptime(fixture["date"], "%Y-%m-%d").date() <= end
-    ]
+    return sorted(
+        (
+            fixture
+            for fixture in FIXTURES
+            if start <= datetime.strptime(fixture["date"], "%Y-%m-%d").date() <= end
+        ),
+        key=_kickoff_sort_key,
+    )
 
 
 def _kickoff_ts(fixture: Fixture) -> int | None:
@@ -374,7 +419,6 @@ def build_filtered_embed(title: str, fixtures: list[Fixture]) -> Embed:
         lines.append("")
 
     embed.description = "\n".join(lines).rstrip()
-    embed.set_footer(text="All kickoff dates are based on tournament ET (UTC-4).")
     return embed
 
 
@@ -393,12 +437,7 @@ def build_filtered_page_embed(title: str, fixtures: list[Fixture], page: int) ->
     start = safe_page * FILTERED_PAGE_SIZE
     end = start + FILTERED_PAGE_SIZE
     embed = build_filtered_embed(title, fixtures[start:end])
-    embed.set_footer(
-        text=(
-            f"Page {safe_page + 1}/{total_pages}  ·  "
-            "All kickoff dates are based on tournament ET (UTC-4)."
-        )
-    )
+    embed.set_footer(text=f"Page {safe_page + 1}/{total_pages}")
     return embed
 
 
