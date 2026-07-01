@@ -112,17 +112,25 @@ def _parse_event(
     return kickoff, home, away, home_score, away_score, winner
 
 
-def _fixture_index(fixtures: list[Fixture]) -> dict[tuple[datetime, str, str], int]:
-    """Index fixtures by the (kickoff UTC, home, away) identity ESPN
-    events are matched on."""
-    return {
-        (kickoff_utc(f), f["home"], f["away"]): f["match_id"] for f in fixtures
-    }
+def _fixture_index(fixtures: list[Fixture]) -> dict[tuple[str, str], int]:
+    """Index fixtures by the (home, away) identity ESPN events match on.
+
+    Keyed on team names rather than kickoff time: ``fixtures`` is already
+    the result-window set, where (home, away) is unique, so we don't need
+    the kickoff in the key — and matching on it broke settlement when a
+    match started late (ESPN's kickoff drifted from our stored time; e.g.
+    a Round-of-32 tie that kicked off an hour late never settled).
+    """
+    return {(f["home"], f["away"]): f["match_id"] for f in fixtures}
 
 
 def match_results(payload: dict, awaiting: list[Fixture]) -> list[MatchResult]:
     """Map completed events in an ESPN scoreboard payload onto the
-    fixtures we are waiting on. Unmatched/unfinished events are ignored."""
+    fixtures we are waiting on. Unmatched/unfinished events are ignored.
+
+    Matching is by (home, away) team identity, not kickoff time, so a
+    match that starts late (ESPN kickoff ≠ our stored time) still settles.
+    """
     index = _fixture_index(awaiting)
 
     results: list[MatchResult] = []
@@ -133,8 +141,8 @@ def match_results(payload: dict, awaiting: list[Fixture]) -> list[MatchResult]:
         parsed = _parse_event(event)
         if parsed is None:
             continue
-        kickoff, home, away, home_score, away_score, winner = parsed
-        match_id = index.get((kickoff, home, away))
+        _kickoff, home, away, home_score, away_score, winner = parsed
+        match_id = index.get((home, away))
         if match_id is not None:
             results.append(
                 MatchResult(
@@ -294,14 +302,17 @@ def parse_event_odds(event: dict) -> MatchOdds | None:
         return None
 
 
-def _event_key(event: dict) -> tuple[datetime, str, str] | None:
-    """The (kickoff UTC, home, away) identity of an event, or None."""
+def _event_key(event: dict) -> tuple[str, str] | None:
+    """The (home, away) team identity of an event, or None.
+
+    Team-name identity (not kickoff) so odds still match when a match's
+    scheduled time drifts — mirrors ``_fixture_index``.
+    """
     try:
-        kickoff = datetime.strptime(event["date"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=UTC)
         teams: dict[str, str] = {}
         for competitor in event["competitions"][0]["competitors"]:
             teams[competitor["homeAway"]] = _normalize(competitor["team"]["displayName"])
-        return kickoff, teams["home"], teams["away"]
+        return teams["home"], teams["away"]
     except (KeyError, IndexError, TypeError, ValueError):
         return None
 

@@ -369,6 +369,34 @@ differences). Resolutions persist in `wc_fixture_overrides` and re-apply
 on restart, so you only set each match once. Verify with `$wcf <team>`
 or `$wcbetboard`.
 
+## A match finished but bets are stuck `pending` (didn't settle)
+
+**Symptom:** a match is clearly over on ESPN, but `$wcbetme` / the DB
+shows bets on it still `pending`, and no settlement announcement fired.
+
+**Likely cause — late kickoff:** settlement maps ESPN events to our
+fixtures by `(home, away)` team identity. This is robust to a match
+starting late (fixed after match 79 Mexico–Ecuador started an hour late
+and its bets stuck `pending` because the old code required an exact
+kickoff-time match). If bets are still stuck after this fix, check:
+
+1. **Team-name spelling.** ESPN's names must normalize to ours via
+   `results.TEAM_NAME_ALIASES`. Diff ESPN's `displayName` against the
+   fixture's `home`/`away`; add any new alias.
+2. **Knockout not resolved.** If it's a knockout whose teams were never
+   filled in, `fixtures_awaiting_result` skips it — resolve with
+   `$wcbetadmin setteam`, then it settles next poll.
+3. **Result window.** `RESULT_WINDOW` (30h from our stored kickoff) must
+   still cover “now”; a match delayed a full day-plus could fall out.
+
+**Fix (settle manually):**
+```
+$wcbetadmin result <match_id> <score>              # e.g. 79 2-0
+$wcbetadmin result <match_id> <score> pens <side>  # level knockout
+```
+This is idempotent-safe: `settle_wc_match` records a result row and
+rejects duplicates, so a later auto-settle attempt is a harmless no-op.
+
 ## A knockout went to penalties — bets won't auto-settle
 
 **Symptom:** a knockout match finished level (e.g. 1–1) and was decided

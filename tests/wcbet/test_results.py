@@ -135,9 +135,22 @@ def test_event_not_in_awaiting_list_is_ignored() -> None:
     assert match_results(payload, [MATCH_12]) == []
 
 
-def test_kickoff_mismatch_does_not_match() -> None:
+def test_late_kickoff_still_matches_by_teams() -> None:
+    # A match that starts late (ESPN kickoff drifts from our stored time)
+    # must still settle — matching is by (home, away), not kickoff.
+    # Regression: match 79 (Mexico-Ecuador) started an hour late and never
+    # settled because the old index keyed on exact kickoff time.
     event = _espn_event(MATCH_2, 2, 1)
     event["date"] = (MATCH_2_KICKOFF + timedelta(hours=1)).strftime("%Y-%m-%dT%H:%MZ")
+    assert match_results({"events": [event]}, [MATCH_2]) == [
+        {"match_id": 2, "home_score": 2, "away_score": 1, "winner": None}
+    ]
+
+
+def test_wrong_teams_do_not_match() -> None:
+    # A completed event whose teams aren't in the awaiting set is ignored,
+    # even at the right kickoff time.
+    event = _espn_event(MATCH_2, 2, 1, home_name="Nowhere FC", away_name="Elsewhere")
     assert match_results({"events": [event]}, [MATCH_2]) == []
 
 

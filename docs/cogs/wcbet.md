@@ -90,7 +90,8 @@ even if ESPN's data is stale or odd.
 Resolutions persist and are re-applied on every startup (`WCBet.cog_load`),
 so they survive restarts. `betting.bettable_fixtures` and
 `results.fixtures_awaiting_result` both gate on `is_fixture_resolved`, and
-ESPN settlement matches on the resolved `(kickoff, home, away)` — so team
+ESPN settlement matches on the resolved `(home, away)` teams (not kickoff
+time, so a late start still settles) — so team
 names must match ESPN's (`results.TEAM_NAME_ALIASES` covers the few
 spelling differences, e.g. Ivory Coast → Côte d'Ivoire).
 
@@ -225,10 +226,13 @@ coins at once, too much blast radius for the mod tier.
 2. Fetches ESPN's free, key-less scoreboard JSON
    (`site.api.espn.com/...scoreboard?dates=YYYYMMDD` — the `dates` param
    uses the ET calendar date, same convention as `fixtures.py`).
-3. Completed events are mapped to our `match_id` by exact
-   `(kickoff UTC, home, away)` after normalizing five team-name
-   spellings (`results.TEAM_NAME_ALIASES`) — a mismatch can never settle
-   the wrong match; it just doesn't match.
+3. Completed events are mapped to our `match_id` by `(home, away)` team
+   identity after normalizing five team-name spellings
+   (`results.TEAM_NAME_ALIASES`). Matching is **not** keyed on kickoff
+   time — a match that starts late (ESPN's kickoff drifts from our stored
+   time) still settles, since `(home, away)` is unique within the
+   result-window set. (Historic bug: a late Round-of-32 kickoff once left
+   all bets stuck `pending` because the index required an exact time.)
 4. Default **propose mode**: posts the finished score + ready-to-run
    `$wcbetadmin result …` command to `#world-cup-log` (once per match
    per process). With `WCBET_AUTO_SETTLE=1` it settles directly through
