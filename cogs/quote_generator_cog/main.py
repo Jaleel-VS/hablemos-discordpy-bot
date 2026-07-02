@@ -266,7 +266,7 @@ class QuoteGenerator(BaseCog):
                 asyncio.to_thread(creator_fn, user_nick, user_avatar, message_content, output_path=img_path),
                 timeout=30,
             )
-            await ctx.send(content=ctx.author.mention, file=File(img_path))
+            await ctx.send(file=File(img_path))
         except Forbidden:
             logger.warning(
                 "Missing permissions to send quote image in channel %s (guild %s)",
@@ -404,7 +404,7 @@ class QuoteGenerator(BaseCog):
                 asyncio.to_thread(create_multi_image, messages, output_path=img_path),
                 timeout=30,
             )
-            await ctx.send(content=ctx.author.mention, file=File(img_path))
+            await ctx.send(file=File(img_path))
         except HTTPException:
             logger.exception("Failed to send multi-quote image")
             await ctx.send(embed=red_embed("Something went wrong sending the image."))
@@ -458,9 +458,7 @@ class QuoteGenerator(BaseCog):
                 asyncio.to_thread(creator_fn, username, avatar, content, output_path=img_path),
                 timeout=30,
             )
-            await interaction.followup.send(
-                content=interaction.user.mention, file=File(img_path),
-            )
+            await interaction.followup.send(file=File(img_path))
         except Exception:
             logger.exception("Context menu quote failed")
             await interaction.followup.send("Something went wrong generating the quote.", ephemeral=True)
