@@ -134,7 +134,7 @@ def create_image2(user_name: str, user_avatar: str, message_content: str, *, out
       letter-spacing: .12em;
       color: #fff;
       /* outline for better legibility on busy backgrounds */
-      -webkit-text-stroke: {max(2, min(8, int((_compute_quote_glyph_font_size.__code__.co_consts and 0) or 0) or 0))}px rgba(0,0,0,0.85);
+      -webkit-text-stroke: {max(2, min(8, 0))}px rgba(0,0,0,0.85);
     }}
 
     .phrase {{

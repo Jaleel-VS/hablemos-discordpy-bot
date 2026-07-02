@@ -2,8 +2,11 @@
 
 Language-exchange posting lives in ``langex_cog``.
 """
+from __future__ import annotations
+
 import logging
 import re
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Embed, Interaction, Member, TextStyle
@@ -22,6 +25,9 @@ from .config import (
     SPANISH_NATIVE_ROLE_ID,
 )
 from .i18n import t
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +78,7 @@ class IntroOnlyModal(Modal):
         self.interests.label = t("label_interests", lang)
         self.interests.placeholder = t("placeholder_interests", lang)
 
-    async def on_submit(self, interaction: Interaction):
+    async def on_submit(self, interaction: Interaction[Hablemos]):
         about = self.about_me.value.strip()
         interests = (self.interests.value or "").strip()
 
@@ -119,11 +125,13 @@ async def _audit_log(client, user: discord.User | discord.Member, action: str) -
         logger.debug("Failed to send audit log for %s", action)
 
 
-async def _post_intro(interaction: Interaction, embed: Embed, channel_id: int, lang: str) -> None:
+async def _post_intro(
+    interaction: Interaction[Hablemos], embed: Embed, channel_id: int, lang: str
+) -> None:
     """Post a simple introduction embed."""
     await interaction.response.defer(ephemeral=True)
     channel = await _resolve_channel(interaction, channel_id)
-    if not channel:
+    if channel is None:
         return
 
     try:
@@ -144,17 +152,23 @@ async def _post_intro(interaction: Interaction, embed: Embed, channel_id: int, l
     await _audit_log(interaction.client, interaction.user, "Introduction posted")
 
 
-async def _resolve_channel(interaction: Interaction, channel_id: int):
+async def _resolve_channel(
+    interaction: Interaction, channel_id: int,
+) -> discord.TextChannel | discord.Thread | discord.VoiceChannel | None:
     """Get or fetch a channel, sending error on failure."""
     channel = interaction.client.get_channel(channel_id)
-    if channel:
+    if channel is None:
+        try:
+            channel = await interaction.client.fetch_channel(channel_id)
+        except discord.NotFound:
+            logger.error("Channel %s not found", channel_id)
+            await interaction.followup.send(embed=red_embed("Target channel not found."), ephemeral=True)
+            return None
+        except discord.HTTPException:
+            logger.exception("Failed to fetch channel %s", channel_id)
+            await interaction.followup.send(embed=red_embed("Could not reach the target channel."), ephemeral=True)
+            return None
+    if isinstance(channel, (discord.TextChannel, discord.Thread, discord.VoiceChannel)):
         return channel
-    try:
-        return await interaction.client.fetch_channel(channel_id)
-    except discord.NotFound:
-        logger.error("Channel %s not found", channel_id)
-        await interaction.followup.send(embed=red_embed("Target channel not found."), ephemeral=True)
-    except discord.HTTPException:
-        logger.exception("Failed to fetch channel %s", channel_id)
-        await interaction.followup.send(embed=red_embed("Could not reach the target channel."), ephemeral=True)
+    logger.error("Channel %s is not a messageable text channel", channel_id)
     return None

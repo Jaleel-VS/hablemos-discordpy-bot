@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import logging
 from io import BytesIO
+from typing import cast
 
 from cogs.utils.plotting import configure_backend
 
@@ -111,9 +112,14 @@ def render_word_difficulty(
     # slowest (each bucket contributes a few). Dedup by word so a word
     # that's both "hardest" and "slowest" is only labeled once.
     interesting: list[int] = []
-    interesting += df["solve_rate_pct"].nsmallest(4).index.tolist()
-    interesting += df["solve_rate_pct"].nlargest(3).index.tolist()
-    interesting += df["avg_solve_seconds"].nlargest(3).index.tolist()
+    # pandas-stubs types ``df[str]`` as ``Series | DataFrame``; these columns
+    # are always Series, so cast to pick the Series ``.nsmallest``/``.nlargest``
+    # overloads (which return a Series with a usable ``.index``).
+    solve_rate = cast("pd.Series", df["solve_rate_pct"])
+    avg_seconds = cast("pd.Series", df["avg_solve_seconds"])
+    interesting += solve_rate.nsmallest(4).index.tolist()
+    interesting += solve_rate.nlargest(3).index.tolist()
+    interesting += avg_seconds.nlargest(3).index.tolist()
     seen: set[int] = set()
     ordered_unique: list[int] = []
     for i in interesting:
@@ -139,7 +145,8 @@ def render_word_difficulty(
     ax.set_ylim(-5, 105)
     ax.set_xlabel("Avg seconds to solve (successful solves only)", fontsize=10)
     ax.set_ylabel("Solve rate (%)", fontsize=10)
-    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{int(v)}%"))
+    from matplotlib.ticker import FuncFormatter
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{int(v)}%"))
 
     # 50% reference line — helps eyeball "below-average difficulty".
     ax.axhline(50, color="#999", linestyle="--", linewidth=0.8, alpha=0.6)

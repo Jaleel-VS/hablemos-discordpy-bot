@@ -2,17 +2,22 @@
 Vocabulary Notes Cog
 Provides slash commands for managing vocabulary notes privately
 """
+from __future__ import annotations
+
 import csv
 import io
 import logging
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Embed, Interaction, app_commands
-from discord.ext import commands
 from discord.ui import Modal, TextInput
 
 from base_cog import BaseCog
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +104,7 @@ class VocabNoteModal(Modal, title="Add Vocabulary Note"):
 class VocabCog(BaseCog):
     """Save, search, and export your personal vocabulary notes."""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
 
     vocab_group = app_commands.Group(
@@ -361,7 +366,7 @@ class VocabCog(BaseCog):
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
 
-async def setup(bot):
+async def setup(bot: Hablemos):
     """Setup function to add the cog to the bot"""
     await bot.add_cog(VocabCog(bot))
     logger.info("VocabCog loaded successfully")

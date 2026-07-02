@@ -55,7 +55,7 @@ def get_word(category):
         words = choice(list(reader(f)))
     return words[0], words[1]
 
-def get_image(img: str, category: str) -> tuple[str, str | None]:
+def get_image(img: str, category: str) -> tuple[str, str] | None:
     """
     Get a random image file for the given word and category.
 

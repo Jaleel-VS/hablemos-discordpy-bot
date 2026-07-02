@@ -254,7 +254,7 @@ def render_card(card: Card, view: dict, *, revealed: bool) -> BytesIO:
             d.line([(ox, oy), (ox, oy + dy * length)], fill=a, width=2 * S)
 
     # 7) Downsample + round the outer corners (transparent PNG).
-    out = img.resize((CARD_W, CARD_H), Image.LANCZOS).convert("RGBA")
+    out = img.resize((CARD_W, CARD_H), Image.Resampling.LANCZOS).convert("RGBA")
     corner = Image.new("L", (CARD_W, CARD_H), 0)
     ImageDraw.Draw(corner).rounded_rectangle(
         [0, 0, CARD_W - 1, CARD_H - 1], radius=26, fill=255)

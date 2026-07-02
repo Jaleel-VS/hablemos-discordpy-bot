@@ -1,12 +1,18 @@
 """Global command error handler cog."""
+from __future__ import annotations
+
 import difflib
 import logging
 import random
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
 
 from base_cog import BaseCog
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +89,11 @@ class ErrorHandler(BaseCog):
                 # Suggest similar commands via fuzzy match
                 invoked = ctx.invoked_with
                 all_cmds = [c.name for c in self.bot.commands if not c.hidden]
-                close = difflib.get_close_matches(invoked, all_cmds, n=3, cutoff=0.6)
+                close = (
+                    difflib.get_close_matches(invoked, all_cmds, n=3, cutoff=0.6)
+                    if invoked is not None
+                    else []
+                )
                 if close:
                     suggestions = ", ".join(f"`{self.bot.command_prefix}{c}`" for c in close)
                     await ctx.send(f"Command not found. Did you mean {suggestions}?")
@@ -141,5 +151,5 @@ class ErrorHandler(BaseCog):
             pass
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Hablemos):
     await bot.add_cog(ErrorHandler(bot))

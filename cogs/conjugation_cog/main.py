@@ -8,15 +8,18 @@ from __future__ import annotations
 
 import logging
 import time
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Interaction, app_commands
-from discord.ext import commands
 
 from base_cog import BaseCog
 
 from .session import ConjugationCard, ConjugationMode, ConjugationSession
 from .views import build_question_view, build_result_view, build_summary_view
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +60,7 @@ class ConjugationCog(BaseCog):
     SESSION_TTL = 1800
     MAX_SESSIONS = 50
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         self.active_sessions: dict[int, ConjugationSession] = {}
 
@@ -160,6 +163,8 @@ class ConjugationCog(BaseCog):
             app_commands.Choice(name="Multiple choice", value="choice"),
             app_commands.Choice(name="Typing", value="typing"),
         ],
+    )
+    @app_commands.choices(
         count=[
             app_commands.Choice(name="5", value=5),
             app_commands.Choice(name="10", value=10),
@@ -292,6 +297,6 @@ class ConjugationCog(BaseCog):
             await interaction.followup.send(view=view, ephemeral=True)
 
 
-async def setup(bot):
+async def setup(bot: Hablemos):
     await bot.add_cog(ConjugationCog(bot))
     logger.info("ConjugationCog loaded")

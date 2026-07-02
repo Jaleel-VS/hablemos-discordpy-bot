@@ -10,6 +10,7 @@ against duplicate registration on cog reload).
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
@@ -20,13 +21,16 @@ from cogs.utils.embeds import green_embed, red_embed
 from .config import TRIGGER_CHANNEL_ID
 from .views import TriggerView
 
+if TYPE_CHECKING:
+    from hablemos import Hablemos
+
 logger = logging.getLogger(__name__)
 
 
 class AlmightyCog(BaseCog):
     """Posts a persistent form button and relays submissions to a feed channel."""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         # Register the persistent view once so the button keeps working
         # across restarts. Guarded so cog reloads don't stack duplicates.
@@ -55,5 +59,5 @@ class AlmightyCog(BaseCog):
         await ctx.send(embed=green_embed("Posted the submission panel."))
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Hablemos):
     await bot.add_cog(AlmightyCog(bot))

@@ -1,9 +1,11 @@
 """Spotify now-playing command — shows what a user is listening to."""
+from __future__ import annotations
+
 import colorsys
 import logging
 import math
 from io import BytesIO
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import aiohttp
 import discord
@@ -22,6 +24,9 @@ from PIL import Image
 from base_cog import BaseCog
 from cogs.spotify_cog.config import SPOTIFY_EMOJI
 from cogs.utils.embeds import red_embed
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +48,10 @@ async def _dominant_color(url: str) -> Color:
 
         # Quantize to 16 color palette
         quantized = img.quantize(colors=16, method=Image.Quantize.MEDIANCUT)
-        palette = quantized.getpalette()[:48]  # 16 colors × 3 channels
+        raw_palette = quantized.getpalette()
+        if raw_palette is None:
+            return DEFAULT_ACCENT
+        palette = raw_palette[:48]  # 16 colors × 3 channels
         hist = quantized.histogram()[:16]
         total_pixels = sum(hist)
 
@@ -103,7 +111,7 @@ class NowPlayingView(ui.LayoutView):
             f"-# {spotify.album}",
         ]
 
-        container_children = [
+        container_children: list[ui.Item] = [
             ui.Section(
                 ui.TextDisplay(
                     f"-# {target.display_name} is listening to\n" + "\n".join(lines),
@@ -225,7 +233,7 @@ class SpotifyCog(BaseCog):
         # Send as v2 with Listen button
         try:
             view = discord.ui.LayoutView()
-            container_children = [
+            container_children: list[discord.ui.Item] = [
                 discord.ui.MediaGallery(
                     discord.MediaGalleryItem(media="attachment://nowplaying.png"),
                 ),
@@ -248,5 +256,5 @@ class SpotifyCog(BaseCog):
             await ctx.send(file=File(buf, filename="nowplaying.png"))
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Hablemos):
     await bot.add_cog(SpotifyCog(bot))

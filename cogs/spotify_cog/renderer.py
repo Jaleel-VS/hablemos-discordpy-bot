@@ -92,7 +92,11 @@ def _round_corners(img: Image.Image, radius: int) -> Image.Image:
     return img
 
 
-def _truncate(text: str, font: ImageFont.FreeTypeFont, max_width: int) -> str:
+def _truncate(
+    text: str,
+    font: ImageFont.FreeTypeFont | ImageFont.ImageFont,
+    max_width: int,
+) -> str:
     """Truncate text with ellipsis if it exceeds max_width."""
     if font.getlength(text) <= max_width:
         return text

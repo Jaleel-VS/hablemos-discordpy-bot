@@ -1,7 +1,10 @@
 """
 Tickets cog — quick overview of open moderation tickets across forum channels.
 """
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Color, ui
@@ -17,6 +20,9 @@ from .config import (
     OPEN_TAGS,
     STAFF_FORUM_ID,
 )
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -235,5 +241,5 @@ class TicketsCog(BaseCog):
             logger.exception("Failed to send new-ticket notification")
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Hablemos):
     await bot.add_cog(TicketsCog(bot))

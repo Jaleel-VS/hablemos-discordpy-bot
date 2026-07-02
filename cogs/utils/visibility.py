@@ -12,7 +12,10 @@ class VisibilityView(discord.ui.View):
     ----------
     author_id: The user allowed to interact with the buttons.
     command_message: The original command invocation message.
-    on_public: ``async def(channel) -> None`` — send the result publicly.
+    on_public: ``async def(command_message | None) -> None`` — send the
+        result publicly (reply to the original message, or ``None`` if it
+        could not be reached, in which case the callback falls back to the
+        channel).
     on_private: ``async def(interaction) -> None`` — send the result ephemerally.
     """
 
@@ -21,7 +24,7 @@ class VisibilityView(discord.ui.View):
         *,
         author_id: int,
         command_message: discord.Message,
-        on_public: Callable[[discord.TextChannel], Awaitable[None]],
+        on_public: Callable[[discord.Message | None], Awaitable[None]],
         on_private: Callable[[discord.Interaction], Awaitable[None]],
         timeout: float = 120,
     ):
@@ -37,7 +40,8 @@ class VisibilityView(discord.ui.View):
 
     @discord.ui.button(label='Send Public', style=discord.ButtonStyle.primary)
     async def send_public(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.message.delete()
+        if interaction.message is not None:
+            await interaction.message.delete()
         try:
             await self._on_public(self.command_message)
         except (discord.NotFound, discord.HTTPException):
@@ -47,14 +51,16 @@ class VisibilityView(discord.ui.View):
     @discord.ui.button(label='Send Private', style=discord.ButtonStyle.secondary)
     async def send_private(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self._on_private(interaction)
-        await interaction.message.delete()
+        if interaction.message is not None:
+            await interaction.message.delete()
         with contextlib.suppress(discord.NotFound, discord.HTTPException):
             await self.command_message.delete()
         self.stop()
 
     @discord.ui.button(label='Discard', style=discord.ButtonStyle.danger)
     async def discard(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.message.delete()
+        if interaction.message is not None:
+            await interaction.message.delete()
         self.stop()
 
     async def on_timeout(self):

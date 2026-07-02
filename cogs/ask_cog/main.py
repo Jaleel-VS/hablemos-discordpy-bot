@@ -1,8 +1,11 @@
 """
 Ask cog — owner-only Gemini Q&A with paginated responses.
 """
+from __future__ import annotations
+
 import asyncio
 import logging
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
@@ -12,6 +15,9 @@ from cogs.utils.gemini import GeminiError
 from cogs.utils.visibility import VisibilityView as BaseVisibilityView
 
 from .prompts import ASK_PROMPT
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -154,7 +160,7 @@ class AskCog(BaseCog):
         view.prompt_message = msg or processing
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Hablemos):
     if bot.gemini is None:
         logger.info("bot.gemini is None — AskCog will not load")
         return

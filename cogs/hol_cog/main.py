@@ -1,6 +1,9 @@
 """Higher-or-Lower cog — guess which search term is more popular."""
+from __future__ import annotations
+
 import contextlib
 import logging
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Color, Embed, ui
@@ -9,6 +12,9 @@ from discord.ext import commands
 from base_cog import BaseCog
 from cogs.hol_cog.config import HOL_CHANNEL_IDS
 from cogs.hol_cog.data import pick_pair
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +65,7 @@ def _result_embed(
 class GameView(ui.View):
     """Interactive Higher-or-Lower buttons."""
 
-    def __init__(self, cog: "HigherOrLower", player: discord.Member | discord.User):
+    def __init__(self, cog: HigherOrLower, player: discord.Member | discord.User):
         super().__init__(timeout=TIMEOUT)
         self.cog = cog
         self.player = player
@@ -161,7 +167,7 @@ class GameView(ui.View):
 class HigherOrLower(BaseCog):
     """Higher-or-Lower: guess which Google search term is more popular."""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         self._active: dict[int, GameView] = {}
 
@@ -186,5 +192,5 @@ class HigherOrLower(BaseCog):
         game.message = msg
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Hablemos):
     await bot.add_cog(HigherOrLower(bot))

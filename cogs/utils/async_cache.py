@@ -2,16 +2,20 @@
 import asyncio
 import functools
 from collections import OrderedDict
+from collections.abc import Callable, Coroutine
+from typing import Any
 
 
 def async_cache(maxsize: int = 128):
     """LRU cache for async functions. Concurrent calls with the same args share one task."""
 
-    def decorator[T](func: T) -> T:
+    def decorator[**P, R](
+        func: Callable[P, Coroutine[Any, Any, R]],
+    ) -> Callable[P, Coroutine[Any, Any, R]]:
         cache: OrderedDict[tuple, asyncio.Task] = OrderedDict()
 
         @functools.wraps(func)
-        async def wrapper(*args, **kwargs):
+        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
             key = (args, tuple(sorted(kwargs.items())))
 
             if key in cache:
@@ -36,14 +40,16 @@ def async_cache(maxsize: int = 128):
                 cache.pop(key, None)
                 raise
 
-        wrapper.cache = cache
-
-        def invalidate(*args, **kwargs):
+        def invalidate(*args: Any, **kwargs: Any) -> None:
             key = (args, tuple(sorted(kwargs.items())))
             cache.pop(key, None)
 
-        wrapper.invalidate = invalidate
-        wrapper.cache_clear = cache.clear
+        # Expose cache-management handles on the wrapped callable. These are
+        # dynamic attributes, so set them via __dict__ to keep the declared
+        # Callable return type intact.
+        wrapper.__dict__["cache"] = cache
+        wrapper.__dict__["invalidate"] = invalidate
+        wrapper.__dict__["cache_clear"] = cache.clear
         return wrapper
 
     return decorator

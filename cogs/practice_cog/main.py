@@ -3,12 +3,16 @@ Vocab Practice Cog with SRS (Clozemaster-style)
 
 Provides spaced repetition practice with cloze sentences.
 """
+from __future__ import annotations
+
 import logging
 import unicodedata
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Embed, Interaction, app_commands
 from discord.ext import commands
+from fsrs import Rating
 
 from base_cog import BaseCog
 from cogs.utils.gemini import GeminiError
@@ -24,6 +28,9 @@ from .views import (
     create_stats_embed,
 )
 
+if TYPE_CHECKING:
+    from hablemos import Hablemos
+
 logger = logging.getLogger(__name__)
 
 
@@ -38,7 +45,7 @@ class PracticeCog(BaseCog):
     SESSION_TTL = 1800  # 30 minutes
     MAX_SESSIONS = 50
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         self.active_sessions: dict[int, PracticeSession] = {}
         logger.info("PracticeCog initialized successfully")
@@ -84,8 +91,14 @@ class PracticeCog(BaseCog):
             return
 
         if action == "seed":
+            if language is None:
+                await ctx.send("Usage: `$practice seed <spanish|english> [count]`")
+                return
             await self._seed_cards(ctx, language, count)
         elif action == "count":
+            if language is None:
+                await ctx.send("Usage: `$practice count <spanish|english>`")
+                return
             await self._show_card_count(ctx, language)
         else:
             await ctx.send(f"Unknown action: {action}. Use `seed` or `count`.")
@@ -120,6 +133,9 @@ class PracticeCog(BaseCog):
                 continue
 
             # Generate sentence using Gemini
+            if self.bot.gemini is None:
+                logger.warning("Gemini unavailable — cannot seed practice cards")
+                break
             try:
                 result = await self.bot.gemini.run(
                     PRACTICE_SENTENCE_PROMPT,
@@ -492,7 +508,7 @@ class PracticeCog(BaseCog):
     async def _handle_rating(self, interaction: Interaction, session: PracticeSession,
                              card: PracticeCard, quality: int):
         """Handle quality rating and update SRS"""
-        card_json, due_iso = review_card(card.card_json, quality)
+        card_json, due_iso = review_card(card.card_json, Rating(quality))
 
         # Update database
         await self.bot.db.update_user_progress(

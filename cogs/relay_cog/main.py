@@ -1,10 +1,16 @@
 """Relay cog — owner-only message relay to other guilds/channels."""
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
 
 from base_cog import BaseCog
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +62,9 @@ class RelayCog(BaseCog):
             target_guild = ctx.guild
         else:
             # Validate guild
+            if target_channel_id is None:
+                await ctx.send("❌ Usage: $parrot <guild_id> <channel_id> <message>")
+                return
             target_guild = self.bot.get_guild(target_guild_id)
             if target_guild is None:
                 logger.error(
@@ -128,6 +137,6 @@ class RelayCog(BaseCog):
             )
             await ctx.send("❌ An unexpected error occurred while sending the message.")
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Hablemos):
     await bot.add_cog(RelayCog(bot))
 

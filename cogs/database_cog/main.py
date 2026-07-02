@@ -1,17 +1,23 @@
 """Database commands cog — owner-only note management."""
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 from discord import Color, Embed
-from discord.ext.commands import Bot, command, is_owner
+from discord.ext.commands import command, is_owner
 
 from base_cog import BaseCog
 from cogs.utils.embeds import blue_embed, green_embed, red_embed
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
 
 class DatabaseCommands(BaseCog):
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
 
     @command(aliases=['addnote'])
@@ -124,5 +130,5 @@ class DatabaseCommands(BaseCog):
             logger.error("Error deleting note: %s", e)
             await ctx.send(embed=red_embed("Failed to delete note. Please try again later."))
 
-async def setup(bot):
+async def setup(bot: Hablemos):
     await bot.add_cog(DatabaseCommands(bot))

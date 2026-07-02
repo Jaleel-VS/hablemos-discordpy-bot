@@ -86,6 +86,18 @@ class WebsiteAPIClient:
             logger.error("HTTP client error: %s", e)
             raise
 
+    async def _request_dict(self, method: str, endpoint: str, **kwargs) -> dict:
+        """Perform a request that must return a JSON object."""
+        data = await self._request(method, endpoint, **kwargs)
+        if not isinstance(data, dict):
+            raise Exception(f"Expected a JSON object from {endpoint}, got {type(data).__name__}")
+        return data
+
+    async def _request_list(self, method: str, endpoint: str, **kwargs) -> list:
+        """Perform a request that returns a JSON array (empty list if absent)."""
+        data = await self._request(method, endpoint, **kwargs)
+        return data if isinstance(data, list) else []
+
     # ==================== Podcasts ====================
 
     async def get_podcasts(self, include_archived: bool = False) -> list[Podcast]:
@@ -94,12 +106,12 @@ class WebsiteAPIClient:
         if include_archived:
             params['includeArchived'] = 'true'
 
-        data = await self._request('GET', '/podcasts', params=params)
-        return [Podcast.from_dict(p) for p in (data or [])]
+        data = await self._request_list('GET', '/podcasts', params=params)
+        return [Podcast.from_dict(p) for p in data]
 
     async def get_podcast(self, podcast_id: str) -> Podcast:
         """Get a single podcast by ID"""
-        data = await self._request('GET', f'/podcasts/{podcast_id}')
+        data = await self._request_dict('GET', f'/podcasts/{podcast_id}')
         return Podcast.from_dict(data)
 
     async def create_podcast(
@@ -124,7 +136,7 @@ class WebsiteAPIClient:
             'country': country,
             'topic': topic
         }
-        data = await self._request('POST', '/podcasts', json=payload)
+        data = await self._request_dict('POST', '/podcasts', json=payload)
         return Podcast.from_dict(data)
 
     async def update_podcast(self, podcast_id: str, **fields) -> Podcast:
@@ -146,7 +158,7 @@ class WebsiteAPIClient:
                 api_key = key_map.get(key, key)
                 payload[api_key] = value
 
-        data = await self._request('PATCH', f'/podcasts/{podcast_id}', json=payload)
+        data = await self._request_dict('PATCH', f'/podcasts/{podcast_id}', json=payload)
         return Podcast.from_dict(data)
 
     async def delete_podcast(self, podcast_id: str) -> None:
@@ -155,25 +167,25 @@ class WebsiteAPIClient:
 
     async def archive_podcast(self, podcast_id: str) -> Podcast:
         """Archive a podcast"""
-        data = await self._request('POST', f'/podcasts/{podcast_id}/archive')
+        data = await self._request_dict('POST', f'/podcasts/{podcast_id}/archive')
         return Podcast.from_dict(data)
 
     async def unarchive_podcast(self, podcast_id: str) -> Podcast:
         """Unarchive a podcast"""
-        data = await self._request('POST', f'/podcasts/{podcast_id}/unarchive')
+        data = await self._request_dict('POST', f'/podcasts/{podcast_id}/unarchive')
         return Podcast.from_dict(data)
 
     # ==================== Link Reports ====================
 
     async def get_link_report_counts(self) -> list[LinkReportCount]:
         """Get report counts for all podcasts"""
-        data = await self._request('GET', '/link-reports/counts')
-        return [LinkReportCount.from_dict(r) for r in (data or [])]
+        data = await self._request_list('GET', '/link-reports/counts')
+        return [LinkReportCount.from_dict(r) for r in data]
 
     async def get_podcast_report_count(self, podcast_id: str) -> int:
         """Get report count for a specific podcast"""
         data = await self._request('GET', f'/podcasts/{podcast_id}/reports/count')
-        return data.get('count', 0) if data else 0
+        return data.get('count', 0) if isinstance(data, dict) else 0
 
     async def clear_podcast_reports(self, podcast_id: str) -> None:
         """Clear all reports for a podcast"""

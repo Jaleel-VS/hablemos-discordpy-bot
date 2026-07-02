@@ -209,7 +209,7 @@ class Hangman:
             logger.info("Game won by %s!", name_)
             await self.send_final_embed(context, name_, True)
 
-    def extend_found_set(self, letter):
+    def extend_found_set(self, letter: str):
         before_size = len(self.letters_found)
         self.letters_found.update(VOWELS.get(letter, letter))
         after_size = len(self.letters_found)

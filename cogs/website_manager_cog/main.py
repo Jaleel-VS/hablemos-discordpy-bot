@@ -2,16 +2,21 @@
 Website Manager Cog
 Provides slash commands for managing website resources (podcasts, videos, etc.)
 """
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Embed, Interaction, app_commands
-from discord.ext import commands
 
 from base_cog import BaseCog
 
 from .api import WebsiteAPIClient
 from .views import MainManageView
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +24,8 @@ def has_management_permission():
     """Check if user has permission to manage website resources"""
     async def predicate(interaction: Interaction) -> bool:
         # Allow bot owner
-        if interaction.user.id == interaction.client.settings.owner_id:
+        client: Hablemos = interaction.client  # type: ignore[assignment]
+        if interaction.user.id == client.settings.owner_id:
             return True
 
         # Allow users with manage_messages permission (mods)
@@ -30,7 +36,7 @@ def has_management_permission():
 class WebsiteManagerCog(BaseCog):
     """Manage podcasts, videos, and other website resources."""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         self.api_client = WebsiteAPIClient(base_url=bot.settings.website_api_url)
 

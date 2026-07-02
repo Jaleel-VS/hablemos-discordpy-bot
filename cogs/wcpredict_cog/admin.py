@@ -4,9 +4,12 @@ Owner-only prefix command group `$wcpredict` — set the deadline, record
 the actual champion (which grades all predictions), reset state, and view
 participation stats.
 """
+from __future__ import annotations
+
 import logging
 import re
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
@@ -20,6 +23,9 @@ from .config import (
     WC_PREDICT_LOG_CHANNEL_ID,
 )
 from .scoring import score_prediction
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +73,7 @@ def _resolve_team_role(guild: discord.Guild, raw: str) -> discord.Role | None:
 class WCPredictAdmin(BaseCog):
     """Owner-only `$wcpredict` admin group."""
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Hablemos) -> None:
         super().__init__(bot)
 
     @commands.group(name="wcpredict", invoke_without_command=True)
@@ -198,7 +204,7 @@ class WCPredictAdmin(BaseCog):
         total: int,
     ) -> None:
         channel = guild.get_channel(WC_PREDICT_LOG_CHANNEL_ID)
-        if channel is None:
+        if not isinstance(channel, discord.abc.Messageable):
             logger.warning(
                 "wcpredict log channel %s not found in guild %s",
                 WC_PREDICT_LOG_CHANNEL_ID, guild.id,

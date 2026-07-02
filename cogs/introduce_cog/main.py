@@ -3,7 +3,10 @@
 Language-exchange partner finding now lives in ``langex_cog``; this cog
 is introductions only.
 """
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 import discord
 from discord import ButtonStyle, Embed, Interaction, app_commands
@@ -18,6 +21,9 @@ from .config import (
     detect_ui_lang,
 )
 from .modals import IntroOnlyModal
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +51,7 @@ class IntroduceButton(View):
 class IntroduceCog(BaseCog):
     """Introduce yourself to the community."""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         bot.add_view(IntroduceButton())
 
@@ -55,7 +61,7 @@ class IntroduceCog(BaseCog):
     async def introduce_slash(self, interaction: Interaction):
         if interaction.channel_id != COMMAND_CHANNEL_ID:
             ch = interaction.client.get_channel(COMMAND_CHANNEL_ID)
-            mention = ch.mention if ch else f"<#{COMMAND_CHANNEL_ID}>"
+            mention = ch.mention if isinstance(ch, discord.abc.GuildChannel) else f"<#{COMMAND_CHANNEL_ID}>"
             await interaction.response.send_message(f"Use this in {mention}.", ephemeral=True)
             return
         await _start_intro_flow(interaction)
@@ -71,6 +77,6 @@ class IntroduceCog(BaseCog):
         await ctx.send(embed=embed, view=IntroduceButton())
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Hablemos):
     await bot.add_cog(IntroduceCog(bot))
     logger.info("IntroduceCog loaded")

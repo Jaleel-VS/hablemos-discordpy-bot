@@ -1,12 +1,18 @@
 """World Cup cog — slash command to self-assign a team role."""
-import logging
+from __future__ import annotations
 
+import logging
+from typing import TYPE_CHECKING
+
+import discord
 from discord import Interaction, app_commands
-from discord.ext import commands
 
 from base_cog import BaseCog
 
 from .views import WorldCupMenuView
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +20,7 @@ logger = logging.getLogger(__name__)
 class WorldCup(BaseCog):
     """Self-service team role picker for World Cup 2026."""
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Hablemos) -> None:
         super().__init__(bot)
 
     @app_commands.command(name="worldcup", description="Manage your World Cup team role")
@@ -23,6 +29,8 @@ class WorldCup(BaseCog):
         """Show the World Cup team menu."""
         guild = interaction.guild
         member = interaction.user
+        if guild is None or not isinstance(member, discord.Member):
+            return
 
         teams = sorted(
             [r for r in guild.roles if r.name.startswith("Team ")],
@@ -46,5 +54,5 @@ class WorldCup(BaseCog):
         )
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: Hablemos) -> None:
     await bot.add_cog(WorldCup(bot))

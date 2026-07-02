@@ -1,15 +1,21 @@
 """General cog — help, info, ping, and invite commands."""
+from __future__ import annotations
+
 import logging
 import time
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Color, Embed, Interaction, app_commands
 from discord.ext import commands
-from discord.ext.commands import Bot, command
+from discord.ext.commands import command
 
 from base_cog import BaseCog
 from cogs.general_cog.config import BOT_AUTHOR_ID, DPY, INVITE_LINK, REPO
 from cogs.utils.embeds import green_embed
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -52,10 +58,11 @@ def _build_cog_field(
     return cog_name, value
 
 
-def _collect_cog_entries(bot: Bot) -> list[tuple[str, str, list[str], list[str]]]:
+def _collect_cog_entries(bot: Hablemos) -> list[tuple[str, str, list[str], list[str]]]:
     """Collect (cog_name, cog_desc, slash_lines, prefix_lines) for visible cogs."""
     entries: list[tuple[str, str, list[str], list[str]]] = []
-    prefix = bot.command_prefix
+    raw_prefix = bot.command_prefix
+    prefix = raw_prefix if isinstance(raw_prefix, str) else "$"
 
     for name, cog in sorted(bot.cogs.items()):
         if name in HIDDEN_COGS:
@@ -86,7 +93,7 @@ def _collect_cog_entries(bot: Bot) -> list[tuple[str, str, list[str], list[str]]
 class General(BaseCog):
     """General bot commands — help, info, ping."""
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
 
     # ------------------------------------------------------------------
@@ -336,5 +343,5 @@ class General(BaseCog):
             logger.warning("permdebug: couldn't send in channel or DM; see server log above")
 
 
-async def setup(bot):
+async def setup(bot: Hablemos):
     await bot.add_cog(General(bot))
