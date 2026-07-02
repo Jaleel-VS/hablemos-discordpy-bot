@@ -144,7 +144,7 @@ class PracticeMixin(DatabaseMixin):
                 total_due += 1
             elif row['card_json']:
                 card = Card.from_json(row['card_json'])
-                if card.state == 2 and card.stability >= 21:
+                if card.state == 2 and card.stability is not None and card.stability >= 21:
                     levels[lvl]['mastered'] += 1
                     total_mastered += 1
                 else:

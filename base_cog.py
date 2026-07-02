@@ -46,4 +46,4 @@ class BaseCog(Cog):
         else:
             logger.error('An error occurred: %s in %s', error, ctx.channel)
             raise error
-        ctx.error_handled = True
+        ctx.__dict__["error_handled"] = True

@@ -1,5 +1,7 @@
 """Tests for Vocab Catch pure logic (`cogs.vocabcatch_cog.catch_logic`)
 and the card renderer smoke path. No Discord/DB needed."""
+from typing import TYPE_CHECKING, cast
+
 from cogs.vocabcatch_cog.catch_logic import (
     answer_matches,
     normalize_answer,
@@ -16,6 +18,9 @@ from cogs.vocabcatch_cog.config import (
     weights_for_mode,
 )
 from cogs.vocabcatch_cog.renderer import render_card
+
+if TYPE_CHECKING:
+    from cogs.vocabcatch_cog.renderer import Card
 
 _CARD = {
     "card_id": 7,
@@ -128,7 +133,9 @@ def test_render_produces_png_all_rarities_and_modes() -> None:
         for mode in (MODE_SHOW_ES, MODE_EN_TO_ES, MODE_ES_TO_EN):
             view = resolve_card(card, mode)
             for revealed in (False, True):
-                data = render_card(card, view, revealed=revealed).getvalue()
+                data = render_card(
+                    cast("Card", card), dict(view), revealed=revealed,
+                ).getvalue()
                 assert data[:8] == b"\x89PNG\r\n\x1a\n"
                 assert len(data) > 1000
 
@@ -140,10 +147,14 @@ def test_render_handles_missing_optional_fields() -> None:
         "example_es": None, "example_en": None, "rarity": 1,
     }
     view = resolve_card(minimal, MODE_ES_TO_EN)
-    assert render_card(minimal, view, revealed=True).getvalue()[:8] == b"\x89PNG\r\n\x1a\n"
+    assert render_card(
+        cast("Card", minimal), dict(view), revealed=True,
+    ).getvalue()[:8] == b"\x89PNG\r\n\x1a\n"
 
 
 def test_render_long_word_does_not_crash() -> None:
     card = {**_CARD, "word_es": "electroencefalografista", "rarity": 5}
     view = resolve_card(card, MODE_SHOW_ES)
-    assert render_card(card, view, revealed=True).getvalue()[:8] == b"\x89PNG\r\n\x1a\n"
+    assert render_card(
+        cast("Card", card), dict(view), revealed=True,
+    ).getvalue()[:8] == b"\x89PNG\r\n\x1a\n"

@@ -114,7 +114,10 @@ def main() -> None:
                RETURNING id""",
             (infinitive, english.replace("\r", ""), category, i),
         )
-        verb_ids[infinitive] = cur.fetchone()[0]
+        row = cur.fetchone()
+        if row is None:
+            raise RuntimeError(f"INSERT ... RETURNING id returned no row for verb {infinitive!r}")
+        verb_ids[infinitive] = row[0]
     conn.commit()
     print(f"Inserted {len(verb_ids)} verbs")
 
@@ -152,7 +155,8 @@ def main() -> None:
 
     # Summary
     cur.execute("SELECT count(*) FROM conjugation_verbs")
-    print(f"Total verbs in DB: {cur.fetchone()[0]}")
+    verb_count_row = cur.fetchone()
+    print(f"Total verbs in DB: {verb_count_row[0] if verb_count_row else 0}")
     cur.execute("SELECT tense, count(*) FROM conjugation_forms GROUP BY tense ORDER BY tense")
     for row in cur.fetchall():
         print(f"  {row[0]}: {row[1]} forms")

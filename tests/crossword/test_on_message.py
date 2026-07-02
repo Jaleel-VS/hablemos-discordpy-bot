@@ -8,10 +8,16 @@ were replaced with a global watcher.
 from __future__ import annotations
 
 import asyncio
+from typing import TYPE_CHECKING, cast
 
 import pytest
 
 from .conftest import FakeAuthor, FakePermissions, make_message
+
+if TYPE_CHECKING:
+    import discord
+
+    from .conftest import FakeDB
 
 
 async def test_correct_answer_awards_and_bumps_db(cog_with_game) -> None:
@@ -186,13 +192,16 @@ async def test_timeout_watcher_vs_solve_one_end_only(
         fake_channel, FakeAuthor(2, "bob"), answer,
     )
 
-    await asyncio.gather(one_watcher_tick(), cog.on_message(solver))
+    await asyncio.gather(
+        one_watcher_tick(),
+        cog.on_message(cast("discord.Message", solver)),  # test double
+    )
 
     # Regardless of who won, the cog must end up with no active game
     # and exactly one cleanup of the DB active-game row.
     assert fake_channel.id not in cog._active
     assert fake_channel.id not in cog._locks
-    assert len(cog.bot.db.clear_calls) == 1
+    assert len(cast("FakeDB", cog.bot.db).clear_calls) == 1
 
 
 async def test_completion_flow_end_to_end(cog_with_game) -> None:
@@ -234,7 +243,7 @@ async def test_many_games_lock_leak_check(
         game.starter_id = 42
         cog._active[ch.id] = game
         msg = make_message(ch, FakeAuthor(42, "alice"), "quit")
-        await cog.on_message(msg)
+        await cog.on_message(cast("discord.Message", msg))  # test double
     assert len(cog._active) == 0
     assert len(cog._locks) == 0
 

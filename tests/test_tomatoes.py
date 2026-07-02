@@ -9,7 +9,7 @@ initializes `output_path = None` up front; this test pins that behavior.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, cast
 
 import pytest
 
@@ -48,6 +48,7 @@ async def test_tomato_no_user_does_not_raise_unbound_output_path() -> None:
     # Invoke the command's underlying coroutine directly. Before the fix this
     # raised UnboundLocalError from the finally block; now it returns cleanly
     # after sending the usage hint.
-    await cog.tomato.callback(cog, ctx)
+    callback = cast(Any, cog.tomato.callback)  # bound command callback (test)
+    await callback(cog, ctx)
 
     assert ctx.sent, "should send a usage hint when no user is supplied"

@@ -3,6 +3,7 @@ two players type `catch <word>` concurrently. Also covers the per-channel
 mode routing (English-answer vs Spanish-answer)."""
 import asyncio
 from types import SimpleNamespace
+from typing import TYPE_CHECKING, cast
 
 import pytest
 
@@ -13,6 +14,10 @@ from cogs.vocabcatch_cog.config import (
     MODE_SHOW_ES,
 )
 from cogs.vocabcatch_cog.main import ActiveSpawn, ChannelState, VocabCatch
+
+if TYPE_CHECKING:
+    from cogs.vocabcatch_cog.renderer import Card
+    from hablemos import Hablemos
 
 CARD = {
     "card_id": 7, "word_es": "el relámpago", "word_en": "lightning",
@@ -49,7 +54,7 @@ def _make_message(user_id: int):
 @pytest.fixture
 def cog(monkeypatch):
     c = VocabCatch.__new__(VocabCatch)  # bypass __init__ (no real bot)
-    c.bot = FakeBot()
+    c.bot = cast("Hablemos", FakeBot())  # test double
     c._channels = {}
     monkeypatch.setattr(
         "cogs.vocabcatch_cog.main.renderer.render_card",
@@ -66,7 +71,7 @@ def cog(monkeypatch):
 def _spawn_state(mode: str) -> ChannelState:
     view = resolve_card(CARD, mode)
     state = ChannelState(mode=mode)
-    state.active = ActiveSpawn(card=CARD, view=view, mode=mode,
+    state.active = ActiveSpawn(card=cast("Card", CARD), view=view, mode=mode,
                                message_id=1, spawned_at=0.0)
     return state
 
@@ -113,6 +118,7 @@ async def test_wrong_guess_does_not_catch(cog) -> None:
 
 async def test_catch_after_caught_is_noop(cog) -> None:
     state = _spawn_state(MODE_SHOW_ES)
+    assert state.active is not None
     state.active.caught = True
     m = _make_message(111)
     await cog._try_catch(m, state, "relámpago")

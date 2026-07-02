@@ -79,6 +79,7 @@ async def test_custom_stake_arms_but_does_not_commit(fake_bot, interaction, cloc
     assert fake_bot.db.place_calls == []  # nothing committed
     assert panel.selected_stake == 500
     assert panel._place_button is not None and not panel._place_button.disabled
+    assert panel._place_button.label is not None
     assert "750" in panel._place_button.label  # payout(500, flat 1.5)
 
 
@@ -273,9 +274,11 @@ async def test_close_collapses_panel(fake_bot, interaction, clock):
 
     assert panel.is_finished()  # view stopped
     assert interaction.response.edited  # message re-rendered
+    container = panel.children[0]
+    assert isinstance(container, discord.ui.Container)
     text = "\n".join(
         item.content
-        for item in panel.children[0].children
+        for item in container.children
         if isinstance(item, discord.ui.TextDisplay)
     )
     assert "closed" in text.lower()
@@ -311,6 +314,7 @@ def _text(panel: views.BetPanelView) -> str:
     import discord
 
     container = panel.children[0]
+    assert isinstance(container, discord.ui.Container)
     return "\n".join(
         item.content
         for item in container.children
@@ -401,6 +405,9 @@ async def test_outcome_buttons_show_live_prices(fake_bot, clock, fake_odds):
     panel.selected_match_id = 1
     await panel.refresh()
 
+    assert panel._outcome_buttons["home"].label is not None
+    assert panel._outcome_buttons["draw"].label is not None
+    assert panel._outcome_buttons["away"].label is not None
     assert "1.43" in panel._outcome_buttons["home"].label
     assert "4.40" in panel._outcome_buttons["draw"].label
     assert "8.50" in panel._outcome_buttons["away"].label
@@ -413,9 +420,10 @@ async def test_stake_options_carry_payouts(fake_bot, clock, fake_odds):
     panel.selected_outcome = "away"  # 8.50
     await panel.refresh()
 
+    assert panel._stake_select is not None
     labels = [option.label for option in panel._stake_select.options]
     assert "500 → pays 4,250" in labels
-    assert any(label.startswith("All in (10,000)") for label in labels)
+    assert any(label is not None and label.startswith("All in (10,000)") for label in labels)
     assert labels[-1] == "Custom amount…"
 
 
@@ -426,11 +434,13 @@ async def test_outcome_change_reprices_stake_options(fake_bot, clock, fake_odds)
     panel.selected_outcome = "away"
     panel.selected_stake = 500
     await panel.refresh()
+    assert panel._place_button is not None and panel._place_button.label is not None
     assert "win 4,250" in panel._place_button.label
 
     panel.selected_outcome = "draw"  # 4.40 — stake kept, price changes
     await panel.refresh()
     assert panel.selected_stake == 500
+    assert panel._place_button is not None and panel._place_button.label is not None
     assert "win 2,200" in panel._place_button.label
 
 
@@ -514,6 +524,9 @@ async def test_multiplier_boosts_live_odds_in_panel(fake_bot, clock, fake_odds):
     panel.selected_match_id = 1
     await panel.refresh()
     # 1.43*1.5=2.15, 4.40*1.5=6.60, 8.50*1.5=12.75
+    assert panel._outcome_buttons["home"].label is not None
+    assert panel._outcome_buttons["draw"].label is not None
+    assert panel._outcome_buttons["away"].label is not None
     assert "2.15" in panel._outcome_buttons["home"].label
     assert "6.60" in panel._outcome_buttons["draw"].label
     assert "12.75" in panel._outcome_buttons["away"].label
