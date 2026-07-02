@@ -55,10 +55,16 @@ class WorldCupMenuView(View):
 
     async def _remove(self, interaction: Interaction) -> None:
         role = self.current_team
+        member = interaction.user
+        if role is None or not isinstance(member, discord.Member):
+            await interaction.response.edit_message(
+                content="Something went wrong. Please try again.", view=None
+            )
+            return
         try:
-            await interaction.user.remove_roles(role, reason="World Cup team removal")
+            await member.remove_roles(role, reason="World Cup team removal")
         except discord.Forbidden:
-            logger.warning("Missing permissions to remove role %s from %s", role.name, interaction.user)
+            logger.warning("Missing permissions to remove role %s from %s", role.name, member)
             await interaction.response.edit_message(
                 content="I don't have permission to remove that role.", view=None
             )
@@ -146,8 +152,13 @@ class TeamSelectView(View):
         return True
 
     async def _on_select(self, interaction: Interaction) -> None:
-        role_id = int(interaction.data["values"][0])
+        data = interaction.data
+        values = data.get("values") if data else None
         member = interaction.user
+        if not values or interaction.guild is None or not isinstance(member, discord.Member):
+            await interaction.response.edit_message(content="Something went wrong. Please try again.", view=None)
+            return
+        role_id = int(values[0])
         role = interaction.guild.get_role(role_id)
 
         if role is None:
@@ -198,10 +209,13 @@ class TeamSelectView(View):
         logger.debug("TeamSelectView timed out for user %s", self.user_id)
 
 
-async def _get_log_channel(guild: discord.Guild) -> discord.TextChannel | None:
+async def _get_log_channel(guild: discord.Guild | None) -> discord.TextChannel | None:
+    if guild is None:
+        return None
     channel = guild.get_channel(WORLD_CUP_LOG_CHANNEL_ID)
-    if channel is None:
+    if not isinstance(channel, discord.TextChannel):
         logger.warning("Log channel %s not found in guild %s", WORLD_CUP_LOG_CHANNEL_ID, guild.id)
+        return None
     return channel
 
 

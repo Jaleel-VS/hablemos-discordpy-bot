@@ -4,13 +4,19 @@ Mirrors the structure of `cogs/worldcup_cog/views.py` (paginated team
 picker with menu) but persists the user's pick to the database instead
 of granting a Discord role.
 """
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 import discord
 from discord import ButtonStyle, Interaction
 from discord.ui import Button, Select, View
 
 from .config import WC_PREDICT_LOG_CHANNEL_ID
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +30,7 @@ class WCPredictMenuView(View):
         self,
         teams: list[discord.Role],
         user_id: int,
-        bot,
+        bot: Hablemos,
         current_pick: discord.Role | None = None,
         timeout: float = 180,
     ):
@@ -67,6 +73,11 @@ class WCPredictMenuView(View):
 
     async def _clear(self, interaction: Interaction) -> None:
         role = self.current_pick
+        if role is None:
+            await interaction.response.edit_message(
+                content="You don't have a prediction to clear.", view=None,
+            )
+            return
         try:
             await self.bot.db.delete_wc_prediction(self.user_id)
         except Exception as exc:
@@ -94,7 +105,7 @@ class WCPredictTeamSelectView(View):
         self,
         teams: list[discord.Role],
         user_id: int,
-        bot,
+        bot: Hablemos,
         current_pick: discord.Role | None = None,
         page: int = 0,
         timeout: float = 180,
@@ -159,7 +170,12 @@ class WCPredictTeamSelectView(View):
         return True
 
     async def _on_select(self, interaction: Interaction) -> None:
-        role_id = int(interaction.data["values"][0])
+        data = interaction.data
+        if not data or "values" not in data or not data["values"]:
+            return
+        if interaction.guild is None:
+            return
+        role_id = int(data["values"][0])
         role = interaction.guild.get_role(role_id)
 
         if role is None:
@@ -215,10 +231,11 @@ class WCPredictTeamSelectView(View):
 
 async def _get_log_channel(guild: discord.Guild) -> discord.TextChannel | None:
     channel = guild.get_channel(WC_PREDICT_LOG_CHANNEL_ID)
-    if channel is None:
+    if not isinstance(channel, discord.TextChannel):
         logger.warning(
             "Log channel %s not found in guild %s", WC_PREDICT_LOG_CHANNEL_ID, guild.id,
         )
+        return None
     return channel
 
 
@@ -227,6 +244,8 @@ async def _log_pick(
     role: discord.Role,
     previous: discord.Role | None,
 ) -> None:
+    if interaction.guild is None:
+        return
     channel = await _get_log_channel(interaction.guild)
     if channel is None:
         return
@@ -253,6 +272,8 @@ async def _log_pick(
 
 
 async def _log_clear(interaction: Interaction, role: discord.Role) -> None:
+    if interaction.guild is None:
+        return
     channel = await _get_log_channel(interaction.guild)
     if channel is None:
         return

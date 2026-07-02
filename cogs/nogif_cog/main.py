@@ -15,10 +15,13 @@ Restrictions persist across bot restarts via the ``nogif_restrictions``
 DB table; pending timers are rescheduled in ``cog_load``.
 """
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import re
 from datetime import UTC, datetime, timedelta
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
@@ -27,6 +30,9 @@ from base_cog import BaseCog
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
 from .config import NOGIF_MAX_SECONDS, NOGIF_ROLE_NAME, SETTING_KEY_PREFIX
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +60,7 @@ def _parse_duration(value: str) -> tuple[int, str]:
 class NoGif(BaseCog):
     """Temporarily restrict a member from sending GIFs/embeds."""
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Hablemos) -> None:
         super().__init__(bot)
         # user_id → asyncio.Task (scheduled lift)
         self._tasks: dict[int, asyncio.Task] = {}
@@ -247,6 +253,8 @@ class NoGif(BaseCog):
             return
 
         # Can't restrict someone with a higher/equal role
+        if ctx.guild is None or not isinstance(ctx.author, discord.Member):
+            return
         if member.top_role >= ctx.author.top_role and ctx.author != ctx.guild.owner:
             await ctx.send(
                 embed=red_embed(
@@ -292,6 +300,8 @@ class NoGif(BaseCog):
 
         Usage: $ungif @user
         """
+        if ctx.guild is None:
+            return
         setting_key = f"{SETTING_KEY_PREFIX}.{ctx.guild.id}"
         stored_id = await self.bot.db.get_bot_setting(setting_key)
         role = ctx.guild.get_role(int(stored_id)) if stored_id else None
@@ -335,10 +345,10 @@ class NoGif(BaseCog):
             await ctx.send(
                 embed=red_embed("Uso: `$nogif @usuario <duración>` — ej: `$nogif @Juan 30m`")
             )
-            ctx.error_handled = True
+            setattr(ctx, "error_handled", True)
         elif isinstance(error, commands.MemberNotFound):
             await ctx.send(embed=red_embed("No encontré ese usuario."))
-            ctx.error_handled = True
+            setattr(ctx, "error_handled", True)
 
     @ungif.error
     async def ungif_error(self, ctx: commands.Context, error: Exception) -> None:
@@ -346,11 +356,11 @@ class NoGif(BaseCog):
             return
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(embed=red_embed("Uso: `$ungif @usuario`"))
-            ctx.error_handled = True
+            setattr(ctx, "error_handled", True)
         elif isinstance(error, commands.MemberNotFound):
             await ctx.send(embed=red_embed("No encontré ese usuario."))
-            ctx.error_handled = True
+            setattr(ctx, "error_handled", True)
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: Hablemos) -> None:
     await bot.add_cog(NoGif(bot))

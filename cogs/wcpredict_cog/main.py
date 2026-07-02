@@ -7,8 +7,11 @@ of correct picks. Predictions lock at a configurable deadline.
 `$wcfixtures` (alias `$wcf`) shows a paginated embed of all 104 World Cup
 fixtures. An optional argument jumps to a group, team, or stage.
 """
+from __future__ import annotations
+
 import logging
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Embed, Interaction, app_commands
@@ -37,6 +40,9 @@ from .fixtures_view import (
 )
 from .scoring import score_prediction
 from .views import WCPredictMenuView
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +73,7 @@ class WCPredict(BaseCog):
         guild_only=True,
     )
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Hablemos) -> None:
         super().__init__(bot)
 
     # ---------- shared helpers ----------
@@ -166,6 +172,8 @@ class WCPredict(BaseCog):
     async def set_pick(self, interaction: Interaction) -> None:
         guild = interaction.guild
         member = interaction.user
+        if guild is None:
+            return
 
         teams = _team_roles(guild)
         if not teams:
@@ -253,6 +261,8 @@ class WCPredict(BaseCog):
     )
     async def leaderboard(self, interaction: Interaction) -> None:
         guild = interaction.guild
+        if guild is None:
+            return
         winner_role_id = await self._get_winner_role_id()
         rows = await self.bot.db.get_all_wc_predictions(guild.id)
         total = len(rows)
@@ -342,24 +352,33 @@ class WCPredict(BaseCog):
         temporal_response = self._build_temporal_fixtures_response(query, ctx.author.id)
         if temporal_response is not None:
             embed, view = temporal_response
-            await ctx.send(embed=embed, view=view)
+            if view is not None:
+                await ctx.send(embed=embed, view=view)
+            else:
+                await ctx.send(embed=embed)
             return
 
         date_response = self._build_date_fixtures_response(query, ctx.author.id)
         if date_response is not None:
             embed, view = date_response
-            await ctx.send(embed=embed, view=view)
+            if view is not None:
+                await ctx.send(embed=embed, view=view)
+            else:
+                await ctx.send(embed=embed)
             return
 
-        page = resolve_page(query) if query.strip() else 0
-        if query.strip() and page is None:
-            await ctx.send(embed=self._unknown_wcfixtures_embed(query.strip()))
-            return
+        if query.strip():
+            page = resolve_page(query)
+            if page is None:
+                await ctx.send(embed=self._unknown_wcfixtures_embed(query.strip()))
+                return
+        else:
+            page = 0
 
         view = FixturesView(invoker_id=ctx.author.id, page=page)
         await ctx.send(embed=build_embed(page), view=view)
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: Hablemos) -> None:
     await bot.add_cog(WCPredict(bot))
     await bot.add_cog(WCPredictAdmin(bot))

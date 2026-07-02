@@ -2,10 +2,13 @@
 Language Learning Conversation Cog
 Provides AI-generated conversations for Spanish-English language learning
 """
+from __future__ import annotations
+
 import asyncio
 import logging
 import random
 import time
+from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
@@ -24,17 +27,22 @@ from .conversation_data import (
 )
 from .prompts import CONVERSATION_PROMPT, ConversationInput
 
+if TYPE_CHECKING:
+    from hablemos import Hablemos
+
 logger = logging.getLogger(__name__)
 
 class ConversationCog(BaseCog):
     """AI-generated conversations for language practice."""
 
-    def __init__(self, bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         self._background_tasks: set[asyncio.Task] = set()
         logger.info("ConversationCog initialized successfully")
 
-    def _resolve_args(self, language: str | None, level: str | None, category: str | None) -> dict | None:
+    def _resolve_args(
+        self, language: str | None, level: str | None, category: str | None,
+    ) -> dict[str, str] | None:
         """Resolve and validate language/level/category, applying alias lookup and defaults."""
         result: dict[str, str] = {}
 
@@ -193,6 +201,11 @@ class ConversationCog(BaseCog):
         success_count = 0
         scenarios = CATEGORIES[category]['scenarios'][level]
 
+        gemini = self.bot.gemini
+        if gemini is None:
+            logger.warning("Gemini unavailable — cannot generate conversations")
+            return success_count
+
         for i in range(count):
             try:
                 # Select random scenario
@@ -200,7 +213,7 @@ class ConversationCog(BaseCog):
 
                 # Generate conversation
                 try:
-                    parsed = await self.bot.gemini.run(
+                    parsed = await gemini.run(
                         CONVERSATION_PROMPT,
                         ConversationInput(
                             language=language,
@@ -498,7 +511,7 @@ class ConversationCog(BaseCog):
             logger.error("Unhandled error in conversation cog: %s", error, exc_info=True)
             await ctx.send("❌ An error occurred. Please try again later.")
 
-async def setup(bot):
+async def setup(bot: Hablemos):
     """Required setup function for loading the cog"""
     if bot.gemini is None:
         logger.info("bot.gemini is None — ConversationCog will not load")
