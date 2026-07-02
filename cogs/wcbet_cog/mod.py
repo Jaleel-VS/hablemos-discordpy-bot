@@ -9,7 +9,10 @@ and are logged loudly to the shared World Cup channel.
 Match results and match-wide voids stay owner-only (`admin.py`) — they
 move everyone's coins at once.
 """
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
@@ -18,6 +21,9 @@ from base_cog import BaseCog
 from cogs.utils.embeds import blue_embed, green_embed, red_embed, yellow_embed
 
 from .config import WCBET_LOG_CHANNEL_ID
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +39,7 @@ def _resolve_member(ctx: commands.Context, target: str | None) -> discord.Member
     if target is None:
         return None
     raw = target.strip().lstrip("<@!").rstrip(">")
-    if not raw.isdigit():
+    if not raw.isdigit() or ctx.guild is None:
         return None
     return ctx.guild.get_member(int(raw))
 
@@ -41,7 +47,7 @@ def _resolve_member(ctx: commands.Context, target: str | None) -> discord.Member
 class WCBetMod(BaseCog):
     """Moderator-only `$wcbetmod` group (`manage_messages`)."""
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Hablemos) -> None:
         super().__init__(bot)
 
     @commands.group(name="wcbetmod", invoke_without_command=True)
@@ -109,6 +115,8 @@ class WCBetMod(BaseCog):
         if member is None:
             await ctx.send(embed=red_embed("Usage: `$wcbetmod ban <@user|user_id> [reason]`"))
             return
+        if ctx.guild is None:
+            return
 
         await self.bot.db.set_wc_bet_ban(
             member.id, ctx.guild.id, ctx.author.id, reason,
@@ -138,6 +146,8 @@ class WCBetMod(BaseCog):
         member = _resolve_member(ctx, target)
         if member is None:
             await ctx.send(embed=red_embed("Usage: `$wcbetmod unban <@user|user_id>`"))
+            return
+        if ctx.guild is None:
             return
 
         removed = await self.bot.db.remove_wc_bet_ban(member.id)
@@ -176,6 +186,8 @@ class WCBetMod(BaseCog):
         member = _resolve_member(ctx, target)
         if member is None:
             await ctx.send(embed=red_embed("Usage: `$wcbetmod <give|take> <@user|user_id> <amount>`"))
+            return
+        if ctx.guild is None:
             return
         if delta == 0 or abs(delta) > MAX_ADJUSTMENT:
             await ctx.send(
@@ -260,7 +272,7 @@ class WCBetMod(BaseCog):
     ) -> None:
         """Send a mod-action embed to the shared World Cup log channel."""
         channel = guild.get_channel(WCBET_LOG_CHANNEL_ID)
-        if channel is None:
+        if not isinstance(channel, discord.abc.Messageable):
             logger.warning(
                 "wcbetmod log channel %s not found in guild %s",
                 WCBET_LOG_CHANNEL_ID, guild.id,

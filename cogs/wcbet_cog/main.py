@@ -11,9 +11,12 @@ endpoint while a match is in its post-kickoff window. By default it only
 the owner-only `$wcbetadmin` group (see `admin.py`) always works and
 wins races safely (the result row insert is the duplicate guard).
 """
+from __future__ import annotations
+
 import logging
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 import discord
 from discord import ui
@@ -45,6 +48,9 @@ from .config import (
 )
 from .mod import WCBetMod
 from .views import OpenBetPanelView
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -246,7 +252,7 @@ def _build_board_page(fixtures: list[dict], page: int) -> ui.LayoutView:
 class WCBet(BaseCog):
     """`$wcbet` — World Cup match betting with virtual coins."""
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Hablemos) -> None:
         super().__init__(bot)
         # Matches already proposed in the log channel this process, so
         # propose mode does not repeat itself every poll.
@@ -359,6 +365,8 @@ class WCBet(BaseCog):
     @commands.guild_only()
     async def wcbettop(self, ctx: commands.Context) -> None:
         """Show the top 10 World Cup betting balances."""
+        if ctx.guild is None:
+            return
         rows = await self.bot.db.get_wc_top_balances(ctx.guild.id)
         if not rows:
             await ctx.send(embed=blue_embed("No wallets yet."))
@@ -377,6 +385,8 @@ class WCBet(BaseCog):
     @commands.guild_only()
     async def wcbetme(self, ctx: commands.Context, member: discord.Member | None = None) -> None:
         """Show your (or another member's) World Cup betting profile."""
+        if ctx.guild is None or not isinstance(ctx.author, discord.Member):
+            return
         target = member or ctx.author
         profile = await self.bot.db.get_wc_user_profile(target.id, ctx.guild.id)
         if profile["total_bets"] == 0 and profile["balance"] == 0:
@@ -389,6 +399,8 @@ class WCBet(BaseCog):
     @commands.guild_only()
     async def wcbethistory(self, ctx: commands.Context, member: discord.Member | None = None) -> None:
         """Show your (or another member's) recent World Cup betting balance history."""
+        if not isinstance(ctx.author, discord.Member):
+            return
         target = member or ctx.author
         history = await self.bot.db.get_wc_balance_history(target.id)
         await ctx.send(view=_build_history_page(target, history, 0))
@@ -509,19 +521,28 @@ class WCBet(BaseCog):
         if parlay_msg:
             await self._announce(parlay_msg, channel_id=WCBET_NOTIFICATION_CHANNEL_ID)
 
-    async def _announce(self, content: str | None = None, *, embed=None, channel_id: int = WCBET_LOG_CHANNEL_ID) -> None:
+    async def _announce(
+        self,
+        content: str | None = None,
+        *,
+        embed: discord.Embed | None = None,
+        channel_id: int = WCBET_LOG_CHANNEL_ID,
+    ) -> None:
         """Post to a World Cup channel, tolerating a missing channel."""
         channel = self.bot.get_channel(channel_id)
-        if channel is None:
+        if not isinstance(channel, discord.abc.Messageable):
             logger.warning("World Cup channel %s not found", channel_id)
             return
         try:
-            await channel.send(content=content, embed=embed)
+            if embed is not None:
+                await channel.send(content=content, embed=embed)
+            else:
+                await channel.send(content=content)
         except (discord.Forbidden, discord.HTTPException) as exc:
             logger.error("Failed to post to channel %s: %s", channel_id, exc)
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: Hablemos) -> None:
     await bot.add_cog(WCBet(bot))
     await bot.add_cog(WCBetAdmin(bot))
     await bot.add_cog(WCBetMod(bot))

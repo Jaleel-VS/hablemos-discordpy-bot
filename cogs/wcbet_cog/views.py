@@ -13,10 +13,13 @@ match that kicked off mid-flow disappears and the selection resets. The
 Place button commits at re-resolved odds and refuses if the price moved
 from what it displayed.
 """
+from __future__ import annotations
+
 import contextlib
 import logging
 from datetime import UTC, datetime
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 import discord
 from discord import (
@@ -27,7 +30,6 @@ from discord import (
     TextStyle,
     ui,
 )
-from discord.ext import commands
 
 from cogs.wcpredict_cog.fixtures import FIXTURE_BY_ID, Fixture, is_knockout
 from cogs.wcpredict_cog.fixtures_view import TEAM_FLAGS
@@ -46,7 +48,10 @@ from .config import (
     WCBET_ODDS,
     WCBET_STARTING_BALANCE,
 )
-from .results import MatchOdds
+from .results import MatchOdds, WcBet, WcWallet
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -104,10 +109,11 @@ def _outcome_label(outcome: str, fixture: Fixture) -> str:
 
 async def _get_log_channel(guild: discord.Guild) -> discord.TextChannel | None:
     channel = guild.get_channel(WCBET_LOG_CHANNEL_ID)
-    if channel is None:
+    if not isinstance(channel, discord.TextChannel):
         logger.warning(
             "Bet log channel %s not found in guild %s", WCBET_LOG_CHANNEL_ID, guild.id,
         )
+        return None
     return channel
 
 
@@ -150,7 +156,7 @@ class OpenBetPanelView(ui.View):
     ephemeral `BetPanelView` LayoutView sent per clicker.
     """
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Hablemos) -> None:
         super().__init__(timeout=600)
         self.bot = bot
         self.prompt_message: discord.Message | None = None
@@ -162,6 +168,13 @@ class OpenBetPanelView(ui.View):
     async def _open_for(self, interaction: Interaction) -> None:
         """Open the personal panel for the clicker (extracted for testing)."""
         user_id = interaction.user.id
+        guild_id = interaction.guild_id
+        if guild_id is None:
+            await interaction.response.send_message(
+                content="World Cup betting is only available in a server.",
+                ephemeral=True,
+            )
+            return
         if await self.bot.db.is_wc_bet_banned(user_id):
             await interaction.response.send_message(
                 content=(
@@ -171,9 +184,9 @@ class OpenBetPanelView(ui.View):
                 ephemeral=True,
             )
             return
-        wallet = await self.bot.db.get_wc_wallet(user_id)
+        wallet: WcWallet | None = await self.bot.db.get_wc_wallet(user_id)
         if wallet is None:
-            optin = OptInView(self.bot, user_id=user_id, guild_id=interaction.guild_id)
+            optin = OptInView(self.bot, user_id=user_id, guild_id=guild_id)
             await interaction.response.send_message(view=optin, ephemeral=True)
             return
 
@@ -187,7 +200,7 @@ class OpenBetPanelView(ui.View):
             notice = f"+{WCBET_DAILY_ALLOWANCE} daily allowance claimed!"
 
         panel = BetPanelView(
-            self.bot, user_id=user_id, guild_id=interaction.guild_id,
+            self.bot, user_id=user_id, guild_id=guild_id,
             balance=balance, notice=notice,
         )
         await panel.refresh()
@@ -208,7 +221,7 @@ class OpenBetPanelView(ui.View):
 class OptInView(ui.LayoutView):
     """Ephemeral opt-in explainer shown to users without a wallet."""
 
-    def __init__(self, bot: commands.Bot, *, user_id: int, guild_id: int) -> None:
+    def __init__(self, bot: Hablemos, *, user_id: int, guild_id: int) -> None:
         super().__init__(timeout=600)
         self.bot = bot
         self.user_id = user_id
@@ -272,7 +285,7 @@ class BetPanelView(ui.LayoutView):
 
     def __init__(
         self,
-        bot: commands.Bot,
+        bot: Hablemos,
         *,
         user_id: int,
         guild_id: int,
@@ -300,7 +313,7 @@ class BetPanelView(ui.LayoutView):
         self._odds_blip = False
 
         self._fixtures: list[Fixture] = []
-        self._pending: dict[int, object] = {}
+        self._pending: dict[int, WcBet] = {}
         self._history: list = []
         self._odds: dict[int, MatchOdds] = {}
         # House odds multiplier (1 = no boost); loaded from the DB each
@@ -354,7 +367,9 @@ class BetPanelView(ui.LayoutView):
 
         self._pending = {}
         for fixture in self._fixtures:
-            bet = await self.bot.db.get_wc_user_bet(self.user_id, fixture["match_id"])
+            bet: WcBet | None = await self.bot.db.get_wc_user_bet(
+                self.user_id, fixture["match_id"]
+            )
             if bet is not None:
                 self._pending[fixture["match_id"]] = bet
 
@@ -493,7 +508,7 @@ class BetPanelView(ui.LayoutView):
             # After: a focused slip for that one match (no duplicate listing).
             if selected is None:
                 children.append(ui.TextDisplay("\n".join(self._match_list_lines())))
-            else:
+            elif selected_odds is not None:
                 children.append(ui.TextDisplay("\n".join(
                     self._slip_lines(selected, selected_odds),
                 )))
@@ -584,7 +599,7 @@ class BetPanelView(ui.LayoutView):
             children.append(ui.ActionRow(stake_select))
 
             armed = pick_odds is not None and self.selected_stake is not None
-            if armed:
+            if pick_odds is not None and self.selected_stake is not None:
                 self._armed_odds = pick_odds
                 win = betting.payout(self.selected_stake, pick_odds)
                 place_label = f"Place {self.selected_stake:,} → win {win:,}"
@@ -837,7 +852,7 @@ class BetPanelView(ui.LayoutView):
                 await interaction.response.send_modal(StakeModal(self))
                 return
             try:
-                stake = int(value)
+                stake = int(value) if value is not None else None
             except (TypeError, ValueError):
                 stake = None
             if stake is not None and not 1 <= stake <= self.balance:
@@ -973,7 +988,9 @@ class BetPanelView(ui.LayoutView):
         for p in parlays:
             lines.append(self._format_parlay_share_line(p))
         msg = f"🎰 **{interaction.user.display_name}'s bets:**\n" + "\n".join(lines)
-        await interaction.channel.send(msg)
+        channel = interaction.channel
+        if isinstance(channel, discord.abc.Messageable):
+            await channel.send(msg)
         await interaction.response.send_message("Shared!", ephemeral=True)
 
     @staticmethod
@@ -1124,7 +1141,7 @@ class ParlayPanelView(ui.LayoutView):
     MAX_LEGS = 5
 
     def __init__(
-        self, bot: commands.Bot, *, user_id: int, guild_id: int, balance: int,
+        self, bot: Hablemos, *, user_id: int, guild_id: int, balance: int,
     ) -> None:
         super().__init__(timeout=600)
         self.bot = bot
@@ -1285,7 +1302,8 @@ class ParlayPanelView(ui.LayoutView):
         armed = ready and bool(amounts) and self.stake is not None
         place_label = (
             f"Place {self.stake:,} → win {betting.payout(self.stake, self._combined()):,}"
-            if armed else f"Place parlay — need ≥{self.MIN_LEGS} legs + stake"
+            if self.stake is not None
+            else f"Place parlay — need ≥{self.MIN_LEGS} legs + stake"
         )
         place = ui.Button(
             label=place_label, emoji="💸", style=ButtonStyle.primary, disabled=not armed,
@@ -1336,7 +1354,7 @@ class ParlayPanelView(ui.LayoutView):
                 )
                 return
             try:
-                stake = int(value)
+                stake = int(value) if value is not None else None
             except (TypeError, ValueError):
                 stake = None
             if stake is not None and not 1 <= stake <= self.balance:

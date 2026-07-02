@@ -193,7 +193,7 @@ class WCBetsMixin(DatabaseMixin):
         match_id: int,
         outcome: str,
         stake: int,
-        odds: float,
+        odds: Decimal,
     ) -> int:
         """Place (or replace) the user's bet on a match in one transaction.
 

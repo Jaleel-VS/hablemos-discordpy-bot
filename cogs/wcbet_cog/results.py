@@ -240,6 +240,37 @@ class MatchOdds(TypedDict):
     away: Decimal
 
 
+class WcBet(TypedDict):
+    """A row from ``wc_bets`` as returned by the bet query helpers.
+
+    Models the ``asyncpg.Record`` shape these queries return so callers can
+    index fields (``bet["stake"]``) with a known type. Rows are read-only
+    at the call sites that use this alias.
+    """
+
+    user_id: int
+    match_id: int
+    guild_id: int
+    outcome: str
+    stake: int
+    odds: Decimal
+    status: str
+    payout: int | None
+    placed_at: object
+    settled_at: object
+
+
+class WcWallet(TypedDict):
+    """A row from ``wc_bet_wallets`` (balance + bookkeeping columns)."""
+
+    user_id: int
+    guild_id: int
+    balance: int
+    last_allowance_date: object
+    created_at: object
+    updated_at: object
+
+
 def apply_odds_multiplier(odds: MatchOdds, multiplier: Decimal) -> MatchOdds:
     """Scale all three legs by `multiplier`, quantized to 2dp (half-up).
 

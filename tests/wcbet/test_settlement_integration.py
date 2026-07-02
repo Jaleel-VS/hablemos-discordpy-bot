@@ -78,7 +78,7 @@ async def test_settle_match_with_a_parlay_leg(db: Database):
         ],
     )
     # A straight bet on match 25 too, so settle has both kinds to handle.
-    await db.place_wc_bet(user, GUILD, 25, "home", 100, 1.5)
+    await db.place_wc_bet(user, GUILD, 25, "home", 100, Decimal("1.5"))
 
     # Settle match 25 home win — must not raise.
     summary = await db.settle_wc_match(

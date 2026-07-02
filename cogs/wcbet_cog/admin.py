@@ -4,9 +4,12 @@ Owner-only prefix command group `$wcbetadmin` — record match results
 (which settles all pending bets atomically), void postponed matches,
 and view participation stats.
 """
+from __future__ import annotations
+
 import logging
 import re
 from decimal import Decimal, InvalidOperation
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
@@ -24,6 +27,9 @@ from db.bets import MatchAlreadySettledError
 from . import betting, espn, results
 from .betting import format_parlay_results, format_player_results
 from .config import WCBET_LOG_CHANNEL_ID, WCBET_NOTIFICATION_CHANNEL_ID
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +71,7 @@ _RESULT_PENS_RE = re.compile(
 )
 
 
-def _parse_result_arg(text: str) -> tuple[str, "betting.Outcome | None"]:
+def _parse_result_arg(text: str) -> tuple[str, betting.Outcome | None]:
     """Split a result argument into (score_part, penalty_winner|None).
 
     Accepts an optional trailing shootout marker naming the side that
@@ -88,7 +94,7 @@ class WCBetAdmin(BaseCog):
     _MULTIPLIER_MIN = Decimal("0.5")
     _MULTIPLIER_MAX = Decimal("10")
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Hablemos) -> None:
         super().__init__(bot)
 
     @commands.group(name="wcbetadmin", invoke_without_command=True)
@@ -422,7 +428,7 @@ class WCBetAdmin(BaseCog):
         summary: dict,
     ) -> None:
         channel = guild.get_channel(WCBET_LOG_CHANNEL_ID)
-        if channel is None:
+        if not isinstance(channel, discord.abc.Messageable):
             logger.warning(
                 "wcbet log channel %s not found in guild %s",
                 WCBET_LOG_CHANNEL_ID, guild.id,
@@ -452,7 +458,7 @@ class WCBetAdmin(BaseCog):
         parlay_msg = format_parlay_results(summary.get("parlays", []))
         if player_msg or parlay_msg:
             notify = guild.get_channel(WCBET_NOTIFICATION_CHANNEL_ID)
-            if notify is None:
+            if not isinstance(notify, discord.abc.Messageable):
                 logger.warning("wcbet notification channel %s not found", WCBET_NOTIFICATION_CHANNEL_ID)
                 return
             for msg in (player_msg, parlay_msg):
