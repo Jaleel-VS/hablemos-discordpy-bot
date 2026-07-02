@@ -1,8 +1,11 @@
 """
 Conversation Summary Cog — AI-powered conversation summaries using Google Gemini.
 """
+from __future__ import annotations
+
 import logging
 import random
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
@@ -19,6 +22,9 @@ from .prompts import (
     FocusedSummaryInput,
 )
 
+if TYPE_CHECKING:
+    from hablemos import Hablemos
+
 logger = logging.getLogger(__name__)
 
 MAX_MESSAGES = 500
@@ -27,7 +33,7 @@ MAX_MESSAGES = 500
 class SummaryCog(BaseCog):
     """AI-powered conversation summaries."""
 
-    def __init__(self, bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         self.cache = SummaryCache(ttl_seconds=3600)
         logger.info("SummaryCog initialized successfully")
@@ -52,10 +58,10 @@ class SummaryCog(BaseCog):
         start_guild, start_channel, start_id = parse_message_link(start_link)
         end_guild, end_channel, end_id = parse_message_link(end_link)
 
-        if not all([start_guild, start_channel, start_id]):
+        if start_guild is None or start_channel is None or start_id is None:
             await ctx.send("Invalid start message link.")
             return
-        if not all([end_guild, end_channel, end_id]):
+        if end_guild is None or end_channel is None or end_id is None:
             await ctx.send("Invalid end message link.")
             return
 
@@ -65,6 +71,8 @@ class SummaryCog(BaseCog):
             return
 
         # Validate same guild
+        if ctx.guild is None:
+            return
         if ctx.guild.id != start_guild:
             await ctx.send("Those messages are from a different server.")
             return
@@ -74,7 +82,7 @@ class SummaryCog(BaseCog):
             start_id, end_id = end_id, start_id
 
         channel = self.bot.get_channel(start_channel)
-        if not channel:
+        if not isinstance(channel, discord.TextChannel):
             await ctx.send("I can't access that channel.")
             return
 
@@ -139,14 +147,18 @@ class SummaryCog(BaseCog):
             status += "..."
             await processing.edit(content=status)
 
+            gemini = self.bot.gemini
+            if gemini is None:
+                await processing.edit(content="Summaries are unavailable right now.")
+                return
             try:
                 if topic:
-                    summary = await self.bot.gemini.run(
+                    summary = await gemini.run(
                         FOCUSED_SUMMARY_PROMPT,
                         FocusedSummaryInput(messages=messages, topic=topic),
                     )
                 else:
-                    summary = await self.bot.gemini.run(SUMMARY_PROMPT, messages)
+                    summary = await gemini.run(SUMMARY_PROMPT, messages)
             except GeminiError as e:
                 logger.warning("Summary Gemini error code=%s: %s", e.code, e.message)
                 await processing.edit(content=e.user_message)
@@ -205,15 +217,17 @@ class SummaryCog(BaseCog):
         start_guild, start_channel, start_id = parse_message_link(start_link)
         end_guild, end_channel, end_id = parse_message_link(end_link)
 
-        if not all([start_guild, start_channel, start_id]):
+        if start_guild is None or start_channel is None or start_id is None:
             await ctx.send("Invalid start message link.")
             return
-        if not all([end_guild, end_channel, end_id]):
+        if end_guild is None or end_channel is None or end_id is None:
             await ctx.send("Invalid end message link.")
             return
 
         if start_channel != end_channel:
             await ctx.send("Both links must be from the same channel.")
+            return
+        if ctx.guild is None:
             return
         if ctx.guild.id != start_guild:
             await ctx.send("Those messages are from a different server.")
@@ -223,7 +237,7 @@ class SummaryCog(BaseCog):
             start_id, end_id = end_id, start_id
 
         channel = self.bot.get_channel(start_channel)
-        if not channel:
+        if not isinstance(channel, discord.TextChannel):
             await ctx.send("I can't access that channel.")
             return
 
@@ -270,8 +284,12 @@ class SummaryCog(BaseCog):
 
             await processing.edit(content=f"Analyzing {len(messages)} messages for topics...")
 
+            gemini = self.bot.gemini
+            if gemini is None:
+                await processing.edit(content="Topic suggestions are unavailable right now.")
+                return
             try:
-                result = await self.bot.gemini.run(SUGGEST_TOPICS_PROMPT, messages)
+                result = await gemini.run(SUGGEST_TOPICS_PROMPT, messages)
             except GeminiError as e:
                 logger.warning("Sumtopics Gemini error code=%s: %s", e.code, e.message)
                 await processing.edit(content=e.user_message)
@@ -327,7 +345,7 @@ class SummaryCog(BaseCog):
             await super().cog_command_error(ctx, error)
 
 
-async def setup(bot):
+async def setup(bot: Hablemos):
     if bot.gemini is None:
         logger.info("bot.gemini is None — SummaryCog will not load")
         return

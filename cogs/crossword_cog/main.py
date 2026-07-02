@@ -1,4 +1,6 @@
 """Crossword cog — mini crossword puzzles for language practice."""
+from __future__ import annotations
+
 import asyncio
 import contextlib
 import logging
@@ -8,6 +10,7 @@ import unicodedata
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING, cast
 
 import asyncpg
 import discord
@@ -31,6 +34,9 @@ from .config import (
 from .grid import generate_grid
 from .renderer import render_grid
 from .words import WordEntry, load_words_from_db, pick_words
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -367,7 +373,7 @@ def _build_game(
 class CrosswordCog(BaseCog):
     """Mini crossword puzzles for Spanish/English practice."""
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Hablemos) -> None:
         super().__init__(bot)
         self._active: dict[int, CrosswordGame] = {}
         self._locks: dict[int, asyncio.Lock] = {}
@@ -437,11 +443,15 @@ class CrosswordCog(BaseCog):
         # Resolve a Messageable: guild channel/thread via cache, DM via user.
         target: discord.abc.Messageable | None = None
         if not is_dm:
-            target = self.bot.get_channel(channel_id)
-            if target is None:
+            cached = self.bot.get_channel(channel_id)
+            if isinstance(cached, discord.abc.Messageable):
+                target = cached
+            else:
                 # Thread may be uncached; try to fetch.
                 try:
-                    target = await self.bot.fetch_channel(channel_id)
+                    fetched = await self.bot.fetch_channel(channel_id)
+                    if isinstance(fetched, discord.abc.Messageable):
+                        target = fetched
                 except (discord.NotFound, discord.Forbidden, discord.HTTPException):
                     target = None
 
@@ -687,8 +697,14 @@ class CrosswordCog(BaseCog):
     ) -> None:
         """Start a mini crossword puzzle with dropdown options."""
         await interaction.response.defer()
+        channel = interaction.channel
+        if not isinstance(channel, discord.abc.Messageable):
+            await interaction.followup.send(
+                "❌ This command can't be used in this channel.", ephemeral=True,
+            )
+            return
         err = await self._start_game(
-            interaction.channel, interaction.channel.id,
+            channel, channel.id,
             interaction.user, difficulty, language,
             use_v2=True, followup=interaction.followup,
         )
@@ -710,6 +726,8 @@ class CrosswordCog(BaseCog):
         DM games are excluded. Ranking is by total words solved across
         games played in this server.
         """
+        if ctx.guild is None:
+            return
         scope_lc = scope.lower()
         if scope_lc in ("all", "lifetime", "∞"):
             days: int | None = None
@@ -722,7 +740,8 @@ class CrosswordCog(BaseCog):
             try:
                 days = max(1, min(int(scope_lc), 365))
             except ValueError:
-                return await ctx.send("❌ Usage: `$cwl [days|week|month|all]`")
+                await ctx.send("❌ Usage: `$cwl [days|week|month|all]`")
+                return
             window_label = f"last {days}d"
 
         rows = await self.bot.db.crossword_get_top_solvers(
@@ -730,10 +749,11 @@ class CrosswordCog(BaseCog):
         )
 
         if not rows:
-            return await ctx.send(
+            await ctx.send(
                 f"🧩 No crossword games played here yet ({window_label}). "
                 f"Try `$crossword`!"
             )
+            return
 
         medals = {1: "🥇", 2: "🥈", 3: "🥉"}
         lines: list[str] = []
@@ -778,7 +798,8 @@ class CrosswordCog(BaseCog):
             try:
                 days = max(1, min(int(scope), 365))
             except ValueError:
-                return await ctx.send("❌ Usage: `$cwstats [days|all]`")
+                await ctx.send("❌ Usage: `$cwstats [days|all]`")
+                return
             window_label = f"last {days}d"
 
         stats = await self.bot.db.crossword_get_stats(days=days)
@@ -787,7 +808,8 @@ class CrosswordCog(BaseCog):
         games = int(totals.get("games") or 0)
 
         if games == 0:
-            return await ctx.send(f"ℹ️ No crossword games recorded ({window_label}).")
+            await ctx.send(f"ℹ️ No crossword games recorded ({window_label}).")
+            return
 
         breakdown = stats["breakdown"]
         top = await self.bot.db.crossword_get_top_solvers(days=days, limit=10)
@@ -885,7 +907,8 @@ class CrosswordCog(BaseCog):
         elif lang_arg in ("spanish",):
             lang_arg = "es"
         if lang_arg not in (None, "es", "en"):
-            return await ctx.send("❌ Language must be `es` or `en`.")
+            await ctx.send("❌ Language must be `es` or `en`.")
+            return
         limit = max(1, min(limit, 25))
 
         if mode in ("hardest", "easiest"):
@@ -896,10 +919,11 @@ class CrosswordCog(BaseCog):
                 limit=limit,
             )
             if not rows:
-                return await ctx.send(
+                await ctx.send(
                     "ℹ️ Not enough per-word data yet — need words that have "
                     "appeared in at least 3 games."
                 )
+                return
             lines: list[str] = []
             for i, r in enumerate(rows, 1):
                 rate = float(r["solve_rate"]) * 100
@@ -922,20 +946,23 @@ class CrosswordCog(BaseCog):
                 color=discord.Color.blurple(),
             )
             embed.set_footer(text="Includes only words that appeared in ≥3 games.")
-            return await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
+            return
 
         if mode == "unseen":
             if lang_arg is None:
-                return await ctx.send(
+                await ctx.send(
                     "❌ `unseen` requires a language: `$cwwords unseen es` or `en`."
                 )
+                return
             rows = await self.bot.db.crossword_get_unseen_words(
                 language=lang_arg, limit=limit,
             )
             if not rows:
-                return await ctx.send(
+                await ctx.send(
                     "✅ Every word in the list has appeared at least once."
                 )
+                return
             lines = [
                 f"• `{r['word']}` ({r['difficulty']} · {r['theme']})"
                 for r in rows
@@ -946,7 +973,8 @@ class CrosswordCog(BaseCog):
                 color=discord.Color.blurple(),
             )
             embed.set_footer(text="Words in the list that have never appeared in a game.")
-            return await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
+            return
 
         await ctx.send(
             "❌ Usage: `$cwwords <hardest|easiest|unseen> [lang] [limit]`"
@@ -975,7 +1003,8 @@ class CrosswordCog(BaseCog):
         elif lang_arg in ("spanish",):
             lang_arg = "es"
         if lang_arg not in (None, "es", "en"):
-            return await ctx.send("❌ Language must be `es`, `en`, or empty.")
+            await ctx.send("❌ Language must be `es`, `en`, or empty.")
+            return
 
         days_arg: int | None = days if days > 0 else None
         min_appearances = max(1, min(min_appearances, 50))
@@ -992,7 +1021,7 @@ class CrosswordCog(BaseCog):
         )
 
         if not rows:
-            return await ctx.send(
+            await ctx.send(
                 "ℹ️ Not enough per-word data yet — need words with at "
                 f"least {min_appearances} appearances."
             )
@@ -1068,9 +1097,15 @@ class CrosswordCog(BaseCog):
 
             # Quit command — starter or members with manage_messages can end the game
             if text.lower() == "quit":
+                # message.author is User | Member; permissions_for wants
+                # Member | Role. In practice a quit only lands in a guild
+                # channel where the author is a Member, but we keep the
+                # original unconditional check (getattr tolerates the DM/User
+                # case) and cast to satisfy the type checker.
+                author = cast("discord.Member", message.author)
                 can_quit = (
                     message.author.id == game.starter_id
-                    or getattr(message.channel.permissions_for(message.author), "manage_messages", False)
+                    or getattr(message.channel.permissions_for(author), "manage_messages", False)
                 )
                 if can_quit:
                     logger.info("Crossword quit by %s in #%s", message.author, channel_id)
@@ -1216,7 +1251,7 @@ class CrosswordCog(BaseCog):
             )
 
             channel = self.bot.get_channel(channel_id) or (game.message and game.message.channel)
-            if channel:
+            if isinstance(channel, discord.abc.Messageable):
                 try:
                     if game.use_v2:
                         try:
@@ -1275,7 +1310,7 @@ class CrosswordCog(BaseCog):
             total = len(game.grid.placed)
 
             channel = self.bot.get_channel(channel_id) or (game.message and game.message.channel)
-            if channel:
+            if isinstance(channel, discord.abc.Messageable):
                 try:
                     # Always use embed for timeout — simpler and more reliable
                     embed = Embed(
@@ -1406,5 +1441,5 @@ class CrosswordCog(BaseCog):
         self._locks.clear()
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: Hablemos) -> None:
     await bot.add_cog(CrosswordCog(bot))

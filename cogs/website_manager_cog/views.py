@@ -15,19 +15,51 @@ logger = logging.getLogger(__name__)
 # Constants
 ITEMS_PER_PAGE = 5
 
-class MainManageView(View):
-    """Main management menu with resource type buttons"""
 
-    def __init__(self, api_client, user_id: int, timeout: float = 180):
-        super().__init__(timeout=timeout)
-        self.api_client = api_client
-        self.user_id = user_id
+def _selected_value(interaction: Interaction) -> str | None:
+    """First value from a component (select) interaction, or None if absent."""
+    data = interaction.data
+    if not data:
+        return None
+    values = data.get("values")
+    if not values:
+        return None
+    return values[0]
+
+
+class _ManagedView(View):
+    """Shared base: owner check + timeout disable for the management views.
+
+    ``message`` is populated by the caller after sending so ``on_timeout``
+    can grey the components out; it is declared here so the type checker
+    knows the attribute exists.
+    """
+
+    user_id: int
+    message: discord.Message | None = None
 
     async def interaction_check(self, interaction: Interaction) -> bool:
         if interaction.user.id != self.user_id:
             await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
             return False
         return True
+
+    async def on_timeout(self):
+        for item in self.children:
+            if isinstance(item, (Button, Select)):
+                item.disabled = True
+        if self.message:
+            with contextlib.suppress(Exception):
+                await self.message.edit(view=self)
+
+
+class MainManageView(_ManagedView):
+    """Main management menu with resource type buttons"""
+
+    def __init__(self, api_client, user_id: int, timeout: float = 180):
+        super().__init__(timeout=timeout)
+        self.api_client = api_client
+        self.user_id = user_id
 
     @button(label="Podcasts", style=ButtonStyle.primary, emoji="🎙️")
     async def podcasts_button(self, interaction: Interaction, btn: Button):
@@ -60,26 +92,13 @@ class MainManageView(View):
         )
         self.stop()
 
-    async def on_timeout(self):
-        for item in self.children:
-            item.disabled = True
-        if self.message:
-            with contextlib.suppress(Exception):
-                await self.message.edit(view=self)
-
-class PodcastMenuView(View):
+class PodcastMenuView(_ManagedView):
     """Podcast management menu"""
 
     def __init__(self, api_client, user_id: int, timeout: float = 180):
         super().__init__(timeout=timeout)
         self.api_client = api_client
         self.user_id = user_id
-
-    async def interaction_check(self, interaction: Interaction) -> bool:
-        if interaction.user.id != self.user_id:
-            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
-            return False
-        return True
 
     @button(label="Add Podcast", style=ButtonStyle.success, emoji="➕")
     async def add_button(self, interaction: Interaction, btn: Button):
@@ -167,15 +186,8 @@ class PodcastMenuView(View):
         )
         await interaction.response.edit_message(embed=embed, view=view)
 
-    async def on_timeout(self):
-        for item in self.children:
-            item.disabled = True
-        if self.message:
-            with contextlib.suppress(Exception):
-                await self.message.edit(view=self)
 
-
-class PodcastListView(View):
+class PodcastListView(_ManagedView):
     """Paginated list of podcasts with actions"""
 
     def __init__(self, api_client, podcasts: list, page: int = 0, user_id: int = 0, timeout: float = 180):
@@ -189,12 +201,6 @@ class PodcastListView(View):
         # Add podcast select dropdown
         self._update_select()
         self._update_buttons()
-
-    async def interaction_check(self, interaction: Interaction) -> bool:
-        if interaction.user.id != self.user_id:
-            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
-            return False
-        return True
 
     def _update_select(self):
         """Update the podcast select dropdown for current page"""
@@ -258,7 +264,7 @@ class PodcastListView(View):
 
     async def podcast_selected(self, interaction: Interaction):
         """Handle podcast selection"""
-        podcast_id = interaction.data['values'][0]
+        podcast_id = _selected_value(interaction)
         podcast = next((p for p in self.podcasts if p.id == podcast_id), None)
 
         if not podcast:
@@ -311,12 +317,13 @@ class PodcastListView(View):
 
     async def on_timeout(self):
         for item in self.children:
-            item.disabled = True
+            if isinstance(item, (Button, Select)):
+                item.disabled = True
         if self.message:
             with contextlib.suppress(Exception):
                 await self.message.edit(view=self)
 
-class PodcastActionsView(View):
+class PodcastActionsView(_ManagedView):
     """Actions for a single podcast"""
 
     def __init__(self, api_client, podcast, parent_view=None, user_id: int = 0, timeout: float = 180):
@@ -337,12 +344,6 @@ class PodcastActionsView(View):
                     item.label = "Archive"
                     item.style = ButtonStyle.secondary
                     item.emoji = "🗄️"
-
-    async def interaction_check(self, interaction: Interaction) -> bool:
-        if interaction.user.id != self.user_id:
-            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
-            return False
-        return True
 
     @button(label="Edit", style=ButtonStyle.primary, emoji="✏️")
     async def edit_button(self, interaction: Interaction, btn: Button):
@@ -391,12 +392,13 @@ class PodcastActionsView(View):
 
     async def on_timeout(self):
         for item in self.children:
-            item.disabled = True
+            if isinstance(item, (Button, Select)):
+                item.disabled = True
         if self.message:
             with contextlib.suppress(Exception):
                 await self.message.edit(view=self)
 
-class ConfirmDeleteView(View):
+class ConfirmDeleteView(_ManagedView):
     """Confirmation dialog for deleting a podcast"""
 
     def __init__(self, api_client, podcast, user_id: int = 0, timeout: float = 60):
@@ -404,12 +406,6 @@ class ConfirmDeleteView(View):
         self.api_client = api_client
         self.podcast = podcast
         self.user_id = user_id
-
-    async def interaction_check(self, interaction: Interaction) -> bool:
-        if interaction.user.id != self.user_id:
-            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
-            return False
-        return True
 
     @button(label="Yes, Delete", style=ButtonStyle.danger, emoji="🗑️")
     async def confirm_button(self, interaction: Interaction, btn: Button):
@@ -463,12 +459,13 @@ class ConfirmDeleteView(View):
 
     async def on_timeout(self):
         for item in self.children:
-            item.disabled = True
+            if isinstance(item, (Button, Select)):
+                item.disabled = True
         if self.message:
             with contextlib.suppress(Exception):
                 await self.message.edit(view=self)
 
-class ReportActionsView(View):
+class ReportActionsView(_ManagedView):
     """Actions for managing reported podcasts"""
 
     def __init__(self, api_client, report_counts, podcast_map, user_id: int = 0, timeout: float = 180):
@@ -504,15 +501,9 @@ class ReportActionsView(View):
             select_menu.callback = self.podcast_selected
             self.add_item(select_menu)
 
-    async def interaction_check(self, interaction: Interaction) -> bool:
-        if interaction.user.id != self.user_id:
-            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
-            return False
-        return True
-
     async def podcast_selected(self, interaction: Interaction):
         """Handle podcast selection from reports"""
-        podcast_id = interaction.data['values'][0]
+        podcast_id = _selected_value(interaction)
         podcast = self.podcast_map.get(podcast_id)
 
         if not podcast:
@@ -552,12 +543,13 @@ class ReportActionsView(View):
 
     async def on_timeout(self):
         for item in self.children:
-            item.disabled = True
+            if isinstance(item, (Button, Select)):
+                item.disabled = True
         if self.message:
             with contextlib.suppress(Exception):
                 await self.message.edit(view=self)
 
-class ReportedPodcastActionsView(View):
+class ReportedPodcastActionsView(_ManagedView):
     """Actions for a reported podcast"""
 
     def __init__(self, api_client, podcast, report_count, parent_view=None, user_id: int = 0, timeout: float = 180):
@@ -567,12 +559,6 @@ class ReportedPodcastActionsView(View):
         self.report_count = report_count
         self.parent_view = parent_view
         self.user_id = user_id
-
-    async def interaction_check(self, interaction: Interaction) -> bool:
-        if interaction.user.id != self.user_id:
-            await interaction.response.send_message("This panel isn't yours.", ephemeral=True)
-            return False
-        return True
 
     @button(label="Archive Podcast", style=ButtonStyle.secondary, emoji="🗄️")
     async def archive_button(self, interaction: Interaction, btn: Button):
@@ -659,7 +645,8 @@ class ReportedPodcastActionsView(View):
 
     async def on_timeout(self):
         for item in self.children:
-            item.disabled = True
+            if isinstance(item, (Button, Select)):
+                item.disabled = True
         if self.message:
             with contextlib.suppress(Exception):
                 await self.message.edit(view=self)

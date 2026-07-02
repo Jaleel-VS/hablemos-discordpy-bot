@@ -1,9 +1,12 @@
 """
 Admin cog — owner-only commands for cog management and bot metrics.
 """
+from __future__ import annotations
+
 import logging
 import re
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Color, Embed, app_commands, ui
@@ -12,6 +15,9 @@ from discord.ext import commands, tasks
 from base_cog import BaseCog
 from cogs.admin_cog.config import VC_ENRICH_CHANNEL_ID
 from cogs.utils.discovery import discover_extensions
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +39,7 @@ _JOINER_RE = re.compile(r'^V(\d+)')
 class AdminCog(BaseCog):
     """Owner-only cog management and metrics."""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         self.daily_cleanup.start()
         self._vc_enrich_ctx_menu: app_commands.ContextMenu | None = None
@@ -442,7 +448,7 @@ class AdminCog(BaseCog):
             return
 
         channel = guild.get_channel(channel_id)
-        if not channel:
+        if not isinstance(channel, discord.abc.Messageable):
             await ctx.send("❌ Channel not found.")
             return
 
@@ -479,6 +485,9 @@ class AdminCog(BaseCog):
         In a channel, exports the last `count` messages (default 50, max 500).
         """
         target = channel or ctx.channel
+        if not isinstance(target, discord.TextChannel | discord.Thread):
+            await ctx.send("❌ This command only works in a text channel or thread.")
+            return
         is_thread = isinstance(target, discord.Thread)
 
         if is_thread and channel is None:
@@ -547,10 +556,10 @@ class AdminCog(BaseCog):
         start_guild, start_channel, start_id = parse_message_link(start_link)
         end_guild, end_channel, end_id = parse_message_link(end_link)
 
-        if not all([start_guild, start_channel, start_id]):
+        if start_guild is None or start_channel is None or start_id is None:
             await ctx.send("Invalid start message link.")
             return
-        if not all([end_guild, end_channel, end_id]):
+        if end_guild is None or end_channel is None or end_id is None:
             await ctx.send("Invalid end message link.")
             return
         if start_channel != end_channel:
@@ -564,7 +573,7 @@ class AdminCog(BaseCog):
             start_id, end_id = end_id, start_id
 
         channel = self.bot.get_channel(start_channel)
-        if not channel:
+        if not isinstance(channel, discord.abc.Messageable):
             await ctx.send("I can't access that channel.")
             return
 
@@ -654,7 +663,7 @@ class AdminCog(BaseCog):
             return
 
         channel = guild.get_channel(channel_id)
-        if not channel:
+        if not isinstance(channel, discord.abc.Messageable):
             await ctx.send("❌ Channel not found or not accessible.")
             return
 
@@ -701,6 +710,9 @@ class AdminCog(BaseCog):
         3b — add role B.
         """
         member = ctx.author
+        if not isinstance(member, discord.Member):
+            await ctx.message.add_reaction("❌")
+            return
         has_a = member.get_role(_ROLE_A) is not None
         has_b = member.get_role(_ROLE_B) is not None
         p = profile.lower()
@@ -774,7 +786,7 @@ class AdminCog(BaseCog):
             await ctx.send("❌ Sync failed. Check logs.")
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Hablemos):
     cog = AdminCog(bot)
 
     # Context menu commands must be added to the tree manually
@@ -789,7 +801,7 @@ async def setup(bot: commands.Bot):
             return
 
         target = bot.get_channel(VC_ENRICH_CHANNEL_ID)
-        if not target:
+        if not isinstance(target, discord.abc.Messageable):
             await interaction.followup.send("❌ Enrich channel not found.", ephemeral=True)
             return
 
