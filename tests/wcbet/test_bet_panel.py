@@ -39,8 +39,13 @@ async def _armed_panel(fake_bot, outcome: str = "away", stake: int = 500):
     return panel
 
 
-def _modal_with_stake(panel: views.BetPanelView, raw: str) -> views.StakeModal:
-    modal = views.StakeModal(panel)
+def _modal_with_stake(
+    panel: views.BetPanelView | views.ParlayPanelView,
+    raw: str,
+    *,
+    stake_attr: str = "selected_stake",
+) -> views.StakeModal:
+    modal = views.StakeModal(panel, stake_attr=stake_attr)
     modal.stake_input._value = raw  # what discord fills in from the submit payload
     return modal
 
@@ -88,6 +93,46 @@ async def test_all_stake_arms_full_balance(fake_bot, interaction, clock):
 
     assert fake_bot.db.place_calls == []
     assert panel.selected_stake == 10_000
+
+
+async def test_parlay_custom_stake_arms_but_does_not_commit(
+    fake_bot, interaction, clock, fake_odds
+):
+    panel = views.ParlayPanelView(
+        fake_bot, user_id=USER_ID, guild_id=GUILD_ID, balance=10_000,
+    )
+    await panel.refresh()
+    panel.legs = [
+        {"match_id": 1, "outcome": "home", "odds": Decimal("1.43")},
+        {"match_id": 2, "outcome": "home", "odds": Decimal("1.50")},
+    ]
+
+    modal = _modal_with_stake(panel, "500", stake_attr="stake")
+    await modal.on_submit(interaction)
+
+    assert fake_bot.db.place_parlay_calls == []  # nothing committed
+    assert panel.stake == 500
+    assert panel.notice is None
+
+
+async def test_parlay_invalid_custom_stake_rejected(
+    fake_bot, interaction, clock, fake_odds
+):
+    panel = views.ParlayPanelView(
+        fake_bot, user_id=USER_ID, guild_id=GUILD_ID, balance=10_000,
+    )
+    await panel.refresh()
+    panel.legs = [
+        {"match_id": 1, "outcome": "home", "odds": Decimal("1.43")},
+        {"match_id": 2, "outcome": "home", "odds": Decimal("1.50")},
+    ]
+
+    modal = _modal_with_stake(panel, "not-a-number", stake_attr="stake")
+    await modal.on_submit(interaction)
+
+    assert fake_bot.db.place_parlay_calls == []
+    assert panel.stake is None
+    assert panel.notice is not None
 
 
 # ── place button (commits at re-resolved odds) ───────────────────────────────

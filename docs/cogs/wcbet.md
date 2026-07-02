@@ -166,6 +166,12 @@ leg loses. Per-leg odds are snapshotted at placement. A voided match refunds
 any parlay containing it (whole-parlay void). Parlay results announce to the
 notification channel alongside single-bet results.
 
+Once at least two legs are added, a **stake picker** appears with balance-
+scaled presets plus a **Custom amount…** option that opens the same
+`StakeModal` as the single-bet panel — type any whole number (or `all`)
+and it arms the slip without committing, so the payout preview updates
+before you hit **Place parlay**.
+
 To curb parlay-farming, each user may hold at most
 `WCBET_MAX_PENDING_PARLAYS` (default **2**) pending parlays at once;
 placing another while at the cap is rejected with a separate ephemeral

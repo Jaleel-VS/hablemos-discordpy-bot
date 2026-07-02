@@ -1274,6 +1274,9 @@ class ParlayPanelView(ui.LayoutView):
                 )
                 for a in amounts
             ]
+            stake_options.append(
+                SelectOption(label="Custom amount…", value="custom", emoji="✏️")
+            )
             stake_select = ui.Select(placeholder="Choose your stake…", options=stake_options)
             stake_select.callback = self._make_stake_cb(stake_select)
             children.append(ui.ActionRow(stake_select))
@@ -1327,6 +1330,11 @@ class ParlayPanelView(ui.LayoutView):
     def _make_stake_cb(self, select: ui.Select):
         async def cb(interaction: Interaction) -> None:
             value = select.values[0] if select.values else None
+            if value == "custom":
+                await interaction.response.send_modal(
+                    StakeModal(self, stake_attr="stake")
+                )
+                return
             try:
                 stake = int(value)
             except (TypeError, ValueError):
@@ -1414,14 +1422,22 @@ class ParlayPanelView(ui.LayoutView):
 class StakeModal(ui.Modal, title="Custom stake"):
     """Single-field modal for custom stake amounts.
 
-    Never commits a bet — it sets the panel's `selected_stake` and
+    Never commits a bet — it sets the panel's stake attribute and
     re-renders, so custom amounts get the same preview-then-confirm
-    treatment as the preset picks.
+    treatment as the preset picks. `stake_attr` names the panel field to
+    write, so the modal serves both the single-bet panel
+    (``selected_stake``) and the parlay builder (``stake``).
     """
 
-    def __init__(self, panel: BetPanelView) -> None:
+    def __init__(
+        self,
+        panel: BetPanelView | ParlayPanelView,
+        *,
+        stake_attr: str = "selected_stake",
+    ) -> None:
         super().__init__()
         self.panel = panel
+        self.stake_attr = stake_attr
         self.stake_input = ui.TextInput(
             style=TextStyle.short,
             placeholder="e.g. 500 — or 'all'",
@@ -1438,7 +1454,7 @@ class StakeModal(ui.Modal, title="Custom stake"):
                 "and your balance, or 'all'."
             )
         else:
-            panel.selected_stake = stake
+            setattr(panel, self.stake_attr, stake)
             panel.notice = None
         await panel.refresh()
         await interaction.response.edit_message(view=panel)
