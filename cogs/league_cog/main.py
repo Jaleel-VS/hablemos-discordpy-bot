@@ -2,12 +2,15 @@
 Language League Cog
 Tracks user activity and maintains league rankings for language learners
 """
+from __future__ import annotations
+
 import asyncio
 import functools
 import logging
 import time
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from datetime import UTC, date, datetime
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Embed, Interaction, Member, app_commands
@@ -36,20 +39,28 @@ from cogs.league_cog.utils import detect_message_language
 from cogs.league_cog.views import LeagueJoinView
 from cogs.utils.flags import random_english_flag, random_spanish_flag
 
+if TYPE_CHECKING:
+    from hablemos import Hablemos
+
 # Set seed for consistent language detection results
 DetectorFactory.seed = LANGUAGE.LANGDETECT_SEED
 
 logger = logging.getLogger(__name__)
 
-def handle_interaction_errors[**P, T](func: Callable[P, T]) -> Callable[P, T]:
+def handle_interaction_errors[**P, T](
+    func: Callable[P, Awaitable[T]],
+) -> Callable[P, Awaitable[T | None]]:
     """
     Decorator for consistent error handling in slash commands.
     Automatically handles exceptions and sends user-friendly error messages.
     """
     @functools.wraps(func)
-    async def wrapper(self, interaction: Interaction, *args, **kwargs):
+    async def wrapper(*args: P.args, **kwargs: P.kwargs) -> T | None:
+        # Command methods are called as (self, interaction, ...); pull the
+        # interaction out positionally for the error-reporting fallback.
+        interaction = args[1] if len(args) > 1 else None
         try:
-            return await func(self, interaction, *args, **kwargs)
+            return await func(*args, **kwargs)
         except Exception as e:
             logger.error("Error in %s: %s", func.__name__, e, exc_info=True)
             error_embed = Embed(
@@ -57,11 +68,14 @@ def handle_interaction_errors[**P, T](func: Callable[P, T]) -> Callable[P, T]:
                 description="Something went wrong. Please try again later.",
                 color=discord.Color.red()
             )
+            if not isinstance(interaction, Interaction):
+                return None
             # Check if we've already responded/deferred
             if interaction.response.is_done():
                 await interaction.followup.send(embed=error_embed, ephemeral=True)
             else:
                 await interaction.response.send_message(embed=error_embed, ephemeral=True)
+            return None
     return wrapper
 
 class LeagueCog(BaseCog):
@@ -70,7 +84,7 @@ class LeagueCog(BaseCog):
     # Cache TTL in seconds
     LEADERBOARD_CACHE_TTL = 30
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         # In-memory cooldown cache: (user_id, channel_id) → last_counted_timestamp
         self._cooldowns: dict[tuple[int, int], float] = {}
@@ -380,6 +394,16 @@ class LeagueCog(BaseCog):
     @league_group.command(name="join", description="Join the Language League")
     async def league_join(self, interaction: Interaction):
         """Join the Language League (opt-in)"""
+        if not isinstance(interaction.user, Member):
+            await interaction.response.send_message(
+                embed=Embed(
+                    title="❌ Error",
+                    description="This command can only be used in a server.",
+                    color=discord.Color.red(),
+                ),
+                ephemeral=True,
+            )
+            return
         try:
             embed = await self.perform_join(interaction.user)
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -444,6 +468,11 @@ class LeagueCog(BaseCog):
         board: str = "combined"
     ):
         """View league rankings (top 20)"""
+        if interaction.guild is None:
+            await interaction.response.send_message(
+                "This command can only be used in a server.", ephemeral=True,
+            )
+            return
         # Defer immediately - DB and image generation take time
         await interaction.response.defer()
 

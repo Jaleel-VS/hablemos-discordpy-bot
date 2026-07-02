@@ -6,10 +6,10 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 import discord
 from discord import ButtonStyle, Color, Embed, Interaction, SelectOption
-from discord.ext import commands
 from discord.ui import Button, Select, View, button
 
 from cogs.utils.embeds import green_embed, red_embed
@@ -27,6 +27,9 @@ from .i18n import t
 from .matching import rank_matches
 from .modals import DetailsModal
 
+if TYPE_CHECKING:
+    from hablemos import Hablemos
+
 logger = logging.getLogger(__name__)
 
 
@@ -38,7 +41,7 @@ def _ui_lang(interaction: Interaction) -> str:
 class PrefsView(View):
     """Ephemeral selects: offer / seek / level / region / DM, then modal."""
 
-    def __init__(self, bot: commands.Bot, lang: str = "en", timeout: float = 300):
+    def __init__(self, bot: Hablemos, lang: str = "en", timeout: float = 300):
         super().__init__(timeout=timeout)
         self.bot = bot
         self.lang = lang
@@ -64,7 +67,10 @@ class PrefsView(View):
         )
 
         async def cb(interaction: Interaction):
-            setattr(self, attr, interaction.data["values"][0])
+            data = interaction.data
+            values = data.get("values") if data else None
+            if values:
+                setattr(self, attr, values[0])
             await interaction.response.defer()
 
         select.callback = cb
@@ -109,7 +115,7 @@ class PrefsView(View):
 class LangExPanelView(View):
     """Persistent hub: Post / update, Find a partner, Delete my profile."""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(timeout=None)
         self.bot = bot
 
@@ -174,7 +180,7 @@ class LangExPanelView(View):
         await interaction.response.send_message(embed=green_embed(t("delete_ok", lang)), ephemeral=True)
 
 
-async def _delete_message(bot: commands.Bot, channel_id: int | None, message_id: int | None) -> None:
+async def _delete_message(bot: Hablemos, channel_id: int | None, message_id: int | None) -> None:
     if not channel_id or not message_id:
         return
     channel = bot.get_channel(channel_id)

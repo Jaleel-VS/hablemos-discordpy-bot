@@ -345,10 +345,10 @@ class NoGif(BaseCog):
             await ctx.send(
                 embed=red_embed("Uso: `$nogif @usuario <duración>` — ej: `$nogif @Juan 30m`")
             )
-            setattr(ctx, "error_handled", True)
+            ctx.__dict__["error_handled"] = True
         elif isinstance(error, commands.MemberNotFound):
             await ctx.send(embed=red_embed("No encontré ese usuario."))
-            setattr(ctx, "error_handled", True)
+            ctx.__dict__["error_handled"] = True
 
     @ungif.error
     async def ungif_error(self, ctx: commands.Context, error: Exception) -> None:
@@ -356,10 +356,10 @@ class NoGif(BaseCog):
             return
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(embed=red_embed("Uso: `$ungif @usuario`"))
-            setattr(ctx, "error_handled", True)
+            ctx.__dict__["error_handled"] = True
         elif isinstance(error, commands.MemberNotFound):
             await ctx.send(embed=red_embed("No encontré ese usuario."))
-            setattr(ctx, "error_handled", True)
+            ctx.__dict__["error_handled"] = True
 
 
 async def setup(bot: Hablemos) -> None:

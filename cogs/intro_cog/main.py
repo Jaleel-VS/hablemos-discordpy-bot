@@ -1,6 +1,10 @@
 """Introduction tracker — enforces a cooldown on the introductions channel."""
-import logging
+from __future__ import annotations
 
+import logging
+from typing import TYPE_CHECKING
+
+import discord
 from discord import (
     Color,
     Embed,
@@ -12,7 +16,6 @@ from discord import (
 )
 from discord.ext import commands
 from discord.ext.commands import (
-    Bot,
     Cog,
     check_any,
     has_any_role,
@@ -31,6 +34,9 @@ from .config import (
     SETTING_ALERT_CHANNEL,
     SETTING_WARN_CHANNEL,
 )
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +69,7 @@ def _build_alert_embed(
 class IntroductionTracker(BaseCog):
     """Tracks and manages member introductions."""
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         self.intro_channel_id = bot.settings.intro_channel_id
         self.general_channel_id = bot.settings.general_channel_id
@@ -80,7 +86,7 @@ class IntroductionTracker(BaseCog):
         channel_id = await self.bot.db.get_bot_setting(setting_key)
         return channel_id if channel_id is not None else default
 
-    def _is_exempt(self, member: Member) -> bool:
+    def _is_exempt(self, member: Member | discord.User) -> bool:
         """Check if a member is exempt via role or user exemption list."""
         if member.id in self._exempt_users:
             return True
@@ -105,7 +111,7 @@ class IntroductionTracker(BaseCog):
         # Warn the user
         warn_channel_id = await self._get_channel_id(SETTING_WARN_CHANNEL, DEFAULT_WARN_CHANNEL_ID)
         warn_channel = self.bot.get_channel(warn_channel_id)
-        if warn_channel:
+        if isinstance(warn_channel, discord.abc.Messageable):
             try:
                 await warn_channel.send(
                     content=f"Hey {message.author.mention}! 👋",
@@ -122,7 +128,7 @@ class IntroductionTracker(BaseCog):
         # Alert staff
         alert_channel_id = await self._get_channel_id(SETTING_ALERT_CHANNEL, DEFAULT_ALERT_CHANNEL_ID)
         alert_channel = self.bot.get_channel(alert_channel_id)
-        if alert_channel:
+        if isinstance(alert_channel, discord.abc.Messageable) and isinstance(message.author, Member):
             try:
                 embed = _build_alert_embed(
                     message.author, message.author.id, attempt_count, saved_content, deleted=deleted,
@@ -231,7 +237,10 @@ class IntroductionTracker(BaseCog):
         logger.info("Intro warn channel set to %s by %s", channel.id, ctx.author)
 
     @commands.command(aliases=['clearintro'])
-    @check_any(has_permissions(manage_messages=True), has_any_role(RESETINTRO_ROLE_ID))
+    # has_any_role returns Callable[[T], T] which pyright rejects as a
+    # check_any() arg, but this is discord.py's documented usage pattern
+    # and works at runtime (stub inconsistency in check_any's signature).
+    @check_any(has_permissions(manage_messages=True), has_any_role(RESETINTRO_ROLE_ID))  # type: ignore[arg-type]
     async def resetintro(self, ctx: commands.Context, user_id: int | None = None):
         """Clear a user's introduction history so they can post again."""
         if user_id is None:

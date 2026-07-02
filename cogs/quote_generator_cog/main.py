@@ -342,8 +342,11 @@ class QuoteGenerator(BaseCog):
 
         ref = ctx.message.reference
         channel = self.bot.get_channel(ref.channel_id)
-        if channel is None:
+        if not isinstance(channel, (discord.TextChannel, discord.Thread, discord.VoiceChannel)):
             await ctx.send(embed=red_embed("I can't access that channel."))
+            return
+        if ref.message_id is None:
+            await ctx.send(embed=red_embed("I can't access that message."))
             return
 
         target = await self._fetch_message_safe(ctx, channel, ref.message_id)
@@ -354,7 +357,7 @@ class QuoteGenerator(BaseCog):
         collected = [target]
         current = target
         for _ in range(count):
-            if current.reference is not None:
+            if current.reference is not None and current.reference.message_id is not None:
                 try:
                     parent = await channel.fetch_message(current.reference.message_id)
                     collected.append(parent)

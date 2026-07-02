@@ -1,18 +1,22 @@
 """Dictation cog — audio listening exercises for language practice."""
+from __future__ import annotations
 
 import io
 import logging
+from typing import TYPE_CHECKING
 
 import aioboto3
 import discord
 from discord import Interaction, app_commands
-from discord.ext import commands
 
 from base_cog import BaseCog
 from config import get_str_env
 
 from .config import ANSWER_TIMEOUT_SECONDS, MAX_SCORE, S3_BUCKET, S3_REGION
 from .scoring import score_answer
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +38,7 @@ _SCORE_EMOJI = {0: "😢", 1: "😕", 2: "🙂", 3: "😊", 4: "🎉"}
 class DictationCog(BaseCog):
     """Audio dictation exercises — listen and type what you hear."""
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Hablemos) -> None:
         super().__init__(bot)
         self._session = aioboto3.Session(
             aws_access_key_id=_AWS_KEY,
@@ -58,6 +62,13 @@ class DictationCog(BaseCog):
     ) -> None:
         channel_id = interaction.channel_id
         user_id = interaction.user.id
+
+        if channel_id is None:
+            await interaction.response.send_message(
+                "❌ This command can only be used in a channel.",
+                ephemeral=True,
+            )
+            return
 
         if channel_id in self._pending:
             await interaction.response.send_message(
@@ -105,8 +116,12 @@ class DictationCog(BaseCog):
             msg = await self.bot.wait_for("message", check=check, timeout=ANSWER_TIMEOUT_SECONDS)
         except TimeoutError:
             self._pending.pop(channel_id, None)
-            await interaction.channel.send("⏰ Time's up! The correct sentence was:\n"
-                                           f">>> {sentence['sentence']}")
+            channel = interaction.channel
+            if isinstance(channel, discord.abc.Messageable):
+                await channel.send(
+                    "⏰ Time's up! The correct sentence was:\n"
+                    f">>> {sentence['sentence']}"
+                )
             return
 
         self._pending.pop(channel_id, None)
@@ -127,7 +142,9 @@ class DictationCog(BaseCog):
     async def _fetch_audio(self, audio_url: str) -> bytes | None:
         """Download an MP3 from S3."""
         try:
-            async with self._session.client("s3", region_name=S3_REGION) as s3:
+            # aioboto3's Session.client inherits boto3's sync return type, but
+            # at runtime returns an async context manager the stubs don't model.
+            async with self._session.client("s3", region_name=S3_REGION) as s3:  # type: ignore[attr-defined]
                 resp = await s3.get_object(Bucket=S3_BUCKET, Key=audio_url)
                 return await resp["Body"].read()
         except Exception:
@@ -168,5 +185,5 @@ class DictationCog(BaseCog):
         return embed
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: Hablemos) -> None:
     await bot.add_cog(DictationCog(bot))

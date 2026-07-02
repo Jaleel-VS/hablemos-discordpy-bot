@@ -23,6 +23,8 @@ import logging
 import random
 import time
 from dataclasses import dataclass, field
+from io import BytesIO
+from typing import TYPE_CHECKING, cast
 
 import discord
 from discord import Message
@@ -45,15 +47,29 @@ from .config import (
     channel_modes,
     weights_for_mode,
 )
+from .renderer import Card
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
+
+
+def _render_card(card: Card, view: CardView, *, revealed: bool) -> BytesIO:
+    """Type-safe wrapper for ``renderer.render_card``.
+
+    ``render_card`` declares ``view: dict``; a ``CardView`` TypedDict is not
+    directly assignable to a plain ``dict`` under the type checker, so cast
+    it here (identical at runtime) in one place instead of at each call.
+    """
+    return renderer.render_card(card, cast(dict, view), revealed=revealed)
 
 
 @dataclass
 class ActiveSpawn:
     """The currently catchable wild card in a channel."""
 
-    card: dict
+    card: Card
     view: CardView
     mode: str
     message_id: int
@@ -76,7 +92,7 @@ class ChannelState:
 class VocabCatch(BaseCog):
     """Spawns and catches bilingual collectible vocab cards."""
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Hablemos) -> None:
         super().__init__(bot)
         # channel_id -> ChannelState, for each configured (enabled) channel.
         self._channels: dict[int, ChannelState] = {
@@ -131,8 +147,11 @@ class VocabCatch(BaseCog):
             return  # empty pool — nothing to spawn
 
         view = resolve_card(card, state.mode)
+        # get_random_card returns a plain row dict; it carries the Card fields
+        # the renderer needs (card_id/pos/gender/rarity).
+        card = cast(Card, card)
         try:
-            buf = renderer.render_card(card, view, revealed=False)
+            buf = _render_card(card, view, revealed=False)
             file = discord.File(buf, filename="card.png")
             embed = discord.Embed(
                 title="✨ A wild word appeared!",
@@ -209,7 +228,7 @@ class VocabCatch(BaseCog):
         card, view = spawn.card, spawn.view
         dup = f" (×{count})" if count > 1 else ""
         try:
-            buf = renderer.render_card(card, view, revealed=True)
+            buf = _render_card(card, view, revealed=True)
             file = discord.File(buf, filename="caught.png")
             embed = discord.Embed(
                 title=f"🎉 {message.author.display_name} caught **{view['prompt']}**!",
@@ -283,6 +302,6 @@ class VocabCatch(BaseCog):
         return {1: "⚪", 2: "🟢", 3: "🔵", 4: "🟣", 5: "🟡"}.get(rarity, "⚪")
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: Hablemos) -> None:
     await bot.add_cog(VocabCatch(bot))
     await bot.add_cog(VocabCatchAdmin(bot))

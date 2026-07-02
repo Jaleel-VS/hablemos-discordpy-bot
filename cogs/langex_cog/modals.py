@@ -3,10 +3,10 @@ from __future__ import annotations
 
 import logging
 import re
+from typing import TYPE_CHECKING
 
 import discord
 from discord import CheckboxGroupOption, Interaction, TextStyle
-from discord.ext import commands
 from discord.ui import CheckboxGroup, Label, Modal, TextInput
 
 from cogs.utils.embeds import green_embed, red_embed
@@ -14,6 +14,9 @@ from cogs.utils.embeds import green_embed, red_embed
 from .components import build_profile_view
 from .config import CONTACT_METHODS, FEED_CHANNEL_ID
 from .i18n import t
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +30,7 @@ def _contains_url(*texts: str) -> bool:
 class DetailsModal(Modal):
     """Free-text step: about / looking-for / interests. Finalizes the post."""
 
-    def __init__(self, bot: commands.Bot, prefs: dict, lang: str):
+    def __init__(self, bot: Hablemos, prefs: dict, lang: str):
         super().__init__(title=t("modal_title", lang))
         self.bot = bot
         self.prefs = prefs
@@ -133,7 +136,7 @@ class DetailsModal(Modal):
             pass
 
 
-async def _delete_message(bot: commands.Bot, channel_id: int | None, message_id: int | None) -> None:
+async def _delete_message(bot: Hablemos, channel_id: int | None, message_id: int | None) -> None:
     """Best-effort delete of a previously-posted profile message."""
     if not channel_id or not message_id:
         return

@@ -1,7 +1,9 @@
 """Interactions cog — tracks reply/mention interactions and provides analysis commands."""
+from __future__ import annotations
+
 import logging
 from datetime import UTC, datetime
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import discord
 from discord import Color, ui
@@ -13,13 +15,16 @@ from cogs.utils.duration import format_duration, parse_duration
 from cogs.utils.plural import plural
 from cogs.utils.visibility import VisibilityView
 
+if TYPE_CHECKING:
+    from hablemos import Hablemos
+
 logger = logging.getLogger(__name__)
 
 
 class InteractionsCog(BaseCog):
     """Track and analyze reply/mention interactions between users."""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         self._interaction_errors = 0
         self._last_interactions_msgs: dict[int, discord.Message] = {}
@@ -92,7 +97,10 @@ class InteractionsCog(BaseCog):
         Usage: $interactions [#channel] [duration]
         Examples: $interactions 12h | $interactions #general 3d | $interactions #general 1d12h
         """
-        channel = channel or ctx.channel
+        target_channel = channel or ctx.channel
+        if not isinstance(target_channel, (discord.TextChannel, discord.Thread)):
+            await ctx.send("This command can only be used in a server text channel.")
+            return
 
         try:
             td = parse_duration(duration)
@@ -103,11 +111,11 @@ class InteractionsCog(BaseCog):
         after = datetime.now(UTC) - td
         duration_label = format_duration(td)
 
-        top_pairs = await self.bot.db.get_top_pairs(channel.id, after)
-        stats = await self.bot.db.get_interaction_stats(channel.id, after)
+        top_pairs = await self.bot.db.get_top_pairs(target_channel.id, after)
+        stats = await self.bot.db.get_interaction_stats(target_channel.id, after)
 
         if not top_pairs:
-            await ctx.send(f"No interactions recorded in #{channel.name} over the last {duration_label}.")
+            await ctx.send(f"No interactions recorded in #{target_channel.name} over the last {duration_label}.")
             return
 
         guild = ctx.guild
@@ -135,7 +143,7 @@ class InteractionsCog(BaseCog):
 
         view = ui.LayoutView()
         view.add_item(ui.Container(
-            ui.TextDisplay(f"## Interactions in #{channel.name}\n-# Top pairs by replies & mentions"),
+            ui.TextDisplay(f"## Interactions in #{target_channel.name}\n-# Top pairs by replies & mentions"),
             ui.Separator(visible=True),
             ui.TextDisplay("\n".join(lines)),
             ui.Separator(visible=True),
@@ -159,7 +167,10 @@ class InteractionsCog(BaseCog):
             if last:
                 msg += f" [Last used here]({last.jump_url})"
             await ctx.send(msg)
-            ctx.error_handled = True
+            # `error_handled` is a dynamic flag read by BaseCog.cog_command_error;
+            # write via __dict__ so it satisfies both the type checker (Context
+            # has no declared attr) and ruff (no setattr with a constant name).
+            ctx.__dict__["error_handled"] = True
             return
 
     # ── $whotalks / $wt (per-user) ──
@@ -213,6 +224,9 @@ class InteractionsCog(BaseCog):
         Examples: $wt | $wt 7d | $wt #general 30d
         """
         user = ctx.author
+        if ctx.guild is None:
+            await ctx.send("This command can only be used in a server.")
+            return
         try:
             td = parse_duration(duration)
         except ValueError as exc:
@@ -255,5 +269,5 @@ class InteractionsCog(BaseCog):
         visibility.prompt_message = prompt
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Hablemos):
     await bot.add_cog(InteractionsCog(bot))

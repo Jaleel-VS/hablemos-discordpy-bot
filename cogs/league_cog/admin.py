@@ -4,10 +4,13 @@ Language League Admin Cog
 This module contains all admin-only commands for managing and auditing
 the Language League system. All commands require bot owner permissions.
 """
+from __future__ import annotations
+
 import asyncio
 import logging
 import re
 import time
+from typing import TYPE_CHECKING, cast
 
 import discord
 from discord import Embed
@@ -26,14 +29,22 @@ from cogs.league_cog.utils import (
 )
 from cogs.league_cog.views import LeagueJoinView
 
+if TYPE_CHECKING:
+    from cogs.league_cog.main import LeagueCog
+    from hablemos import Hablemos
+
 logger = logging.getLogger(__name__)
 
 
 class LeagueAdminCog(BaseCog):
     """Admin-only commands for Language League management"""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
+
+    def _league_cog(self) -> LeagueCog | None:
+        """Return the main LeagueCog instance if loaded (typed accessor)."""
+        return cast("LeagueCog | None", self.bot.get_cog("LeagueCog"))
 
     @commands.group(name="league", invoke_without_command=True)
     @commands.is_owner()
@@ -232,7 +243,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
             user_id = ctx.message.mentions[0].id if ctx.message.mentions else int(target)
             success = await self.bot.db.leaderboard_ban_user(user_id)
             if success:
-                league_cog = self.bot.get_cog("LeagueCog")
+                league_cog = self._league_cog()
                 if league_cog:
                     league_cog._banned_users.add(user_id)
                 await ctx.send(f"✅ Banned user `{user_id}` from league.")
@@ -253,7 +264,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
             user_id = ctx.message.mentions[0].id if ctx.message.mentions else int(target)
             success = await self.bot.db.leaderboard_unban_user(user_id)
             if success:
-                league_cog = self.bot.get_cog("LeagueCog")
+                league_cog = self._league_cog()
                 if league_cog:
                     league_cog._banned_users.discard(user_id)
                 await ctx.send(f"✅ Unbanned user `{user_id}` from league.")
@@ -273,7 +284,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
         channel = ctx.message.channel_mentions[0]
         success = await self.bot.db.exclude_channel(channel.id, channel.name, ctx.author.id)
         if success:
-            league_cog = self.bot.get_cog("LeagueCog")
+            league_cog = self._league_cog()
             if league_cog:
                 league_cog._excluded_channels.add(channel.id)
             await ctx.send(f"✅ Excluded {channel.mention} from league tracking.")
@@ -291,7 +302,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
         channel = ctx.message.channel_mentions[0]
         success = await self.bot.db.include_channel(channel.id)
         if success:
-            league_cog = self.bot.get_cog("LeagueCog")
+            league_cog = self._league_cog()
             if league_cog:
                 league_cog._excluded_channels.discard(channel.id)
             await ctx.send(f"✅ Re-included {channel.mention} in league tracking.")
@@ -368,7 +379,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
                 return await ctx.send(f"❌ Could not find guild {guild_id}")
 
             channel = guild.get_channel(channel_id)
-            if not channel:
+            if not isinstance(channel, discord.abc.Messageable):
                 return await ctx.send(f"❌ Could not find channel {channel_id}")
 
             message = await channel.fetch_message(message_id)
@@ -452,7 +463,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
             for i, row in enumerate(rows, 1):
                 try:
                     channel = guild.get_channel(row['channel_id'])
-                    if not channel:
+                    if not isinstance(channel, discord.abc.Messageable):
                         embed.add_field(
                             name=f"Message {i}",
                             value=f"❌ Channel not found (ID: {row['channel_id']})",
@@ -505,7 +516,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
             round_number = current_round['round_number']
             await ctx.send(f"⏳ Ending round {round_number}...")
 
-            league_cog = self.bot.get_cog('LeagueCog')
+            league_cog = self._league_cog()
             if not league_cog:
                 return await ctx.send("❌ LeagueCog not loaded.")
 
@@ -555,7 +566,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
             if not current_round:
                 return await ctx.send("❌ No active round found.")
 
-            league_cog = self.bot.get_cog('LeagueCog')
+            league_cog = self._league_cog()
             if not league_cog:
                 return await ctx.send("❌ LeagueCog not loaded.")
 
@@ -655,7 +666,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
                     return await ctx.send(f"❌ Could not find guild `{guild_id}`.")
 
                 channel = guild.get_channel(channel_id)
-                if not channel:
+                if not isinstance(channel, discord.abc.Messageable):
                     return await ctx.send(f"❌ Could not find channel `{channel_id}`.")
 
                 message = await channel.fetch_message(message_id)
@@ -703,7 +714,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
         logger.info("Admin %s ran langa on %s-char message → %s", ctx.author, len(content), detected)
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Hablemos):
     """Setup function to add the cog to the bot"""
     await bot.add_cog(LeagueAdminCog(bot))
     logger.info("LeagueAdminCog loaded successfully")

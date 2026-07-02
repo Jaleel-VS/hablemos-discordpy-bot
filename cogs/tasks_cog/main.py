@@ -30,8 +30,10 @@ def _is_tasks_readable_channel(interaction: Interaction) -> bool:
     """Check if the command is in the tasks channel or its read-only category."""
     if interaction.channel_id == TASKS_CHANNEL_ID:
         return True
-    if TASKS_CATEGORY_ID and hasattr(interaction.channel, "category_id"):
-        return interaction.channel.category_id == TASKS_CATEGORY_ID
+    channel = interaction.channel
+    category_id = getattr(channel, "category_id", None)
+    if TASKS_CATEGORY_ID and category_id is not None:
+        return category_id == TASKS_CATEGORY_ID
     return False
 
 
@@ -54,7 +56,10 @@ class TaskManager(BaseCog):
         if interaction.type != discord.InteractionType.component:
             return
 
-        custom_id = interaction.data.get("custom_id", "")
+        data = interaction.data
+        if not data:
+            return
+        custom_id = str(data.get("custom_id", ""))
         if not custom_id.startswith(("task_status:", "task_assign:")):
             return
 
@@ -68,7 +73,7 @@ class TaskManager(BaseCog):
         view = TaskView(task_id)
         # Find the matching component and dispatch
         for item in view.children:
-            if item.custom_id == custom_id:
+            if getattr(item, "custom_id", None) == custom_id and hasattr(item, "callback"):
                 await item.callback(interaction)
                 return
 
@@ -83,6 +88,11 @@ class TaskManager(BaseCog):
     @task_group.command(name="create", description="Create a new task")
     async def task_create(self, interaction: Interaction) -> None:
         """Open a modal form to create a task."""
+        if interaction.guild is None or not isinstance(interaction.user, discord.Member):
+            await interaction.response.send_message(
+                embed=red_embed("Use this command in a server."), ephemeral=True,
+            )
+            return
         await interaction.response.send_modal(
             TaskCreateModal(guild=interaction.guild, invoker=interaction.user),
         )
@@ -107,6 +117,8 @@ class TaskManager(BaseCog):
                 embed=red_embed("Use this command in the tasks channel or its category."),
                 ephemeral=True,
             )
+            return
+        if interaction.guild_id is None:
             return
 
         tasks = await self.bot.db.list_tasks(
@@ -168,7 +180,7 @@ class TaskManager(BaseCog):
         # Try to delete the message from the tasks channel
         if task.get("message_id"):
             channel = self.bot.get_channel(TASKS_CHANNEL_ID)
-            if channel:
+            if isinstance(channel, discord.TextChannel):
                 try:
                     msg = await channel.fetch_message(task["message_id"])
                     await msg.delete()
@@ -189,6 +201,8 @@ class TaskManager(BaseCog):
                 embed=red_embed("Use this command in the tasks channel or its category."),
                 ephemeral=True,
             )
+            return
+        if interaction.guild_id is None:
             return
 
         tasks = await self.bot.db.list_tasks(guild_id=interaction.guild_id)

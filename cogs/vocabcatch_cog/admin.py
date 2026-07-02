@@ -3,7 +3,10 @@
 Seed the card pool, force a spawn for testing, add a card, preview art,
 and view pool/channel stats.
 """
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING, cast
 
 import discord
 from discord.ext import commands
@@ -18,7 +21,12 @@ from .config import (
     RARITY_LABELS,
     channel_modes,
 )
+from .renderer import Card
 from .seed import SEED_CARDS
+
+if TYPE_CHECKING:
+
+    from .main import VocabCatch
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +63,11 @@ class VocabCatchAdmin(BaseCog):
         cog = self.bot.get_cog("VocabCatch")
         if cog is None:
             await ctx.send(embed=red_embed("VocabCatch cog not loaded."))
+            return
+        # Cross-cog access via get_cog is dynamic; narrow to the concrete cog.
+        cog = cast("VocabCatch", cog)
+        if not isinstance(ctx.channel, (discord.TextChannel, discord.Thread, discord.VoiceChannel)):
+            await ctx.send(embed=red_embed("This channel isn't a Vocab Catch channel."))
             return
         state = cog._channels.get(ctx.channel.id)
         if state is None:
@@ -93,7 +106,10 @@ class VocabCatchAdmin(BaseCog):
             await ctx.send(embed=red_embed(f"No card #{card_id}."))
             return
         view = resolve_card(card, mode)
-        buf = renderer.render_card(card, view, revealed=True)
+        # get_card returns a plain row dict carrying the Card fields; the
+        # renderer's view: dict param also can't take a CardView TypedDict
+        # directly, so cast both (identical at runtime).
+        buf = renderer.render_card(cast(Card, card), cast(dict, view), revealed=True)
         await ctx.send(file=discord.File(buf, filename="preview.png"))
 
     @vocatchadmin.command(name="stats")

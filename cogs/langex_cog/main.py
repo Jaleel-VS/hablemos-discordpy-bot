@@ -13,6 +13,7 @@ the transition. The persistent panel uses ``timeout=None`` with stable
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
@@ -24,13 +25,16 @@ from .config import PANEL_CHANNEL_ID
 from .i18n import t
 from .views import LangExPanelView, _delete_message
 
+if TYPE_CHECKING:
+    from hablemos import Hablemos
+
 logger = logging.getLogger(__name__)
 
 
 class LangExCog(BaseCog):
     """Language-exchange partner finding and matchmaking."""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Hablemos):
         super().__init__(bot)
         # Register the persistent panel once so the buttons survive restarts.
         if not any(isinstance(v, LangExPanelView) for v in bot.persistent_views):
@@ -70,5 +74,5 @@ class LangExCog(BaseCog):
         await ctx.send(embed=green_embed(f"Removed {user.mention}'s language-exchange profile."))
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Hablemos):
     await bot.add_cog(LangExCog(bot))

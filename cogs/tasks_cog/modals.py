@@ -39,41 +39,41 @@ class TaskCreateModal(Modal, title="Create a Task"):
 
     def __init__(self, guild: discord.Guild, invoker: discord.Member):
         super().__init__()
-        self.add_item(Label(
-            text="Title",
-            component=TextInput(
-                placeholder="What needs to be done?",
-                required=True,
-                max_length=256,
-            ),
-        ))
-        self.add_item(Label(
-            text="Description",
-            component=TextInput(
-                placeholder="Add details, context, links…",
-                required=False,
-                max_length=1024,
-                style=TextStyle.paragraph,
-            ),
-        ))
-        self.add_item(Label(
-            text="Assignees",
-            component=CheckboxGroup(
-                options=_build_assignee_options(guild, invoker),
-                required=False,
-                min_values=0,
-                max_values=len(ASSIGNABLE_MEMBER_IDS),
-            ),
-        ))
+        self._title_input = TextInput(
+            placeholder="What needs to be done?",
+            required=True,
+            max_length=256,
+        )
+        self._description_input = TextInput(
+            placeholder="Add details, context, links…",
+            required=False,
+            max_length=1024,
+            style=TextStyle.paragraph,
+        )
+        self._assignees_input = CheckboxGroup(
+            options=_build_assignee_options(guild, invoker),
+            required=False,
+            min_values=0,
+            max_values=len(ASSIGNABLE_MEMBER_IDS),
+        )
+        self.add_item(Label(text="Title", component=self._title_input))
+        self.add_item(Label(text="Description", component=self._description_input))
+        self.add_item(Label(text="Assignees", component=self._assignees_input))
 
     async def on_submit(self, interaction: Interaction) -> None:
         """Create the task, post embed, and ping assignees."""
         bot: Hablemos = interaction.client  # type: ignore[assignment]
 
-        task_title = self.children[0].component.value or ""
-        description = self.children[1].component.value or ""
+        if interaction.guild is None or interaction.guild_id is None:
+            await interaction.response.send_message(
+                embed=red_embed("Use this command in a server."), ephemeral=True,
+            )
+            return
 
-        checkbox = self.children[2].component
+        task_title = self._title_input.value or ""
+        description = self._description_input.value or ""
+
+        checkbox = self._assignees_input
         assignee_ids = [int(v) for v in checkbox.values] if checkbox.values else []
 
         task = await bot.db.create_task(
@@ -88,7 +88,7 @@ class TaskCreateModal(Modal, title="Create a Task"):
         view = TaskView(task["id"])
 
         channel = bot.get_channel(TASKS_CHANNEL_ID)
-        if not channel:
+        if not isinstance(channel, discord.TextChannel):
             await interaction.response.send_message(
                 embed=red_embed("Tasks channel not configured. Set `TASKS_CHANNEL_ID`."),
                 ephemeral=True,

@@ -1,11 +1,17 @@
 """Persistent views for task embeds — survive bot restarts."""
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Interaction, SelectOption
 from discord.ui import Select, UserSelect, View
 
 from .config import STATUSES
+
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
 
@@ -64,14 +70,20 @@ class TaskStatusSelect(Select):
         self.task_id = task_id
 
     async def callback(self, interaction: Interaction) -> None:
-        if not interaction.user.guild_permissions.manage_guild:
+        if (
+            not isinstance(interaction.user, discord.Member)
+            or not interaction.user.guild_permissions.manage_guild
+        ):
             await interaction.response.send_message(
                 "You don't have permission to do that.", ephemeral=True,
             )
             return
+        if interaction.guild is None:
+            return
 
         new_status = self.values[0]
-        task = await interaction.client.db.update_task_status(self.task_id, new_status)
+        bot: Hablemos = interaction.client  # type: ignore[assignment]
+        task = await bot.db.update_task_status(self.task_id, new_status)
         if not task:
             await interaction.response.send_message("Task not found.", ephemeral=True)
             return
@@ -97,14 +109,20 @@ class TaskAssignSelect(UserSelect):
         self.task_id = task_id
 
     async def callback(self, interaction: Interaction) -> None:
-        if not interaction.user.guild_permissions.manage_guild:
+        if (
+            not isinstance(interaction.user, discord.Member)
+            or not interaction.user.guild_permissions.manage_guild
+        ):
             await interaction.response.send_message(
                 "You don't have permission to do that.", ephemeral=True,
             )
             return
+        if interaction.guild is None:
+            return
 
         new_ids = [u.id for u in self.values]
-        task = await interaction.client.db.update_task_assignees(self.task_id, new_ids)
+        bot: Hablemos = interaction.client  # type: ignore[assignment]
+        task = await bot.db.update_task_assignees(self.task_id, new_ids)
         if not task:
             await interaction.response.send_message("Task not found.", ephemeral=True)
             return
