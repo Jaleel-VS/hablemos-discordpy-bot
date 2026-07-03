@@ -57,6 +57,12 @@ async def _format_thread(thread: discord.Thread, open_tag_names: set[str]) -> st
     return line
 
 
+# Open tickets shown per page in the paginated overview. Each entry is a
+# two-line block (title + last-interaction), so 8 stays well within
+# Discord's Components V2 size budget.
+PAGE_SIZE = 8
+
+
 def _loading_view() -> ui.LayoutView:
     """Build a loading placeholder view."""
     view = ui.LayoutView()
@@ -67,24 +73,111 @@ def _loading_view() -> ui.LayoutView:
     return view
 
 
-def _tickets_view(sections: list[tuple[str, str]], total: int) -> ui.LayoutView:
-    """Build the final tickets layout view."""
-    children: list[ui.Item] = [
-        ui.TextDisplay("## Open Tickets"),
-        ui.Separator(visible=True),
-    ]
-
-    for name, value in sections:
-        children.append(ui.TextDisplay(f"**{name}**\n{value}"))
-
-    children.append(ui.Separator(visible=True))
-    children.append(ui.TextDisplay(
-        f"-# {total} open · ✅ = responded · ⏳ = awaiting response"
-    ))
-
+def _empty_tickets_view() -> ui.LayoutView:
+    """View shown when no forum has any open tickets."""
     view = ui.LayoutView()
-    view.add_item(ui.Container(*children, accent_colour=Color.orange()))
+    view.add_item(ui.Container(
+        ui.TextDisplay("## Open Tickets\nNo open tickets 🎉"),
+        accent_colour=Color.green(),
+    ))
     return view
+
+
+class TicketsView(ui.LayoutView):
+    """Paginated ◀/▶ overview of open tickets (flat list, N per page).
+
+    Entries are a flat list of (forum_name, formatted_line) across every
+    watched forum. Only the invoking mod can flip pages; buttons disable
+    on timeout so the last page stays readable.
+    """
+
+    def __init__(
+        self,
+        invoker_id: int,
+        entries: list[tuple[str, str]],
+        total: int,
+        *,
+        page: int = 0,
+        timeout: float = 300,
+    ) -> None:
+        super().__init__(timeout=timeout)
+        self.invoker_id = invoker_id
+        self.entries = entries
+        self.total = total
+        self.page = page
+        self._rebuild()
+
+    @property
+    def page_count(self) -> int:
+        return max(1, (len(self.entries) + PAGE_SIZE - 1) // PAGE_SIZE)
+
+    def _rebuild(self) -> None:
+        self.clear_items()
+
+        start = self.page * PAGE_SIZE
+        page_entries = self.entries[start:start + PAGE_SIZE]
+
+        children: list[ui.Item] = [
+            ui.TextDisplay("## Open Tickets"),
+            ui.Separator(visible=True),
+        ]
+
+        # Group this page's entries under their forum name, only emitting a
+        # header when the forum changes so a forum spanning a page boundary
+        # still reads cleanly.
+        current_forum: str | None = None
+        for forum_name, line in page_entries:
+            if forum_name != current_forum:
+                children.append(ui.TextDisplay(f"**{forum_name}**"))
+                current_forum = forum_name
+            children.append(ui.TextDisplay(line))
+
+        children.append(ui.Separator(visible=True))
+        children.append(ui.TextDisplay(
+            f"-# {self.total} open · page {self.page + 1}/{self.page_count} · "
+            "✅ = responded · ⏳ = awaiting response"
+        ))
+
+        prev_btn = ui.Button(
+            label="◀",
+            style=discord.ButtonStyle.secondary,
+            disabled=self.page <= 0,
+        )
+        prev_btn.callback = self._prev
+        next_btn = ui.Button(
+            label="▶",
+            style=discord.ButtonStyle.secondary,
+            disabled=self.page >= self.page_count - 1,
+        )
+        next_btn.callback = self._next
+        children.append(ui.ActionRow(prev_btn, next_btn))
+
+        self.add_item(ui.Container(*children, accent_colour=Color.orange()))
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.invoker_id:
+            await interaction.response.send_message(
+                "Only the person who ran this command can flip pages.",
+                ephemeral=True,
+            )
+            return False
+        return True
+
+    async def _prev(self, interaction: discord.Interaction) -> None:
+        self.page = max(0, self.page - 1)
+        self._rebuild()
+        await interaction.response.edit_message(view=self)
+
+    async def _next(self, interaction: discord.Interaction) -> None:
+        self.page = min(self.page_count - 1, self.page + 1)
+        self._rebuild()
+        await interaction.response.edit_message(view=self)
+
+    async def on_timeout(self) -> None:
+        """Disable the nav buttons when the view expires."""
+        for item in self.walk_children():
+            if isinstance(item, ui.Button):
+                item.disabled = True
 
 
 class TicketsCog(BaseCog):
@@ -113,51 +206,31 @@ class TicketsCog(BaseCog):
         # Send loading state
         msg = await ctx.send(view=_loading_view())
 
-        sections: list[tuple[str, str]] = []
+        # Flat list of (forum_name, formatted_line) across every forum, in
+        # forum order then thread-creation order. Pagination is by entry
+        # count, so long forums no longer get silently truncated.
+        entries: list[tuple[str, str]] = []
         total = 0
 
         for forum in forums:
             open_threads = [t for t in forum.threads if _is_open(t, open_tags)]
             open_threads.sort(key=lambda t: t.created_at or t.id)
-
-            if open_threads:
-                lines = [await _format_thread(t, open_tags) for t in open_threads]
-                # Truncate at last complete ticket entry to avoid cutting off mid-entry
-                MAX_LENGTH = 900
-                truncated_lines = []
-                char_count = 0
-                omitted = 0
-
-                for entry in lines:
-                    # Check if adding this entry would exceed limit
-                    # +1 for the newline that will join entries
-                    entry_length = len(entry) + (1 if truncated_lines else 0)
-                    if char_count + entry_length <= MAX_LENGTH:
-                        truncated_lines.append(entry)
-                        char_count += entry_length
-                    else:
-                        omitted += 1
-
-                value = "\n".join(truncated_lines)
-                if omitted > 0:
-                    suffix = f"\n-# ...and {omitted} more"
-                    # Ensure suffix fits
-                    if len(value) + len(suffix) > MAX_LENGTH:
-                        # Remove last entry to make room
-                        truncated_lines.pop()
-                        omitted += 1
-                        value = "\n".join(truncated_lines) + suffix
-                    else:
-                        value += suffix
-            else:
-                value = "No open tickets 🎉"
-
-            sections.append((f"#{forum.name} ({len(open_threads)})", value))
+            forum_label = f"#{forum.name} ({len(open_threads)})"
+            for thread in open_threads:
+                line = await _format_thread(thread, open_tags)
+                entries.append((forum_label, line))
             total += len(open_threads)
 
-        # Edit with final view
+        if total == 0:
+            try:
+                await msg.edit(view=_empty_tickets_view())
+            except discord.HTTPException:
+                logger.exception("Failed to edit tickets message")
+            return
+
+        # Edit with final paginated view
         try:
-            await msg.edit(view=_tickets_view(sections, total))
+            await msg.edit(view=TicketsView(ctx.author.id, entries, total))
         except discord.HTTPException:
             logger.exception("Failed to edit tickets message")
 
