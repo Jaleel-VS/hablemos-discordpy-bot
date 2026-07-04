@@ -786,10 +786,10 @@ async def initialize_schema(pool):
                 match_id   INTEGER NOT NULL,
                 guild_id   BIGINT NOT NULL,
                 outcome    TEXT NOT NULL CHECK (outcome IN ('home','draw','away')),
-                stake      INTEGER NOT NULL CHECK (stake > 0),
+                stake      BIGINT NOT NULL CHECK (stake > 0),
                 odds       NUMERIC(5,2) NOT NULL,
                 status     TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','won','lost','void')),
-                payout     INTEGER,
+                payout     BIGINT,
                 placed_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                 settled_at TIMESTAMPTZ,
                 PRIMARY KEY (user_id, match_id)
@@ -844,11 +844,11 @@ async def initialize_schema(pool):
                 id            BIGSERIAL PRIMARY KEY,
                 user_id       BIGINT NOT NULL REFERENCES wc_bet_wallets(user_id),
                 guild_id      BIGINT NOT NULL,
-                stake         INTEGER NOT NULL CHECK (stake > 0),
-                combined_odds NUMERIC(8,2) NOT NULL,
+                stake         BIGINT NOT NULL CHECK (stake > 0),
+                combined_odds NUMERIC(12,2) NOT NULL,
                 status        TEXT NOT NULL DEFAULT 'pending'
                               CHECK (status IN ('pending','won','lost','void')),
-                payout        INTEGER,
+                payout        BIGINT,
                 placed_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                 settled_at    TIMESTAMPTZ
             )
@@ -873,6 +873,28 @@ async def initialize_schema(pool):
         await conn.execute('''
             CREATE INDEX IF NOT EXISTS idx_wc_parlay_legs_match
             ON wc_parlay_legs(match_id)
+        ''')
+
+        # Migration: widen WC betting money columns from INTEGER to BIGINT.
+        # Balances (wc_bet_wallets.balance, wc_balance_log) were already
+        # BIGINT, but per-bet/parlay stake and payout were INTEGER (max
+        # ~2.1B). As balances grow, an all-in stake or a winning payout can
+        # exceed that and crash the placement/settlement transaction. The
+        # payout math is unbounded Python ints, so only the column type
+        # limits it. Widening INTEGER->BIGINT is a metadata-only change (no
+        # value rewrite) and is idempotent: re-running on an already-BIGINT
+        # column is a no-op. combined_odds gets extra headroom for deep
+        # parlays (999,999.99x -> 9,999,999,999.99x).
+        await conn.execute('''
+            ALTER TABLE wc_bets
+            ALTER COLUMN stake TYPE BIGINT,
+            ALTER COLUMN payout TYPE BIGINT
+        ''')
+        await conn.execute('''
+            ALTER TABLE wc_parlays
+            ALTER COLUMN stake TYPE BIGINT,
+            ALTER COLUMN payout TYPE BIGINT,
+            ALTER COLUMN combined_odds TYPE NUMERIC(12,2)
         ''')
 
         # ── Knockout fixture overrides ──

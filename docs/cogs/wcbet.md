@@ -257,6 +257,15 @@ coins at once, too much blast radius for the mod tier.
 
 See [`../database.md`](../database.md#world-cup-betting).
 
+> **Money columns are `BIGINT`.** Balances, and per-bet/parlay `stake` and
+> `payout`, are all 64-bit (`combined_odds` is `NUMERIC(12,2)`). An early
+> schema used `INTEGER` (max ~2.1B) for bet/parlay `stake`/`payout`; a
+> migration in `db/schema.py` widens them to `BIGINT` (idempotent
+> `ALTER COLUMN ... TYPE BIGINT`, no value rewrite) so large all-in
+> stakes and compounding parlay payouts can't overflow the column. The
+> payout math itself is unbounded Python ints, so the column type was the
+> only ceiling.
+
 ## Configuration & environment variables
 
 | Constant / Env Var | Location | Default | Purpose |
