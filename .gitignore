@@ -13,6 +13,8 @@ scripts/bee_preview_*.png
 .python-version
 *.sql
 .DS_Store
+.pi-loop.json*
+.pi-*.json*
 cogs/crossword_cog/data/generated_batch.csv
 cogs/crossword_cog/data/generated_clean.csv
 cogs/tomatoes_cog/output.webp
