@@ -5,6 +5,7 @@ World Cup activity routes to the same place. Live odds come from
 DraftKings via ESPN (see `espn.py`); `WCBET_ODDS` is the flat fallback
 when a match has no line.
 """
+
 from decimal import Decimal
 
 from cogs.worldcup_cog.config import WORLD_CUP_LOG_CHANNEL_ID
@@ -19,7 +20,7 @@ WCBET_DAILY_ALLOWANCE: int = 5_000
 # Max parlays a user may have pending (unsettled) at any one time. Caps
 # parlay-farming: a user must let existing parlays settle before stacking
 # more. Enforced authoritatively inside the place_wc_parlay transaction.
-WCBET_MAX_PENDING_PARLAYS: int = get_int_env("WCBET_MAX_PENDING_PARLAYS", 2)
+WCBET_MAX_PENDING_PARLAYS: int = get_int_env("WCBET_MAX_PENDING_PARLAYS", 1)
 
 # Fallback odds when DraftKings has not priced a match (or the fetch
 # fails); also the snapshot stored on such bets. Payouts are computed
@@ -41,7 +42,8 @@ WCBET_RESULTS_POLL_MINUTES: int = get_int_env("WCBET_RESULTS_POLL_MINUTES", 5)
 # (and bettable) only once it's within this horizon. 3 days comfortably
 # covers the ~1–2 day gap between a round's teams locking in and kickoff.
 WCBET_KNOCKOUT_RESOLVE_LOOKAHEAD_DAYS: int = get_int_env(
-    "WCBET_KNOCKOUT_RESOLVE_LOOKAHEAD_DAYS", 3,
+    "WCBET_KNOCKOUT_RESOLVE_LOOKAHEAD_DAYS",
+    3,
 )
 
 # Max bets rendered in the panel's "My bets" view. Discord's Components V2
@@ -55,7 +57,9 @@ WCBET_MY_BETS_LIMIT: int = 20
 WCBET_LOG_CHANNEL_ID: int = WORLD_CUP_LOG_CHANNEL_ID
 
 # Channel where per-player win/loss mentions are posted after settlement.
-WCBET_NOTIFICATION_CHANNEL_ID: int = get_int_env("WCBET_NOTIFICATION_CHANNEL_ID", 247135634265735168)
+WCBET_NOTIFICATION_CHANNEL_ID: int = get_int_env(
+    "WCBET_NOTIFICATION_CHANNEL_ID", 247135634265735168
+)
 
 __all__ = [
     "WCBET_AUTO_SETTLE",

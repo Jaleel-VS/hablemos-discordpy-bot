@@ -173,7 +173,7 @@ and it arms the slip without committing, so the payout preview updates
 before you hit **Place parlay**.
 
 To curb parlay-farming, each user may hold at most
-`WCBET_MAX_PENDING_PARLAYS` (default **2**) pending parlays at once;
+`WCBET_MAX_PENDING_PARLAYS` (default **1**) pending parlays at once;
 placing another while at the cap is rejected with a separate ephemeral
 warning until one settles. The limit is enforced authoritatively inside the
 `place_wc_parlay` transaction (a `COUNT` under the wallet's `FOR UPDATE`
@@ -272,7 +272,7 @@ See [`../database.md`](../database.md#world-cup-betting).
 |--------------------|----------|---------|---------|
 | `WCBET_STARTING_BALANCE` | `cogs/wcbet_cog/config.py` | 10,000 | Coins granted on opt-in. |
 | `WCBET_DAILY_ALLOWANCE` | `cogs/wcbet_cog/config.py` | 5,000 | Lazy daily top-up. |
-| `WCBET_MAX_PENDING_PARLAYS` | `cogs/wcbet_cog/config.py` | 2 | Max unsettled parlays a user may hold at once (anti-farming). Enforced inside `place_wc_parlay`. |
+| `WCBET_MAX_PENDING_PARLAYS` | `cogs/wcbet_cog/config.py` | 1 | Max unsettled parlays a user may hold at once (anti-farming). Enforced inside `place_wc_parlay`. |
 | `WCBET_ODDS` | `cogs/wcbet_cog/config.py` | Decimal 1.5 | Fallback odds when no DraftKings line exists; payout math is `floor(stake × odds)` in `betting.payout`. (The house multiplier scales this too.) |
 | Odds multiplier | `bot_settings` (`wcbet_odds_multiplier`, hundredths) via `$wcbetadmin multiplier` | 1.5 | House boost applied to every offered line (real + fallback). Set/reset at runtime; new bets only. |
 | `WCBET_MY_BETS_LIMIT` | `cogs/wcbet_cog/config.py` | 20 | Max bets rendered in the panel's `My bets` view (Discord's `TextDisplay` is capped at 4,000 chars). Overflow points users at `$wcbethistory`. |
