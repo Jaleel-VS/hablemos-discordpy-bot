@@ -3,7 +3,7 @@ import csv
 import random
 from pathlib import Path
 
-categories = ['general', 'phil', 'would', 'other']
+categories = ['general', 'phil', 'would', 'other', 'cursed']
 
 DATA_DIR = Path(__file__).resolve().parent / "convo_starter_data"
 

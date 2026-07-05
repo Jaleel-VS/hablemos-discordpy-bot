@@ -50,7 +50,7 @@ class ConvoStarter(BaseCog):
             table = "general"
         elif category[0] in categories:
             table = category[0]
-        elif category[0] in ['1', '2', '3', '4']:
+        elif category[0] in ['1', '2', '3', '4', '5']:
             table = categories[int(category[0]) - 1]
         else:
             return await ctx.send(NOT_FOUND)
@@ -73,7 +73,8 @@ class ConvoStarter(BaseCog):
             "`general`, `1` - General questions\n"
             "`phil`, `2` - Philosophical questions\n"
             "`would`, `3` - *'Would you rather'* questions\n"
-            "`other`, `4` -  Random questions\n\n"
+            "`other`, `4` - Random questions\n"
+            "`cursed`, `5` - Cursed deals: amazing power, terrible catch\n\n"
             f"[Full list of questions]({SOURCE_URL})"
         )
         await ctx.send(embed=green_embed(text))
