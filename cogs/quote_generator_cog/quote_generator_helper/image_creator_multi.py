@@ -204,6 +204,9 @@ def _wrap_content(
     emoji as an inline fixed-width box. Returns a list of lines, each a
     list of ``_Segment``.
     """
+    # Normalize newlines/tabs to spaces (HTML renderers collapse whitespace too).
+    content = content.replace("\r", " ").replace("\n", " ").replace("\t", " ")
+
     # Flatten tokens into atomic units: words, single spaces, and emoji.
     units: list[_Segment] = []
     for kind, value in tokenize_for_render(content):
