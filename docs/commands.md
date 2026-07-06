@@ -176,7 +176,7 @@ See [`cogs/quote_generator.md`](./cogs/quote_generator.md) for the full feature.
 | `$quote <message_link>` / `$q` | Generate a styled quote image from a message (style 1). |
 | `$quote2 <message_link>` / `$q2` | Style 2 quote image. |
 | `$quote3 <message_link>` / `$q3` | Style 3 quote image. |
-| `$quotemulti <message_links...>` / `$qm` | Multi-message quote (up to 10 messages). |
+| `$quotem [count]` / `$qm` | Multi-message conversation quote (reply-based; captures the replied message plus up to `count` (1–5) earlier messages). |
 
 ## Spotify
 
