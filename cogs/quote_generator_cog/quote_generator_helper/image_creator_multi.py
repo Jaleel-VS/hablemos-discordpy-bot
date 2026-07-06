@@ -209,8 +209,7 @@ def _wrap_content(
     for kind, value in tokenize_for_render(content):
         if kind == "emoji":
             img = _emoji_image(value, emoji_cache, emoji_px)
-            width = emoji_px if img is not None else 0
-            units.append(_Segment("emoji", width, image=img))
+            units.append(_Segment("emoji", emoji_px, image=img))
             continue
         # Split text into words and spaces so wrapping happens on spaces.
         for i, word in enumerate(value.split(" ")):
