@@ -16,7 +16,7 @@ reactions.
 | `$quote <message_link>` / `$q` | Generate a quote image from a message. Uses style 1 (default). | None | 5s/user |
 | `$quote2 <message_link>` / `$q2` | Style 2 (alternate layout). | None | 5s/user |
 | `$quote3 <message_link>` / `$q3` | Style 3 (alternate layout). | None | 5s/user |
-| `$quotemulti <message_links...>` / `$qm` | Multi-message quote (up to 10 messages). | None | 10s/user |
+| `$quotem [count]` / `$qm` | Multi-message conversation quote. Must be used as a reply; captures the replied message plus up to `count` (1–5) earlier messages via the reply chain or channel history. | None | 15s/user |
 
 ## Configuration
 
@@ -26,15 +26,25 @@ reactions.
 
 ## Implementation notes
 
-- The cog uses Pillow (PIL) to render images.
-- Three different image creators (`image_creator.py`,
-  `image_creator2.py`, `image_creator3.py`) provide the styles.
-- Emojis are replaced with images using `replace_emoji_with_images` (in
-  `emoji.py`).
+- Single-message styles (`$quote`, `$quote2`, `$quote3`) render via
+  imgkit/wkhtmltoimage from HTML templates (`image_creator.py`,
+  `image_creator2.py`, `image_creator3.py`). Emoji in these are inlined as
+  HTML `<img>` tags by `replace_emoji_with_images` (in `emoji.py`), and
+  their length cap uses `visual_length`.
+- The multi-message conversation quote (`$quotem`) renders with **Pillow**
+  (`image_creator_multi.py`), following the super-sample → LANCZOS
+  downsample pattern documented in
+  [`../architecture.md`](../architecture.md#image-rendering-pillow) (render
+  at `S = SCALE * OUTPUT_SCALE = 6`, export at `OUTPUT_SCALE`). It draws a
+  Discord dark-theme card with circular avatars, bold name lines, inline
+  emoji, and word-wrapped body text.
+  - Emoji are handled as structured tokens via `tokenize_for_render`
+    (text runs vs. emoji PNG URLs — Twemoji for Unicode, the Discord CDN
+    for custom `<:name:id>` emoji), and its length cap uses
+    `render_visual_length`. `_clean_message_content(..., for_render=True)`
+    preserves raw emoji markup instead of emitting HTML `<img>` tags.
 - Markdown is stripped from message content (see `markdown.py` /
   `remove_markdown_from_message`).
-- Multi-message quotes are rendered as a conversation thread (see
-  `image_creator_multi.py`).
 
 ## Related
 

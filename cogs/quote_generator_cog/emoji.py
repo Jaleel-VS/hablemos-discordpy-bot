@@ -77,3 +77,93 @@ def replace_emoji_with_images(text: str) -> str:
             f'width="{_LARGE_IMG_PX}" height="{_LARGE_IMG_PX}"',
         )
     return text
+
+
+# ---------------------------------------------------------------------------
+# Token-based helpers for the Pillow renderer (quotem).
+#
+# The imgkit renderers above inline emoji as HTML <img> tags. The Pillow
+# renderer can't parse HTML, so it needs the emoji as structured tokens: a
+# text run or an emoji with a resolvable PNG URL it can fetch and paste.
+# ---------------------------------------------------------------------------
+
+# Matches a custom Discord emoji or a run of Unicode emoji, capturing which.
+_EMOJI_SPLIT_RE = re.compile(
+    rf"({_CUSTOM_EMOJI_RE.pattern}|{_UNICODE_EMOJI_RE.pattern})",
+)
+
+
+def _custom_emoji_url(match: re.Match) -> str:
+    """PNG URL for a custom Discord emoji `<a?:name:id>` match."""
+    return f"https://cdn.discordapp.com/emojis/{match.group(2)}.png"
+
+
+def _unicode_emoji_url(emoji: str) -> str:
+    """Twemoji PNG URL for a single Unicode emoji cluster."""
+    codepoints = "-".join(f"{ord(c):x}" for c in emoji if c != "\ufe0f")
+    return f"{_TWEMOJI_BASE}/{codepoints}.png"
+
+
+def tokenize_for_render(text: str) -> list[tuple[str, str]]:
+    """Split *text* into ``(kind, value)`` tokens for the Pillow renderer.
+
+    ``kind`` is either ``"text"`` (``value`` is a literal substring) or
+    ``"emoji"`` (``value`` is a PNG URL). Consecutive Unicode emoji are
+    emitted as one token per cluster so each renders as its own image.
+    """
+    tokens: list[tuple[str, str]] = []
+    pos = 0
+    for match in _EMOJI_SPLIT_RE.finditer(text):
+        if match.start() > pos:
+            tokens.append(("text", text[pos:match.start()]))
+        custom = _CUSTOM_EMOJI_RE.fullmatch(match.group(0))
+        if custom is not None:
+            tokens.append(("emoji", _custom_emoji_url(custom)))
+        else:
+            # A Unicode run may contain several standalone emoji; split on
+            # ZWJ-joined clusters so each glyph gets its own Twemoji image.
+            for cluster in _split_emoji_clusters(match.group(0)):
+                tokens.append(("emoji", _unicode_emoji_url(cluster)))
+        pos = match.end()
+    if pos < len(text):
+        tokens.append(("text", text[pos:]))
+    return tokens
+
+
+def _is_regional_indicator(char: str) -> bool:
+    return "\U0001f1e6" <= char <= "\U0001f1ff"
+
+
+def _split_emoji_clusters(run: str) -> list[str]:
+    """Split a run of Unicode emoji into individual clusters.
+
+    Keeps ZWJ (U+200D) sequences and trailing variation selectors
+    attached to the preceding base emoji, and pairs regional-indicator
+    codepoints, so multi-codepoint emoji (family, flags, \u2026) stay together.
+    """
+    clusters: list[str] = []
+    current = ""
+    for char in run:
+        joins = char in ("\u200d", "\ufe0f") or (current and current[-1] == "\u200d")
+        # A regional indicator joins a preceding lone regional indicator
+        # to form a two-letter flag.
+        flag_pair = (
+            _is_regional_indicator(char)
+            and len(current) == 1
+            and _is_regional_indicator(current)
+        )
+        if joins or flag_pair:
+            current += char
+        else:
+            if current:
+                clusters.append(current)
+            current = char
+    if current:
+        clusters.append(current)
+    return clusters
+
+
+def render_visual_length(text: str) -> int:
+    """Visual length for the Pillow renderer: each emoji counts as 1 char."""
+    return sum(1 if kind == "emoji" else len(value)
+               for kind, value in tokenize_for_render(text))

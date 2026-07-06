@@ -35,7 +35,11 @@ from cogs.quote_generator_cog.quote_generator_helper.image_creator_multi import 
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
 from .config import FEATURE_KEY_EMOJI
-from .emoji import replace_emoji_with_images, visual_length
+from .emoji import (
+    render_visual_length,
+    replace_emoji_with_images,
+    visual_length,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -105,10 +109,23 @@ def _resolve_mentions(content: str, mentions, role_mentions, channel_mentions, g
     return content
 
 
-async def _clean_message_content(content: str, mentions, role_mentions, channel_mentions, guild=None, *, db=None) -> str:
-    """Strip emoji, markdown, and resolve mentions from message content."""
+async def _clean_message_content(
+    content: str, mentions, role_mentions, channel_mentions, guild=None, *, db=None, for_render: bool = False,
+) -> str:
+    """Strip markdown, resolve mentions, and normalise emoji in message content.
+
+    ``for_render=True`` is used by the Pillow-based ``quotem`` renderer,
+    which tokenizes emoji itself — so raw emoji markup is preserved rather
+    than converted to HTML ``<img>`` tags (the imgkit renderers' format).
+    """
     emoji_enabled = await db.get_feature_setting(FEATURE_KEY_EMOJI) if db else False
-    if emoji_enabled:
+    if for_render:
+        # Keep custom (<:name:id>) and Unicode emoji intact when the
+        # feature is on so the renderer can inline them; strip custom
+        # emoji markup otherwise.
+        if not emoji_enabled:
+            content = _remove_custom_emoji(content)
+    elif emoji_enabled:
         content = replace_emoji_with_images(content)
     else:
         content = _remove_custom_emoji(content)
@@ -384,11 +401,11 @@ class QuoteGenerator(BaseCog):
                 continue
             content = await _clean_message_content(
                 msg.content, msg.mentions, msg.role_mentions,
-                msg.channel_mentions, ctx.guild, db=self.bot.db,
+                msg.channel_mentions, ctx.guild, db=self.bot.db, for_render=True,
             )
             if not content.strip():
                 continue
-            total_length += visual_length(content)
+            total_length += render_visual_length(content)
             if total_length > MAX_QUOTE_LENGTH * 2:
                 break
             username = _get_safe_username(msg.author, ctx.guild)
