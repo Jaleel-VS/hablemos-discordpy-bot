@@ -68,7 +68,7 @@ refunds the old stake and deducts the new one in a single DB
 transaction.
 
 **Knockout rounds.** Group-stage fixtures have fixed teams and are always
-bettable inside the 24h window. Knockout fixtures (Round of 32 onward)
+bettable inside the 48h window. Knockout fixtures (Round of 32 onward)
 ship with bracket placeholders ("Winner Group A", "Winner Match 73") and
 are **not** bettable or settleable until their real teams are resolved.
 
