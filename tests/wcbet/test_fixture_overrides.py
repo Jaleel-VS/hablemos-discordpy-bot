@@ -110,10 +110,10 @@ def test_resolved_knockout_is_bettable(restore_match_73) -> None:
     assert R32_MATCH_ID in ids
 
 
-def test_resolved_knockout_respects_24h_window(restore_match_73) -> None:
+def test_resolved_knockout_respects_48h_window(restore_match_73) -> None:
     apply_fixture_override(R32_MATCH_ID, "Mexico", "Brazil")
-    # Two days before kickoff — outside the 24h lookahead.
-    far = kickoff_utc(FIXTURE_BY_ID[R32_MATCH_ID]) - timedelta(hours=48)
+    # Three days before kickoff — outside the 48h lookahead.
+    far = kickoff_utc(FIXTURE_BY_ID[R32_MATCH_ID]) - timedelta(hours=72)
     ids = {f["match_id"] for f in bettable_fixtures(far)}
     assert R32_MATCH_ID not in ids
 

@@ -624,7 +624,10 @@ class BetPanelView(ui.LayoutView):
             manage.callback = self._on_manage
             share = ui.Button(label="Share bets", emoji="📣", style=ButtonStyle.secondary)
             share.callback = self._on_share_bets
-            parlay = ui.Button(label="Parlay", emoji="🎰", style=ButtonStyle.secondary)
+            parlay = ui.Button(
+                label="Parlay", emoji="🎰", style=ButtonStyle.secondary,
+                disabled=len(self._fixtures) < 2,
+            )
             parlay.callback = self._on_open_parlay
             close = ui.Button(label="Close", emoji="✖️", style=ButtonStyle.secondary)
             close.callback = self._on_close
