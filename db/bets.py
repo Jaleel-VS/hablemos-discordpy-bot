@@ -186,6 +186,35 @@ class WCBetsMixin(DatabaseMixin):
                 await self._log_balance_event(conn, user_id, amount, new_balance, 'daily_allowance')
             return new_balance
 
+    async def claim_wc_bonus(
+        self, user_id: int, amount: int, event_tag: str,
+    ) -> int | None:
+        """Credit a one-time bonus identified by *event_tag*.
+
+        Returns the new balance, or None if already claimed (an existing
+        balance-log row with that event for this user) or no wallet exists.
+        """
+        async with self._pool().acquire() as conn, conn.transaction():
+            already = await conn.fetchval(
+                'SELECT 1 FROM wc_balance_log '
+                'WHERE user_id = $1 AND event = $2 LIMIT 1',
+                user_id, event_tag,
+            )
+            if already:
+                return None
+            new_balance = await conn.fetchval(
+                '''
+                UPDATE wc_bet_wallets
+                SET balance = balance + $2, updated_at = NOW()
+                WHERE user_id = $1
+                RETURNING balance
+                ''',
+                user_id, amount,
+            )
+            if new_balance is not None:
+                await self._log_balance_event(conn, user_id, amount, new_balance, event_tag)
+            return new_balance
+
     async def place_wc_bet(
         self,
         user_id: int,

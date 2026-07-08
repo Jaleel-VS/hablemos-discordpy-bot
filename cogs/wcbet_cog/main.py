@@ -405,6 +405,27 @@ class WCBet(BaseCog):
         history = await self.bot.db.get_wc_balance_history(target.id)
         await ctx.send(view=_build_history_page(target, history, 0))
 
+    @commands.command(name="wcbetclaim")
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.guild_only()
+    async def wcbetclaim(self, ctx: commands.Context) -> None:
+        """One-time 250k coin bonus to celebrate the knockout rounds."""
+        if not isinstance(ctx.author, discord.Member):
+            return
+        new_balance = await self.bot.db.claim_wc_bonus(
+            ctx.author.id, 250_000, "knockout_bonus",
+        )
+        if new_balance is None:
+            await ctx.send(
+                embed=blue_embed("You've already claimed your knockout bonus!"),
+            )
+            return
+        await ctx.send(
+            embed=green_embed(
+                f"🎉 +250,000 knockout bonus claimed! New balance: **{new_balance:,}** coins."
+            ),
+        )
+
     @commands.command(name="wcbetboard")
     @commands.cooldown(1, 10, commands.BucketType.channel)
     @commands.guild_only()
