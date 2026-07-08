@@ -15,7 +15,7 @@ from config import get_int_env
 WCBET_STARTING_BALANCE: int = 10_000
 
 # Coins granted on the first `$wcbet` interaction of each UTC day.
-WCBET_DAILY_ALLOWANCE: int = 5_000
+WCBET_DAILY_ALLOWANCE: int = 100_000
 
 # Max parlays a user may have pending (unsettled) at any one time. Caps
 # parlay-farming: a user must let existing parlays settle before stacking
