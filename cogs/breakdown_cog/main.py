@@ -46,7 +46,7 @@ def render_breakdown(data: SentenceBreakdown, detected_lang: str) -> str:
     for clause in data.clauses:
         lines.append(f"**{clause.clause_type}:** *{clause.clause_text}*\n")
         for w in clause.words:
-            parts = f"`{w.word}` → {w.translation} — {w.part_of_speech}, {w.grammatical_role}"
+            parts = f"`{w.word}` → **{w.translation}** — {w.part_of_speech}, {w.grammatical_role}"
             if w.notes:
                 parts += f" · *{w.notes}*"
             lines.append(parts)
@@ -62,7 +62,7 @@ def render_breakdown(data: SentenceBreakdown, detected_lang: str) -> str:
 class BreakdownCog(BaseCog):
     """Sentence breakdown — grammatical analysis powered by Gemini."""
 
-    @commands.command(name="breakdown")
+    @commands.command(name="breakdown", aliases=["bd"])
     @commands.cooldown(1, COOLDOWN_SECONDS, commands.BucketType.user)
     async def breakdown(self, ctx: commands.Context, *, sentence: str | None = None):
         """Break down a sentence into its grammatical components.
