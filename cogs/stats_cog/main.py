@@ -18,7 +18,7 @@ from base_cog import BaseCog
 from cogs.utils.embeds import red_embed
 
 from . import graphs
-from .config import ROLE_MAP
+from .config import ROLE_MAP, STATS_GUILD_ID
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -43,12 +43,16 @@ def _truncate_hour(dt: datetime) -> datetime:
 class StatsCog(BaseCog):
     """Server activity tracking and analytics."""
 
+    async def cog_check(self, ctx: commands.Context) -> bool:
+        """Restrict all $stats commands to the tracked guild."""
+        return ctx.guild is not None and ctx.guild.id == STATS_GUILD_ID
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
         """Track every non-bot message for stats."""
         if message.author.bot:
             return
-        if not message.guild:
+        if not message.guild or message.guild.id != STATS_GUILD_ID:
             return
 
         member = message.author
