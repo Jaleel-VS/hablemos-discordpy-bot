@@ -167,7 +167,7 @@ class BreakdownCog(BaseCog):
             description=rendered[:4096],
             color=0x5865F2,
         )
-        embed.set_footer(text=f"Detected: {lang_label} • AI-generated analysis")
+        embed.set_footer(text=f"Detected: {lang_label}")
 
         await processing.edit(content=None, embed=embed)
 
