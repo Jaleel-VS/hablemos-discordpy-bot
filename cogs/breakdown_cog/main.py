@@ -34,8 +34,12 @@ logger = logging.getLogger(__name__)
 GEMINI_TIMEOUT = 45
 
 
-def render_breakdown(data: SentenceBreakdown, detected_lang: str) -> str:
-    """Render a SentenceBreakdown into compact markdown for an embed description."""
+def render_breakdown(data: SentenceBreakdown, detected_lang: str, *, detailed: bool = False) -> str:
+    """Render a SentenceBreakdown into compact markdown for an embed description.
+
+    Args:
+        detailed: If True, include grammatical roles and verb/noun notes.
+    """
     lines: list[str] = []
 
     # Spelling correction
@@ -46,9 +50,12 @@ def render_breakdown(data: SentenceBreakdown, detected_lang: str) -> str:
     for clause in data.clauses:
         lines.append(f"**{clause.clause_type}:** *{clause.clause_text}*\n")
         for w in clause.words:
-            parts = f"`{w.word}` → **{w.translation}** — {w.part_of_speech}, {w.grammatical_role}"
-            if w.notes:
-                parts += f" · *{w.notes}*"
+            if detailed:
+                parts = f"`{w.word}` → **{w.translation}** — {w.part_of_speech}, {w.grammatical_role}"
+                if w.notes:
+                    parts += f" · *{w.notes}*"
+            else:
+                parts = f"`{w.word}` → **{w.translation}** — {w.part_of_speech}"
             lines.append(parts)
         lines.append("")
 
@@ -65,12 +72,29 @@ class BreakdownCog(BaseCog):
     @commands.command(name="breakdown", aliases=["bd"])
     @commands.cooldown(1, COOLDOWN_SECONDS, commands.BucketType.user)
     async def breakdown(self, ctx: commands.Context, *, sentence: str | None = None):
-        """Break down a sentence into its grammatical components.
+        """Break down a sentence (simple view).
 
         Usage:
-            $breakdown <sentence in Spanish or English>
-            Reply to a message with $breakdown
+            $bd <sentence in Spanish or English>
+            Reply to a message with $bd
         """
+        await self._do_breakdown(ctx, sentence, detailed=False)
+
+    @commands.command(name="breakdown2", aliases=["bd2"])
+    @commands.cooldown(1, COOLDOWN_SECONDS, commands.BucketType.user)
+    async def breakdown2(self, ctx: commands.Context, *, sentence: str | None = None):
+        """Break down a sentence (detailed view with grammar notes).
+
+        Usage:
+            $bd2 <sentence in Spanish or English>
+            Reply to a message with $bd2
+        """
+        await self._do_breakdown(ctx, sentence, detailed=True)
+
+    async def _do_breakdown(
+        self, ctx: commands.Context, sentence: str | None, *, detailed: bool
+    ) -> None:
+        """Shared breakdown logic for simple and detailed commands."""
         # Channel restriction
         if ctx.channel.id not in ALLOWED_CHANNEL_IDS:
             channels = " ".join(f"<#{cid}>" for cid in ALLOWED_CHANNEL_IDS)
@@ -170,7 +194,7 @@ class BreakdownCog(BaseCog):
             return
 
         # Render structured data into markdown
-        rendered = render_breakdown(result, detected_lang)
+        rendered = render_breakdown(result, detected_lang, detailed=detailed)
 
         # Build response embed
         lang_label = "🇪🇸 Spanish" if detected_lang == "es" else "🇺🇸 English"
