@@ -57,6 +57,10 @@ class Prompt[I, O]:
             ``GEMINI_<FEATURE>_MODEL`` env var override.
         temperature, top_p, top_k, max_output_tokens: Generation config
             forwarded to ``GenerateContentConfig``.
+        response_mime_type: Set to ``"application/json"`` to enable
+            structured output. Requires ``response_schema`` to be set.
+        response_schema: A Pydantic ``BaseModel`` class or JSON schema
+            dict. Gemini constrains its output to match this schema.
     """
 
     feature: str = ""
@@ -64,6 +68,8 @@ class Prompt[I, O]:
     max_output_tokens: int = 2048
     top_p: float = 0.9
     top_k: int = 40
+    response_mime_type: str | None = None
+    response_schema: type | None = None
 
     def render(self, inp: I) -> str:
         """Render the prompt template with ``inp``. Override in subclass."""
@@ -123,12 +129,17 @@ class Gemini:
         """
         rendered = prompt.render(inp)
         model = self._resolve_model(prompt)
-        config = types.GenerateContentConfig(
-            temperature=prompt.resolve_temperature(inp),
-            top_p=prompt.top_p,
-            top_k=prompt.top_k,
-            max_output_tokens=prompt.max_output_tokens,
-        )
+        config_kwargs: dict = {
+            "temperature": prompt.resolve_temperature(inp),
+            "top_p": prompt.top_p,
+            "top_k": prompt.top_k,
+            "max_output_tokens": prompt.max_output_tokens,
+        }
+        if prompt.response_mime_type:
+            config_kwargs["response_mime_type"] = prompt.response_mime_type
+        if prompt.response_schema:
+            config_kwargs["response_schema"] = prompt.response_schema
+        config = types.GenerateContentConfig(**config_kwargs)
         text = await self._call_with_retry(
             feature=prompt.feature, model=model, prompt=rendered, config=config,
         )
