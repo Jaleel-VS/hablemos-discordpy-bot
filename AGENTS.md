@@ -60,6 +60,38 @@ Always use `self.bot.db` (the shared `Database` instance). All queries go throug
 - On hot paths (e.g., `on_message` listeners), suppress repeated errors to avoid log flooding
 - When verifying discord.py behavior/API, check the installed package source in the local `.venv/` first (ground truth for the exact runtime version); only fall back to the discord.py docs online if no local `.venv/` is available
 
+### Optionals & `None`
+
+The goal is to stop `None` from spreading: check it **once**, at the point of
+origin, then pass non-optional values downstream. If a value is checked for
+`None` in more than one place, the check is in the wrong place.
+
+- **Kill it at the source.** DB methods, parsers, and API wrappers are where
+  `None` originates (e.g. `asyncpg` `fetchrow` returning `None`). Normalize
+  there — return a default (`unwrap_or`), raise, or return a real object — so
+  callers receive a concrete value and never re-check.
+- **Default in the query method, not the caller.** When a lookup has a sensible
+  default (a setting, a count, a balance), fold the default into the DB mixin
+  method so its return type is `int`/`str`/`Decimal`, not `... | None`. Mirror
+  the `config.py` env helpers (`get_int_env(name, default)`), which already do
+  this.
+- **Prefer a Null Object over an optional** when callers would otherwise branch
+  on absence everywhere — return an empty/zero-valued object (e.g. a zero
+  `Wallet`) instead of `None` so downstream code has nothing to check.
+- **Guard clause, then treat as present.** After an early-return `None` guard,
+  the value is non-optional for the rest of the function — don't re-check it.
+- **Never `assert x is not None` to satisfy the type checker.** If the value is
+  genuinely present, restructure so the type reflects that; if it can be
+  absent, handle it. Asserts crash in prod and are stripped under `-O`.
+- **Collapse `x if x is not None else None` chains.** Repeated map-over-optional
+  expressions (row parsing, coercion) belong in one typed parser/helper, not
+  scattered inline.
+- **Make illegal states unrepresentable.** Don't thread several independent
+  optionals that are only valid in combination (e.g. match + outcome + stake) —
+  model the combined state as one object or enum so there's a single check.
+- Highest-density `None`-checking today lives in `cogs/wcbet_cog/views.py` and
+  `db/bets.py`; treat those as the reference for what *not* to add more of.
+
 ### Naming
 - Cog directories: `<feature>_cog/`
 - Cog classes: PascalCase (e.g., `QuoteGenerator`, `LanguageLeague`)
@@ -117,6 +149,9 @@ When you resolve a new failure mode, add it to the playbook.
 - Don't use in-memory caches for data that belongs in the database
 - Don't use raw `pool.acquire()` + inline SQL in cog files — add query methods to DB mixins
 - Don't call `tree.sync()` in `on_ready` — use the `$sync` owner command instead
+- Don't propagate `None` past its origin — normalize at the DB/parser/API boundary so callers get concrete values (see [Optionals & `None`](#optionals--none))
+- Don't `assert x is not None` to appease the type checker — restructure or handle the absence
+- Don't re-check a value for `None` after an early-return guard has already ruled it out
 
 ### Refactoring Safety
 - Before renaming or deleting any function, class, or constant, check all call sites with `lsp references` — a symbol used by another module will cause an `ImportError` at bot startup even if tests pass
