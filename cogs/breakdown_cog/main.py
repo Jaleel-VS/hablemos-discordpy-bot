@@ -150,12 +150,23 @@ class BreakdownCog(BaseCog):
             logger.warning("Breakdown Gemini error code=%s: %s", e.code, e.message)
             await processing.edit(content=None, embed=red_embed(e.user_message))
             return
-        except Exception:
-            logger.error("Breakdown unexpected error", exc_info=True)
-            await processing.edit(
-                content=None,
-                embed=red_embed("Something went wrong. Please try again later."),
-            )
+        except (ValueError, Exception) as e:
+            # ValueError covers Pydantic validation failures (truncated JSON)
+            if "ValidationError" in type(e).__name__ or isinstance(e, ValueError):
+                logger.warning("Breakdown parse error: %s", e)
+                await processing.edit(
+                    content=None,
+                    embed=red_embed(
+                        "The sentence was too complex to analyze fully. "
+                        "Try a shorter sentence."
+                    ),
+                )
+            else:
+                logger.error("Breakdown unexpected error", exc_info=True)
+                await processing.edit(
+                    content=None,
+                    embed=red_embed("Something went wrong. Please try again later."),
+                )
             return
 
         # Render structured data into markdown

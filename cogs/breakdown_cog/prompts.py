@@ -87,7 +87,7 @@ class BreakdownPrompt(Prompt[BreakdownInput, SentenceBreakdown]):
 
     feature = "breakdown"
     temperature = 0.3
-    max_output_tokens = 2048
+    max_output_tokens = 4096
     response_mime_type = "application/json"
     response_schema = SentenceBreakdown
 
