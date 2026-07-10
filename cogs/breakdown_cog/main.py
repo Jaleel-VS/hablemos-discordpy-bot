@@ -19,7 +19,7 @@ from cogs.utils.embeds import red_embed, yellow_embed
 from cogs.utils.gemini import GeminiError
 
 from .config import (
-    ALLOWED_CHANNEL_ID,
+    ALLOWED_CHANNEL_IDS,
     COOLDOWN_SECONDS,
     MAX_INPUT_LENGTH,
     MIN_INPUT_LENGTH,
@@ -72,10 +72,11 @@ class BreakdownCog(BaseCog):
             Reply to a message with $breakdown
         """
         # Channel restriction
-        if ctx.channel.id != ALLOWED_CHANNEL_ID:
+        if ctx.channel.id not in ALLOWED_CHANNEL_IDS:
+            channels = " ".join(f"<#{cid}>" for cid in ALLOWED_CHANNEL_IDS)
             await ctx.send(
                 embed=yellow_embed(
-                    f"⚠️ `$breakdown` can only be used in <#{ALLOWED_CHANNEL_ID}>."
+                    f"⚠️ `$breakdown` can only be used in: {channels}"
                 )
             )
             return
