@@ -60,6 +60,16 @@ def _remove_custom_emoji(text: str) -> str:
     return sub(r"<:[A-Za-z0-9_]+:([0-9]+)>", '', text).replace("  ", " ")
 
 
+def _strip_all_emoji(text: str) -> str:
+    """Strip both custom Discord and standard Unicode emoji from text.
+
+    Used when emoji rendering is disabled — without this, Unicode emoji leak
+    into the renderer and draw as missing-glyph boxes (tofu) because the quote
+    fonts have no emoji coverage.
+    """
+    return demoji.replace(_remove_custom_emoji(text), '')
+
+
 def _strip_standard_emoji(text: str) -> str:
     """Strip standard Unicode emoji, truncate to 28 chars."""
     return demoji.replace(text, '')[:28]
@@ -121,14 +131,14 @@ async def _clean_message_content(
     emoji_enabled = await db.get_feature_setting(FEATURE_KEY_EMOJI) if db else False
     if for_render:
         # Keep custom (<:name:id>) and Unicode emoji intact when the
-        # feature is on so the renderer can inline them; strip custom
-        # emoji markup otherwise.
+        # feature is on so the renderer can inline them; strip all emoji
+        # otherwise so nothing leaks as a missing-glyph box.
         if not emoji_enabled:
-            content = _remove_custom_emoji(content)
+            content = _strip_all_emoji(content)
     elif emoji_enabled:
         content = replace_emoji_with_images(content)
     else:
-        content = _remove_custom_emoji(content)
+        content = _strip_all_emoji(content)
     content = remove_markdown_from_message(content)
     return _resolve_mentions(content, mentions, role_mentions, channel_mentions, guild)
 

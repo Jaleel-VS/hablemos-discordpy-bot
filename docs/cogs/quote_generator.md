@@ -30,7 +30,11 @@ reactions.
   imgkit/wkhtmltoimage from HTML templates (`image_creator.py`,
   `image_creator2.py`, `image_creator3.py`). Emoji in these are inlined as
   HTML `<img>` tags by `replace_emoji_with_images` (in `emoji.py`), and
-  their length cap uses `visual_length`.
+  their length cap uses `visual_length`. A regex match may span several
+  standalone emoji (e.g. `😍💋`), so the run is split into clusters and one
+  `<img>` is emitted per cluster — Twemoji serves each standalone emoji as a
+  separate file, and only joins codepoints with `-` for ZWJ/flag sequences
+  (joining `😍💋` into `1f60d-1f48b.png` would 404).
 - The multi-message conversation quote (`$quotem`) renders with **Pillow**
   (`image_creator_multi.py`), following the super-sample → LANCZOS
   downsample pattern documented in
@@ -43,6 +47,12 @@ reactions.
     for custom `<:name:id>` emoji), and its length cap uses
     `render_visual_length`. `_clean_message_content(..., for_render=True)`
     preserves raw emoji markup instead of emitting HTML `<img>` tags.
+- Emoji rendering is gated by the `quote_emoji` feature flag (toggle with
+  `$quoteadmin emoji`), which seeds to **enabled**. When disabled,
+  `_clean_message_content` strips *both* custom and Unicode emoji via
+  `_strip_all_emoji` — otherwise bare Unicode emoji leak into the renderer
+  and draw as missing-glyph boxes (tofu), since the quote fonts have no
+  emoji coverage.
 - Markdown is stripped from message content (see `markdown.py` /
   `remove_markdown_from_message`).
 

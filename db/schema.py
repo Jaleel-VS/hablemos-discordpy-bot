@@ -76,6 +76,13 @@ async def initialize_schema(pool):
             ON CONFLICT (feature_name) DO NOTHING
         ''')
 
+        # Initialize quote emoji rendering as enabled by default
+        await conn.execute('''
+            INSERT INTO feature_settings (feature_name, enabled)
+            VALUES ('quote_emoji', TRUE)
+            ON CONFLICT (feature_name) DO NOTHING
+        ''')
+
         # Conversations table for language learning
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS conversations (

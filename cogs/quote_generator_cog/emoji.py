@@ -43,15 +43,28 @@ def _custom_to_img(match: re.Match) -> str:
     )
 
 
-def _unicode_to_img(match: re.Match) -> str:
-    """Convert a Unicode emoji match to a Twemoji <img> tag."""
-    emoji = match.group(0)
+def _cluster_to_img(cluster: str) -> str:
+    """Build a Twemoji <img> tag for a single emoji cluster."""
     # Build codepoint string: strip variation selectors, join with -
-    codepoints = "-".join(f"{ord(c):x}" for c in emoji if c != "\ufe0f")
+    codepoints = "-".join(f"{ord(c):x}" for c in cluster if c != "\ufe0f")
     return (
         f'<img src="{_TWEMOJI_BASE}/{codepoints}.png"'
-        f' alt="{emoji}" width="{_IMG_PX}" height="{_IMG_PX}"'
+        f' alt="{cluster}" width="{_IMG_PX}" height="{_IMG_PX}"'
         f' style="{_IMG_STYLE}">'
+    )
+
+
+def _unicode_to_img(match: re.Match) -> str:
+    """Convert a run of Unicode emoji to one Twemoji <img> tag per cluster.
+
+    A regex match may span several standalone emoji (e.g. ``\ud83d\ude0d\ud83d\udc8b``); each is a
+    separate Twemoji file, so split the run into clusters and emit one image
+    each. Joining them (``1f60d-1f48b``) would 404 \u2014 that form is reserved for
+    ZWJ sequences.
+    """
+    return "".join(
+        _cluster_to_img(cluster)
+        for cluster in _split_emoji_clusters(match.group(0))
     )
 
 
