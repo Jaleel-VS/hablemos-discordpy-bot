@@ -64,16 +64,37 @@ class BreakdownCog(BaseCog):
 
     @commands.command(name="breakdown")
     @commands.cooldown(1, COOLDOWN_SECONDS, commands.BucketType.user)
-    async def breakdown(self, ctx: commands.Context, *, sentence: str):
+    async def breakdown(self, ctx: commands.Context, *, sentence: str | None = None):
         """Break down a sentence into its grammatical components.
 
-        Usage: $breakdown <sentence in Spanish or English>
+        Usage:
+            $breakdown <sentence in Spanish or English>
+            Reply to a message with $breakdown
         """
         # Channel restriction
         if ctx.channel.id != ALLOWED_CHANNEL_ID:
             await ctx.send(
                 embed=yellow_embed(
                     f"⚠️ `$breakdown` can only be used in <#{ALLOWED_CHANNEL_ID}>."
+                )
+            )
+            return
+
+        # Resolve sentence from reply if not provided inline
+        if sentence is None:
+            ref = ctx.message.reference
+            if ref and ref.message_id:
+                try:
+                    replied = await ctx.channel.fetch_message(ref.message_id)
+                    sentence = replied.content
+                except (discord.NotFound, discord.Forbidden, discord.HTTPException):
+                    pass
+
+        if not sentence:
+            await ctx.send(
+                embed=red_embed(
+                    "Please provide a sentence or reply to a message.\n"
+                    "Usage: `$breakdown <sentence>` or reply with `$breakdown`"
                 )
             )
             return
