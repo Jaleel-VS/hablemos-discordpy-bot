@@ -35,21 +35,21 @@ GEMINI_TIMEOUT = 45
 
 
 def render_breakdown(data: SentenceBreakdown, detected_lang: str) -> str:
-    """Render a SentenceBreakdown into markdown for an embed description."""
+    """Render a SentenceBreakdown into compact markdown for an embed description."""
     lines: list[str] = []
 
     # Spelling correction
     if data.correction:
         lines.append(f"✏️ **Corrected:** {data.correction}\n")
 
-    # Clause-level + word-level
-    for i, clause in enumerate(data.clauses, 1):
-        lines.append(f"**Clause {i} — {clause.clause_type}:** *{clause.clause_text}*\n")
+    # Clause-level + word-level (compact single-line per word)
+    for clause in data.clauses:
+        lines.append(f"**{clause.clause_type}:** *{clause.clause_text}*\n")
         for w in clause.words:
-            lines.append(f"• `{w.word}` — {w.part_of_speech} ({w.grammatical_role})")
-            lines.append(f"  → {w.translation}")
+            parts = f"`{w.word}` → {w.translation} — {w.part_of_speech}, {w.grammatical_role}"
             if w.notes:
-                lines.append(f"  _{w.notes}_")
+                parts += f" · *{w.notes}*"
+            lines.append(parts)
         lines.append("")
 
     # Full translation
