@@ -986,4 +986,41 @@ async def initialize_schema(pool):
             ON ticket_subscriptions(guild_id)
         ''')
 
+        # ── Stats: channel activity tracking ──
+        # Pre-aggregated hourly counts per channel per native-role type.
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS channel_stats (
+                channel_id   BIGINT NOT NULL,
+                role_type    TEXT NOT NULL,
+                hour_bucket  TIMESTAMPTZ NOT NULL,
+                msg_count    INT NOT NULL DEFAULT 0,
+                PRIMARY KEY (channel_id, role_type, hour_bucket)
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_channel_stats_bucket
+            ON channel_stats(hour_bucket)
+        ''')
+
+        # ── Stats: user adoption tracking (no PII) ──
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS user_activity (
+                user_id     BIGINT PRIMARY KEY,
+                role_type   TEXT NOT NULL,
+                first_seen  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                last_seen   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_user_activity_first_seen
+            ON user_activity(first_seen)
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_user_activity_last_seen
+            ON user_activity(last_seen)
+        ''')
+
         logger.info("Database schema initialized")

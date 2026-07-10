@@ -1,0 +1,165 @@
+"""Stats database mixin — channel activity and user adoption tracking."""
+import logging
+from datetime import UTC, datetime
+
+from db import DatabaseMixin
+
+logger = logging.getLogger(__name__)
+
+
+class StatsMixin(DatabaseMixin):
+    """Query methods for stats tracking (channel_stats + user_activity)."""
+
+    # ── Upserts (called from on_message listener) ──
+
+    async def upsert_channel_stat(
+        self, channel_id: int, role_type: str, hour_bucket: datetime
+    ) -> None:
+        """Increment message count for a channel/role/hour bucket."""
+        await self._execute(
+            """
+            INSERT INTO channel_stats (channel_id, role_type, hour_bucket, msg_count)
+            VALUES ($1, $2, $3, 1)
+            ON CONFLICT (channel_id, role_type, hour_bucket)
+            DO UPDATE SET msg_count = channel_stats.msg_count + 1
+            """,
+            channel_id,
+            role_type,
+            hour_bucket,
+        )
+
+    async def upsert_user_activity(self, user_id: int, role_type: str) -> None:
+        """Record user activity (first_seen on insert, last_seen on update)."""
+        now = datetime.now(UTC)
+        await self._execute(
+            """
+            INSERT INTO user_activity (user_id, role_type, first_seen, last_seen)
+            VALUES ($1, $2, $3, $3)
+            ON CONFLICT (user_id)
+            DO UPDATE SET last_seen = $3
+            """,
+            user_id,
+            role_type,
+            now,
+        )
+
+    # ── Channel stats queries ──
+
+    async def get_top_channels(
+        self, days: int = 7, limit: int = 10
+    ) -> list[dict]:
+        """Top channels by total message count in the last N days."""
+        rows = await self._fetch(
+            """
+            SELECT channel_id, SUM(msg_count) AS total
+            FROM channel_stats
+            WHERE hour_bucket >= NOW() - ($1 || ' days')::INTERVAL
+            GROUP BY channel_id
+            ORDER BY total DESC
+            LIMIT $2
+            """,
+            str(days),
+            limit,
+        )
+        return [dict(r) for r in rows]
+
+    async def get_role_breakdown(self, days: int = 7) -> list[dict]:
+        """Message counts grouped by role_type in the last N days."""
+        rows = await self._fetch(
+            """
+            SELECT role_type, SUM(msg_count) AS total
+            FROM channel_stats
+            WHERE hour_bucket >= NOW() - ($1 || ' days')::INTERVAL
+            GROUP BY role_type
+            ORDER BY total DESC
+            """,
+            str(days),
+        )
+        return [dict(r) for r in rows]
+
+    async def get_daily_activity(self, days: int = 7) -> list[dict]:
+        """Daily message counts by role_type for the last N days."""
+        rows = await self._fetch(
+            """
+            SELECT
+                date_trunc('day', hour_bucket) AS day,
+                role_type,
+                SUM(msg_count) AS total
+            FROM channel_stats
+            WHERE hour_bucket >= NOW() - ($1 || ' days')::INTERVAL
+            GROUP BY day, role_type
+            ORDER BY day
+            """,
+            str(days),
+        )
+        return [dict(r) for r in rows]
+
+    async def get_hourly_heatmap(self, days: int = 7) -> list[dict]:
+        """Message counts by hour-of-day and day-of-week for heatmap."""
+        rows = await self._fetch(
+            """
+            SELECT
+                EXTRACT(DOW FROM hour_bucket) AS dow,
+                EXTRACT(HOUR FROM hour_bucket) AS hour,
+                SUM(msg_count) AS total
+            FROM channel_stats
+            WHERE hour_bucket >= NOW() - ($1 || ' days')::INTERVAL
+            GROUP BY dow, hour
+            ORDER BY dow, hour
+            """,
+            str(days),
+        )
+        return [dict(r) for r in rows]
+
+    # ── User adoption queries ──
+
+    async def get_new_users_per_week(self, weeks: int = 8) -> list[dict]:
+        """Count of new users per week (by first_seen)."""
+        rows = await self._fetch(
+            """
+            SELECT
+                date_trunc('week', first_seen) AS week,
+                COUNT(*) AS new_users
+            FROM user_activity
+            WHERE first_seen >= NOW() - ($1 || ' weeks')::INTERVAL
+            GROUP BY week
+            ORDER BY week
+            """,
+            str(weeks),
+        )
+        return [dict(r) for r in rows]
+
+    async def get_active_users_count(self, days: int = 30) -> int:
+        """Count of users active in the last N days."""
+        val = await self._fetchval(
+            """
+            SELECT COUNT(*)
+            FROM user_activity
+            WHERE last_seen >= NOW() - ($1 || ' days')::INTERVAL
+            """,
+            str(days),
+        )
+        return val or 0
+
+    async def get_total_users(self) -> int:
+        """Total unique users ever tracked."""
+        val = await self._fetchval("SELECT COUNT(*) FROM user_activity")
+        return val or 0
+
+    async def get_growth_summary(self, days: int = 30) -> dict:
+        """Summary: total users, MAU, new this period."""
+        total = await self.get_total_users()
+        mau = await self.get_active_users_count(30)
+        new_users = await self._fetchval(
+            """
+            SELECT COUNT(*)
+            FROM user_activity
+            WHERE first_seen >= NOW() - ($1 || ' days')::INTERVAL
+            """,
+            str(days),
+        )
+        return {
+            "total_users": total,
+            "monthly_active": mau,
+            "new_users": new_users or 0,
+        }
