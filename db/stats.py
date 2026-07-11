@@ -45,6 +45,21 @@ class StatsMixin(DatabaseMixin):
 
     # ── Channel stats queries ──
 
+    async def upsert_user_message_count(
+        self, user_id: int, hour_bucket: datetime
+    ) -> None:
+        """Increment message count for a user/hour bucket."""
+        await self._execute(
+            """
+            INSERT INTO user_message_counts (user_id, hour_bucket, msg_count)
+            VALUES ($1, $2, 1)
+            ON CONFLICT (user_id, hour_bucket)
+            DO UPDATE SET msg_count = user_message_counts.msg_count + 1
+            """,
+            user_id,
+            hour_bucket,
+        )
+
     async def get_top_channels(
         self, days: int = 7, limit: int = 10
     ) -> list[dict]:
@@ -55,6 +70,24 @@ class StatsMixin(DatabaseMixin):
             FROM channel_stats
             WHERE hour_bucket >= NOW() - ($1 || ' days')::INTERVAL
             GROUP BY channel_id
+            ORDER BY total DESC
+            LIMIT $2
+            """,
+            str(days),
+            limit,
+        )
+        return [dict(r) for r in rows]
+
+    async def get_top_users(
+        self, days: int = 7, limit: int = 10
+    ) -> list[dict]:
+        """Top users by total message count in the last N days."""
+        rows = await self._fetch(
+            """
+            SELECT user_id, SUM(msg_count) AS total
+            FROM user_message_counts
+            WHERE hour_bucket >= NOW() - ($1 || ' days')::INTERVAL
+            GROUP BY user_id
             ORDER BY total DESC
             LIMIT $2
             """,

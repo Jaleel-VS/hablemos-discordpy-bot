@@ -67,6 +67,7 @@ class StatsCog(BaseCog):
                 message.channel.id, role_type, hour_bucket
             )
             await self.bot.db.upsert_user_activity(member.id, role_type)
+            await self.bot.db.upsert_user_message_count(member.id, hour_bucket)
         except Exception as e:
             logger.debug("Stats upsert failed: %s", e)
 
@@ -151,6 +152,30 @@ class StatsCog(BaseCog):
         embed = discord.Embed(title=f"📊 Top Channels — Last {days} days", color=0x5865F2)
         embed.set_image(url="attachment://top_channels.png")
         await ctx.send(embed=embed, file=file)
+
+    @stats.command(name="topusers")
+    @commands.is_owner()
+    async def stats_topusers(self, ctx: commands.Context, days: int = 7):
+        """Top active users leaderboard. Usage: $stats topusers [days]"""
+        days = max(1, min(days, 90))
+        data = await self.bot.db.get_top_users(days, limit=10)
+
+        if not data:
+            await ctx.send(embed=red_embed("No user activity data yet."))
+            return
+
+        user_lines = []
+        for i, row in enumerate(data, 1):
+            member = ctx.guild.get_member(row["user_id"]) if ctx.guild else None
+            name = member.display_name if member else f"<@{row['user_id']}>"
+            user_lines.append(f"`{i}.` {name} — **{row['total']:,}** msgs")
+
+        embed = discord.Embed(
+            title=f"📊 Top Users — Last {days} days",
+            color=0x5865F2,
+        )
+        embed.add_field(name="🏆 Most Active", value="\n".join(user_lines), inline=False)
+        await ctx.send(embed=embed)
 
     @stats.command(name="roles")
     @commands.is_owner()

@@ -82,6 +82,15 @@ Adding a new domain:
   command_name)`. `cog_name` is collapsed with `MIN()` to avoid
   duplicate-conflict rows (see commit history for context).
 
+### Stats tracking
+- `user_message_counts` — hourly per-user message totals for the stats
+  cog leaderboard.
+- Columns: `user_id`, `hour_bucket`, `msg_count`.
+- Purpose: powers `$stats topusers` by summing recent hourly buckets
+  into a top-user ranking.
+- Written by: `StatsCog.on_message` via `db.stats.StatsMixin
+  .upsert_user_message_count()`.
+
 ### Introductions / Exchange
 - `introductions` — per-user intro post tracking.
 - `exchange_posts` — active exchange posts, one per user, with repost

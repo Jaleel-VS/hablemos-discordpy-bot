@@ -178,6 +178,7 @@ See [`cogs/admin.md`](./cogs/admin.md), [`cogs/database.md`](./cogs/database.md)
 | `$rawembed <message_link>` | Show raw embed JSON from a message. | Owner-only |
 | `$sync [guild_id]` | Sync slash commands globally or to a guild. | Owner-only |
 | `$mystats` | List all guilds the bot is in, sorted by member count. | Owner-only |
+| `$stats topusers [days]` | Show the top 10 most active users by message count in the tracked stats guild for the last N days (default 7, max 90). | Owner-only |
 | `$leave <guild_id>` | Leave a guild by ID. | Owner-only |
 | `$vcenrich <message_link>` | Parse a Rai voice-join log and render with avatars. | `manage_messages` |
 | **VC Enrich** (context menu) | Right-click a Rai voice log, select "VC Enrich" → posts to enrich channel. | `manage_messages` |

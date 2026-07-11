@@ -1010,6 +1010,20 @@ async def initialize_schema(pool):
             ON channel_stats(hour_bucket)
         ''')
 
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS user_message_counts (
+                user_id      BIGINT NOT NULL,
+                hour_bucket  TIMESTAMPTZ NOT NULL,
+                msg_count    INT NOT NULL DEFAULT 0,
+                PRIMARY KEY (user_id, hour_bucket)
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_user_message_counts_bucket
+            ON user_message_counts(hour_bucket)
+        ''')
+
         # ── Stats: user adoption tracking (no PII) ──
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS user_activity (
