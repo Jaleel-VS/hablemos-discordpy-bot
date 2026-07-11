@@ -5,6 +5,11 @@ from config import get_int_env
 # Only this guild is tracked and reported on (the main Hablemos server).
 STATS_GUILD_ID: int = get_int_env("STATS_GUILD_ID", 243838819743432704)
 
+# Optional private channel for the weekly stats report. Set to 0 to disable.
+STATS_REPORT_CHANNEL_ID: int = get_int_env("STATS_REPORT_CHANNEL_ID", 0)
+STATS_WEEKLY_REPORT_DAY: int = get_int_env("STATS_WEEKLY_REPORT_DAY", 0)
+STATS_WEEKLY_REPORT_HOUR_UTC: int = get_int_env("STATS_WEEKLY_REPORT_HOUR_UTC", 9)
+
 # Native role IDs for classification
 SPANISH_NATIVE_ROLE_ID: int = get_int_env("STATS_SPANISH_NATIVE_ROLE", 243854128424550401)
 ENGLISH_NATIVE_ROLE_ID: int = get_int_env("STATS_ENGLISH_NATIVE_ROLE", 243853718758359040)

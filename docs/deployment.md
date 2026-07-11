@@ -41,6 +41,9 @@ Defaults come from `config.py` (`load_settings`) or from a cog's own
 | `LANGEX_FEED_CHANNEL_ID` | baked-in | Channel where language-exchange profile embeds are posted. |
 | `LANGEX_AUDIT_CHANNEL_ID` | baked-in | Audit-log channel for language-exchange post/remove. |
 | `STATS_GUILD_ID` | baked-in | The only guild the stats cog tracks (`on_message`) and reports on (`$stats`). Messages from other guilds are ignored. |
+| `STATS_REPORT_CHANNEL_ID` | `0` | Optional channel for the weekly `$stats report` digest. `0` disables scheduled reports. |
+| `STATS_WEEKLY_REPORT_DAY` | `0` | UTC weekday for the weekly stats digest, using Python weekday numbering (`0` = Monday, `6` = Sunday). |
+| `STATS_WEEKLY_REPORT_HOUR_UTC` | `9` | UTC hour when the weekly stats digest should post. |
 
 > **Rule:** never hardcode a new guild/channel/role ID inside a cog.
 > Add it to the relevant `config.py` (root or cog-local) with a

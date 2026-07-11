@@ -36,12 +36,61 @@ class StatsMixin(DatabaseMixin):
             INSERT INTO user_activity (user_id, role_type, first_seen, last_seen)
             VALUES ($1, $2, $3, $3)
             ON CONFLICT (user_id)
-            DO UPDATE SET last_seen = $3
+            DO UPDATE SET role_type = $2, last_seen = $3
             """,
             user_id,
             role_type,
             now,
         )
+
+    async def track_message_stats(
+        self,
+        channel_id: int,
+        user_id: int,
+        role_type: str,
+        hour_bucket: datetime,
+    ) -> None:
+        """Record all per-message stats updates atomically."""
+        now = datetime.now(UTC)
+        async with self._pool().acquire() as conn, conn.transaction():
+            await conn.execute(
+                """
+                    INSERT INTO channel_stats (
+                        channel_id, role_type, hour_bucket, msg_count
+                    )
+                    VALUES ($1, $2, $3, 1)
+                    ON CONFLICT (channel_id, role_type, hour_bucket)
+                    DO UPDATE SET msg_count = channel_stats.msg_count + 1
+                    """,
+                channel_id,
+                role_type,
+                hour_bucket,
+            )
+            await conn.execute(
+                """
+                    INSERT INTO user_activity (
+                        user_id, role_type, first_seen, last_seen
+                    )
+                    VALUES ($1, $2, $3, $3)
+                    ON CONFLICT (user_id)
+                    DO UPDATE SET role_type = $2, last_seen = $3
+                    """,
+                user_id,
+                role_type,
+                now,
+            )
+            await conn.execute(
+                """
+                    INSERT INTO user_message_counts (
+                        user_id, hour_bucket, msg_count
+                    )
+                    VALUES ($1, $2, 1)
+                    ON CONFLICT (user_id, hour_bucket)
+                    DO UPDATE SET msg_count = user_message_counts.msg_count + 1
+                    """,
+                user_id,
+                hour_bucket,
+            )
 
     # ── Channel stats queries ──
 
@@ -84,7 +133,10 @@ class StatsMixin(DatabaseMixin):
         """Top users by total message count in the last N days."""
         rows = await self._fetch(
             """
-            SELECT user_id, SUM(msg_count) AS total
+            SELECT
+                user_id,
+                SUM(msg_count) AS total,
+                COUNT(DISTINCT (hour_bucket AT TIME ZONE 'UTC')::DATE) AS active_days
             FROM user_message_counts
             WHERE hour_bucket >= NOW() - ($1 || ' days')::INTERVAL
             GROUP BY user_id
@@ -95,6 +147,136 @@ class StatsMixin(DatabaseMixin):
             limit,
         )
         return [dict(r) for r in rows]
+
+    async def get_activity_totals_between(
+        self, start_at: datetime, end_at: datetime
+    ) -> dict:
+        """Return message, active-user, and new-user totals for a period."""
+        row = await self._fetchrow(
+            """
+            SELECT
+                COALESCE((
+                    SELECT SUM(msg_count)
+                    FROM channel_stats
+                    WHERE hour_bucket >= $1 AND hour_bucket < $2
+                ), 0) AS total_messages,
+                (
+                    SELECT COUNT(DISTINCT user_id)
+                    FROM user_message_counts
+                    WHERE hour_bucket >= $1 AND hour_bucket < $2
+                ) AS active_users,
+                (
+                    SELECT COUNT(*)
+                    FROM user_activity
+                    WHERE first_seen >= $1 AND first_seen < $2
+                ) AS new_users
+            """,
+            start_at,
+            end_at,
+        )
+        if row is None:
+            return {"total_messages": 0, "active_users": 0, "new_users": 0}
+        return dict(row)
+
+    async def get_channel_period_deltas(
+        self,
+        current_start: datetime,
+        current_end: datetime,
+        previous_start: datetime,
+        previous_end: datetime,
+    ) -> list[dict]:
+        """Return per-channel message deltas between two equal periods."""
+        rows = await self._fetch(
+            """
+            WITH current_period AS (
+                SELECT channel_id, SUM(msg_count) AS total
+                FROM channel_stats
+                WHERE hour_bucket >= $1 AND hour_bucket < $2
+                GROUP BY channel_id
+            ),
+            previous_period AS (
+                SELECT channel_id, SUM(msg_count) AS total
+                FROM channel_stats
+                WHERE hour_bucket >= $3 AND hour_bucket < $4
+                GROUP BY channel_id
+            )
+            SELECT
+                COALESCE(c.channel_id, p.channel_id) AS channel_id,
+                COALESCE(c.total, 0) AS current_total,
+                COALESCE(p.total, 0) AS previous_total,
+                COALESCE(c.total, 0) - COALESCE(p.total, 0) AS delta
+            FROM current_period c
+            FULL OUTER JOIN previous_period p USING (channel_id)
+            WHERE COALESCE(c.total, 0) <> COALESCE(p.total, 0)
+            ORDER BY ABS(COALESCE(c.total, 0) - COALESCE(p.total, 0)) DESC
+            """,
+            current_start,
+            current_end,
+            previous_start,
+            previous_end,
+        )
+        return [dict(r) for r in rows]
+
+    async def get_role_period_deltas(
+        self,
+        current_start: datetime,
+        current_end: datetime,
+        previous_start: datetime,
+        previous_end: datetime,
+    ) -> list[dict]:
+        """Return native-role message deltas between two equal periods."""
+        rows = await self._fetch(
+            """
+            WITH current_period AS (
+                SELECT role_type, SUM(msg_count) AS total
+                FROM channel_stats
+                WHERE hour_bucket >= $1 AND hour_bucket < $2
+                GROUP BY role_type
+            ),
+            previous_period AS (
+                SELECT role_type, SUM(msg_count) AS total
+                FROM channel_stats
+                WHERE hour_bucket >= $3 AND hour_bucket < $4
+                GROUP BY role_type
+            )
+            SELECT
+                COALESCE(c.role_type, p.role_type) AS role_type,
+                COALESCE(c.total, 0) AS current_total,
+                COALESCE(p.total, 0) AS previous_total,
+                COALESCE(c.total, 0) - COALESCE(p.total, 0) AS delta
+            FROM current_period c
+            FULL OUTER JOIN previous_period p USING (role_type)
+            ORDER BY current_total DESC, role_type
+            """,
+            current_start,
+            current_end,
+            previous_start,
+            previous_end,
+        )
+        return [dict(r) for r in rows]
+
+    async def get_peak_activity_window(
+        self, start_at: datetime, end_at: datetime
+    ) -> dict:
+        """Return the busiest day-of-week/hour bucket in a period."""
+        row = await self._fetchrow(
+            """
+            SELECT
+                EXTRACT(DOW FROM hour_bucket AT TIME ZONE 'UTC') AS dow,
+                EXTRACT(HOUR FROM hour_bucket AT TIME ZONE 'UTC') AS hour,
+                SUM(msg_count) AS total
+            FROM channel_stats
+            WHERE hour_bucket >= $1 AND hour_bucket < $2
+            GROUP BY dow, hour
+            ORDER BY total DESC
+            LIMIT 1
+            """,
+            start_at,
+            end_at,
+        )
+        if row is None:
+            return {"dow": None, "hour": None, "total": 0}
+        return dict(row)
 
     async def get_role_breakdown(self, days: int = 7) -> list[dict]:
         """Message counts grouped by role_type in the last N days."""
@@ -115,7 +297,7 @@ class StatsMixin(DatabaseMixin):
         rows = await self._fetch(
             """
             SELECT
-                date_trunc('day', hour_bucket) AS day,
+                date_trunc('day', hour_bucket AT TIME ZONE 'UTC') AS day,
                 role_type,
                 SUM(msg_count) AS total
             FROM channel_stats
@@ -132,8 +314,8 @@ class StatsMixin(DatabaseMixin):
         rows = await self._fetch(
             """
             SELECT
-                EXTRACT(DOW FROM hour_bucket) AS dow,
-                EXTRACT(HOUR FROM hour_bucket) AS hour,
+                EXTRACT(DOW FROM hour_bucket AT TIME ZONE 'UTC') AS dow,
+                EXTRACT(HOUR FROM hour_bucket AT TIME ZONE 'UTC') AS hour,
                 SUM(msg_count) AS total
             FROM channel_stats
             WHERE hour_bucket >= NOW() - ($1 || ' days')::INTERVAL
@@ -179,8 +361,8 @@ class StatsMixin(DatabaseMixin):
         val = await self._fetchval("SELECT COUNT(*) FROM user_activity")
         return val or 0
 
-    async def get_growth_summary(self, days: int = 30) -> dict:
-        """Summary: total users, MAU, new this period."""
+    async def get_growth_summary(self, new_user_days: int = 30) -> dict:
+        """Summary: total users, 30-day MAU, and new users this period."""
         total = await self.get_total_users()
         mau = await self.get_active_users_count(30)
         new_users = await self._fetchval(
@@ -189,7 +371,7 @@ class StatsMixin(DatabaseMixin):
             FROM user_activity
             WHERE first_seen >= NOW() - ($1 || ' days')::INTERVAL
             """,
-            str(days),
+            str(new_user_days),
         )
         return {
             "total_users": total,

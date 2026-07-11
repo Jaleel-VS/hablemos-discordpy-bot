@@ -163,7 +163,7 @@ log to `#world-cup-log`. See [`cogs/wcbet.md`](./cogs/wcbet.md).
 
 ## Owner-only utilities
 
-See [`cogs/admin.md`](./cogs/admin.md), [`cogs/database.md`](./cogs/database.md), [`cogs/relay.md`](./cogs/relay.md), and [`cogs/tickets.md`](./cogs/tickets.md) for full details.
+See [`cogs/admin.md`](./cogs/admin.md), [`cogs/database.md`](./cogs/database.md), [`cogs/relay.md`](./cogs/relay.md), [`cogs/stats.md`](./cogs/stats.md), and [`cogs/tickets.md`](./cogs/tickets.md) for full details.
 
 | Command | Description | Permissions |
 |---------|-------------|-------------|
@@ -178,7 +178,13 @@ See [`cogs/admin.md`](./cogs/admin.md), [`cogs/database.md`](./cogs/database.md)
 | `$rawembed <message_link>` | Show raw embed JSON from a message. | Owner-only |
 | `$sync [guild_id]` | Sync slash commands globally or to a guild. | Owner-only |
 | `$mystats` | List all guilds the bot is in, sorted by member count. | Owner-only |
-| `$stats topusers [days]` | Show the top 10 most active users by message count in the tracked stats guild for the last N days (default 7, max 90). | Owner-only |
+| `$stats [days]` | Show tracked-guild activity summary: top channels, role mix, total users, MAU, and new users. | Owner-only |
+| `$stats report [days]` | Show a period-over-period community health report, including deltas, rising/cooling channels, role mix, and peak UTC activity window. | Owner-only |
+| `$stats channels [days]` | Render a top-channel message-volume chart. | Owner-only |
+| `$stats topusers [days]` | Show the top 10 most active users by message count, active days, and messages per active day in the tracked stats guild. | Owner-only |
+| `$stats roles [days]` | Render daily message volume split by native-language role. | Owner-only |
+| `$stats growth [weeks]` | Render new-user growth and total tracked users over time. | Owner-only |
+| `$stats heatmap [days]` | Render hour-by-day activity heatmap in UTC. | Owner-only |
 | `$leave <guild_id>` | Leave a guild by ID. | Owner-only |
 | `$vcenrich <message_link>` | Parse a Rai voice-join log and render with avatars. | `manage_messages` |
 | **VC Enrich** (context menu) | Right-click a Rai voice log, select "VC Enrich" → posts to enrich channel. | `manage_messages` |

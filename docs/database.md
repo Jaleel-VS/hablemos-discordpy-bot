@@ -83,13 +83,23 @@ Adding a new domain:
   duplicate-conflict rows (see commit history for context).
 
 ### Stats tracking
+- `channel_stats` — hourly per-channel message totals split by native-role
+  type.
+- Columns: `channel_id`, `role_type`, `hour_bucket`, `msg_count`.
+- Purpose: powers `$stats`, `$stats report`, `$stats channels`,
+  `$stats roles`, and `$stats heatmap`.
 - `user_message_counts` — hourly per-user message totals for the stats
   cog leaderboard.
 - Columns: `user_id`, `hour_bucket`, `msg_count`.
-- Purpose: powers `$stats topusers` by summing recent hourly buckets
-  into a top-user ranking.
+- Purpose: powers `$stats topusers`, active-user counts in `$stats report`,
+  and messages-per-active-user calculations.
+- `user_activity` — per-user first/last seen timestamps and latest
+  native-role classification.
+- Columns: `user_id`, `role_type`, `first_seen`, `last_seen`.
+- Purpose: powers user growth, MAU, and new-user counts.
 - Written by: `StatsCog.on_message` via `db.stats.StatsMixin
-  .upsert_user_message_count()`.
+  .track_message_stats()`, which updates all stats tables in one
+  transaction.
 
 ### Introductions / Exchange
 - `introductions` — per-user intro post tracking.
