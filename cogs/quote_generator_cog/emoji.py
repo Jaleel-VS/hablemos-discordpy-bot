@@ -10,11 +10,17 @@ _IMG_STYLE = "vertical-align:text-bottom;display:inline"
 # Discord custom emoji: <:name:id> or <a:name:id>
 _CUSTOM_EMOJI_RE = re.compile(r"<a?:([A-Za-z0-9_]+):([0-9]+)>")
 
-# Broad Unicode emoji pattern — covers most common emoji ranges
+# Broad Unicode emoji pattern — covers most common emoji ranges.
+# Keycap sequences (1️⃣, #️⃣, *️⃣) are the one case whose base character
+# (a plain digit, '#', or '*') isn't itself in any emoji range, so they need
+# their own alternative rather than living inside the character class.
+_KEYCAP_RE_PART = r"[0-9#*]️?⃣"
 _UNICODE_EMOJI_RE = re.compile(
-    "["
+    "(?:"
+    + _KEYCAP_RE_PART
+    + "|["
     "\U0001f600-\U0001f64f"  # emoticons
-    "\U0001f300-\U0001f5ff"  # symbols & pictographs
+    "\U0001f300-\U0001f5ff"  # symbols & pictographs (includes skin-tone modifiers)
     "\U0001f680-\U0001f6ff"  # transport & map
     "\U0001f1e0-\U0001f1ff"  # flags
     "\U0001f900-\U0001f9ff"  # supplemental symbols
@@ -28,7 +34,8 @@ _UNICODE_EMOJI_RE = re.compile(
     "\U00002600-\U000026ff"  # misc symbols
     "\U00002934-\U00002935"  # arrows
     "\U00003030\U0000303d"   # wavy dash, part alternation
-    "]+",
+    "\U000e0020-\U000e007f"  # tag characters (flag subdivision sequences)
+    "])+",
 )
 
 
@@ -147,17 +154,34 @@ def _is_regional_indicator(char: str) -> bool:
     return "\U0001f1e6" <= char <= "\U0001f1ff"
 
 
+def _is_skin_tone_modifier(char: str) -> bool:
+    return "\U0001f3fb" <= char <= "\U0001f3ff"
+
+
+def _is_tag_char(char: str) -> bool:
+    return "\U000e0020" <= char <= "\U000e007f"
+
+
 def _split_emoji_clusters(run: str) -> list[str]:
     """Split a run of Unicode emoji into individual clusters.
 
-    Keeps ZWJ (U+200D) sequences and trailing variation selectors
-    attached to the preceding base emoji, and pairs regional-indicator
-    codepoints, so multi-codepoint emoji (family, flags, \u2026) stay together.
+    Keeps attached to the preceding base emoji: ZWJ (U+200D) sequences,
+    trailing variation selectors, skin-tone modifiers, keycap combiners
+    (U+20E3), and tag-sequence characters (flag subdivisions, e.g. the
+    England flag). Pairs regional-indicator codepoints so two-letter flags
+    stay together. Without this, multi-codepoint emoji fall apart into
+    separate clusters and render as the wrong image (or 404).
     """
     clusters: list[str] = []
     current = ""
     for char in run:
-        joins = char in ("\u200d", "\ufe0f") or (current and current[-1] == "\u200d")
+        joins = (
+            char in ("\u200d", "\ufe0f", "\u20e3")
+            or (current and current[-1] == "\u200d")
+            or _is_skin_tone_modifier(char)
+            or _is_tag_char(char)
+            or (current and _is_tag_char(current[-1]))
+        )
         # A regional indicator joins a preceding lone regional indicator
         # to form a two-letter flag.
         flag_pair = (

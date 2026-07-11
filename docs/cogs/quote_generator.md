@@ -34,7 +34,11 @@ reactions.
   standalone emoji (e.g. `😍💋`), so the run is split into clusters and one
   `<img>` is emitted per cluster — Twemoji serves each standalone emoji as a
   separate file, and only joins codepoints with `-` for ZWJ/flag sequences
-  (joining `😍💋` into `1f60d-1f48b.png` would 404).
+  (joining `😍💋` into `1f60d-1f48b.png` would 404). `_split_emoji_clusters`
+  keeps a base emoji joined to its skin-tone modifier, keycap combiner
+  (`1️⃣`), and tag-sequence characters (flag subdivisions, e.g. the England
+  flag) — those Twemoji files are also joined with `-`, so splitting on them
+  would 404 or render the wrong (untoned/base) image.
 - The multi-message conversation quote (`$quotem`) renders with **Pillow**
   (`image_creator_multi.py`), following the super-sample → LANCZOS
   downsample pattern documented in
