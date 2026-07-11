@@ -97,6 +97,7 @@ class SearchCog(BaseCog):
     """Search messages in the server."""
 
     @commands.command(name="search")
+    @commands.has_permissions(manage_messages=True)
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def search_prefix(self, ctx: commands.Context, *, query: str):
         """Search for messages in this server.
@@ -186,6 +187,7 @@ class SearchCog(BaseCog):
         await ctx.send(embed=embed)
 
     @app_commands.command(name="search", description="Search for messages in this server")
+    @app_commands.default_permissions(manage_messages=True)
     @app_commands.describe(
         query="What to search for",
         author="Filter by message author",
