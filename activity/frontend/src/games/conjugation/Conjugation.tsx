@@ -74,12 +74,13 @@ export default function Conjugation({ accessToken }: GameProps) {
     void answer("", true);
   }, [answer]);
 
-  // When the client-side countdown hits zero, flush one final submit so the
-  // server finalizes and returns the result. The engine finalizes regardless
-  // of the guess text, so an empty string is fine.
+  // When the client-side countdown hits zero, end the run via the finish
+  // action — NOT a normal empty guess. The finish path finalizes without
+  // grading, so the unanswered prompt on screen at the buzzer is not counted
+  // wrong. (Sending guess="" would grade it as a wrong answer.)
   const flushTimeout = useCallback(() => {
     if (overRef.current) return;
-    void answer("");
+    void answer("", true);
   }, [answer]);
 
   if (screen === "setup") {

@@ -18,23 +18,30 @@ function useCountdown(deadlineIso: string | null, onZero: () => void): number {
     deadlineIso ? Math.max(0, Math.ceil((Date.parse(deadlineIso) - Date.now()) / 1000)) : 0,
   );
   const firedRef = useRef(false);
+  // Keep the latest onZero without making it an effect dependency. onZero's
+  // identity changes on every guess (it closes over the current sealed state);
+  // if the effect depended on it, it would re-run and reset firedRef, letting
+  // the zero-callback fire repeatedly — which previously produced several
+  // phantom "wrong" answers at the buzzer.
+  const onZeroRef = useRef(onZero);
+  onZeroRef.current = onZero;
 
   useEffect(() => {
     if (!deadlineIso) return; // untimed: no ticking, no auto-finish
-    firedRef.current = false;
+    firedRef.current = false; // reset only for a genuinely new game (new deadline)
     const deadline = Date.parse(deadlineIso);
     const tick = () => {
       const secs = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
       setRemaining(secs);
       if (secs <= 0 && !firedRef.current) {
-        firedRef.current = true;
-        onZero();
+        firedRef.current = true; // fire exactly once per game
+        onZeroRef.current();
       }
     };
     tick();
     const id = window.setInterval(tick, 250);
     return () => window.clearInterval(id);
-  }, [deadlineIso, onZero]);
+  }, [deadlineIso]);
 
   return remaining;
 }

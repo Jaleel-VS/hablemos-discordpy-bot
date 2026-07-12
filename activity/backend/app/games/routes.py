@@ -110,24 +110,37 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
     @router.post("/{game_key}/start")
     async def start(game_key: str, body: StartRequest) -> dict[str, Any]:
         engine = _engine_or_404(game_key)
-        await _verified_user_id(body.access_token)
+        # Verify identity ONCE, here, and bind it into the sealed state. The
+        # seal is authenticated (Fernet), so the client can't forge/change it —
+        # subsequent guesses trust the id in the state instead of re-hitting
+        # Discord's users/@me on every answer (which dominated per-guess
+        # latency: ~100ms hop vs. <1ms of actual game work).
+        user_id = await _verified_user_id(body.access_token)
         outcome = engine.new_game(mode=body.mode, user_id="", options=body.options)
+        outcome.state["_uid"] = user_id
         return _response(engine, outcome.state)
 
     @router.post("/{game_key}/guess")
     async def guess(game_key: str, body: GuessRequest) -> dict[str, Any]:
         # TEMP measurement (remove after the snappiness investigation): split
-        # the request into the Discord identity hop (verify_ms) vs. the actual
-        # game work (work_ms) so we can see which one dominates per-guess
-        # latency. See docs/playbook.md "Activity feels laggy".
+        # the request into the identity resolution (verify_ms) vs. the actual
+        # game work (work_ms). See docs/playbook.md "Activity feels laggy".
         t0 = perf_counter()
         engine = _engine_or_404(game_key)
-        user_id = await _verified_user_id(body.access_token)
-        t_verified = perf_counter()
         try:
             state = unseal(get_secret(), body.sealed_state)
         except StateSealError:
             raise HTTPException(status_code=400, detail="Estado de partida inválido")
+        # Identity comes from the sealed state (bound at start) — no per-guess
+        # Discord round trip. Fall back to a token verify only if it's absent
+        # (e.g. an in-flight game started before this change deployed).
+        state_uid = state.get("_uid")
+        if isinstance(state_uid, int):
+            user_id = state_uid
+        else:
+            user_id = await _verified_user_id(body.access_token)
+            state["_uid"] = user_id
+        t_verified = perf_counter()
         try:
             outcome = engine.submit(state=state, guess=body.guess, finish=body.finish)
         except GameError as exc:

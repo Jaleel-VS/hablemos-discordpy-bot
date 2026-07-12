@@ -23,7 +23,12 @@ from pydantic import BaseModel
 
 from .config import Settings, load_settings
 from .db import Database
-from .discord_oauth import DiscordOAuthError, exchange_code, fetch_user
+from .discord_oauth import (
+    DiscordOAuthError,
+    close_http_client,
+    exchange_code,
+    fetch_user,
+)
 from .games.routes import build_router
 
 logger = logging.getLogger(__name__)
@@ -81,6 +86,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         try:
             yield
         finally:
+            await close_http_client()
             if db_holder["db"] is not None:
                 await db_holder["db"].close()
 

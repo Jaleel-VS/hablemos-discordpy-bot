@@ -16,9 +16,17 @@ from app.main import create_app
 
 
 @pytest.fixture
-def client(monkeypatch):
-    # Stub identity verification: any token resolves to a fixed user.
+def fetch_calls():
+    """Mutable counter the client fixture increments on each fetch_user call."""
+    return {"n": 0}
+
+
+@pytest.fixture
+def client(monkeypatch, fetch_calls):
+    # Stub identity verification: any token resolves to a fixed user, and count
+    # calls so tests can assert we don't re-verify on every guess.
     async def fake_fetch_user(access_token: str):
+        fetch_calls["n"] += 1
         return {"id": "42", "username": "tester", "global_name": "", "avatar": ""}
 
     monkeypatch.setattr(routes_mod, "fetch_user", fake_fetch_user)
@@ -138,6 +146,59 @@ def test_conjugation_guess_advances(client):
     assert body["view"]["answered_count"] == 1
     assert body["sealed_state"] != start["sealed_state"]  # state advanced
     assert body["view"]["last"] is not None
+
+
+def test_identity_verified_once_not_per_guess(client, fetch_calls):
+    # start verifies identity once...
+    start = client.post(
+        "/api/games/conjugation/start", json={"access_token": "t", "mode": "free"},
+    ).json()
+    assert fetch_calls["n"] == 1
+    sealed = start["sealed_state"]
+    # ...and subsequent guesses reuse the id bound in the sealed state, with NO
+    # further fetch_user calls (the whole point of the latency fix).
+    for _ in range(3):
+        resp = client.post(
+            "/api/games/conjugation/guess",
+            json={"access_token": "t", "sealed_state": sealed, "guess": "x"},
+        ).json()
+        sealed = resp["sealed_state"]
+    assert fetch_calls["n"] == 1  # still just the one from start
+
+
+def test_bound_uid_not_leaked_to_client(client):
+    start = client.post(
+        "/api/games/conjugation/start", json={"access_token": "t", "mode": "free"},
+    ).json()
+    # The internal _uid must never appear in the client-facing view.
+    assert "_uid" not in json.dumps(start["view"])
+    resp = client.post(
+        "/api/games/conjugation/guess",
+        json={"access_token": "t", "sealed_state": start["sealed_state"], "guess": "x"},
+    ).json()
+    assert "_uid" not in json.dumps(resp["view"])
+
+
+def test_guess_falls_back_to_token_verify_for_legacy_state(client, fetch_calls):
+    # An in-flight game sealed before the fix has no _uid; guess must still work
+    # by verifying the token once.
+    start = client.post(
+        "/api/games/conjugation/start", json={"access_token": "t", "mode": "free"},
+    ).json()
+    # Rebuild a sealed state WITHOUT _uid to simulate a pre-fix token.
+    from app.games.sealed_state import seal, unseal
+
+    secret = "test-secret-for-sealing"
+    state = unseal(secret, start["sealed_state"])
+    state.pop("_uid", None)
+    legacy = seal(secret, state)
+    fetch_calls["n"] = 0
+    resp = client.post(
+        "/api/games/conjugation/guess",
+        json={"access_token": "t", "sealed_state": legacy, "guess": "x"},
+    )
+    assert resp.status_code == 200
+    assert fetch_calls["n"] == 1  # fell back to a token verify
 
 
 def test_conjugation_untimed_practice_finishes_on_request(client):

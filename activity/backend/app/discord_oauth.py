@@ -23,6 +23,32 @@ class DiscordOAuthError(Exception):
     """Raised when a Discord OAuth call fails."""
 
 
+# A single shared client, reused across all requests. Creating a new
+# ``AsyncClient`` per call (the old behavior) meant a fresh TLS handshake to
+# discord.com every time — measured at ~90-135ms per call and the dominant cost
+# of every guess. A pooled client keeps connections warm (HTTP keep-alive), so
+# subsequent calls skip the handshake.
+_client: httpx.AsyncClient | None = None
+
+
+def _get_client() -> httpx.AsyncClient:
+    global _client
+    if _client is None or _client.is_closed:
+        _client = httpx.AsyncClient(
+            timeout=10.0,
+            limits=httpx.Limits(max_keepalive_connections=10, keepalive_expiry=30.0),
+        )
+    return _client
+
+
+async def close_http_client() -> None:
+    """Close the shared client on app shutdown (called from the lifespan)."""
+    global _client
+    if _client is not None and not _client.is_closed:
+        await _client.aclose()
+    _client = None
+
+
 async def _request_with_retry(
     method: str,
     url: str,
@@ -33,25 +59,27 @@ async def _request_with_retry(
     """Call the Discord API, honoring 429 rate limits (per the official SDK
     example's ``fetchAndRetry``): on 429, wait ``retry_after`` and retry; on a
     transport error, back off briefly and retry.
+
+    Uses the shared pooled client so connections stay warm across calls.
     """
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        for attempt in range(retries + 1):
+    client = _get_client()
+    for attempt in range(retries + 1):
+        try:
+            resp = await client.request(method, url, **kwargs)
+        except httpx.HTTPError:
+            if attempt == retries:
+                raise
+            await asyncio.sleep(1.0)
+            continue
+        if resp.status_code == httpx.codes.TOO_MANY_REQUESTS and attempt < retries:
+            retry_after = resp.headers.get("retry-after")
             try:
-                resp = await client.request(method, url, **kwargs)
-            except httpx.HTTPError:
-                if attempt == retries:
-                    raise
-                await asyncio.sleep(1.0)
-                continue
-            if resp.status_code == httpx.codes.TOO_MANY_REQUESTS and attempt < retries:
-                retry_after = resp.headers.get("retry-after")
-                try:
-                    wait = float(retry_after) if retry_after is not None else 1.0
-                except ValueError:
-                    wait = 1.0
-                await asyncio.sleep(wait)
-                continue
-            return resp
+                wait = float(retry_after) if retry_after is not None else 1.0
+            except ValueError:
+                wait = 1.0
+            await asyncio.sleep(wait)
+            continue
+        return resp
     # Unreachable: the loop either returns a response or raises.
     raise DiscordOAuthError("Discord request failed after retries")
 
