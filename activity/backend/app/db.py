@@ -180,6 +180,28 @@ class Database:
             )
         return inserted
 
+    async def has_daily_result(
+        self, *, game_key: str, user_id: int, puzzle_no: int,
+    ) -> bool:
+        """Whether this user already finished this game's daily puzzle.
+
+        Used to refuse a second daily ``/start`` — the daily is a fixed,
+        deterministic sequence, so replaying it would let a player retry for a
+        better score (and against the honor-system leaderboard). Returns
+        ``False`` for any freeplay row (those carry a NULL ``puzzle_no``).
+        """
+        row = await self._p().fetchrow(
+            """
+            SELECT 1
+            FROM game_results
+            WHERE game_key = $1 AND user_id = $2
+              AND puzzle_no = $3 AND mode = 'daily'
+            LIMIT 1
+            """,
+            game_key, user_id, puzzle_no,
+        )
+        return row is not None
+
     async def fetch_unposted_daily(self, limit: int = 20) -> list[dict[str, Any]]:
         """Daily results not yet posted to a channel, oldest first (Phase 2)."""
         rows = await self._p().fetch(

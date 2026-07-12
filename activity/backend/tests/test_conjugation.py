@@ -166,6 +166,36 @@ def test_daily_is_deterministic_across_players(engine):
     assert a == b
 
 
+def test_daily_withholds_answer_in_per_answer_feedback(engine):
+    # The daily is a fixed shared sequence; revealing each form mid-run would
+    # let a player harvest the day's answers. The flag stays, expected does not.
+    oc = engine.new_game(mode="daily", user_id="1")
+    oc = engine.submit(state=oc.state, guess="definitely-wrong")
+    last = oc.client_view["last"]
+    assert last["result"] == "wrong"
+    assert "expected" not in last
+    # ...but the raw sealed state still carries it (the server needs it) and the
+    # end-of-game recap discloses the misses.
+    assert oc.state["last"]["expected"]
+
+
+def test_freeplay_reveals_answer_in_feedback(engine):
+    oc = engine.new_game(mode="free", user_id="1")
+    oc = engine.submit(state=oc.state, guess="definitely-wrong")
+    assert oc.client_view["last"]["expected"]  # nothing to game in freeplay
+
+
+def test_daily_recap_still_lists_missed_answers(engine):
+    # Withholding is mid-run only — the recap must still teach the correct forms.
+    oc = engine.new_game(mode="daily", user_id="1")
+    oc = engine.submit(state=oc.state, guess="nope")
+    state = oc.state
+    state["deadline"] = (datetime.now(UTC) - timedelta(seconds=10)).isoformat()
+    oc = engine.submit(state=state, guess="")
+    misses = oc.client_view["result"]["misses"]
+    assert misses and misses[0]["expected"]
+
+
 # ── untimed practice mode ─────────────────────────────────────────────────
 
 def test_daily_is_always_timed(engine):

@@ -117,6 +117,18 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
         user_id = await _verified_user_id(body.access_token)
         outcome = engine.new_game(mode=body.mode, user_id="", options=body.options)
         outcome.state["_uid"] = user_id
+        # Daily is a once-per-day fixed sequence: refuse a replay so a player
+        # can't retry the same puzzle for a better score (or farm the honor
+        # -system streak). Freeplay carries no puzzle_no and is never blocked.
+        puzzle_no = outcome.state.get("puzzle_no")
+        if body.mode == "daily" and isinstance(puzzle_no, int):
+            db = get_db()
+            if db is not None and await db.has_daily_result(
+                game_key=game_key, user_id=user_id, puzzle_no=puzzle_no,
+            ):
+                raise HTTPException(
+                    status_code=409, detail="Ya jugaste el reto diario de hoy.",
+                )
         return _response(engine, outcome.state)
 
     @router.post("/{game_key}/guess")

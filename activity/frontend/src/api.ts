@@ -62,7 +62,9 @@ export type MatchResult = "exact" | "close" | "wrong";
 
 export interface ConjugationFeedback {
   result: MatchResult;
-  expected: string;
+  // Withheld during the daily sprint (a fixed shared sequence) so answers
+  // can't be harvested mid-run; present in freeplay/practice and in the recap.
+  expected?: string;
   given: string;
   verb: string;
   pronoun: string;

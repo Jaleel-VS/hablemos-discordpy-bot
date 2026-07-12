@@ -201,6 +201,37 @@ def test_guess_falls_back_to_token_verify_for_legacy_state(client, fetch_calls):
     assert fetch_calls["n"] == 1  # fell back to a token verify
 
 
+def test_daily_replay_refused_when_already_played(monkeypatch):
+    # Build the router directly with a fake DB that reports today's daily as
+    # already finished — the second start must be refused (409), never a replay.
+    from fastapi import FastAPI
+
+    async def fake_fetch_user(access_token: str):
+        return {"id": "42", "username": "t", "global_name": "", "avatar": ""}
+
+    monkeypatch.setattr(routes_mod, "fetch_user", fake_fetch_user)
+
+    class FakeDB:
+        async def has_daily_result(self, *, game_key, user_id, puzzle_no):
+            return True  # this user already played today's puzzle
+
+    app = FastAPI()
+    app.include_router(
+        routes_mod.build_router(
+            get_db=lambda: FakeDB(),
+            get_secret=lambda: "test-secret-for-sealing",
+            discord_context={"channel_id": None, "guild_id": None},
+        )
+    )
+    with TestClient(app) as c:
+        r = c.post("/api/games/conjugation/start", json={"access_token": "t", "mode": "daily"})
+        assert r.status_code == 409
+        # Freeplay carries no puzzle_no and must never be blocked.
+        assert c.post(
+            "/api/games/conjugation/start", json={"access_token": "t", "mode": "free"},
+        ).status_code == 200
+
+
 def test_conjugation_untimed_practice_finishes_on_request(client):
     start = client.post(
         "/api/games/conjugation/start",

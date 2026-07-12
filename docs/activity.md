@@ -145,6 +145,15 @@ time runs out.
   the engine normalizes untrusted values, defaulting to the timed sprint.
 - The pending answer lives in sealed state and is never in the client view
   until it's been submitted.
+- **Daily anti-harvest.** The daily is a fixed, deterministic sequence shared by
+  everyone, so revealing each form mid-run would let a player mash junk, read the
+  answers, and restart to ace it. Two guards close this: (1) conjugation's
+  per-answer feedback **withholds `expected` in daily mode** (the client gets the
+  exact/close/wrong flag but not the correct form — disclosed only in the
+  end-of-game recap; freeplay/practice reveals normally since there's nothing to
+  game); (2) the shared `start` route **refuses a second daily** for a puzzle a
+  player already finished (`409`) — applies to any game with a `puzzle_no`,
+  Wordle included.
 
 ### Persistence
 

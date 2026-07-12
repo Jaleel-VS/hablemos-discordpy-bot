@@ -135,16 +135,24 @@ export default function Sprint({ view, busy, error, onAnswer, onTimeout, onFinis
         {last ? (
           <p className={`feedback feedback--${last.result}`} key={view.answered_count}>
             {last.result === "exact" && <span>¡Correcto!</span>}
-            {last.result === "close" && (
-              <span>
-                ¡Casi! <strong>{last.expected}</strong> (acentos)
-              </span>
-            )}
-            {last.result === "wrong" && (
-              <span>
-                Era <strong>{last.expected}</strong>
-              </span>
-            )}
+            {/* `expected` is withheld during the daily sprint, so fall back to
+                an answer-free message when it's absent. */}
+            {last.result === "close" &&
+              (last.expected ? (
+                <span>
+                  ¡Casi! <strong>{last.expected}</strong> (acentos)
+                </span>
+              ) : (
+                <span>¡Casi! (acentos)</span>
+              ))}
+            {last.result === "wrong" &&
+              (last.expected ? (
+                <span>
+                  Era <strong>{last.expected}</strong>
+                </span>
+              ) : (
+                <span>Incorrecto</span>
+              ))}
           </p>
         ) : null}
       </div>

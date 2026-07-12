@@ -244,13 +244,30 @@ class ConjugationEngine:
             "best_streak": state.get("best_streak", 0),
             "answered_count": len(state.get("answered", [])),
             "status": state["status"],
-            "last": state.get("last"),
+            "last": self._client_last(state),
         }
         if not self.is_over(state):
             view["prompt"] = self._config_question(state).prompt()
         else:
             view["result"] = self.result_payload(state)
         return view
+
+    def _client_last(self, state: dict[str, Any]) -> dict[str, Any] | None:
+        """Per-answer feedback for the client, with the answer withheld in daily.
+
+        The daily sprint is a fixed, deterministic sequence shared by everyone,
+        so revealing each graded form mid-run would let a player harvest the
+        whole day's answers (mash junk, read ``expected``, restart, ace it).
+        Daily play therefore gets the result flag (exact/close/wrong) but not
+        ``expected`` — the correct forms are disclosed only in the end-of-game
+        recap. Freeplay/practice reveals normally (there's nothing to game).
+        """
+        last = state.get("last")
+        if last is None:
+            return None
+        if state.get("mode") == "daily":
+            return {k: v for k, v in last.items() if k != "expected"}
+        return last
 
     def _config(self, state: dict[str, Any]) -> d.Config:
         cfg = state.get("config", {})
