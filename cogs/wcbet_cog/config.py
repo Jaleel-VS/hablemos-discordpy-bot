@@ -11,6 +11,10 @@ from decimal import Decimal
 from cogs.worldcup_cog.config import WORLD_CUP_LOG_CHANNEL_ID
 from config import get_int_env
 
+# How far ahead (hours) a fixture becomes bettable before kickoff.
+# Wider windows let users bet earlier on confirmed knockout pairings.
+WCBET_BETTING_WINDOW_HOURS: int = get_int_env("WCBET_BETTING_WINDOW_HOURS", 96)
+
 # Coins granted once when a user opts in.
 WCBET_STARTING_BALANCE: int = 10_000
 
@@ -63,6 +67,7 @@ WCBET_NOTIFICATION_CHANNEL_ID: int = get_int_env(
 
 __all__ = [
     "WCBET_AUTO_SETTLE",
+    "WCBET_BETTING_WINDOW_HOURS",
     "WCBET_DAILY_ALLOWANCE",
     "WCBET_KNOCKOUT_RESOLVE_LOOKAHEAD_DAYS",
     "WCBET_LOG_CHANNEL_ID",

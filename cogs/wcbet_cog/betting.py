@@ -13,6 +13,7 @@ from datetime import UTC, datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Literal
 
+from cogs.wcbet_cog.config import WCBET_BETTING_WINDOW_HOURS
 from cogs.wcpredict_cog.fixtures import (
     FIXTURES,
     Fixture,
@@ -57,7 +58,7 @@ def bettable_fixtures(now_utc: datetime) -> list[Fixture]:
 
     ``now_utc`` must be timezone-aware.
     """
-    cutoff = now_utc + timedelta(hours=48)
+    cutoff = now_utc + timedelta(hours=WCBET_BETTING_WINDOW_HOURS)
     out: list[Fixture] = []
     for fixture in FIXTURES:
         if not is_fixture_resolved(fixture):
