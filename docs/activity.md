@@ -111,6 +111,10 @@ opaque token and an answer-free `view`.
   channel) and **freeplay** (random, no streaks, no posting).
 - The answer is authoritative on the server and never sent to the client until
   the game ends.
+- **Daily expires at date rollover.** A daily `submit` is rejected once the
+  state's `date` is no longer today, so a saved token can't be finished days
+  later (which `compute_streak`, keyed on consecutive `puzzle_no`, would
+  otherwise still credit). Freeplay has no date gate.
 
 ### Conjugation sprint (`app/games/conjugation/`)
 
@@ -163,6 +167,13 @@ bot uses (`DATABASE_URL`). Tables are game-agnostic, keyed by `game_key`:
 bot posts it) and `game_stats` (per-user daily aggregates + streak +
 guess-distribution). The Activity creates these idempotently on boot. If
 `DATABASE_URL` is unset the game still plays; stats just read as zeros.
+
+The daily-result insert and the streak/stats bump run in **one transaction**
+(`record_result`), so a mid-write failure can't leave the unique daily row
+committed while the streak update is lost (which would permanently block the
+retry that fixes it). Request fields (`access_token`, `sealed_state`, `guess`)
+are length-bounded at the Pydantic layer so an oversized body is rejected
+before any Fernet/normalization work.
 
 ## Developer Portal setup (one-time)
 

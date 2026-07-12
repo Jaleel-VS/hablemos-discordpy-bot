@@ -89,6 +89,20 @@ def test_guess_flow_and_win(client):
         assert body["sealed_state"] != sealed  # state advanced
 
 
+def test_oversized_fields_rejected_as_422(client):
+    # Length-bounded request fields reject before any Fernet/normalization work.
+    r = client.post(
+        "/api/games/wordle/guess",
+        json={"access_token": "t", "sealed_state": "x" * 9000, "guess": "gatos"},
+    )
+    assert r.status_code == 422  # pydantic max_length validation
+    r = client.post(
+        "/api/games/wordle/start",
+        json={"access_token": "z" * 1000, "mode": "free"},
+    )
+    assert r.status_code == 422
+
+
 def test_tampered_state_rejected(client):
     r = client.post(
         "/api/games/wordle/guess",

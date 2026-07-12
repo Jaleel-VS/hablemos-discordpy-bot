@@ -11,6 +11,7 @@ from app.games.wordle import daily as daily_mod
 from app.games.wordle.engine import WordleEngine
 from app.games.wordle.normalize import is_valid_shape, letters, normalize
 from app.games.wordle.scorer import Tile, emoji_row, score
+from app.games.wordle.words import ANSWERS
 
 
 # ── normalization ─────────────────────────────────────────────────────────
@@ -161,6 +162,42 @@ def test_hostile_state_rejected():
     eng = WordleEngine()
     with pytest.raises(GameError):
         eng.submit(state={"answer": "x", "rows": [], "status": "playing"}, guess="gatos")
+
+
+def test_malformed_state_shape_rejected():
+    # A validly-sealed but wrong-shaped state must 400 cleanly, not KeyError
+    # later. Each guard: missing max_guesses, too many rows, bad tile value.
+    eng = WordleEngine()
+    base = eng.new_game(mode="free", user_id="1").state
+    answer = base["answer"]
+    guess = next(w for w in ANSWERS if w != answer)
+
+    no_max = {**base, "answer": answer}
+    no_max.pop("max_guesses", None)
+    with pytest.raises(GameError):
+        eng.submit(state=no_max, guess=guess)
+
+    too_many = {**base, "rows": [{"guess": guess, "tiles": ["gray"] * 5}] * 7}
+    with pytest.raises(GameError):
+        eng.submit(state=too_many, guess=guess)
+
+    bad_tiles = {**base, "rows": [{"guess": guess, "tiles": ["magenta", "x", "y", "z", "w"]}]}
+    with pytest.raises(GameError):
+        eng.submit(state=bad_tiles, guess=guess)
+
+
+def test_daily_rejected_after_date_rollover():
+    # A daily token saved on an earlier date is no longer playable — closes the
+    # "save token, learn answer, finish later, keep streak" gap.
+    eng = WordleEngine()
+    game = eng.new_game(mode="daily", user_id="1")
+    stale = {**game.state, "date": "2020-01-01"}
+    with pytest.raises(GameError):
+        eng.submit(state=stale, guess=next(w for w in ANSWERS if w != stale["answer"]))
+    # Free-play carries no date-gating and is unaffected.
+    free = eng.new_game(mode="free", user_id="1")
+    free_stale = {**free.state, "date": "2020-01-01"}
+    eng.submit(state=free_stale, guess=next(w for w in ANSWERS if w != free_stale["answer"]))
 
 
 def test_daily_number_and_wrap():

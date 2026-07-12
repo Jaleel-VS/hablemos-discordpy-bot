@@ -157,28 +157,34 @@ class Database:
         Returns ``True`` if a new row was inserted, ``False`` if this was a
         duplicate daily submission (already recorded for this puzzle/user).
         Daily stats are only updated on a genuinely new insert.
+
+        The insert and the stats bump run in **one transaction**: if the bump
+        fails, the insert rolls back too. Otherwise the unique daily row would
+        persist while the streak update was lost, permanently blocking the
+        retry that would fix it.
         """
-        row = await self._p().fetchrow(
-            """
-            INSERT INTO game_results
-                (game_key, user_id, mode, won, puzzle_no, payload,
-                 channel_id, guild_id)
-            VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7, $8)
-            ON CONFLICT (game_key, user_id, puzzle_no)
-                WHERE puzzle_no IS NOT NULL AND mode = 'daily'
-            DO NOTHING
-            RETURNING id
-            """,
-            game_key, user_id, mode, won, puzzle_no, json.dumps(payload),
-            channel_id, guild_id,
-        )
-        inserted = row is not None
-        if inserted and mode == "daily":
-            await self._bump_daily_stats(
-                game_key=game_key, user_id=user_id, won=won,
-                puzzle_no=puzzle_no, guesses_used=payload.get("guesses_used"),
+        async with self._p().acquire() as conn, conn.transaction():
+            row = await conn.fetchrow(
+                """
+                INSERT INTO game_results
+                    (game_key, user_id, mode, won, puzzle_no, payload,
+                     channel_id, guild_id)
+                VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7, $8)
+                ON CONFLICT (game_key, user_id, puzzle_no)
+                    WHERE puzzle_no IS NOT NULL AND mode = 'daily'
+                DO NOTHING
+                RETURNING id
+                """,
+                game_key, user_id, mode, won, puzzle_no, json.dumps(payload),
+                channel_id, guild_id,
             )
-        return inserted
+            inserted = row is not None
+            if inserted and mode == "daily":
+                await self._bump_daily_stats(
+                    conn, game_key=game_key, user_id=user_id, won=won,
+                    puzzle_no=puzzle_no, guesses_used=payload.get("guesses_used"),
+                )
+            return inserted
 
     async def has_daily_result(
         self, *, game_key: str, user_id: int, puzzle_no: int,
@@ -252,6 +258,7 @@ class Database:
 
     async def _bump_daily_stats(
         self,
+        conn: asyncpg.Connection,
         *,
         game_key: str,
         user_id: int,
@@ -259,55 +266,58 @@ class Database:
         puzzle_no: int | None,
         guesses_used: int | None,
     ) -> None:
-        """Update aggregates + streak for a new daily result, transactionally.
+        """Update aggregates + streak for a new daily result.
+
+        Runs on the caller's connection inside the caller's transaction (see
+        :meth:`record_result`) so the result insert and this bump commit or roll
+        back together.
 
         Streak logic: a win on the puzzle immediately after ``last_puzzle_no``
         extends the streak; any other win (re)starts it at 1; a loss resets it
         to 0. ``distribution`` counts wins by guess count.
         """
-        async with self._p().acquire() as conn, conn.transaction():
-            cur = await conn.fetchrow(
-                """
-                SELECT current_streak, max_streak, last_puzzle_no
-                FROM game_stats
-                WHERE game_key = $1 AND user_id = $2
-                FOR UPDATE
-                """,
-                game_key, user_id,
-            )
-            prev_streak = cur["current_streak"] if cur else 0
-            prev_max = cur["max_streak"] if cur else 0
-            last_no = cur["last_puzzle_no"] if cur else None
+        cur = await conn.fetchrow(
+            """
+            SELECT current_streak, max_streak, last_puzzle_no
+            FROM game_stats
+            WHERE game_key = $1 AND user_id = $2
+            FOR UPDATE
+            """,
+            game_key, user_id,
+        )
+        prev_streak = cur["current_streak"] if cur else 0
+        prev_max = cur["max_streak"] if cur else 0
+        last_no = cur["last_puzzle_no"] if cur else None
 
-            new_streak = compute_streak(
-                prev_streak=prev_streak, last_puzzle_no=last_no,
-                won=won, puzzle_no=puzzle_no,
-            )
-            new_max = max(prev_max, new_streak)
-            dist_key = distribution_key(won=won, guesses_used=guesses_used)
+        new_streak = compute_streak(
+            prev_streak=prev_streak, last_puzzle_no=last_no,
+            won=won, puzzle_no=puzzle_no,
+        )
+        new_max = max(prev_max, new_streak)
+        dist_key = distribution_key(won=won, guesses_used=guesses_used)
 
-            await conn.execute(
-                """
-                INSERT INTO game_stats
-                    (game_key, user_id, games, wins, current_streak,
-                     max_streak, last_puzzle_no, distribution, updated_at)
-                VALUES ($1, $2, 1, $3, $4, $5, $6,
-                        jsonb_build_object($7::text, 1), NOW())
-                ON CONFLICT (game_key, user_id) DO UPDATE SET
-                    games          = game_stats.games + 1,
-                    wins           = game_stats.wins + $3,
-                    current_streak = $4,
-                    max_streak     = $5,
-                    last_puzzle_no = $6,
-                    distribution   = jsonb_set(
-                        game_stats.distribution,
-                        ARRAY[$7::text],
-                        to_jsonb(
-                            COALESCE((game_stats.distribution->>$7)::int, 0) + 1
-                        )
-                    ),
-                    updated_at     = NOW()
-                """,
-                game_key, user_id, 1 if won else 0, new_streak, new_max,
-                puzzle_no, dist_key,
-            )
+        await conn.execute(
+            """
+            INSERT INTO game_stats
+                (game_key, user_id, games, wins, current_streak,
+                 max_streak, last_puzzle_no, distribution, updated_at)
+            VALUES ($1, $2, 1, $3, $4, $5, $6,
+                    jsonb_build_object($7::text, 1), NOW())
+            ON CONFLICT (game_key, user_id) DO UPDATE SET
+                games          = game_stats.games + 1,
+                wins           = game_stats.wins + $3,
+                current_streak = $4,
+                max_streak     = $5,
+                last_puzzle_no = $6,
+                distribution   = jsonb_set(
+                    game_stats.distribution,
+                    ARRAY[$7::text],
+                    to_jsonb(
+                        COALESCE((game_stats.distribution->>$7)::int, 0) + 1
+                    )
+                ),
+                updated_at     = NOW()
+            """,
+            game_key, user_id, 1 if won else 0, new_streak, new_max,
+            puzzle_no, dist_key,
+        )

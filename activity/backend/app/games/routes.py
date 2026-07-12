@@ -5,9 +5,11 @@
     GET  /api/games                    -> list available games
     POST /api/games/{game_key}/stats   -> the caller's per-user daily stats
 
-Identity is server-verified on every mutating call: the client sends its
-access token and we resolve the real Discord user via ``users/@me`` rather than
-trusting any client-sent id.
+Identity is verified against Discord (``users/@me``) once at ``/start`` and
+bound into the sealed state as ``_uid``. Because the seal is authenticated,
+``/guess`` trusts that id instead of re-hitting Discord on every answer (a
+deliberate latency fix); it falls back to a token verify only for a legacy
+state sealed before that binding existed.
 
 Game state travels round-trips in the request body but **sealed** (see
 :mod:`sealed_state`) — the client holds an opaque, tamper-proof token, never
@@ -21,7 +23,7 @@ import logging
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.discord_oauth import DiscordOAuthError, fetch_user
 from app.games.base import GameError, Mode
@@ -30,9 +32,17 @@ from app.games.sealed_state import StateSealError, seal, unseal
 
 logger = logging.getLogger(__name__)
 
+# Upper bounds on untrusted request fields, so a hostile POST can't force
+# expensive JSON/Fernet/Unicode work before validation. Generous vs. real use
+# (access tokens ~30 chars, a guess a few letters, sealed state a few hundred
+# bytes) but small enough to bound the work.
+_MAX_TOKEN = 512
+_MAX_SEALED = 8192
+_MAX_GUESS = 128
+
 
 class StartRequest(BaseModel):
-    access_token: str
+    access_token: str = Field(max_length=_MAX_TOKEN)
     mode: Mode = "daily"
     # Optional, game-specific config (e.g. conjugation verb set / tenses).
     # Untrusted: each engine normalizes or ignores it.
@@ -40,16 +50,16 @@ class StartRequest(BaseModel):
 
 
 class GuessRequest(BaseModel):
-    access_token: str
-    sealed_state: str  # opaque token from the previous response
-    guess: str = ""
+    access_token: str = Field(max_length=_MAX_TOKEN)
+    sealed_state: str = Field(max_length=_MAX_SEALED)  # opaque token from prev response
+    guess: str = Field(default="", max_length=_MAX_GUESS)
     # Request that an open-ended game end now (untimed conjugation practice).
     # Ignored by games without such a mode.
     finish: bool = False
 
 
 class StatsRequest(BaseModel):
-    access_token: str
+    access_token: str = Field(max_length=_MAX_TOKEN)
 
 
 def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> APIRouter:

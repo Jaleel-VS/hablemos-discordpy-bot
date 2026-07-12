@@ -72,6 +72,12 @@ class WordleEngine:
         self._validate_state(state)
         if state["status"] != "playing":
             raise GameError("Esta partida ya terminó.")
+        # A daily is only playable on its own date. Without this, a player could
+        # save an unfinished daily token, learn the answer later, and finish it
+        # days on — and compute_streak() (keyed on consecutive puzzle_no) would
+        # still credit the streak. Free-play carries no puzzle_no and is exempt.
+        if state.get("mode") == "daily" and state.get("date") != _today().isoformat():
+            raise GameError("El reto diario de hoy ya no está disponible.")
 
         normalized = normalize(guess)
         if not is_valid_shape(normalized):
@@ -143,13 +149,32 @@ class WordleEngine:
 
     @staticmethod
     def _validate_state(state: dict[str, Any]) -> None:
-        """Guard against malformed/hostile state before trusting it."""
+        """Guard against malformed/hostile state before trusting it.
+
+        A sealed token can only carry state *we* produced, but schema evolution
+        or a secret rotation can surface an old/foreign shape — so every field
+        the rest of ``submit``/``result_payload`` indexes into is checked here,
+        turning a bad shape into a clean 400 rather than a later KeyError.
+        """
         if not isinstance(state, dict):
             raise GameError("Estado de partida inválido.")
         answer = state.get("answer")
         if not isinstance(answer, str) or not is_valid_shape(normalize(answer)):
             raise GameError("Estado de partida inválido.")
-        if not isinstance(state.get("rows"), list):
-            raise GameError("Estado de partida inválido.")
         if state.get("status") not in ("playing", "won", "lost"):
             raise GameError("Estado de partida inválido.")
+        max_guesses = state.get("max_guesses")
+        if not isinstance(max_guesses, int) or max_guesses <= 0:
+            raise GameError("Estado de partida inválido.")
+        rows = state.get("rows")
+        if not isinstance(rows, list) or len(rows) > max_guesses:
+            raise GameError("Estado de partida inválido.")
+        _tiles = {t.value for t in Tile}
+        for row in rows:
+            if not isinstance(row, dict):
+                raise GameError("Estado de partida inválido.")
+            tiles = row.get("tiles")
+            if not isinstance(row.get("guess"), str) or not isinstance(tiles, list):
+                raise GameError("Estado de partida inválido.")
+            if any(t not in _tiles for t in tiles):
+                raise GameError("Estado de partida inválido.")
