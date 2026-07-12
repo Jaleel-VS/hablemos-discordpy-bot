@@ -51,6 +51,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     """Build the FastAPI app. Accepts injected settings for testing."""
     cfg = settings or load_settings()
 
+    # Configure logging so the app's own loggers actually emit. Without this,
+    # uvicorn only sets up its own loggers and every ``logger.info`` in our
+    # modules is dropped (root defaults to WARNING). Honor a LOG_LEVEL env var,
+    # defaulting to INFO. Safe to call repeatedly (force=True re-applies).
+    logging.basicConfig(
+        level=os.getenv("LOG_LEVEL", "INFO").upper(),
+        format="%(asctime)s %(levelname)s %(name)s %(message)s",
+        force=True,
+    )
+
     # Database is optional: with no DATABASE_URL the app still serves the
     # handshake and games, but results/stats aren't persisted. Held in a
     # mutable holder so the games router can read it after lifespan startup.
