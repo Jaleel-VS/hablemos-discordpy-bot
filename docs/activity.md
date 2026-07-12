@@ -10,11 +10,10 @@ share the same PostgreSQL database. The code lives in
 [`../activity/`](../activity/) (see its
 [`README.md`](../activity/README.md) for the internal layout).
 
-> **Status:** Phase 1 done — an extensible single-player game framework with
-> **Spanish Wordle** as the first game (daily + freeplay, stats/streaks
-> persisted to the shared Postgres). Phase 0 (OAuth handshake) is live in
-> production. Phase 2 (posting daily results to a channel via the bot) is not
-> built yet.
+> **Status:** Phases 0–2 built. Phase 0 (OAuth handshake) is live in
+> production. Phase 1 is the extensible game framework with **Spanish Wordle**
+> (daily + freeplay, stats/streaks in the shared Postgres). Phase 2 is the bot
+> posting finished **daily** results to a configured channel.
 
 ## How it works
 
@@ -31,9 +30,20 @@ Discord API (oauth2/token, users/@me)                                        │
                                           gateway bot polls results, posts card to channel
 ```
 
-The Activity **cannot post channel messages itself** — that's the bot's job
-(Phase 2). Identity is always verified server-side via `users/@me`; the iframe
-is tamperable, so a client-sent user id is never trusted.
+The Activity **cannot post channel messages itself** — that's the bot's job.
+Identity is always verified server-side via `users/@me`; the iframe is
+tamperable, so a client-sent user id is never trusted.
+
+### Results posting (Phase 2)
+
+When a player finishes a **daily** game, the Activity writes a `game_results`
+row (`posted_at` NULL). The bot's `activity_results_cog` runs a `tasks.loop`
+that polls for unposted daily rows, posts an emoji-grid card to
+`ACTIVITY_RESULTS_CHANNEL_ID` mentioning the player, then sets `posted_at`.
+This keeps the bot gateway-only (no inbound HTTP) and reuses its DB pool.
+Freeplay results are never posted. The bot **reads** `game_results` but never
+creates the table — the Activity owns that schema — so the poller tolerates the
+table not existing yet. See [`cogs/activity_results.md`](./cogs/activity_results.md).
 
 ### The `/.proxy/` rule (the #1 gotcha)
 

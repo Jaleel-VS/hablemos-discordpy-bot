@@ -44,6 +44,9 @@ Defaults come from `config.py` (`load_settings`) or from a cog's own
 | `STATS_REPORT_CHANNEL_ID` | `0` | Optional channel for the weekly `$stats report` digest. `0` disables scheduled reports. |
 | `STATS_WEEKLY_REPORT_DAY` | `0` | UTC weekday for the weekly stats digest, using Python weekday numbering (`0` = Monday, `6` = Sunday). |
 | `STATS_WEEKLY_REPORT_HOUR_UTC` | `9` | UTC hour when the weekly stats digest should post. |
+| `ACTIVITY_RESULTS_CHANNEL_ID` | `0` | Channel where finished **daily** Activity game results (e.g. Wordle) are posted by the bot. `0` disables posting. See [`activity.md`](./activity.md). |
+| `ACTIVITY_RESULTS_POLL_SECONDS` | `60` | How often the bot polls `game_results` for unposted daily results. |
+| `ACTIVITY_RESULTS_BATCH` | `10` | Max results posted per poll tick (prevents a backlog flooding the channel). |
 
 > **Rule:** never hardcode a new guild/channel/role ID inside a cog.
 > Add it to the relevant `config.py` (root or cog-local) with a

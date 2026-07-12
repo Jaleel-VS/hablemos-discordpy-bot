@@ -24,6 +24,7 @@ change. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules.
 > Only a subset is filled in so far. New entries should follow the
 > template in [`cogs/_template.md`](./cogs/_template.md).
 
+- [Activity Results (`activity_results_cog`)](./cogs/activity_results.md)
 - [Admin (`admin_cog`)](./cogs/admin.md)
 - [Almighty (`almighty_cog`)](./cogs/almighty.md)
 - [Ask (`ask_cog`)](./cogs/ask.md)
