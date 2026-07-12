@@ -245,6 +245,25 @@ def test_finish_does_not_grade_its_own_guess(engine):
     assert oc.client_view["result"]["total"] == before
 
 
+def test_zero_answer_finish_scores_zero_over_zero(engine):
+    # Finishing untimed practice with no answers reads "0/0", not a bare "0".
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False})
+    oc = engine.submit(state=oc.state, guess="", finish=True)
+    rp = oc.client_view["result"]
+    assert rp["score"] == "0/0"
+    assert rp["total"] == 0
+
+
+def test_timed_state_with_null_deadline_is_rejected(engine):
+    # An incoherent timed+null-deadline state must be rejected up front, not
+    # crash later on fromisoformat(None) in the deadline check.
+    oc = engine.new_game(mode="free", user_id="1")  # timed
+    state = oc.state
+    state["deadline"] = None
+    with pytest.raises(GameError):
+        engine.submit(state=state, guess="x")
+
+
 def test_early_finish_on_timed_game_is_rejected(engine):
     # A timed daily can't be ended instantly to bank a 0-answer streak day.
     oc = engine.new_game(mode="daily", user_id="1")

@@ -229,7 +229,9 @@ class ConjugationEngine:
             "correct": correct,
             "total": total,
             "best_streak": best_streak,
-            "score": f"{correct}/{total}" if total else "0",
+            # Always the N/M shape (a zero-answer run — now reachable via the
+            # untimed "Terminar" — reads "0/0", not a bare "0").
+            "score": f"{correct}/{total}",
             "grid": self._emoji_grid(answered),
             "summary": summary,
             "misses": [a for a in answered if a["result"] == Match.WRONG.value],
@@ -332,7 +334,11 @@ class ConjugationEngine:
         if not isinstance(current, dict) or not isinstance(current.get("expected"), str):
             raise GameError("Estado de partida inválido.")
         # A timed game must carry a parseable deadline; an untimed one has none.
+        # Reject the incoherent timed+null-deadline combo up front, otherwise
+        # the deadline check in submit() would hit fromisoformat(None) → crash.
         deadline = state.get("deadline")
+        if state.get("timed", True) and deadline is None:
+            raise GameError("Estado de partida inválido.")
         if deadline is not None:
             try:
                 datetime.fromisoformat(deadline)
