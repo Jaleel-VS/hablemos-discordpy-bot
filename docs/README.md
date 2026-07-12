@@ -17,6 +17,7 @@ change. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules.
 | Work on the embedded Activity (games) | [`activity.md`](./activity.md) |
 | Dig into one cog | [`cogs/`](./cogs/) |
 | Diagnose a problem | [`playbook.md`](./playbook.md) |
+| See planned/roadmap work | [`plans/`](./plans/) |
 | Edit these docs | [`CONTRIBUTING.md`](./CONTRIBUTING.md) |
 
 ## Per-cog docs
@@ -28,7 +29,8 @@ change. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules.
 - [Admin (`admin_cog`)](./cogs/admin.md)
 - [Almighty (`almighty_cog`)](./cogs/almighty.md)
 - [Ask (`ask_cog`)](./cogs/ask.md)
-- [Conjugation (`conjugation_cog`)](./cogs/conjugation.md)
+- [Conjugation — native (`conjugation_cog`)](./cogs/conjugation.md)
+- [Conjugation launcher (`conjuga_cog`)](./cogs/wordle.md)
 - [Conversation (`conversation_cog`)](./cogs/conversation.md)
 - [Conversation Starter (`convo_starter_cog`)](./cogs/convo_starter.md)
 - [Crossword (`crossword_cog`)](./cogs/crossword.md)
@@ -54,7 +56,7 @@ change. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules.
 - [Tickets (`tickets_cog`)](./cogs/tickets.md)
 - [Vocab (`vocab_cog`)](./cogs/vocab.md)
 - [Website Manager (`website_manager_cog`)](./cogs/website_manager.md)
-- [Wordle launcher (`wordle_cog`)](./cogs/wordle.md)
+- [Activity launchers (`wordle_cog` / `conjuga_cog`)](./cogs/wordle.md)
 - [World Cup Predictions (`wcpredict_cog`)](./cogs/wcpredict.md)
 
 ## Relationship to `AGENTS.md`

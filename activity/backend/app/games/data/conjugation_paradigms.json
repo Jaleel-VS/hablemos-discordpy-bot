@@ -1,0 +1,2293 @@
+{
+  "pronouns": [
+    "yo",
+    "tú",
+    "él",
+    "nosotros",
+    "vosotros",
+    "ellos"
+  ],
+  "sets": {
+    "high-frequency": [
+      "ser",
+      "estar",
+      "tener",
+      "hacer",
+      "poder",
+      "decir",
+      "ir",
+      "ver",
+      "dar",
+      "saber",
+      "querer",
+      "llegar",
+      "pasar",
+      "deber",
+      "poner",
+      "parecer",
+      "quedar",
+      "creer",
+      "hablar",
+      "llevar",
+      "dejar",
+      "seguir",
+      "encontrar",
+      "llamar",
+      "venir",
+      "pensar",
+      "salir",
+      "volver",
+      "tomar",
+      "conocer"
+    ],
+    "irregulars": [
+      "ser",
+      "estar",
+      "ir",
+      "tener",
+      "hacer",
+      "poder",
+      "decir",
+      "venir",
+      "poner",
+      "saber",
+      "querer",
+      "dar",
+      "ver",
+      "salir",
+      "traer"
+    ],
+    "regular-ar": [
+      "hablar",
+      "llegar",
+      "pasar",
+      "quedar",
+      "llevar",
+      "dejar",
+      "llamar",
+      "trabajar",
+      "estudiar",
+      "tomar",
+      "mirar",
+      "escuchar",
+      "bailar",
+      "cantar",
+      "comprar",
+      "cocinar",
+      "buscar",
+      "caminar",
+      "esperar",
+      "preguntar"
+    ],
+    "regular-er-ir": [
+      "comer",
+      "beber",
+      "aprender",
+      "creer",
+      "leer",
+      "vender",
+      "correr",
+      "vivir",
+      "escribir",
+      "recibir",
+      "abrir",
+      "decidir",
+      "permitir",
+      "sufrir",
+      "subir",
+      "dividir",
+      "discutir"
+    ]
+  },
+  "tenses": {
+    "futuro": "Futuro",
+    "imperfecto": "Imperfecto",
+    "presente": "Presente",
+    "pretérito": "Pretérito"
+  },
+  "verbs": {
+    "abrir": {
+      "english": "to open",
+      "forms": {
+        "futuro": {
+          "ellos": "abrirán",
+          "nosotros": "abriremos",
+          "tú": "abrirás",
+          "vosotros": "abriréis",
+          "yo": "abriré",
+          "él": "abrirá"
+        },
+        "imperfecto": {
+          "ellos": "abrían",
+          "nosotros": "abríamos",
+          "tú": "abrías",
+          "vosotros": "abríais",
+          "yo": "abría",
+          "él": "abría"
+        },
+        "presente": {
+          "ellos": "abren",
+          "nosotros": "abrimos",
+          "tú": "abres",
+          "vosotros": "abrís",
+          "yo": "abro",
+          "él": "abre"
+        },
+        "pretérito": {
+          "ellos": "abrieron",
+          "nosotros": "abrimos",
+          "tú": "abriste",
+          "vosotros": "abristeis",
+          "yo": "abrí",
+          "él": "abrió"
+        }
+      }
+    },
+    "aprender": {
+      "english": "to learn",
+      "forms": {
+        "futuro": {
+          "ellos": "aprenderán",
+          "nosotros": "aprenderemos",
+          "tú": "aprenderás",
+          "vosotros": "aprenderéis",
+          "yo": "aprenderé",
+          "él": "aprenderá"
+        },
+        "imperfecto": {
+          "ellos": "aprendían",
+          "nosotros": "aprendíamos",
+          "tú": "aprendías",
+          "vosotros": "aprendíais",
+          "yo": "aprendía",
+          "él": "aprendía"
+        },
+        "presente": {
+          "ellos": "aprenden",
+          "nosotros": "aprendemos",
+          "tú": "aprendes",
+          "vosotros": "aprendéis",
+          "yo": "aprendo",
+          "él": "aprende"
+        },
+        "pretérito": {
+          "ellos": "aprendieron",
+          "nosotros": "aprendimos",
+          "tú": "aprendiste",
+          "vosotros": "aprendisteis",
+          "yo": "aprendí",
+          "él": "aprendió"
+        }
+      }
+    },
+    "bailar": {
+      "english": "to dance",
+      "forms": {
+        "futuro": {
+          "ellos": "bailarán",
+          "nosotros": "bailaremos",
+          "tú": "bailarás",
+          "vosotros": "bailaréis",
+          "yo": "bailaré",
+          "él": "bailará"
+        },
+        "imperfecto": {
+          "ellos": "bailaban",
+          "nosotros": "bailábamos",
+          "tú": "bailabas",
+          "vosotros": "bailabais",
+          "yo": "bailaba",
+          "él": "bailaba"
+        },
+        "presente": {
+          "ellos": "bailan",
+          "nosotros": "bailamos",
+          "tú": "bailas",
+          "vosotros": "bailáis",
+          "yo": "bailo",
+          "él": "baila"
+        },
+        "pretérito": {
+          "ellos": "bailaron",
+          "nosotros": "bailamos",
+          "tú": "bailaste",
+          "vosotros": "bailasteis",
+          "yo": "bailé",
+          "él": "bailó"
+        }
+      }
+    },
+    "beber": {
+      "english": "to drink",
+      "forms": {
+        "futuro": {
+          "ellos": "beberán",
+          "nosotros": "beberemos",
+          "tú": "beberás",
+          "vosotros": "beberéis",
+          "yo": "beberé",
+          "él": "beberá"
+        },
+        "imperfecto": {
+          "ellos": "bebían",
+          "nosotros": "bebíamos",
+          "tú": "bebías",
+          "vosotros": "bebíais",
+          "yo": "bebía",
+          "él": "bebía"
+        },
+        "presente": {
+          "ellos": "beben",
+          "nosotros": "bebemos",
+          "tú": "bebes",
+          "vosotros": "bebéis",
+          "yo": "bebo",
+          "él": "bebe"
+        },
+        "pretérito": {
+          "ellos": "bebieron",
+          "nosotros": "bebimos",
+          "tú": "bebiste",
+          "vosotros": "bebisteis",
+          "yo": "bebí",
+          "él": "bebió"
+        }
+      }
+    },
+    "buscar": {
+      "english": "to look for",
+      "forms": {
+        "futuro": {
+          "ellos": "buscarán",
+          "nosotros": "buscaremos",
+          "tú": "buscarás",
+          "vosotros": "buscaréis",
+          "yo": "buscaré",
+          "él": "buscará"
+        },
+        "imperfecto": {
+          "ellos": "buscaban",
+          "nosotros": "buscábamos",
+          "tú": "buscabas",
+          "vosotros": "buscabais",
+          "yo": "buscaba",
+          "él": "buscaba"
+        },
+        "presente": {
+          "ellos": "buscan",
+          "nosotros": "buscamos",
+          "tú": "buscas",
+          "vosotros": "buscáis",
+          "yo": "busco",
+          "él": "busca"
+        },
+        "pretérito": {
+          "ellos": "buscaron",
+          "nosotros": "buscamos",
+          "tú": "buscaste",
+          "vosotros": "buscasteis",
+          "yo": "busqué",
+          "él": "buscó"
+        }
+      }
+    },
+    "caminar": {
+      "english": "to walk",
+      "forms": {
+        "futuro": {
+          "ellos": "caminarán",
+          "nosotros": "caminaremos",
+          "tú": "caminarás",
+          "vosotros": "caminaréis",
+          "yo": "caminaré",
+          "él": "caminará"
+        },
+        "imperfecto": {
+          "ellos": "caminaban",
+          "nosotros": "caminábamos",
+          "tú": "caminabas",
+          "vosotros": "caminabais",
+          "yo": "caminaba",
+          "él": "caminaba"
+        },
+        "presente": {
+          "ellos": "caminan",
+          "nosotros": "caminamos",
+          "tú": "caminas",
+          "vosotros": "camináis",
+          "yo": "camino",
+          "él": "camina"
+        },
+        "pretérito": {
+          "ellos": "caminaron",
+          "nosotros": "caminamos",
+          "tú": "caminaste",
+          "vosotros": "caminasteis",
+          "yo": "caminé",
+          "él": "caminó"
+        }
+      }
+    },
+    "cantar": {
+      "english": "to sing",
+      "forms": {
+        "futuro": {
+          "ellos": "cantarán",
+          "nosotros": "cantaremos",
+          "tú": "cantarás",
+          "vosotros": "cantaréis",
+          "yo": "cantaré",
+          "él": "cantará"
+        },
+        "imperfecto": {
+          "ellos": "cantaban",
+          "nosotros": "cantábamos",
+          "tú": "cantabas",
+          "vosotros": "cantabais",
+          "yo": "cantaba",
+          "él": "cantaba"
+        },
+        "presente": {
+          "ellos": "cantan",
+          "nosotros": "cantamos",
+          "tú": "cantas",
+          "vosotros": "cantáis",
+          "yo": "canto",
+          "él": "canta"
+        },
+        "pretérito": {
+          "ellos": "cantaron",
+          "nosotros": "cantamos",
+          "tú": "cantaste",
+          "vosotros": "cantasteis",
+          "yo": "canté",
+          "él": "cantó"
+        }
+      }
+    },
+    "cocinar": {
+      "english": "to cook",
+      "forms": {
+        "futuro": {
+          "ellos": "cocinarán",
+          "nosotros": "cocinaremos",
+          "tú": "cocinarás",
+          "vosotros": "cocinaréis",
+          "yo": "cocinaré",
+          "él": "cocinará"
+        },
+        "imperfecto": {
+          "ellos": "cocinaban",
+          "nosotros": "cocinábamos",
+          "tú": "cocinabas",
+          "vosotros": "cocinabais",
+          "yo": "cocinaba",
+          "él": "cocinaba"
+        },
+        "presente": {
+          "ellos": "cocinan",
+          "nosotros": "cocinamos",
+          "tú": "cocinas",
+          "vosotros": "cocináis",
+          "yo": "cocino",
+          "él": "cocina"
+        },
+        "pretérito": {
+          "ellos": "cocinaron",
+          "nosotros": "cocinamos",
+          "tú": "cocinaste",
+          "vosotros": "cocinasteis",
+          "yo": "cociné",
+          "él": "cocinó"
+        }
+      }
+    },
+    "comer": {
+      "english": "to eat",
+      "forms": {
+        "futuro": {
+          "ellos": "comerán",
+          "nosotros": "comeremos",
+          "tú": "comerás",
+          "vosotros": "comeréis",
+          "yo": "comeré",
+          "él": "comerá"
+        },
+        "imperfecto": {
+          "ellos": "comían",
+          "nosotros": "comíamos",
+          "tú": "comías",
+          "vosotros": "comíais",
+          "yo": "comía",
+          "él": "comía"
+        },
+        "presente": {
+          "ellos": "comen",
+          "nosotros": "comemos",
+          "tú": "comes",
+          "vosotros": "coméis",
+          "yo": "como",
+          "él": "come"
+        },
+        "pretérito": {
+          "ellos": "comieron",
+          "nosotros": "comimos",
+          "tú": "comiste",
+          "vosotros": "comisteis",
+          "yo": "comí",
+          "él": "comió"
+        }
+      }
+    },
+    "comprar": {
+      "english": "to buy",
+      "forms": {
+        "futuro": {
+          "ellos": "comprarán",
+          "nosotros": "compraremos",
+          "tú": "comprarás",
+          "vosotros": "compraréis",
+          "yo": "compraré",
+          "él": "comprará"
+        },
+        "imperfecto": {
+          "ellos": "compraban",
+          "nosotros": "comprábamos",
+          "tú": "comprabas",
+          "vosotros": "comprabais",
+          "yo": "compraba",
+          "él": "compraba"
+        },
+        "presente": {
+          "ellos": "compran",
+          "nosotros": "compramos",
+          "tú": "compras",
+          "vosotros": "compráis",
+          "yo": "compro",
+          "él": "compra"
+        },
+        "pretérito": {
+          "ellos": "compraron",
+          "nosotros": "compramos",
+          "tú": "compraste",
+          "vosotros": "comprasteis",
+          "yo": "compré",
+          "él": "compró"
+        }
+      }
+    },
+    "conocer": {
+      "english": "to be familiar with, to know",
+      "forms": {
+        "futuro": {
+          "ellos": "conocerán",
+          "nosotros": "conoceremos",
+          "tú": "conocerás",
+          "vosotros": "conoceréis",
+          "yo": "conoceré",
+          "él": "conocerá"
+        },
+        "imperfecto": {
+          "ellos": "conocían",
+          "nosotros": "conocíamos",
+          "tú": "conocías",
+          "vosotros": "conocíais",
+          "yo": "conocía",
+          "él": "conocía"
+        },
+        "presente": {
+          "ellos": "conocen",
+          "nosotros": "conocemos",
+          "tú": "conoces",
+          "vosotros": "conocéis",
+          "yo": "conozco",
+          "él": "conoce"
+        },
+        "pretérito": {
+          "ellos": "conocieron",
+          "nosotros": "conocimos",
+          "tú": "conociste",
+          "vosotros": "conocisteis",
+          "yo": "conocí",
+          "él": "conoció"
+        }
+      }
+    },
+    "correr": {
+      "english": "to run",
+      "forms": {
+        "futuro": {
+          "ellos": "correrán",
+          "nosotros": "correremos",
+          "tú": "correrás",
+          "vosotros": "correréis",
+          "yo": "correré",
+          "él": "correrá"
+        },
+        "imperfecto": {
+          "ellos": "corrían",
+          "nosotros": "corríamos",
+          "tú": "corrías",
+          "vosotros": "corríais",
+          "yo": "corría",
+          "él": "corría"
+        },
+        "presente": {
+          "ellos": "corren",
+          "nosotros": "corremos",
+          "tú": "corres",
+          "vosotros": "corréis",
+          "yo": "corro",
+          "él": "corre"
+        },
+        "pretérito": {
+          "ellos": "corrieron",
+          "nosotros": "corrimos",
+          "tú": "corriste",
+          "vosotros": "corristeis",
+          "yo": "corrí",
+          "él": "corrió"
+        }
+      }
+    },
+    "creer": {
+      "english": "to believe, to think",
+      "forms": {
+        "futuro": {
+          "ellos": "creerán",
+          "nosotros": "creeremos",
+          "tú": "creerás",
+          "vosotros": "creeréis",
+          "yo": "creeré",
+          "él": "creerá"
+        },
+        "imperfecto": {
+          "ellos": "creían",
+          "nosotros": "creíamos",
+          "tú": "creías",
+          "vosotros": "creíais",
+          "yo": "creía",
+          "él": "creía"
+        },
+        "presente": {
+          "ellos": "creen",
+          "nosotros": "creemos",
+          "tú": "crees",
+          "vosotros": "creéis",
+          "yo": "creo",
+          "él": "cree"
+        },
+        "pretérito": {
+          "ellos": "creyeron",
+          "nosotros": "creímos",
+          "tú": "creíste",
+          "vosotros": "creísteis",
+          "yo": "creí",
+          "él": "creyó"
+        }
+      }
+    },
+    "dar": {
+      "english": "to give",
+      "forms": {
+        "futuro": {
+          "ellos": "darán",
+          "nosotros": "daremos",
+          "tú": "darás",
+          "vosotros": "daréis",
+          "yo": "daré",
+          "él": "dará"
+        },
+        "imperfecto": {
+          "ellos": "daban",
+          "nosotros": "dábamos",
+          "tú": "dabas",
+          "vosotros": "dabais",
+          "yo": "daba",
+          "él": "daba"
+        },
+        "presente": {
+          "ellos": "dan",
+          "nosotros": "damos",
+          "tú": "das",
+          "vosotros": "dais",
+          "yo": "doy",
+          "él": "da"
+        },
+        "pretérito": {
+          "ellos": "dieron",
+          "nosotros": "dimos",
+          "tú": "diste",
+          "vosotros": "disteis",
+          "yo": "di",
+          "él": "dio"
+        }
+      }
+    },
+    "deber": {
+      "english": "to should, to ought, to owe",
+      "forms": {
+        "futuro": {
+          "ellos": "deberán",
+          "nosotros": "deberemos",
+          "tú": "deberás",
+          "vosotros": "deberéis",
+          "yo": "deberé",
+          "él": "deberá"
+        },
+        "imperfecto": {
+          "ellos": "debían",
+          "nosotros": "debíamos",
+          "tú": "debías",
+          "vosotros": "debíais",
+          "yo": "debía",
+          "él": "debía"
+        },
+        "presente": {
+          "ellos": "deben",
+          "nosotros": "debemos",
+          "tú": "debes",
+          "vosotros": "debéis",
+          "yo": "debo",
+          "él": "debe"
+        },
+        "pretérito": {
+          "ellos": "debieron",
+          "nosotros": "debimos",
+          "tú": "debiste",
+          "vosotros": "debisteis",
+          "yo": "debí",
+          "él": "debió"
+        }
+      }
+    },
+    "decidir": {
+      "english": "to decide",
+      "forms": {
+        "futuro": {
+          "ellos": "decidirán",
+          "nosotros": "decidiremos",
+          "tú": "decidirás",
+          "vosotros": "decidiréis",
+          "yo": "decidiré",
+          "él": "decidirá"
+        },
+        "imperfecto": {
+          "ellos": "decidían",
+          "nosotros": "decidíamos",
+          "tú": "decidías",
+          "vosotros": "decidíais",
+          "yo": "decidía",
+          "él": "decidía"
+        },
+        "presente": {
+          "ellos": "deciden",
+          "nosotros": "decidimos",
+          "tú": "decides",
+          "vosotros": "decidís",
+          "yo": "decido",
+          "él": "decide"
+        },
+        "pretérito": {
+          "ellos": "decidieron",
+          "nosotros": "decidimos",
+          "tú": "decidiste",
+          "vosotros": "decidisteis",
+          "yo": "decidí",
+          "él": "decidió"
+        }
+      }
+    },
+    "decir": {
+      "english": "to say, to tell",
+      "forms": {
+        "futuro": {
+          "ellos": "dirán",
+          "nosotros": "diremos",
+          "tú": "dirás",
+          "vosotros": "diréis",
+          "yo": "diré",
+          "él": "dirá"
+        },
+        "imperfecto": {
+          "ellos": "decían",
+          "nosotros": "decíamos",
+          "tú": "decías",
+          "vosotros": "decíais",
+          "yo": "decía",
+          "él": "decía"
+        },
+        "presente": {
+          "ellos": "dicen",
+          "nosotros": "decimos",
+          "tú": "dices",
+          "vosotros": "decís",
+          "yo": "digo",
+          "él": "dice"
+        },
+        "pretérito": {
+          "ellos": "dijeron",
+          "nosotros": "dijimos",
+          "tú": "dijiste",
+          "vosotros": "dijisteis",
+          "yo": "dije",
+          "él": "dijo"
+        }
+      }
+    },
+    "dejar": {
+      "english": "to let, to allow, to leave, to leave behind",
+      "forms": {
+        "futuro": {
+          "ellos": "dejarán",
+          "nosotros": "dejaremos",
+          "tú": "dejarás",
+          "vosotros": "dejaréis",
+          "yo": "dejaré",
+          "él": "dejará"
+        },
+        "imperfecto": {
+          "ellos": "dejaban",
+          "nosotros": "dejábamos",
+          "tú": "dejabas",
+          "vosotros": "dejabais",
+          "yo": "dejaba",
+          "él": "dejaba"
+        },
+        "presente": {
+          "ellos": "dejan",
+          "nosotros": "dejamos",
+          "tú": "dejas",
+          "vosotros": "dejáis",
+          "yo": "dejo",
+          "él": "deja"
+        },
+        "pretérito": {
+          "ellos": "dejaron",
+          "nosotros": "dejamos",
+          "tú": "dejaste",
+          "vosotros": "dejasteis",
+          "yo": "dejé",
+          "él": "dejó"
+        }
+      }
+    },
+    "discutir": {
+      "english": "to argue",
+      "forms": {
+        "futuro": {
+          "ellos": "discutirán",
+          "nosotros": "discutiremos",
+          "tú": "discutirás",
+          "vosotros": "discutiréis",
+          "yo": "discutiré",
+          "él": "discutirá"
+        },
+        "imperfecto": {
+          "ellos": "discutían",
+          "nosotros": "discutíamos",
+          "tú": "discutías",
+          "vosotros": "discutíais",
+          "yo": "discutía",
+          "él": "discutía"
+        },
+        "presente": {
+          "ellos": "discuten",
+          "nosotros": "discutimos",
+          "tú": "discutes",
+          "vosotros": "discutís",
+          "yo": "discuto",
+          "él": "discute"
+        },
+        "pretérito": {
+          "ellos": "discutieron",
+          "nosotros": "discutimos",
+          "tú": "discutiste",
+          "vosotros": "discutisteis",
+          "yo": "discutí",
+          "él": "discutió"
+        }
+      }
+    },
+    "dividir": {
+      "english": "to divide",
+      "forms": {
+        "futuro": {
+          "ellos": "dividirán",
+          "nosotros": "dividiremos",
+          "tú": "dividirás",
+          "vosotros": "dividiréis",
+          "yo": "dividiré",
+          "él": "dividirá"
+        },
+        "imperfecto": {
+          "ellos": "dividían",
+          "nosotros": "dividíamos",
+          "tú": "dividías",
+          "vosotros": "dividíais",
+          "yo": "dividía",
+          "él": "dividía"
+        },
+        "presente": {
+          "ellos": "dividen",
+          "nosotros": "dividimos",
+          "tú": "divides",
+          "vosotros": "dividís",
+          "yo": "divido",
+          "él": "divide"
+        },
+        "pretérito": {
+          "ellos": "dividieron",
+          "nosotros": "dividimos",
+          "tú": "dividiste",
+          "vosotros": "dividisteis",
+          "yo": "dividí",
+          "él": "dividió"
+        }
+      }
+    },
+    "encontrar": {
+      "english": "to find, to encounter",
+      "forms": {
+        "futuro": {
+          "ellos": "encontrarán",
+          "nosotros": "encontraremos",
+          "tú": "encontrarás",
+          "vosotros": "encontraréis",
+          "yo": "encontraré",
+          "él": "encontrará"
+        },
+        "imperfecto": {
+          "ellos": "encontraban",
+          "nosotros": "encontrábamos",
+          "tú": "encontrabas",
+          "vosotros": "encontrabais",
+          "yo": "encontraba",
+          "él": "encontraba"
+        },
+        "presente": {
+          "ellos": "encuentran",
+          "nosotros": "encontramos",
+          "tú": "encuentras",
+          "vosotros": "encontráis",
+          "yo": "encuentro",
+          "él": "encuentra"
+        },
+        "pretérito": {
+          "ellos": "encontraron",
+          "nosotros": "encontramos",
+          "tú": "encontraste",
+          "vosotros": "encontrasteis",
+          "yo": "encontré",
+          "él": "encontró"
+        }
+      }
+    },
+    "escribir": {
+      "english": "to write",
+      "forms": {
+        "futuro": {
+          "ellos": "escribirán",
+          "nosotros": "escribiremos",
+          "tú": "escribirás",
+          "vosotros": "escribiréis",
+          "yo": "escribiré",
+          "él": "escribirá"
+        },
+        "imperfecto": {
+          "ellos": "escribían",
+          "nosotros": "escribíamos",
+          "tú": "escribías",
+          "vosotros": "escribíais",
+          "yo": "escribía",
+          "él": "escribía"
+        },
+        "presente": {
+          "ellos": "escriben",
+          "nosotros": "escribimos",
+          "tú": "escribes",
+          "vosotros": "escribís",
+          "yo": "escribo",
+          "él": "escribe"
+        },
+        "pretérito": {
+          "ellos": "escribieron",
+          "nosotros": "escribimos",
+          "tú": "escribiste",
+          "vosotros": "escribisteis",
+          "yo": "escribí",
+          "él": "escribió"
+        }
+      }
+    },
+    "escuchar": {
+      "english": "to listen to",
+      "forms": {
+        "futuro": {
+          "ellos": "escucharán",
+          "nosotros": "escucharemos",
+          "tú": "escucharás",
+          "vosotros": "escucharéis",
+          "yo": "escucharé",
+          "él": "escuchará"
+        },
+        "imperfecto": {
+          "ellos": "escuchaban",
+          "nosotros": "escuchábamos",
+          "tú": "escuchabas",
+          "vosotros": "escuchabais",
+          "yo": "escuchaba",
+          "él": "escuchaba"
+        },
+        "presente": {
+          "ellos": "escuchan",
+          "nosotros": "escuchamos",
+          "tú": "escuchas",
+          "vosotros": "escucháis",
+          "yo": "escucho",
+          "él": "escucha"
+        },
+        "pretérito": {
+          "ellos": "escucharon",
+          "nosotros": "escuchamos",
+          "tú": "escuchaste",
+          "vosotros": "escuchasteis",
+          "yo": "escuché",
+          "él": "escuchó"
+        }
+      }
+    },
+    "esperar": {
+      "english": "to wait, to hope",
+      "forms": {
+        "futuro": {
+          "ellos": "esperarán",
+          "nosotros": "esperaremos",
+          "tú": "esperarás",
+          "vosotros": "esperaréis",
+          "yo": "esperaré",
+          "él": "esperará"
+        },
+        "imperfecto": {
+          "ellos": "esperaban",
+          "nosotros": "esperábamos",
+          "tú": "esperabas",
+          "vosotros": "esperabais",
+          "yo": "esperaba",
+          "él": "esperaba"
+        },
+        "presente": {
+          "ellos": "esperan",
+          "nosotros": "esperamos",
+          "tú": "esperas",
+          "vosotros": "esperáis",
+          "yo": "espero",
+          "él": "espera"
+        },
+        "pretérito": {
+          "ellos": "esperaron",
+          "nosotros": "esperamos",
+          "tú": "esperaste",
+          "vosotros": "esperasteis",
+          "yo": "esperé",
+          "él": "esperó"
+        }
+      }
+    },
+    "estar": {
+      "english": "to be",
+      "forms": {
+        "futuro": {
+          "ellos": "estarán",
+          "nosotros": "estaremos",
+          "tú": "estarás",
+          "vosotros": "estaréis",
+          "yo": "estaré",
+          "él": "estará"
+        },
+        "imperfecto": {
+          "ellos": "estaban",
+          "nosotros": "estábamos",
+          "tú": "estabas",
+          "vosotros": "estabais",
+          "yo": "estaba",
+          "él": "estaba"
+        },
+        "presente": {
+          "ellos": "están",
+          "nosotros": "estamos",
+          "tú": "estás",
+          "vosotros": "estáis",
+          "yo": "estoy",
+          "él": "está"
+        },
+        "pretérito": {
+          "ellos": "estuvieron",
+          "nosotros": "estuvimos",
+          "tú": "estuviste",
+          "vosotros": "estuvisteis",
+          "yo": "estuve",
+          "él": "estuvo"
+        }
+      }
+    },
+    "estudiar": {
+      "english": "to study",
+      "forms": {
+        "futuro": {
+          "ellos": "estudiarán",
+          "nosotros": "estudiaremos",
+          "tú": "estudiarás",
+          "vosotros": "estudiaréis",
+          "yo": "estudiaré",
+          "él": "estudiará"
+        },
+        "imperfecto": {
+          "ellos": "estudiaban",
+          "nosotros": "estudiábamos",
+          "tú": "estudiabas",
+          "vosotros": "estudiabais",
+          "yo": "estudiaba",
+          "él": "estudiaba"
+        },
+        "presente": {
+          "ellos": "estudian",
+          "nosotros": "estudiamos",
+          "tú": "estudias",
+          "vosotros": "estudiáis",
+          "yo": "estudio",
+          "él": "estudia"
+        },
+        "pretérito": {
+          "ellos": "estudiaron",
+          "nosotros": "estudiamos",
+          "tú": "estudiaste",
+          "vosotros": "estudiasteis",
+          "yo": "estudié",
+          "él": "estudió"
+        }
+      }
+    },
+    "hablar": {
+      "english": "to speak, to talk",
+      "forms": {
+        "futuro": {
+          "ellos": "hablarán",
+          "nosotros": "hablaremos",
+          "tú": "hablarás",
+          "vosotros": "hablaréis",
+          "yo": "hablaré",
+          "él": "hablará"
+        },
+        "imperfecto": {
+          "ellos": "hablaban",
+          "nosotros": "hablábamos",
+          "tú": "hablabas",
+          "vosotros": "hablabais",
+          "yo": "hablaba",
+          "él": "hablaba"
+        },
+        "presente": {
+          "ellos": "hablan",
+          "nosotros": "hablamos",
+          "tú": "hablas",
+          "vosotros": "habláis",
+          "yo": "hablo",
+          "él": "habla"
+        },
+        "pretérito": {
+          "ellos": "hablaron",
+          "nosotros": "hablamos",
+          "tú": "hablaste",
+          "vosotros": "hablasteis",
+          "yo": "hablé",
+          "él": "habló"
+        }
+      }
+    },
+    "hacer": {
+      "english": "to make, to do",
+      "forms": {
+        "futuro": {
+          "ellos": "harán",
+          "nosotros": "haremos",
+          "tú": "harás",
+          "vosotros": "haréis",
+          "yo": "haré",
+          "él": "hará"
+        },
+        "imperfecto": {
+          "ellos": "hacían",
+          "nosotros": "hacíamos",
+          "tú": "hacías",
+          "vosotros": "hacíais",
+          "yo": "hacía",
+          "él": "hacía"
+        },
+        "presente": {
+          "ellos": "hacen",
+          "nosotros": "hacemos",
+          "tú": "haces",
+          "vosotros": "hacéis",
+          "yo": "hago",
+          "él": "hace"
+        },
+        "pretérito": {
+          "ellos": "hicieron",
+          "nosotros": "hicimos",
+          "tú": "hiciste",
+          "vosotros": "hicisteis",
+          "yo": "hice",
+          "él": "hizo"
+        }
+      }
+    },
+    "ir": {
+      "english": "to go",
+      "forms": {
+        "futuro": {
+          "ellos": "irán",
+          "nosotros": "iremos",
+          "tú": "irás",
+          "vosotros": "iréis",
+          "yo": "iré",
+          "él": "irá"
+        },
+        "imperfecto": {
+          "ellos": "iban",
+          "nosotros": "íbamos",
+          "tú": "ibas",
+          "vosotros": "ibais",
+          "yo": "iba",
+          "él": "iba"
+        },
+        "presente": {
+          "ellos": "van",
+          "nosotros": "vamos",
+          "tú": "vas",
+          "vosotros": "vais",
+          "yo": "voy",
+          "él": "va"
+        },
+        "pretérito": {
+          "ellos": "fueron",
+          "nosotros": "fuimos",
+          "tú": "fuiste",
+          "vosotros": "fuisteis",
+          "yo": "fui",
+          "él": "fue"
+        }
+      }
+    },
+    "leer": {
+      "english": "to read",
+      "forms": {
+        "futuro": {
+          "ellos": "leerán",
+          "nosotros": "leeremos",
+          "tú": "leerás",
+          "vosotros": "leeréis",
+          "yo": "leeré",
+          "él": "leerá"
+        },
+        "imperfecto": {
+          "ellos": "leían",
+          "nosotros": "leíamos",
+          "tú": "leías",
+          "vosotros": "leíais",
+          "yo": "leía",
+          "él": "leía"
+        },
+        "presente": {
+          "ellos": "leen",
+          "nosotros": "leemos",
+          "tú": "lees",
+          "vosotros": "leéis",
+          "yo": "leo",
+          "él": "lee"
+        },
+        "pretérito": {
+          "ellos": "leyeron",
+          "nosotros": "leímos",
+          "tú": "leíste",
+          "vosotros": "leísteis",
+          "yo": "leí",
+          "él": "leyó"
+        }
+      }
+    },
+    "llamar": {
+      "english": "to call, to call oneself",
+      "forms": {
+        "futuro": {
+          "ellos": "llamarán",
+          "nosotros": "llamaremos",
+          "tú": "llamarás",
+          "vosotros": "llamaréis",
+          "yo": "llamaré",
+          "él": "llamará"
+        },
+        "imperfecto": {
+          "ellos": "llamaban",
+          "nosotros": "llamábamos",
+          "tú": "llamabas",
+          "vosotros": "llamabais",
+          "yo": "llamaba",
+          "él": "llamaba"
+        },
+        "presente": {
+          "ellos": "llaman",
+          "nosotros": "llamamos",
+          "tú": "llamas",
+          "vosotros": "llamáis",
+          "yo": "llamo",
+          "él": "llama"
+        },
+        "pretérito": {
+          "ellos": "llamaron",
+          "nosotros": "llamamos",
+          "tú": "llamaste",
+          "vosotros": "llamasteis",
+          "yo": "llamé",
+          "él": "llamó"
+        }
+      }
+    },
+    "llegar": {
+      "english": "to arrive",
+      "forms": {
+        "futuro": {
+          "ellos": "llegarán",
+          "nosotros": "llegaremos",
+          "tú": "llegarás",
+          "vosotros": "llegaréis",
+          "yo": "llegaré",
+          "él": "llegará"
+        },
+        "imperfecto": {
+          "ellos": "llegaban",
+          "nosotros": "llegábamos",
+          "tú": "llegabas",
+          "vosotros": "llegabais",
+          "yo": "llegaba",
+          "él": "llegaba"
+        },
+        "presente": {
+          "ellos": "llegan",
+          "nosotros": "llegamos",
+          "tú": "llegas",
+          "vosotros": "llegáis",
+          "yo": "llego",
+          "él": "llega"
+        },
+        "pretérito": {
+          "ellos": "llegaron",
+          "nosotros": "llegamos",
+          "tú": "llegaste",
+          "vosotros": "llegasteis",
+          "yo": "llegué",
+          "él": "llegó"
+        }
+      }
+    },
+    "llevar": {
+      "english": "to take, to carry, to wear",
+      "forms": {
+        "futuro": {
+          "ellos": "llevarán",
+          "nosotros": "llevaremos",
+          "tú": "llevarás",
+          "vosotros": "llevaréis",
+          "yo": "llevaré",
+          "él": "llevará"
+        },
+        "imperfecto": {
+          "ellos": "llevaban",
+          "nosotros": "llevábamos",
+          "tú": "llevabas",
+          "vosotros": "llevabais",
+          "yo": "llevaba",
+          "él": "llevaba"
+        },
+        "presente": {
+          "ellos": "llevan",
+          "nosotros": "llevamos",
+          "tú": "llevas",
+          "vosotros": "lleváis",
+          "yo": "llevo",
+          "él": "lleva"
+        },
+        "pretérito": {
+          "ellos": "llevaron",
+          "nosotros": "llevamos",
+          "tú": "llevaste",
+          "vosotros": "llevasteis",
+          "yo": "llevé",
+          "él": "llevó"
+        }
+      }
+    },
+    "mirar": {
+      "english": "to look, to watch",
+      "forms": {
+        "futuro": {
+          "ellos": "mirarán",
+          "nosotros": "miraremos",
+          "tú": "mirarás",
+          "vosotros": "miraréis",
+          "yo": "miraré",
+          "él": "mirará"
+        },
+        "imperfecto": {
+          "ellos": "miraban",
+          "nosotros": "mirábamos",
+          "tú": "mirabas",
+          "vosotros": "mirabais",
+          "yo": "miraba",
+          "él": "miraba"
+        },
+        "presente": {
+          "ellos": "miran",
+          "nosotros": "miramos",
+          "tú": "miras",
+          "vosotros": "miráis",
+          "yo": "miro",
+          "él": "mira"
+        },
+        "pretérito": {
+          "ellos": "miraron",
+          "nosotros": "miramos",
+          "tú": "miraste",
+          "vosotros": "mirasteis",
+          "yo": "miré",
+          "él": "miró"
+        }
+      }
+    },
+    "parecer": {
+      "english": "to seem, to look like",
+      "forms": {
+        "futuro": {
+          "ellos": "parecerán",
+          "nosotros": "pareceremos",
+          "tú": "parecerás",
+          "vosotros": "pareceréis",
+          "yo": "pareceré",
+          "él": "parecerá"
+        },
+        "imperfecto": {
+          "ellos": "parecían",
+          "nosotros": "parecíamos",
+          "tú": "parecías",
+          "vosotros": "parecíais",
+          "yo": "parecía",
+          "él": "parecía"
+        },
+        "presente": {
+          "ellos": "parecen",
+          "nosotros": "parecemos",
+          "tú": "pareces",
+          "vosotros": "parecéis",
+          "yo": "parezco",
+          "él": "parece"
+        },
+        "pretérito": {
+          "ellos": "parecieron",
+          "nosotros": "parecimos",
+          "tú": "pareciste",
+          "vosotros": "parecisteis",
+          "yo": "parecí",
+          "él": "pareció"
+        }
+      }
+    },
+    "pasar": {
+      "english": "to pass, to spend",
+      "forms": {
+        "futuro": {
+          "ellos": "pasarán",
+          "nosotros": "pasaremos",
+          "tú": "pasarás",
+          "vosotros": "pasaréis",
+          "yo": "pasaré",
+          "él": "pasará"
+        },
+        "imperfecto": {
+          "ellos": "pasaban",
+          "nosotros": "pasábamos",
+          "tú": "pasabas",
+          "vosotros": "pasabais",
+          "yo": "pasaba",
+          "él": "pasaba"
+        },
+        "presente": {
+          "ellos": "pasan",
+          "nosotros": "pasamos",
+          "tú": "pasas",
+          "vosotros": "pasáis",
+          "yo": "paso",
+          "él": "pasa"
+        },
+        "pretérito": {
+          "ellos": "pasaron",
+          "nosotros": "pasamos",
+          "tú": "pasaste",
+          "vosotros": "pasasteis",
+          "yo": "pasé",
+          "él": "pasó"
+        }
+      }
+    },
+    "pensar": {
+      "english": "to think, to plan",
+      "forms": {
+        "futuro": {
+          "ellos": "pensarán",
+          "nosotros": "pensaremos",
+          "tú": "pensarás",
+          "vosotros": "pensaréis",
+          "yo": "pensaré",
+          "él": "pensará"
+        },
+        "imperfecto": {
+          "ellos": "pensaban",
+          "nosotros": "pensábamos",
+          "tú": "pensabas",
+          "vosotros": "pensabais",
+          "yo": "pensaba",
+          "él": "pensaba"
+        },
+        "presente": {
+          "ellos": "piensan",
+          "nosotros": "pensamos",
+          "tú": "piensas",
+          "vosotros": "pensáis",
+          "yo": "pienso",
+          "él": "piensa"
+        },
+        "pretérito": {
+          "ellos": "pensaron",
+          "nosotros": "pensamos",
+          "tú": "pensaste",
+          "vosotros": "pensasteis",
+          "yo": "pensé",
+          "él": "pensó"
+        }
+      }
+    },
+    "permitir": {
+      "english": "to allow, to permit",
+      "forms": {
+        "futuro": {
+          "ellos": "permitirán",
+          "nosotros": "permitiremos",
+          "tú": "permitirás",
+          "vosotros": "permitiréis",
+          "yo": "permitiré",
+          "él": "permitirá"
+        },
+        "imperfecto": {
+          "ellos": "permitían",
+          "nosotros": "permitíamos",
+          "tú": "permitías",
+          "vosotros": "permitíais",
+          "yo": "permitía",
+          "él": "permitía"
+        },
+        "presente": {
+          "ellos": "permiten",
+          "nosotros": "permitimos",
+          "tú": "permites",
+          "vosotros": "permitís",
+          "yo": "permito",
+          "él": "permite"
+        },
+        "pretérito": {
+          "ellos": "permitieron",
+          "nosotros": "permitimos",
+          "tú": "permitiste",
+          "vosotros": "permitisteis",
+          "yo": "permití",
+          "él": "permitió"
+        }
+      }
+    },
+    "poder": {
+      "english": "to be able to, to can",
+      "forms": {
+        "futuro": {
+          "ellos": "podrán",
+          "nosotros": "podremos",
+          "tú": "podrás",
+          "vosotros": "podréis",
+          "yo": "podré",
+          "él": "podrá"
+        },
+        "imperfecto": {
+          "ellos": "podían",
+          "nosotros": "podíamos",
+          "tú": "podías",
+          "vosotros": "podíais",
+          "yo": "podía",
+          "él": "podía"
+        },
+        "presente": {
+          "ellos": "pueden",
+          "nosotros": "podemos",
+          "tú": "puedes",
+          "vosotros": "podéis",
+          "yo": "puedo",
+          "él": "puede"
+        },
+        "pretérito": {
+          "ellos": "pudieron",
+          "nosotros": "pudimos",
+          "tú": "pudiste",
+          "vosotros": "pudisteis",
+          "yo": "pude",
+          "él": "pudo"
+        }
+      }
+    },
+    "poner": {
+      "english": "to put, to place",
+      "forms": {
+        "futuro": {
+          "ellos": "pondrán",
+          "nosotros": "pondremos",
+          "tú": "pondrás",
+          "vosotros": "pondréis",
+          "yo": "pondré",
+          "él": "pondrá"
+        },
+        "imperfecto": {
+          "ellos": "ponían",
+          "nosotros": "poníamos",
+          "tú": "ponías",
+          "vosotros": "poníais",
+          "yo": "ponía",
+          "él": "ponía"
+        },
+        "presente": {
+          "ellos": "ponen",
+          "nosotros": "ponemos",
+          "tú": "pones",
+          "vosotros": "ponéis",
+          "yo": "pongo",
+          "él": "pone"
+        },
+        "pretérito": {
+          "ellos": "pusieron",
+          "nosotros": "pusimos",
+          "tú": "pusiste",
+          "vosotros": "pusisteis",
+          "yo": "puse",
+          "él": "puso"
+        }
+      }
+    },
+    "preguntar": {
+      "english": "to ask",
+      "forms": {
+        "futuro": {
+          "ellos": "preguntarán",
+          "nosotros": "preguntaremos",
+          "tú": "preguntarás",
+          "vosotros": "preguntaréis",
+          "yo": "preguntaré",
+          "él": "preguntará"
+        },
+        "imperfecto": {
+          "ellos": "preguntaban",
+          "nosotros": "preguntábamos",
+          "tú": "preguntabas",
+          "vosotros": "preguntabais",
+          "yo": "preguntaba",
+          "él": "preguntaba"
+        },
+        "presente": {
+          "ellos": "preguntan",
+          "nosotros": "preguntamos",
+          "tú": "preguntas",
+          "vosotros": "preguntáis",
+          "yo": "pregunto",
+          "él": "pregunta"
+        },
+        "pretérito": {
+          "ellos": "preguntaron",
+          "nosotros": "preguntamos",
+          "tú": "preguntaste",
+          "vosotros": "preguntasteis",
+          "yo": "pregunté",
+          "él": "preguntó"
+        }
+      }
+    },
+    "quedar": {
+      "english": "to remain, to stay",
+      "forms": {
+        "futuro": {
+          "ellos": "quedarán",
+          "nosotros": "quedaremos",
+          "tú": "quedarás",
+          "vosotros": "quedaréis",
+          "yo": "quedaré",
+          "él": "quedará"
+        },
+        "imperfecto": {
+          "ellos": "quedaban",
+          "nosotros": "quedábamos",
+          "tú": "quedabas",
+          "vosotros": "quedabais",
+          "yo": "quedaba",
+          "él": "quedaba"
+        },
+        "presente": {
+          "ellos": "quedan",
+          "nosotros": "quedamos",
+          "tú": "quedas",
+          "vosotros": "quedáis",
+          "yo": "quedo",
+          "él": "queda"
+        },
+        "pretérito": {
+          "ellos": "quedaron",
+          "nosotros": "quedamos",
+          "tú": "quedaste",
+          "vosotros": "quedasteis",
+          "yo": "quedé",
+          "él": "quedó"
+        }
+      }
+    },
+    "querer": {
+      "english": "to wish, to want, to love",
+      "forms": {
+        "futuro": {
+          "ellos": "querrán",
+          "nosotros": "querremos",
+          "tú": "querrás",
+          "vosotros": "querréis",
+          "yo": "querré",
+          "él": "querrá"
+        },
+        "imperfecto": {
+          "ellos": "querían",
+          "nosotros": "queríamos",
+          "tú": "querías",
+          "vosotros": "queríais",
+          "yo": "quería",
+          "él": "quería"
+        },
+        "presente": {
+          "ellos": "quieren",
+          "nosotros": "queremos",
+          "tú": "quieres",
+          "vosotros": "queréis",
+          "yo": "quiero",
+          "él": "quiere"
+        },
+        "pretérito": {
+          "ellos": "quisieron",
+          "nosotros": "quisimos",
+          "tú": "quisiste",
+          "vosotros": "quisisteis",
+          "yo": "quise",
+          "él": "quiso"
+        }
+      }
+    },
+    "recibir": {
+      "english": "to receive",
+      "forms": {
+        "futuro": {
+          "ellos": "recibirán",
+          "nosotros": "recibiremos",
+          "tú": "recibirás",
+          "vosotros": "recibiréis",
+          "yo": "recibiré",
+          "él": "recibirá"
+        },
+        "imperfecto": {
+          "ellos": "recibían",
+          "nosotros": "recibíamos",
+          "tú": "recibías",
+          "vosotros": "recibíais",
+          "yo": "recibía",
+          "él": "recibía"
+        },
+        "presente": {
+          "ellos": "reciben",
+          "nosotros": "recibimos",
+          "tú": "recibes",
+          "vosotros": "recibís",
+          "yo": "recibo",
+          "él": "recibe"
+        },
+        "pretérito": {
+          "ellos": "recibieron",
+          "nosotros": "recibimos",
+          "tú": "recibiste",
+          "vosotros": "recibisteis",
+          "yo": "recibí",
+          "él": "recibió"
+        }
+      }
+    },
+    "saber": {
+      "english": "to know a fact, how to do something (present), to find out (preterite)",
+      "forms": {
+        "futuro": {
+          "ellos": "sabrán",
+          "nosotros": "sabremos",
+          "tú": "sabrás",
+          "vosotros": "sabréis",
+          "yo": "sabré",
+          "él": "sabrá"
+        },
+        "imperfecto": {
+          "ellos": "sabían",
+          "nosotros": "sabíamos",
+          "tú": "sabías",
+          "vosotros": "sabíais",
+          "yo": "sabía",
+          "él": "sabía"
+        },
+        "presente": {
+          "ellos": "saben",
+          "nosotros": "sabemos",
+          "tú": "sabes",
+          "vosotros": "sabéis",
+          "yo": "sé",
+          "él": "sabe"
+        },
+        "pretérito": {
+          "ellos": "supieron",
+          "nosotros": "supimos",
+          "tú": "supiste",
+          "vosotros": "supisteis",
+          "yo": "supe",
+          "él": "supo"
+        }
+      }
+    },
+    "salir": {
+      "english": "to leave, to go out",
+      "forms": {
+        "futuro": {
+          "ellos": "saldrán",
+          "nosotros": "saldremos",
+          "tú": "saldrás",
+          "vosotros": "saldréis",
+          "yo": "saldré",
+          "él": "saldrá"
+        },
+        "imperfecto": {
+          "ellos": "salían",
+          "nosotros": "salíamos",
+          "tú": "salías",
+          "vosotros": "salíais",
+          "yo": "salía",
+          "él": "salía"
+        },
+        "presente": {
+          "ellos": "salen",
+          "nosotros": "salimos",
+          "tú": "sales",
+          "vosotros": "salís",
+          "yo": "salgo",
+          "él": "sale"
+        },
+        "pretérito": {
+          "ellos": "salieron",
+          "nosotros": "salimos",
+          "tú": "saliste",
+          "vosotros": "salisteis",
+          "yo": "salí",
+          "él": "salió"
+        }
+      }
+    },
+    "seguir": {
+      "english": "to follow, to continue",
+      "forms": {
+        "futuro": {
+          "ellos": "seguirán",
+          "nosotros": "seguiremos",
+          "tú": "seguirás",
+          "vosotros": "seguiréis",
+          "yo": "seguiré",
+          "él": "seguirá"
+        },
+        "imperfecto": {
+          "ellos": "seguían",
+          "nosotros": "seguíamos",
+          "tú": "seguías",
+          "vosotros": "seguíais",
+          "yo": "seguía",
+          "él": "seguía"
+        },
+        "presente": {
+          "ellos": "siguen",
+          "nosotros": "seguimos",
+          "tú": "sigues",
+          "vosotros": "seguís",
+          "yo": "sigo",
+          "él": "sigue"
+        },
+        "pretérito": {
+          "ellos": "siguieron",
+          "nosotros": "seguimos",
+          "tú": "seguiste",
+          "vosotros": "seguisteis",
+          "yo": "seguí",
+          "él": "siguió"
+        }
+      }
+    },
+    "ser": {
+      "english": "to be",
+      "forms": {
+        "futuro": {
+          "ellos": "serán",
+          "nosotros": "seremos",
+          "tú": "serás",
+          "vosotros": "seréis",
+          "yo": "seré",
+          "él": "será"
+        },
+        "imperfecto": {
+          "ellos": "eran",
+          "nosotros": "éramos",
+          "tú": "eras",
+          "vosotros": "erais",
+          "yo": "era",
+          "él": "era"
+        },
+        "presente": {
+          "ellos": "son",
+          "nosotros": "somos",
+          "tú": "eres",
+          "vosotros": "sois",
+          "yo": "soy",
+          "él": "es"
+        },
+        "pretérito": {
+          "ellos": "fueron",
+          "nosotros": "fuimos",
+          "tú": "fuiste",
+          "vosotros": "fuisteis",
+          "yo": "fui",
+          "él": "fue"
+        }
+      }
+    },
+    "subir": {
+      "english": "to go up",
+      "forms": {
+        "futuro": {
+          "ellos": "subirán",
+          "nosotros": "subiremos",
+          "tú": "subirás",
+          "vosotros": "subiréis",
+          "yo": "subiré",
+          "él": "subirá"
+        },
+        "imperfecto": {
+          "ellos": "subían",
+          "nosotros": "subíamos",
+          "tú": "subías",
+          "vosotros": "subíais",
+          "yo": "subía",
+          "él": "subía"
+        },
+        "presente": {
+          "ellos": "suben",
+          "nosotros": "subimos",
+          "tú": "subes",
+          "vosotros": "subís",
+          "yo": "subo",
+          "él": "sube"
+        },
+        "pretérito": {
+          "ellos": "subieron",
+          "nosotros": "subimos",
+          "tú": "subiste",
+          "vosotros": "subisteis",
+          "yo": "subí",
+          "él": "subió"
+        }
+      }
+    },
+    "sufrir": {
+      "english": "to suffer, to undergo",
+      "forms": {
+        "futuro": {
+          "ellos": "sufrirán",
+          "nosotros": "sufriremos",
+          "tú": "sufrirás",
+          "vosotros": "sufriréis",
+          "yo": "sufriré",
+          "él": "sufrirá"
+        },
+        "imperfecto": {
+          "ellos": "sufrían",
+          "nosotros": "sufríamos",
+          "tú": "sufrías",
+          "vosotros": "sufríais",
+          "yo": "sufría",
+          "él": "sufría"
+        },
+        "presente": {
+          "ellos": "sufren",
+          "nosotros": "sufrimos",
+          "tú": "sufres",
+          "vosotros": "sufrís",
+          "yo": "sufro",
+          "él": "sufre"
+        },
+        "pretérito": {
+          "ellos": "sufrieron",
+          "nosotros": "sufrimos",
+          "tú": "sufriste",
+          "vosotros": "sufristeis",
+          "yo": "sufrí",
+          "él": "sufrió"
+        }
+      }
+    },
+    "tener": {
+      "english": "to have, to possess",
+      "forms": {
+        "futuro": {
+          "ellos": "tendrán",
+          "nosotros": "tendremos",
+          "tú": "tendrás",
+          "vosotros": "tendréis",
+          "yo": "tendré",
+          "él": "tendrá"
+        },
+        "imperfecto": {
+          "ellos": "tenían",
+          "nosotros": "teníamos",
+          "tú": "tenías",
+          "vosotros": "teníais",
+          "yo": "tenía",
+          "él": "tenía"
+        },
+        "presente": {
+          "ellos": "tienen",
+          "nosotros": "tenemos",
+          "tú": "tienes",
+          "vosotros": "tenéis",
+          "yo": "tengo",
+          "él": "tiene"
+        },
+        "pretérito": {
+          "ellos": "tuvieron",
+          "nosotros": "tuvimos",
+          "tú": "tuviste",
+          "vosotros": "tuvisteis",
+          "yo": "tuve",
+          "él": "tuvo"
+        }
+      }
+    },
+    "tomar": {
+      "english": "to take, to ingest, to drink",
+      "forms": {
+        "futuro": {
+          "ellos": "tomarán",
+          "nosotros": "tomaremos",
+          "tú": "tomarás",
+          "vosotros": "tomaréis",
+          "yo": "tomaré",
+          "él": "tomará"
+        },
+        "imperfecto": {
+          "ellos": "tomaban",
+          "nosotros": "tomábamos",
+          "tú": "tomabas",
+          "vosotros": "tomabais",
+          "yo": "tomaba",
+          "él": "tomaba"
+        },
+        "presente": {
+          "ellos": "toman",
+          "nosotros": "tomamos",
+          "tú": "tomas",
+          "vosotros": "tomáis",
+          "yo": "tomo",
+          "él": "toma"
+        },
+        "pretérito": {
+          "ellos": "tomaron",
+          "nosotros": "tomamos",
+          "tú": "tomaste",
+          "vosotros": "tomasteis",
+          "yo": "tomé",
+          "él": "tomó"
+        }
+      }
+    },
+    "trabajar": {
+      "english": "to work",
+      "forms": {
+        "futuro": {
+          "ellos": "trabajarán",
+          "nosotros": "trabajaremos",
+          "tú": "trabajarás",
+          "vosotros": "trabajaréis",
+          "yo": "trabajaré",
+          "él": "trabajará"
+        },
+        "imperfecto": {
+          "ellos": "trabajaban",
+          "nosotros": "trabajábamos",
+          "tú": "trabajabas",
+          "vosotros": "trabajabais",
+          "yo": "trabajaba",
+          "él": "trabajaba"
+        },
+        "presente": {
+          "ellos": "trabajan",
+          "nosotros": "trabajamos",
+          "tú": "trabajas",
+          "vosotros": "trabajáis",
+          "yo": "trabajo",
+          "él": "trabaja"
+        },
+        "pretérito": {
+          "ellos": "trabajaron",
+          "nosotros": "trabajamos",
+          "tú": "trabajaste",
+          "vosotros": "trabajasteis",
+          "yo": "trabajé",
+          "él": "trabajó"
+        }
+      }
+    },
+    "traer": {
+      "english": "to bring, to carry",
+      "forms": {
+        "futuro": {
+          "ellos": "traerán",
+          "nosotros": "traeremos",
+          "tú": "traerás",
+          "vosotros": "traeréis",
+          "yo": "traeré",
+          "él": "traerá"
+        },
+        "imperfecto": {
+          "ellos": "traían",
+          "nosotros": "traíamos",
+          "tú": "traías",
+          "vosotros": "traíais",
+          "yo": "traía",
+          "él": "traía"
+        },
+        "presente": {
+          "ellos": "traen",
+          "nosotros": "traemos",
+          "tú": "traes",
+          "vosotros": "traéis",
+          "yo": "traigo",
+          "él": "trae"
+        },
+        "pretérito": {
+          "ellos": "trajeron",
+          "nosotros": "trajimos",
+          "tú": "trajiste",
+          "vosotros": "trajisteis",
+          "yo": "traje",
+          "él": "trajo"
+        }
+      }
+    },
+    "vender": {
+      "english": "to sell",
+      "forms": {
+        "futuro": {
+          "ellos": "venderán",
+          "nosotros": "venderemos",
+          "tú": "venderás",
+          "vosotros": "venderéis",
+          "yo": "venderé",
+          "él": "venderá"
+        },
+        "imperfecto": {
+          "ellos": "vendían",
+          "nosotros": "vendíamos",
+          "tú": "vendías",
+          "vosotros": "vendíais",
+          "yo": "vendía",
+          "él": "vendía"
+        },
+        "presente": {
+          "ellos": "venden",
+          "nosotros": "vendemos",
+          "tú": "vendes",
+          "vosotros": "vendéis",
+          "yo": "vendo",
+          "él": "vende"
+        },
+        "pretérito": {
+          "ellos": "vendieron",
+          "nosotros": "vendimos",
+          "tú": "vendiste",
+          "vosotros": "vendisteis",
+          "yo": "vendí",
+          "él": "vendió"
+        }
+      }
+    },
+    "venir": {
+      "english": "to come",
+      "forms": {
+        "futuro": {
+          "ellos": "vendrán",
+          "nosotros": "vendremos",
+          "tú": "vendrás",
+          "vosotros": "vendréis",
+          "yo": "vendré",
+          "él": "vendrá"
+        },
+        "imperfecto": {
+          "ellos": "venían",
+          "nosotros": "veníamos",
+          "tú": "venías",
+          "vosotros": "veníais",
+          "yo": "venía",
+          "él": "venía"
+        },
+        "presente": {
+          "ellos": "vienen",
+          "nosotros": "venimos",
+          "tú": "vienes",
+          "vosotros": "venís",
+          "yo": "vengo",
+          "él": "viene"
+        },
+        "pretérito": {
+          "ellos": "vinieron",
+          "nosotros": "vinimos",
+          "tú": "viniste",
+          "vosotros": "vinisteis",
+          "yo": "vine",
+          "él": "vino"
+        }
+      }
+    },
+    "ver": {
+      "english": "to see",
+      "forms": {
+        "futuro": {
+          "ellos": "verán",
+          "nosotros": "veremos",
+          "tú": "verás",
+          "vosotros": "veréis",
+          "yo": "veré",
+          "él": "verá"
+        },
+        "imperfecto": {
+          "ellos": "veían",
+          "nosotros": "veíamos",
+          "tú": "veías",
+          "vosotros": "veíais",
+          "yo": "veía",
+          "él": "veía"
+        },
+        "presente": {
+          "ellos": "ven",
+          "nosotros": "vemos",
+          "tú": "ves",
+          "vosotros": "veis",
+          "yo": "veo",
+          "él": "ve"
+        },
+        "pretérito": {
+          "ellos": "vieron",
+          "nosotros": "vimos",
+          "tú": "viste",
+          "vosotros": "visteis",
+          "yo": "vi",
+          "él": "vio"
+        }
+      }
+    },
+    "vivir": {
+      "english": "to live",
+      "forms": {
+        "futuro": {
+          "ellos": "vivirán",
+          "nosotros": "viviremos",
+          "tú": "vivirás",
+          "vosotros": "viviréis",
+          "yo": "viviré",
+          "él": "vivirá"
+        },
+        "imperfecto": {
+          "ellos": "vivían",
+          "nosotros": "vivíamos",
+          "tú": "vivías",
+          "vosotros": "vivíais",
+          "yo": "vivía",
+          "él": "vivía"
+        },
+        "presente": {
+          "ellos": "viven",
+          "nosotros": "vivimos",
+          "tú": "vives",
+          "vosotros": "vivís",
+          "yo": "vivo",
+          "él": "vive"
+        },
+        "pretérito": {
+          "ellos": "vivieron",
+          "nosotros": "vivimos",
+          "tú": "viviste",
+          "vosotros": "vivisteis",
+          "yo": "viví",
+          "él": "vivió"
+        }
+      }
+    },
+    "volver": {
+      "english": "to return, to do something again",
+      "forms": {
+        "futuro": {
+          "ellos": "volverán",
+          "nosotros": "volveremos",
+          "tú": "volverás",
+          "vosotros": "volveréis",
+          "yo": "volveré",
+          "él": "volverá"
+        },
+        "imperfecto": {
+          "ellos": "volvían",
+          "nosotros": "volvíamos",
+          "tú": "volvías",
+          "vosotros": "volvíais",
+          "yo": "volvía",
+          "él": "volvía"
+        },
+        "presente": {
+          "ellos": "vuelven",
+          "nosotros": "volvemos",
+          "tú": "vuelves",
+          "vosotros": "volvéis",
+          "yo": "vuelvo",
+          "él": "vuelve"
+        },
+        "pretérito": {
+          "ellos": "volvieron",
+          "nosotros": "volvimos",
+          "tú": "volviste",
+          "vosotros": "volvisteis",
+          "yo": "volví",
+          "él": "volvió"
+        }
+      }
+    }
+  }
+}

@@ -102,3 +102,57 @@ def test_stats_zero_without_db(client):
     r = client.post("/api/games/wordle/stats", json={"access_token": "t"})
     assert r.status_code == 200
     assert r.json()["games"] == 0
+
+
+# ── conjugation via the generic routes ────────────────────────────────────
+
+def test_conjugation_listed(client):
+    keys = [g["key"] for g in client.get("/api/games").json()["games"]]
+    assert "conjugation" in keys
+
+
+def test_conjugation_start_hides_answer(client):
+    r = client.post(
+        "/api/games/conjugation/start",
+        json={"access_token": "t", "mode": "free",
+              "options": {"set": "regular-ar", "tenses": ["presente"], "pronouns": ["yo"]}},
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert "prompt" in body["view"]
+    # The expected answer must never appear in the client view/response.
+    assert "expected" not in json.dumps(body["view"])
+
+
+def test_conjugation_guess_advances(client):
+    start = client.post(
+        "/api/games/conjugation/start",
+        json={"access_token": "t", "mode": "free"},
+    ).json()
+    r = client.post(
+        "/api/games/conjugation/guess",
+        json={"access_token": "t", "sealed_state": start["sealed_state"], "guess": "hablo"},
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert body["view"]["answered_count"] == 1
+    assert body["sealed_state"] != start["sealed_state"]  # state advanced
+    assert body["view"]["last"] is not None
+
+
+def test_conjugation_untimed_practice_finishes_on_request(client):
+    start = client.post(
+        "/api/games/conjugation/start",
+        json={"access_token": "t", "mode": "free", "options": {"timed": False}},
+    ).json()
+    assert start["view"]["timed"] is False
+    assert start["view"]["deadline"] is None
+    # "Terminar": finish flag ends the run and returns a result.
+    r = client.post(
+        "/api/games/conjugation/guess",
+        json={"access_token": "t", "sealed_state": start["sealed_state"],
+              "guess": "", "finish": True},
+    )
+    assert r.status_code == 200
+    assert r.json()["view"]["status"] == "over"
+    assert "result" in r.json()["view"]

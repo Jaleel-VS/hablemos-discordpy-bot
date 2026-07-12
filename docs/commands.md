@@ -60,14 +60,18 @@ See [`cogs/crossword.md`](./cogs/crossword.md) for the full feature.
 | In-game: `giveup` / `reveal` | Starter-only: end the game and show answers. |
 | In-game: `!hint` | Reveal one random letter (max 2 per game). |
 
-## Wordle (Activity)
+## Activity games (embedded app)
 
-See [`cogs/wordle.md`](./cogs/wordle.md) and [`activity.md`](./activity.md) for
-the embedded game.
+The bot has an embedded [Discord Activity](./activity.md) hosting single-player
+Spanish games (Wordle, Conjugation). These commands post a button that launches
+the app. The app shows a game hub when more than one game is registered, so a
+launcher button lands on the menu (Discord's launch has no deep-link parameter —
+see [`cogs/wordle.md`](./cogs/wordle.md)).
 
 | Command | Description |
 |---------|-------------|
-| `$wordle` / `$palabra` | Post a button that launches the Spanish Wordle Activity in the current channel. |
+| `$wordle` / `$palabra` | Post a button that launches the Activity (Wordle-themed entry point). |
+| `$conjuga` / `$conjugar` | Post a button that launches the Activity (Conjugation-themed entry point). |
 
 ## Introductions
 

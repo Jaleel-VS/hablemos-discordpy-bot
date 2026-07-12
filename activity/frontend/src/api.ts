@@ -43,6 +43,84 @@ export interface Stats {
   distribution: Record<string, number>;
 }
 
+// ── game registry ───────────────────────────────────────────────────────────
+export interface GameInfo {
+  key: string;
+  display_name: string;
+}
+
+// ── conjugation game ──────────────────────────────────────────────────────────
+export interface ConjugationPrompt {
+  verb: string;
+  english: string;
+  tense: string;
+  tense_label: string;
+  pronoun: string;
+}
+
+export type MatchResult = "exact" | "close" | "wrong";
+
+export interface ConjugationFeedback {
+  result: MatchResult;
+  expected: string;
+  given: string;
+  verb: string;
+  pronoun: string;
+}
+
+export interface ConjugationMiss {
+  verb: string;
+  tense: string;
+  pronoun: string;
+  expected: string;
+  given: string;
+  result: MatchResult;
+}
+
+export interface ConjugationResult {
+  won: boolean;
+  mode: string;
+  puzzle_no: number | null;
+  correct: number;
+  total: number;
+  best_streak: number;
+  score: string;
+  grid: string;
+  summary: string;
+  misses: ConjugationMiss[];
+}
+
+export interface ConjugationView {
+  game: "conjugation";
+  mode: "daily" | "free";
+  timed: boolean;
+  duration: number | null; // null when untimed
+  deadline: string | null; // ISO server-authoritative end time; null when untimed
+  puzzle_no: number | null;
+  correct: number;
+  streak: number;
+  best_streak: number;
+  answered_count: number;
+  status: "playing" | "over";
+  last: ConjugationFeedback | null;
+  prompt?: ConjugationPrompt;
+  result?: ConjugationResult;
+}
+
+export interface ConjugationResponse {
+  sealed_state: string;
+  view: ConjugationView;
+}
+
+// Options a game may take at start (conjugation: verb set / tenses / pronouns /
+// whether the run is the 60s sprint or untimed practice).
+export interface StartOptions {
+  set?: string;
+  tenses?: string[];
+  pronouns?: string[];
+  timed?: boolean;
+}
+
 async function post<T>(path: string, body: unknown): Promise<T> {
   const resp = await fetch(path, {
     method: "POST",
@@ -63,12 +141,52 @@ async function post<T>(path: string, body: unknown): Promise<T> {
   return (await resp.json()) as T;
 }
 
+export function listGames(): Promise<{ games: GameInfo[] }> {
+  return fetch("/.proxy/api/games").then((r) => {
+    if (!r.ok) throw new Error(`Error ${r.status}`);
+    return r.json() as Promise<{ games: GameInfo[] }>;
+  });
+}
+
 export function startGame(
   gameKey: string,
   accessToken: string,
   mode: "daily" | "free",
+  options?: StartOptions,
 ): Promise<GameResponse> {
-  return post(`/.proxy/api/games/${gameKey}/start`, { access_token: accessToken, mode });
+  return post(`/.proxy/api/games/${gameKey}/start`, {
+    access_token: accessToken,
+    mode,
+    ...(options ? { options } : {}),
+  });
+}
+
+// Conjugation shares the generic start/guess endpoints but returns its own view
+// shape, so it gets typed wrappers rather than reusing the Wordle GameResponse.
+export function startConjugation(
+  accessToken: string,
+  mode: "daily" | "free",
+  options?: StartOptions,
+): Promise<ConjugationResponse> {
+  return post(`/.proxy/api/games/conjugation/start`, {
+    access_token: accessToken,
+    mode,
+    ...(options ? { options } : {}),
+  });
+}
+
+export function submitConjugation(
+  accessToken: string,
+  sealedState: string,
+  guess: string,
+  finish = false,
+): Promise<ConjugationResponse> {
+  return post(`/.proxy/api/games/conjugation/guess`, {
+    access_token: accessToken,
+    sealed_state: sealedState,
+    guess,
+    finish,
+  });
 }
 
 export function submitGuess(

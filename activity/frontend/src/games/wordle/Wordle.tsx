@@ -6,18 +6,15 @@ import {
   type GameView,
   type Stats,
 } from "../../api";
+import type { GameProps } from "../registry";
 import Board from "./Board";
 import Keyboard from "./Keyboard";
 
 const GAME_KEY = "wordle";
 
-interface WordleProps {
-  accessToken: string;
-}
-
 type Mode = "daily" | "free";
 
-export default function Wordle({ accessToken }: WordleProps) {
+export default function Wordle({ accessToken }: GameProps) {
   const [mode, setMode] = useState<Mode>("daily");
   const [sealed, setSealed] = useState<string | null>(null);
   const [view, setView] = useState<GameView | null>(null);

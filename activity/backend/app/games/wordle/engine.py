@@ -43,7 +43,9 @@ class WordleEngine:
 
     # ── lifecycle ─────────────────────────────────────────────────────────
 
-    def new_game(self, *, mode: Mode, user_id: str) -> GuessOutcome:  # noqa: ARG002
+    def new_game(
+        self, *, mode: Mode, user_id: str, options: dict[str, Any] | None = None,  # noqa: ARG002
+    ) -> GuessOutcome:
         today = _today()
         if mode == "daily":
             answer, puzzle_no = daily_mod.daily_answer(today)
@@ -62,7 +64,11 @@ class WordleEngine:
         }
         return GuessOutcome(state=state, client_view=self._client_view(state))
 
-    def submit(self, *, state: dict[str, Any], guess: str) -> GuessOutcome:
+    def submit(
+        self, *, state: dict[str, Any], guess: str, finish: bool = False,  # noqa: ARG002
+    ) -> GuessOutcome:
+        # Wordle has no open-ended mode; ``finish`` is part of the shared
+        # contract but not meaningful here, so it is ignored.
         self._validate_state(state)
         if state["status"] != "playing":
             raise GameError("Esta partida ya terminó.")

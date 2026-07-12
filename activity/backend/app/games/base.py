@@ -55,17 +55,30 @@ class GameEngine(Protocol):
     #: Human-facing name for menus and result cards (e.g. ``"Wordle"``).
     display_name: str
 
-    def new_game(self, *, mode: Mode, user_id: str) -> GuessOutcome:
+    def new_game(
+        self, *, mode: Mode, user_id: str, options: dict[str, Any] | None = None,
+    ) -> GuessOutcome:
         """Start a new game. Returns the initial state + client view.
 
         ``user_id`` is the verified Discord id — used to seed per-user daily
         state if a game wants it (Wordle keys the daily secret on date only,
         so it ignores this, but other games may not).
+
+        ``options`` is optional, game-specific configuration from the client
+        (e.g. the conjugation game's chosen verb set / tenses / pronouns for
+        freeplay). Engines must treat it as untrusted and normalize/ignore it;
+        Wordle ignores it entirely.
         """
         ...
 
-    def submit(self, *, state: dict[str, Any], guess: str) -> GuessOutcome:
+    def submit(
+        self, *, state: dict[str, Any], guess: str, finish: bool = False,
+    ) -> GuessOutcome:
         """Apply one guess to ``state`` (authoritatively) and return the next.
+
+        ``finish`` requests that the game end now without grading this call
+        (used by games with an untimed/open-ended mode — e.g. the conjugation
+        sprint's "Terminar" button). Games without such a mode ignore it.
 
         Raises :class:`GameError` on invalid input. Must be safe against
         arbitrary/hostile ``state`` and ``guess`` — never trust the client.

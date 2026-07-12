@@ -34,12 +34,18 @@ logger = logging.getLogger(__name__)
 class StartRequest(BaseModel):
     access_token: str
     mode: Mode = "daily"
+    # Optional, game-specific config (e.g. conjugation verb set / tenses).
+    # Untrusted: each engine normalizes or ignores it.
+    options: dict[str, Any] | None = None
 
 
 class GuessRequest(BaseModel):
     access_token: str
     sealed_state: str  # opaque token from the previous response
-    guess: str
+    guess: str = ""
+    # Request that an open-ended game end now (untimed conjugation practice).
+    # Ignored by games without such a mode.
+    finish: bool = False
 
 
 class StatsRequest(BaseModel):
@@ -104,7 +110,7 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
     async def start(game_key: str, body: StartRequest) -> dict[str, Any]:
         engine = _engine_or_404(game_key)
         await _verified_user_id(body.access_token)
-        outcome = engine.new_game(mode=body.mode, user_id="")
+        outcome = engine.new_game(mode=body.mode, user_id="", options=body.options)
         return _response(engine, outcome.state)
 
     @router.post("/{game_key}/guess")
@@ -116,7 +122,7 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
         except StateSealError:
             raise HTTPException(status_code=400, detail="Estado de partida inválido")
         try:
-            outcome = engine.submit(state=state, guess=body.guess)
+            outcome = engine.submit(state=state, guess=body.guess, finish=body.finish)
         except GameError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
         await _persist_if_over(engine, game_key, user_id, outcome.state)

@@ -2,8 +2,9 @@
 
 The bot has a companion **Discord Activity** — an embedded web app that runs
 inside Discord's client (the same mechanism as YouTube Watch Together or the
-official word games). It hosts Spanish-language games; the first is a Spanish
-Wordle. When a daily game finishes, the result posts to a configured channel.
+official word games). It hosts Spanish-language games — a Spanish Wordle and a
+timed verb-conjugation sprint — behind a game **hub/menu**. When a daily game
+finishes, the result posts to a configured channel.
 
 The Activity is a **separate Railway web service** from the gateway bot. They
 share the same PostgreSQL database. The code lives in
@@ -11,9 +12,10 @@ share the same PostgreSQL database. The code lives in
 [`README.md`](../activity/README.md) for the internal layout).
 
 > **Status:** Phases 0–2 built. Phase 0 (OAuth handshake) is live in
-> production. Phase 1 is the extensible game framework with **Spanish Wordle**
-> (daily + freeplay, stats/streaks in the shared Postgres). Phase 2 is the bot
-> posting finished **daily** results to a configured channel.
+> production. Phase 1 is the extensible game framework — **Spanish Wordle** and
+> a **Conjugation** sprint (both daily + freeplay, stats/streaks in the shared
+> Postgres), reached through a game hub. Phase 2 is the bot posting finished
+> **daily** results to a configured channel.
 
 ## How it works
 
@@ -55,15 +57,18 @@ silently fails with `blocked:csp`. Discord's proxy strips `/.proxy` before the
 request reaches FastAPI, so the FastAPI routes are declared without it
 (`/api/token`).
 
-### Launching (testing an unpublished Activity)
+### Launching
 
-Activities launch from the **voice-channel Activity Shelf** (the 🚀 Rocket
-button in a voice channel), *not* from the app's profile card. While the app is
-unpublished it only appears in the shelf for the **owner account** (or team
-members) with **Developer Mode** on and the tested **platform** checked under
-Activities → Supported Platforms. A first launch shows a "not made by Discord"
-confirmation — expected for a private test app. Your bot can also launch it
-from a command later via the `LAUNCH_ACTIVITY` interaction callback (Phase 2+).
+The bot launches the Activity from a command button (`$wordle`, `$conjuga`) via
+the `LAUNCH_ACTIVITY` interaction callback — see
+[`cogs/wordle.md`](./cogs/wordle.md). Discord opens it in the channel the button
+was clicked from (servers and DMs both work — **no voice channel required**).
+
+Activities also appear in the 🚀 Activity Shelf. While the app is unpublished it
+only appears there for the **owner account** (or team members) with **Developer
+Mode** on and the tested **platform** checked under Activities → Supported
+Platforms. A first launch shows a "not made by Discord" confirmation — expected
+for a private test app.
 
 ## Games framework (Phase 1)
 
@@ -76,7 +81,17 @@ game touches only its own module:
   one line here.
 - `app/games/routes.py` — generic routes for **every** game:
   `POST /api/games/{key}/start`, `/guess`, `/stats`, and `GET /api/games`.
-- `app/games/wordle/` — the first game (see below).
+  `start` accepts an optional untrusted `options` object for game-specific
+  config (the conjugation game's verb set / tenses / pronouns); each engine
+  normalizes or ignores it.
+- `app/games/wordle/` — the Wordle game (see below).
+- `app/games/conjugation/` — the conjugation sprint (see below).
+
+The frontend mirrors this: `GET /api/games` drives a **hub/menu** listing every
+game. With a single game registered the app boots straight into it (no menu
+friction); with two or more it shows the hub. A frontend registry
+(`src/games/registry.tsx`) maps each game key to its React component and card
+styling.
 
 Game state is **stateless on the server**: it round-trips through the client
 between guesses, but **sealed** (`sealed_state.py` — Fernet encrypt+authenticate
@@ -96,6 +111,40 @@ opaque token and an answer-free `view`.
   channel) and **freeplay** (random, no streaks, no posting).
 - The answer is authoritative on the server and never sent to the client until
   the game ends.
+
+### Conjugation sprint (`app/games/conjugation/`)
+
+A timed verb-conjugation drill modeled on Conjuguemos: show a verb + subject
+pronoun + tense, the player types the conjugated form, get instant graded
+feedback, repeat against a **60-second** clock. Score = correct answers before
+time runs out.
+
+- **Data is precomputed, not live.** `scripts/generate_conjugation_paradigms.py`
+  runs [verbecc](https://pypi.org/project/verbecc/) **offline** over a seed verb
+  list (from `cogs/conjugation_cog/verb_data.json`) and emits
+  `app/games/data/conjugation_paradigms.json` (verb → tense → pronoun → form).
+  verbecc trains an ML model on first import (~12s) and needs
+  scikit-learn/scipy/numpy, so it is a **dev/build-time** dependency only — the
+  runtime image just reads the committed JSON (like the Wordle word lists). Add
+  a tense in the generator's `TENSES` map and regenerate to grow the game.
+- **Three-way grading** (`normalize.py`): `exact`, `close` (correct except
+  accents — counts, but the UI flags it), `wrong`. Reuses the same ñ-safe
+  accent handling as Wordle (ñ is a letter, not an accent).
+- **Three modes.** **Reto diario** — a deterministic 60s sprint (hash of puzzle
+  number + index) so everyone drills the same prompts; counts toward streaks and
+  posts to the results channel. **Sprint 60s** — freeplay against the clock with
+  the player's chosen verb set / tenses / pronouns. **Práctica libre** — the same
+  freeplay pools but **untimed**: no deadline, ends only when the player taps
+  "Terminar" (or leaves).
+- **Timing is server-authoritative** for timed modes: every `submit` re-checks
+  the deadline (a 1.5s grace covers request latency), so the client countdown is
+  presentational only and can't be gamed. Untimed practice carries a `null`
+  deadline and ends via an explicit `finish` action on `submit` (part of the
+  shared `GameEngine` contract; games without an open-ended mode ignore it).
+- Freeplay config and the `timed` flag ride in the `start` `options` object;
+  the engine normalizes untrusted values, defaulting to the timed sprint.
+- The pending answer lives in sealed state and is never in the client view
+  until it's been submitted.
 
 ### Persistence
 
