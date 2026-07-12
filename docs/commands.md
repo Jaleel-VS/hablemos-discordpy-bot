@@ -60,6 +60,15 @@ See [`cogs/crossword.md`](./cogs/crossword.md) for the full feature.
 | In-game: `giveup` / `reveal` | Starter-only: end the game and show answers. |
 | In-game: `!hint` | Reveal one random letter (max 2 per game). |
 
+## Wordle (Activity)
+
+See [`cogs/wordle.md`](./cogs/wordle.md) and [`activity.md`](./activity.md) for
+the embedded game.
+
+| Command | Description |
+|---------|-------------|
+| `$wordle` / `$palabra` | Post a button that launches the Spanish Wordle Activity in the current channel. |
+
 ## Introductions
 
 See [`cogs/introduce.md`](./cogs/introduce.md) for the full feature.
