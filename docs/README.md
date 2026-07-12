@@ -14,6 +14,7 @@ change. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules.
 | Look up an owner/admin command | [`admin.md`](./admin.md) |
 | Understand the database | [`database.md`](./database.md) |
 | Deploy or configure the bot | [`deployment.md`](./deployment.md) |
+| Work on the embedded Activity (games) | [`activity.md`](./activity.md) |
 | Dig into one cog | [`cogs/`](./cogs/) |
 | Diagnose a problem | [`playbook.md`](./playbook.md) |
 | Edit these docs | [`CONTRIBUTING.md`](./CONTRIBUTING.md) |

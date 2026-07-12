@@ -1,0 +1,52 @@
+:root {
+  color-scheme: dark;
+  font-family: "gg sans", "Segoe UI", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: #313338;
+  color: #f2f3f5;
+}
+
+.screen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.avatar {
+  border-radius: 50%;
+  border: 3px solid #5865f2;
+}
+
+.muted {
+  color: #b5bac1;
+  max-width: 32ch;
+}
+
+.error {
+  color: #f23f42;
+  font-family: ui-monospace, monospace;
+  word-break: break-word;
+}

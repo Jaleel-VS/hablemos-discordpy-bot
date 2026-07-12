@@ -1,0 +1,140 @@
+# Discord Activity (embedded games)
+
+The bot has a companion **Discord Activity** — an embedded web app that runs
+inside Discord's client (the same mechanism as YouTube Watch Together or the
+official word games). It hosts Spanish-language games; the first is a Spanish
+Wordle. When a daily game finishes, the result posts to a configured channel.
+
+The Activity is a **separate Railway web service** from the gateway bot. They
+share the same PostgreSQL database. The code lives in
+[`../activity/`](../activity/) (see its
+[`README.md`](../activity/README.md) for the internal layout).
+
+> **Status:** Phase 0 — the "hello world" handshake (OAuth → render the
+> logged-in user) is built and locally verified. The Wordle game (Phase 1) and
+> results posting (Phase 2) are not built yet. `grep -r "TODO(activity)"` for
+> the open pieces.
+
+## How it works
+
+```
+Discord client (iframe)  ──postMessage RPC──►  Vite/React SPA (activity/frontend)
+        │                                             │  fetch("/.proxy/api/…")
+        │ served via <CLIENT_ID>.discordsays.com      ▼
+        │                                       FastAPI (activity/backend)
+        │                                       - POST /api/token  (OAuth exchange)
+        │                                       - POST /api/me      (verified identity)
+        ▼                                       - game logic + results ─► Postgres
+Discord API (oauth2/token, users/@me)                                        │
+                                                                             ▼
+                                          gateway bot polls results, posts card to channel
+```
+
+The Activity **cannot post channel messages itself** — that's the bot's job
+(Phase 2). Identity is always verified server-side via `users/@me`; the iframe
+is tamperable, so a client-sent user id is never trusted.
+
+### The `/.proxy/` rule (the #1 gotcha)
+
+Inside Discord, everything the iframe fetches is routed through
+`https://<CLIENT_ID>.discordsays.com` under a strict CSP. **Every** backend
+call from the SPA must use the `/.proxy/` prefix (e.g.
+`fetch("/.proxy/api/token")`) **and** be covered by a URL Mapping, or it
+silently fails with `blocked:csp`. Discord's proxy strips `/.proxy` before the
+request reaches FastAPI, so the FastAPI routes are declared without it
+(`/api/token`).
+
+## Developer Portal setup (one-time)
+
+Use the **existing Hablemos application** (shared `CLIENT_ID`; the bot is
+already in the guild). At <https://discord.com/developers/applications> →
+your app:
+
+1. **Activities → Settings → "Enable Activities."** This auto-creates the
+   Entry Point ("Launch") command.
+2. **Activities → URL Mappings.** Add a root mapping:
+   - Prefix: `/`  →  Target: your host **without** `https://`
+     (the cloudflared tunnel host in dev, the Railway domain in prod).
+   - The target must be a **directory, not a file**. If you add more specific
+     prefixes later, list them **longest-first**.
+3. **OAuth2 → Redirects.** Add at least one redirect URI or `authorize()`
+   fails. `https://127.0.0.1` is fine for dev (the SDK handles the redirect
+   internally).
+4. **Installation / Supported Platforms.** Enable the platforms (Web / iOS /
+   Android) you want the Activity to appear on.
+5. Copy the **Client ID** (safe to ship in the frontend) and generate/copy the
+   **Client Secret** (server-only — never in the frontend bundle).
+
+## Local development
+
+The Activity must load over HTTPS in Discord's iframe, so you need a public
+tunnel to your local machine.
+
+```bash
+# 1. Backend (FastAPI) — from activity/backend
+python3.12 -m venv .venv && . .venv/bin/activate
+pip install -r requirements.txt
+cp ../.env.example .env          # fill in DISCORD_CLIENT_ID + DISCORD_CLIENT_SECRET
+uvicorn app.main:app --reload --port 8080
+
+# 2. Frontend (Vite) — from activity/frontend, in another shell
+npm install
+echo "VITE_DISCORD_CLIENT_ID=<your client id>" > .env
+npm run dev                      # serves on :5173, proxies /.proxy/api → :8080
+
+# 3. Tunnel the Vite dev server — in a third shell
+cloudflared tunnel --url http://localhost:5173
+```
+
+Then paste the `https://…trycloudflare.com` host into the Developer Portal
+**URL Mapping** (root `/`) and as an OAuth **redirect**. Enable Developer Mode
+in Discord and launch the Activity from a voice channel's activity shelf.
+
+> Ephemeral `trycloudflare.com` URLs change on every restart, which means
+> re-pasting the mapping each session. Set up a **named** cloudflared tunnel
+> with a stable hostname to avoid the churn.
+
+In dev the Vite server ([`vite.config.ts`](../activity/frontend/vite.config.ts))
+proxies both `/.proxy/api/*` and `/api/*` to the FastAPI backend, so the same
+`fetch("/.proxy/api/…")` code works locally and in Discord.
+
+## Production deploy (Railway)
+
+The Activity is **one new web service** in the existing Railway project. A
+single [`Dockerfile`](../activity/Dockerfile) builds the SPA (Node stage) and
+runs FastAPI serving both the static `dist/` and `/api/*` (Python stage), so
+it's one HTTPS origin — no CORS, no cross-origin cookies.
+
+```bash
+# From activity/ — requires an authenticated Railway CLI (railway login,
+# or export RAILWAY_TOKEN=… from railway.com/account/tokens).
+railway service create hablemos-activity     # or create it in the dashboard
+railway up --service hablemos-activity        # build + deploy the Dockerfile
+```
+
+Set these as **service variables** on the new service (see the env table in
+[`deployment.md`](./deployment.md#activity-embedded-app)):
+
+- `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` — runtime (backend).
+- `VITE_DISCORD_CLIENT_ID` — **build-time** arg; Vite inlines it into the
+  client bundle. On Railway, set it as a service variable and reference it in
+  the build (the Dockerfile declares the `ARG`).
+
+Once deployed, take the service's public domain
+(`hablemos-activity.up.railway.app`, or a custom domain) and set it as the
+production **URL Mapping** root target in the Developer Portal (no `https://`
+prefix). The `PORT` env var is provided by Railway automatically.
+
+## Verifying the handshake
+
+The plumbing is covered by a local smoke test (routes + static serving). The
+full OAuth handshake can only be confirmed live inside Discord:
+
+1. Launch the Activity from a voice channel.
+2. It should briefly show "Conectando con Discord…" then render
+   "¡Hola, `<your name>`! 👋" with your avatar.
+3. If it shows an error, open the in-client devtools console (Developer Mode)
+   and check for `blocked:csp` (a URL Mapping / `/.proxy` issue) or a 502 from
+   `/api/token` (wrong `DISCORD_CLIENT_SECRET`).
+
+See [`playbook.md`](./playbook.md) for the failure-mode runbook.

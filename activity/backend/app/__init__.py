@@ -1,0 +1,1 @@
+"""Hablemos Activity backend (FastAPI)."""

@@ -49,6 +49,20 @@ Defaults come from `config.py` (`load_settings`) or from a cog's own
 > Add it to the relevant `config.py` (root or cog-local) with a
 > sensible default and expose it via env var.
 
+## Activity (embedded app)
+
+The companion Discord Activity (see [`activity.md`](./activity.md)) is a
+**separate Railway web service** with its own variables. It shares the bot's
+PostgreSQL database but has no `BOT_TOKEN`.
+
+| Name | Where | Purpose |
+|---|---|---|
+| `DISCORD_CLIENT_ID` | Activity service (runtime) | The Discord application's client ID (same app as the bot). |
+| `DISCORD_CLIENT_SECRET` | Activity service (runtime) | Client secret for the OAuth2 code→token exchange. Server-only — never shipped to the frontend. |
+| `VITE_DISCORD_CLIENT_ID` | Activity service (**build-time**) | Same client ID, inlined into the SPA bundle by Vite. Declared as a Docker build `ARG`. |
+| `PORT` | Activity service | Provided by Railway; FastAPI binds it. Defaults to `8080` locally. |
+| `ACTIVITY_STATIC_DIR` | Activity service (optional) | Override for the built SPA directory. Defaults to `../static` next to the app (where the Dockerfile places `dist/`). |
+
 ## Cog-specific config
 
 Several cogs have their own `config.py` for feature-scoped constants:
