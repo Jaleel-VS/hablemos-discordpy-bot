@@ -10,10 +10,11 @@ share the same PostgreSQL database. The code lives in
 [`../activity/`](../activity/) (see its
 [`README.md`](../activity/README.md) for the internal layout).
 
-> **Status:** Phase 0 — the "hello world" handshake (OAuth → render the
-> logged-in user) is built and locally verified. The Wordle game (Phase 1) and
-> results posting (Phase 2) are not built yet. `grep -r "TODO(activity)"` for
-> the open pieces.
+> **Status:** Phase 1 done — an extensible single-player game framework with
+> **Spanish Wordle** as the first game (daily + freeplay, stats/streaks
+> persisted to the shared Postgres). Phase 0 (OAuth handshake) is live in
+> production. Phase 2 (posting daily results to a channel via the bot) is not
+> built yet.
 
 ## How it works
 
@@ -43,6 +44,57 @@ call from the SPA must use the `/.proxy/` prefix (e.g.
 silently fails with `blocked:csp`. Discord's proxy strips `/.proxy` before the
 request reaches FastAPI, so the FastAPI routes are declared without it
 (`/api/token`).
+
+### Launching (testing an unpublished Activity)
+
+Activities launch from the **voice-channel Activity Shelf** (the 🚀 Rocket
+button in a voice channel), *not* from the app's profile card. While the app is
+unpublished it only appears in the shelf for the **owner account** (or team
+members) with **Developer Mode** on and the tested **platform** checked under
+Activities → Supported Platforms. A first launch shows a "not made by Discord"
+confirmation — expected for a private test app. Your bot can also launch it
+from a command later via the `LAUNCH_ACTIVITY` interaction callback (Phase 2+).
+
+## Games framework (Phase 1)
+
+The backend is a small **registry over a game-engine contract**, so adding a
+game touches only its own module:
+
+- `app/games/base.py` — the `GameEngine` protocol
+  (`new_game` / `submit` / `is_over` / `result_payload`) and shared types.
+- `app/games/registry.py` — the one place that lists games. Add a game = add
+  one line here.
+- `app/games/routes.py` — generic routes for **every** game:
+  `POST /api/games/{key}/start`, `/guess`, `/stats`, and `GET /api/games`.
+- `app/games/wordle/` — the first game (see below).
+
+Game state is **stateless on the server**: it round-trips through the client
+between guesses, but **sealed** (`sealed_state.py` — Fernet encrypt+authenticate
+keyed off `DISCORD_CLIENT_SECRET`) so the client holds an opaque token it can't
+read (the answer lives in the state) or forge. Every guess unseals,
+re-validates via the engine, and re-seals. The client only ever sees the
+opaque token and an answer-free `view`.
+
+### Spanish Wordle (`app/games/wordle/`)
+
+- **27-letter alphabet, Ñ distinct, accents stripped** (`normalize.py` — with
+  the NFD ñ-protection). Word lists in `app/games/data/`
+  (`wordle_answers.txt` curated, `wordle_guesses.txt` permissive superset).
+- **Two-pass duplicate-safe scorer** (`scorer.py`) — greens claim letters
+  first, then yellows from what remains.
+- **Daily** (deterministic by date, counts toward streaks, will post to a
+  channel) and **freeplay** (random, no streaks, no posting).
+- The answer is authoritative on the server and never sent to the client until
+  the game ends.
+
+### Persistence
+
+The Activity backend opens its **own asyncpg pool** to the same Postgres the
+bot uses (`DATABASE_URL`). Tables are game-agnostic, keyed by `game_key`:
+`game_results` (one row per finished game, `posted_at` NULL until the Phase 2
+bot posts it) and `game_stats` (per-user daily aggregates + streak +
+guess-distribution). The Activity creates these idempotently on boot. If
+`DATABASE_URL` is unset the game still plays; stats just read as zeros.
 
 ## Developer Portal setup (one-time)
 

@@ -6,6 +6,7 @@ the *real* Discord user from an access token via ``users/@me`` — the iframe is
 tamperable, so a client-sent user id must never be trusted for anything that
 posts to a channel.
 """
+import asyncio
 import logging
 
 import httpx
@@ -19,6 +20,39 @@ USER_URL = f"{DISCORD_API_BASE}/users/@me"
 
 class DiscordOAuthError(Exception):
     """Raised when a Discord OAuth call fails."""
+
+
+async def _request_with_retry(
+    method: str,
+    url: str,
+    *,
+    retries: int = 3,
+    **kwargs,
+) -> httpx.Response:
+    """Call the Discord API, honoring 429 rate limits (per the official SDK
+    example's ``fetchAndRetry``): on 429, wait ``retry_after`` and retry; on a
+    transport error, back off briefly and retry.
+    """
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        for attempt in range(retries + 1):
+            try:
+                resp = await client.request(method, url, **kwargs)
+            except httpx.HTTPError:
+                if attempt == retries:
+                    raise
+                await asyncio.sleep(1.0)
+                continue
+            if resp.status_code == httpx.codes.TOO_MANY_REQUESTS and attempt < retries:
+                retry_after = resp.headers.get("retry-after")
+                try:
+                    wait = float(retry_after) if retry_after is not None else 1.0
+                except ValueError:
+                    wait = 1.0
+                await asyncio.sleep(wait)
+                continue
+            return resp
+    # Unreachable: the loop either returns a response or raises.
+    raise DiscordOAuthError("Discord request failed after retries")
 
 
 async def exchange_code(
@@ -38,12 +72,12 @@ async def exchange_code(
         "grant_type": "authorization_code",
         "code": code,
     }
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        resp = await client.post(
-            TOKEN_URL,
-            data=data,
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-        )
+    resp = await _request_with_retry(
+        "POST",
+        TOKEN_URL,
+        data=data,
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
     if resp.status_code != httpx.codes.OK:
         # Never leak Discord's raw body to the user; log it, raise generic.
         logger.warning("Token exchange failed: %s %s", resp.status_code, resp.text)
@@ -64,11 +98,11 @@ async def fetch_user(access_token: str) -> dict[str, str]:
     and ``avatar`` (may be empty). This is the authoritative identity — the
     server trusts this, not anything the client claims.
     """
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        resp = await client.get(
-            USER_URL,
-            headers={"Authorization": f"Bearer {access_token}"},
-        )
+    resp = await _request_with_retry(
+        "GET",
+        USER_URL,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
     if resp.status_code != httpx.codes.OK:
         logger.warning("users/@me failed: %s %s", resp.status_code, resp.text)
         raise DiscordOAuthError("Failed to fetch Discord user")

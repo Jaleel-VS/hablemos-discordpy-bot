@@ -15,6 +15,10 @@ export default defineConfig({
     host: true,
     port: 5173,
     allowedHosts: true,
+    // Discord loads the app over the tunnel on 443; point HMR's websocket at
+    // that port so hot-reload works through cloudflared (per the official
+    // discord-activity-starter example).
+    hmr: { clientPort: 443 },
     proxy: {
       "/.proxy/api": {
         target: API_TARGET,

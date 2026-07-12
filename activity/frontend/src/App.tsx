@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
-import { startSession, type DiscordUser } from "./discord";
+import { startSession, type Session } from "./discord";
+import Wordle from "./games/wordle/Wordle";
 
 type Status =
   | { phase: "loading" }
-  | { phase: "ready"; user: DiscordUser }
+  | { phase: "ready"; session: Session }
   | { phase: "error"; message: string };
-
-function avatarUrl(user: DiscordUser): string | null {
-  if (!user.avatar) return null;
-  return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`;
-}
 
 export default function App() {
   const [status, setStatus] = useState<Status>({ phase: "loading" });
@@ -17,8 +13,8 @@ export default function App() {
   useEffect(() => {
     let cancelled = false;
     startSession()
-      .then(({ user }) => {
-        if (!cancelled) setStatus({ phase: "ready", user });
+      .then((session) => {
+        if (!cancelled) setStatus({ phase: "ready", session });
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -51,18 +47,16 @@ export default function App() {
     );
   }
 
-  const { user } = status;
-  const name = user.global_name || user.username;
-  const src = avatarUrl(user);
+  const { session } = status;
+  const name = session.user.global_name || session.user.username;
 
   return (
-    <main className="screen">
-      <h1>¡Hola, {name}! 👋</h1>
-      {src && <img className="avatar" src={src} alt={name} width={96} height={96} />}
-      <p className="muted">
-        La Activity está funcionando. Pronto podrás jugar al Wordle en español
-        aquí.
-      </p>
+    <main className="app">
+      <header className="app-header">
+        <span className="app-title">Wordle en español</span>
+        <span className="app-user">{name}</span>
+      </header>
+      <Wordle accessToken={session.accessToken} />
     </main>
   );
 }

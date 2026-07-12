@@ -44,6 +44,10 @@ class Settings:
     # Directory holding the built SPA (``frontend/dist``). Resolved to an
     # absolute path so static serving works regardless of CWD.
     static_dir: str
+    # Shared PostgreSQL connection string (same DB as the bot). Empty when
+    # unset — the app still serves the handshake, but game persistence is
+    # disabled and stats read as zeros.
+    database_url: str
 
 
 def load_settings() -> Settings:
@@ -62,4 +66,5 @@ def load_settings() -> Settings:
         port=get_int_env("PORT", 8080),
         environment=get_str_env("ENVIRONMENT", "production"),
         static_dir=get_str_env("ACTIVITY_STATIC_DIR", default_static),
+        database_url=get_str_env("DATABASE_URL", ""),
     )

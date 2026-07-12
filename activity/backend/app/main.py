@@ -14,6 +14,7 @@ this app, so the routes below are declared without that prefix.
 """
 import logging
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
@@ -21,7 +22,9 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from .config import Settings, load_settings
+from .db import Database
 from .discord_oauth import DiscordOAuthError, exchange_code, fetch_user
+from .games.routes import build_router
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +50,39 @@ class MeRequest(BaseModel):
 def create_app(settings: Settings | None = None) -> FastAPI:
     """Build the FastAPI app. Accepts injected settings for testing."""
     cfg = settings or load_settings()
-    app = FastAPI(title="Hablemos Activity", version="0.1.0")
+
+    # Database is optional: with no DATABASE_URL the app still serves the
+    # handshake and games, but results/stats aren't persisted. Held in a
+    # mutable holder so the games router can read it after lifespan startup.
+    db_holder: dict[str, Database | None] = {"db": None}
+
+    @asynccontextmanager
+    async def lifespan(_: FastAPI):
+        if cfg.database_url:
+            db = Database(cfg.database_url)
+            try:
+                await db.connect()
+                db_holder["db"] = db
+            except Exception:  # noqa: BLE001 — degrade gracefully, don't crash boot
+                logger.exception("DB connect failed; running without persistence")
+                db_holder["db"] = None
+        else:
+            logger.warning("DATABASE_URL not set — game persistence disabled")
+        try:
+            yield
+        finally:
+            if db_holder["db"] is not None:
+                await db_holder["db"].close()
+
+    app = FastAPI(title="Hablemos Activity", version="0.1.0", lifespan=lifespan)
+
+    app.include_router(
+        build_router(
+            get_db=lambda: db_holder["db"],
+            get_secret=lambda: cfg.discord_client_secret,
+            discord_context={"channel_id": None, "guild_id": None},
+        )
+    )
 
     @app.get("/api/health")
     async def health() -> dict[str, str]:

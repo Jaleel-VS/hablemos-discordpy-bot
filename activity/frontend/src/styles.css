@@ -50,3 +50,197 @@ h1 {
   font-family: ui-monospace, monospace;
   word-break: break-word;
 }
+
+/* ── App shell ───────────────────────────────────────────────────────── */
+.app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid #232428;
+  font-size: 0.9rem;
+}
+
+.app-title {
+  font-weight: 700;
+}
+
+.app-user {
+  color: #b5bac1;
+}
+
+/* ── Wordle ──────────────────────────────────────────────────────────── */
+.wordle {
+  flex: 1;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.mode-toggle button {
+  background: #1e1f22;
+  color: #b5bac1;
+  border: 1px solid #2b2d31;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.mode-toggle button.active {
+  background: #5865f2;
+  color: #fff;
+  border-color: #5865f2;
+}
+
+.board {
+  display: grid;
+  grid-template-rows: repeat(auto-fill, 1fr);
+  gap: 5px;
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 5), 1fr);
+  gap: 5px;
+}
+
+.tile {
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 2px solid #3a3c40;
+  border-radius: 6px;
+  color: #fff;
+  user-select: none;
+}
+
+.tile--filled {
+  border-color: #6a6d73;
+}
+
+.tile--green {
+  background: #3aa394;
+  border-color: #3aa394;
+}
+
+.tile--yellow {
+  background: #d3ad4e;
+  border-color: #d3ad4e;
+}
+
+.tile--gray {
+  background: #3a3c40;
+  border-color: #3a3c40;
+}
+
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  margin-top: auto;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.key {
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+  border: none;
+  border-radius: 6px;
+  background: #6a6d73;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.key:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.key--wide {
+  flex: 1.5;
+  font-size: 0.75rem;
+}
+
+.key--green {
+  background: #3aa394;
+}
+
+.key--yellow {
+  background: #d3ad4e;
+}
+
+.key--gray {
+  background: #2b2d31;
+  color: #83858b;
+}
+
+.result {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.result h2 {
+  margin: 0;
+}
+
+.grid-share {
+  font-size: 1.1rem;
+  line-height: 1.15;
+  margin: 4px 0;
+}
+
+.cta {
+  background: #5865f2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.stats {
+  display: flex;
+  gap: 14px;
+  font-size: 0.8rem;
+  color: #b5bac1;
+  padding: 8px 0;
+}
