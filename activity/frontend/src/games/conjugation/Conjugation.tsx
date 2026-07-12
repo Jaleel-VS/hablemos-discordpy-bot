@@ -46,8 +46,13 @@ export default function Conjugation({ accessToken }: GameProps) {
     async (guess: string, finish = false) => {
       if (!sealed || busy || overRef.current) return;
       setBusy(true);
+      // TEMP measurement (remove after the snappiness investigation): wall-clock
+      // from submit to response as felt by the client. Compare against the
+      // server's total_ms log line — the gap is pure network/proxy latency.
+      const t0 = performance.now();
       try {
         const resp = await submitConjugation(accessToken, sealed, guess, finish);
+        console.info(`[conj] submit round-trip: ${(performance.now() - t0).toFixed(0)}ms`);
         setSealed(resp.sealed_state);
         setView(resp.view);
         if (resp.view.status === "over") {

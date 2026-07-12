@@ -18,6 +18,7 @@ and ``view`` (answer-free until the game ends).
 from __future__ import annotations
 
 import logging
+from time import perf_counter
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
@@ -115,8 +116,14 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
 
     @router.post("/{game_key}/guess")
     async def guess(game_key: str, body: GuessRequest) -> dict[str, Any]:
+        # TEMP measurement (remove after the snappiness investigation): split
+        # the request into the Discord identity hop (verify_ms) vs. the actual
+        # game work (work_ms) so we can see which one dominates per-guess
+        # latency. See docs/playbook.md "Activity feels laggy".
+        t0 = perf_counter()
         engine = _engine_or_404(game_key)
         user_id = await _verified_user_id(body.access_token)
+        t_verified = perf_counter()
         try:
             state = unseal(get_secret(), body.sealed_state)
         except StateSealError:
@@ -126,7 +133,16 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
         except GameError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
         await _persist_if_over(engine, game_key, user_id, outcome.state)
-        return _response(engine, outcome.state)
+        response = _response(engine, outcome.state)
+        t_end = perf_counter()
+        logger.info(
+            "guess-timing game=%s verify_ms=%.1f work_ms=%.1f total_ms=%.1f",
+            game_key,
+            (t_verified - t0) * 1000,
+            (t_end - t_verified) * 1000,
+            (t_end - t0) * 1000,
+        )
+        return response
 
     @router.post("/{game_key}/stats")
     async def stats(game_key: str, body: StatsRequest) -> dict[str, Any]:
