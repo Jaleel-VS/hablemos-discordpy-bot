@@ -25,6 +25,9 @@ export default function Wordle({ accessToken }: WordleProps) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [stats, setStats] = useState<Stats | null>(null);
+  // Row index to flip-reveal after a successful guess; cleared once played.
+  const [revealRow, setRevealRow] = useState<number | null>(null);
+  const [shake, setShake] = useState(false);
 
   const loadStats = useCallback(() => {
     fetchStats(GAME_KEY, accessToken)
@@ -37,6 +40,7 @@ export default function Wordle({ accessToken }: WordleProps) {
       setBusy(true);
       setError(null);
       setCurrent("");
+      setRevealRow(null);
       try {
         const resp = await startGame(GAME_KEY, accessToken, m);
         setSealed(resp.sealed_state);
@@ -57,10 +61,16 @@ export default function Wordle({ accessToken }: WordleProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
+  const triggerShake = useCallback(() => {
+    setShake(true);
+    window.setTimeout(() => setShake(false), 420);
+  }, []);
+
   const submit = useCallback(async () => {
     if (!view || !sealed || busy) return;
     if ([...current].length !== view.word_length) {
       setError(`La palabra debe tener ${view.word_length} letras.`);
+      triggerShake();
       return;
     }
     setBusy(true);
@@ -68,15 +78,19 @@ export default function Wordle({ accessToken }: WordleProps) {
     try {
       const resp = await submitGuess(GAME_KEY, accessToken, sealed, current);
       setSealed(resp.sealed_state);
+      // Flip-reveal the row that was just added (the last one).
+      setRevealRow(resp.view.rows.length - 1);
       setView(resp.view);
       setCurrent("");
       if (resp.view.status !== "playing") loadStats();
     } catch (e) {
+      // Backend rejected the guess (not a word, wrong length): shake the row.
       setError(e instanceof Error ? e.message : "Error al enviar");
+      triggerShake();
     } finally {
       setBusy(false);
     }
-  }, [view, sealed, busy, current, accessToken, loadStats]);
+  }, [view, sealed, busy, current, accessToken, loadStats, triggerShake]);
 
   const onKey = useCallback(
     (key: string) => {
@@ -131,13 +145,15 @@ export default function Wordle({ accessToken }: WordleProps) {
         current={over ? "" : current}
         maxGuesses={view.max_guesses}
         wordLength={view.word_length}
+        revealRow={revealRow}
+        shake={shake}
       />
 
-      {error && <p className="error">{error}</p>}
+      {error && !over && <p className="error">{error}</p>}
 
-      {over && result && (
+      {over && result ? (
         <div className="result">
-          <h2>{result.won ? "¡Ganaste! 🎉" : "¡Casi! 😔"}</h2>
+          <h2>{result.won ? "¡Ganaste!" : "¡Casi!"}</h2>
           {!result.won && (
             <p className="muted">
               La palabra era <strong>{result.answer.toUpperCase()}</strong>
@@ -151,16 +167,16 @@ export default function Wordle({ accessToken }: WordleProps) {
             </button>
           )}
         </div>
+      ) : (
+        <Keyboard rows={view.rows} onKey={onKey} disabled={busy} />
       )}
-
-      {!over && <Keyboard rows={view.rows} onKey={onKey} disabled={busy} />}
 
       {stats && stats.games > 0 && (
         <div className="stats">
-          <span>{stats.games} jugados</span>
-          <span>{Math.round((stats.wins / stats.games) * 100)}% victorias</span>
-          <span>🔥 {stats.current_streak}</span>
-          <span>máx {stats.max_streak}</span>
+          <span><strong>{stats.games}</strong> jugados</span>
+          <span><strong>{Math.round((stats.wins / stats.games) * 100)}%</strong> victorias</span>
+          <span>🔥 <strong>{stats.current_streak}</strong></span>
+          <span>máx <strong>{stats.max_streak}</strong></span>
         </div>
       )}
     </div>

@@ -1,6 +1,48 @@
+/* Hablemos Wordle — Discord-native dark, refined.
+ *
+ * Palette is OKLCH, every neutral tinted toward the brand indigo (never pure
+ * #000/#fff). Layout is fit-to-viewport (no scroll): the board flexes and tile
+ * size is derived with clamp() so the grid + keyboard always fit one iframe.
+ * Motion is ease-out only (tile flip-reveal, key pop, invalid shake, win rise).
+ */
+
 :root {
+  /* ── color: tinted-neutral surface + a confident indigo accent ───────── */
+  --hue: 265;
+  --bg:        oklch(0.20 0.018 var(--hue));   /* app surface */
+  --bg-raised: oklch(0.25 0.020 var(--hue));   /* header / empty tiles */
+  --line:      oklch(0.33 0.022 var(--hue));   /* borders */
+  --line-soft: oklch(0.42 0.025 var(--hue));   /* filled-tile border */
+  --key:       oklch(0.40 0.020 var(--hue));   /* keyboard base */
+  --key-press: oklch(0.52 0.030 var(--hue));
+
+  --ink:       oklch(0.96 0.008 var(--hue));   /* primary text */
+  --ink-dim:   oklch(0.72 0.015 var(--hue));   /* secondary text */
+
+  --accent:    oklch(0.62 0.19 285);           /* Discord-ish indigo */
+
+  /* feedback: desaturated, not garish; carry meaning at a glance */
+  --green:  oklch(0.60 0.13 155);
+  --yellow: oklch(0.74 0.13 85);
+  --absent: oklch(0.34 0.012 var(--hue));
+
+  --radius: 7px;
+
+  --font-display: "Fraunces Variable", Georgia, serif;
+  --font-ui: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1); /* ease-out-quint-ish */
+
   color-scheme: dark;
-  font-family: "gg sans", "Segoe UI", system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 * {
@@ -15,154 +57,225 @@ body,
 }
 
 body {
-  background: #313338;
-  color: #f2f3f5;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
 }
 
+/* ── generic connect/error screen (pre-game) ─────────────────────────── */
 .screen {
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
   padding: 24px;
   text-align: center;
 }
 
-h1 {
+.screen h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
   margin: 0;
-  font-size: 1.6rem;
-}
-
-.avatar {
-  border-radius: 50%;
-  border: 3px solid #5865f2;
 }
 
 .muted {
-  color: #b5bac1;
-  max-width: 32ch;
+  color: var(--ink-dim);
+  max-width: 34ch;
 }
 
 .error {
-  color: #f23f42;
-  font-family: ui-monospace, monospace;
-  word-break: break-word;
+  color: oklch(0.65 0.17 25);
+  font-size: 0.9rem;
 }
 
-/* ── App shell ───────────────────────────────────────────────────────── */
+/* ── app shell ───────────────────────────────────────────────────────── */
 .app {
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  overflow: hidden; /* the whole activity fits one viewport; never scrolls */
 }
 
 .app-header {
-  width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 10px 16px;
-  border-bottom: 1px solid #232428;
-  font-size: 0.9rem;
+  align-items: baseline;
+  padding: 12px 18px 10px;
+  border-bottom: 1px solid var(--line);
 }
 
 .app-title {
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  font-optical-sizing: auto;
+  letter-spacing: 0.01em;
 }
 
 .app-user {
-  color: #b5bac1;
+  color: var(--ink-dim);
+  font-size: 0.82rem;
 }
 
 /* ── Wordle ──────────────────────────────────────────────────────────── */
 .wordle {
   flex: 1;
-  width: 100%;
-  max-width: 480px;
+  min-height: 0; /* allow the flex child to shrink instead of overflowing */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
-  overflow-y: auto;
+  padding: 10px 12px 14px;
+  gap: 10px;
 }
 
 .mode-toggle {
-  display: flex;
-  gap: 8px;
+  display: inline-flex;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
 }
 
 .mode-toggle button {
-  background: #1e1f22;
-  color: #b5bac1;
-  border: 1px solid #2b2d31;
-  border-radius: 8px;
-  padding: 6px 14px;
-  font-size: 0.85rem;
+  background: transparent;
+  color: var(--ink-dim);
+  border: none;
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: color 0.15s var(--ease), background 0.2s var(--ease);
+}
+
+.mode-toggle button:hover {
+  color: var(--ink);
 }
 
 .mode-toggle button.active {
-  background: #5865f2;
-  color: #fff;
-  border-color: #5865f2;
+  background: var(--accent);
+  color: oklch(0.98 0.01 285);
+}
+
+/* Board area flexes to fill remaining height; tile size is derived from both
+ * the available height (per row) and width (per column) so it always fits. */
+.board-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .board {
+  --gap: 6px;
+  /* Deterministic fit-to-viewport tile size: bounded by the height budget
+   * (~9.5vh per row leaves room for header + toggle + keyboard + stats) and
+   * the width budget (~17vw per column), capped at 62px on large screens.
+   * Viewport units avoid the circular reference of percentage-of-self. */
+  --tile: min(9.5vh, 17vw, 62px);
   display: grid;
-  grid-template-rows: repeat(auto-fill, 1fr);
-  gap: 5px;
+  grid-auto-rows: min-content;
+  gap: var(--gap);
 }
 
 .board-row {
   display: grid;
-  grid-template-columns: repeat(var(--cols, 5), 1fr);
-  gap: 5px;
+  grid-template-columns: repeat(var(--cols, 5), var(--tile));
+  gap: var(--gap);
 }
 
 .tile {
-  width: 54px;
-  height: 54px;
+  width: var(--tile);
+  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.7rem;
-  font-weight: 700;
+  font-family: var(--font-ui);
+  font-size: calc(var(--tile) * 0.46);
+  font-weight: 600;
   text-transform: uppercase;
-  border: 2px solid #3a3c40;
-  border-radius: 6px;
-  color: #fff;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
   user-select: none;
 }
 
 .tile--filled {
-  border-color: #6a6d73;
+  border-color: var(--line-soft);
+  animation: pop 0.12s var(--ease);
 }
 
 .tile--green {
-  background: #3aa394;
-  border-color: #3aa394;
+  background: var(--green);
+  border-color: var(--green);
+  color: oklch(0.98 0.02 155);
 }
 
 .tile--yellow {
-  background: #d3ad4e;
-  border-color: #d3ad4e;
+  background: var(--yellow);
+  border-color: var(--yellow);
+  color: oklch(0.22 0.03 85);
 }
 
 .tile--gray {
-  background: #3a3c40;
-  border-color: #3a3c40;
+  background: var(--absent);
+  border-color: var(--absent);
 }
 
+/* Flip-reveal: submitted tiles flip on their X axis, colored at the midpoint.
+ * Staggered per-column via inline --i for the NYT cascade. */
+.tile--revealed {
+  animation: flip 0.5s var(--ease) both;
+  animation-delay: calc(var(--i) * 0.16s);
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateX(0);
+  }
+  50% {
+    transform: rotateX(-90deg);
+  }
+  100% {
+    transform: rotateX(0);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* invalid-word feedback on the active row */
+.board-row.shake {
+  animation: shake 0.4s var(--ease);
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
+/* ── keyboard ────────────────────────────────────────────────────────── */
 .keyboard {
   display: flex;
   flex-direction: column;
   gap: 6px;
   width: 100%;
-  margin-top: auto;
+  max-width: 500px;
 }
 
 .keyboard-row {
@@ -174,73 +287,105 @@ h1 {
 .key {
   flex: 1;
   min-width: 0;
-  height: 52px;
+  height: clamp(44px, 7.5vh, 56px);
   border: none;
   border-radius: 6px;
-  background: #6a6d73;
-  color: #fff;
-  font-size: 1rem;
+  background: var(--key);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
   font-weight: 600;
   text-transform: uppercase;
   cursor: pointer;
+  transition: background 0.15s var(--ease), transform 0.06s var(--ease);
+}
+
+.key:active {
+  transform: scale(0.94);
+  background: var(--key-press);
 }
 
 .key:disabled {
-  opacity: 0.6;
   cursor: default;
 }
 
 .key--wide {
-  flex: 1.5;
-  font-size: 0.75rem;
+  flex: 1.6;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
 }
 
-.key--green {
-  background: #3aa394;
-}
+.key--green { background: var(--green); color: oklch(0.98 0.02 155); }
+.key--yellow { background: var(--yellow); color: oklch(0.22 0.03 85); }
+.key--gray { background: var(--absent); color: var(--ink-dim); }
 
-.key--yellow {
-  background: #d3ad4e;
-}
-
-.key--gray {
-  background: #2b2d31;
-  color: #83858b;
-}
-
+/* ── result ──────────────────────────────────────────────────────────── */
 .result {
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  animation: rise 0.5s var(--ease) both;
+}
+
+@keyframes rise {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .result h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.5rem;
   margin: 0;
 }
 
 .grid-share {
-  font-size: 1.1rem;
-  line-height: 1.15;
-  margin: 4px 0;
+  font-family: var(--font-ui);
+  font-size: 1.15rem;
+  line-height: 1.12;
+  letter-spacing: 2px;
+  margin: 2px 0;
 }
 
 .cta {
-  background: #5865f2;
-  color: #fff;
+  background: var(--accent);
+  color: oklch(0.98 0.01 285);
   border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 0.95rem;
+  border-radius: 999px;
+  padding: 10px 24px;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
+  transition: transform 0.1s var(--ease), filter 0.15s var(--ease);
 }
 
+.cta:hover {
+  filter: brightness(1.08);
+}
+
+.cta:active {
+  transform: scale(0.96);
+}
+
+/* ── stats strip ─────────────────────────────────────────────────────── */
 .stats {
   display: flex;
-  gap: 14px;
-  font-size: 0.8rem;
-  color: #b5bac1;
-  padding: 8px 0;
+  gap: 18px;
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  padding-top: 2px;
+}
+
+.stats strong {
+  color: var(--ink);
+  font-weight: 600;
 }
