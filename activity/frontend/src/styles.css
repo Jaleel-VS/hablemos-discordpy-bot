@@ -129,6 +129,7 @@ body {
   align-items: center;
   padding: 10px 12px 14px;
   gap: 10px;
+  overflow: hidden; /* nothing escapes the game area */
 }
 
 .mode-toggle {
@@ -164,6 +165,9 @@ body {
 
 /* Board area flexes to fill remaining height; tile size is derived from both
  * the available height (per row) and width (per column) so it always fits. */
+/* The wrap is the flex leftover between toggle and keyboard. The board sizes
+ * itself to fit INSIDE the wrap (both dimensions), so it never overlaps its
+ * neighbours regardless of aspect ratio. No viewport magic numbers. */
 .board-wrap {
   flex: 1;
   min-height: 0;
@@ -171,29 +175,39 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
+  container-type: size;
 }
 
 .board {
-  --gap: 6px;
-  /* Deterministic fit-to-viewport tile size: bounded by the height budget
-   * (~9.5vh per row leaves room for header + toggle + keyboard + stats) and
-   * the width budget (~17vw per column), capped at 62px on large screens.
-   * Viewport units avoid the circular reference of percentage-of-self. */
-  --tile: min(9.5vh, 17vw, 62px);
+  --cols: 5;
+  --rows: 6;
+  --gap: 5px;
+  /* Deterministic square tile: the largest size that fits BOTH the height
+   * budget (per row) and the width budget (per column) of the wrap, gaps
+   * subtracted exactly, capped at 62px on large screens. cq units measure the
+   * .board-wrap (container-type: size), so there is no overflow in either
+   * dimension regardless of aspect ratio. */
+  --tile: min(
+    (100cqh - (var(--rows) - 1) * var(--gap)) / var(--rows),
+    (100cqw - (var(--cols) - 1) * var(--gap)) / var(--cols),
+    62px
+  );
   display: grid;
-  grid-auto-rows: min-content;
+  grid-auto-rows: var(--tile);
   gap: var(--gap);
 }
 
 .board-row {
   display: grid;
-  grid-template-columns: repeat(var(--cols, 5), var(--tile));
+  grid-template-columns: repeat(var(--cols), var(--tile));
   gap: var(--gap);
+  /* 3D context so tile flips render as a hinge, not a flat squash. */
+  perspective: 700px;
 }
 
 .tile {
   width: var(--tile);
-  aspect-ratio: 1;
+  height: var(--tile);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -229,28 +243,33 @@ body {
   border-color: var(--absent);
 }
 
-/* Flip-reveal: submitted tiles flip on their X axis, colored at the midpoint.
+/* Flip-reveal: the tile rotates edge-on (invisible at 90deg) then back. The
+ * color class is applied from the start, but because the face is edge-on at
+ * the midpoint, the eye reads the color as "revealed" as it rotates back.
  * Staggered per-column via inline --i for the NYT cascade. */
 .tile--revealed {
-  animation: flip 0.5s var(--ease) both;
-  animation-delay: calc(var(--i) * 0.16s);
+  animation: flip 0.55s ease-in-out both;
+  animation-delay: calc(var(--i) * 0.2s);
 }
 
 @keyframes flip {
   0% {
-    transform: rotateX(0);
+    transform: rotateX(0deg);
   }
   50% {
-    transform: rotateX(-90deg);
+    transform: rotateX(90deg);
   }
   100% {
-    transform: rotateX(0);
+    transform: rotateX(0deg);
   }
 }
 
 @keyframes pop {
   0% {
-    transform: scale(0.92);
+    transform: scale(0.9);
+  }
+  40% {
+    transform: scale(1.08);
   }
   100% {
     transform: scale(1);

@@ -29,7 +29,13 @@ export default function Board({
 
   return (
     <div className="board-wrap">
-      <div className="board" style={{ ["--cols" as string]: wordLength }}>
+      <div
+        className="board"
+        style={{
+          ["--cols" as string]: wordLength,
+          ["--rows" as string]: maxGuesses,
+        }}
+      >
         {Array.from({ length: maxGuesses }).map((_, r) => {
           const submitted = rows[r];
           const isCurrent = r === currentRowIndex;
