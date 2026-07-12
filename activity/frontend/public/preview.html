@@ -1,0 +1,76 @@
+<!doctype html>
+<!-- Temporary visual-QA harness: renders a static Wordle board using the real
+     compiled stylesheet so the layout + tiles can be screenshotted without the
+     Discord SDK handshake. Not linked from the app; safe to delete. -->
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Board preview</title>
+    <script>
+      // Resolve the app's hashed CSS bundle at runtime so this harness always
+      // uses the current build's stylesheet without hardcoding the hash.
+      fetch("/")
+        .then((r) => r.text())
+        .then((html) => {
+          const m = html.match(/\/assets\/index-[^"']+\.css/);
+          if (m) {
+            const l = document.createElement("link");
+            l.rel = "stylesheet";
+            l.href = m[0];
+            document.head.appendChild(l);
+          }
+        });
+    </script>
+  </head>
+  <body>
+    <main class="app">
+      <header class="app-header">
+        <span class="app-title">Wordle en español</span>
+        <span class="app-user">Preview</span>
+      </header>
+      <div class="wordle">
+        <div class="mode-toggle">
+          <button class="active">Diario #193</button>
+          <button>Libre</button>
+        </div>
+        <div class="board-wrap">
+          <div class="board" style="--cols:5;--rows:6">
+            <div class="board-row">
+              <div class="tile tile--green">m</div>
+              <div class="tile tile--gray">e</div>
+              <div class="tile tile--yellow">s</div>
+              <div class="tile tile--gray">o</div>
+              <div class="tile tile--gray">n</div>
+            </div>
+            <div class="board-row">
+              <div class="tile tile--filled">a</div>
+              <div class="tile tile--filled">b</div>
+              <div class="tile"></div>
+              <div class="tile"></div>
+              <div class="tile"></div>
+            </div>
+            <div class="board-row"><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>
+            <div class="board-row"><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>
+            <div class="board-row"><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>
+            <div class="board-row"><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>
+          </div>
+        </div>
+        <div class="keyboard">
+          <div class="keyboard-row">
+            <button class="key">q</button><button class="key">w</button><button class="key">e</button><button class="key">r</button><button class="key">t</button><button class="key">y</button><button class="key">u</button><button class="key">i</button><button class="key">o</button><button class="key">p</button>
+          </div>
+          <div class="keyboard-row">
+            <button class="key">a</button><button class="key">s</button><button class="key">d</button><button class="key">f</button><button class="key">g</button><button class="key">h</button><button class="key">j</button><button class="key">k</button><button class="key">l</button><button class="key">ñ</button>
+          </div>
+          <div class="keyboard-row">
+            <button class="key key--wide">enter</button><button class="key">z</button><button class="key">x</button><button class="key">c</button><button class="key">v</button><button class="key">b</button><button class="key">n</button><button class="key">m</button><button class="key key--wide">⌫</button>
+          </div>
+        </div>
+        <div class="stats">
+          <span><strong>1</strong> jugados</span><span><strong>100%</strong> victorias</span><span>🔥 <strong>1</strong></span><span>máx <strong>1</strong></span>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
