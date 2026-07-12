@@ -1,14 +1,16 @@
-"""World Cup cog — slash command to self-assign a team role."""
+"""World Cup cog — slash command to self-assign a team role + bracket view."""
 from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING
 
 import discord
-from discord import Interaction, app_commands
+from discord import File, Interaction, app_commands
+from discord.ext import commands
 
 from base_cog import BaseCog
 
+from .bracket import render_bracket
 from .views import WorldCupMenuView
 
 if TYPE_CHECKING:
@@ -52,6 +54,14 @@ class WorldCup(BaseCog):
             view=view,
             ephemeral=True,
         )
+
+    @commands.command(name="bracket")
+    @commands.cooldown(1, 15, commands.BucketType.channel)
+    async def bracket(self, ctx: commands.Context):
+        """Show the World Cup knockout bracket (Ro16 to Final)."""
+        async with ctx.typing():
+            buf = render_bracket()
+        await ctx.send(file=File(buf, filename="bracket.png"))
 
 
 async def setup(bot: Hablemos) -> None:
