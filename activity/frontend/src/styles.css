@@ -226,41 +226,66 @@ body {
   animation: pop 0.12s var(--ease);
 }
 
+/* Each colored tile exposes its fill/ink as variables so the flip keyframes
+ * can swap to them generically at the reveal midpoint (without the keyframe
+ * needing to know which color this tile is). */
 .tile--green {
-  background: var(--green);
-  border-color: var(--green);
-  color: oklch(0.98 0.02 155);
+  --fill: var(--green);
+  --ink-on: oklch(0.98 0.02 155);
+  background: var(--fill);
+  border-color: var(--fill);
+  color: var(--ink-on);
 }
 
 .tile--yellow {
-  background: var(--yellow);
-  border-color: var(--yellow);
-  color: oklch(0.22 0.03 85);
+  --fill: var(--yellow);
+  --ink-on: oklch(0.22 0.03 85);
+  background: var(--fill);
+  border-color: var(--fill);
+  color: var(--ink-on);
 }
 
 .tile--gray {
-  background: var(--absent);
-  border-color: var(--absent);
+  --fill: var(--absent);
+  --ink-on: var(--ink);
+  background: var(--fill);
+  border-color: var(--fill);
+  color: var(--ink-on);
 }
 
-/* Flip-reveal: the tile rotates edge-on (invisible at 90deg) then back. The
- * color class is applied from the start, but because the face is edge-on at
- * the midpoint, the eye reads the color as "revealed" as it rotates back.
- * Staggered per-column via inline --i for the NYT cascade. */
+/* Flip-reveal: the tile looks EMPTY (neutral, letter hidden) while it rotates
+ * down to edge-on (0->90deg), then swaps to its color at the midpoint and
+ * rotates back up (90->0deg) showing the result. Because the swap happens at
+ * 90deg (invisible edge), the color never "prerenders". Staggered per-column
+ * via inline --i so tiles reveal left-to-right, one at a time. */
 .tile--revealed {
-  animation: flip 0.55s ease-in-out both;
-  animation-delay: calc(var(--i) * 0.2s);
+  animation: flip 0.6s ease-in-out both;
+  animation-delay: calc(var(--i) * 0.28s);
 }
 
 @keyframes flip {
   0% {
     transform: rotateX(0deg);
+    background: var(--bg-raised);
+    border-color: var(--line-soft);
+    color: transparent;
   }
   50% {
     transform: rotateX(90deg);
+    background: var(--bg-raised);
+    border-color: var(--line-soft);
+    color: transparent;
+  }
+  50.01% {
+    background: var(--fill);
+    border-color: var(--fill);
+    color: var(--ink-on);
   }
   100% {
     transform: rotateX(0deg);
+    background: var(--fill);
+    border-color: var(--fill);
+    color: var(--ink-on);
   }
 }
 
