@@ -18,7 +18,6 @@ and ``view`` (answer-free until the game ends).
 from __future__ import annotations
 
 import logging
-from time import perf_counter
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
@@ -122,10 +121,6 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
 
     @router.post("/{game_key}/guess")
     async def guess(game_key: str, body: GuessRequest) -> dict[str, Any]:
-        # TEMP measurement (remove after the snappiness investigation): split
-        # the request into the identity resolution (verify_ms) vs. the actual
-        # game work (work_ms). See docs/playbook.md "Activity feels laggy".
-        t0 = perf_counter()
         engine = _engine_or_404(game_key)
         try:
             state = unseal(get_secret(), body.sealed_state)
@@ -140,22 +135,12 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
         else:
             user_id = await _verified_user_id(body.access_token)
             state["_uid"] = user_id
-        t_verified = perf_counter()
         try:
             outcome = engine.submit(state=state, guess=body.guess, finish=body.finish)
         except GameError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
         await _persist_if_over(engine, game_key, user_id, outcome.state)
-        response = _response(engine, outcome.state)
-        t_end = perf_counter()
-        logger.info(
-            "guess-timing game=%s verify_ms=%.1f work_ms=%.1f total_ms=%.1f",
-            game_key,
-            (t_verified - t0) * 1000,
-            (t_end - t_verified) * 1000,
-            (t_end - t0) * 1000,
-        )
-        return response
+        return _response(engine, outcome.state)
 
     @router.post("/{game_key}/stats")
     async def stats(game_key: str, body: StatsRequest) -> dict[str, Any]:

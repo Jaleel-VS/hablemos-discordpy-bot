@@ -8,7 +8,6 @@ posts to a channel.
 """
 import asyncio
 import logging
-from time import perf_counter
 
 import httpx
 
@@ -127,16 +126,11 @@ async def fetch_user(access_token: str) -> dict[str, str]:
     and ``avatar`` (may be empty). This is the authoritative identity — the
     server trusts this, not anything the client claims.
     """
-    # TEMP measurement (remove after the snappiness investigation): time the
-    # users/@me round trip. This runs on every start/guess/stats, so if it's
-    # large it explains the "less snappy" feel. See docs/playbook.md.
-    _t0 = perf_counter()
     resp = await _request_with_retry(
         "GET",
         USER_URL,
         headers={"Authorization": f"Bearer {access_token}"},
     )
-    logger.info("fetch_user users/@me round_trip_ms=%.1f", (perf_counter() - _t0) * 1000)
     if resp.status_code != httpx.codes.OK:
         logger.warning("users/@me failed: %s %s", resp.status_code, resp.text)
         raise DiscordOAuthError("Failed to fetch Discord user")
