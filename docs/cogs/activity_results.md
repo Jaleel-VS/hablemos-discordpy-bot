@@ -31,15 +31,31 @@ The `payload` shape is game-agnostic (every game's `result_payload` includes
 `won`/`summary`/`grid`), so this cog posts any game's results without knowing
 the game.
 
+## Commands
+
+| Command | Access | Description |
+|---------|--------|-------------|
+| `$activity_stats` (alias `$astats`) | Owner | Bare call → server totals per game. |
+| `$activity_stats totals` | Owner | Per-game counts: games, players, daily/free split, wins, unpublished daily rows. |
+| `$activity_stats health` | Owner | Results-poster backlog — unposted daily count, oldest pending age, target channel. |
+| `$activity_stats streaks [game_key]` | Owner | Top 10 daily streaks for a game (default `wordle`). |
+| `$activity_stats user <member> [game_key]` | Owner | One player's daily games/wins/streaks/distribution (default `wordle`). |
+
+`game_key` is `wordle` or `conjugation`. These are read-only views of the
+Activity's own tables; they never write.
+
 ## Database tables
 
 | Table | Owns | Description |
 |-------|------|-------------|
-| `game_results` | Activity backend (read-only here) | One row per finished game. The bot reads unposted daily rows and sets `posted_at`; it never creates the table (the Activity owns the schema). |
+| `game_results` | Activity backend (read-only here) | One row per finished game. The bot reads unposted daily rows and sets `posted_at`, and aggregates them for `$activity_stats`; it never creates the table (the Activity owns the schema). |
+| `game_stats` | Activity backend (read-only here) | Per-`(game_key, user_id)` daily aggregates (games, wins, current/max streak, guess distribution). Read by `$activity_stats streaks`/`user`. |
 
-`GameResultsMixin` (`db/game_results.py`) tolerates the table not existing yet
-(returns empty / no-op) so a fresh environment where the Activity hasn't booted
-doesn't error.
+`GameResultsMixin` (`db/game_results.py`) tolerates the tables not existing yet
+(returns empty / zero-valued / no-op) so a fresh environment where the Activity
+hasn't booted doesn't error. This includes the `$activity_stats` read methods
+(`activity_totals_by_game`, `activity_pending_health`, `activity_top_streaks`,
+`activity_user_stats`).
 
 ## Configuration & environment variables
 

@@ -73,6 +73,17 @@ see [`cogs/wordle.md`](./cogs/wordle.md)).
 | `$wordle` / `$palabra` | Post a button that launches the Activity (Wordle-themed entry point). |
 | `$conjuga` / `$conjugar` | Post a button that launches the Activity (Conjugation-themed entry point). |
 
+Owner-only, for inspecting what the Activity has persisted (see
+[`cogs/activity_results.md`](./cogs/activity_results.md)):
+
+| Command | Description |
+|---------|-------------|
+| `$activity_stats` / `$astats` | Server-wide totals per game (bare call). |
+| `$activity_stats totals` | Games, players, daily/free split, wins, unpublished daily rows, per game. |
+| `$activity_stats health` | Results-poster backlog: unposted daily count, oldest pending age, target channel. |
+| `$activity_stats streaks [game]` | Top 10 daily streaks for a game (default `wordle`). |
+| `$activity_stats user <member> [game]` | A player's daily games/wins/streaks/distribution (default `wordle`). |
+
 ## Introductions
 
 See [`cogs/introduce.md`](./cogs/introduce.md) for the full feature.
