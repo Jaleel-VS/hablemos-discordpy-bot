@@ -119,18 +119,28 @@ def resolve_config(options: dict[str, Any] | None) -> Config:
     if not isinstance(options, dict):
         return base
 
+    # Element types are checked (isinstance str) before any set membership test:
+    # a non-string like a list is unhashable and would raise TypeError on
+    # ``in`` — so hostile payloads such as {"set": ["x"]} or
+    # {"tenses": [["presente"]]} must degrade to defaults, not crash /start.
     verb_set = options.get("set")
-    if verb_set not in SETS or not SETS[verb_set]:
+    if not isinstance(verb_set, str) or verb_set not in SETS or not SETS[verb_set]:
         verb_set = base.verb_set
 
     raw_tenses = options.get("tenses")
-    tenses = [t for t in raw_tenses if t in _TENSE_KEYS] if isinstance(raw_tenses, list) else []
+    tenses = (
+        [t for t in raw_tenses if isinstance(t, str) and t in _TENSE_KEYS]
+        if isinstance(raw_tenses, list)
+        else []
+    )
     if not tenses:
         tenses = base.tenses
 
     raw_pronouns = options.get("pronouns")
     pronouns = (
-        [p for p in raw_pronouns if p in _PRONOUN_SET] if isinstance(raw_pronouns, list) else []
+        [p for p in raw_pronouns if isinstance(p, str) and p in _PRONOUN_SET]
+        if isinstance(raw_pronouns, list)
+        else []
     )
     if not pronouns:
         pronouns = base.pronouns

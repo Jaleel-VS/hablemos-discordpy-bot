@@ -2,6 +2,7 @@
 
 Run: pytest activity/backend/tests  (from repo root, with the backend venv)
 """
+import unicodedata
 from datetime import UTC, datetime, timedelta
 
 import pytest
@@ -33,6 +34,16 @@ def test_grade_ñ_is_a_letter_not_an_accent():
     assert grade("ano", "año") == Match.WRONG
 
 
+def test_grade_normalizes_decomposed_input():
+    # Some IMEs / dead-key layouts / paste sources emit NFD (é as e + combining
+    # accent, ñ as n + combining tilde). A correctly-typed form in NFD must
+    # grade EXACT, not CLOSE (accent) or WRONG (ñ lost to the strip).
+    assert grade(unicodedata.normalize("NFD", "hablé"), "hablé") == Match.EXACT
+    assert grade(unicodedata.normalize("NFD", "riñó"), "riñó") == Match.EXACT
+    # And a genuine accent miss typed in NFD is still CLOSE.
+    assert grade(unicodedata.normalize("NFD", "hable"), "hablé") == Match.CLOSE
+
+
 # ── config resolution (untrusted input) ──────────────────────────────────────
 
 def test_default_config_excludes_vosotros():
@@ -57,6 +68,20 @@ def test_resolve_config_honors_valid_subset():
 
 def test_resolve_config_none_is_default():
     assert d.resolve_config(None).verb_set == d.default_config().verb_set
+
+
+def test_resolve_config_survives_unhashable_elements():
+    # Unhashable elements (lists/dicts) must not raise TypeError on the ``in``
+    # membership tests — a hostile /start body degrades to defaults, never 500s.
+    base = d.default_config()
+    cfg = d.resolve_config(
+        {"set": ["x"], "tenses": [["presente"]], "pronouns": [{"a": 1}]}
+    )
+    assert cfg.verb_set == base.verb_set
+    assert cfg.tenses == base.tenses
+    assert cfg.pronouns == base.pronouns
+    # A single unhashable list as the whole value is fine too.
+    assert d.resolve_config({"tenses": [{"nested": True}, "presente"]}).tenses == ["presente"]
 
 
 # ── sprint flow ───────────────────────────────────────────────────────────

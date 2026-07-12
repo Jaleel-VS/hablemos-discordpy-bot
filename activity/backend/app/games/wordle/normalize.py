@@ -23,7 +23,10 @@ def normalize(word: str) -> str:
     Returns a string over the alphabet ``a-z`` plus ``ñ``. Non-letter
     characters are left to the caller to filter (see :func:`is_valid_shape`).
     """
-    lowered = word.strip().lower()
+    # NFC first so a decomposed ñ (n + combining tilde, from some IMEs/paste
+    # sources) is recomposed before the shield — otherwise the replace misses
+    # it and the tilde is stripped, silently turning ñ into a bare n.
+    lowered = unicodedata.normalize("NFC", word).strip().lower()
     # Protect ñ before decomposition so its tilde isn't stripped as an accent.
     shielded = lowered.replace("ñ", _SENTINEL)
     decomposed = unicodedata.normalize("NFD", shielded)

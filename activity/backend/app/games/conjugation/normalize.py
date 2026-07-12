@@ -32,7 +32,11 @@ class Match(StrEnum):
 
 def _strip_accents(text: str) -> str:
     """Lowercase and strip accents, preserving ñ as one letter."""
-    shielded = text.strip().lower().replace("ñ", _SENTINEL)
+    # NFC first so a decomposed ñ (n + combining tilde, as some IMEs/paste
+    # sources emit) is recomposed before the shield — otherwise the ``replace``
+    # misses it and the tilde is stripped, silently turning ñ into n.
+    normalized = unicodedata.normalize("NFC", text)
+    shielded = normalized.strip().lower().replace("ñ", _SENTINEL)
     decomposed = unicodedata.normalize("NFD", shielded)
     stripped = "".join(ch for ch in decomposed if unicodedata.category(ch) != "Mn")
     return stripped.replace(_SENTINEL, "ñ")
@@ -40,7 +44,10 @@ def _strip_accents(text: str) -> str:
 
 def _clean(text: str) -> str:
     """Trim and collapse internal whitespace; keep the accented, lowercased form."""
-    return " ".join(text.strip().lower().split())
+    # NFC-normalize so a correctly-typed but decomposed accent (é as e + ´)
+    # compares equal to the stored (composed) form instead of grading CLOSE.
+    normalized = unicodedata.normalize("NFC", text)
+    return " ".join(normalized.strip().lower().split())
 
 
 def grade(guess: str, expected: str) -> Match:
