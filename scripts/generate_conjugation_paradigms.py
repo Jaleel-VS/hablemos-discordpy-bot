@@ -37,9 +37,16 @@ Usage::
 
     pip install verbecc
     python scripts/generate_conjugation_paradigms.py
+
+The generator **fails loudly** (exit 1, no write) if any seed verb or any
+configured tense would be dropped from the output — a silent shrink would
+change the deterministic daily sequence for everyone and quietly shrink
+freeplay pools. Pass ``--allow-drops`` to regenerate anyway (writing the
+smaller JSON) after you've reviewed and accepted the drops.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -145,7 +152,33 @@ def _build_forms(conjugate, verb: str) -> dict[str, dict[str, str]] | None:
     return forms or None
 
 
+def _report_drops(all_verbs: list[str], verbs_out: dict[str, dict]) -> list[str]:
+    """Human-readable list of every seed verb or configured tense that got
+    dropped from the output. Empty list == the full seed grid survived."""
+    drops: list[str] = []
+    dropped_verbs = [v for v in all_verbs if v not in verbs_out]
+    if dropped_verbs:
+        drops.append(f"{len(dropped_verbs)} verb(s) dropped entirely: {dropped_verbs}")
+    for key in TENSES:
+        # A tense is "dropped" if no surviving verb carries it (verbecc emitted
+        # it for none of them) — it would vanish from the game.
+        missing_from = [v for v, d in verbs_out.items() if key not in d["forms"]]
+        if len(missing_from) == len(verbs_out):  # present in zero verbs
+            drops.append(f"tense {key!r} present in NO verb")
+        elif missing_from:
+            drops.append(f"tense {key!r} missing from {len(missing_from)} verb(s): {missing_from}")
+    return drops
+
+
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--allow-drops",
+        action="store_true",
+        help="write the JSON even if seed verbs/tenses were dropped",
+    )
+    args = parser.parse_args()
+
     if not _SEED.exists():
         print(f"seed file not found: {_SEED}", file=sys.stderr)
         return 1
@@ -181,6 +214,23 @@ def main() -> int:
         key: [v for v in verbs if v in verbs_out]
         for key, verbs in sets.items()
     }
+
+    # Drift guard: refuse to silently ship a smaller game. A dropped verb/tense
+    # shifts the deterministic daily sequence and shrinks freeplay pools, so it
+    # must be an explicit, reviewed decision (--allow-drops).
+    drops = _report_drops(all_verbs, verbs_out)
+    if drops:
+        print("\nDROPPED from the seed grid:", file=sys.stderr)
+        for line in drops:
+            print(f"  - {line}", file=sys.stderr)
+        if not args.allow_drops:
+            print(
+                "\nRefusing to write (would change the daily sequence / shrink "
+                "pools). Re-run with --allow-drops once you've accepted these.",
+                file=sys.stderr,
+            )
+            return 1
+        print("\n--allow-drops set: writing the smaller paradigm anyway.", file=sys.stderr)
 
     out = {
         "pronouns": PRONOUNS,

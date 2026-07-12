@@ -130,7 +130,12 @@ time runs out.
   verbecc trains an ML model on first import (~12s) and needs
   scikit-learn/scipy/numpy, so it is a **dev/build-time** dependency only — the
   runtime image just reads the committed JSON (like the Wordle word lists). Add
-  a tense in the generator's `TENSES` map and regenerate to grow the game.
+  a tense in the generator's `TENSES` map and regenerate to grow the game. The
+  generator **refuses to write** (exit 1) if a verbecc change would drop any
+  seed verb or tense — a silent shrink would shift the deterministic daily
+  sequence and reduce freeplay pools; pass `--allow-drops` to accept reviewed
+  drops. `tests/test_conjugation_data.py` guards the committed JSON the same way
+  in CI (full seed grid present, no leaked pronoun prefixes).
 - **Three-way grading** (`normalize.py`): `exact`, `close` (correct except
   accents — counts, but the UI flags it), `wrong`. Reuses the same ñ-safe
   accent handling as Wordle (ñ is a letter, not an accent).
@@ -158,6 +163,18 @@ time runs out.
   game); (2) the shared `start` route **refuses a second daily** for a puzzle a
   player already finished (`409`) — applies to any game with a `puzzle_no`,
   Wordle included.
+- **Known limit — the daily is honor-system, by design.** Because the backend
+  is stateless (state round-trips as a sealed token) and the repo is
+  open-source with a deterministic daily, a determined player *can* still cheat
+  a daily score: the date→answer mapping is derivable from public code
+  (`daily.py`), and a sealed token can be replayed/branched to brute-force
+  Wordle guesses (each `submit` forks the same starting state). Truly closing
+  this needs **server-side attempt consumption** — a per-`(user, game, puzzle)`
+  progress row storing a monotonic guess high-water mark, rejecting stale/reused
+  tokens — which re-introduces a per-guess DB round-trip we deliberately removed
+  (verify-once + `_uid`). Since the only stake is a cosmetic emoji-grid post in a
+  friendly server, we accept the honor-system boundary rather than pay that cost.
+  Revisit if the daily leaderboard ever becomes competitive.
 
 ### Persistence
 
