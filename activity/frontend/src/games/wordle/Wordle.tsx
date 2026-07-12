@@ -115,6 +115,14 @@ export default function Wordle({ accessToken }: GameProps) {
     return () => window.removeEventListener("keydown", handler);
   }, [onKey]);
 
+  // Auto-dismiss the toast so it behaves like a real toast (doesn't linger
+  // until the next keypress). Re-armed whenever a new error is set.
+  useEffect(() => {
+    if (!error) return;
+    const id = window.setTimeout(() => setError(null), 1800);
+    return () => window.clearTimeout(id);
+  }, [error]);
+
   if (!view) {
     return (
       <div className="wordle">
@@ -146,7 +154,15 @@ export default function Wordle({ accessToken }: GameProps) {
         shake={shake}
       />
 
-      {error && !over && <p className="error">{error}</p>}
+      {/* Zero-height anchor so the toast floats in the board/keyboard gap
+          WITHOUT taking flow space (an in-flow message shrinks the board). */}
+      <div className="toast-anchor">
+        {error && !over && (
+          <div className="toast" role="status" key={error}>
+            {error}
+          </div>
+        )}
+      </div>
 
       {over && result ? (
         <div className="result">

@@ -4,6 +4,7 @@ import type { ConjugationView } from "../../api";
 interface SprintProps {
   view: ConjugationView;
   busy: boolean;
+  error: string | null;
   onAnswer: (guess: string) => void;
   onTimeout: () => void;
   onFinish: () => void;
@@ -46,7 +47,7 @@ function useCountdown(deadlineIso: string | null, onZero: () => void): number {
   return remaining;
 }
 
-export default function Sprint({ view, busy, onAnswer, onTimeout, onFinish }: SprintProps) {
+export default function Sprint({ view, busy, error, onAnswer, onTimeout, onFinish }: SprintProps) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const remaining = useCountdown(view.deadline, onTimeout);
@@ -106,6 +107,16 @@ export default function Sprint({ view, busy, onAnswer, onTimeout, onFinish }: Sp
             {view.streak >= 3 ? "🔥" : ""} {view.streak}
           </span>
         </div>
+      </div>
+
+      {/* Submit errors (e.g. a network failure) float as a toast so they never
+          resize the prompt card. Zero-height anchor = no layout shift. */}
+      <div className="toast-anchor">
+        {error && (
+          <div className="toast" role="status" key={error}>
+            {error}
+          </div>
+        )}
       </div>
 
       {/* The prompt card. `key` on answered_count forces a remount so the

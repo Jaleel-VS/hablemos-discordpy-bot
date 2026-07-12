@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   startConjugation,
   submitConjugation,
@@ -46,6 +46,7 @@ export default function Conjugation({ accessToken }: GameProps) {
     async (guess: string, finish = false) => {
       if (!sealed || busy || overRef.current) return;
       setBusy(true);
+      setError(null); // clear any prior submit-error toast
       try {
         const resp = await submitConjugation(accessToken, sealed, guess, finish);
         setSealed(resp.sealed_state);
@@ -68,6 +69,14 @@ export default function Conjugation({ accessToken }: GameProps) {
     if (overRef.current) return;
     void answer("", true);
   }, [answer]);
+
+  // Auto-dismiss the sprint error toast so it doesn't linger. The Setup error
+  // is a form-validation state we leave until the next action.
+  useEffect(() => {
+    if (!error || screen !== "playing") return;
+    const id = window.setTimeout(() => setError(null), 1800);
+    return () => window.clearTimeout(id);
+  }, [error, screen]);
 
   // When the client-side countdown hits zero, end the run via the finish
   // action — NOT a normal empty guess. The finish path finalizes without
@@ -96,6 +105,7 @@ export default function Conjugation({ accessToken }: GameProps) {
       <Sprint
         view={view}
         busy={busy}
+        error={error}
         onAnswer={answer}
         onTimeout={flushTimeout}
         onFinish={finish}

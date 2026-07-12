@@ -120,7 +120,9 @@ export default function Setup({ onStart, busy, error }: SetupProps) {
         </div>
       </fieldset>
 
-      {error && <p className="error">{error}</p>}
+      {/* Reserved slot: the error occupies fixed space whether or not it's
+          shown, so revealing it never pushes the action buttons down. */}
+      <div className="setup-error-slot">{error && <p className="error">{error}</p>}</div>
 
       <div className="setup-actions">
         <button className="cta" onClick={() => freeplay(true)} disabled={busy}>

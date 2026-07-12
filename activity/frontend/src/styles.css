@@ -91,6 +91,46 @@ body {
   font-size: 0.9rem;
 }
 
+/* Floating toast for transient messages (invalid word, too short). The anchor
+ * is a zero-height flex child so it reserves NO layout space — the toast is
+ * absolutely positioned over the board/keyboard gap and centered on the anchor,
+ * so showing it never resizes or shifts the board (the old in-flow <p> did). */
+.toast-anchor {
+  position: relative;
+  height: 0;
+  width: 100%;
+  z-index: 5;
+}
+
+.toast {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  background: oklch(0.32 0.02 var(--hue));
+  color: var(--ink);
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  box-shadow: 0 6px 20px oklch(0.1 0.02 var(--hue) / 0.5);
+  animation: toast-in 0.22s var(--ease) both;
+  pointer-events: none;
+}
+
+@keyframes toast-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 6px));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
 /* ── app shell ───────────────────────────────────────────────────────── */
 .app {
   height: 100%;
@@ -695,6 +735,15 @@ body {
   background: color-mix(in oklab, var(--accent) 24%, var(--bg-raised));
   border-color: color-mix(in oklab, var(--accent) 60%, var(--line));
   color: var(--ink);
+}
+
+/* Reserve space for the (usually absent) error so it can't shift the buttons. */
+.setup-error-slot {
+  min-height: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .setup-actions {
