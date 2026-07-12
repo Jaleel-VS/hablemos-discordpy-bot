@@ -78,10 +78,22 @@ class GameEngine(Protocol):
 
         ``finish`` requests that the game end now without grading this call
         (used by games with an untimed/open-ended mode — e.g. the conjugation
-        sprint's "Terminar" button). Games without such a mode ignore it.
+        sprint's "Terminar" button). Games without such a mode ignore it, and
+        a timed game must reject a ``finish`` that arrives while real time
+        remains (raise :class:`GameError`) so it can't be used to end early.
 
         Raises :class:`GameError` on invalid input. Must be safe against
         arbitrary/hostile ``state`` and ``guess`` — never trust the client.
+        """
+        ...
+
+    def client_view(self, state: dict[str, Any]) -> dict[str, Any]:
+        """The answer-free projection of ``state`` the client may see.
+
+        The route layer re-derives the view from the (possibly re-bound) state
+        after ``new_game``/``submit``, so this is part of the contract, not a
+        private helper. Must never include the pending answer while the game is
+        in progress.
         """
         ...
 

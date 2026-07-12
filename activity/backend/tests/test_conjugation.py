@@ -243,3 +243,22 @@ def test_finish_does_not_grade_its_own_guess(engine):
     oc = engine.submit(state=oc.state, guess="whatever", finish=True)
     # finishing must not append a graded answer for the flush call
     assert oc.client_view["result"]["total"] == before
+
+
+def test_early_finish_on_timed_game_is_rejected(engine):
+    # A timed daily can't be ended instantly to bank a 0-answer streak day.
+    oc = engine.new_game(mode="daily", user_id="1")
+    with pytest.raises(GameError):
+        engine.submit(state=oc.state, guess="", finish=True)
+    assert not engine.is_over(oc.state)
+
+
+def test_end_of_timer_flush_still_finishes_timed_game(engine):
+    # The legit end-of-timer flush (finish arriving at/after the deadline) is
+    # accepted and finalizes the run.
+    oc = engine.new_game(mode="free", user_id="1")  # timed sprint
+    state = oc.state
+    state["deadline"] = (datetime.now(UTC) - timedelta(seconds=1)).isoformat()
+    oc = engine.submit(state=state, guess="", finish=True)
+    assert engine.is_over(oc.state)
+    assert "result" in oc.client_view

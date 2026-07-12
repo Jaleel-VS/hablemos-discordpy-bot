@@ -100,7 +100,7 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
             logger.exception("Failed to persist result for game=%s user=%s", game_key, user_id)
 
     def _response(engine, state: dict) -> dict[str, Any]:
-        return {"sealed_state": seal(get_secret(), state), "view": engine._client_view(state)}
+        return {"sealed_state": seal(get_secret(), state), "view": engine.client_view(state)}
 
     @router.get("")
     async def list_games() -> dict[str, Any]:
@@ -115,7 +115,10 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
         # Discord's users/@me on every answer (which dominated per-guess
         # latency: ~100ms hop vs. <1ms of actual game work).
         user_id = await _verified_user_id(body.access_token)
-        outcome = engine.new_game(mode=body.mode, user_id="", options=body.options)
+        # Pass the verified id to the engine (per the GameEngine contract — a
+        # game may seed per-user daily state on it) AND bind it into the sealed
+        # state so subsequent guesses trust it without re-hitting Discord.
+        outcome = engine.new_game(mode=body.mode, user_id=str(user_id), options=body.options)
         outcome.state["_uid"] = user_id
         # Daily is a once-per-day fixed sequence: refuse a replay so a player
         # can't retry the same puzzle for a better score (or farm the honor

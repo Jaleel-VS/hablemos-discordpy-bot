@@ -62,7 +62,7 @@ class WordleEngine:
             "status": "playing",
             "date": today.isoformat(),
         }
-        return GuessOutcome(state=state, client_view=self._client_view(state))
+        return GuessOutcome(state=state, client_view=self.client_view(state))
 
     def submit(
         self, *, state: dict[str, Any], guess: str, finish: bool = False,  # noqa: ARG002
@@ -89,7 +89,7 @@ class WordleEngine:
         elif len(rows) >= state["max_guesses"]:
             state["status"] = "lost"
 
-        return GuessOutcome(state=state, client_view=self._client_view(state))
+        return GuessOutcome(state=state, client_view=self.client_view(state))
 
     def is_over(self, state: dict[str, Any]) -> bool:
         return state.get("status") in ("won", "lost")
@@ -122,7 +122,7 @@ class WordleEngine:
 
     # ── helpers ───────────────────────────────────────────────────────────
 
-    def _client_view(self, state: dict[str, Any]) -> dict[str, Any]:
+    def client_view(self, state: dict[str, Any]) -> dict[str, Any]:
         """What the client may see. Excludes the answer until the game ends."""
         view: dict[str, Any] = {
             "game": self.key,

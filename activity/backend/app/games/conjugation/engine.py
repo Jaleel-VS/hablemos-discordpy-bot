@@ -137,7 +137,7 @@ class ConjugationEngine:
             "status": "playing",
             "date": today.isoformat(),
         }
-        return GuessOutcome(state=state, client_view=self._client_view(state))
+        return GuessOutcome(state=state, client_view=self.client_view(state))
 
     def submit(
         self, *, state: dict[str, Any], guess: str, finish: bool = False,
@@ -149,16 +149,23 @@ class ConjugationEngine:
         # Explicit end (untimed practice "Terminar", or a client timer flush).
         # Finalize without grading this call's guess.
         if finish:
+            # A timed game may only be finished by the end-of-timer flush, which
+            # arrives at/after the deadline. Rejecting an early finish stops a
+            # client from ending a timed daily instantly to bank a 0-answer
+            # streak day; the untimed practice mode has no deadline and may
+            # always finish on request.
+            if state.get("timed", True) and _now() < self._deadline(state) - _GRACE:
+                raise GameError("El reto cronometrado aún no ha terminado.")
             state["status"] = "over"
             state["last"] = None
-            return GuessOutcome(state=state, client_view=self._client_view(state))
+            return GuessOutcome(state=state, client_view=self.client_view(state))
 
         # Server-authoritative clock (timed games only). Past the grace window,
         # finalize and ignore this guess (it's the client's end-of-timer flush).
         if state.get("timed", True) and _now() > self._deadline(state) + _GRACE:
             state["status"] = "over"
             state["last"] = None
-            return GuessOutcome(state=state, client_view=self._client_view(state))
+            return GuessOutcome(state=state, client_view=self.client_view(state))
 
         current = self._config_question(state)
         result = grade(guess, current.expected)
@@ -192,7 +199,7 @@ class ConjugationEngine:
         # Advance to the next prompt.
         state["seq"] += 1
         state["current"] = self._next_question(state).as_state()
-        return GuessOutcome(state=state, client_view=self._client_view(state))
+        return GuessOutcome(state=state, client_view=self.client_view(state))
 
     def is_over(self, state: dict[str, Any]) -> bool:
         return state.get("status") == "over"
@@ -230,7 +237,7 @@ class ConjugationEngine:
 
     # ── helpers ───────────────────────────────────────────────────────────
 
-    def _client_view(self, state: dict[str, Any]) -> dict[str, Any]:
+    def client_view(self, state: dict[str, Any]) -> dict[str, Any]:
         """What the client may see. Excludes the pending answer while playing."""
         view: dict[str, Any] = {
             "game": self.key,
