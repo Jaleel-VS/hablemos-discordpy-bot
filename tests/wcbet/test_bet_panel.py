@@ -473,6 +473,7 @@ def _make_bet(match_id: int) -> dict:
         "odds": Decimal("1.43"),
         "status": "lost",
         "payout": None,
+        "placed_at": datetime(2026, 6, 11, 12, 0, tzinfo=UTC),
     }
 
 

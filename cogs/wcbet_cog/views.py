@@ -374,12 +374,24 @@ class BetPanelView(ui.LayoutView):
                 self._pending[fixture["match_id"]] = bet
 
         if self.show_history:
-            # Fetch one extra row past the display cap so we can tell whether
-            # older bets exist (and show the overflow footer) without a second
-            # query. Discord's TextDisplay caps the body at 4,000 chars.
-            self._history = await self.bot.db.get_wc_user_bets(
+            # Fetch singles and parlays, merge into one chronological feed.
+            # Over-fetch by one past the display cap so we can detect overflow
+            # without a second query.
+            singles = await self.bot.db.get_wc_user_bets(
                 self.user_id, limit=WCBET_MY_BETS_LIMIT + 1
             )
+            parlays = await self.bot.db.get_wc_user_parlays(self.user_id)
+            # Tag each entry so the renderer knows the type.
+            for s in singles:
+                s["_type"] = "single"
+            for p in parlays:
+                p["_type"] = "parlay"
+            merged = sorted(
+                [*singles, *parlays],
+                key=lambda r: r["placed_at"],
+                reverse=True,
+            )
+            self._history = merged[:WCBET_MY_BETS_LIMIT + 1]
 
         if self.show_manage:
             # Pending parlays for the manage list (singles come from
@@ -660,22 +672,11 @@ class BetPanelView(ui.LayoutView):
             overflow = len(self._history) > WCBET_MY_BETS_LIMIT
             shown = self._history[:WCBET_MY_BETS_LIMIT]
             lines = []
-            for bet in shown:
-                fixture = FIXTURE_BY_ID.get(bet["match_id"])
-                match_label = (
-                    f"{_team_label(fixture['home'])} vs {_team_label(fixture['away'])}"
-                    if fixture else f"match {bet['match_id']}"
-                )
-                outcome_label = (
-                    _outcome_label(bet["outcome"], fixture) if fixture else bet["outcome"]
-                )
-                status = bet["status"]
-                line = (
-                    f"{STATUS_EMOJI.get(status, '•')} **{bet['stake']:,}** "
-                    f"@ {bet['odds']} on **{outcome_label}** — {match_label}"
-                )
-                if status == "won" and bet["payout"] is not None:
-                    line += f" (paid **{bet['payout']:,}**)"
+            for entry in shown:
+                if entry.get("_type") == "parlay":
+                    line = self._format_parlay_history(entry)
+                else:
+                    line = self._format_single_history(entry)
                 lines.append(line)
             if overflow:
                 lines.append(
@@ -698,6 +699,37 @@ class BetPanelView(ui.LayoutView):
             ui.ActionRow(back, close),
             accent_colour=Color.blurple(),
         ))
+
+    def _format_single_history(self, bet) -> str:
+        """Format a single bet for the unified history list."""
+        fixture = FIXTURE_BY_ID.get(bet["match_id"])
+        match_label = (
+            f"{_team_label(fixture['home'])} vs {_team_label(fixture['away'])}"
+            if fixture else f"match {bet['match_id']}"
+        )
+        outcome_label = (
+            _outcome_label(bet["outcome"], fixture) if fixture else bet["outcome"]
+        )
+        status = bet["status"]
+        line = (
+            f"{STATUS_EMOJI.get(status, '•')} **{bet['stake']:,}** "
+            f"@ {bet['odds']} on **{outcome_label}** — {match_label}"
+        )
+        if status == "won" and bet["payout"] is not None:
+            line += f" (paid **{bet['payout']:,}**)"
+        return line
+
+    def _format_parlay_history(self, parlay: dict) -> str:
+        """Format a parlay for the unified history list."""
+        legs = parlay.get("legs", [])
+        status = parlay["status"]
+        line = (
+            f"{STATUS_EMOJI.get(status, '•')} 🎯 **{parlay['stake']:,}** "
+            f"@ {parlay['combined_odds']}x ({len(legs)} legs)"
+        )
+        if status == "won" and parlay["payout"] is not None:
+            line += f" (paid **{parlay['payout']:,}**)"
+        return line
 
     # ---------- manage bets ----------
 
