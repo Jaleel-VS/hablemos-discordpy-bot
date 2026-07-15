@@ -534,6 +534,115 @@ class WCBetsMixin(DatabaseMixin):
             # else: still has pending legs — leave it.
         return settled
 
+    async def reverse_wc_settlement(self, match_id: int) -> dict:
+        """Reverse an incorrect settlement: claw back winner payouts, reset all
+        bets to pending, fix parlay legs, and delete the result row.
+
+        Returns {"clawed_back": int (users), "total_clawed": int (coins),
+        "reset_losers": int, "parlays_reversed": int}.
+        """
+        async with self._pool().acquire() as conn, conn.transaction():
+            # 1. Delete the result row.
+            deleted = await conn.execute(
+                'DELETE FROM wc_match_results WHERE match_id = $1', match_id,
+            )
+            if deleted == 'DELETE 0':
+                raise ValueError(f"Match {match_id} has no settlement to reverse.")
+
+            # 2. Claw back payouts from incorrect winners.
+            winners = await conn.fetch(
+                'SELECT user_id, payout FROM wc_bets '
+                "WHERE match_id = $1 AND status = 'won' FOR UPDATE",
+                match_id,
+            )
+            clawed_back = 0
+            total_clawed = 0
+            for bet in winners:
+                new_balance = await conn.fetchval(
+                    'UPDATE wc_bet_wallets '
+                    'SET balance = balance - $2, updated_at = NOW() '
+                    'WHERE user_id = $1 RETURNING balance',
+                    bet['user_id'], bet['payout'],
+                )
+                clawed_back += 1
+                total_clawed += bet['payout']
+                if new_balance is not None:
+                    await self._log_balance_event(
+                        conn, bet['user_id'], -bet['payout'], new_balance,
+                        'settlement_reversal', match_id,
+                    )
+
+            # 3. Reset all bets on this match back to pending.
+            reset = await conn.execute(
+                "UPDATE wc_bets SET status = 'pending', payout = NULL, "
+                "settled_at = NULL WHERE match_id = $1 AND status IN ('won', 'lost')",
+                match_id,
+            )
+            reset_losers = int(reset.split()[-1]) - clawed_back
+
+            # 4. Reset parlay legs for this match back to NULL.
+            await conn.execute(
+                'UPDATE wc_parlay_legs SET result = NULL '
+                'WHERE match_id = $1',
+                match_id,
+            )
+
+            # 5. Reverse parlays that settled (won or lost) due to this match.
+            #    A parlay should be reversed if it was settled AFTER or AT the
+            #    same time as this match. We find parlays with a leg on this
+            #    match that aren't 'pending'.
+            settled_parlays = await conn.fetch(
+                '''
+                SELECT p.id, p.user_id, p.status, p.payout
+                FROM wc_parlays p
+                WHERE p.status IN ('won', 'lost')
+                  AND p.id IN (
+                      SELECT parlay_id FROM wc_parlay_legs WHERE match_id = $1
+                  )
+                FOR UPDATE
+                ''',
+                match_id,
+            )
+            parlays_reversed = 0
+            for p in settled_parlays:
+                # Check if the parlay has other lost legs (from other matches).
+                other_lost = await conn.fetchval(
+                    'SELECT COUNT(*) FROM wc_parlay_legs '
+                    'WHERE parlay_id = $1 AND match_id != $2 AND result = \'lost\'',
+                    p['id'], match_id,
+                )
+                if other_lost > 0:
+                    # Parlay would still be lost regardless — leave it.
+                    continue
+                # Claw back payout if it won.
+                if p['status'] == 'won' and p['payout'] > 0:
+                    new_balance = await conn.fetchval(
+                        'UPDATE wc_bet_wallets '
+                        'SET balance = balance - $2, updated_at = NOW() '
+                        'WHERE user_id = $1 RETURNING balance',
+                        p['user_id'], p['payout'],
+                    )
+                    total_clawed += p['payout']
+                    if new_balance is not None:
+                        await self._log_balance_event(
+                            conn, p['user_id'], -p['payout'], new_balance,
+                            'parlay_reversal', match_id,
+                        )
+                # Reset parlay to pending.
+                await conn.execute(
+                    "UPDATE wc_parlays SET status = 'pending', payout = NULL, "
+                    'settled_at = NULL WHERE id = $1',
+                    p['id'],
+                )
+                parlays_reversed += 1
+
+            return {
+                'clawed_back': clawed_back,
+                'total_clawed': total_clawed,
+                'reset_losers': reset_losers,
+                'parlays_reversed': parlays_reversed,
+            }
+
     async def void_wc_match(self, match_id: int) -> dict:
         """Refund every pending stake on a match and mark the bets void.
 

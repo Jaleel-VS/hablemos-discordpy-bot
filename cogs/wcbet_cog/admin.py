@@ -198,6 +198,75 @@ class WCBetAdmin(BaseCog):
         )
         await self._log_settlement(ctx.guild, fixture, home_score, away_score, summary)
 
+    @wcbetadmin.command(name="resettle")
+    @commands.is_owner()
+    async def resettle(
+        self, ctx: commands.Context, match_id: int, *, score: str,
+    ) -> None:
+        """Reverse an incorrect settlement and re-settle with the correct score.
+
+        Usage: $wcbetadmin resettle <match_id> <home_score>-<away_score> [pens home|away]
+        """
+        fixture = FIXTURE_BY_ID.get(match_id)
+        if fixture is None:
+            await ctx.send(embed=red_embed(f"Unknown match ID `{match_id}`."))
+            return
+
+        score_part, winner = _parse_result_arg(score)
+        parsed = betting.parse_score(score_part)
+        if parsed is None:
+            await ctx.send(
+                embed=red_embed(
+                    "Couldn't parse that score. Use `<home>-<away>`, e.g. `2-1` "
+                    "(knockout shootout: add `pens home` or `pens away`)."
+                ),
+            )
+            return
+        home_score, away_score = parsed
+
+        outcome = betting.settle_outcome(fixture, home_score, away_score, winner=winner)
+        if outcome is None:
+            await ctx.send(
+                embed=red_embed(
+                    f"**{fixture['home']} {home_score}\u2013{away_score} {fixture['away']}** "
+                    "is a knockout that ended level \u2014 name the advancing side: "
+                    f"`$wcbetadmin resettle {match_id} {home_score}-"
+                    f"{away_score} pens home` (or `pens away`)."
+                ),
+            )
+            return
+
+        # Step 1: Reverse the incorrect settlement.
+        try:
+            rev = await self.bot.db.reverse_wc_settlement(match_id)
+        except ValueError as exc:
+            await ctx.send(embed=red_embed(str(exc)))
+            return
+
+        # Step 2: Re-settle with correct score.
+        summary = await self.bot.db.settle_wc_match(
+            match_id, home_score, away_score, outcome, payout_fn=betting.payout,
+        )
+
+        line = (
+            f"\u21a9\ufe0f **Resettled match {match_id}:** "
+            f"**{fixture['home']} {home_score}\u2013{away_score} {fixture['away']}** "
+            f"({outcome})\n"
+            f"\u274c Reversed: clawed back {rev['total_clawed']:,} coins from "
+            f"{rev['clawed_back']} incorrect winners, "
+            f"{rev['parlays_reversed']} parlays reopened.\n"
+            f"\u2705 Correct: {summary['winners']} won / {summary['losers']} lost / "
+            f"**{summary['total_paid']:,}** coins paid."
+        )
+        await ctx.send(embed=green_embed(line))
+        logger.info(
+            "wcbet: match %s resettled %s-%s (%s) by %s — reversed %s, "
+            "now %s winners, %s losers, %s paid",
+            match_id, home_score, away_score, outcome, ctx.author,
+            rev, summary["winners"], summary["losers"], summary["total_paid"],
+        )
+        await self._log_settlement(ctx.guild, fixture, home_score, away_score, summary)
+
     @wcbetadmin.command(name="multiplier")
     @commands.is_owner()
     async def multiplier(
