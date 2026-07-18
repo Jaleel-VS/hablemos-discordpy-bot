@@ -188,11 +188,15 @@ class WCBetsMixin(DatabaseMixin):
 
     async def claim_wc_bonus(
         self, user_id: int, amount: int, event_tag: str,
+        *, guild_id: int | None = None,
     ) -> int | None:
         """Credit a one-time bonus identified by *event_tag*.
 
         Returns the new balance, or None if already claimed (an existing
-        balance-log row with that event for this user) or no wallet exists.
+        balance-log row with that event for this user).
+
+        If the user has no wallet and *guild_id* is provided, a wallet is
+        created with the bonus as the starting balance.
         """
         async with self._pool().acquire() as conn, conn.transaction():
             already = await conn.fetchval(
@@ -211,6 +215,17 @@ class WCBetsMixin(DatabaseMixin):
                 ''',
                 user_id, amount,
             )
+            if new_balance is None and guild_id is not None:
+                # No wallet yet — create one with the bonus as starting balance.
+                new_balance = await conn.fetchval(
+                    '''
+                    INSERT INTO wc_bet_wallets (user_id, guild_id, balance)
+                    VALUES ($1, $2, $3)
+                    ON CONFLICT (user_id) DO NOTHING
+                    RETURNING balance
+                    ''',
+                    user_id, guild_id, amount,
+                )
             if new_balance is not None:
                 await self._log_balance_event(conn, user_id, amount, new_balance, event_tag)
             return new_balance
