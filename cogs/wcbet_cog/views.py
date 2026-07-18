@@ -577,22 +577,31 @@ class BetPanelView(ui.LayoutView):
                 else None
             )
             if pick_odds is not None:
-                amounts = betting.stake_presets(self.balance)
+                is_final = selected is not None and betting.is_finals_match(selected)
+                amounts = betting.stake_presets(self.balance, finals=is_final)
                 if self.selected_stake is not None and self.selected_stake not in amounts:
                     amounts.insert(0, self.selected_stake)
-                stake_options = [
-                    SelectOption(
-                        label=(
-                            f"All in ({amount:,}) → pays "
+                stake_options = []
+                half = self.balance // 2
+                for amount in amounts:
+                    if amount == self.balance:
+                        prefix = "🔥 " if is_final else ""
+                        lbl = (
+                            f"{prefix}All in ({amount:,}) → pays "
                             f"{betting.payout(amount, pick_odds):,}"
-                            if amount == self.balance
-                            else f"{amount:,} → pays {betting.payout(amount, pick_odds):,}"
-                        ),
+                        )
+                    elif is_final and amount == half:
+                        lbl = (
+                            f"Half ({amount:,}) → pays "
+                            f"{betting.payout(amount, pick_odds):,}"
+                        )
+                    else:
+                        lbl = f"{amount:,} → pays {betting.payout(amount, pick_odds):,}"
+                    stake_options.append(SelectOption(
+                        label=lbl,
                         value=str(amount),
                         default=amount == self.selected_stake,
-                    )
-                    for amount in amounts
-                ]
+                    ))
                 stake_options.append(
                     SelectOption(label="Custom amount…", value="custom", emoji="✏️")
                 )
@@ -1309,7 +1318,10 @@ class ParlayPanelView(ui.LayoutView):
 
         # Stake select + place, enabled once at MIN_LEGS.
         ready = len(self.legs) >= self.MIN_LEGS
-        amounts = betting.stake_presets(self.balance) if ready else []
+        is_final = ready and all(
+            betting.is_finals_match(f) for f in self._fixtures
+        )
+        amounts = betting.stake_presets(self.balance, finals=is_final) if ready else []
         if ready and self.stake is not None and self.stake not in amounts:
             amounts.insert(0, self.stake)
         if ready and amounts:

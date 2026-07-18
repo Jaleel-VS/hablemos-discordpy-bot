@@ -143,15 +143,30 @@ def parlay_payout(stake: int, odds: list[Decimal]) -> int:
 # Stake quick-pick amounts offered in the panel (filtered to balance).
 STAKE_PRESETS = (100, 250, 500, 1_000, 2_500, 5_000)
 
+# Stages that use the "all or nothing" finals stake presets.
+_FINALS_STAGES = frozenset({"Third Place Playoff", "Final"})
 
-def stake_presets(balance: int) -> list[int]:
+
+def is_finals_match(fixture: Fixture) -> bool:
+    """True for the Third Place Playoff and Final."""
+    return fixture["stage"] in _FINALS_STAGES
+
+
+def stake_presets(balance: int, *, finals: bool = False) -> list[int]:
     """Preset stakes affordable at `balance`, plus an all-in amount.
 
     The balance itself is appended when it is not already a preset, so
     there is always an "all in" choice (empty list when broke).
+
+    When *finals* is True, only offers half-balance and full-balance
+    (all-or-nothing for the final matches).
     """
     if balance < 1:
         return []
+    if finals:
+        half = balance // 2
+        amounts = [half, balance] if half > 0 else [balance]
+        return amounts
     amounts = [preset for preset in STAKE_PRESETS if preset <= balance]
     if balance not in amounts:
         amounts.append(balance)
