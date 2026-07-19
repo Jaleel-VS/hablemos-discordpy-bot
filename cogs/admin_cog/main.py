@@ -13,7 +13,7 @@ from discord import Color, Embed, app_commands, ui
 from discord.ext import commands, tasks
 
 from base_cog import BaseCog
-from cogs.admin_cog.config import VC_ENRICH_CHANNEL_ID
+from cogs.admin_cog.config import REMINDER_CHANNEL_ID, REMINDER_INTERVAL_MINUTES, VC_ENRICH_CHANNEL_ID
 from cogs.utils.discovery import discover_extensions
 
 if TYPE_CHECKING:
@@ -46,6 +46,7 @@ class AdminCog(BaseCog):
 
     async def cog_unload(self):
         self.daily_cleanup.cancel()
+        self.server_reminder.cancel()
         if self._vc_enrich_ctx_menu:
             self.bot.tree.remove_command(self._vc_enrich_ctx_menu.name, type=self._vc_enrich_ctx_menu.type)
 
@@ -784,6 +785,130 @@ class AdminCog(BaseCog):
         except Exception as e:
             logger.error("Sync failed: %s", e, exc_info=True)
             await ctx.send("❌ Sync failed. Check logs.")
+
+    # ── Server reminder task ──
+
+    def _build_reminder_view(self) -> ui.LayoutView:
+        """Build the bilingual server-rules reminder as a Components v2 LayoutView."""
+        rules_url = "https://discord.com/channels/243838819743432704/243859144962998272/1527368819188826276"
+        view = ui.LayoutView(timeout=None)
+        view.add_item(ui.Container(
+            ui.TextDisplay(
+                "## 📋 Server Rules Reminder · Recordatorio de Reglas\n"
+                "---\n"
+                "**🇬🇧 English**\n"
+                "A friendly reminder to everyone to please adhere to the server rules as we approach "
+                "the World Cup Final. We understand that emotions will be running high — this is a "
+                "deeply exciting moment! However, please remember that this is a **language learning "
+                "server** and we ask everyone to help maintain a kind, welcoming, and friendly "
+                "environment for all members.\n\n"
+                "**🇪🇸 Español**\n"
+                "Un recordatorio amistoso para todos de que, por favor, respeten las reglas del servidor "
+                "conforme nos acercamos a la Final del Mundial. Entendemos que las emociones estarán a "
+                "flor de piel — ¡es un momento muy emocionante! Sin embargo, recuerden que este es un "
+                "**servidor de aprendizaje de idiomas** y pedimos a todos que contribuyan a mantener un "
+                "ambiente amable, acogedor y respetuoso para todos los miembros.\n\n"
+                f"📜 **More information:** {rules_url}"
+            ),
+            accent_colour=discord.Color.blurple(),
+        ))
+        return view
+
+    @tasks.loop(minutes=REMINDER_INTERVAL_MINUTES)
+    async def server_reminder(self):
+        """Send the bilingual server-rules reminder to the configured channel."""
+        channel = self.bot.get_channel(REMINDER_CHANNEL_ID)
+        if not isinstance(channel, discord.abc.Messageable):
+            logger.warning("server_reminder: channel %s not found or not messageable", REMINDER_CHANNEL_ID)
+            return
+        try:
+            await channel.send(view=self._build_reminder_view())
+            logger.info("server_reminder: posted to channel %s", REMINDER_CHANNEL_ID)
+        except discord.HTTPException:
+            logger.exception("server_reminder: failed to post")
+
+    @server_reminder.before_loop
+    async def before_server_reminder(self):
+        await self.bot.wait_until_ready()
+
+    # ── $reminder command group ──
+
+    @commands.group(name='reminder', invoke_without_command=True)
+    @commands.is_owner()
+    async def reminder_group(self, ctx: commands.Context):
+        """Manage the recurring server reminder. Subcommands: start, stop, status, interval"""
+        await ctx.send(
+            "Subcommands: `start`, `stop`, `status`, `interval <minutes>`\n"
+            f"Channel: <#{REMINDER_CHANNEL_ID}> · "
+            f"Interval: **{self.server_reminder.minutes:.0f}m** · "
+            f"Running: **{'yes' if self.server_reminder.is_running() else 'no'}**"
+        )
+
+    @reminder_group.command(name='start')
+    @commands.is_owner()
+    async def reminder_start(self, ctx: commands.Context):
+        """Start the reminder task (no-op if already running)."""
+        if self.server_reminder.is_running():
+            await ctx.send("Already running.")
+            return
+        self.server_reminder.start()
+        await ctx.send(f"✅ Reminder task started — fires every {self.server_reminder.minutes:.0f}m.")
+
+    @reminder_group.command(name='stop')
+    @commands.is_owner()
+    async def reminder_stop(self, ctx: commands.Context):
+        """Stop the reminder task."""
+        if not self.server_reminder.is_running():
+            await ctx.send("Not running.")
+            return
+        self.server_reminder.cancel()
+        await ctx.send("✅ Reminder task stopped.")
+
+    @reminder_group.command(name='status')
+    @commands.is_owner()
+    async def reminder_status(self, ctx: commands.Context):
+        """Show reminder task status."""
+        running = self.server_reminder.is_running()
+        count = self.server_reminder.current_loop
+        await ctx.send(
+            f"**Reminder task** — {'🟢 running' if running else '🔴 stopped'}\n"
+            f"Interval: **{self.server_reminder.minutes:.0f}m** · "
+            f"Fires sent this session: **{count}**"
+        )
+
+    @reminder_group.command(name='interval')
+    @commands.is_owner()
+    async def reminder_interval(self, ctx: commands.Context, minutes: int):
+        """Set the reminder interval in minutes and restart the task.
+
+        Usage: $reminder interval 30
+        """
+        if minutes < 1:
+            await ctx.send("❌ Interval must be at least 1 minute.")
+            return
+        was_running = self.server_reminder.is_running()
+        if was_running:
+            self.server_reminder.cancel()
+        self.server_reminder.change_interval(minutes=minutes)
+        self.server_reminder.start()
+        await ctx.send(f"✅ Reminder interval set to **{minutes}m** and task {'restarted' if was_running else 'started'}.")
+
+    @reminder_group.command(name='send')
+    @commands.is_owner()
+    async def reminder_send(self, ctx: commands.Context):
+        """Send the reminder immediately (does not reset the loop timer)."""
+        channel = self.bot.get_channel(REMINDER_CHANNEL_ID)
+        if not isinstance(channel, discord.abc.Messageable):
+            await ctx.send(f"❌ Channel <#{REMINDER_CHANNEL_ID}> not found.")
+            return
+        await channel.send(view=self._build_reminder_view())
+        await ctx.message.add_reaction("✅")
+
+    @reminder_group.command(name='preview')
+    @commands.is_owner()
+    async def reminder_preview(self, ctx: commands.Context):
+        """Preview the reminder in the current channel (doesn't post to the reminder channel)."""
+        await ctx.send(view=self._build_reminder_view())
 
 
 async def setup(bot: Hablemos):
