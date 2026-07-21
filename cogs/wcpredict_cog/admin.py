@@ -6,6 +6,7 @@ participation stats.
 """
 from __future__ import annotations
 
+import csv
 import io
 import logging
 import re
@@ -301,78 +302,64 @@ class WCPredictAdmin(BaseCog):
                     key_to_label[key] = username
                     events.setdefault(key, []).append((ts, None))
 
-        # --- classify users who currently end on target team ---
-        loyal: list[str] = []          # picked target before WC, never left
-        changed: list[str] = []        # on target now, but changed at some point
-        late: list[str] = []           # first picked target after WC started
+        # --- build flat CSV audit table (all users who ever touched target) ---
+        # Columns: verdict, user_id, names_seen, first_pick, final_team, events
 
-        for key, user_events in events.items():
-            # Only care about users whose final state is the target team
-            final_team = user_events[-1][1] if user_events else None
-            if final_team != target:
+        csv_buf = io.StringIO()
+        writer = csv.writer(csv_buf)
+        writer.writerow(["verdict", "user_id", "names_seen", "first_pick", "final_team", "events"])
+
+        for key, user_events in sorted(events.items(), key=lambda kv: kv[1][0][0]):
+            final_team = user_events[-1][1] or "removed"
+
+            # Only rows that ever touched the target team
+            if not any(team == target for _, team in user_events):
                 continue
 
+            user_id = key[4:] if key.startswith("uid:") else ""
             label = key_to_label.get(key, key)
-            # Append user ID to label when we have one (uid: keys)
-            if key.startswith("uid:"):
-                label = f"{label} (`{key[4:]}`)"
 
-            # Find the first time this user ever picked the target
-            first_target_ts = next(
-                (ts for ts, team in user_events if team == target),
-                None,
-            )
-            if first_target_ts is None:
-                continue
+            first_target_ts = next(ts for ts, team in user_events if team == target)
+            first_target_idx = next(i for i, (ts, team) in enumerate(user_events) if team == target)
+            ever_left = any(team != target for _, team in user_events[first_target_idx + 1:])
 
-            # Did they ever leave the target after first picking it?
-            first_target_idx = next(
-                i for i, (ts, team) in enumerate(user_events) if team == target
-            )
-            ever_left = any(
-                team != target
-                for _, team in user_events[first_target_idx + 1:]
-            )
-
-            if first_target_ts >= _WC_START:
-                late.append(f"{label} (first picked <t:{int(first_target_ts.timestamp())}:d>)")
+            if final_team != target:
+                verdict = "LEFT"
+            elif first_target_ts >= _WC_START:
+                verdict = "LATE"
             elif ever_left:
-                changed.append(
-                    f"{label} (first picked <t:{int(first_target_ts.timestamp())}:d>, strayed & returned)"
-                )
+                verdict = "STRAYED"
             else:
-                loyal.append(
-                    f"{label} (since <t:{int(first_target_ts.timestamp())}:d>)"
-                )
+                verdict = "LOYAL"
 
-        # --- build output ---
-        loyal_lines = [f"- {u}" for u in loyal] or ["- *(none)*"]
-        changed_lines = [f"- {u}" for u in changed] or ["- *(none)*"]
-        late_lines = [f"- {u}" for u in late] or ["- *(none)*"]
-        lines: list[str] = [
-            f"# {target} role history scan",
-            f"Scanned **{len(all_messages)}** log messages · "
-            f"**{len(events)}** unique users tracked\n",
-            f"## ✅ Loyal from day 1 ({len(loyal)})",
-            *loyal_lines,
-            "",
-            f"## ⚠️ On {target} now, but strayed at some point ({len(changed)})",
-            *changed_lines,
-            "",
-            f"## 🕐 Picked {target} only after WC started ({len(late)})",
-            *late_lines,
-        ]
+            event_chain = " → ".join(
+                f"{team or 'removed'} ({ts.strftime('%b %d')})"
+                for ts, team in user_events
+            )
 
-        content = "\n".join(lines).encode()
-        filename = f"wc_scanroles_{target.replace(' ', '_').lower()}.md"
-        report_file = discord.File(io.BytesIO(content), filename=filename)
+            writer.writerow([
+                verdict,
+                user_id,
+                label,
+                first_target_ts.strftime("%Y-%m-%d"),
+                final_team,
+                event_chain,
+            ])
 
-        await status.edit(content=f"✅ Scan complete — {len(loyal)} loyal, {len(changed)} strayed, {len(late)} late.")
+        csv_content = csv_buf.getvalue().encode()
+        filename = f"wc_audit_{target.replace(' ', '_').lower()}.csv"
+        report_file = discord.File(io.BytesIO(csv_content), filename=filename)
+
+        # Quick summary counts for the status message
+        rows_preview = [r for r in csv.DictReader(io.StringIO(csv_buf.getvalue()))]
+        counts = {}
+        for r in rows_preview:
+            counts[r["verdict"]] = counts.get(r["verdict"], 0) + 1
+
+        summary = "  ".join(f"{v}:{counts.get(v, 0)}" for v in ("LOYAL", "STRAYED", "LATE", "LEFT"))
+        await status.edit(content=f"✅ {len(rows_preview)} users touched `{target}` — {summary}")
         await ctx.send(file=report_file)
-        logger.info(
-            "wcpredict scanroles run by %s: %d loyal, %d changed, %d late",
-            ctx.author, len(loyal), len(changed), len(late),
-        )
+        logger.info("wcpredict scanroles by %s: %s", ctx.author, summary)
 
     # ---------- helpers ----------
 
