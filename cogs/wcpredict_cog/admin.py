@@ -302,22 +302,52 @@ class WCPredictAdmin(BaseCog):
                     # detect it as a Spain touch when auditing renames
                     events.setdefault(key, []).append((ts, f"~{removed_team}"))
 
+        # --- resolve user IDs from current role holders + wc_predictions ---
+        # Build username -> (user_id, display_name) from everyone in the guild
+        # who currently holds the target role, plus anyone in wc_predictions.
+        # This auto-fills user_id for rows that are otherwise just a username.
+        username_to_id: dict[str, int] = {}
+
+        target_role = discord.utils.find(
+            lambda r: r.name == target, ctx.guild.roles
+        )
+        if target_role:
+            for member in target_role.members:
+                username_to_id[str(member)] = member.id
+                # Also index by display name in case the log used display_name
+                username_to_id[member.display_name] = member.id
+
+        # Pull from wc_predictions — these have verified IDs regardless of role
+        db_rows = await self.bot.db.get_all_wc_predictions(ctx.guild.id)
+        for row in db_rows:
+            member = ctx.guild.get_member(row["user_id"])
+            if member:
+                username_to_id[str(member)] = member.id
+                username_to_id[member.display_name] = member.id
+
         # --- build flat CSV audit table (all users who ever touched target) ---
-        # Columns: verdict, user_id, names_seen, first_pick, final_team, events
+        # Columns: verdict, user_id, id_source, names_seen, first_pick, final_team, events
         csv_buf = io.StringIO()
         writer = csv.writer(csv_buf)
-        writer.writerow(["verdict", "user_id", "names_seen", "first_pick", "final_team", "events"])
+        writer.writerow(["verdict", "user_id", "id_source", "names_seen", "first_pick", "final_team", "events"])
 
         for key, user_events in sorted(events.items(), key=lambda kv: kv[1][0][0]):
             # "touched" means assigned, switched to, or removed — covers rename splits
             def _touched(team: str) -> bool:
                 return team == target or team == f"~{target}"
 
-            if not any(_touched(team) for _, team in user_events):
-                continue
-
             user_id = key[4:] if key.startswith("uid:") else ""
+            id_source = "footer" if key.startswith("uid:") else ""
             label = key_to_label.get(key, key)
+
+            # Try to resolve user_id from current guild members when not in footer
+            if not user_id:
+                resolved = username_to_id.get(label)
+                if resolved:
+                    user_id = str(resolved)
+                    id_source = "resolved"
+                else:
+                    id_source = "UNRESOLVED"
 
             # final_team: last event that isn't a removal of something else
             raw_final = user_events[-1][1]
@@ -360,6 +390,7 @@ class WCPredictAdmin(BaseCog):
             writer.writerow([
                 verdict,
                 user_id,
+                id_source,
                 label,
                 first_pick_str,
                 display_final,
