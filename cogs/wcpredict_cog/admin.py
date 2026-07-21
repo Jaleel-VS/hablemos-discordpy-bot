@@ -6,6 +6,7 @@ participation stats.
 """
 from __future__ import annotations
 
+import io
 import logging
 import re
 from datetime import UTC, datetime
@@ -29,6 +30,22 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+ROLE_MENTION_RE = re.compile(r"<@&(\d+)>")
+
+# Patterns for the embed descriptions produced by worldcup_cog/views.py
+_RE_ASSIGNED = re.compile(
+    r"\*\*(.+?)\*\* assigned themselves \*\*(.+?)\*\*\.",
+)
+_RE_SWITCHED = re.compile(
+    r"\*\*(.+?)\*\* switched from \*\*(.+?)\*\* to \*\*(.+?)\*\*\.",
+)
+_RE_REMOVED = re.compile(
+    r"\*\*(.+?)\*\* removed \*\*(.+?)\*\*\.",
+)
+
+# WC 2026 kickoff — predictions must be set *before* this to count as
+# "from the first moment before the World Cup".
+_WC_START = datetime(2026, 6, 11, tzinfo=UTC)
 ROLE_MENTION_RE = re.compile(r"<@&(\d+)>")
 
 
@@ -81,7 +98,7 @@ class WCPredictAdmin(BaseCog):
     async def wcpredict_admin(self, ctx: commands.Context) -> None:
         """Admin tools for the World Cup predictions feature."""
         await ctx.send(
-            "Usage: `$wcpredict <setdeadline|cleardeadline|setwinner|clearwinner|stats>`",
+            "Usage: `$wcpredict <setdeadline|cleardeadline|setwinner|clearwinner|stats|scanroles>`",
         )
 
     # ---------- deadline ----------
@@ -193,6 +210,148 @@ class WCPredictAdmin(BaseCog):
         )
         embed.set_footer(text=f"{total} total prediction(s)")
         await ctx.send(embed=embed)
+
+    # ---------- scan role log ----------
+
+    @wcpredict_admin.command(name="scanroles")
+    @commands.is_owner()
+    async def scanroles(self, ctx: commands.Context, target_team: str = "Team Spain") -> None:
+        """Scan #world-cup-log and report who had <target_team> from before the WC started.
+
+        Reads all embed messages in the log channel, builds a per-user role
+        history, then outputs three lists:
+          • Loyal from day 1  — picked before WC start, never switched away
+          • Changed but ended on target — was on target at end, but switched at some point
+          • Picked after WC started — set target team only after Jun 11
+
+        Usage: $wcpredict scanroles [team name]
+        Default team: Team Spain
+        """
+        if ctx.guild is None:
+            await ctx.send(embed=red_embed("Run this in the league guild."))
+            return
+
+        channel = ctx.guild.get_channel(WC_PREDICT_LOG_CHANNEL_ID)
+        if not isinstance(channel, discord.TextChannel):
+            await ctx.send(embed=red_embed(f"Can't find log channel `{WC_PREDICT_LOG_CHANNEL_ID}`."))
+            return
+
+        # Normalise target name for comparison (case-insensitive, strip whitespace)
+        target = target_team.strip()
+        if not target.lower().startswith("team "):
+            target = f"Team {target}"
+
+        status = await ctx.send(f"⏳ Scanning **{channel.name}** for `{target}` role history…")
+
+        # --- fetch all messages (discord.py paginates internally) ---
+        try:
+            all_messages: list[discord.Message] = [
+                msg async for msg in channel.history(limit=None, oldest_first=True)
+            ]
+        except discord.Forbidden:
+            await status.edit(content="❌ No permission to read that channel.")
+            return
+        except discord.HTTPException:
+            logger.exception("Failed to fetch history for channel %s", channel.id)
+            await status.edit(content="❌ Failed to fetch messages.")
+            return
+
+        await status.edit(content=f"⏳ Fetched {len(all_messages)} messages, parsing…")
+
+        # --- parse embeds into per-user event list ---
+        # events[username] = list of (timestamp, team_name | None)
+        #   None means "removed role entirely"
+        events: dict[str, list[tuple[datetime, str | None]]] = {}
+
+        for msg in all_messages:
+            ts = msg.created_at  # always UTC-aware
+            for embed in msg.embeds:
+                desc = embed.description or ""
+
+                m = _RE_ASSIGNED.search(desc)
+                if m:
+                    user, team = m.group(1), m.group(2)
+                    events.setdefault(user, []).append((ts, team))
+                    continue
+
+                m = _RE_SWITCHED.search(desc)
+                if m:
+                    user, _from, to = m.group(1), m.group(2), m.group(3)
+                    events.setdefault(user, []).append((ts, to))
+                    continue
+
+                m = _RE_REMOVED.search(desc)
+                if m:
+                    user, _team = m.group(1), m.group(2)
+                    events.setdefault(user, []).append((ts, None))
+
+        # --- classify users who currently end on target team ---
+        loyal: list[str] = []          # picked target before WC, never left
+        changed: list[str] = []        # on target now, but changed at some point
+        late: list[str] = []           # first picked target after WC started
+
+        for user, user_events in events.items():
+            # Only care about users whose final state is the target team
+            final_team = user_events[-1][1] if user_events else None
+            if final_team != target:
+                continue
+
+            # Find the first time this user ever picked the target
+            first_target_ts = next(
+                (ts for ts, team in user_events if team == target),
+                None,
+            )
+            if first_target_ts is None:
+                continue
+
+            # Did they ever leave the target after first picking it?
+            first_target_idx = next(
+                i for i, (ts, team) in enumerate(user_events) if team == target
+            )
+            ever_left = any(
+                team != target
+                for _, team in user_events[first_target_idx + 1:]
+            )
+
+            if first_target_ts >= _WC_START:
+                late.append(f"{user} (first picked <t:{int(first_target_ts.timestamp())}:d>)")
+            elif ever_left:
+                changed.append(
+                    f"{user} (first picked <t:{int(first_target_ts.timestamp())}:d>, strayed & returned)"
+                )
+            else:
+                loyal.append(
+                    f"{user} (since <t:{int(first_target_ts.timestamp())}:d>)"
+                )
+
+        # --- build output ---
+        loyal_lines = [f"- {u}" for u in loyal] or ["- *(none)*"]
+        changed_lines = [f"- {u}" for u in changed] or ["- *(none)*"]
+        late_lines = [f"- {u}" for u in late] or ["- *(none)*"]
+        lines: list[str] = [
+            f"# {target} role history scan",
+            f"Scanned **{len(all_messages)}** log messages · "
+            f"**{len(events)}** unique users tracked\n",
+            f"## ✅ Loyal from day 1 ({len(loyal)})",
+            *loyal_lines,
+            "",
+            f"## ⚠️ On {target} now, but strayed at some point ({len(changed)})",
+            *changed_lines,
+            "",
+            f"## 🕐 Picked {target} only after WC started ({len(late)})",
+            *late_lines,
+        ]
+
+        content = "\n".join(lines).encode()
+        filename = f"wc_scanroles_{target.replace(' ', '_').lower()}.md"
+        report_file = discord.File(io.BytesIO(content), filename=filename)
+
+        await status.edit(content=f"✅ Scan complete — {len(loyal)} loyal, {len(changed)} strayed, {len(late)} late.")
+        await ctx.send(file=report_file)
+        logger.info(
+            "wcpredict scanroles run by %s: %d loyal, %d changed, %d late",
+            ctx.author, len(loyal), len(changed), len(late),
+        )
 
     # ---------- helpers ----------
 
