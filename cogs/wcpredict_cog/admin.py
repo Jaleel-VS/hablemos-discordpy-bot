@@ -260,12 +260,11 @@ class WCPredictAdmin(BaseCog):
         await status.edit(content=f"⏳ Fetched {len(all_messages)} messages, parsing…")
 
         # --- parse embeds into per-user event list ---
-        # Key: "uid:<user_id>" when the footer has one (new logs), else the
-        # display username (old logs). Using the ID eliminates rename splits.
-        # events[key] = list of (timestamp, team_name | None, label)
-        #   team_name None means "removed role entirely"
-        #   label is the human-readable name for the report
-        events: dict[str, list[tuple[datetime, str | None]]] = {}
+        # Key: "uid:<user_id>" when the footer has one (new logs), else username.
+        # team value: the role name assigned/switched-to, or "~Team X" when removed.
+        # Using "~Team X" instead of None means removal events are still
+        # detectable as a Spain touch, so username-renamed users aren't silently dropped.
+        events: dict[str, list[tuple[datetime, str]]] = {}
         key_to_label: dict[str, str] = {}
 
         _RE_FOOTER_UID = re.compile(r"^user_id:(\d+)$")
@@ -275,7 +274,6 @@ class WCPredictAdmin(BaseCog):
             for embed in msg.embeds:
                 desc = embed.description or ""
 
-                # Prefer footer user_id as the stable key; fall back to username
                 footer_text = embed.footer.text if embed.footer else None
                 uid_match = _RE_FOOTER_UID.match(footer_text) if footer_text else None
 
@@ -297,43 +295,65 @@ class WCPredictAdmin(BaseCog):
 
                 m = _RE_REMOVED.search(desc)
                 if m:
-                    username, _team = m.group(1), m.group(2)
+                    username, removed_team = m.group(1), m.group(2)
                     key = f"uid:{uid_match.group(1)}" if uid_match else username
                     key_to_label[key] = username
-                    events.setdefault(key, []).append((ts, None))
+                    # Prefix with ~ so we know it was removed but can still
+                    # detect it as a Spain touch when auditing renames
+                    events.setdefault(key, []).append((ts, f"~{removed_team}"))
 
         # --- build flat CSV audit table (all users who ever touched target) ---
         # Columns: verdict, user_id, names_seen, first_pick, final_team, events
-
         csv_buf = io.StringIO()
         writer = csv.writer(csv_buf)
         writer.writerow(["verdict", "user_id", "names_seen", "first_pick", "final_team", "events"])
 
         for key, user_events in sorted(events.items(), key=lambda kv: kv[1][0][0]):
-            final_team = user_events[-1][1] or "removed"
+            # "touched" means assigned, switched to, or removed — covers rename splits
+            def _touched(team: str) -> bool:
+                return team == target or team == f"~{target}"
 
-            # Only rows that ever touched the target team
-            if not any(team == target for _, team in user_events):
+            if not any(_touched(team) for _, team in user_events):
                 continue
 
             user_id = key[4:] if key.startswith("uid:") else ""
             label = key_to_label.get(key, key)
 
-            first_target_ts = next(ts for ts, team in user_events if team == target)
-            first_target_idx = next(i for i, (ts, team) in enumerate(user_events) if team == target)
-            ever_left = any(team != target for _, team in user_events[first_target_idx + 1:])
+            # final_team: last event that isn't a removal of something else
+            raw_final = user_events[-1][1]
+            final_team = raw_final.lstrip("~") if raw_final.startswith("~") else raw_final
+            is_currently_removed = raw_final.startswith("~")
+            display_final = f"removed ({final_team})" if is_currently_removed else final_team
 
-            if final_team != target:
+            # first time they had the target (assign or switch-to, not removal)
+            first_target_ts = next(
+                (ts for ts, team in user_events if team == target), None
+            )
+
+            if first_target_ts is None:
+                # Only ever removed it (rename split catch) — they left
+                first_touch_ts = next(ts for ts, team in user_events if _touched(team))
                 verdict = "LEFT"
-            elif first_target_ts >= _WC_START:
-                verdict = "LATE"
-            elif ever_left:
-                verdict = "STRAYED"
+                first_pick_str = first_touch_ts.strftime("%Y-%m-%d")
             else:
-                verdict = "LOYAL"
+                first_pick_str = first_target_ts.strftime("%Y-%m-%d")
+                first_target_idx = next(
+                    i for i, (ts, team) in enumerate(user_events) if team == target
+                )
+                ever_left = any(
+                    team != target for _, team in user_events[first_target_idx + 1:]
+                )
+                if display_final != target:
+                    verdict = "LEFT"
+                elif first_target_ts >= _WC_START:
+                    verdict = "LATE"
+                elif ever_left:
+                    verdict = "STRAYED"
+                else:
+                    verdict = "LOYAL"
 
             event_chain = " → ".join(
-                f"{team or 'removed'} ({ts.strftime('%b %d')})"
+                f"{'removed: ' + team[1:] if team.startswith('~') else team} ({ts.strftime('%b %d')})"
                 for ts, team in user_events
             )
 
@@ -341,8 +361,8 @@ class WCPredictAdmin(BaseCog):
                 verdict,
                 user_id,
                 label,
-                first_target_ts.strftime("%Y-%m-%d"),
-                final_team,
+                first_pick_str,
+                display_final,
                 event_chain,
             ])
 
