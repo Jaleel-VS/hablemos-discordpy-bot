@@ -234,6 +234,7 @@ async def _log_assignment(
         embed.description = f"**{interaction.user}** switched from **{previous.name}** to **{role.name}**."
     else:
         embed.description = f"**{interaction.user}** assigned themselves **{role.name}**."
+    embed.set_footer(text=f"user_id:{interaction.user.id}")
 
     try:
         await channel.send(embed=embed)
@@ -249,6 +250,7 @@ async def _log_removal(interaction: Interaction, role: discord.Role) -> None:
     embed = discord.Embed(color=discord.Color.red())
     embed.set_thumbnail(url=interaction.user.display_avatar.url)
     embed.description = f"**{interaction.user}** removed **{role.name}**."
+    embed.set_footer(text=f"user_id:{interaction.user.id}")
 
     try:
         await channel.send(embed=embed)

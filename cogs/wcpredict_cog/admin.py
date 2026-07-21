@@ -259,42 +259,63 @@ class WCPredictAdmin(BaseCog):
         await status.edit(content=f"⏳ Fetched {len(all_messages)} messages, parsing…")
 
         # --- parse embeds into per-user event list ---
-        # events[username] = list of (timestamp, team_name | None)
-        #   None means "removed role entirely"
+        # Key: "uid:<user_id>" when the footer has one (new logs), else the
+        # display username (old logs). Using the ID eliminates rename splits.
+        # events[key] = list of (timestamp, team_name | None, label)
+        #   team_name None means "removed role entirely"
+        #   label is the human-readable name for the report
         events: dict[str, list[tuple[datetime, str | None]]] = {}
+        key_to_label: dict[str, str] = {}
+
+        _RE_FOOTER_UID = re.compile(r"^user_id:(\d+)$")
 
         for msg in all_messages:
             ts = msg.created_at  # always UTC-aware
             for embed in msg.embeds:
                 desc = embed.description or ""
 
+                # Prefer footer user_id as the stable key; fall back to username
+                footer_text = embed.footer.text if embed.footer else None
+                uid_match = _RE_FOOTER_UID.match(footer_text) if footer_text else None
+
                 m = _RE_ASSIGNED.search(desc)
                 if m:
-                    user, team = m.group(1), m.group(2)
-                    events.setdefault(user, []).append((ts, team))
+                    username, team = m.group(1), m.group(2)
+                    key = f"uid:{uid_match.group(1)}" if uid_match else username
+                    key_to_label[key] = username
+                    events.setdefault(key, []).append((ts, team))
                     continue
 
                 m = _RE_SWITCHED.search(desc)
                 if m:
-                    user, _from, to = m.group(1), m.group(2), m.group(3)
-                    events.setdefault(user, []).append((ts, to))
+                    username, _from, to = m.group(1), m.group(2), m.group(3)
+                    key = f"uid:{uid_match.group(1)}" if uid_match else username
+                    key_to_label[key] = username
+                    events.setdefault(key, []).append((ts, to))
                     continue
 
                 m = _RE_REMOVED.search(desc)
                 if m:
-                    user, _team = m.group(1), m.group(2)
-                    events.setdefault(user, []).append((ts, None))
+                    username, _team = m.group(1), m.group(2)
+                    key = f"uid:{uid_match.group(1)}" if uid_match else username
+                    key_to_label[key] = username
+                    events.setdefault(key, []).append((ts, None))
 
         # --- classify users who currently end on target team ---
         loyal: list[str] = []          # picked target before WC, never left
         changed: list[str] = []        # on target now, but changed at some point
         late: list[str] = []           # first picked target after WC started
 
-        for user, user_events in events.items():
+        for key, user_events in events.items():
             # Only care about users whose final state is the target team
             final_team = user_events[-1][1] if user_events else None
             if final_team != target:
                 continue
+
+            label = key_to_label.get(key, key)
+            # Append user ID to label when we have one (uid: keys)
+            if key.startswith("uid:"):
+                label = f"{label} (`{key[4:]}`)"
 
             # Find the first time this user ever picked the target
             first_target_ts = next(
@@ -314,14 +335,14 @@ class WCPredictAdmin(BaseCog):
             )
 
             if first_target_ts >= _WC_START:
-                late.append(f"{user} (first picked <t:{int(first_target_ts.timestamp())}:d>)")
+                late.append(f"{label} (first picked <t:{int(first_target_ts.timestamp())}:d>)")
             elif ever_left:
                 changed.append(
-                    f"{user} (first picked <t:{int(first_target_ts.timestamp())}:d>, strayed & returned)"
+                    f"{label} (first picked <t:{int(first_target_ts.timestamp())}:d>, strayed & returned)"
                 )
             else:
                 loyal.append(
-                    f"{user} (since <t:{int(first_target_ts.timestamp())}:d>)"
+                    f"{label} (since <t:{int(first_target_ts.timestamp())}:d>)"
                 )
 
         # --- build output ---
