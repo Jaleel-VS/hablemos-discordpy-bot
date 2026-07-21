@@ -6,7 +6,6 @@ participation stats.
 """
 from __future__ import annotations
 
-import csv
 import io
 import logging
 import re
@@ -325,43 +324,39 @@ class WCPredictAdmin(BaseCog):
                 username_to_id[str(member)] = member.id
                 username_to_id[member.display_name] = member.id
 
-        # --- build flat CSV audit table (all users who ever touched target) ---
-        # Columns: verdict, user_id, id_source, names_seen, first_pick, final_team, events
-        csv_buf = io.StringIO()
-        writer = csv.writer(csv_buf)
-        writer.writerow(["verdict", "user_id", "id_source", "names_seen", "first_pick", "final_team", "events"])
+        # --- build markdown audit table ---
+        COLS = ["verdict", "user_id", "id_source", "username", "first_pick", "final_team", "events"]
+        rows: list[list[str]] = []
+        counts: dict[str, int] = {}
 
         for key, user_events in sorted(events.items(), key=lambda kv: kv[1][0][0]):
-            # "touched" means assigned, switched to, or removed — covers rename splits
             def _touched(team: str) -> bool:
                 return team == target or team == f"~{target}"
+
+            if not any(_touched(team) for _, team in user_events):
+                continue
 
             user_id = key[4:] if key.startswith("uid:") else ""
             id_source = "footer" if key.startswith("uid:") else ""
             label = key_to_label.get(key, key)
 
-            # Try to resolve user_id from current guild members when not in footer
             if not user_id:
                 resolved = username_to_id.get(label)
                 if resolved:
                     user_id = str(resolved)
                     id_source = "resolved"
                 else:
-                    id_source = "UNRESOLVED"
+                    id_source = "**UNRESOLVED**"
 
-            # final_team: last event that isn't a removal of something else
             raw_final = user_events[-1][1]
             final_team = raw_final.lstrip("~") if raw_final.startswith("~") else raw_final
-            is_currently_removed = raw_final.startswith("~")
-            display_final = f"removed ({final_team})" if is_currently_removed else final_team
+            is_removed = raw_final.startswith("~")
+            display_final = f"~~{final_team}~~" if is_removed else final_team
 
-            # first time they had the target (assign or switch-to, not removal)
             first_target_ts = next(
                 (ts for ts, team in user_events if team == target), None
             )
-
             if first_target_ts is None:
-                # Only ever removed it (rename split catch) — they left
                 first_touch_ts = next(ts for ts, team in user_events if _touched(team))
                 verdict = "LEFT"
                 first_pick_str = first_touch_ts.strftime("%Y-%m-%d")
@@ -373,7 +368,7 @@ class WCPredictAdmin(BaseCog):
                 ever_left = any(
                     team != target for _, team in user_events[first_target_idx + 1:]
                 )
-                if display_final != target:
+                if display_final.strip("~") != target:
                     verdict = "LEFT"
                 elif first_target_ts >= _WC_START:
                     verdict = "LATE"
@@ -383,32 +378,39 @@ class WCPredictAdmin(BaseCog):
                     verdict = "LOYAL"
 
             event_chain = " → ".join(
-                f"{'removed: ' + team[1:] if team.startswith('~') else team} ({ts.strftime('%b %d')})"
+                f"~~{team[1:]}~~ ({ts.strftime('%b %d')})" if team.startswith("~")
+                else f"{team} ({ts.strftime('%b %d')})"
                 for ts, team in user_events
             )
 
-            writer.writerow([
-                verdict,
-                user_id,
-                id_source,
-                label,
-                first_pick_str,
-                display_final,
-                event_chain,
-            ])
+            counts[verdict] = counts.get(verdict, 0) + 1
+            rows.append([verdict, user_id, id_source, label, first_pick_str, display_final, event_chain])
 
-        csv_content = csv_buf.getvalue().encode()
-        filename = f"wc_audit_{target.replace(' ', '_').lower()}.csv"
-        report_file = discord.File(io.BytesIO(csv_content), filename=filename)
+        # Render markdown: header, separator, then rows sorted by verdict priority
+        _ORDER = {"LOYAL": 0, "STRAYED": 1, "LEFT": 2, "LATE": 3}
+        rows.sort(key=lambda r: (_ORDER.get(r[0], 9), r[4]))  # verdict then first_pick
 
-        # Quick summary counts for the status message
-        rows_preview = [r for r in csv.DictReader(io.StringIO(csv_buf.getvalue()))]
-        counts = {}
-        for r in rows_preview:
-            counts[r["verdict"]] = counts.get(r["verdict"], 0) + 1
+        def _md_row(cells: list[str]) -> str:
+            return "| " + " | ".join(cells) + " |"
+
+        sep = "| " + " | ".join("---" for _ in COLS) + " |"
+        table_lines = [_md_row(COLS), sep, *(_md_row(r) for r in rows)]
 
         summary = "  ".join(f"{v}:{counts.get(v, 0)}" for v in ("LOYAL", "STRAYED", "LATE", "LEFT"))
-        await status.edit(content=f"✅ {len(rows_preview)} users touched `{target}` — {summary}")
+        md_lines = [
+            f"# {target} role audit",
+            f"Scanned **{len(all_messages)}** log messages · "
+            f"**{len(rows)}** users touched this team · {summary}",
+            f"> UNRESOLVED rows need manual username→ID lookup",
+            "",
+            *table_lines,
+        ]
+
+        content = "\n".join(md_lines).encode()
+        filename = f"wc_audit_{target.replace(' ', '_').lower()}.md"
+        report_file = discord.File(io.BytesIO(content), filename=filename)
+
+        await status.edit(content=f"✅ {len(rows)} users touched `{target}` — {summary}")
         await ctx.send(file=report_file)
         logger.info("wcpredict scanroles by %s: %s", ctx.author, summary)
 
