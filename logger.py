@@ -42,19 +42,22 @@ class DiscordWebhookHandler(logging.Handler):
 def setup_logging():
     log_formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s')
 
+    level_name = os.getenv("LOG_LEVEL", "INFO").upper()
+    level = getattr(logging, level_name, logging.INFO)
+
     # File Handler
     file_handler = RotatingFileHandler('bot.log', maxBytes=5*1024*1024, backupCount=2)
     file_handler.setFormatter(log_formatter)
-    file_handler.setLevel(logging.INFO)
+    file_handler.setLevel(level)
 
     # Stream Handler - use stdout so Railway doesn't mark INFO as errors
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setFormatter(log_formatter)
-    stream_handler.setLevel(logging.INFO)
+    stream_handler.setLevel(level)
 
     # Root Logger
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
+    root_logger.setLevel(level)
     root_logger.addHandler(file_handler)
     root_logger.addHandler(stream_handler)
 
