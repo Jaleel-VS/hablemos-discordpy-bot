@@ -163,7 +163,8 @@ class AutomodWatch(BaseCog):
         window_seconds: int = cfg["window_seconds"]
 
         if not alert_channel_id:
-            return  # not configured — silently skip
+            logger.debug("automod_watch: alert channel not configured, skipping flag")
+            return
 
         # channel_id is Optional in the discord.py type stubs; a flag with no
         # channel is not useful to us — skip rather than risk a KeyError.
@@ -188,6 +189,11 @@ class AutomodWatch(BaseCog):
         window = self._windows[channel_id]
         self._prune(window, window_seconds)
         window.append(event)
+
+        logger.debug(
+            "automod_watch: flag in channel %s keyword=%r window=%d/%d",
+            channel_id, execution.matched_keyword, len(window), threshold,
+        )
 
         if len(window) >= threshold:
             events = list(window)
