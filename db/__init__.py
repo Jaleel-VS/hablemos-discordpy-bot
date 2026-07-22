@@ -53,6 +53,7 @@ from db.tasks import TasksMixin
 from db.ticket_subs import TicketSubsMixin
 from db.vocab import VocabMixin
 from db.vocab_catch import VocabCatchMixin
+from db.automod_watch import AutomodWatchMixin
 
 
 class Database(
@@ -77,6 +78,7 @@ class Database(
     TicketSubsMixin,
     StatsMixin,
     GameResultsMixin,
+    AutomodWatchMixin,
 ):
     def __init__(self, database_url: str):
         self.pool: asyncpg.Pool | None = None

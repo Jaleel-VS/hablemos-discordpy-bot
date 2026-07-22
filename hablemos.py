@@ -28,6 +28,7 @@ class Hablemos(Bot):
         intents.members = True
         intents.message_content = True
         intents.presences = True
+        intents.auto_moderation_execution = True
         super().__init__(description="Bot by Jaleel#6408",
                           command_prefix=prefix,
                           owner_id=settings.owner_id,
