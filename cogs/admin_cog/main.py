@@ -113,6 +113,10 @@ class AdminCog(BaseCog):
         """Enable and load a cog. Usage: $cog enable league_cog"""
         ext = f'cogs.{name}.main' if not name.startswith('cogs.') else name
 
+        if ext not in discover_extensions():
+            await ctx.send(f"❌ Unknown cog `{name}`. Use `$cog list` to see available cogs.")
+            return
+
         await self.bot.db.set_cog_enabled(ext, True)
 
         if ext not in self.bot.extensions:
@@ -131,6 +135,10 @@ class AdminCog(BaseCog):
     async def disable_cog(self, ctx: commands.Context, name: str):
         """Disable and unload a cog. Usage: $cog disable league_cog"""
         ext = f'cogs.{name}.main' if not name.startswith('cogs.') else name
+
+        if ext not in discover_extensions():
+            await ctx.send(f"❌ Unknown cog `{name}`. Use `$cog list` to see available cogs.")
+            return
 
         if ext in PROTECTED_EXTENSIONS:
             await ctx.send("That cog is protected and cannot be disabled.")
