@@ -993,6 +993,27 @@ async def initialize_schema(pool):
             ON ticket_subscriptions(guild_id)
         ''')
 
+        # Migration: add per-forum granularity to ticket subscriptions.
+        # Adds a forum_id column (0 = legacy "all forums" subscription),
+        # drops the old (user_id, guild_id) PK, and re-creates as
+        # (user_id, guild_id, forum_id).
+        await conn.execute('''
+            DO $$
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name='ticket_subscriptions' AND column_name='forum_id'
+                ) THEN
+                    ALTER TABLE ticket_subscriptions
+                        ADD COLUMN forum_id BIGINT NOT NULL DEFAULT 0;
+                    ALTER TABLE ticket_subscriptions
+                        DROP CONSTRAINT ticket_subscriptions_pkey;
+                    ALTER TABLE ticket_subscriptions
+                        ADD PRIMARY KEY (user_id, guild_id, forum_id);
+                END IF;
+            END $$;
+        ''')
+
         # ── Stats: channel activity tracking ──
         # Pre-aggregated hourly counts per channel per native-role type.
         await conn.execute('''

@@ -11,7 +11,7 @@ from discord import Color, ui
 from discord.ext import commands
 
 from base_cog import BaseCog
-from cogs.utils.embeds import green_embed, yellow_embed
+from cogs.utils.checks import min_role
 
 from .config import (
     ADMIN_FORUM_ID,
@@ -19,7 +19,9 @@ from .config import (
     NOTIFY_CHANNEL_ID,
     OPEN_TAGS,
     STAFF_FORUM_ID,
+    TICKETSUB_MIN_ROLE_ID,
 )
+from .views import TicketSubView
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -235,13 +237,13 @@ class TicketsCog(BaseCog):
             logger.exception("Failed to edit tickets message")
 
     @commands.command(name='ticketsub')
-    @commands.has_permissions(manage_messages=True)
+    @min_role(TICKETSUB_MIN_ROLE_ID)
     async def ticketsub(self, ctx: commands.Context):
         """
-        Toggle your subscription to new-ticket pings.
+        Manage your per-forum ticket notification subscriptions.
 
-        When subscribed, you'll be mentioned in the configured notification
-        channel whenever a new open ticket is opened in a mod forum.
+        Opens a menu to choose which mod forums you want to be
+        pinged for when new tickets are opened.
 
         Usage: $ticketsub
         """
@@ -259,16 +261,45 @@ class TicketsCog(BaseCog):
         user_id = ctx.author.id
         guild_id = ctx.guild.id
 
-        if await self.bot.db.is_ticket_subscribed(user_id, guild_id):
-            await self.bot.db.remove_ticket_subscription(user_id, guild_id)
-            await ctx.send(embed=yellow_embed(
-                "🔕 You'll no longer be pinged when new tickets arrive."
-            ))
+        # Migrate legacy "all forums" subscriptions on first use
+        forum_ids = list(_watched_forum_ids())
+        await self.bot.db.migrate_legacy_ticket_subs(guild_id, forum_ids)
+
+        # Build list of (forum_id, display_name) for available forums
+        forums: list[tuple[int, str]] = []
+        for fid in forum_ids:
+            channel = self.bot.get_channel(fid)
+            if isinstance(channel, discord.ForumChannel):
+                forums.append((fid, channel.name))
+            else:
+                forums.append((fid, f"Forum {fid}"))
+
+        if not forums:
+            await ctx.send("No forum channels configured.")
+            return
+
+        subscribed = await self.bot.db.get_ticket_subscribed_forums(user_id, guild_id)
+        subscribed_ids = {fid for fid in subscribed if fid != 0}
+
+        # Build status embed
+        if subscribed_ids:
+            names = [n for fid, n in forums if fid in subscribed_ids]
+            listing = ", ".join(f"**#{n}**" for n in names)
+            description = f"🔔 Currently subscribed to: {listing}"
+            color = discord.Color.green()
         else:
-            await self.bot.db.add_ticket_subscription(user_id, guild_id)
-            await ctx.send(embed=green_embed(
-                f"🔔 You'll be pinged in <#{NOTIFY_CHANNEL_ID}> when new tickets arrive."
-            ))
+            description = "🔕 You're not subscribed to any ticket forums."
+            color = discord.Color.orange()
+
+        embed = discord.Embed(description=description, color=color)
+        embed.set_footer(text="Select the forums you want notifications for.")
+
+        view = TicketSubView(
+            user_id=user_id,
+            forums=forums,
+            subscribed_ids=subscribed_ids,
+        )
+        await ctx.send(embed=embed, view=view)
 
     @commands.Cog.listener()
     async def on_thread_create(self, thread: discord.Thread) -> None:
@@ -287,7 +318,11 @@ class TicketsCog(BaseCog):
         if guild is None:
             return
 
-        subscribers = await self.bot.db.get_ticket_subscribers(guild.id)
+        forum_id = thread.parent_id
+        if forum_id is None:
+            return
+
+        subscribers = await self.bot.db.get_ticket_subscribers(guild.id, forum_id)
         if not subscribers:
             return
 
