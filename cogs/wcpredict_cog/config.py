@@ -7,6 +7,9 @@ runtime (deadline, actual champion) live in the `bot_settings` table.
 from cogs.worldcup_cog.config import WORLD_CUP_LOG_CHANNEL_ID
 from config import get_int_env
 
+# World Cup is over — disable this cog by default.
+ENABLED = False
+
 # Optional fallback deadline as a Unix epoch (seconds). 0 means
 # "no deadline configured" — predictions stay open until an admin sets
 # one via `$wcpredict setdeadline`.

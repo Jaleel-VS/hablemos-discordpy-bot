@@ -1,5 +1,6 @@
 """Bot entrypoint — Hablemos subclass of discord.py Bot."""
 import asyncio
+import importlib
 import logging
 
 import discord
@@ -19,6 +20,20 @@ logger = logging.getLogger(__name__)
 settings = load_settings()
 logger.info("Environment: %s", settings.environment)
 
+
+def _is_code_enabled(ext: str) -> bool:
+    """Check the code-level ENABLED flag in a cog's config module.
+
+    Returns True (load) unless the cog's config explicitly sets ENABLED = False.
+    """
+    # ext is like 'cogs.worldcup_cog.main' → config module is 'cogs.worldcup_cog.config'
+    config_module = ext.rsplit('.', 1)[0] + '.config'
+    try:
+        mod = importlib.import_module(config_module)
+    except (ImportError, ModuleNotFoundError):
+        # No config module → assume enabled
+        return True
+    return getattr(mod, 'ENABLED', True)
 
 
 class Hablemos(Bot):
@@ -76,9 +91,19 @@ class Hablemos(Bot):
         except Exception:
             disabled = set()
 
+        # Load explicitly enabled cogs (DB overrides code-level ENABLED=False)
+        try:
+            enabled = await self.db.get_enabled_cogs()
+        except Exception:
+            enabled = set()
+
         for ext in discover_extensions():
             if ext in disabled:
                 logger.info("Skipping disabled extension: %s", ext)
+                continue
+            # Code-level ENABLED flag (checked unless DB explicitly enables)
+            if ext not in enabled and not _is_code_enabled(ext):
+                logger.info("Skipping code-disabled extension: %s", ext)
                 continue
             try:
                 await asyncio.wait_for(self.load_extension(ext), timeout=30)

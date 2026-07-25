@@ -18,6 +18,13 @@ class MetricsMixin(DatabaseMixin):
         )
         return {r['cog_name'] for r in rows}
 
+    async def get_enabled_cogs(self) -> set[str]:
+        """Return set of cog extension names explicitly enabled in DB."""
+        rows = await self._fetch(
+            "SELECT cog_name FROM cog_settings WHERE enabled = TRUE"
+        )
+        return {r['cog_name'] for r in rows}
+
     async def set_cog_enabled(self, cog_name: str, enabled: bool) -> None:
         """Enable or disable a cog by extension name."""
         await self._execute('''

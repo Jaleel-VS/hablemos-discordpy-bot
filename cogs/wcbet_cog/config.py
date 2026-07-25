@@ -11,6 +11,9 @@ from decimal import Decimal
 from cogs.worldcup_cog.config import WORLD_CUP_LOG_CHANNEL_ID
 from config import get_int_env
 
+# World Cup is over — disable this cog by default.
+ENABLED = False
+
 # How far ahead (hours) a fixture becomes bettable before kickoff.
 # Wider windows let users bet earlier on confirmed knockout pairings.
 WCBET_BETTING_WINDOW_HOURS: int = get_int_env("WCBET_BETTING_WINDOW_HOURS", 96)

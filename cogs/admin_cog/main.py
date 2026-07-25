@@ -13,7 +13,11 @@ from discord import Color, Embed, app_commands, ui
 from discord.ext import commands, tasks
 
 from base_cog import BaseCog
-from cogs.admin_cog.config import REMINDER_CHANNEL_ID, REMINDER_INTERVAL_MINUTES, VC_ENRICH_CHANNEL_ID
+from cogs.admin_cog.config import (
+    REMINDER_CHANNEL_ID,
+    REMINDER_INTERVAL_MINUTES,
+    VC_ENRICH_CHANNEL_ID,
+)
 from cogs.utils.discovery import discover_extensions
 
 if TYPE_CHECKING:
@@ -83,6 +87,8 @@ class AdminCog(BaseCog):
     @commands.is_owner()
     async def list_cogs(self, ctx: commands.Context):
         """List all cogs and their status."""
+        from hablemos import _is_code_enabled
+
         extensions = discover_extensions()
         disabled = await self.bot.db.get_disabled_cogs()
         loaded = set(self.bot.extensions.keys())
@@ -94,6 +100,8 @@ class AdminCog(BaseCog):
                 status = 'loaded (protected)'
             elif ext in disabled:
                 status = 'disabled'
+            elif not _is_code_enabled(ext):
+                status = 'disabled (code)'
             elif ext in loaded:
                 status = 'loaded'
             else:
