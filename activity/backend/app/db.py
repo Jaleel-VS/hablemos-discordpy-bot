@@ -65,6 +65,26 @@ CREATE TABLE IF NOT EXISTS game_stats (
     updated_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     PRIMARY KEY (game_key, user_id)
 );
+
+-- Engagement log: one row per game *started* (both modes, all games), closed
+-- when the game ends. Answers "who played what, when, and for how long", and
+-- leaves abandoned sessions open (ended_at NULL) as drop-off signal.
+CREATE TABLE IF NOT EXISTS activity_sessions (
+    session_id       UUID        PRIMARY KEY,
+    game_key         TEXT        NOT NULL,
+    user_id          BIGINT      NOT NULL,
+    mode             TEXT        NOT NULL,
+    started_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    ended_at         TIMESTAMPTZ,
+    duration_seconds INTEGER,
+    outcome          TEXT
+);
+
+-- Recent-activity and per-user history scans.
+CREATE INDEX IF NOT EXISTS activity_sessions_started
+    ON activity_sessions (started_at DESC);
+CREATE INDEX IF NOT EXISTS activity_sessions_user
+    ON activity_sessions (user_id, started_at DESC);
 """
 
 
@@ -137,6 +157,40 @@ class Database:
         if self._pool is None:
             raise RuntimeError("DB pool not initialized; call connect() first")
         return self._pool
+
+    # ── engagement sessions ───────────────────────────────────────────────
+
+    async def start_session(
+        self, *, session_id: str, game_key: str, user_id: int, mode: str,
+    ) -> None:
+        """Log a game start (open session). Best-effort — never fail /start."""
+        await self._p().execute(
+            """
+            INSERT INTO activity_sessions (session_id, game_key, user_id, mode)
+            VALUES ($1::uuid, $2, $3, $4)
+            ON CONFLICT (session_id) DO NOTHING
+            """,
+            session_id, game_key, user_id, mode,
+        )
+
+    async def end_session(self, *, session_id: str, outcome: str) -> None:
+        """Close an open session: set ended_at, compute duration, record outcome.
+
+        Idempotent — a second call (e.g. a replayed final guess) won't overwrite
+        an already-closed session. ``outcome`` is a short label like
+        ``won`` / ``lost`` / ``finished``.
+        """
+        await self._p().execute(
+            """
+            UPDATE activity_sessions
+               SET ended_at = NOW(),
+                   duration_seconds = GREATEST(0,
+                       EXTRACT(EPOCH FROM (NOW() - started_at))::int),
+                   outcome = $2
+             WHERE session_id = $1::uuid AND ended_at IS NULL
+            """,
+            session_id, outcome,
+        )
 
     # ── results ───────────────────────────────────────────────────────────
 

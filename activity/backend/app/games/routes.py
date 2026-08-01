@@ -20,6 +20,7 @@ and ``view`` (answer-free until the game ends).
 from __future__ import annotations
 
 import logging
+import uuid
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
@@ -95,6 +96,14 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
         if db is None:
             return
         result = engine.result_payload(state)
+        # Close the engagement session (best-effort; never fail the request).
+        session_id = state.get("_sid")
+        if isinstance(session_id, str):
+            outcome = "won" if result.get("won") else "lost"
+            try:
+                await db.end_session(session_id=session_id, outcome=outcome)
+            except Exception:  # noqa: BLE001 — engagement logging is non-critical
+                logger.exception("Failed to close session %s", session_id)
         try:
             await db.record_result(
                 game_key=game_key,
@@ -142,6 +151,21 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
                 raise HTTPException(
                     status_code=409, detail="Ya jugaste el reto diario de hoy.",
                 )
+        # Open an engagement session (who/what/when; closed at end for duration).
+        # Bound into the sealed state so /guess can close the right row. Best
+        # -effort: a logging failure must never block starting a game.
+        session_id = str(uuid.uuid4())
+        outcome.state["_sid"] = session_id
+        _db = get_db()
+        if _db is not None:
+            try:
+                await _db.start_session(
+                    session_id=session_id, game_key=game_key,
+                    user_id=user_id, mode=body.mode,
+                )
+            except Exception:  # noqa: BLE001 — engagement logging is non-critical
+                logger.exception("Failed to open session for game=%s user=%s",
+                                 game_key, user_id)
         return _response(engine, outcome.state)
 
     @router.post("/{game_key}/guess")
