@@ -17,6 +17,10 @@ on:
         description: "Deploy the activity service"
         type: boolean
         default: true
+      deploy_logforwarder:
+        description: "Deploy the log forwarder service"
+        type: boolean
+        default: true
 
 concurrency:
   # Never run two deploys of the same ref at once (Lightsail allows one active deploy per service).
@@ -33,6 +37,7 @@ jobs:
     outputs:
       bot: ${{ steps.filter.outputs.bot }}
       activity: ${{ steps.filter.outputs.activity }}
+      logforwarder: ${{ steps.filter.outputs.logforwarder }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -44,9 +49,21 @@ jobs:
               - 'deploy/activity.*'
               - 'scripts/lightsail_deploy.sh'
               - '.github/workflows/deploy-lightsail.yml'
+            logforwarder:
+              - 'logforwarder/**'
+              - 'deploy/logforwarder.*'
+              - 'scripts/lightsail_deploy.sh'
+              - '.github/workflows/deploy-lightsail.yml'
             bot:
               - '**'
               - '!activity/**'
+              - '!logforwarder/**'
+              - '!deploy/activity.*'
+              - '!deploy/logforwarder.*'
+              - '!README.md'
+              - '!deploy/README.md'
+              - '!docs/**'
+              - '!plans/**'
 
   deploy-activity:
     needs: changes
@@ -147,3 +164,45 @@ jobs:
             hablemos-discordpy-bot \
             hablemos-bot:ci \
             /tmp/bot.containers.json
+
+  deploy-logforwarder:
+    needs: changes
+    if: >-
+      (github.event_name == 'push' && needs.changes.outputs.logforwarder == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.deploy_logforwarder)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.DEPLOY_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEPLOY_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install lightsailctl
+        run: |
+          sudo curl -fsSL "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" \
+            -o /usr/local/bin/lightsailctl
+          sudo chmod +x /usr/local/bin/lightsailctl
+
+      - name: Build logforwarder image (linux/amd64)
+        run: docker build --platform linux/amd64 -t hablemos-logforwarder:ci logforwarder/
+
+      - name: Render container config
+        env:
+          LOGFWD_AWS_ACCESS_KEY_ID: ${{ secrets.LOGFWD_AWS_ACCESS_KEY_ID }}
+          LOGFWD_AWS_SECRET_ACCESS_KEY: ${{ secrets.LOGFWD_AWS_SECRET_ACCESS_KEY }}
+          AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
+        run: |
+          envsubst '$LOGFWD_AWS_ACCESS_KEY_ID $LOGFWD_AWS_SECRET_ACCESS_KEY $AXIOM_TOKEN' \
+            < deploy/logforwarder.containers.json > /tmp/logforwarder.containers.json
+
+      - name: Push image and deploy
+        run: |
+          chmod +x scripts/lightsail_deploy.sh
+          scripts/lightsail_deploy.sh \
+            hablemos-logforwarder \
+            hablemos-logforwarder:ci \
+            /tmp/logforwarder.containers.json

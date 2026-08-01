@@ -1,0 +1,16 @@
+{
+  "app": {
+    "image": "__IMAGE__",
+    "command": [],
+    "environment": {
+      "AWS_REGION": "us-east-1",
+      "AWS_ACCESS_KEY_ID": "${LOGFWD_AWS_ACCESS_KEY_ID}",
+      "AWS_SECRET_ACCESS_KEY": "${LOGFWD_AWS_SECRET_ACCESS_KEY}",
+      "AXIOM_TOKEN": "${AXIOM_TOKEN}",
+      "AXIOM_DATASET": "hablemos",
+      "AXIOM_URL": "https://us-east-1.aws.edge.axiom.co",
+      "SERVICES": "hablemos-activity,hablemos-discordpy-bot",
+      "POLL_SECONDS": "20"
+    }
+  }
+}
