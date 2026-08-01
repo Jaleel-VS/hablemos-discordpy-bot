@@ -80,6 +80,27 @@ envsubst < deploy/bot.containers.json > /tmp/bot.containers.json
 AWS_REGION=us-east-1 scripts/lightsail_deploy.sh hablemos-discordpy-bot hablemos-bot:local /tmp/bot.containers.json
 ```
 
+## Rollback
+
+Lightsail keeps the last 50 deployment versions with their full specs, so a
+rollback is a redeploy of an older version (no rebuild):
+
+```bash
+# Roll back to the most recent successful version below the current one:
+AWS_REGION=us-east-1 scripts/lightsail_rollback.sh hablemos-discordpy-bot
+
+# Roll back to a specific version:
+AWS_REGION=us-east-1 scripts/lightsail_rollback.sh hablemos-activity 3
+```
+
+It skips FAILED versions, reuses the stored image ref, and polls the new
+deployment to ACTIVE (dumping container logs if it fails). Check versions with:
+
+```bash
+aws lightsail get-container-service-deployments --region us-east-1 \
+  --service-name hablemos-discordpy-bot --query 'deployments[].[version,state]' --output table
+```
+
 ## Slash command sync
 
 Global slash commands are not auto-synced. After a deploy that adds/changes
