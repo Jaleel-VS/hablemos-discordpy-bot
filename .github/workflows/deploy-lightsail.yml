@@ -82,8 +82,10 @@ jobs:
           DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          # Interpolate ${VAR} placeholders; leave __IMAGE__ for the deploy script.
-          envsubst < deploy/activity.containers.json > /tmp/activity.containers.json
+          # Restrict substitution to these exact vars (leave __IMAGE__ and any
+          # literal '$' in values untouched).
+          envsubst '$DISCORD_CLIENT_ID $DISCORD_CLIENT_SECRET $DATABASE_URL' \
+            < deploy/activity.containers.json > /tmp/activity.containers.json
 
       - name: Push image and deploy
         run: |
@@ -130,7 +132,13 @@ jobs:
           LOG_WEBHOOK_URL: ${{ secrets.LOG_WEBHOOK_URL }}
           APP_AWS_ACCESS_KEY_ID: ${{ secrets.APP_AWS_ACCESS_KEY_ID }}
           APP_AWS_SECRET_ACCESS_KEY: ${{ secrets.APP_AWS_SECRET_ACCESS_KEY }}
-        run: envsubst < deploy/bot.containers.json > /tmp/bot.containers.json
+        run: |
+          # Restrict substitution to these exact vars so a '$' inside any secret
+          # value (or the literal "$" PREFIX) is never touched.
+          envsubst '$BOT_TOKEN $DATABASE_URL $GEMINI_API_KEY $ACTIVITY_RESULTS_CHANNEL_ID $TICKETSUB_MIN_ROLE_ID $WCBET_AUTO_SETTLE $LOG_WEBHOOK_URL $APP_AWS_ACCESS_KEY_ID $APP_AWS_SECRET_ACCESS_KEY' \
+            < deploy/bot.containers.json > /tmp/bot.containers.json
+          # Fail fast if the token didn't render to its expected length.
+          python3 -c "import json; t=json.load(open('/tmp/bot.containers.json'))['app']['environment']['BOT_TOKEN']; assert 50 < len(t) < 100 and t.count('.')==2, f'BOT_TOKEN looks wrong: len={len(t)} dots={t.count(chr(46))}'; print('BOT_TOKEN rendered OK, len', len(t))"
 
       - name: Push image and deploy
         run: |
