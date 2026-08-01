@@ -48,25 +48,32 @@ fi
 
 echo "==> Creating deployment for $SERVICE"
 aws lightsail create-container-service-deployment "${DEPLOY_ARGS[@]}" >/dev/null
-echo "==> Deployment submitted. Polling until ACTIVE..."
 
-# Poll the current deployment state until ACTIVE (or fail after ~5 min).
-for i in $(seq 1 30); do
-  STATE="$(aws lightsail get-container-services --region "$REGION" --service-name "$SERVICE" \
-    --query 'containerServices[0].currentDeployment.state' --output text 2>/dev/null || echo "PENDING")"
-  SVC="$(aws lightsail get-container-services --region "$REGION" --service-name "$SERVICE" \
-    --query 'containerServices[0].state' --output text 2>/dev/null || echo "?")"
-  echo "  [$i] service=$SVC currentDeployment=$STATE"
-  if [ "$STATE" = "ACTIVE" ]; then
-    echo "==> $SERVICE deployment ACTIVE"
-    exit 0
-  fi
-  if [ "$STATE" = "FAILED" ]; then
-    echo "ERROR: deployment FAILED" >&2
-    exit 1
-  fi
+# Capture the version number of the deployment we just created. deployments[0]
+# is the newest. We must track THIS version, not currentDeployment.state —
+# currentDeployment keeps pointing at the old (healthy) version until the new
+# one succeeds, so polling it gives a false pass when a new deploy is failing.
+NEW_VERSION="$(aws lightsail get-container-service-deployments --region "$REGION" --service-name "$SERVICE" \
+  --query 'deployments[0].version' --output text 2>/dev/null)"
+echo "==> Submitted deployment version $NEW_VERSION. Polling until it is ACTIVE..."
+
+for i in $(seq 1 40); do
+  STATE="$(aws lightsail get-container-service-deployments --region "$REGION" --service-name "$SERVICE" \
+    --query "deployments[?version==\`$NEW_VERSION\`].state | [0]" --output text 2>/dev/null || echo "PENDING")"
+  echo "  [$i] deployment v$NEW_VERSION state=$STATE"
+  case "$STATE" in
+    ACTIVE)
+      echo "==> $SERVICE deployment v$NEW_VERSION is ACTIVE"
+      exit 0 ;;
+    FAILED|INACTIVE)
+      echo "ERROR: deployment v$NEW_VERSION ended in state $STATE" >&2
+      echo "--- recent container logs ---" >&2
+      aws lightsail get-container-log --region "$REGION" --service-name "$SERVICE" \
+        --container-name app --query 'logEvents[-20:].message' --output text 2>/dev/null >&2 || true
+      exit 1 ;;
+  esac
   sleep 10
 done
 
-echo "ERROR: timed out waiting for deployment to become ACTIVE" >&2
+echo "ERROR: timed out waiting for deployment v$NEW_VERSION to become ACTIVE" >&2
 exit 1
