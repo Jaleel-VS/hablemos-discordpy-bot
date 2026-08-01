@@ -34,6 +34,27 @@ from .games.routes import build_router
 logger = logging.getLogger(__name__)
 
 
+def _install_healthz_log_filter() -> None:
+    """Drop uvicorn access-log records for GET /healthz.
+
+    uvicorn logs every request via the ``uvicorn.access`` logger; the record's
+    args are ``(client_addr, method, path, http_version, status_code)``. We
+    filter out successful health-check probes so they don't flood the logs.
+    """
+
+    class _HealthzFilter(logging.Filter):
+        def filter(self, record: logging.LogRecord) -> bool:
+            args = record.args
+            # uvicorn.access args: (client, method, full_path, http_ver, status)
+            if isinstance(args, tuple) and len(args) >= 3:
+                path = str(args[2])
+                if path == "/healthz" or path.endswith(" /healthz"):
+                    return False
+            return True
+
+    logging.getLogger("uvicorn.access").addFilter(_HealthzFilter())
+
+
 class TokenRequest(BaseModel):
     """Body of ``POST /api/token`` — the OAuth2 code from ``authorize()``."""
 
@@ -65,6 +86,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         format="%(asctime)s %(levelname)s %(name)s %(message)s",
         force=True,
     )
+
+    # Suppress uvicorn access-log lines for the LB health check. Lightsail
+    # probes /healthz every few seconds from ~6 internal nodes, which would
+    # otherwise dominate the logs (and Axiom). Drop only those lines.
+    _install_healthz_log_filter()
 
     # Database is optional: with no DATABASE_URL the app still serves the
     # handshake and games, but results/stats aren't persisted. Held in a
@@ -104,6 +130,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def health() -> dict[str, str]:
         """Liveness probe (also handy to confirm proxy routing works)."""
         return {"status": "ok", "environment": cfg.environment}
+
+    @app.get("/healthz")
+    async def healthz() -> dict[str, str]:
+        """Load-balancer health check target.
+
+        Lightsail probes this every few seconds from multiple internal nodes.
+        It's a separate path from ``/`` so its access-log lines can be
+        filtered out (see ``_install_healthz_log_filter``) — otherwise the
+        probes drown out real request logs.
+        """
+        return {"status": "ok"}
 
     @app.post("/api/token", response_model=TokenResponse)
     async def token(body: TokenRequest) -> TokenResponse:

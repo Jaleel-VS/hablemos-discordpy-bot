@@ -2,11 +2,11 @@
   "containerName": "app",
   "containerPort": 8080,
   "healthCheck": {
-    "path": "/",
-    "intervalSeconds": 10,
+    "path": "/healthz",
+    "intervalSeconds": 30,
     "timeoutSeconds": 5,
     "healthyThreshold": 2,
     "unhealthyThreshold": 5,
-    "successCodes": "200-499"
+    "successCodes": "200-299"
   }
 }
