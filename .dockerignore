@@ -1,10 +1,37 @@
+# Python bytecode / caches
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.pytest_cache/
+.ruff_cache/
+.cache/
+
+# Secrets & VCS
 .env
+.env.*
 .git/
 .gitignore
+
+# The activity app is a SEPARATE Lightsail service — the bot never imports it.
+# Excluding it saves ~185MB from the bot image build context.
+activity/
+
+# Dev-only / non-runtime files
+tests/
+docs/
+plans/
+scripts/
+deploy/
+.github/
 README.md
+AGENTS.md
+CLAUDE.md
+*.log
+pyrightconfig.json
+pytest.ini
+ruff.toml
+requirements-dev.txt
 Dockerfile
 .dockerignore
+.railwayignore
