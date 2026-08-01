@@ -1,0 +1,141 @@
+name: Deploy to Lightsail
+
+# Builds and deploys the two container services to AWS Lightsail.
+# Path filters keep bot-only and activity-only changes from rebuilding both.
+# Manual runs (workflow_dispatch) can force either or both.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy_bot:
+        description: "Deploy the bot service"
+        type: boolean
+        default: true
+      deploy_activity:
+        description: "Deploy the activity service"
+        type: boolean
+        default: true
+
+concurrency:
+  # Never run two deploys of the same ref at once (Lightsail allows one active deploy per service).
+  group: deploy-lightsail-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  # Detect which parts of the monorepo changed so we only rebuild what's needed.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      bot: ${{ steps.filter.outputs.bot }}
+      activity: ${{ steps.filter.outputs.activity }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            activity:
+              - 'activity/**'
+              - 'deploy/activity.*'
+              - 'scripts/lightsail_deploy.sh'
+              - '.github/workflows/deploy-lightsail.yml'
+            bot:
+              - '**'
+              - '!activity/**'
+
+  deploy-activity:
+    needs: changes
+    if: >-
+      (github.event_name == 'push' && needs.changes.outputs.activity == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.deploy_activity)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.DEPLOY_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEPLOY_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install lightsailctl
+        run: |
+          sudo curl -fsSL "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" \
+            -o /usr/local/bin/lightsailctl
+          sudo chmod +x /usr/local/bin/lightsailctl
+
+      - name: Build activity image (linux/amd64)
+        run: |
+          docker build --platform linux/amd64 \
+            --build-arg VITE_DISCORD_CLIENT_ID="${{ secrets.DISCORD_CLIENT_ID }}" \
+            -t hablemos-activity:ci activity/
+
+      - name: Render container config
+        env:
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+          DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          # Interpolate ${VAR} placeholders; leave __IMAGE__ for the deploy script.
+          envsubst < deploy/activity.containers.json > /tmp/activity.containers.json
+
+      - name: Push image and deploy
+        run: |
+          chmod +x scripts/lightsail_deploy.sh
+          scripts/lightsail_deploy.sh \
+            hablemos-activity \
+            hablemos-activity:ci \
+            /tmp/activity.containers.json \
+            deploy/activity.endpoint.json
+
+  deploy-bot:
+    needs: changes
+    if: >-
+      (github.event_name == 'push' && needs.changes.outputs.bot == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.deploy_bot)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.DEPLOY_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEPLOY_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install lightsailctl
+        run: |
+          sudo curl -fsSL "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" \
+            -o /usr/local/bin/lightsailctl
+          sudo chmod +x /usr/local/bin/lightsailctl
+
+      - name: Build bot image (linux/amd64)
+        run: docker build --platform linux/amd64 -t hablemos-bot:ci .
+
+      - name: Render container config
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ACTIVITY_RESULTS_CHANNEL_ID: ${{ secrets.ACTIVITY_RESULTS_CHANNEL_ID }}
+          TICKETSUB_MIN_ROLE_ID: ${{ secrets.TICKETSUB_MIN_ROLE_ID }}
+          WCBET_AUTO_SETTLE: ${{ secrets.WCBET_AUTO_SETTLE }}
+          LOG_WEBHOOK_URL: ${{ secrets.LOG_WEBHOOK_URL }}
+          APP_AWS_ACCESS_KEY_ID: ${{ secrets.APP_AWS_ACCESS_KEY_ID }}
+          APP_AWS_SECRET_ACCESS_KEY: ${{ secrets.APP_AWS_SECRET_ACCESS_KEY }}
+        run: envsubst < deploy/bot.containers.json > /tmp/bot.containers.json
+
+      - name: Push image and deploy
+        run: |
+          chmod +x scripts/lightsail_deploy.sh
+          scripts/lightsail_deploy.sh \
+            hablemos-discordpy-bot \
+            hablemos-bot:ci \
+            /tmp/bot.containers.json

@@ -1,0 +1,14 @@
+{
+  "app": {
+    "image": "__IMAGE__",
+    "command": [],
+    "environment": {
+      "PORT": "8080",
+      "ENVIRONMENT": "production",
+      "DISCORD_CLIENT_ID": "${DISCORD_CLIENT_ID}",
+      "DISCORD_CLIENT_SECRET": "${DISCORD_CLIENT_SECRET}",
+      "DATABASE_URL": "${DATABASE_URL}"
+    },
+    "ports": { "8080": "HTTP" }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "app": {
+    "image": "__IMAGE__",
+    "command": [],
+    "environment": {
+      "ENVIRONMENT": "production",
+      "PREFIX": "$",
+      "BOT_TOKEN": "${BOT_TOKEN}",
+      "DATABASE_URL": "${DATABASE_URL}",
+      "GEMINI_API_KEY": "${GEMINI_API_KEY}",
+      "ACTIVITY_RESULTS_CHANNEL_ID": "${ACTIVITY_RESULTS_CHANNEL_ID}",
+      "TICKETSUB_MIN_ROLE_ID": "${TICKETSUB_MIN_ROLE_ID}",
+      "WCBET_AUTO_SETTLE": "${WCBET_AUTO_SETTLE}",
+      "LOG_WEBHOOK_URL": "${LOG_WEBHOOK_URL}",
+      "AWS_ACCESS_KEY_ID": "${APP_AWS_ACCESS_KEY_ID}",
+      "AWS_SECRET_ACCESS_KEY": "${APP_AWS_SECRET_ACCESS_KEY}"
+    }
+  }
+}
