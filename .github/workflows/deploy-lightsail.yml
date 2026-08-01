@@ -54,16 +54,23 @@ jobs:
               - 'deploy/logforwarder.*'
               - 'scripts/lightsail_deploy.sh'
               - '.github/workflows/deploy-lightsail.yml'
+            # Explicit allowlist of what goes into the bot image. dorny's
+            # picomatch OR-s list entries, so leading-'!' negation of a '**'
+            # catch-all does NOT subtract — an allowlist is the reliable way to
+            # scope this. Keep in sync with the bot's runtime source + build.
             bot:
-              - '**'
-              - '!activity/**'
-              - '!logforwarder/**'
-              - '!deploy/activity.*'
-              - '!deploy/logforwarder.*'
-              - '!README.md'
-              - '!deploy/README.md'
-              - '!docs/**'
-              - '!plans/**'
+              - 'cogs/**'
+              - 'db/**'
+              - 'base_cog.py'
+              - 'config.py'
+              - 'hablemos.py'
+              - 'logger.py'
+              - 'requirements.txt'
+              - 'Dockerfile'
+              - '.dockerignore'
+              - 'deploy/bot.containers.json'
+              - 'scripts/lightsail_deploy.sh'
+              - '.github/workflows/deploy-lightsail.yml'
 
   deploy-activity:
     needs: changes
