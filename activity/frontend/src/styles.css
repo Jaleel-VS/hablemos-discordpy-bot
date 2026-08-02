@@ -1277,11 +1277,14 @@ body {
 }
 
 .cloze-summary {
-  justify-content: center;
+  justify-content: flex-start;
   gap: 18px;
   padding: 20px;
   max-width: 460px;
   margin: 0 auto;
+  /* The parent (.cloze) hides overflow; a long recap (up to 10 review rows on
+     a small phone) would clip. Let the summary scroll instead. */
+  overflow-y: auto;
 }
 
 .round-daily-tag {
@@ -1292,4 +1295,31 @@ body {
   padding: 6px 12px;
   border-radius: 999px;
   background: oklch(0.72 0.15 35 / 0.12);
+}
+
+/* Daily has no per-card feedback (backend withholds it); this is the muted
+   "corrections at the end" note shown in its place. */
+.feedback--daily {
+  color: var(--ink-dim);
+  font-style: italic;
+}
+
+/* A CLOSE (accent-only) miss in the recap: counted correct, but flagged so the
+   learner sees it was an accent slip, not a wrong word. */
+.miss--close .miss-given {
+  /* It wasn't wrong, so don't strike it through like a WRONG given answer. */
+  text-decoration: none;
+  color: var(--ink-dim);
+}
+
+.miss-tag {
+  margin-left: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: oklch(0.78 0.13 85);
+  background: oklch(0.78 0.13 85 / 0.16);
+  padding: 1px 6px;
+  border-radius: 6px;
 }

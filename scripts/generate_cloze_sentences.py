@@ -433,36 +433,43 @@ def main() -> int:
 
     # Underfill guard: a partially-successful run (Bedrock throttling, a run of
     # unparseable batches) can leave a bucket far short of target. Writing that
-    # would silently replace a healthy corpus with a lopsided one — e.g. a deck
-    # with too few cards for a non-repeating daily round. Refuse unless every
-    # (target, difficulty) bucket reaches --min-fill of its per-difficulty goal.
-    # --merge is exempt (the existing pool backstops thin new buckets); a run
-    # can still be forced with --allow-underfill after review.
-    if not args.merge:
-        floor = max(ROUND_MIN, int(per_difficulty * args.min_fill))
-        thin = {
-            f"{t}/{dfc}": counts.get(f"{t}/{dfc}", 0)
-            for t in targets for dfc in DIFFICULTIES
-            if counts.get(f"{t}/{dfc}", 0) < floor
-        }
-        if thin:
+    # would silently ship a lopsided corpus — e.g. a deck with too few cards for
+    # a non-repeating daily round.
+    #
+    # Two tiers:
+    #  * a HARD per-bucket floor (ROUND_MIN) that ALWAYS applies, including to
+    #    --merge — a merge against an absent or already-thin corpus must never
+    #    ship a deck that can't fill a daily round.
+    #  * a proportional floor (--min-fill of the per-difficulty target) that
+    #    applies to a fresh (non-merge) run, catching a run that technically
+    #    produced cards everywhere but fell well short.
+    # Either can be overridden with --allow-underfill after review.
+    proportional = 0 if args.merge else int(per_difficulty * args.min_fill)
+    floor = max(ROUND_MIN, proportional)
+    # Check every (target, difficulty) bucket that will EXIST in the written
+    # corpus — the union of the targets requested this run and any already
+    # present in a merged pool — so a merge that leaves a pre-existing deck thin
+    # is caught too, not just the buckets this run generated.
+    check_targets = set(targets) | {c["target"] for c in combined}
+    thin = {
+        f"{t}/{dfc}": counts.get(f"{t}/{dfc}", 0)
+        for t in check_targets for dfc in DIFFICULTIES
+        if counts.get(f"{t}/{dfc}", 0) < floor
+    }
+    if thin:
+        print(f"\nUnderfilled buckets (< {floor} per bucket):", file=sys.stderr)
+        for bucket in sorted(thin):
+            print(f"  - {bucket}: {thin[bucket]}", file=sys.stderr)
+        if not args.allow_underfill:
             print(
-                f"\nUnderfilled buckets (< {floor} = {args.min_fill:.0%} of "
-                f"{per_difficulty}):",
+                "\nRefusing to write a corpus with a bucket below the daily-round "
+                "floor (would shrink a deck's daily/freeplay pool). Re-run, or "
+                "pass --allow-underfill once you've accepted these counts.",
                 file=sys.stderr,
             )
-            for bucket in sorted(thin):
-                print(f"  - {bucket}: {thin[bucket]}", file=sys.stderr)
-            if not args.allow_underfill:
-                print(
-                    "\nRefusing to write a lopsided corpus (would shrink a deck's "
-                    "daily/freeplay pool). Re-run — or pass --allow-underfill once "
-                    "you've accepted these counts, or --merge to top up in place.",
-                    file=sys.stderr,
-                )
-                return 1
-            print("\n--allow-underfill set: writing the thin corpus anyway.",
-                  file=sys.stderr)
+            return 1
+        print("\n--allow-underfill set: writing the thin corpus anyway.",
+              file=sys.stderr)
 
     if args.dry_run:
         print("\n--dry-run: not writing. Sample cards:")

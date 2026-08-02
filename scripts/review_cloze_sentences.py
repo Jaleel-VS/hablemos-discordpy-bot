@@ -72,6 +72,10 @@ _BATCH = 12
 _MAX_TOKENS = 4096
 _TEMPERATURE = None
 
+#: How many times to re-review cards the model returned no verdict for before
+#: giving up and failing them closed (treating them as suspect).
+_MAX_REVIEW_ATTEMPTS = 3
+
 _LANG_NAMES = {"es": "Spanish", "en": "English"}
 
 
@@ -107,14 +111,20 @@ def _review_prompt(cards: list[dict[str, Any]]) -> str:
         "2. answer — the bracketed answer must be the correct, natural word for "
         "the blank, grammatically correct (tense, mood, number, gender; honour "
         "subjunctive triggers like 'dudo que', 'es posible que', 'para que').\n"
-        "3. distractors — EACH distractor must be clearly WRONG in the sentence: "
-        "NOT a synonym or near-synonym of the answer, and NOT an equally valid "
-        "alternative. Exactly one word (the answer) may correctly fill the gap.\n"
+        "3. distractors — EACH distractor must be (a) a REAL, correctly-spelled "
+        "word in the target language, (b) the same part of speech AND grammatical "
+        "form (tense, mood, number, gender) as the answer, and (c) clearly WRONG "
+        "in the sentence: NOT a synonym or near-synonym of the answer, and NOT an "
+        "equally valid alternative. A misspelled or non-existent word (e.g. an "
+        "incorrectly-conjugated form like 'granize' instead of 'granice') makes "
+        "the card suspect. Exactly one word (the answer) may correctly fill the "
+        "gap.\n"
         "4. difficulty — the label (beginner/intermediate/advanced) should be "
         "roughly appropriate; a wrong label is a minor issue, not a failure.\n\n"
         "A card is \"suspect\" if translation or answer is wrong, or if any "
-        "distractor is a synonym/valid alternative. Difficulty mismatch alone is "
-        "NOT suspect (note it in reasons instead).\n\n"
+        "distractor is a synonym/valid alternative, misspelled, non-existent, or "
+        "in the wrong morphological form. Difficulty mismatch alone is NOT "
+        "suspect (note it in reasons instead).\n\n"
         f"Cards:\n{cards_block}\n\n"
         "Return ONLY a JSON array, no prose, no markdown fences. One object per "
         'card: {"id":"<id>","verdict":"ok"|"suspect","reasons":["short reason", '
@@ -236,10 +246,24 @@ def main() -> int:
         bedrock_auth()
 
     verdicts: dict[str, dict] = {}
-    for i in range(0, len(review_cards), _BATCH):
-        batch = review_cards[i : i + _BATCH]
-        verdicts.update(_review_batch(batch, args.model, args.verbose))
-        time.sleep(0.4)  # gentle pacing
+    # Grade in batches, then RETRY any card the model didn't return a verdict
+    # for (a transient failure or an unparseable batch), up to a few rounds.
+    # Whatever is still unreviewed after retries is FAILED CLOSED below (treated
+    # as suspect) — the pipeline never leaves a card it couldn't verify shipped.
+    pending = [
+        c for c in review_cards
+        if c["id"] not in force_keep and c["id"] not in force_quarantine
+    ]
+    for attempt in range(1, _MAX_REVIEW_ATTEMPTS + 1):
+        if not pending:
+            break
+        if attempt > 1:
+            print(f"Retry {attempt - 1}: re-reviewing {len(pending)} card(s) with no verdict…")
+        for i in range(0, len(pending), _BATCH):
+            batch = pending[i : i + _BATCH]
+            verdicts.update(_review_batch(batch, args.model, args.verbose))
+            time.sleep(0.4)  # gentle pacing
+        pending = [c for c in pending if c["id"] not in verdicts]
 
     # Classify. A card the model didn't return a verdict for is "unreviewed" —
     # surfaced explicitly, never assumed OK.
@@ -257,7 +281,15 @@ def main() -> int:
             continue
         v = verdicts.get(cid)
         if v is None:
+            # Fail closed: an unverifiable card is recorded AND quarantined as
+            # suspect, so a review that couldn't reach a verdict can't leave an
+            # unverified card in the shipped corpus.
             unreviewed.append(cid)
+            suspect.append({**c, "_review": {
+                "verdict": "suspect",
+                "reasons": ["unreviewed: no model verdict after retries (failed closed)"],
+                "suggested_answer": "",
+            }})
         elif v["verdict"] == "suspect":
             suspect.append({**c, "_review": v})
         else:
@@ -266,8 +298,7 @@ def main() -> int:
     # ── report ──────────────────────────────────────────────────────────────
     print("\n=== Review summary ===")
     print(f"  ok:         {len(ok_ids)}")
-    print(f"  suspect:    {len(suspect)}")
-    print(f"  unreviewed: {len(unreviewed)}")
+    print(f"  suspect:    {len(suspect)}  (incl. {len(unreviewed)} unreviewed → failed closed)")
     if suspect:
         print("\nSuspect cards:")
         for s in suspect[:50]:
@@ -278,9 +309,6 @@ def main() -> int:
                   f"answer={s['answer']!r}: {r}{sug_txt}")
         if len(suspect) > 50:
             print(f"  … and {len(suspect) - 50} more")
-    if unreviewed:
-        print(f"\nUnreviewed (model gave no verdict): {unreviewed[:20]}"
-              f"{' …' if len(unreviewed) > 20 else ''}")
 
     if args.report:
         report = {
@@ -333,10 +361,19 @@ def main() -> int:
     corpus.setdefault("meta", {})
     corpus["meta"]["counts"] = counts
     corpus["meta"]["total"] = len(kept)
+    # Provenance invariant: record whether the WHOLE corpus was reviewed this
+    # run (no --limit) and that no unreviewed card survived (they fail closed
+    # into quarantine). survivors_all_passed is only true when every shipped
+    # card either passed the model or was a human force-keep — so the commit can
+    # prove the 392-or-whatever survivors were actually verified.
+    reviewed_all = args.limit == 0
     corpus["meta"]["last_review"] = {
         "model": args.model,
         "reviewed_at": datetime.now(UTC).isoformat(),
         "quarantined": len(quarantined_now),
+        "reviewed_all": reviewed_all,
+        "unreviewed_after_retries": len(unreviewed),
+        "survivors_all_passed": reviewed_all and len(unreviewed) == 0,
     }
 
     _DATA.write_text(json.dumps(corpus, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

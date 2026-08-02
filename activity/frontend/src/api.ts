@@ -152,7 +152,6 @@ export interface ClozeMiss {
   given: string;
   result: MatchResult;
 }
-
 export interface ClozeResult {
   won: boolean;
   mode: string;

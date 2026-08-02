@@ -3,18 +3,21 @@
     "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
     "generated_at": "2026-08-02T09:49:28.750478+00:00",
     "counts": {
-      "en/beginner": 67,
-      "es/beginner": 74,
-      "en/intermediate": 69,
-      "es/intermediate": 58,
-      "en/advanced": 75,
-      "es/advanced": 49
+      "en/beginner": 63,
+      "es/beginner": 70,
+      "en/intermediate": 64,
+      "es/intermediate": 54,
+      "en/advanced": 72,
+      "es/advanced": 44
     },
-    "total": 392,
+    "total": 367,
     "last_review": {
       "model": "us.anthropic.claude-opus-4-8",
-      "reviewed_at": "2026-08-02T10:26:22.025766+00:00",
-      "quarantined": 105
+      "reviewed_at": "2026-08-02T10:58:33.655776+00:00",
+      "quarantined": 25,
+      "reviewed_all": true,
+      "unreviewed_after_retries": 0,
+      "survivors_all_passed": true
     }
   },
   "difficulties": {
@@ -264,9 +267,9 @@
       "answer": "sleep",
       "context": "Dormimos ocho horas cada noche.",
       "distractors": [
-        "rest",
-        "wake",
-        "dream"
+        "eat",
+        "read",
+        "sing"
       ],
       "difficulty": "beginner"
     },
@@ -284,19 +287,6 @@
       "difficulty": "beginner"
     },
     {
-      "id": "en-0028",
-      "target": "en",
-      "cloze": "The weather is very ___ today.",
-      "answer": "hot",
-      "context": "El clima es muy caluroso hoy.",
-      "distractors": [
-        "warm",
-        "sunny",
-        "bright"
-      ],
-      "difficulty": "beginner"
-    },
-    {
       "id": "en-0029",
       "target": "en",
       "cloze": "We ___ to buy groceries soon.",
@@ -306,32 +296,6 @@
         "want",
         "prefer",
         "like"
-      ],
-      "difficulty": "beginner"
-    },
-    {
-      "id": "en-0030",
-      "target": "en",
-      "cloze": "My brother ___ in the city.",
-      "answer": "lives",
-      "context": "Mi hermano vive en la ciudad.",
-      "distractors": [
-        "stays",
-        "remains",
-        "works"
-      ],
-      "difficulty": "beginner"
-    },
-    {
-      "id": "en-0031",
-      "target": "en",
-      "cloze": "The cat is ___ on the bed.",
-      "answer": "sleeping",
-      "context": "El gato está durmiendo en la cama.",
-      "distractors": [
-        "resting",
-        "lying",
-        "sitting"
       ],
       "difficulty": "beginner"
     },
@@ -462,19 +426,6 @@
         "stories",
         "jokes",
         "secrets"
-      ],
-      "difficulty": "beginner"
-    },
-    {
-      "id": "en-0048",
-      "target": "en",
-      "cloze": "The sky is very ___ today.",
-      "answer": "blue",
-      "context": "El cielo es muy azul hoy.",
-      "distractors": [
-        "clear",
-        "bright",
-        "light"
       ],
       "difficulty": "beginner"
     },
@@ -908,19 +859,6 @@
       "difficulty": "beginner"
     },
     {
-      "id": "es-0002",
-      "target": "es",
-      "cloze": "Mi hermana es muy ___.",
-      "answer": "inteligente",
-      "context": "My sister is very intelligent.",
-      "distractors": [
-        "cansada",
-        "feliz",
-        "triste"
-      ],
-      "difficulty": "beginner"
-    },
-    {
       "id": "es-0003",
       "target": "es",
       "cloze": "El gato ___ en la cama.",
@@ -930,19 +868,6 @@
         "salta",
         "come",
         "corre"
-      ],
-      "difficulty": "beginner"
-    },
-    {
-      "id": "es-0004",
-      "target": "es",
-      "cloze": "Nosotros vivimos en una casa ___.",
-      "answer": "grande",
-      "context": "We live in a big house.",
-      "distractors": [
-        "pequeña",
-        "nueva",
-        "vieja"
       ],
       "difficulty": "beginner"
     },
@@ -1086,19 +1011,6 @@
         "metal",
         "vidrio",
         "plástico"
-      ],
-      "difficulty": "beginner"
-    },
-    {
-      "id": "es-0018",
-      "target": "es",
-      "cloze": "Yo corro ___ en el parque.",
-      "answer": "rápido",
-      "context": "I run fast in the park.",
-      "distractors": [
-        "lentamente",
-        "fuerte",
-        "tranquilo"
       ],
       "difficulty": "beginner"
     },
@@ -1567,19 +1479,6 @@
         "claro",
         "oscuro",
         "estrellado"
-      ],
-      "difficulty": "beginner"
-    },
-    {
-      "id": "es-0059",
-      "target": "es",
-      "cloze": "Mi cuarto es ___ pero cómodo.",
-      "answer": "pequeño",
-      "context": "My room is small but comfortable.",
-      "distractors": [
-        "grande",
-        "largo",
-        "estrecho"
       ],
       "difficulty": "beginner"
     },
@@ -2182,19 +2081,6 @@
       "difficulty": "intermediate"
     },
     {
-      "id": "en-0110",
-      "target": "en",
-      "cloze": "She ___ coffee over tea every single day.",
-      "answer": "prefers",
-      "context": "Ella prefiere café en lugar de té cada día.",
-      "distractors": [
-        "drinks",
-        "makes",
-        "serves"
-      ],
-      "difficulty": "intermediate"
-    },
-    {
       "id": "en-0111",
       "target": "en",
       "cloze": "The garden is ___ during the spring season.",
@@ -2217,19 +2103,6 @@
         "sell",
         "deliver",
         "cook"
-      ],
-      "difficulty": "intermediate"
-    },
-    {
-      "id": "en-0113",
-      "target": "en",
-      "cloze": "The restaurant serves ___ food every evening.",
-      "answer": "delicious",
-      "context": "El restaurante sirve comida deliciosa cada noche.",
-      "distractors": [
-        "expensive",
-        "fresh",
-        "hot"
       ],
       "difficulty": "intermediate"
     },
@@ -2273,19 +2146,6 @@
       "difficulty": "intermediate"
     },
     {
-      "id": "en-0117",
-      "target": "en",
-      "cloze": "The children played ___ in the park.",
-      "answer": "happily",
-      "context": "Los niños jugaron felizmente en el parque.",
-      "distractors": [
-        "quietly",
-        "slowly",
-        "carefully"
-      ],
-      "difficulty": "intermediate"
-    },
-    {
       "id": "en-0119",
       "target": "en",
       "cloze": "The music was too ___ for the party.",
@@ -2321,19 +2181,6 @@
         "hides",
         "weighs",
         "breaks"
-      ],
-      "difficulty": "intermediate"
-    },
-    {
-      "id": "en-0124",
-      "target": "en",
-      "cloze": "He ___ his birthday with close friends.",
-      "answer": "celebrated",
-      "context": "Él celebró su cumpleaños con amigos cercanos.",
-      "distractors": [
-        "enjoyed",
-        "organized",
-        "attended"
       ],
       "difficulty": "intermediate"
     },
@@ -2399,19 +2246,6 @@
         "slowly",
         "carefully",
         "quietly"
-      ],
-      "difficulty": "intermediate"
-    },
-    {
-      "id": "en-0134",
-      "target": "en",
-      "cloze": "She will ___ her homework before dinner tonight.",
-      "answer": "finish",
-      "context": "Ella terminará su tarea antes de cenar esta noche.",
-      "distractors": [
-        "start",
-        "begin",
-        "continue"
       ],
       "difficulty": "intermediate"
     },
@@ -3144,19 +2978,6 @@
       "difficulty": "intermediate"
     },
     {
-      "id": "es-0125",
-      "target": "es",
-      "cloze": "Mañana ___ al cine a ver una película nueva.",
-      "answer": "iremos",
-      "context": "Tomorrow we will go to the cinema to see a new film.",
-      "distractors": [
-        "saldremos",
-        "entraremos",
-        "llegaremos"
-      ],
-      "difficulty": "intermediate"
-    },
-    {
       "id": "es-0128",
       "target": "es",
       "cloze": "Mi tío es ___ y trabaja en construcción.",
@@ -3176,22 +2997,9 @@
       "answer": "comieron",
       "context": "They ate delicious food at the Italian restaurant.",
       "distractors": [
-        "probaron",
-        "degustaron",
-        "compartieron"
-      ],
-      "difficulty": "intermediate"
-    },
-    {
-      "id": "es-0132",
-      "target": "es",
-      "cloze": "Mi hermana ___ libros en la biblioteca cada semana.",
-      "answer": "compra",
-      "context": "My sister buys books at the library every week.",
-      "distractors": [
-        "vende",
-        "lee",
-        "escribe"
+        "escribieron",
+        "cantaron",
+        "leyeron"
       ],
       "difficulty": "intermediate"
     },
@@ -3391,19 +3199,6 @@
       "difficulty": "intermediate"
     },
     {
-      "id": "es-0153",
-      "target": "es",
-      "cloze": "Yo espero que el examen sea ___ para todos.",
-      "answer": "fácil",
-      "context": "I hope the exam is easy for everyone.",
-      "distractors": [
-        "complicado",
-        "imposible",
-        "complejo"
-      ],
-      "difficulty": "intermediate"
-    },
-    {
       "id": "es-0156",
       "target": "es",
       "cloze": "El perro ___ las órdenes del dueño muy rápidamente.",
@@ -3495,19 +3290,6 @@
       "difficulty": "intermediate"
     },
     {
-      "id": "es-0164",
-      "target": "es",
-      "cloze": "Ella necesita ___ mucho para el examen final.",
-      "answer": "estudiar",
-      "context": "She needs to study a lot for the final exam.",
-      "distractors": [
-        "trabajar",
-        "practicar",
-        "leer"
-      ],
-      "difficulty": "intermediate"
-    },
-    {
       "id": "en-0167",
       "target": "en",
       "cloze": "The ancient manuscript ___ secrets that scholars had pondered for centuries.",
@@ -3530,19 +3312,6 @@
         "suggested",
         "requested",
         "hoped"
-      ],
-      "difficulty": "advanced"
-    },
-    {
-      "id": "en-0169",
-      "target": "en",
-      "cloze": "The merchant ___ his finest silks and fabrics in the crowded marketplace.",
-      "answer": "displayed",
-      "context": "El comerciante exhibió sus mejores sedas y telas en el mercado abarrotado.",
-      "distractors": [
-        "stored",
-        "sold",
-        "shipped"
       ],
       "difficulty": "advanced"
     },
@@ -3790,19 +3559,6 @@
         "doubt",
         "refute",
         "ignore"
-      ],
-      "difficulty": "advanced"
-    },
-    {
-      "id": "en-0192",
-      "target": "en",
-      "cloze": "The chef decided to ___ the recipe with fresh herbs and spices.",
-      "answer": "augment",
-      "context": "El chef decidió aumentar la receta con hierbas y especias frescas.",
-      "distractors": [
-        "diminish",
-        "simplify",
-        "alter"
       ],
       "difficulty": "advanced"
     },
@@ -4288,19 +4044,6 @@
       "difficulty": "advanced"
     },
     {
-      "id": "en-0233",
-      "target": "en",
-      "cloze": "The rescue team ___ exceptional courage while saving the trapped miners.",
-      "answer": "displayed",
-      "context": "El equipo de rescate mostró un coraje excepcional al salvar a los mineros atrapados.",
-      "distractors": [
-        "concealed",
-        "suppressed",
-        "hid"
-      ],
-      "difficulty": "advanced"
-    },
-    {
       "id": "en-0234",
       "target": "en",
       "cloze": "The evidence will ___ the defendant of all charges brought against him.",
@@ -4556,7 +4299,7 @@
       "distractors": [
         "nieve",
         "truene",
-        "granize"
+        "granice"
       ],
       "difficulty": "advanced"
     },
@@ -4685,7 +4428,7 @@
       "context": "It is likely that it will rain this weekend, so prepare your umbrella.",
       "distractors": [
         "nieve",
-        "granize",
+        "granice",
         "truene"
       ],
       "difficulty": "advanced"
@@ -4791,19 +4534,6 @@
         "demolió",
         "visitó",
         "fotografió"
-      ],
-      "difficulty": "advanced"
-    },
-    {
-      "id": "es-0193",
-      "target": "es",
-      "cloze": "Aunque ___ mañana, iremos al parque para caminar juntos.",
-      "answer": "llueva",
-      "context": "Even if it rains tomorrow, we will go to the park to walk together.",
-      "distractors": [
-        "nieve",
-        "truene",
-        "ventee"
       ],
       "difficulty": "advanced"
     },
@@ -4964,19 +4694,6 @@
       "difficulty": "advanced"
     },
     {
-      "id": "es-0206",
-      "target": "es",
-      "cloze": "___ que su propuesta no sea aceptada por los miembros del comité.",
-      "answer": "Teme",
-      "context": "He fears that his proposal will not be accepted by the committee members.",
-      "distractors": [
-        "Espera",
-        "Confía",
-        "Cree"
-      ],
-      "difficulty": "advanced"
-    },
-    {
       "id": "es-0207",
       "target": "es",
       "cloze": "La empresa ___ una fábrica nueva con tecnología de punta en la región.",
@@ -5055,45 +4772,6 @@
       "difficulty": "advanced"
     },
     {
-      "id": "es-0216",
-      "target": "es",
-      "cloze": "Espero que mañana ___ mejor tiempo para nuestra excursión.",
-      "answer": "haga",
-      "context": "I hope that tomorrow the weather will be better for our excursion.",
-      "distractors": [
-        "sea",
-        "esté",
-        "viene"
-      ],
-      "difficulty": "advanced"
-    },
-    {
-      "id": "es-0219",
-      "target": "es",
-      "cloze": "Dudo que ___ terminar el proyecto antes del viernes.",
-      "answer": "puedas",
-      "context": "I doubt that you can finish the project before Friday.",
-      "distractors": [
-        "logres",
-        "quieras",
-        "intentes"
-      ],
-      "difficulty": "advanced"
-    },
-    {
-      "id": "es-0220",
-      "target": "es",
-      "cloze": "Le aconsejé que no ___ tanto dinero en ropa innecesaria.",
-      "answer": "gastara",
-      "context": "I advised her not to spend so much money on unnecessary clothes.",
-      "distractors": [
-        "ahorrara",
-        "guardara",
-        "invirtiera"
-      ],
-      "difficulty": "advanced"
-    },
-    {
       "id": "es-0221",
       "target": "es",
       "cloze": "Es probable que ___ durante la tarde según el pronóstico.",
@@ -5102,7 +4780,7 @@
       "distractors": [
         "nieve",
         "truene",
-        "granize"
+        "granice"
       ],
       "difficulty": "advanced"
     },

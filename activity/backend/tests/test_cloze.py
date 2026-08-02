@@ -227,14 +227,18 @@ def test_daily_is_deterministic_across_users(engine):
     assert a.state["puzzle_no"] == b.state["puzzle_no"]
 
 
-def test_daily_withholds_answer_in_feedback(engine):
+def test_daily_withholds_all_feedback(engine):
+    # The daily is a deterministic shared sequence and state round-trips as a
+    # sealed token, so ANY per-card feedback (even just the result flag) lets a
+    # choice-mode player replay the previous turn's token and probe options.
+    # Daily play therefore returns no per-card feedback at all; corrections come
+    # only in the end-of-round recap.
     oc = engine.new_game(mode="daily", user_id="1", options={"answer_mode": "choice"})
     answer = oc.state["cards"][0]["answer"]
     oc2 = engine.submit(state=oc.state, guess=answer)
-    last = oc2.client_view["last"]
-    assert last is not None
-    assert "answer" not in last          # withheld mid-run in daily
-    assert last["result"] == "exact"     # but the flag is present
+    assert oc2.client_view["last"] is None   # no answer AND no result flag
+    # The score still advances (that leaks nothing about the current card).
+    assert oc2.client_view["correct"] == 1
 
 
 def test_freeplay_reveals_answer_in_feedback(engine):
@@ -254,6 +258,40 @@ def test_recap_exposes_misses_with_answers(engine):
     assert len(result["misses"]) == ROUND_SIZE
     # The recap discloses the correct answer for review (unlike mid-run daily).
     assert all("answer" in m for m in result["misses"])
+
+
+def test_empty_guess_is_rejected(engine):
+    # An empty (non-finish) guess must not be graded/advanced — otherwise a
+    # client could walk a daily to a persisted won=True 0/N without answering.
+    oc = engine.new_game(mode="daily", user_id="1", options={"answer_mode": "type"})
+    with pytest.raises(GameError):
+        engine.submit(state=oc.state, guess="")
+    with pytest.raises(GameError):
+        engine.submit(state=oc.state, guess="   ")
+    # State did not advance.
+    assert oc.state["seq"] == 0
+    assert oc.state["answered"] == []
+
+
+def test_recap_includes_close_answers_for_correction(engine):
+    # A CLOSE (accent) answer counts as correct but the learner still needs to
+    # see the right spelling; in daily mode there's no mid-run feedback, so the
+    # recap must include CLOSE entries (with their correct answer), not only
+    # outright WRONG ones.
+    oc = engine.new_game(mode="daily", user_id="1", options={"answer_mode": "type"})
+    state = oc.state
+    # Force a known accented answer and submit the accent-stripped form (CLOSE).
+    state["cards"][0]["answer"] = "caf\u00e9"
+    state = engine.submit(state=state, guess="cafe").state
+    for _ in range(ROUND_SIZE - 1):
+        if engine.is_over(state):
+            break
+        cur = state["cards"][state["seq"]]
+        state = engine.submit(state=state, guess=cur["answer"]).state
+    result = engine.result_payload(state)
+    close = [m for m in result["misses"] if m["result"] == "close"]
+    assert len(close) == 1
+    assert close[0]["answer"] == "caf\u00e9"
 
 
 # ── hostile state guards ────────────────────────────────────────────────────
@@ -302,5 +340,35 @@ def test_validate_rejects_overlong_answered_log(engine):
     oc = engine.new_game(mode="free", user_id="1")
     state = oc.state
     state["answered"] = [{"x": 1}] * (len(state["cards"]) + 5)  # impossible history
+    with pytest.raises(GameError):
+        engine.submit(state=state, guess="x")
+
+
+def test_validate_rejects_missing_mode(engine):
+    # mode is read via state["mode"] downstream; a state without it must fail
+    # clean, not KeyError.
+    oc = engine.new_game(mode="free", user_id="1")
+    state = oc.state
+    del state["mode"]
+    with pytest.raises(GameError):
+        engine.submit(state=state, guess="x")
+
+
+def test_validate_rejects_null_distractors(engine):
+    # distractors: null would break _card_from_dict/options() with a TypeError;
+    # it must be caught as a clean GameError.
+    oc = engine.new_game(mode="free", user_id="1", options={"answer_mode": "choice"})
+    state = oc.state
+    state["cards"][0]["distractors"] = None
+    with pytest.raises(GameError):
+        engine.submit(state=state, guess="x")
+
+
+def test_validate_rejects_malformed_answered_entry(engine):
+    # An answered entry without a str result would break result_payload /
+    # _emoji_grid indexing a["result"].
+    oc = engine.new_game(mode="free", user_id="1")
+    state = oc.state
+    state["answered"] = [{"no_result_key": True}]
     with pytest.raises(GameError):
         engine.submit(state=state, guess="x")

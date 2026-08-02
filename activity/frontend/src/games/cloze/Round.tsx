@@ -96,7 +96,10 @@ export default function Round({ view, busy, error, onAnswer, onFinish }: RoundPr
         <p className="cloze-context">{prompt.context}</p>
       </div>
 
-      {/* Inline feedback from the previous answer. */}
+      {/* Inline feedback from the previous answer. In the daily there is no
+          per-card feedback (the backend withholds it so a replayed token can't
+          probe answers), so show a subtle note that corrections come at the
+          end instead of an empty slot. Freeplay flashes the graded result. */}
       <div className="feedback-slot">
         {last ? (
           <p className={`feedback feedback--${last.result}`} key={view.answered_count}>
@@ -117,6 +120,10 @@ export default function Round({ view, busy, error, onAnswer, onFinish }: RoundPr
               ) : (
                 <span>Incorrecto</span>
               ))}
+          </p>
+        ) : view.mode === "daily" && view.answered_count > 0 ? (
+          <p className="feedback feedback--daily" key={view.answered_count}>
+            <span>Revisa tus respuestas al final</span>
           </p>
         ) : null}
       </div>

@@ -159,6 +159,15 @@ class ClozeEngine:
             state["last"] = None
             return GuessOutcome(state=state, client_view=self.client_view(state))
 
+        # Reject an empty (non-finish) guess. Grading "" would count a card as
+        # answered (wrong) and advance the round, which — chained — lets a
+        # client walk a daily to completion without ever attempting an answer
+        # (banking a persisted won=True, 0/N result + streak). Every real answer
+        # (a typed word or a tapped option) is non-empty; the client only sends
+        # "" via the finish path handled above.
+        if not guess.strip():
+            raise GameError("Escribe o elige una respuesta.")
+
         card = self._current_card(state)
         result = grade(guess, card.answer)
         is_correct = result in (Match.EXACT, Match.CLOSE)
@@ -223,7 +232,16 @@ class ClozeEngine:
             "score": f"{correct}/{total}",
             "grid": self._emoji_grid(answered),
             "summary": summary,
-            "misses": [a for a in answered if a["result"] == Match.WRONG.value],
+            # The recap review list. Include both WRONG and CLOSE (accent) cards
+            # so the learner sees the correct spelling of everything they didn't
+            # nail — crucial in daily mode, where per-card feedback is withheld
+            # during play (an accent miss otherwise never surfaces the correct
+            # form). Each entry carries its ``result`` so the client can render
+            # a CLOSE differently from an outright miss.
+            "misses": [
+                a for a in answered
+                if a["result"] in (Match.WRONG.value, Match.CLOSE.value)
+            ],
         }
 
     # ── helpers ───────────────────────────────────────────────────────────
@@ -256,20 +274,36 @@ class ClozeEngine:
         return view
 
     def _client_last(self, state: dict[str, Any]) -> dict[str, Any] | None:
-        """Per-card feedback, with the answer withheld in daily mode.
+        """Per-card feedback, suppressed during daily play.
 
         The daily round is a fixed, deterministic sequence shared by everyone,
-        so revealing each answer mid-run would let a player harvest the whole
-        day's answers (mash junk, read ``answer``, restart, ace it). Daily play
-        therefore gets the result flag (exact/close/wrong) but not ``answer`` —
-        the correct words are disclosed only in the end-of-round recap.
-        Freeplay reveals normally (there's nothing to game).
+        and the backend is stateless (state round-trips as a sealed token). If
+        daily feedback exposed anything about the just-graded card, a player
+        could **replay the previous turn's token** and vary the guess to probe:
+        in choice mode, three replays against the four options reveal the answer
+        (watch which one flips the result flag), then submit the winner on the
+        "real" branch. Withholding the *answer* alone doesn't close this — the
+        result flag itself is the probing signal.
+
+        So during daily play we return **no per-card feedback at all** (only the
+        running score/streak, which leak nothing about the current card). The
+        correct words — and which ones were missed — are disclosed only in the
+        end-of-round recap, which is reachable solely by answering every card
+        (an early daily finish is rejected). Freeplay reveals normally (it feeds
+        no streak and there's nothing to game).
+
+        This remains an honor-system boundary in the same sense the conjugation
+        daily documents: the date→cards mapping is derivable from public code,
+        so a determined player can still precompute answers offline. Closing
+        that fully needs server-side per-guess attempt consumption, a cost we
+        deliberately don't pay for a cosmetic streak. What this *does* close is
+        the cheap in-client token-replay probe.
         """
         last = state.get("last")
         if last is None:
             return None
         if state.get("mode") == "daily":
-            return {k: v for k, v in last.items() if k != "answer"}
+            return None
         return last
 
     def _current_card(self, state: dict[str, Any]) -> d.Card:
@@ -297,40 +331,70 @@ class ClozeEngine:
 
     @staticmethod
     def _validate_state(state: dict[str, Any]) -> None:
-        """Guard against malformed/hostile state before trusting it."""
+        """Guard against malformed/hostile state before trusting it.
+
+        The sealed state is authenticated, so a well-formed state can only come
+        from us — but a *legacy* state, a truncated token, or a deliberately
+        malformed one must fail with a clean :class:`GameError` (→ HTTP 400),
+        never a raw ``KeyError``/``TypeError`` (→ HTTP 500). Every field the
+        engine subsequently indexes without a ``.get`` default is checked here,
+        including inside each card and each answered entry, so downstream code
+        (``result_payload``, ``_emoji_grid``, ``_current_card``, ``options``)
+        can trust the shape.
+        """
+        def bad() -> GameError:
+            return GameError("Estado de partida inválido.")
+
         if not isinstance(state, dict):
-            raise GameError("Estado de partida inválido.")
+            raise bad()
         if state.get("game") != "cloze":
-            raise GameError("Estado de partida inválido.")
+            raise bad()
         if state.get("status") not in ("playing", "over"):
-            raise GameError("Estado de partida inválido.")
-        if not isinstance(state.get("answered"), list):
-            raise GameError("Estado de partida inválido.")
+            raise bad()
+        # mode / answer_mode are read via state[...] downstream (result_payload,
+        # client_view), so they must be present and valid — not just truthy.
+        if state.get("mode") not in ("daily", "free"):
+            raise bad()
+        if state.get("answer_mode") not in ("choice", "type"):
+            raise bad()
         cards = state.get("cards")
         if not isinstance(cards, list) or not cards:
-            raise GameError("Estado de partida inválido.")
+            raise bad()
         seq = state.get("seq")
         if not isinstance(seq, int) or seq < 0:
-            raise GameError("Estado de partida inválido.")
+            raise bad()
         # Scoring counters must be well-typed ints — submit() does arithmetic on
         # them (``correct += 1``, ``max(best_streak, streak)``), so a hostile
         # string/None would raise a raw TypeError instead of a clean GameError.
         for key in ("correct", "streak", "best_streak"):
             if not isinstance(state.get(key), int):
-                raise GameError("Estado de partida inválido.")
+                raise bad()
         # round_size is the loop bound for "round over"; it must match the deck
         # actually carried in state, or a tampered value could end early / never.
         if state.get("round_size") != len(cards):
-            raise GameError("Estado de partida inválido.")
-        # The answered log can never exceed the cards served so far (seq); a
-        # longer log is a forged/replayed state.
-        answered = state.get("answered", [])
-        if len(answered) > len(cards):
-            raise GameError("Estado de partida inválido.")
-        # The current card (when still playing) must be a dict with a str answer.
-        if state.get("status") == "playing":
-            if seq >= len(cards):
-                raise GameError("Estado de partida inválido.")
-            current = cards[seq]
-            if not isinstance(current, dict) or not isinstance(current.get("answer"), str):
-                raise GameError("Estado de partida inválido.")
+            raise bad()
+        # Every card must be well-shaped: str answer/cloze and a LIST of
+        # distractors. ``distractors: null`` (or any non-list) would break
+        # _card_from_dict's ``tuple(... for d in raw[...])`` and options() with a
+        # raw TypeError; a non-str answer would break grading.
+        for card in cards:
+            if not isinstance(card, dict):
+                raise bad()
+            if not isinstance(card.get("answer"), str):
+                raise bad()
+            if not isinstance(card.get("cloze"), str):
+                raise bad()
+            if not isinstance(card.get("distractors"), list):
+                raise bad()
+        # The answered log can never exceed the cards served; and every entry
+        # must be a dict carrying a str ``result`` (result_payload / _emoji_grid
+        # index a["result"] on each), or a forged entry raises a raw error.
+        answered = state.get("answered")
+        if not isinstance(answered, list) or len(answered) > len(cards):
+            raise bad()
+        for entry in answered:
+            if not isinstance(entry, dict) or not isinstance(entry.get("result"), str):
+                raise bad()
+        # While playing, the current card must be in range (submit indexes it).
+        if state.get("status") == "playing" and seq >= len(cards):
+            raise bad()

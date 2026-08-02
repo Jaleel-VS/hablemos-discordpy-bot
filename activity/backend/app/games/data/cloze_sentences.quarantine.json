@@ -1,7 +1,7 @@
 {
   "meta": {
     "note": "Cards quarantined by review_cloze_sentences.py — fix and re-merge, or discard. NOT loaded by the runtime.",
-    "updated_at": "2026-08-02T10:26:22.031859+00:00"
+    "updated_at": "2026-08-02T10:58:33.659346+00:00"
   },
   "cards": [
     {
@@ -2118,6 +2118,507 @@
         "verdict": "suspect",
         "reasons": [
           "'destináramos', 'asignáramos', 'empleáramos' are all valid alternatives for investing/allocating resources"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0028",
+      "target": "en",
+      "cloze": "The weather is very ___ today.",
+      "answer": "hot",
+      "context": "El clima es muy caluroso hoy.",
+      "distractors": [
+        "warm",
+        "sunny",
+        "bright"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'warm' is a near-synonym and could validly fill the blank given 'caluroso'"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0030",
+      "target": "en",
+      "cloze": "My brother ___ in the city.",
+      "answer": "lives",
+      "context": "Mi hermano vive en la ciudad.",
+      "distractors": [
+        "stays",
+        "remains",
+        "works"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractors 'stays' and 'remains' are near-synonyms of 'lives' and could fit contextually"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0031",
+      "target": "en",
+      "cloze": "The cat is ___ on the bed.",
+      "answer": "sleeping",
+      "context": "El gato está durmiendo en la cama.",
+      "distractors": [
+        "resting",
+        "lying",
+        "sitting"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractors 'resting' and 'lying' are near-synonyms and could plausibly fit a cat on the bed"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0048",
+      "target": "en",
+      "cloze": "The sky is very ___ today.",
+      "answer": "blue",
+      "context": "El cielo es muy azul hoy.",
+      "distractors": [
+        "clear",
+        "bright",
+        "light"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'clear' is a valid alternative to describe the sky and fits naturally"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0002",
+      "target": "es",
+      "cloze": "Mi hermana es muy ___.",
+      "answer": "inteligente",
+      "context": "My sister is very intelligent.",
+      "distractors": [
+        "cansada",
+        "feliz",
+        "triste"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractors 'cansada', 'feliz', 'triste' are all grammatically valid and would fit the sentence naturally; multiple valid alternatives"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0004",
+      "target": "es",
+      "cloze": "Nosotros vivimos en una casa ___.",
+      "answer": "grande",
+      "context": "We live in a big house.",
+      "distractors": [
+        "pequeña",
+        "nueva",
+        "vieja"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractors 'pequeña', 'nueva', 'vieja' are all valid adjectives that fit the sentence naturally; multiple valid alternatives"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0018",
+      "target": "es",
+      "cloze": "Yo corro ___ en el parque.",
+      "answer": "rápido",
+      "context": "I run fast in the park.",
+      "distractors": [
+        "lentamente",
+        "fuerte",
+        "tranquilo"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'lentamente' is an adverb while answer 'rápido' is used as adverb but distractors 'fuerte' and 'tranquilo' are adjective forms; morphological inconsistency, though all fit contextually as wrong"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0059",
+      "target": "es",
+      "cloze": "Mi cuarto es ___ pero cómodo.",
+      "answer": "pequeño",
+      "context": "My room is small but comfortable.",
+      "distractors": [
+        "grande",
+        "largo",
+        "estrecho"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'estrecho' (narrow) can be a valid alternative describing a small/narrow room"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0110",
+      "target": "en",
+      "cloze": "She ___ coffee over tea every single day.",
+      "answer": "prefers",
+      "context": "Ella prefiere café en lugar de té cada día.",
+      "distractors": [
+        "drinks",
+        "makes",
+        "serves"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'drinks' is an equally valid alternative: 'She drinks coffee over tea every single day' works naturally"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0113",
+      "target": "en",
+      "cloze": "The restaurant serves ___ food every evening.",
+      "answer": "delicious",
+      "context": "El restaurante sirve comida deliciosa cada noche.",
+      "distractors": [
+        "expensive",
+        "fresh",
+        "hot"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "Distractors 'expensive', 'fresh', 'hot' are all plausible adjectives that could fit the sentence naturally as alternatives"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0117",
+      "target": "en",
+      "cloze": "The children played ___ in the park.",
+      "answer": "happily",
+      "context": "Los niños jugaron felizmente en el parque.",
+      "distractors": [
+        "quietly",
+        "slowly",
+        "carefully"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "Distractors 'quietly', 'slowly', 'carefully' are all valid adverbs that could plausibly fill the blank"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0124",
+      "target": "en",
+      "cloze": "He ___ his birthday with close friends.",
+      "answer": "celebrated",
+      "context": "Él celebró su cumpleaños con amigos cercanos.",
+      "distractors": [
+        "enjoyed",
+        "organized",
+        "attended"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "Distractor 'enjoyed' is a plausible valid alternative; 'attended' also fits 'his birthday party' loosely"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0134",
+      "target": "en",
+      "cloze": "She will ___ her homework before dinner tonight.",
+      "answer": "finish",
+      "context": "Ella terminará su tarea antes de cenar esta noche.",
+      "distractors": [
+        "start",
+        "begin",
+        "continue"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'start' and 'begin' are synonyms; both are equally valid distractors but overlap semantically; more importantly 'continue' also works. However these are all clearly wrong as opposites/alternatives to finish — acceptable, but 'start' and 'begin' being synonyms of each other is fine since they're distractors not the answer"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0125",
+      "target": "es",
+      "cloze": "Mañana ___ al cine a ver una película nueva.",
+      "answer": "iremos",
+      "context": "Tomorrow we will go to the cinema to see a new film.",
+      "distractors": [
+        "saldremos",
+        "entraremos",
+        "llegaremos"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractors 'saldremos', 'entraremos', 'llegaremos' are all plausible future-tense verbs of motion that could fit 'al cine' contextually, especially 'llegaremos al cine' is valid"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0132",
+      "target": "es",
+      "cloze": "Mi hermana ___ libros en la biblioteca cada semana.",
+      "answer": "compra",
+      "context": "My sister buys books at the library every week.",
+      "distractors": [
+        "vende",
+        "lee",
+        "escribe"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'lee' is a valid alternative: 'lee libros en la biblioteca' is more natural than 'compra' at a library"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0153",
+      "target": "es",
+      "cloze": "Yo espero que el examen sea ___ para todos.",
+      "answer": "fácil",
+      "context": "I hope the exam is easy for everyone.",
+      "distractors": [
+        "complicado",
+        "imposible",
+        "complejo"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "Distractors 'complicado' and 'complejo' are near-synonyms of each other; all are valid antonyms but acceptable as wrong. 'complicado' and 'complejo' are synonyms creating ambiguity, but none fits 'easy'. Actually all distractors are wrong for the gap, so acceptable"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0164",
+      "target": "es",
+      "cloze": "Ella necesita ___ mucho para el examen final.",
+      "answer": "estudiar",
+      "context": "She needs to study a lot for the final exam.",
+      "distractors": [
+        "trabajar",
+        "practicar",
+        "leer"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractors 'practicar' and 'leer' are plausible valid alternatives for studying for an exam"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0169",
+      "target": "en",
+      "cloze": "The merchant ___ his finest silks and fabrics in the crowded marketplace.",
+      "answer": "displayed",
+      "context": "El comerciante exhibió sus mejores sedas y telas en el mercado abarrotado.",
+      "distractors": [
+        "stored",
+        "sold",
+        "shipped"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'sold' is a plausible valid alternative in a marketplace context"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0192",
+      "target": "en",
+      "cloze": "The chef decided to ___ the recipe with fresh herbs and spices.",
+      "answer": "augment",
+      "context": "El chef decidió aumentar la receta con hierbas y especias frescas.",
+      "distractors": [
+        "diminish",
+        "simplify",
+        "alter"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'augment the recipe' is slightly awkward but acceptable",
+          "distractor 'alter' is a plausible valid alternative for modifying a recipe with herbs"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0233",
+      "target": "en",
+      "cloze": "The rescue team ___ exceptional courage while saving the trapped miners.",
+      "answer": "displayed",
+      "context": "El equipo de rescate mostró un coraje excepcional al salvar a los mineros atrapados.",
+      "distractors": [
+        "concealed",
+        "suppressed",
+        "hid"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'concealed' and 'hid' are synonyms of each other; 'hid' is a valid antonym distractor but all are clearly wrong—acceptable, though multiple near-identical distractors (concealed/hid)"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0193",
+      "target": "es",
+      "cloze": "Aunque ___ mañana, iremos al parque para caminar juntos.",
+      "answer": "llueva",
+      "context": "Even if it rains tomorrow, we will go to the park to walk together.",
+      "distractors": [
+        "nieve",
+        "truene",
+        "ventee"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'ventee' is a nonstandard/incorrect form; standard is 'vente' from ventar, and 'ventear' subjunctive is 'ventee' but the verb is rare/questionable"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0206",
+      "target": "es",
+      "cloze": "___ que su propuesta no sea aceptada por los miembros del comité.",
+      "answer": "Teme",
+      "context": "He fears that his proposal will not be accepted by the committee members.",
+      "distractors": [
+        "Espera",
+        "Confía",
+        "Cree"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "answer 'Teme' is indicative but sentence has 'no sea' subjunctive triggered by teme; distractors Espera/Confía/Cree do not trigger subjunctive so they would be grammatically inconsistent, making only 'Teme' fit — acceptable, but distractors are near-valid indicative alternatives that could plausibly fit with different mood; Espera que...sea could also work, making it a valid alternative"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0216",
+      "target": "es",
+      "cloze": "Espero que mañana ___ mejor tiempo para nuestra excursión.",
+      "answer": "haga",
+      "context": "I hope that tomorrow the weather will be better for our excursion.",
+      "distractors": [
+        "sea",
+        "esté",
+        "viene"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'esté' is a valid alternative: 'esté mejor tiempo' is awkward but 'haga' is standard; however 'esté' borderline; 'sea' also arguable but wrong; main issue: distractor 'esté' could be seen as near-valid"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0219",
+      "target": "es",
+      "cloze": "Dudo que ___ terminar el proyecto antes del viernes.",
+      "answer": "puedas",
+      "context": "I doubt that you can finish the project before Friday.",
+      "distractors": [
+        "logres",
+        "quieras",
+        "intentes"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractors 'logres' and 'quieras' and 'intentes' are near-synonyms/valid alternatives that fit 'Dudo que ... terminar', e.g. 'Dudo que logres terminar' is equally valid"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0220",
+      "target": "es",
+      "cloze": "Le aconsejé que no ___ tanto dinero en ropa innecesaria.",
+      "answer": "gastara",
+      "context": "I advised her not to spend so much money on unnecessary clothes.",
+      "distractors": [
+        "ahorrara",
+        "guardara",
+        "invirtiera"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'guardara' and 'ahorrara' are contradictory but 'invirtiera' fits grammatically; borderline but distractors are clearly wrong meaning-wise; acceptable"
         ],
         "suggested_answer": ""
       }

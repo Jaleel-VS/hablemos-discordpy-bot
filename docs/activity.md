@@ -218,12 +218,17 @@ conjugation sprint).
   grades every committed card with **Claude Opus 4.8** (a different, stronger
   model than the Haiku generator — not the same model checking its own
   homework), judging translation, answer correctness (incl. subjunctive/tense),
-  distractor validity, and difficulty. Suspects are **quarantined** out of
-  `cloze_sentences.json` into a sibling `cloze_sentences.quarantine.json`
-  (never loaded at runtime) for human fix-and-reinstate; a `--decisions` file
-  lets a human force-keep or force-quarantine specific ids. Run `--dry-run`
-  first for a report without modifying the corpus. Both scripts share Bedrock
-  plumbing in `scripts/_bedrock.py`.
+  distractor validity (real, correctly-spelled, right morphological form, not a
+  synonym), and difficulty. The pipeline **fails closed**: a card the model
+  can't grade after retries is quarantined, not shipped, and the corpus meta
+  records a `survivors_all_passed` invariant so a commit can prove every shipped
+  card was verified. Suspects are **quarantined** out of `cloze_sentences.json`
+  into a sibling `cloze_sentences.quarantine.json` (never loaded at runtime) for
+  human fix-and-reinstate; a `--decisions` file lets a human force-keep or
+  force-quarantine specific ids. Run `--dry-run` first for a report without
+  modifying the corpus. Both scripts share Bedrock plumbing in
+  `scripts/_bedrock.py`. Two review passes over the initial 497 cards left
+  **367 verified** (130 quarantined).
 - **Daily** is a deterministic 10-card pick by date (hash of puzzle number +
   position, non-repeating within a round) so everyone drills the same cards; it
   counts toward streaks and posts to the results channel. Because it feeds

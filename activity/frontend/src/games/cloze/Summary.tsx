@@ -44,11 +44,17 @@ export default function Summary({ result, onReplay }: SummaryProps) {
           <h2 className="misses-title">Para repasar</h2>
           <ul className="misses-list">
             {misses.slice(0, 8).map((m, i) => (
-              <li className="miss" key={i}>
+              <li className={`miss miss--${m.result}`} key={i}>
                 <span className="miss-answer">
                   <span className="miss-given">{m.given || "—"}</span>
                   <span className="miss-arrow">→</span>
                   <span className="miss-correct">{m.answer}</span>
+                  {/* A CLOSE answer counted as correct but had an accent error;
+                      tag it so the learner knows they were only off by accents,
+                      not fully wrong. */}
+                  {m.result === "close" && (
+                    <span className="miss-tag">acentos</span>
+                  )}
                 </span>
               </li>
             ))}
