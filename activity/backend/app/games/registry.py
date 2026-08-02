@@ -4,12 +4,14 @@ Adding a game: import its engine and add it to ``_ENGINES``. Routes, auth, and
 persistence are all generic over ``game_key`` and need no changes.
 """
 from app.games.base import GameEngine
+from app.games.cloze import ClozeEngine
 from app.games.conjugation import ConjugationEngine
 from app.games.wordle import WordleEngine
 
 _ENGINES: dict[str, GameEngine] = {
     WordleEngine.key: WordleEngine(),
     ConjugationEngine.key: ConjugationEngine(),
+    ClozeEngine.key: ClozeEngine(),
 }
 
 

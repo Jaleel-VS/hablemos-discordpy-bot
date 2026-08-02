@@ -2,9 +2,10 @@
 
 The bot has a companion **Discord Activity** — an embedded web app that runs
 inside Discord's client (the same mechanism as YouTube Watch Together or the
-official word games). It hosts Spanish-language games — a Spanish Wordle and a
-timed verb-conjugation sprint — behind a game **hub/menu**. When a daily game
-finishes, the result posts to a configured channel.
+official word games). It hosts Spanish-language games — a Spanish Wordle, a
+timed verb-conjugation sprint, and a Clozemaster-style fill-in-the-blank game —
+behind a game **hub/menu**. When a daily game finishes, the result posts to a
+configured channel.
 
 The Activity is a **separate Railway web service** from the gateway bot. They
 share the same PostgreSQL database. The code lives in
@@ -12,10 +13,10 @@ share the same PostgreSQL database. The code lives in
 [`README.md`](../activity/README.md) for the internal layout).
 
 > **Status:** Phases 0–2 built. Phase 0 (OAuth handshake) is live in
-> production. Phase 1 is the extensible game framework — **Spanish Wordle** and
-> a **Conjugation** sprint (both daily + freeplay, stats/streaks in the shared
-> Postgres), reached through a game hub. Phase 2 is the bot posting finished
-> **daily** results to a configured channel.
+> production. Phase 1 is the extensible game framework — **Spanish Wordle**, a
+> **Conjugation** sprint, and a **Cloze** (fill-in-the-blank) game (all daily +
+> freeplay, stats/streaks in the shared Postgres), reached through a game hub.
+> Phase 2 is the bot posting finished **daily** results to a configured channel.
 
 ## How it works
 
@@ -86,6 +87,7 @@ game touches only its own module:
   normalizes or ignores it.
 - `app/games/wordle/` — the Wordle game (see below).
 - `app/games/conjugation/` — the conjugation sprint (see below).
+- `app/games/cloze/` — the fill-in-the-blank game (see below).
 
 The frontend mirrors this: `GET /api/games` drives a **hub/menu** listing every
 game. With a single game registered the app boots straight into it (no menu
@@ -175,6 +177,46 @@ time runs out.
   (verify-once + `_uid`). Since the only stake is a cosmetic emoji-grid post in a
   friendly server, we accept the honor-system boundary rather than pay that cost.
   Revisit if the daily leaderboard ever becomes competitive.
+
+### Cloze (`app/games/cloze/`)
+
+A Clozemaster-style **fill-in-the-blank** game. A short sentence is shown with
+one content word blanked in the learner's **target language**, plus the full
+sentence in the other language as context; the player supplies the missing word.
+A round is a fixed **10 cards** — there is no clock (untimed, unlike the
+conjugation sprint).
+
+- **Two decks by target language.** `target="es"` blanks the Spanish word
+  (English shown as context) for Spanish learners; `target="en"` is the mirror
+  for English learners. The player picks their target on the setup screen; the
+  daily defaults to the Spanish deck.
+- **Two answer modes**, chosen at start (`answer_mode`): **`choice`** — 4-option
+  multiple choice (the answer + 3 precomputed same-part-of-speech distractors);
+  **`type`** — free text, graded with the **same ñ-safe 3-way
+  `exact`/`close`/`wrong` grader reused from the conjugation game** (accents are
+  flagged, not failed). MC options are shuffled deterministically per run.
+- **Three difficulty bands** (`beginner`/`intermediate`/`advanced`) plus a mixed
+  default, keyed off the source word's frequency + sentence complexity.
+- **Content is precomputed, not live.**
+  `scripts/generate_cloze_sentences.py` runs **offline** against Amazon Bedrock
+  (Claude Haiku 4.5, via the author's `bedrock-how` AWS profile — the same path
+  as the shell `how`/`howdo` helpers), batching sentence pairs and emitting
+  `app/games/data/cloze_sentences.json` (~500 cards, evenly split across both
+  decks and three difficulties). The generator validates every card in Python
+  (exactly one blank, the answer present as a whole word or a pre-blanked
+  sentence, exactly 3 distinct distractors, no answer/distractor collision),
+  dedupes, and buckets by difficulty. The **runtime never calls an LLM** — it
+  just reads the committed JSON, the same rule the conjugation game follows with
+  its verbecc paradigms. Re-run with `--merge` to grow the pool over time.
+- **Daily** is a deterministic 10-card pick by date (hash of puzzle number +
+  position, non-repeating within a round) so everyone drills the same cards; it
+  counts toward streaks and posts to the results channel. **Freeplay** is a
+  random round with the player's chosen deck / difficulty / answer mode.
+- **Daily anti-harvest.** Like the conjugation daily, per-card feedback
+  **withholds the answer in daily mode** (the client gets the
+  `exact`/`close`/`wrong` flag but not the correct word — disclosed only in the
+  end-of-round recap); freeplay reveals normally. The same honor-system boundary
+  documented for the conjugation daily applies (stateless sealed-token design).
 
 ### Persistence
 

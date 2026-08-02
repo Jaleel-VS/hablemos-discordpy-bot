@@ -41,8 +41,8 @@ the game.
 | `$activity_stats streaks [game_key]` | Owner | Top 10 daily streaks for a game (default `wordle`). |
 | `$activity_stats user <member> [game_key]` | Owner | One player's daily games/wins/streaks/distribution (default `wordle`). |
 
-`game_key` is `wordle` or `conjugation`. These are read-only views of the
-Activity's own tables; they never write.
+`game_key` is `wordle`, `conjugation`, or `cloze`. These are read-only views of
+the Activity's own tables; they never write.
 
 ## Database tables
 

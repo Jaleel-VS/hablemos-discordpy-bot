@@ -1158,3 +1158,128 @@ body {
   font-size: 0.8rem;
   margin: 8px 0 0;
 }
+
+/* ═══ cloze game ═══════════════════════════════════════════════════════════ */
+/* Container mirrors .conj (flex column filling the game viewport). The setup,
+   round, and summary screens reuse the shared .setup-*, .prompt-card, .pill,
+   .feedback, .cta, .chip, .answer-* and .misses-* classes; only the pieces
+   unique to a fill-in-the-blank card are defined here. */
+.cloze {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+.cloze-setup {
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 18px 20px 24px;
+  overflow-y: auto;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.cloze-round {
+  justify-content: flex-start;
+  gap: 14px;
+  padding: 16px 20px 22px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* Top bar: Terminar on the left, progress/score/streak pills on the right. */
+.round-top {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pill-progress {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-dim);
+}
+
+/* The cloze card: the target sentence with a highlighted blank, plus the
+   context sentence in the other language underneath. */
+.cloze-card {
+  gap: 16px;
+}
+
+.cloze-sentence {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.5;
+  text-align: center;
+  margin: 0;
+  color: var(--ink);
+}
+
+.cloze-blank {
+  display: inline-block;
+  min-width: 2.4em;
+  padding: 0 0.35em;
+  margin: 0 0.1em;
+  border-radius: 8px;
+  background: oklch(0.72 0.15 35 / 0.18);
+  border-bottom: 2px solid oklch(0.72 0.15 35 / 0.7);
+  color: transparent;
+  transform: translateY(2px);
+}
+
+.cloze-context {
+  font-size: 0.95rem;
+  color: var(--ink-dim);
+  text-align: center;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Multiple-choice: a 2×2 grid of tappable option buttons. */
+.cloze-options {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.cloze-option {
+  padding: 16px 14px;
+  border-radius: 14px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 1.05rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.08s var(--ease), border-color 0.12s var(--ease),
+    background 0.12s var(--ease);
+}
+
+.cloze-option:hover:not(:disabled) {
+  border-color: oklch(0.72 0.15 35 / 0.7);
+  background: oklch(0.72 0.15 35 / 0.08);
+}
+
+.cloze-option:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.cloze-option:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.cloze-summary {
+  justify-content: center;
+  gap: 18px;
+  padding: 20px;
+  max-width: 460px;
+  margin: 0 auto;
+}

@@ -121,6 +121,75 @@ export interface StartOptions {
   tenses?: string[];
   pronouns?: string[];
   timed?: boolean;
+  // Cloze: target language (which word is blanked), difficulty, and answer mode.
+  target?: string;
+  difficulty?: string;
+  answer_mode?: "choice" | "type";
+}
+
+// ── cloze game ────────────────────────────────────────────────────────────────
+export interface ClozePrompt {
+  id: string;
+  target: string; // language of the blanked word ("es" | "en")
+  cloze: string; // sentence with a single ___ blank
+  context: string; // full sentence in the OTHER language
+  difficulty: string;
+  options: string[]; // 4 shuffled multiple-choice options (answer + 3 distractors)
+}
+
+export interface ClozeFeedback {
+  result: MatchResult;
+  // Withheld during the daily round (a fixed shared sequence) so answers can't
+  // be harvested mid-run; present in freeplay and in the recap.
+  answer?: string;
+  given: string;
+  context: string;
+}
+
+export interface ClozeMiss {
+  id: string;
+  answer: string;
+  given: string;
+  result: MatchResult;
+}
+
+export interface ClozeResult {
+  won: boolean;
+  mode: string;
+  puzzle_no: number | null;
+  target: string;
+  answer_mode: "choice" | "type";
+  correct: number;
+  total: number;
+  best_streak: number;
+  score: string;
+  grid: string;
+  summary: string;
+  misses: ClozeMiss[];
+}
+
+export interface ClozeView {
+  game: "cloze";
+  mode: "daily" | "free";
+  answer_mode: "choice" | "type";
+  target: string;
+  difficulty: string | null;
+  puzzle_no: number | null;
+  round_size: number;
+  seq: number;
+  correct: number;
+  streak: number;
+  best_streak: number;
+  answered_count: number;
+  status: "playing" | "over";
+  last: ClozeFeedback | null;
+  prompt?: ClozePrompt;
+  result?: ClozeResult;
+}
+
+export interface ClozeResponse {
+  sealed_state: string;
+  view: ClozeView;
 }
 
 async function post<T>(path: string, body: unknown): Promise<T> {
@@ -206,4 +275,32 @@ export function submitGuess(
 
 export function fetchStats(gameKey: string, accessToken: string): Promise<Stats> {
   return post(`/.proxy/api/games/${gameKey}/stats`, { access_token: accessToken });
+}
+
+// Cloze shares the generic start/guess endpoints but returns its own view
+// shape, so it gets typed wrappers (like conjugation).
+export function startCloze(
+  accessToken: string,
+  mode: "daily" | "free",
+  options?: StartOptions,
+): Promise<ClozeResponse> {
+  return post(`/.proxy/api/games/cloze/start`, {
+    access_token: accessToken,
+    mode,
+    ...(options ? { options } : {}),
+  });
+}
+
+export function submitCloze(
+  accessToken: string,
+  sealedState: string,
+  guess: string,
+  finish = false,
+): Promise<ClozeResponse> {
+  return post(`/.proxy/api/games/cloze/guess`, {
+    access_token: accessToken,
+    sealed_state: sealedState,
+    guess,
+    finish,
+  });
 }

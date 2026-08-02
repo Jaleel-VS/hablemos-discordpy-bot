@@ -1,0 +1,6483 @@
+{
+  "meta": {
+    "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "generated_at": "2026-08-02T09:49:28.750478+00:00",
+    "counts": {
+      "en/beginner": 83,
+      "es/beginner": 83,
+      "en/intermediate": 83,
+      "es/intermediate": 82,
+      "en/advanced": 83,
+      "es/advanced": 83
+    },
+    "total": 497
+  },
+  "difficulties": {
+    "beginner": "Principiante",
+    "intermediate": "Intermedio",
+    "advanced": "Avanzado"
+  },
+  "cards": [
+    {
+      "id": "en-0001",
+      "target": "en",
+      "cloze": "I like to ___ water every day.",
+      "answer": "drink",
+      "context": "Me gusta beber agua todos los días.",
+      "distractors": [
+        "eat",
+        "sleep",
+        "walk"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0002",
+      "target": "en",
+      "cloze": "She has a ___ blue house.",
+      "answer": "big",
+      "context": "Ella tiene una casa azul grande.",
+      "distractors": [
+        "small",
+        "old",
+        "new"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0003",
+      "target": "en",
+      "cloze": "The cat is very ___ and kind.",
+      "answer": "friendly",
+      "context": "El gato es muy amigable y amable.",
+      "distractors": [
+        "angry",
+        "tired",
+        "cold"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0004",
+      "target": "en",
+      "cloze": "We ___ to school in the morning.",
+      "answer": "go",
+      "context": "Vamos a la escuela por la mañana.",
+      "distractors": [
+        "come",
+        "stay",
+        "run"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0005",
+      "target": "en",
+      "cloze": "My mother ___ delicious food.",
+      "answer": "makes",
+      "context": "Mi madre hace comida deliciosa.",
+      "distractors": [
+        "buys",
+        "sells",
+        "finds"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0006",
+      "target": "en",
+      "cloze": "The weather is very ___ today.",
+      "answer": "cold",
+      "context": "El clima es muy frío hoy.",
+      "distractors": [
+        "hot",
+        "warm",
+        "cool"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0007",
+      "target": "en",
+      "cloze": "I need to ___ new shoes.",
+      "answer": "buy",
+      "context": "Necesito comprar zapatos nuevos.",
+      "distractors": [
+        "sell",
+        "make",
+        "wear"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0008",
+      "target": "en",
+      "cloze": "He runs very ___ in the park.",
+      "answer": "fast",
+      "context": "Él corre muy rápido en el parque.",
+      "distractors": [
+        "slow",
+        "quick",
+        "hard"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0009",
+      "target": "en",
+      "cloze": "We ___ breakfast at seven o'clock.",
+      "answer": "eat",
+      "context": "Comemos desayuno a las siete.",
+      "distractors": [
+        "make",
+        "cook",
+        "prepare"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0010",
+      "target": "en",
+      "cloze": "The dog is ___ and playful.",
+      "answer": "happy",
+      "context": "El perro es feliz y juguetón.",
+      "distractors": [
+        "sad",
+        "tired",
+        "sick"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0011",
+      "target": "en",
+      "cloze": "I ___ a book every night.",
+      "answer": "read",
+      "context": "Leo un libro cada noche.",
+      "distractors": [
+        "write",
+        "watch",
+        "listen"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0012",
+      "target": "en",
+      "cloze": "She ___ in a big office.",
+      "answer": "works",
+      "context": "Ella trabaja en una oficina grande.",
+      "distractors": [
+        "plays",
+        "studies",
+        "sleeps"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0013",
+      "target": "en",
+      "cloze": "The apple is red and ___.",
+      "answer": "sweet",
+      "context": "La manzana es roja y dulce.",
+      "distractors": [
+        "sour",
+        "bitter",
+        "salty"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0014",
+      "target": "en",
+      "cloze": "I ___ my friends every week.",
+      "answer": "see",
+      "context": "Veo a mis amigos cada semana.",
+      "distractors": [
+        "hear",
+        "call",
+        "visit"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0015",
+      "target": "en",
+      "cloze": "The sky is blue and ___.",
+      "answer": "beautiful",
+      "context": "El cielo es azul y hermoso.",
+      "distractors": [
+        "ugly",
+        "dark",
+        "bright"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0016",
+      "target": "en",
+      "cloze": "We like to ___ games together.",
+      "answer": "play",
+      "context": "Nos gusta jugar juegos juntos.",
+      "distractors": [
+        "watch",
+        "make",
+        "win"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0017",
+      "target": "en",
+      "cloze": "He ___ Spanish very well.",
+      "answer": "speaks",
+      "context": "Él habla español muy bien.",
+      "distractors": [
+        "writes",
+        "reads",
+        "hears"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0018",
+      "target": "en",
+      "cloze": "My sister is very ___ and intelligent.",
+      "answer": "smart",
+      "context": "Mi hermana es muy inteligente.",
+      "distractors": [
+        "silly",
+        "lazy",
+        "busy"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0019",
+      "target": "en",
+      "cloze": "I ___ to the store every day.",
+      "answer": "walk",
+      "context": "Camino a la tienda todos los días.",
+      "distractors": [
+        "run",
+        "drive",
+        "ride"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0020",
+      "target": "en",
+      "cloze": "The music is ___ and fun.",
+      "answer": "loud",
+      "context": "La música es fuerte y divertida.",
+      "distractors": [
+        "quiet",
+        "soft",
+        "low"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0021",
+      "target": "en",
+      "cloze": "She likes to ___ in the evening.",
+      "answer": "dance",
+      "context": "A ella le gusta bailar por la noche.",
+      "distractors": [
+        "sing",
+        "walk",
+        "jump"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0022",
+      "target": "en",
+      "cloze": "The flower is ___ and bright.",
+      "answer": "yellow",
+      "context": "La flor es amarilla y brillante.",
+      "distractors": [
+        "green",
+        "purple",
+        "orange"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0023",
+      "target": "en",
+      "cloze": "I ___ letters to my family.",
+      "answer": "write",
+      "context": "Escribo cartas a mi familia.",
+      "distractors": [
+        "send",
+        "read",
+        "show"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0024",
+      "target": "en",
+      "cloze": "He is a very ___ person.",
+      "answer": "kind",
+      "context": "Él es una persona muy amable.",
+      "distractors": [
+        "mean",
+        "rude",
+        "angry"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0025",
+      "target": "en",
+      "cloze": "We ___ eight hours every night.",
+      "answer": "sleep",
+      "context": "Dormimos ocho horas cada noche.",
+      "distractors": [
+        "rest",
+        "wake",
+        "dream"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0026",
+      "target": "en",
+      "cloze": "I like to ___ dinner every night.",
+      "answer": "cook",
+      "context": "Me gusta cocinar la cena cada noche.",
+      "distractors": [
+        "wash",
+        "clean",
+        "fix"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0027",
+      "target": "en",
+      "cloze": "She has a ___ apartment downtown.",
+      "answer": "small",
+      "context": "Ella tiene un apartamento pequeño en el centro.",
+      "distractors": [
+        "tiny",
+        "narrow",
+        "short"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0028",
+      "target": "en",
+      "cloze": "The weather is very ___ today.",
+      "answer": "hot",
+      "context": "El clima es muy caluroso hoy.",
+      "distractors": [
+        "warm",
+        "sunny",
+        "bright"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0029",
+      "target": "en",
+      "cloze": "We ___ to buy groceries soon.",
+      "answer": "need",
+      "context": "Necesitamos comprar comestibles pronto.",
+      "distractors": [
+        "want",
+        "prefer",
+        "like"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0030",
+      "target": "en",
+      "cloze": "My brother ___ in the city.",
+      "answer": "lives",
+      "context": "Mi hermano vive en la ciudad.",
+      "distractors": [
+        "stays",
+        "remains",
+        "works"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0031",
+      "target": "en",
+      "cloze": "The cat is ___ on the bed.",
+      "answer": "sleeping",
+      "context": "El gato está durmiendo en la cama.",
+      "distractors": [
+        "resting",
+        "lying",
+        "sitting"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0032",
+      "target": "en",
+      "cloze": "I drink coffee every ___.",
+      "answer": "morning",
+      "context": "Bebo café cada mañana.",
+      "distractors": [
+        "afternoon",
+        "evening",
+        "day"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0033",
+      "target": "en",
+      "cloze": "She is very ___ and creative.",
+      "answer": "intelligent",
+      "context": "Ella es muy inteligente y creativa.",
+      "distractors": [
+        "clever",
+        "wise",
+        "talented"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0034",
+      "target": "en",
+      "cloze": "The book is on the ___.",
+      "answer": "table",
+      "context": "El libro está en la mesa.",
+      "distractors": [
+        "chair",
+        "desk",
+        "shelf"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0035",
+      "target": "en",
+      "cloze": "We always eat lunch at ___.",
+      "answer": "noon",
+      "context": "Siempre comemos almuerzo al mediodía.",
+      "distractors": [
+        "midnight",
+        "morning",
+        "evening"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0036",
+      "target": "en",
+      "cloze": "He ___ very fast every day.",
+      "answer": "runs",
+      "context": "Él corre muy rápido cada día.",
+      "distractors": [
+        "jumps",
+        "walks",
+        "moves"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0037",
+      "target": "en",
+      "cloze": "The flowers are very ___.",
+      "answer": "colorful",
+      "context": "Las flores son muy coloridas.",
+      "distractors": [
+        "bright",
+        "pretty",
+        "fresh"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0038",
+      "target": "en",
+      "cloze": "I need a new ___ today.",
+      "answer": "shirt",
+      "context": "Necesito una camisa nueva hoy.",
+      "distractors": [
+        "pants",
+        "jacket",
+        "dress"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0039",
+      "target": "en",
+      "cloze": "They speak Spanish and English ___.",
+      "answer": "well",
+      "context": "Hablan español e inglés bien.",
+      "distractors": [
+        "fluently",
+        "clearly",
+        "perfectly"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0040",
+      "target": "en",
+      "cloze": "My mother is a ___.",
+      "answer": "teacher",
+      "context": "Mi madre es una maestra.",
+      "distractors": [
+        "doctor",
+        "nurse",
+        "engineer"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0041",
+      "target": "en",
+      "cloze": "The music is very ___ tonight.",
+      "answer": "loud",
+      "context": "La música es muy fuerte esta noche.",
+      "distractors": [
+        "noisy",
+        "strong",
+        "intense"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0042",
+      "target": "en",
+      "cloze": "I can see the ___ clearly.",
+      "answer": "mountains",
+      "context": "Puedo ver las montañas claramente.",
+      "distractors": [
+        "hills",
+        "valleys",
+        "forests"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0043",
+      "target": "en",
+      "cloze": "She writes ___ to her friends.",
+      "answer": "letters",
+      "context": "Ella escribe cartas a sus amigos.",
+      "distractors": [
+        "emails",
+        "messages",
+        "notes"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0044",
+      "target": "en",
+      "cloze": "The ___ is very cold now.",
+      "answer": "water",
+      "context": "El agua es muy fría ahora.",
+      "distractors": [
+        "ice",
+        "snow",
+        "rain"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0045",
+      "target": "en",
+      "cloze": "We have three ___ at home.",
+      "answer": "dogs",
+      "context": "Tenemos tres perros en casa.",
+      "distractors": [
+        "cats",
+        "birds",
+        "fish"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0046",
+      "target": "en",
+      "cloze": "He always tells the ___.",
+      "answer": "truth",
+      "context": "Siempre dice la verdad.",
+      "distractors": [
+        "stories",
+        "jokes",
+        "secrets"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0047",
+      "target": "en",
+      "cloze": "I like to ___ to music.",
+      "answer": "listen",
+      "context": "Me gusta escuchar música.",
+      "distractors": [
+        "watch",
+        "hear",
+        "feel"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0048",
+      "target": "en",
+      "cloze": "The sky is very ___ today.",
+      "answer": "blue",
+      "context": "El cielo es muy azul hoy.",
+      "distractors": [
+        "clear",
+        "bright",
+        "light"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0049",
+      "target": "en",
+      "cloze": "We travel to the ___ often.",
+      "answer": "beach",
+      "context": "Viajamos a la playa frecuentemente.",
+      "distractors": [
+        "park",
+        "lake",
+        "forest"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0050",
+      "target": "en",
+      "cloze": "She is always very ___ and respectful.",
+      "answer": "polite",
+      "context": "Ella siempre es muy educada y respetuosa.",
+      "distractors": [
+        "quiet",
+        "calm",
+        "gentle"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0051",
+      "target": "en",
+      "cloze": "I like to eat ___ every day.",
+      "answer": "apples",
+      "context": "Me gusta comer manzanas todos los días.",
+      "distractors": [
+        "oranges",
+        "carrots",
+        "bananas"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0052",
+      "target": "en",
+      "cloze": "My cat is very ___ and fluffy.",
+      "answer": "cute",
+      "context": "Mi gato es muy lindo y suave.",
+      "distractors": [
+        "sad",
+        "angry",
+        "tired"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0053",
+      "target": "en",
+      "cloze": "She drinks ___ in the morning.",
+      "answer": "coffee",
+      "context": "Ella bebe café por la mañana.",
+      "distractors": [
+        "milk",
+        "juice",
+        "tea"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0054",
+      "target": "en",
+      "cloze": "We play ___ on Saturdays.",
+      "answer": "soccer",
+      "context": "Jugamos fútbol los sábados.",
+      "distractors": [
+        "tennis",
+        "basketball",
+        "volleyball"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0055",
+      "target": "en",
+      "cloze": "The ___ is very blue today.",
+      "answer": "sky",
+      "context": "El cielo está muy azul hoy.",
+      "distractors": [
+        "ground",
+        "road",
+        "wall"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0056",
+      "target": "en",
+      "cloze": "He has a new ___ now.",
+      "answer": "job",
+      "context": "Él tiene un nuevo trabajo ahora.",
+      "distractors": [
+        "house",
+        "car",
+        "book"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0057",
+      "target": "en",
+      "cloze": "I need to buy ___ today.",
+      "answer": "milk",
+      "context": "Necesito comprar leche hoy.",
+      "distractors": [
+        "bread",
+        "cheese",
+        "butter"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0058",
+      "target": "en",
+      "cloze": "The ___ is red and pretty.",
+      "answer": "flower",
+      "context": "La flor es roja y bonita.",
+      "distractors": [
+        "tree",
+        "grass",
+        "rock"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0059",
+      "target": "en",
+      "cloze": "My friend lives near the ___.",
+      "answer": "park",
+      "context": "Mi amigo vive cerca del parque.",
+      "distractors": [
+        "school",
+        "hospital",
+        "library"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0060",
+      "target": "en",
+      "cloze": "The ___ is open right now.",
+      "answer": "window",
+      "context": "La ventana está abierta ahora mismo.",
+      "distractors": [
+        "door",
+        "gate",
+        "roof"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0061",
+      "target": "en",
+      "cloze": "I love to read books every ___.",
+      "answer": "night",
+      "context": "Me encanta leer libros todas las noches.",
+      "distractors": [
+        "day",
+        "week",
+        "year"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0062",
+      "target": "en",
+      "cloze": "She wears a green ___ today.",
+      "answer": "dress",
+      "context": "Ella usa un vestido verde hoy.",
+      "distractors": [
+        "coat",
+        "hat",
+        "shoe"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0063",
+      "target": "en",
+      "cloze": "The dog is sleeping under the ___.",
+      "answer": "tree",
+      "context": "El perro está durmiendo bajo el árbol.",
+      "distractors": [
+        "chair",
+        "bench",
+        "table"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0064",
+      "target": "en",
+      "cloze": "I have two ___ and one brother.",
+      "answer": "sisters",
+      "context": "Tengo dos hermanas y un hermano.",
+      "distractors": [
+        "cousins",
+        "aunts",
+        "friends"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0065",
+      "target": "en",
+      "cloze": "The ___ tastes very good tonight.",
+      "answer": "food",
+      "context": "La comida sabe muy bien esta noche.",
+      "distractors": [
+        "drink",
+        "dessert",
+        "snack"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0066",
+      "target": "en",
+      "cloze": "My mother cooks ___ every evening.",
+      "answer": "dinner",
+      "context": "Mi madre cocina la cena todas las noches.",
+      "distractors": [
+        "lunch",
+        "breakfast",
+        "snack"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0067",
+      "target": "en",
+      "cloze": "The sun is very ___ today.",
+      "answer": "bright",
+      "context": "El sol es muy brillante hoy.",
+      "distractors": [
+        "dark",
+        "dim",
+        "dull"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0068",
+      "target": "en",
+      "cloze": "I go to school by ___.",
+      "answer": "bus",
+      "context": "Voy a la escuela en autobús.",
+      "distractors": [
+        "car",
+        "train",
+        "bike"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0069",
+      "target": "en",
+      "cloze": "He speaks ___ very well.",
+      "answer": "English",
+      "context": "Él habla inglés muy bien.",
+      "distractors": [
+        "Spanish",
+        "French",
+        "German"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0070",
+      "target": "en",
+      "cloze": "The ___ is very loud here.",
+      "answer": "music",
+      "context": "La música es muy ruidosa aquí.",
+      "distractors": [
+        "noise",
+        "sound",
+        "voice"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0071",
+      "target": "en",
+      "cloze": "I wear ___ every single day.",
+      "answer": "socks",
+      "context": "Uso calcetines todos los días.",
+      "distractors": [
+        "shoes",
+        "gloves",
+        "pants"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0072",
+      "target": "en",
+      "cloze": "My room is very ___ and organized.",
+      "answer": "clean",
+      "context": "Mi habitación está muy limpia y organizada.",
+      "distractors": [
+        "dirty",
+        "messy",
+        "cluttered"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0073",
+      "target": "en",
+      "cloze": "The ___ is falling very hard now.",
+      "answer": "rain",
+      "context": "La lluvia está cayendo muy fuerte ahora.",
+      "distractors": [
+        "snow",
+        "wind",
+        "hail"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0074",
+      "target": "en",
+      "cloze": "She has a pet ___ in her room.",
+      "answer": "fish",
+      "context": "Ella tiene un pez mascota en su habitación.",
+      "distractors": [
+        "bird",
+        "hamster",
+        "rabbit"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0075",
+      "target": "en",
+      "cloze": "I always eat ___ at noon.",
+      "answer": "lunch",
+      "context": "Siempre como almuerzo al mediodía.",
+      "distractors": [
+        "breakfast",
+        "dinner",
+        "snack"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0076",
+      "target": "en",
+      "cloze": "I like to ___ in the garden.",
+      "answer": "walk",
+      "context": "Me gusta caminar en el jardín.",
+      "distractors": [
+        "talk",
+        "jump",
+        "sit"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0077",
+      "target": "en",
+      "cloze": "She ___ letters every day.",
+      "answer": "writes",
+      "context": "Ella escribe cartas todos los días.",
+      "distractors": [
+        "draws",
+        "sends",
+        "types"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0078",
+      "target": "en",
+      "cloze": "The ___ is very cold today.",
+      "answer": "water",
+      "context": "El agua está muy fría hoy.",
+      "distractors": [
+        "ice",
+        "snow",
+        "rain"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0079",
+      "target": "en",
+      "cloze": "He ___ tea in the afternoon.",
+      "answer": "drinks",
+      "context": "Él bebe té por la tarde.",
+      "distractors": [
+        "makes",
+        "serves",
+        "pours"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0080",
+      "target": "en",
+      "cloze": "My friend has a yellow ___.",
+      "answer": "car",
+      "context": "Mi amigo tiene un coche amarillo.",
+      "distractors": [
+        "bike",
+        "truck",
+        "boat"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0081",
+      "target": "en",
+      "cloze": "We ___ lunch at noon.",
+      "answer": "eat",
+      "context": "Comemos almuerzo al mediodía.",
+      "distractors": [
+        "cook",
+        "serve",
+        "taste"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0082",
+      "target": "en",
+      "cloze": "The ___ is very bright today.",
+      "answer": "sun",
+      "context": "El sol está muy brillante hoy.",
+      "distractors": [
+        "moon",
+        "star",
+        "cloud"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0083",
+      "target": "en",
+      "cloze": "I need a new ___ now.",
+      "answer": "pen",
+      "context": "Necesito un bolígrafo nuevo ahora.",
+      "distractors": [
+        "pencil",
+        "marker",
+        "crayon"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0001",
+      "target": "es",
+      "cloze": "Yo ___ agua todos los días.",
+      "answer": "bebo",
+      "context": "I drink water every day.",
+      "distractors": [
+        "como",
+        "duermo",
+        "corro"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0002",
+      "target": "es",
+      "cloze": "Mi hermana es muy ___.",
+      "answer": "inteligente",
+      "context": "My sister is very intelligent.",
+      "distractors": [
+        "cansada",
+        "feliz",
+        "triste"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0003",
+      "target": "es",
+      "cloze": "El gato ___ en la cama.",
+      "answer": "duerme",
+      "context": "The cat sleeps in the bed.",
+      "distractors": [
+        "salta",
+        "come",
+        "corre"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0004",
+      "target": "es",
+      "cloze": "Nosotros vivimos en una casa ___.",
+      "answer": "grande",
+      "context": "We live in a big house.",
+      "distractors": [
+        "pequeña",
+        "nueva",
+        "vieja"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0005",
+      "target": "es",
+      "cloze": "Ella come ___ en la mañana.",
+      "answer": "pan",
+      "context": "She eats bread in the morning.",
+      "distractors": [
+        "queso",
+        "arroz",
+        "pescado"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0006",
+      "target": "es",
+      "cloze": "Tú tienes un coche ___.",
+      "answer": "nuevo",
+      "context": "You have a new car.",
+      "distractors": [
+        "roto",
+        "viejo",
+        "sucio"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0007",
+      "target": "es",
+      "cloze": "Ellos ___ en el parque.",
+      "answer": "juegan",
+      "context": "They play in the park.",
+      "distractors": [
+        "leen",
+        "cantan",
+        "bailan"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0008",
+      "target": "es",
+      "cloze": "La puerta está ___ ahora.",
+      "answer": "cerrada",
+      "context": "The door is closed now.",
+      "distractors": [
+        "abierta",
+        "rota",
+        "mojada"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0009",
+      "target": "es",
+      "cloze": "Yo compro ___ en el mercado.",
+      "answer": "frutas",
+      "context": "I buy fruits at the market.",
+      "distractors": [
+        "verduras",
+        "flores",
+        "libros"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0010",
+      "target": "es",
+      "cloze": "Mi padre ___ en una oficina.",
+      "answer": "trabaja",
+      "context": "My father works in an office.",
+      "distractors": [
+        "estudia",
+        "juega",
+        "viaja"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0011",
+      "target": "es",
+      "cloze": "El cielo es ___ hoy.",
+      "answer": "azul",
+      "context": "The sky is blue today.",
+      "distractors": [
+        "gris",
+        "rojo",
+        "amarillo"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0012",
+      "target": "es",
+      "cloze": "Nosotros ___ español en clase.",
+      "answer": "hablamos",
+      "context": "We speak Spanish in class.",
+      "distractors": [
+        "escribimos",
+        "leemos",
+        "cantamos"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0013",
+      "target": "es",
+      "cloze": "Ella tiene dos hermanos ___.",
+      "answer": "pequeños",
+      "context": "She has two small brothers.",
+      "distractors": [
+        "altos",
+        "rubios",
+        "jóvenes"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0014",
+      "target": "es",
+      "cloze": "Yo llego a la escuela ___.",
+      "answer": "temprano",
+      "context": "I arrive at school early.",
+      "distractors": [
+        "tarde",
+        "pronto",
+        "rápido"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0015",
+      "target": "es",
+      "cloze": "Ellos beben ___ en el desayuno.",
+      "answer": "leche",
+      "context": "They drink milk at breakfast.",
+      "distractors": [
+        "café",
+        "jugo",
+        "té"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0016",
+      "target": "es",
+      "cloze": "Tú ___ una carta importante.",
+      "answer": "escribes",
+      "context": "You write an important letter.",
+      "distractors": [
+        "lees",
+        "envías",
+        "recibes"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0017",
+      "target": "es",
+      "cloze": "La mesa es de ___.",
+      "answer": "madera",
+      "context": "The table is made of wood.",
+      "distractors": [
+        "metal",
+        "vidrio",
+        "plástico"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0018",
+      "target": "es",
+      "cloze": "Yo corro ___ en el parque.",
+      "answer": "rápido",
+      "context": "I run fast in the park.",
+      "distractors": [
+        "lentamente",
+        "fuerte",
+        "tranquilo"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0019",
+      "target": "es",
+      "cloze": "Mi abuela cocina comida ___.",
+      "answer": "deliciosa",
+      "context": "My grandmother cooks delicious food.",
+      "distractors": [
+        "fría",
+        "caliente",
+        "salada"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0020",
+      "target": "es",
+      "cloze": "Ellos ___ la televisión por la noche.",
+      "answer": "miran",
+      "context": "They watch television at night.",
+      "distractors": [
+        "escuchan",
+        "tocan",
+        "ven"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0021",
+      "target": "es",
+      "cloze": "Yo estudio ___ en la universidad.",
+      "answer": "matemáticas",
+      "context": "I study mathematics at the university.",
+      "distractors": [
+        "historia",
+        "biología",
+        "música"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0022",
+      "target": "es",
+      "cloze": "Tú compras ___ en la tienda.",
+      "answer": "ropa",
+      "context": "You buy clothes at the store.",
+      "distractors": [
+        "zapatos",
+        "sombreros",
+        "bolsas"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0023",
+      "target": "es",
+      "cloze": "El perro es muy ___.",
+      "answer": "amable",
+      "context": "The dog is very friendly.",
+      "distractors": [
+        "feroz",
+        "agresivo",
+        "salvaje"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0024",
+      "target": "es",
+      "cloze": "Nosotros ___ a los abuelos los domingos.",
+      "answer": "visitamos",
+      "context": "We visit our grandparents on Sundays.",
+      "distractors": [
+        "llamamos",
+        "saludamos",
+        "vemos"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0025",
+      "target": "es",
+      "cloze": "Ella pinta un cuadro ___.",
+      "answer": "bonito",
+      "context": "She paints a beautiful picture.",
+      "distractors": [
+        "feo",
+        "oscuro",
+        "claro"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0026",
+      "target": "es",
+      "cloze": "Mi hermana ___ manzanas cada día.",
+      "answer": "come",
+      "context": "My sister eats apples every day.",
+      "distractors": [
+        "bebe",
+        "corre",
+        "duerme"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0027",
+      "target": "es",
+      "cloze": "El cielo está muy ___ hoy.",
+      "answer": "nublado",
+      "context": "The sky is very cloudy today.",
+      "distractors": [
+        "soleado",
+        "claro",
+        "estrellado"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0028",
+      "target": "es",
+      "cloze": "Voy al ___ por la mañana.",
+      "answer": "mercado",
+      "context": "I go to the market in the morning.",
+      "distractors": [
+        "parque",
+        "banco",
+        "museo"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0029",
+      "target": "es",
+      "cloze": "Mis padres tienen un ___ rojo.",
+      "answer": "coche",
+      "context": "My parents have a red car.",
+      "distractors": [
+        "libro",
+        "teléfono",
+        "reloj"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0030",
+      "target": "es",
+      "cloze": "Ella ___ agua después del ejercicio.",
+      "answer": "bebe",
+      "context": "She drinks water after exercise.",
+      "distractors": [
+        "come",
+        "corre",
+        "salta"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0031",
+      "target": "es",
+      "cloze": "Los niños ___ en el parque.",
+      "answer": "juegan",
+      "context": "The children play in the park.",
+      "distractors": [
+        "comen",
+        "duermen",
+        "corren"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0032",
+      "target": "es",
+      "cloze": "Mi ___ tiene cinco habitaciones.",
+      "answer": "casa",
+      "context": "My house has five rooms.",
+      "distractors": [
+        "escuela",
+        "oficina",
+        "tienda"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0033",
+      "target": "es",
+      "cloze": "Necesito comprar ___ nuevos pronto.",
+      "answer": "zapatos",
+      "context": "I need to buy new shoes soon.",
+      "distractors": [
+        "calcetines",
+        "guantes",
+        "sombreros"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0034",
+      "target": "es",
+      "cloze": "El restaurante sirve comida ___ deliciosa.",
+      "answer": "italiana",
+      "context": "The restaurant serves delicious Italian food.",
+      "distractors": [
+        "francesa",
+        "española",
+        "mexicana"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0035",
+      "target": "es",
+      "cloze": "Mi abuelo es muy ___ y amable.",
+      "answer": "sabio",
+      "context": "My grandfather is very wise and kind.",
+      "distractors": [
+        "joven",
+        "fuerte",
+        "alto"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0036",
+      "target": "es",
+      "cloze": "Ella estudia ___ en la universidad.",
+      "answer": "medicina",
+      "context": "She studies medicine at the university.",
+      "distractors": [
+        "derecho",
+        "ingeniería",
+        "biología"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0037",
+      "target": "es",
+      "cloze": "El ___ duerme en la cama.",
+      "answer": "gato",
+      "context": "The cat sleeps in the bed.",
+      "distractors": [
+        "perro",
+        "pájaro",
+        "pez"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0038",
+      "target": "es",
+      "cloze": "Yo ___ cartas a mis amigos.",
+      "answer": "escribo",
+      "context": "I write letters to my friends.",
+      "distractors": [
+        "leo",
+        "escucho",
+        "hablo"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0039",
+      "target": "es",
+      "cloze": "Este libro es muy ___ y educativo.",
+      "answer": "interesante",
+      "context": "This book is very interesting and educational.",
+      "distractors": [
+        "aburrido",
+        "corto",
+        "viejo"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0040",
+      "target": "es",
+      "cloze": "Compré una blusa ___ en la tienda.",
+      "answer": "blanca",
+      "context": "I bought a white blouse at the store.",
+      "distractors": [
+        "negra",
+        "roja",
+        "verde"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0041",
+      "target": "es",
+      "cloze": "Mi teléfono tiene una ___ grande.",
+      "answer": "pantalla",
+      "context": "My phone has a big screen.",
+      "distractors": [
+        "batería",
+        "botón",
+        "cable"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0042",
+      "target": "es",
+      "cloze": "Los pájaros ___ muy temprano.",
+      "answer": "cantan",
+      "context": "The birds sing very early.",
+      "distractors": [
+        "vuelan",
+        "comen",
+        "duermen"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0043",
+      "target": "es",
+      "cloze": "Ella tiene el cabello ___ y negro.",
+      "answer": "largo",
+      "context": "She has long and black hair.",
+      "distractors": [
+        "corto",
+        "rizado",
+        "liso"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0044",
+      "target": "es",
+      "cloze": "Mi hermano trabaja en una ___.",
+      "answer": "oficina",
+      "context": "My brother works in an office.",
+      "distractors": [
+        "fábrica",
+        "granja",
+        "hospital"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0045",
+      "target": "es",
+      "cloze": "Visitamos el ___ el fin de semana.",
+      "answer": "museo",
+      "context": "We visit the museum on the weekend.",
+      "distractors": [
+        "playa",
+        "montaña",
+        "pueblo"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0046",
+      "target": "es",
+      "cloze": "El ___ de la gasolina es muy alto.",
+      "answer": "precio",
+      "context": "The price of gasoline is very high.",
+      "distractors": [
+        "color",
+        "sabor",
+        "tamaño"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0047",
+      "target": "es",
+      "cloze": "Ella ___ la cena para la familia.",
+      "answer": "prepara",
+      "context": "She prepares dinner for the family.",
+      "distractors": [
+        "limpia",
+        "compra",
+        "vende"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0048",
+      "target": "es",
+      "cloze": "El invierno es una estación muy ___.",
+      "answer": "fría",
+      "context": "Winter is a very cold season.",
+      "distractors": [
+        "caliente",
+        "templada",
+        "húmeda"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0049",
+      "target": "es",
+      "cloze": "Mi padre ___ muy rápidamente al trabajo.",
+      "answer": "conduce",
+      "context": "My father drives very quickly to work.",
+      "distractors": [
+        "vuela",
+        "nada",
+        "camina"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0050",
+      "target": "es",
+      "cloze": "Los estudiantes ___ al profesor con atención.",
+      "answer": "escuchan",
+      "context": "The students listen to the teacher carefully.",
+      "distractors": [
+        "hablan",
+        "cantan",
+        "gritan"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0051",
+      "target": "es",
+      "cloze": "Mi hermana ___ medicina en la universidad.",
+      "answer": "estudia",
+      "context": "My sister studies medicine at the university.",
+      "distractors": [
+        "enseña",
+        "aprende",
+        "trabaja"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0052",
+      "target": "es",
+      "cloze": "El café está muy ___ hoy.",
+      "answer": "caliente",
+      "context": "The coffee is very hot today.",
+      "distractors": [
+        "frío",
+        "tibio",
+        "dulce"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0053",
+      "target": "es",
+      "cloze": "Nosotros ___ juntos en la mesa.",
+      "answer": "comemos",
+      "context": "We eat together at the table.",
+      "distractors": [
+        "bebemos",
+        "hablamos",
+        "jugamos"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0054",
+      "target": "es",
+      "cloze": "Tu padre ___ un auto rojo.",
+      "answer": "conduce",
+      "context": "Your father drives a red car.",
+      "distractors": [
+        "vende",
+        "compra",
+        "repara"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0055",
+      "target": "es",
+      "cloze": "Yo ___ agua fría cada mañana.",
+      "answer": "bebo",
+      "context": "I drink cold water every morning.",
+      "distractors": [
+        "como",
+        "duermo",
+        "salgo"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0056",
+      "target": "es",
+      "cloze": "Esta película es muy ___.",
+      "answer": "divertida",
+      "context": "This movie is very fun.",
+      "distractors": [
+        "triste",
+        "aburrida",
+        "larga"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0057",
+      "target": "es",
+      "cloze": "Mi abuela ___ una sopa deliciosa.",
+      "answer": "prepara",
+      "context": "My grandmother prepares a delicious soup.",
+      "distractors": [
+        "come",
+        "vende",
+        "prueba"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0058",
+      "target": "es",
+      "cloze": "El cielo está ___ esta tarde.",
+      "answer": "nublado",
+      "context": "The sky is cloudy this afternoon.",
+      "distractors": [
+        "claro",
+        "oscuro",
+        "estrellado"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0059",
+      "target": "es",
+      "cloze": "Mi cuarto es ___ pero cómodo.",
+      "answer": "pequeño",
+      "context": "My room is small but comfortable.",
+      "distractors": [
+        "grande",
+        "largo",
+        "estrecho"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0060",
+      "target": "es",
+      "cloze": "Ella ___ cartas a su amiga.",
+      "answer": "escribe",
+      "context": "She writes letters to her friend.",
+      "distractors": [
+        "lee",
+        "envía",
+        "recibe"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0061",
+      "target": "es",
+      "cloze": "El perro corre muy ___ en el parque.",
+      "answer": "rápido",
+      "context": "The dog runs very fast in the park.",
+      "distractors": [
+        "lento",
+        "fuerte",
+        "suave"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0062",
+      "target": "es",
+      "cloze": "Tú ___ español muy bien.",
+      "answer": "hablas",
+      "context": "You speak Spanish very well.",
+      "distractors": [
+        "entiendes",
+        "escribes",
+        "cantas"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0063",
+      "target": "es",
+      "cloze": "La puerta de mi casa está ___.",
+      "answer": "abierta",
+      "context": "The door of my house is open.",
+      "distractors": [
+        "cerrada",
+        "rota",
+        "nueva"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0064",
+      "target": "es",
+      "cloze": "Nosotros ___ el museo el domingo.",
+      "answer": "visitamos",
+      "context": "We visit the museum on Sunday.",
+      "distractors": [
+        "vemos",
+        "conocemos",
+        "exploramos"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0065",
+      "target": "es",
+      "cloze": "El libro tiene páginas ___.",
+      "answer": "amarillas",
+      "context": "The book has yellow pages.",
+      "distractors": [
+        "blancas",
+        "negras",
+        "grises"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0066",
+      "target": "es",
+      "cloze": "Mi abuela es muy ___ con todos.",
+      "answer": "amable",
+      "context": "My grandmother is very kind to everyone.",
+      "distractors": [
+        "seria",
+        "ocupada",
+        "cansada"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0067",
+      "target": "es",
+      "cloze": "Yo ___ ocho horas cada noche.",
+      "answer": "duermo",
+      "context": "I sleep eight hours every night.",
+      "distractors": [
+        "trabajo",
+        "juego",
+        "estudio"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0068",
+      "target": "es",
+      "cloze": "El mercado ___ frutas muy frescas.",
+      "answer": "vende",
+      "context": "The market sells very fresh fruits.",
+      "distractors": [
+        "compra",
+        "sirve",
+        "prueba"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0069",
+      "target": "es",
+      "cloze": "Mi hermano es ___ y estudioso.",
+      "answer": "inteligente",
+      "context": "My brother is intelligent and studious.",
+      "distractors": [
+        "tímido",
+        "perezoso",
+        "travieso"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0070",
+      "target": "es",
+      "cloze": "Ella ___ la televisión por la noche.",
+      "answer": "mira",
+      "context": "She watches television at night.",
+      "distractors": [
+        "escucha",
+        "lee",
+        "juega"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0071",
+      "target": "es",
+      "cloze": "El pan está ___ en la panadería.",
+      "answer": "fresco",
+      "context": "The bread is fresh at the bakery.",
+      "distractors": [
+        "viejo",
+        "duro",
+        "quemado"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0072",
+      "target": "es",
+      "cloze": "Nosotros ___ música clásica juntos.",
+      "answer": "escuchamos",
+      "context": "We listen to classical music together.",
+      "distractors": [
+        "cantamos",
+        "tocamos",
+        "vemos"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0073",
+      "target": "es",
+      "cloze": "Mi prima tiene un vestido ___.",
+      "answer": "nuevo",
+      "context": "My cousin has a new dress.",
+      "distractors": [
+        "viejo",
+        "bonito",
+        "largo"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0074",
+      "target": "es",
+      "cloze": "Mi hermana bebe ___ todos los días.",
+      "answer": "agua",
+      "context": "My sister drinks water every day.",
+      "distractors": [
+        "café",
+        "vino",
+        "jugo"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0075",
+      "target": "es",
+      "cloze": "El libro es muy ___ y largo.",
+      "answer": "interesante",
+      "context": "The book is very interesting and long.",
+      "distractors": [
+        "aburrido",
+        "corto",
+        "fácil"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0076",
+      "target": "es",
+      "cloze": "Yo como pan con ___ cada mañana.",
+      "answer": "mantequilla",
+      "context": "I eat bread with butter every morning.",
+      "distractors": [
+        "queso",
+        "mermelada",
+        "miel"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0077",
+      "target": "es",
+      "cloze": "Ella estudia inglés en la ___.",
+      "answer": "universidad",
+      "context": "She studies English at the university.",
+      "distractors": [
+        "escuela",
+        "biblioteca",
+        "hospital"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0078",
+      "target": "es",
+      "cloze": "El ___ está muy azul hoy.",
+      "answer": "cielo",
+      "context": "The sky is very blue today.",
+      "distractors": [
+        "mar",
+        "árbol",
+        "tierra"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0079",
+      "target": "es",
+      "cloze": "Nosotros vivimos en una ___ grande.",
+      "answer": "ciudad",
+      "context": "We live in a big city.",
+      "distractors": [
+        "montaña",
+        "playa",
+        "pueblo"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0080",
+      "target": "es",
+      "cloze": "Mi padre trabaja como ___ en la empresa.",
+      "answer": "ingeniero",
+      "context": "My father works as an engineer at the company.",
+      "distractors": [
+        "abogado",
+        "doctor",
+        "profesor"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0081",
+      "target": "es",
+      "cloze": "Los niños juegan en el ___ cada tarde.",
+      "answer": "parque",
+      "context": "The children play in the park every afternoon.",
+      "distractors": [
+        "cine",
+        "playa",
+        "escuela"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0082",
+      "target": "es",
+      "cloze": "Tú escribes ___ muy bonitos a tu amiga.",
+      "answer": "mensajes",
+      "context": "You write very nice messages to your friend.",
+      "distractors": [
+        "cartas",
+        "poemas",
+        "emails"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "es-0083",
+      "target": "es",
+      "cloze": "Hace mucho ___ en el verano.",
+      "answer": "calor",
+      "context": "It is very hot in the summer.",
+      "distractors": [
+        "frío",
+        "viento",
+        "lluvia"
+      ],
+      "difficulty": "beginner"
+    },
+    {
+      "id": "en-0084",
+      "target": "en",
+      "cloze": "I ___ the delicious meal at the restaurant yesterday.",
+      "answer": "enjoyed",
+      "context": "Disfruté de la comida deliciosa en el restaurante ayer.",
+      "distractors": [
+        "hated",
+        "ignored",
+        "forgot"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0085",
+      "target": "en",
+      "cloze": "She will ___ to Spain next summer with her family.",
+      "answer": "travel",
+      "context": "Ella viajará a España el próximo verano con su familia.",
+      "distractors": [
+        "stay",
+        "work",
+        "study"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0086",
+      "target": "en",
+      "cloze": "The ___ sun warmed the garden this morning.",
+      "answer": "bright",
+      "context": "El sol brillante calentó el jardín esta mañana.",
+      "distractors": [
+        "dark",
+        "cold",
+        "distant"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0087",
+      "target": "en",
+      "cloze": "He ___ to learn Spanish after visiting Mexico.",
+      "answer": "decided",
+      "context": "Él decidió aprender español después de visitar México.",
+      "distractors": [
+        "refused",
+        "delayed",
+        "avoided"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0088",
+      "target": "en",
+      "cloze": "The old library ___ many rare books.",
+      "answer": "contains",
+      "context": "La biblioteca antigua contiene muchos libros raros.",
+      "distractors": [
+        "destroys",
+        "loses",
+        "sells"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0089",
+      "target": "en",
+      "cloze": "My sister ___ a new dress for the party.",
+      "answer": "bought",
+      "context": "Mi hermana compró un vestido nuevo para la fiesta.",
+      "distractors": [
+        "made",
+        "borrowed",
+        "returned"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0090",
+      "target": "en",
+      "cloze": "The teacher ___ the difficult grammar lesson clearly.",
+      "answer": "explained",
+      "context": "La maestra explicó la lección de gramática difícil claramente.",
+      "distractors": [
+        "asked",
+        "tested",
+        "skipped"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0091",
+      "target": "en",
+      "cloze": "I will ___ you tomorrow morning before work.",
+      "answer": "call",
+      "context": "Te llamaré mañana por la mañana antes del trabajo.",
+      "distractors": [
+        "visit",
+        "write",
+        "email"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0092",
+      "target": "en",
+      "cloze": "The beautiful flowers ___ in the spring season.",
+      "answer": "bloomed",
+      "context": "Las flores hermosas florecieron en la estación de primavera.",
+      "distractors": [
+        "wilted",
+        "died",
+        "froze"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0093",
+      "target": "en",
+      "cloze": "They ___ finished their homework before dinner time.",
+      "answer": "quickly",
+      "context": "Ellos terminaron rápidamente su tarea antes de la cena.",
+      "distractors": [
+        "slowly",
+        "carefully",
+        "quietly"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0094",
+      "target": "en",
+      "cloze": "The ___ coffee helped me wake up this morning.",
+      "answer": "strong",
+      "context": "El café fuerte me ayudó a despertarme esta mañana.",
+      "distractors": [
+        "weak",
+        "cold",
+        "sweet"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0095",
+      "target": "en",
+      "cloze": "We ___ the famous museum during our vacation last year.",
+      "answer": "visited",
+      "context": "Visitamos el museo famoso durante nuestras vacaciones el año pasado.",
+      "distractors": [
+        "avoided",
+        "skipped",
+        "missed"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0096",
+      "target": "en",
+      "cloze": "The young students ___ many questions in class today.",
+      "answer": "asked",
+      "context": "Los estudiantes jóvenes hicieron muchas preguntas en clase hoy.",
+      "distractors": [
+        "answered",
+        "ignored",
+        "whispered"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0097",
+      "target": "en",
+      "cloze": "She will ___ dinner for everyone at seven o'clock.",
+      "answer": "prepare",
+      "context": "Ella preparará la cena para todos a las siete.",
+      "distractors": [
+        "order",
+        "serve",
+        "clean"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0098",
+      "target": "en",
+      "cloze": "The ___ pillow made me fall asleep immediately.",
+      "answer": "soft",
+      "context": "La almohada suave me hizo dormir inmediatamente.",
+      "distractors": [
+        "hard",
+        "wet",
+        "broken"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0099",
+      "target": "en",
+      "cloze": "He ___ his wallet while walking through the city.",
+      "answer": "lost",
+      "context": "Él perdió su cartera mientras caminaba por la ciudad.",
+      "distractors": [
+        "found",
+        "kept",
+        "sold"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0100",
+      "target": "en",
+      "cloze": "The ___ movie kept us entertained all evening.",
+      "answer": "interesting",
+      "context": "La película interesante nos mantuvo entretenidos toda la noche.",
+      "distractors": [
+        "boring",
+        "sad",
+        "short"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0101",
+      "target": "en",
+      "cloze": "I hope you will ___ safely at your destination.",
+      "answer": "arrive",
+      "context": "Espero que llegues seguro a tu destino.",
+      "distractors": [
+        "depart",
+        "stay",
+        "return"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0102",
+      "target": "en",
+      "cloze": "The ___ suitcase was difficult to carry upstairs.",
+      "answer": "heavy",
+      "context": "La maleta pesada fue difícil de llevar escaleras arriba.",
+      "distractors": [
+        "light",
+        "small",
+        "empty"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0103",
+      "target": "en",
+      "cloze": "They ___ their anniversary with a special dinner.",
+      "answer": "celebrated",
+      "context": "Celebraron su aniversario con una cena especial.",
+      "distractors": [
+        "ignored",
+        "forgot",
+        "postponed"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0104",
+      "target": "en",
+      "cloze": "The ___ water in the lake was very refreshing.",
+      "answer": "clear",
+      "context": "El agua clara en el lago fue muy refrescante.",
+      "distractors": [
+        "murky",
+        "frozen",
+        "hot"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0105",
+      "target": "en",
+      "cloze": "She ___ a long letter to her grandmother yesterday.",
+      "answer": "wrote",
+      "context": "Ella escribió una carta larga a su abuela ayer.",
+      "distractors": [
+        "read",
+        "received",
+        "burned"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0106",
+      "target": "en",
+      "cloze": "The expensive restaurant ___ delicious international cuisine.",
+      "answer": "serves",
+      "context": "El restaurante caro sirve cocina internacional deliciosa.",
+      "distractors": [
+        "closes",
+        "opens",
+        "moves"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0107",
+      "target": "en",
+      "cloze": "I will definitely ___ your wedding next month.",
+      "answer": "attend",
+      "context": "Definitivamente asistiré a tu boda el próximo mes.",
+      "distractors": [
+        "skip",
+        "cancel",
+        "postpone"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0108",
+      "target": "en",
+      "cloze": "The ___ noise from the construction woke me up early.",
+      "answer": "loud",
+      "context": "El ruido fuerte de la construcción me despertó temprano.",
+      "distractors": [
+        "quiet",
+        "soft",
+        "distant"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0109",
+      "target": "en",
+      "cloze": "The teacher will explain the ___ tomorrow morning.",
+      "answer": "lesson",
+      "context": "El maestro explicará la lección mañana por la mañana.",
+      "distractors": [
+        "homework",
+        "schedule",
+        "meeting"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0110",
+      "target": "en",
+      "cloze": "She ___ coffee over tea every single day.",
+      "answer": "prefers",
+      "context": "Ella prefiere café en lugar de té cada día.",
+      "distractors": [
+        "drinks",
+        "makes",
+        "serves"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0111",
+      "target": "en",
+      "cloze": "The garden is ___ during the spring season.",
+      "answer": "beautiful",
+      "context": "El jardín es hermoso durante la estación de primavera.",
+      "distractors": [
+        "small",
+        "green",
+        "quiet"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0112",
+      "target": "en",
+      "cloze": "We need to ___ groceries before the store closes.",
+      "answer": "purchase",
+      "context": "Necesitamos comprar alimentos antes de que cierre la tienda.",
+      "distractors": [
+        "sell",
+        "deliver",
+        "cook"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0113",
+      "target": "en",
+      "cloze": "The restaurant serves ___ food every evening.",
+      "answer": "delicious",
+      "context": "El restaurante sirve comida deliciosa cada noche.",
+      "distractors": [
+        "expensive",
+        "fresh",
+        "hot"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0114",
+      "target": "en",
+      "cloze": "My brother ___ at the hospital as a nurse.",
+      "answer": "works",
+      "context": "Mi hermano trabaja en el hospital como enfermero.",
+      "distractors": [
+        "studies",
+        "plays",
+        "lives"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0115",
+      "target": "en",
+      "cloze": "The weather will be sunny and ___ tomorrow.",
+      "answer": "warm",
+      "context": "El clima será soleado y cálido mañana.",
+      "distractors": [
+        "cold",
+        "wet",
+        "windy"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0116",
+      "target": "en",
+      "cloze": "I ___ an interesting book last weekend.",
+      "answer": "read",
+      "context": "Leí un libro interesante el fin de semana pasado.",
+      "distractors": [
+        "wrote",
+        "bought",
+        "found"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0117",
+      "target": "en",
+      "cloze": "The children played ___ in the park.",
+      "answer": "happily",
+      "context": "Los niños jugaron felizmente en el parque.",
+      "distractors": [
+        "quietly",
+        "slowly",
+        "carefully"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0118",
+      "target": "en",
+      "cloze": "We should ___ at the airport early tomorrow.",
+      "answer": "arrive",
+      "context": "Debemos llegar al aeropuerto temprano mañana.",
+      "distractors": [
+        "leave",
+        "depart",
+        "return"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0119",
+      "target": "en",
+      "cloze": "The music was too ___ for the party.",
+      "answer": "loud",
+      "context": "La música fue demasiado fuerte para la fiesta.",
+      "distractors": [
+        "quiet",
+        "soft",
+        "low"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0120",
+      "target": "en",
+      "cloze": "She ___ to study medicine at university.",
+      "answer": "decided",
+      "context": "Ella decidió estudiar medicina en la universidad.",
+      "distractors": [
+        "promised",
+        "agreed",
+        "refused"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0121",
+      "target": "en",
+      "cloze": "The cake ___ eggs, flour, and sugar.",
+      "answer": "contains",
+      "context": "El pastel contiene huevos, harina y azúcar.",
+      "distractors": [
+        "needs",
+        "requires",
+        "includes"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0122",
+      "target": "en",
+      "cloze": "I will ___ you after I finish work.",
+      "answer": "call",
+      "context": "Te llamaré después de que termine el trabajo.",
+      "distractors": [
+        "text",
+        "email",
+        "visit"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0123",
+      "target": "en",
+      "cloze": "The flowers ___ beautifully in the spring.",
+      "answer": "bloomed",
+      "context": "Las flores florecieron hermosamente en la primavera.",
+      "distractors": [
+        "grew",
+        "opened",
+        "appeared"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0124",
+      "target": "en",
+      "cloze": "He ___ his birthday with close friends.",
+      "answer": "celebrated",
+      "context": "Él celebró su cumpleaños con amigos cercanos.",
+      "distractors": [
+        "enjoyed",
+        "organized",
+        "attended"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0125",
+      "target": "en",
+      "cloze": "The sky is ___ and blue this afternoon.",
+      "answer": "clear",
+      "context": "El cielo está despejado y azul esta tarde.",
+      "distractors": [
+        "dark",
+        "cloudy",
+        "gray"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0126",
+      "target": "en",
+      "cloze": "My grandmother ___ a new house last year.",
+      "answer": "bought",
+      "context": "Mi abuela compró una casa nueva el año pasado.",
+      "distractors": [
+        "sold",
+        "rented",
+        "built"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0127",
+      "target": "en",
+      "cloze": "The music sounds ___ and cheerful today.",
+      "answer": "bright",
+      "context": "La música suena alegre y animada hoy.",
+      "distractors": [
+        "dark",
+        "sad",
+        "slow"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0128",
+      "target": "en",
+      "cloze": "She ___ letters to her family every week.",
+      "answer": "writes",
+      "context": "Ella escribe cartas a su familia cada semana.",
+      "distractors": [
+        "reads",
+        "sends",
+        "receives"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0129",
+      "target": "en",
+      "cloze": "The coffee tastes ___ and bitter this morning.",
+      "answer": "strong",
+      "context": "El café sabe fuerte y amargo esta mañana.",
+      "distractors": [
+        "weak",
+        "mild",
+        "sweet"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0130",
+      "target": "en",
+      "cloze": "We will ___ to Spain next summer vacation.",
+      "answer": "travel",
+      "context": "Viajaremos a España el próximo verano.",
+      "distractors": [
+        "move",
+        "fly",
+        "drive"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0131",
+      "target": "en",
+      "cloze": "He ___ the museum yesterday with his class.",
+      "answer": "visited",
+      "context": "Él visitó el museo ayer con su clase.",
+      "distractors": [
+        "toured",
+        "explored",
+        "attended"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0132",
+      "target": "en",
+      "cloze": "The pillows feel very ___ and comfortable.",
+      "answer": "soft",
+      "context": "Las almohadas se sienten muy suaves y cómodas.",
+      "distractors": [
+        "hard",
+        "firm",
+        "rough"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0133",
+      "target": "en",
+      "cloze": "She ___ finished her homework before dinner.",
+      "answer": "quickly",
+      "context": "Ella terminó rápidamente su tarea antes de cenar.",
+      "distractors": [
+        "slowly",
+        "carefully",
+        "quietly"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0134",
+      "target": "en",
+      "cloze": "She will ___ her homework before dinner tonight.",
+      "answer": "finish",
+      "context": "Ella terminará su tarea antes de cenar esta noche.",
+      "distractors": [
+        "start",
+        "begin",
+        "continue"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0135",
+      "target": "en",
+      "cloze": "The old bridge ___ two small villages together.",
+      "answer": "connects",
+      "context": "El puente viejo conecta dos pueblos pequeños juntos.",
+      "distractors": [
+        "separates",
+        "divides",
+        "breaks"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0136",
+      "target": "en",
+      "cloze": "We need to ___ the garden every morning.",
+      "answer": "water",
+      "context": "Necesitamos regar el jardín cada mañana.",
+      "distractors": [
+        "plant",
+        "dig",
+        "trim"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0137",
+      "target": "en",
+      "cloze": "The movie was quite ___ and too long.",
+      "answer": "boring",
+      "context": "La película fue bastante aburrida y demasiado larga.",
+      "distractors": [
+        "exciting",
+        "thrilling",
+        "engaging"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0138",
+      "target": "en",
+      "cloze": "His family ___ to a different country last year.",
+      "answer": "moved",
+      "context": "Su familia se mudó a un país diferente el año pasado.",
+      "distractors": [
+        "stayed",
+        "remained",
+        "settled"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0139",
+      "target": "en",
+      "cloze": "The restaurant serves ___ food from many regions.",
+      "answer": "traditional",
+      "context": "El restaurante sirve comida tradicional de muchas regiones.",
+      "distractors": [
+        "modern",
+        "exotic",
+        "frozen"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0140",
+      "target": "en",
+      "cloze": "They ___ an ancient temple in the jungle.",
+      "answer": "discovered",
+      "context": "Descubrieron un templo antiguo en la selva.",
+      "distractors": [
+        "lost",
+        "built",
+        "destroyed"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0141",
+      "target": "en",
+      "cloze": "My sister always ___ everyone's birthday without fail.",
+      "answer": "remembers",
+      "context": "Mi hermana siempre recuerda el cumpleaños de todos sin falta.",
+      "distractors": [
+        "forgets",
+        "ignores",
+        "misses"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0142",
+      "target": "en",
+      "cloze": "The birds ___ loudly in the early morning.",
+      "answer": "sang",
+      "context": "Los pájaros cantaron fuertemente en la madrugada.",
+      "distractors": [
+        "flew",
+        "rested",
+        "played"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0143",
+      "target": "en",
+      "cloze": "We should ___ walking alone on dark streets.",
+      "answer": "avoid",
+      "context": "Deberíamos evitar caminar solos en calles oscuras.",
+      "distractors": [
+        "seek",
+        "enjoy",
+        "prefer"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0144",
+      "target": "en",
+      "cloze": "The weather will ___ by the end of week.",
+      "answer": "improve",
+      "context": "El clima mejorará para el final de la semana.",
+      "distractors": [
+        "worsen",
+        "change",
+        "vary"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0145",
+      "target": "en",
+      "cloze": "Her painting skills have ___ remarkably over time.",
+      "answer": "developed",
+      "context": "Sus habilidades de pintura se han desarrollado notablemente con el tiempo.",
+      "distractors": [
+        "declined",
+        "stalled",
+        "regressed"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0146",
+      "target": "en",
+      "cloze": "The company ___ several new employees for summer.",
+      "answer": "hired",
+      "context": "La empresa contrató varios empleados nuevos para el verano.",
+      "distractors": [
+        "fired",
+        "promoted",
+        "trained"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0147",
+      "target": "en",
+      "cloze": "Children need to ___ enough for healthy growth.",
+      "answer": "sleep",
+      "context": "Los niños necesitan dormir lo suficiente para un crecimiento saludable.",
+      "distractors": [
+        "play",
+        "study",
+        "exercise"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0148",
+      "target": "en",
+      "cloze": "The patient felt ___ after taking the medicine.",
+      "answer": "better",
+      "context": "El paciente se sintió mejor después de tomar la medicina.",
+      "distractors": [
+        "worse",
+        "tired",
+        "dizzy"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0149",
+      "target": "en",
+      "cloze": "She ___ stamps from different countries for years.",
+      "answer": "collected",
+      "context": "Ella coleccionó sellos de diferentes países durante años.",
+      "distractors": [
+        "sold",
+        "traded",
+        "scattered"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0150",
+      "target": "en",
+      "cloze": "The test will ___ your understanding of the material.",
+      "answer": "measure",
+      "context": "La prueba medirá tu comprensión del material.",
+      "distractors": [
+        "test",
+        "grade",
+        "evaluate"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0151",
+      "target": "en",
+      "cloze": "They ___ a surprise party for their friend.",
+      "answer": "planned",
+      "context": "Planearon una fiesta sorpresa para su amigo.",
+      "distractors": [
+        "attended",
+        "canceled",
+        "delayed"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0152",
+      "target": "en",
+      "cloze": "The mountain peak was ___ with thick snow.",
+      "answer": "covered",
+      "context": "La cima de la montaña estaba cubierta de nieve gruesa.",
+      "distractors": [
+        "exposed",
+        "cleared",
+        "visible"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0153",
+      "target": "en",
+      "cloze": "Dogs ___ regular exercise and proper nutrition always.",
+      "answer": "require",
+      "context": "Los perros requieren ejercicio regular y nutrición adecuada siempre.",
+      "distractors": [
+        "provide",
+        "offer",
+        "suggest"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0154",
+      "target": "en",
+      "cloze": "The student ___ her hand to ask question.",
+      "answer": "raised",
+      "context": "La estudiante levantó la mano para hacer una pregunta.",
+      "distractors": [
+        "lowered",
+        "waved",
+        "dropped"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0155",
+      "target": "en",
+      "cloze": "We must ___ our spending on unnecessary items.",
+      "answer": "reduce",
+      "context": "Debemos reducir nuestro gasto en artículos innecesarios.",
+      "distractors": [
+        "increase",
+        "maintain",
+        "double"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0156",
+      "target": "en",
+      "cloze": "The flowers ___ beautifully in the spring garden.",
+      "answer": "bloomed",
+      "context": "Las flores florecieron hermosamente en el jardín de primavera.",
+      "distractors": [
+        "wilted",
+        "faded",
+        "died"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0157",
+      "target": "en",
+      "cloze": "She ___ to call me back very soon.",
+      "answer": "promised",
+      "context": "Ella prometió llamarme de vuelta muy pronto.",
+      "distractors": [
+        "refused",
+        "delayed",
+        "forgot"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0158",
+      "target": "en",
+      "cloze": "The book ___ many interesting stories and adventures.",
+      "answer": "contains",
+      "context": "El libro contiene muchas historias y aventuras interesantes.",
+      "distractors": [
+        "lacks",
+        "needs",
+        "misses"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0159",
+      "target": "en",
+      "cloze": "The teacher ___ the difficult grammar rule yesterday.",
+      "answer": "explained",
+      "context": "La maestra explicó la regla de gramática difícil ayer.",
+      "distractors": [
+        "ignored",
+        "forgot",
+        "denied"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0160",
+      "target": "en",
+      "cloze": "My brother ___ coffee to tea every morning.",
+      "answer": "prefers",
+      "context": "Mi hermano prefiere café al té cada mañana.",
+      "distractors": [
+        "avoids",
+        "hates",
+        "refuses"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0161",
+      "target": "en",
+      "cloze": "We will ___ at the airport early tomorrow.",
+      "answer": "arrive",
+      "context": "Llegaremos al aeropuerto temprano mañana.",
+      "distractors": [
+        "depart",
+        "leave",
+        "escape"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0162",
+      "target": "en",
+      "cloze": "She ___ to study medicine at university next year.",
+      "answer": "decided",
+      "context": "Ella decidió estudiar medicina en la universidad el próximo año.",
+      "distractors": [
+        "hesitated",
+        "doubted",
+        "questioned"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0163",
+      "target": "en",
+      "cloze": "The restaurant ___ traditional Mexican food every evening.",
+      "answer": "serves",
+      "context": "El restaurante sirve comida mexicana tradicional cada noche.",
+      "distractors": [
+        "cooks",
+        "prepares",
+        "makes"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0164",
+      "target": "en",
+      "cloze": "I ___ an interesting book at the library yesterday.",
+      "answer": "discovered",
+      "context": "Descubrí un libro interesante en la biblioteca ayer.",
+      "distractors": [
+        "lost",
+        "borrowed",
+        "returned"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0165",
+      "target": "en",
+      "cloze": "The project ___ careful planning and hard work.",
+      "answer": "requires",
+      "context": "El proyecto requiere planificación cuidadosa y trabajo duro.",
+      "distractors": [
+        "suggests",
+        "allows",
+        "permits"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0166",
+      "target": "en",
+      "cloze": "The meeting will ___ at five o'clock today.",
+      "answer": "finish",
+      "context": "La reunión terminará a las cinco hoy.",
+      "distractors": [
+        "start",
+        "begin",
+        "commence"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0084",
+      "target": "es",
+      "cloze": "El café está muy ___ esta mañana.",
+      "answer": "caliente",
+      "context": "The coffee is very hot this morning.",
+      "distractors": [
+        "frío",
+        "dulce",
+        "amargo"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0085",
+      "target": "es",
+      "cloze": "Nosotros ___ al cine el próximo viernes.",
+      "answer": "iremos",
+      "context": "We will go to the cinema next Friday.",
+      "distractors": [
+        "vendremos",
+        "llegaremos",
+        "saldremos"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0086",
+      "target": "es",
+      "cloze": "La comida fue ___ en el restaurante anoche.",
+      "answer": "deliciosa",
+      "context": "The food was delicious at the restaurant last night.",
+      "distractors": [
+        "horrible",
+        "cara",
+        "simple"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0087",
+      "target": "es",
+      "cloze": "Él ___ un libro nuevo en la tienda.",
+      "answer": "compró",
+      "context": "He bought a new book at the store.",
+      "distractors": [
+        "vendió",
+        "rompió",
+        "encontró"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0088",
+      "target": "es",
+      "cloze": "Mi padre trabaja como ___ en una empresa.",
+      "answer": "ingeniero",
+      "context": "My father works as an engineer at a company.",
+      "distractors": [
+        "abogado",
+        "doctor",
+        "maestro"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0089",
+      "target": "es",
+      "cloze": "Ellos ___ a España durante el verano pasado.",
+      "answer": "viajaron",
+      "context": "They traveled to Spain during last summer.",
+      "distractors": [
+        "corrieron",
+        "nadaron",
+        "bailaron"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0090",
+      "target": "es",
+      "cloze": "La casa tiene un jardín muy ___ y grande.",
+      "answer": "hermoso",
+      "context": "The house has a very beautiful and large garden.",
+      "distractors": [
+        "feo",
+        "pequeño",
+        "sucio"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0091",
+      "target": "es",
+      "cloze": "Yo ___ comprar leche en el supermercado mañana.",
+      "answer": "necesito",
+      "context": "I need to buy milk at the supermarket tomorrow.",
+      "distractors": [
+        "quiero",
+        "puedo",
+        "debo"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0092",
+      "target": "es",
+      "cloze": "Las flores del parque son muy ___ y alegres.",
+      "answer": "coloridas",
+      "context": "The flowers in the park are very colorful and cheerful.",
+      "distractors": [
+        "blancas",
+        "marchitas",
+        "pequeñas"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0093",
+      "target": "es",
+      "cloze": "Mi amigo ___ una carta importante para su familia.",
+      "answer": "escribió",
+      "context": "My friend wrote an important letter to his family.",
+      "distractors": [
+        "leyó",
+        "rompió",
+        "guardó"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0094",
+      "target": "es",
+      "cloze": "El problema es bastante ___ de resolver ahora.",
+      "answer": "difícil",
+      "context": "The problem is quite difficult to solve now.",
+      "distractors": [
+        "fácil",
+        "claro",
+        "simple"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0095",
+      "target": "es",
+      "cloze": "Ella ___ la cena para toda la familia.",
+      "answer": "preparará",
+      "context": "She will prepare dinner for the whole family.",
+      "distractors": [
+        "cocinará",
+        "beberá",
+        "comerá"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0096",
+      "target": "es",
+      "cloze": "Los estudiantes ___ sus calificaciones ayer por la tarde.",
+      "answer": "recibieron",
+      "context": "The students received their grades yesterday in the afternoon.",
+      "distractors": [
+        "entregaron",
+        "perdieron",
+        "guardaron"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0097",
+      "target": "es",
+      "cloze": "Este juego es muy ___ y divertido para todos.",
+      "answer": "emocionante",
+      "context": "This game is very exciting and fun for everyone.",
+      "distractors": [
+        "aburrido",
+        "triste",
+        "lento"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0098",
+      "target": "es",
+      "cloze": "Nosotros ___ pizza y bebimos refrescos anoche.",
+      "answer": "comimos",
+      "context": "We ate pizza and drank soft drinks last night.",
+      "distractors": [
+        "cocinamos",
+        "probamos",
+        "guardamos"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0099",
+      "target": "es",
+      "cloze": "La película fue bastante ___ pero muy interesante.",
+      "answer": "larga",
+      "context": "The movie was quite long but very interesting.",
+      "distractors": [
+        "corta",
+        "antigua",
+        "nueva"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0100",
+      "target": "es",
+      "cloze": "Yo ___ mis llaves en la cocina esta mañana.",
+      "answer": "encontré",
+      "context": "I found my keys in the kitchen this morning.",
+      "distractors": [
+        "perdí",
+        "busqué",
+        "guardé"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0101",
+      "target": "es",
+      "cloze": "Los niños juegan ___ en el parque todos los días.",
+      "answer": "felices",
+      "context": "The children play happily in the park every day.",
+      "distractors": [
+        "tristes",
+        "cansados",
+        "nerviosos"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0102",
+      "target": "es",
+      "cloze": "Mi madre ___ ropa nueva para el invierno próximo.",
+      "answer": "compró",
+      "context": "My mother bought new clothes for next winter.",
+      "distractors": [
+        "hizo",
+        "rompió",
+        "lavó"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0103",
+      "target": "es",
+      "cloze": "El viaje fue muy largo pero absolutamente ___.",
+      "answer": "maravilloso",
+      "context": "The trip was very long but absolutely wonderful.",
+      "distractors": [
+        "terrible",
+        "corto",
+        "caro"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0104",
+      "target": "es",
+      "cloze": "Ella ___ español y portugués con mucha fluidez.",
+      "answer": "habla",
+      "context": "She speaks Spanish and Portuguese with great fluency.",
+      "distractors": [
+        "escucha",
+        "entiende",
+        "enseña"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0105",
+      "target": "es",
+      "cloze": "Nosotros ___ al aeropuerto muy temprano mañana.",
+      "answer": "llegaremos",
+      "context": "We will arrive at the airport very early tomorrow.",
+      "distractors": [
+        "saldremos",
+        "viajaremos",
+        "esperaremos"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0106",
+      "target": "es",
+      "cloze": "El agua del río está muy ___ en invierno.",
+      "answer": "fría",
+      "context": "The river water is very cold in winter.",
+      "distractors": [
+        "caliente",
+        "sucia",
+        "profunda"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0107",
+      "target": "es",
+      "cloze": "Yo voy a ___ mi proyecto antes del viernes.",
+      "answer": "terminar",
+      "context": "I am going to finish my project before Friday.",
+      "distractors": [
+        "empezar",
+        "cambiar",
+        "olvidar"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0108",
+      "target": "es",
+      "cloze": "Mi hermana ___ en una oficina grande en la ciudad.",
+      "answer": "trabaja",
+      "context": "My sister works in a large office in the city.",
+      "distractors": [
+        "estudia",
+        "vive",
+        "juega"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0109",
+      "target": "es",
+      "cloze": "El café ___ muy caliente esta mañana.",
+      "answer": "está",
+      "context": "The coffee is very hot this morning.",
+      "distractors": [
+        "parece",
+        "queda",
+        "sigue"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0110",
+      "target": "es",
+      "cloze": "Nosotros ___ pan fresco en la panadería ayer.",
+      "answer": "compramos",
+      "context": "We bought fresh bread at the bakery yesterday.",
+      "distractors": [
+        "vendimos",
+        "llevamos",
+        "probamos"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0111",
+      "target": "es",
+      "cloze": "Las flores del jardín son muy ___ este año.",
+      "answer": "hermosas",
+      "context": "The flowers in the garden are very beautiful this year.",
+      "distractors": [
+        "coloridas",
+        "grandes",
+        "raras"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0112",
+      "target": "es",
+      "cloze": "Él siempre ___ tarde a las reuniones de trabajo.",
+      "answer": "llega",
+      "context": "He always arrives late to work meetings.",
+      "distractors": [
+        "sale",
+        "empieza",
+        "termina"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0113",
+      "target": "es",
+      "cloze": "Mi abuela ___ una comida deliciosa para la familia.",
+      "answer": "cocinó",
+      "context": "My grandmother cooked a delicious meal for the family.",
+      "distractors": [
+        "preparó",
+        "sirvió",
+        "probó"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0114",
+      "target": "es",
+      "cloze": "Mañana ___ a visitar a mis primos en el pueblo.",
+      "answer": "voy",
+      "context": "Tomorrow I am going to visit my cousins in the town.",
+      "distractors": [
+        "vengo",
+        "salgo",
+        "llego"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0115",
+      "target": "es",
+      "cloze": "El problema es muy ___ para resolver solo.",
+      "answer": "difícil",
+      "context": "The problem is very difficult to solve alone.",
+      "distractors": [
+        "complicado",
+        "imposible",
+        "raro"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0116",
+      "target": "es",
+      "cloze": "Ellos ___ noticias importantes de su tía el lunes.",
+      "answer": "recibieron",
+      "context": "They received important news from their aunt on Monday.",
+      "distractors": [
+        "escucharon",
+        "leyeron",
+        "vieron"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0117",
+      "target": "es",
+      "cloze": "La película fue muy ___ y todos la disfrutaron.",
+      "answer": "emocionante",
+      "context": "The movie was very exciting and everyone enjoyed it.",
+      "distractors": [
+        "interesante",
+        "divertida",
+        "sorprendente"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0118",
+      "target": "es",
+      "cloze": "Yo ___ mis llaves debajo del sofá esta tarde.",
+      "answer": "encontré",
+      "context": "I found my keys under the sofa this afternoon.",
+      "distractors": [
+        "busqué",
+        "perdí",
+        "dejé"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0119",
+      "target": "es",
+      "cloze": "Mi primo ___ un libro sobre viajes y aventuras.",
+      "answer": "escribió",
+      "context": "My cousin wrote a book about travels and adventures.",
+      "distractors": [
+        "leyó",
+        "publicó",
+        "vendió"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0120",
+      "target": "es",
+      "cloze": "Los niños están muy ___ en el parque ahora.",
+      "answer": "felices",
+      "context": "The children are very happy in the park now.",
+      "distractors": [
+        "contentos",
+        "alegres",
+        "emocionados"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0121",
+      "target": "es",
+      "cloze": "Ella ___ estudiar más para pasar el examen final.",
+      "answer": "necesita",
+      "context": "She needs to study more to pass the final exam.",
+      "distractors": [
+        "debe",
+        "tiene",
+        "puede"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0122",
+      "target": "es",
+      "cloze": "Mi padre ___ tres idiomas diferentes con fluidez.",
+      "answer": "habla",
+      "context": "My father speaks three different languages fluently.",
+      "distractors": [
+        "entiende",
+        "aprende",
+        "traduce"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0123",
+      "target": "es",
+      "cloze": "Nosotros ___ a España durante el verano pasado.",
+      "answer": "viajamos",
+      "context": "We traveled to Spain during last summer.",
+      "distractors": [
+        "visitamos",
+        "exploramos",
+        "cruzamos"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0124",
+      "target": "es",
+      "cloze": "El paisaje de las montañas es verdaderamente ___.",
+      "answer": "maravilloso",
+      "context": "The landscape of the mountains is truly wonderful.",
+      "distractors": [
+        "espectacular",
+        "increíble",
+        "magnífico"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0125",
+      "target": "es",
+      "cloze": "Mañana ___ al cine a ver una película nueva.",
+      "answer": "iremos",
+      "context": "Tomorrow we will go to the cinema to see a new film.",
+      "distractors": [
+        "saldremos",
+        "entraremos",
+        "llegaremos"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0126",
+      "target": "es",
+      "cloze": "La tarea es ___ pero no es muy complicada.",
+      "answer": "larga",
+      "context": "The homework is long but not very complicated.",
+      "distractors": [
+        "extensa",
+        "pesada",
+        "difícil"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0127",
+      "target": "es",
+      "cloze": "Nosotros ___ a casa antes de las seis.",
+      "answer": "llegaremos",
+      "context": "We will arrive home before six o'clock.",
+      "distractors": [
+        "regresaremos",
+        "volveremos",
+        "entraremos"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0128",
+      "target": "es",
+      "cloze": "Mi tío es ___ y trabaja en construcción.",
+      "answer": "ingeniero",
+      "context": "My uncle is an engineer and works in construction.",
+      "distractors": [
+        "arquitecto",
+        "constructor",
+        "técnico"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0129",
+      "target": "es",
+      "cloze": "Ellos ___ comida deliciosa en el restaurante italiano.",
+      "answer": "comieron",
+      "context": "They ate delicious food at the Italian restaurant.",
+      "distractors": [
+        "probaron",
+        "degustaron",
+        "compartieron"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0130",
+      "target": "es",
+      "cloze": "Mi madre ___ la cena para toda la familia.",
+      "answer": "preparará",
+      "context": "My mother will prepare dinner for the whole family.",
+      "distractors": [
+        "cocinará",
+        "hará",
+        "servirá"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0131",
+      "target": "es",
+      "cloze": "Las flores ___ del jardín atraen muchas mariposas.",
+      "answer": "coloridas",
+      "context": "The colorful flowers in the garden attract many butterflies.",
+      "distractors": [
+        "brillantes",
+        "hermosas",
+        "vistosas"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0132",
+      "target": "es",
+      "cloze": "Mi hermana ___ libros en la biblioteca cada semana.",
+      "answer": "compra",
+      "context": "My sister buys books at the library every week.",
+      "distractors": [
+        "vende",
+        "lee",
+        "escribe"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0133",
+      "target": "es",
+      "cloze": "El profesor ___ la lección con mucha paciencia hoy.",
+      "answer": "explica",
+      "context": "The teacher explains the lesson with great patience today.",
+      "distractors": [
+        "entiende",
+        "pregunta",
+        "enseña"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0134",
+      "target": "es",
+      "cloze": "Nosotros ___ al parque después de terminar el trabajo.",
+      "answer": "caminamos",
+      "context": "We walk to the park after finishing work.",
+      "distractors": [
+        "corremos",
+        "conducimos",
+        "viajamos"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0135",
+      "target": "es",
+      "cloze": "La película fue muy ___ y todos disfrutaron mucho.",
+      "answer": "interesante",
+      "context": "The movie was very interesting and everyone enjoyed it.",
+      "distractors": [
+        "aburrida",
+        "triste",
+        "corta"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0136",
+      "target": "es",
+      "cloze": "Mi padre ___ una casa nueva en las afueras.",
+      "answer": "construyó",
+      "context": "My father built a new house on the outskirts.",
+      "distractors": [
+        "compró",
+        "vendió",
+        "alquiló"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0137",
+      "target": "es",
+      "cloze": "Los estudiantes ___ el problema de matemáticas correctamente.",
+      "answer": "resolvieron",
+      "context": "The students solved the math problem correctly.",
+      "distractors": [
+        "intentaron",
+        "olvidaron",
+        "ignoraron"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0138",
+      "target": "es",
+      "cloze": "Ella ___ canciones hermosas en el concierto cada noche.",
+      "answer": "canta",
+      "context": "She sings beautiful songs at the concert every night.",
+      "distractors": [
+        "baila",
+        "toca",
+        "escucha"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0139",
+      "target": "es",
+      "cloze": "El viaje fue largo pero muy ___ para todos.",
+      "answer": "agradable",
+      "context": "The trip was long but very pleasant for everyone.",
+      "distractors": [
+        "desagradable",
+        "peligroso",
+        "cansado"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0140",
+      "target": "es",
+      "cloze": "Yo ___ ese día con mucha claridad y nostalgia.",
+      "answer": "recuerdo",
+      "context": "I remember that day with great clarity and nostalgia.",
+      "distractors": [
+        "olvido",
+        "imagino",
+        "sueño"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0141",
+      "target": "es",
+      "cloze": "El médico ___ descansar más durante las próximas semanas.",
+      "answer": "recomendó",
+      "context": "The doctor recommended resting more during the next weeks.",
+      "distractors": [
+        "prohibió",
+        "permitió",
+        "sugirió"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0142",
+      "target": "es",
+      "cloze": "Nosotros ___ la cena con los amigos anoche.",
+      "answer": "compartimos",
+      "context": "We shared dinner with friends last night.",
+      "distractors": [
+        "cocinamos",
+        "preparamos",
+        "probamos"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0143",
+      "target": "es",
+      "cloze": "El niño ___ en el jardín durante toda la tarde.",
+      "answer": "juega",
+      "context": "The boy plays in the garden all afternoon.",
+      "distractors": [
+        "corre",
+        "duerme",
+        "estudia"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0144",
+      "target": "es",
+      "cloze": "Las flores ___ rápidamente en primavera con mucha agua.",
+      "answer": "crecen",
+      "context": "The flowers grow quickly in spring with plenty of water.",
+      "distractors": [
+        "mueren",
+        "florecen",
+        "se marchitan"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0145",
+      "target": "es",
+      "cloze": "Mi abuela ___ postres deliciosos para las celebraciones familiares.",
+      "answer": "prepara",
+      "context": "My grandmother prepares delicious desserts for family celebrations.",
+      "distractors": [
+        "come",
+        "prueba",
+        "comparte"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0146",
+      "target": "es",
+      "cloze": "El dinero es ___ para vivir cómodamente en la ciudad.",
+      "answer": "importante",
+      "context": "Money is important to live comfortably in the city.",
+      "distractors": [
+        "innecesario",
+        "insignificante",
+        "inútil"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0147",
+      "target": "es",
+      "cloze": "Yo ___ novelas interesantes todas las noches antes de dormir.",
+      "answer": "leo",
+      "context": "I read interesting novels every night before sleeping.",
+      "distractors": [
+        "escribo",
+        "escucho",
+        "veo"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0148",
+      "target": "es",
+      "cloze": "El atleta ___ muy rápido en la competencia de ayer.",
+      "answer": "corrió",
+      "context": "The athlete ran very fast in yesterday's competition.",
+      "distractors": [
+        "saltó",
+        "nadó",
+        "caminó"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0149",
+      "target": "es",
+      "cloze": "Nosotros ___ museos históricos durante nuestras vacaciones.",
+      "answer": "visitamos",
+      "context": "We visited historical museums during our vacation.",
+      "distractors": [
+        "exploramos",
+        "conocemos",
+        "observamos"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0150",
+      "target": "es",
+      "cloze": "El cielo estaba ___ pero no llovió en toda la noche.",
+      "answer": "nublado",
+      "context": "The sky was cloudy but it didn't rain all night.",
+      "distractors": [
+        "despejado",
+        "claro",
+        "azul"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0151",
+      "target": "es",
+      "cloze": "Mi amigo ___ ayudarme con el proyecto importante.",
+      "answer": "prometió",
+      "context": "My friend promised to help me with the important project.",
+      "distractors": [
+        "negó",
+        "olvidó",
+        "rechazó"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0152",
+      "target": "es",
+      "cloze": "Los pájaros ___ melodías hermosas cada mañana temprano.",
+      "answer": "cantan",
+      "context": "The birds sing beautiful melodies every early morning.",
+      "distractors": [
+        "vuelan",
+        "comen",
+        "duermen"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0153",
+      "target": "es",
+      "cloze": "Yo espero que el examen sea ___ para todos.",
+      "answer": "fácil",
+      "context": "I hope the exam is easy for everyone.",
+      "distractors": [
+        "complicado",
+        "imposible",
+        "complejo"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0154",
+      "target": "es",
+      "cloze": "El restaurante ___ comida italiana excelente todas las noches.",
+      "answer": "sirve",
+      "context": "The restaurant serves excellent Italian food every night.",
+      "distractors": [
+        "cocina",
+        "prepara",
+        "vende"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0155",
+      "target": "es",
+      "cloze": "Ella ___ viajar a Europa el próximo verano con familia.",
+      "answer": "decidió",
+      "context": "She decided to travel to Europe next summer with family.",
+      "distractors": [
+        "pensó",
+        "soñó",
+        "planeó"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0156",
+      "target": "es",
+      "cloze": "El perro ___ las órdenes del dueño muy rápidamente.",
+      "answer": "obedece",
+      "context": "The dog obeys the owner's commands very quickly.",
+      "distractors": [
+        "desobedece",
+        "ignora",
+        "evita"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0157",
+      "target": "es",
+      "cloze": "Mi hermana prefiere ___ café por la mañana.",
+      "answer": "beber",
+      "context": "My sister prefers to drink coffee in the morning.",
+      "distractors": [
+        "comer",
+        "dormir",
+        "escribir"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0158",
+      "target": "es",
+      "cloze": "El médico ___ al paciente con mucha atención.",
+      "answer": "examinó",
+      "context": "The doctor examined the patient with great attention.",
+      "distractors": [
+        "visitó",
+        "llamó",
+        "preguntó"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0159",
+      "target": "es",
+      "cloze": "Nosotros ___ al parque este fin de semana.",
+      "answer": "iremos",
+      "context": "We will go to the park this weekend.",
+      "distractors": [
+        "vendremos",
+        "jugaremos",
+        "comeremos"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0160",
+      "target": "es",
+      "cloze": "La película fue muy ___ para todos nosotros.",
+      "answer": "aburrida",
+      "context": "The movie was very boring for all of us.",
+      "distractors": [
+        "triste",
+        "larga",
+        "mala"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0161",
+      "target": "es",
+      "cloze": "Él siempre llega ___ a sus reuniones de trabajo.",
+      "answer": "temprano",
+      "context": "He always arrives early to his work meetings.",
+      "distractors": [
+        "rápido",
+        "tarde",
+        "pronto"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0162",
+      "target": "es",
+      "cloze": "Mi tío ___ una casa nueva en el campo.",
+      "answer": "construyó",
+      "context": "My uncle built a new house in the countryside.",
+      "distractors": [
+        "vendió",
+        "compró",
+        "alquiló"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0163",
+      "target": "es",
+      "cloze": "Los niños ___ fútbol en el patio de la escuela.",
+      "answer": "jugaron",
+      "context": "The children played football in the school yard.",
+      "distractors": [
+        "corrieron",
+        "saltaron",
+        "cantaron"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0164",
+      "target": "es",
+      "cloze": "Ella necesita ___ mucho para el examen final.",
+      "answer": "estudiar",
+      "context": "She needs to study a lot for the final exam.",
+      "distractors": [
+        "trabajar",
+        "practicar",
+        "leer"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "es-0165",
+      "target": "es",
+      "cloze": "El restaurante ___ comida italiana muy deliciosa.",
+      "answer": "sirve",
+      "context": "The restaurant serves very delicious Italian food.",
+      "distractors": [
+        "vende",
+        "prepara",
+        "ofrece"
+      ],
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "en-0167",
+      "target": "en",
+      "cloze": "The ancient manuscript ___ secrets that scholars had pondered for centuries.",
+      "answer": "revealed",
+      "context": "El manuscrito antiguo reveló secretos que los eruditos habían considerado durante siglos.",
+      "distractors": [
+        "concealed",
+        "discussed",
+        "studied"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0168",
+      "target": "en",
+      "cloze": "She ___ that her children complete their homework before watching television.",
+      "answer": "insisted",
+      "context": "Ella insistió en que sus hijos completaran la tarea antes de ver televisión.",
+      "distractors": [
+        "suggested",
+        "requested",
+        "hoped"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0169",
+      "target": "en",
+      "cloze": "The merchant ___ his finest silks and fabrics in the crowded marketplace.",
+      "answer": "displayed",
+      "context": "El comerciante exhibió sus mejores sedas y telas en el mercado abarrotado.",
+      "distractors": [
+        "stored",
+        "sold",
+        "shipped"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0170",
+      "target": "en",
+      "cloze": "Despite the harsh conditions, the explorers remained ___ in their mission.",
+      "answer": "resolute",
+      "context": "A pesar de las condiciones difíciles, los exploradores se mantuvieron resueltos en su misión.",
+      "distractors": [
+        "cautious",
+        "anxious",
+        "determined"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0171",
+      "target": "en",
+      "cloze": "The composer crafted a symphony that ___ profound emotions in every listener.",
+      "answer": "evoked",
+      "context": "El compositor creó una sinfonía que evocaba emociones profundas en cada oyente.",
+      "distractors": [
+        "suppressed",
+        "eliminated",
+        "ignored"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0172",
+      "target": "en",
+      "cloze": "I would prefer that you ___ your concerns more clearly during meetings.",
+      "answer": "articulate",
+      "context": "Preferiría que articularas tus preocupaciones más claramente durante las reuniones.",
+      "distractors": [
+        "conceal",
+        "mention",
+        "whisper"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0173",
+      "target": "en",
+      "cloze": "The architect designed a building that ___ beautifully with the natural landscape.",
+      "answer": "harmonized",
+      "context": "La arquitecta diseñó un edificio que se armonizaba hermosamente con el paisaje natural.",
+      "distractors": [
+        "clashed",
+        "contrasted",
+        "disrupted"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0174",
+      "target": "en",
+      "cloze": "It is essential that the government ___ stricter environmental protection policies immediately.",
+      "answer": "implement",
+      "context": "Es esencial que el gobierno implemente políticas de protección ambiental más estrictas inmediatamente.",
+      "distractors": [
+        "abandon",
+        "consider",
+        "delay"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0175",
+      "target": "en",
+      "cloze": "The detective ___ the evidence meticulously to uncover the truth about the crime.",
+      "answer": "scrutinized",
+      "context": "El detective examinó la evidencia meticulosamente para descubrir la verdad sobre el crimen.",
+      "distractors": [
+        "ignored",
+        "glanced",
+        "mentioned"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0176",
+      "target": "en",
+      "cloze": "Her ___ speech persuaded many skeptics to reconsider their original positions.",
+      "answer": "eloquent",
+      "context": "Su discurso elocuente persuadió a muchos escépticos a reconsiderar sus posiciones originales.",
+      "distractors": [
+        "mundane",
+        "brief",
+        "unclear"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0177",
+      "target": "en",
+      "cloze": "The botanist ___ rare plants in the greenhouse for scientific research purposes.",
+      "answer": "cultivated",
+      "context": "La botánica cultivó plantas raras en el invernadero para propósitos de investigación científica.",
+      "distractors": [
+        "destroyed",
+        "discovered",
+        "transported"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0178",
+      "target": "en",
+      "cloze": "We suggest that you ___ the entire document before submitting your formal application.",
+      "answer": "peruse",
+      "context": "Sugerimos que leas el documento completo antes de presentar tu solicitud formal.",
+      "distractors": [
+        "sign",
+        "scan",
+        "ignore"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0179",
+      "target": "en",
+      "cloze": "The historical monument stands as a ___ to the region's prosperous heritage.",
+      "answer": "testament",
+      "context": "El monumento histórico se erige como testimonio del próspero patrimonio de la región.",
+      "distractors": [
+        "burden",
+        "mystery",
+        "danger"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0180",
+      "target": "en",
+      "cloze": "It would be beneficial if the committee ___ on this proposal more thoroughly.",
+      "answer": "deliberated",
+      "context": "Sería beneficioso si el comité deliberara sobre esta propuesta más exhaustivamente.",
+      "distractors": [
+        "voted",
+        "rejected",
+        "approved"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0181",
+      "target": "en",
+      "cloze": "The artist ___ the portrait with remarkable precision and artistic sensitivity.",
+      "answer": "rendered",
+      "context": "La artista representó el retrato con precisión notable y sensibilidad artística.",
+      "distractors": [
+        "sketched",
+        "copied",
+        "imagined"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0182",
+      "target": "en",
+      "cloze": "The scholar's meticulous research ___ the theory that had been questioned for decades.",
+      "answer": "corroborated",
+      "context": "La investigación meticulosa de la erudita corroboró la teoría que había sido cuestionada durante décadas.",
+      "distractors": [
+        "contradicted",
+        "ignored",
+        "simplified"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0183",
+      "target": "en",
+      "cloze": "The chef's culinary expertise was evident in every ___ dish served that evening.",
+      "answer": "exquisite",
+      "context": "La experiencia culinaria del chef era evidente en cada plato exquisito servido esa noche.",
+      "distractors": [
+        "plain",
+        "mediocre",
+        "ordinary"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0184",
+      "target": "en",
+      "cloze": "I doubt that he would ___ to such demanding conditions without significant negotiation.",
+      "answer": "acquiesce",
+      "context": "Dudo que él accediera a tales condiciones exigentes sin negociación significativa.",
+      "distractors": [
+        "resist",
+        "protest",
+        "complain"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0185",
+      "target": "en",
+      "cloze": "The philanthropist's generous donations ___ the suffering of countless disadvantaged communities.",
+      "answer": "ameliorated",
+      "context": "Las donaciones generosas del filántropo mejoraron el sufrimiento de innumerables comunidades desfavorecidas.",
+      "distractors": [
+        "worsened",
+        "ignored",
+        "delayed"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0186",
+      "target": "en",
+      "cloze": "The novelist's vivid descriptions ___ readers completely in the fictional world she created.",
+      "answer": "immersed",
+      "context": "Las descripciones vívidas de la novelista sumergieron a los lectores completamente en el mundo ficticio que creó.",
+      "distractors": [
+        "confused",
+        "bored",
+        "distracted"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0187",
+      "target": "en",
+      "cloze": "It is imperative that scientists ___ the mechanisms underlying this mysterious biological phenomenon.",
+      "answer": "elucidate",
+      "context": "Es imperativo que los científicos diluciden los mecanismos subyacentes de este fenómeno biológico misterioso.",
+      "distractors": [
+        "obscure",
+        "complicate",
+        "ignore"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0188",
+      "target": "en",
+      "cloze": "The diplomat's judicious remarks helped to ___ tensions between the two nations.",
+      "answer": "mitigate",
+      "context": "Los comentarios juiciosos del diplomático ayudaron a mitigar las tensiones entre las dos naciones.",
+      "distractors": [
+        "escalate",
+        "intensify",
+        "ignore"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0189",
+      "target": "en",
+      "cloze": "The athlete's rigorous training regimen ___ in an outstanding performance at the championship.",
+      "answer": "culminated",
+      "context": "El régimen de entrenamiento riguroso del atleta culminó en un desempeño excepcional en el campeonato.",
+      "distractors": [
+        "began",
+        "interrupted",
+        "failed"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0190",
+      "target": "en",
+      "cloze": "The archaeologist's groundbreaking discovery ___ years of painstaking fieldwork and research.",
+      "answer": "vindicated",
+      "context": "El descubrimiento innovador del arqueólogo reivindicó años de trabajo de campo y investigación ardua.",
+      "distractors": [
+        "contradicted",
+        "undermined",
+        "questioned"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0191",
+      "target": "en",
+      "cloze": "The professor urged that all students ___ their claims with credible sources and evidence.",
+      "answer": "substantiate",
+      "context": "La profesora instó a que todos los estudiantes sustenten sus afirmaciones con fuentes y evidencia creíbles.",
+      "distractors": [
+        "doubt",
+        "refute",
+        "ignore"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0192",
+      "target": "en",
+      "cloze": "The chef decided to ___ the recipe with fresh herbs and spices.",
+      "answer": "augment",
+      "context": "El chef decidió aumentar la receta con hierbas y especias frescas.",
+      "distractors": [
+        "diminish",
+        "simplify",
+        "alter"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0193",
+      "target": "en",
+      "cloze": "She felt compelled to ___ for environmental protection in her community.",
+      "answer": "advocate",
+      "context": "Ella se sintió obligada a abogar por la protección ambiental en su comunidad.",
+      "distractors": [
+        "oppose",
+        "ignore",
+        "dismiss"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0194",
+      "target": "en",
+      "cloze": "The diplomat sought to ___ tensions between the two neighboring nations.",
+      "answer": "ameliorate",
+      "context": "El diplomático buscó mejorar las tensiones entre las dos naciones vecinas.",
+      "distractors": [
+        "worsen",
+        "prolong",
+        "intensify"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0195",
+      "target": "en",
+      "cloze": "His ___ speech captivated the entire audience for over an hour.",
+      "answer": "eloquent",
+      "context": "Su discurso elocuente cautivó a toda la audiencia durante más de una hora.",
+      "distractors": [
+        "mundane",
+        "tedious",
+        "monotonous"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0196",
+      "target": "en",
+      "cloze": "The botanist decided to ___ rare orchids in her greenhouse laboratory.",
+      "answer": "cultivate",
+      "context": "La botánica decidió cultivar orquídeas raras en su laboratorio de invernadero.",
+      "distractors": [
+        "neglect",
+        "abandon",
+        "ignore"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0197",
+      "target": "en",
+      "cloze": "We must ___ to understand different perspectives before making judgments.",
+      "answer": "endeavor",
+      "context": "Debemos esforzarnos por entender diferentes perspectivas antes de hacer juicios.",
+      "distractors": [
+        "refuse",
+        "avoid",
+        "postpone"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0198",
+      "target": "en",
+      "cloze": "The evidence seems to ___ him from all charges in the trial.",
+      "answer": "exonerate",
+      "context": "La evidencia parece exonerarlo de todos los cargos en el juicio.",
+      "distractors": [
+        "convict",
+        "incriminate",
+        "condemn"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0199",
+      "target": "en",
+      "cloze": "She chose to ___ the expensive vacation and save money instead.",
+      "answer": "forego",
+      "context": "Ella eligió renunciar a las vacaciones costosas y ahorrar dinero en su lugar.",
+      "distractors": [
+        "pursue",
+        "undertake",
+        "embrace"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0200",
+      "target": "en",
+      "cloze": "The museum decided to ___ the new gallery with priceless artifacts.",
+      "answer": "furnish",
+      "context": "El museo decidió amueblar la nueva galería con artefactos invaluables.",
+      "distractors": [
+        "strip",
+        "empty",
+        "remove"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0201",
+      "target": "en",
+      "cloze": "The author chose to ___ the historical context throughout her novel.",
+      "answer": "illuminate",
+      "context": "La autora eligió iluminar el contexto histórico a lo largo de su novela.",
+      "distractors": [
+        "obscure",
+        "darken",
+        "conceal"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0202",
+      "target": "en",
+      "cloze": "The scientist attempted to ___ the cause of the phenomenon from data.",
+      "answer": "infer",
+      "context": "El científico intentó inferir la causa del fenómeno a partir de los datos.",
+      "distractors": [
+        "ignore",
+        "dismiss",
+        "overlook"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0203",
+      "target": "en",
+      "cloze": "We must endeavor to ___ more creativity into our educational programs.",
+      "answer": "infuse",
+      "context": "Debemos esforzarnos por infundir más creatividad en nuestros programas educativos.",
+      "distractors": [
+        "drain",
+        "deplete",
+        "exhaust"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0204",
+      "target": "en",
+      "cloze": "The negotiators managed to ___ a peaceful agreement after weeks of talks.",
+      "answer": "forge",
+      "context": "Los negociadores lograron forjar un acuerdo pacífico después de semanas de conversaciones.",
+      "distractors": [
+        "break",
+        "shatter",
+        "dissolve"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0205",
+      "target": "en",
+      "cloze": "He felt obliged to ___ his absence from the important meeting yesterday.",
+      "answer": "justify",
+      "context": "Se sintió obligado a justificar su ausencia de la importante reunión ayer.",
+      "distractors": [
+        "conceal",
+        "hide",
+        "deny"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0206",
+      "target": "en",
+      "cloze": "The teacher encouraged students to ___ the assigned chapters carefully.",
+      "answer": "peruse",
+      "context": "La maestra animó a los estudiantes a leer cuidadosamente los capítulos asignados.",
+      "distractors": [
+        "skip",
+        "ignore",
+        "skim"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0207",
+      "target": "en",
+      "cloze": "The architect sought to ___ the structural problems in the building design.",
+      "answer": "rectify",
+      "context": "El arquitecto buscó rectificar los problemas estructurales en el diseño del edificio.",
+      "distractors": [
+        "compound",
+        "worsen",
+        "perpetuate"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0208",
+      "target": "en",
+      "cloze": "She decided to ___ her position to pursue her passion for art.",
+      "answer": "relinquish",
+      "context": "Ella decidió renunciar a su posición para perseguir su pasión por el arte.",
+      "distractors": [
+        "acquire",
+        "seize",
+        "claim"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0209",
+      "target": "en",
+      "cloze": "The researcher worked to ___ her hypothesis through rigorous experiments.",
+      "answer": "substantiate",
+      "context": "La investigadora trabajó para fundamentar su hipótesis mediante experimentos rigurosos.",
+      "distractors": [
+        "refute",
+        "disprove",
+        "contradict"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0210",
+      "target": "en",
+      "cloze": "The council convened to ___ on the proposed urban development project.",
+      "answer": "deliberate",
+      "context": "El consejo se reunió para deliberar sobre el proyecto propuesto de desarrollo urbano.",
+      "distractors": [
+        "rush",
+        "hasten",
+        "accelerate"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0211",
+      "target": "en",
+      "cloze": "His demeanor seemed ___ despite the chaos unfolding around him.",
+      "answer": "serene",
+      "context": "Su comportamiento parecía sereno a pesar del caos que se desarrollaba a su alrededor.",
+      "distractors": [
+        "frantic",
+        "agitated",
+        "turbulent"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0212",
+      "target": "en",
+      "cloze": "The painting was deemed ___ by art critics from around the world.",
+      "answer": "exquisite",
+      "context": "La pintura fue considerada exquisita por críticos de arte de todo el mundo.",
+      "distractors": [
+        "mediocre",
+        "ordinary",
+        "plain"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0213",
+      "target": "en",
+      "cloze": "The volunteer organization sought to ___ the effects of poverty in rural areas.",
+      "answer": "mitigate",
+      "context": "La organización de voluntarios buscó mitigar los efectos de la pobreza en zonas rurales.",
+      "distractors": [
+        "exacerbate",
+        "amplify",
+        "magnify"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0214",
+      "target": "en",
+      "cloze": "The detective ___ every detail of the crime scene with great attention.",
+      "answer": "scrutinized",
+      "context": "El detective examinó cada detalle de la escena del crimen con gran atención.",
+      "distractors": [
+        "glanced",
+        "overlooked",
+        "ignored"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0215",
+      "target": "en",
+      "cloze": "The treaty was considered a ___ to the nations' commitment to peace.",
+      "answer": "testament",
+      "context": "El tratado fue considerado un testimonio del compromiso de las naciones con la paz.",
+      "distractors": [
+        "burden",
+        "obstacle",
+        "hindrance"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0216",
+      "target": "en",
+      "cloze": "The young artist felt ___ in her decision to study sculpture abroad.",
+      "answer": "resolute",
+      "context": "La joven artista se sintió resuelta en su decisión de estudiar escultura en el extranjero.",
+      "distractors": [
+        "wavering",
+        "uncertain",
+        "doubtful"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0217",
+      "target": "en",
+      "cloze": "The ambassador will ___ a trade agreement between both nations.",
+      "answer": "negotiate",
+      "context": "El embajador negociará un acuerdo comercial entre ambas naciones.",
+      "distractors": [
+        "celebrate",
+        "postpone",
+        "document"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0218",
+      "target": "en",
+      "cloze": "She tends to ___ when facing difficult academic assignments.",
+      "answer": "procrastinate",
+      "context": "Ella tiende a procrastinar cuando enfrenta tareas académicas difíciles.",
+      "distractors": [
+        "accelerate",
+        "concentrate",
+        "deteriorate"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0219",
+      "target": "en",
+      "cloze": "The chef will ___ the plate with fresh herbs and edible flowers.",
+      "answer": "garnish",
+      "context": "El chef adornará el plato con hierbas frescas y flores comestibles.",
+      "distractors": [
+        "season",
+        "arrange",
+        "present"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0220",
+      "target": "en",
+      "cloze": "The detective began to ___ the evidence with meticulous attention.",
+      "answer": "scrutinize",
+      "context": "El detective comenzó a examinar minuciosamente la evidencia con atención cuidadosa.",
+      "distractors": [
+        "ignore",
+        "catalog",
+        "preserve"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0221",
+      "target": "en",
+      "cloze": "We must ___ the working conditions in the factory soon.",
+      "answer": "ameliorate",
+      "context": "Debemos mejorar las condiciones de trabajo en la fábrica pronto.",
+      "distractors": [
+        "monitor",
+        "evaluate",
+        "maintain"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0222",
+      "target": "en",
+      "cloze": "The witness will ___ the suspect's alibi during the trial.",
+      "answer": "corroborate",
+      "context": "El testigo corroborará la coartada del sospechoso durante el juicio.",
+      "distractors": [
+        "dispute",
+        "question",
+        "deny"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0223",
+      "target": "en",
+      "cloze": "The professor will ___ the complex theory through practical examples.",
+      "answer": "elucidate",
+      "context": "El profesor elucidará la teoría compleja a través de ejemplos prácticos.",
+      "distractors": [
+        "obscure",
+        "complicate",
+        "summarize"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0224",
+      "target": "en",
+      "cloze": "She decided to ___ her claim to the family inheritance.",
+      "answer": "relinquish",
+      "context": "Ella decidió renunciar a su derecho a la herencia familiar.",
+      "distractors": [
+        "contest",
+        "strengthen",
+        "pursue"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0225",
+      "target": "en",
+      "cloze": "The artist will ___ a unique style by combining traditional and modern techniques.",
+      "answer": "forge",
+      "context": "El artista forjará un estilo único combinando técnicas tradicionales y modernas.",
+      "distractors": [
+        "abandon",
+        "imitate",
+        "simplify"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0226",
+      "target": "en",
+      "cloze": "The government will ___ all necessary resources to support the research project.",
+      "answer": "furnish",
+      "context": "El gobierno proporcionará todos los recursos necesarios para apoyar el proyecto de investigación.",
+      "distractors": [
+        "withhold",
+        "restrict",
+        "deny"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0227",
+      "target": "en",
+      "cloze": "We must ___ the new safety protocols before the factory opens.",
+      "answer": "implement",
+      "context": "Debemos implementar los nuevos protocolos de seguridad antes de que abra la fábrica.",
+      "distractors": [
+        "defer",
+        "abandon",
+        "reconsider"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0228",
+      "target": "en",
+      "cloze": "The mediator will ___ to find common ground between the disputing parties.",
+      "answer": "endeavor",
+      "context": "El mediador se esforzará por encontrar terreno común entre las partes en disputa.",
+      "distractors": [
+        "refuse",
+        "hesitate",
+        "surrender"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0229",
+      "target": "en",
+      "cloze": "The music festival will ___ with a spectacular fireworks display.",
+      "answer": "culminate",
+      "context": "El festival de música culminará con un espectáculo de fuegos artificiales espectacular.",
+      "distractors": [
+        "commence",
+        "suspend",
+        "postpone"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0230",
+      "target": "en",
+      "cloze": "The teacher will ___ for increased funding in the arts department.",
+      "answer": "advocate",
+      "context": "La maestra abogará por un aumento de fondos en el departamento de artes.",
+      "distractors": [
+        "oppose",
+        "ignore",
+        "criticize"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0231",
+      "target": "en",
+      "cloze": "The students will ___ their interest in environmental conservation projects.",
+      "answer": "cultivate",
+      "context": "Los estudiantes cultivarán su interés en proyectos de conservación ambiental.",
+      "distractors": [
+        "abandon",
+        "suppress",
+        "diminish"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0232",
+      "target": "en",
+      "cloze": "The architect ___ the building design with remarkable precision and detail.",
+      "answer": "rendered",
+      "context": "El arquitecto presentó el diseño del edificio con precisión y detalle notables.",
+      "distractors": [
+        "sketched",
+        "imagined",
+        "conceived"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0233",
+      "target": "en",
+      "cloze": "The rescue team ___ exceptional courage while saving the trapped miners.",
+      "answer": "displayed",
+      "context": "El equipo de rescate mostró un coraje excepcional al salvar a los mineros atrapados.",
+      "distractors": [
+        "concealed",
+        "suppressed",
+        "hid"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0234",
+      "target": "en",
+      "cloze": "The evidence will ___ the defendant of all charges brought against him.",
+      "answer": "exonerate",
+      "context": "La evidencia exonerará al acusado de todos los cargos presentados en su contra.",
+      "distractors": [
+        "implicate",
+        "incriminate",
+        "convict"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0235",
+      "target": "en",
+      "cloze": "The composer will ___ traditional melodies with contemporary orchestral arrangements.",
+      "answer": "infuse",
+      "context": "El compositor infundirá melodías tradicionales con arreglos orquestales contemporáneos.",
+      "distractors": [
+        "drain",
+        "remove",
+        "extract"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0236",
+      "target": "en",
+      "cloze": "The patient ___ on receiving a second medical opinion before surgery.",
+      "answer": "insisted",
+      "context": "El paciente insistió en recibir una segunda opinión médica antes de la cirugía.",
+      "distractors": [
+        "suggested",
+        "proposed",
+        "mentioned"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0237",
+      "target": "en",
+      "cloze": "The diplomat will ___ the misunderstanding through careful diplomatic channels.",
+      "answer": "rectify",
+      "context": "El diplomático rectificará el malentendido a través de canales diplomáticos cuidadosos.",
+      "distractors": [
+        "worsen",
+        "ignore",
+        "escalate"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0238",
+      "target": "en",
+      "cloze": "The scholar will ___ her thesis with extensive historical documentation.",
+      "answer": "substantiate",
+      "context": "La erudita sustanciará su tesis con documentación histórica extensa.",
+      "distractors": [
+        "contradict",
+        "refute",
+        "undermine"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0239",
+      "target": "en",
+      "cloze": "The garden appears ___ and peaceful despite the bustling city nearby.",
+      "answer": "serene",
+      "context": "El jardín parece sereno y tranquilo a pesar de la ciudad bulliciosa cercana.",
+      "distractors": [
+        "chaotic",
+        "turbulent",
+        "agitated"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0240",
+      "target": "en",
+      "cloze": "The speaker delivered an ___ address that moved the entire audience.",
+      "answer": "eloquent",
+      "context": "El orador pronunció un discurso elocuente que conmovió a toda la audiencia.",
+      "distractors": [
+        "dull",
+        "monotonous",
+        "incoherent"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0241",
+      "target": "en",
+      "cloze": "The volunteers will ___ their weekend plans to help with the community cleanup.",
+      "answer": "forego",
+      "context": "Los voluntarios renunciarán a sus planes de fin de semana para ayudar con la limpieza comunitaria.",
+      "distractors": [
+        "schedule",
+        "arrange",
+        "plan"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0242",
+      "target": "en",
+      "cloze": "The ambassador will ___ to negotiate a peaceful resolution between the two nations.",
+      "answer": "endeavor",
+      "context": "El embajador se esforzará por negociar una resolución pacífica entre las dos naciones.",
+      "distractors": [
+        "attempt",
+        "refuse",
+        "delay"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0243",
+      "target": "en",
+      "cloze": "She ___ a deep passion for classical music throughout her entire adolescence.",
+      "answer": "cultivated",
+      "context": "Ella cultivó una pasión profunda por la música clásica durante toda su adolescencia.",
+      "distractors": [
+        "abandoned",
+        "suppressed",
+        "ignored"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0244",
+      "target": "en",
+      "cloze": "The detective ___ every detail of the crime scene with meticulous care.",
+      "answer": "scrutinized",
+      "context": "El detective examinó cada detalle de la escena del crimen con cuidado meticuloso.",
+      "distractors": [
+        "overlooked",
+        "dismissed",
+        "avoided"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0245",
+      "target": "en",
+      "cloze": "We must ___ the underlying causes of poverty to address this persistent problem.",
+      "answer": "illuminate",
+      "context": "Debemos iluminar las causas subyacentes de la pobreza para abordar este problema persistente.",
+      "distractors": [
+        "obscure",
+        "darken",
+        "conceal"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0246",
+      "target": "en",
+      "cloze": "His ___ speech persuaded the audience to support the environmental conservation initiative.",
+      "answer": "eloquent",
+      "context": "Su discurso elocuente persuadió a la audiencia a apoyar la iniciativa de conservación ambiental.",
+      "distractors": [
+        "monotonous",
+        "confused",
+        "unclear"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0247",
+      "target": "en",
+      "cloze": "The evidence will ___ the witness's account of the accident that occurred last week.",
+      "answer": "corroborate",
+      "context": "La evidencia corroborará el relato del testigo del accidente que ocurrió la semana pasada.",
+      "distractors": [
+        "contradict",
+        "refute",
+        "dispute"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0248",
+      "target": "en",
+      "cloze": "She decided to ___ ahead despite the numerous obstacles and setbacks in her path.",
+      "answer": "forge",
+      "context": "Ella decidió avanzar a pesar de los numerosos obstáculos y reveses en su camino.",
+      "distractors": [
+        "retreat",
+        "surrender",
+        "hesitate"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "en-0249",
+      "target": "en",
+      "cloze": "The musician will ___ a beautiful interpretation of the classical concerto at tonight's concert.",
+      "answer": "render",
+      "context": "El músico interpretará hermosamente el concierto clásico en el concierto de esta noche.",
+      "distractors": [
+        "ignore",
+        "skip",
+        "avoid"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0166",
+      "target": "es",
+      "cloze": "Es importante que los estudiantes ___ con dedicación para aprobar el examen.",
+      "answer": "estudien",
+      "context": "It is important that students study with dedication in order to pass the exam.",
+      "distractors": [
+        "trabajen",
+        "duerman",
+        "canten"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0167",
+      "target": "es",
+      "cloze": "El médico recomendó que mi abuelo ___ treinta minutos cada día.",
+      "answer": "caminara",
+      "context": "The doctor recommended that my grandfather walk thirty minutes every day.",
+      "distractors": [
+        "corriera",
+        "nadara",
+        "saltara"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0168",
+      "target": "es",
+      "cloze": "Aunque sea difícil, debemos ___ en nuestros objetivos profesionales.",
+      "answer": "perseverar",
+      "context": "Although it may be difficult, we must persevere in our professional goals.",
+      "distractors": [
+        "abandonar",
+        "rendirse",
+        "dudar"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0169",
+      "target": "es",
+      "cloze": "La literatura latinoamericana ha ___ profundamente en la cultura mundial.",
+      "answer": "influido",
+      "context": "Latin American literature has profoundly influenced world culture.",
+      "distractors": [
+        "separado",
+        "ignorado",
+        "rechazado"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0170",
+      "target": "es",
+      "cloze": "Es fundamental que ___ tus errores para poder mejorar constantemente.",
+      "answer": "reconozcas",
+      "context": "It is fundamental that you recognize your mistakes in order to improve constantly.",
+      "distractors": [
+        "olvides",
+        "niegues",
+        "escondas"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0171",
+      "target": "es",
+      "cloze": "Los agricultores ___ las semillas en primavera con mucha esperanza.",
+      "answer": "siembran",
+      "context": "The farmers sow the seeds in spring with great hope.",
+      "distractors": [
+        "cosechan",
+        "riegan",
+        "podan"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0172",
+      "target": "es",
+      "cloze": "Aunque ___ mañana, iremos al parque para disfrutar de la naturaleza.",
+      "answer": "llueva",
+      "context": "Even if it rains tomorrow, we will go to the park to enjoy nature.",
+      "distractors": [
+        "nieve",
+        "truene",
+        "granize"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0173",
+      "target": "es",
+      "cloze": "El historiador ___ documentos antiguos que revelaban secretos olvidados.",
+      "answer": "descubrió",
+      "context": "The historian discovered ancient documents that revealed forgotten secrets.",
+      "distractors": [
+        "perdió",
+        "escondió",
+        "guardó"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0174",
+      "target": "es",
+      "cloze": "Es posible que la empresa ___ sus operaciones en mercados internacionales.",
+      "answer": "amplíe",
+      "context": "It is possible that the company will expand its operations in international markets.",
+      "distractors": [
+        "reduzca",
+        "cierre",
+        "traslade"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0175",
+      "target": "es",
+      "cloze": "Mis padres insisten en que ___ mis estudios universitarios con éxito.",
+      "answer": "termine",
+      "context": "My parents insist that I finish my university studies successfully.",
+      "distractors": [
+        "comience",
+        "interrumpa",
+        "abandone"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0176",
+      "target": "es",
+      "cloze": "El compositor ___ una sinfonía hermosa que emocionó profundamente al público.",
+      "answer": "creó",
+      "context": "The composer created a beautiful symphony that deeply moved the audience.",
+      "distractors": [
+        "destruyó",
+        "copió",
+        "robó"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0177",
+      "target": "es",
+      "cloze": "Aunque ___ muy duro, debes recordar descansar adecuadamente cada noche.",
+      "answer": "trabajes",
+      "context": "Although you work very hard, you must remember to rest adequately every night.",
+      "distractors": [
+        "juegues",
+        "viajes",
+        "estudies"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0178",
+      "target": "es",
+      "cloze": "El artista ___ un cuadro extraordinario que reflejaba sus emociones más profundas.",
+      "answer": "pintó",
+      "context": "The artist painted an extraordinary painting that reflected his deepest emotions.",
+      "distractors": [
+        "esculpió",
+        "grabó",
+        "dibujó"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0179",
+      "target": "es",
+      "cloze": "Es esencial que todos ___ activamente en la construcción de una sociedad justa.",
+      "answer": "contribuyamos",
+      "context": "It is essential that we all actively contribute to building a just society.",
+      "distractors": [
+        "ignoremos",
+        "obstaculicemos",
+        "saboteemos"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0180",
+      "target": "es",
+      "cloze": "La investigadora ___ cuidadosamente los datos para obtener conclusiones válidas.",
+      "answer": "analizó",
+      "context": "The researcher carefully analyzed the data to obtain valid conclusions.",
+      "distractors": [
+        "inventó",
+        "falsificó",
+        "ignoró"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0181",
+      "target": "es",
+      "cloze": "Espero que mis amigos ___ mi decisión de cambiar de carrera profesional.",
+      "answer": "comprendan",
+      "context": "I hope that my friends understand my decision to change my professional career.",
+      "distractors": [
+        "critiquen",
+        "rechacen",
+        "cuestionen"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0182",
+      "target": "es",
+      "cloze": "El ingeniero ___ una estructura innovadora que revolucionó la industria completamente.",
+      "answer": "diseñó",
+      "context": "The engineer designed an innovative structure that completely revolutionized the industry.",
+      "distractors": [
+        "destruyó",
+        "copió",
+        "modificó"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0183",
+      "target": "es",
+      "cloze": "Es probable que ___ este fin de semana, así que prepara tu paraguas.",
+      "answer": "llueva",
+      "context": "It is likely that it will rain this weekend, so prepare your umbrella.",
+      "distractors": [
+        "nieve",
+        "granize",
+        "truene"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0184",
+      "target": "es",
+      "cloze": "El novelista ___ una obra maestra que cautivó a millones de lectores.",
+      "answer": "escribió",
+      "context": "The novelist wrote a masterpiece that captivated millions of readers.",
+      "distractors": [
+        "borró",
+        "quemó",
+        "rasgó"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0185",
+      "target": "es",
+      "cloze": "Aunque sea costoso, debemos ___ en educación para asegurar nuestro futuro.",
+      "answer": "invertir",
+      "context": "Although it may be expensive, we must invest in education to ensure our future.",
+      "distractors": [
+        "gastar",
+        "perder",
+        "derrochar"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0186",
+      "target": "es",
+      "cloze": "La científica descubrió una vacuna que ___ enfermedades infecciosas graves.",
+      "answer": "prevenía",
+      "context": "The scientist discovered a vaccine that prevented serious infectious diseases.",
+      "distractors": [
+        "causaba",
+        "propagaba",
+        "intensificaba"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0187",
+      "target": "es",
+      "cloze": "Es vital que ___ tu salud mental practicando meditación regularmente.",
+      "answer": "protejas",
+      "context": "It is vital that you protect your mental health by practicing meditation regularly.",
+      "distractors": [
+        "descuides",
+        "ignores",
+        "abandones"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0188",
+      "target": "es",
+      "cloze": "El músico ___ la pieza clásica con una sensibilidad extraordinaria.",
+      "answer": "interpretó",
+      "context": "The musician performed the classical piece with extraordinary sensitivity.",
+      "distractors": [
+        "ignoró",
+        "parodió",
+        "simplificó"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0189",
+      "target": "es",
+      "cloze": "Aunque haya dificultades, confío en que ___ nuestros sueños juntos.",
+      "answer": "lograremos",
+      "context": "Although there may be difficulties, I trust that we will achieve our dreams together.",
+      "distractors": [
+        "perderemos",
+        "abandonaremos",
+        "olvidaremos"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0190",
+      "target": "es",
+      "cloze": "El arquitecto ___ un edificio sostenible que respeta el medio ambiente completamente.",
+      "answer": "construyó",
+      "context": "The architect built a sustainable building that completely respects the environment.",
+      "distractors": [
+        "demolió",
+        "dañó",
+        "contaminó"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0191",
+      "target": "es",
+      "cloze": "Espero que los estudiantes ___ la importancia de la lectura diaria.",
+      "answer": "comprendan",
+      "context": "I hope that the students understand the importance of daily reading.",
+      "distractors": [
+        "olviden",
+        "ignoren",
+        "rechacen"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0192",
+      "target": "es",
+      "cloze": "El arquitecto ___ un edificio moderno con características sostenibles.",
+      "answer": "diseñó",
+      "context": "The architect designed a modern building with sustainable features.",
+      "distractors": [
+        "demolió",
+        "visitó",
+        "fotografió"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0193",
+      "target": "es",
+      "cloze": "Aunque ___ mañana, iremos al parque para caminar juntos.",
+      "answer": "llueva",
+      "context": "Even if it rains tomorrow, we will go to the park to walk together.",
+      "distractors": [
+        "nieve",
+        "truene",
+        "ventee"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0194",
+      "target": "es",
+      "cloze": "Los campesinos ___ las semillas en primavera para la cosecha futura.",
+      "answer": "siembran",
+      "context": "The farmers plant the seeds in spring for the future harvest.",
+      "distractors": [
+        "cosechan",
+        "riegan",
+        "podan"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0195",
+      "target": "es",
+      "cloze": "Es fundamental que ___ tus datos personales en las redes sociales.",
+      "answer": "protejas",
+      "context": "It is essential that you protect your personal data on social media.",
+      "distractors": [
+        "compartas",
+        "publiques",
+        "expongas"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0196",
+      "target": "es",
+      "cloze": "El investigador ___ una nueva especie de mariposa en la selva amazónica.",
+      "answer": "descubrió",
+      "context": "The researcher discovered a new species of butterfly in the Amazon rainforest.",
+      "distractors": [
+        "perdió",
+        "capturó",
+        "liberó"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0197",
+      "target": "es",
+      "cloze": "Recomiendo que ___ con dedicación para lograr excelentes resultados académicos.",
+      "answer": "estudien",
+      "context": "I recommend that you study with dedication to achieve excellent academic results.",
+      "distractors": [
+        "jueguen",
+        "duerman",
+        "viajen"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0198",
+      "target": "es",
+      "cloze": "La novela que ___ el autor fue traducida a quince idiomas diferentes.",
+      "answer": "escribió",
+      "context": "The novel that the author wrote was translated into fifteen different languages.",
+      "distractors": [
+        "ilustró",
+        "publicó",
+        "vendió"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0199",
+      "target": "es",
+      "cloze": "Sugiero que ___ el proyecto antes de que llegue la fecha límite.",
+      "answer": "termine",
+      "context": "I suggest that you finish the project before the deadline arrives.",
+      "distractors": [
+        "comience",
+        "retrase",
+        "abandone"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0200",
+      "target": "es",
+      "cloze": "El artista ___ un mural impresionante en la pared del centro comunitario.",
+      "answer": "pintó",
+      "context": "The artist painted an impressive mural on the wall of the community center.",
+      "distractors": [
+        "grabó",
+        "esculpió",
+        "modeló"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0201",
+      "target": "es",
+      "cloze": "Es importante que ___ en tus objetivos aunque enfrentes obstáculos significativos.",
+      "answer": "perseveres",
+      "context": "It is important that you persevere in your goals even though you face significant obstacles.",
+      "distractors": [
+        "desistas",
+        "claudiques",
+        "retrocedas"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0202",
+      "target": "es",
+      "cloze": "___ juntos a la comunidad local mediante voluntariado constante.",
+      "answer": "Contribuyamos",
+      "context": "Let us contribute together to the local community through constant volunteering.",
+      "distractors": [
+        "Evitemos",
+        "Ignoremos",
+        "Abandonemos"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0203",
+      "target": "es",
+      "cloze": "El científico ___ los datos cuidadosamente para sacar conclusiones válidas.",
+      "answer": "analizó",
+      "context": "The scientist analyzed the data carefully to draw valid conclusions.",
+      "distractors": [
+        "falsificó",
+        "ocultó",
+        "ignoró"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0204",
+      "target": "es",
+      "cloze": "Dudo que ___ completar toda la obra antes del próximo mes.",
+      "answer": "lograremos",
+      "context": "I doubt that we will manage to complete all the work before next month.",
+      "distractors": [
+        "impediremos",
+        "atrasaremos",
+        "suspenderemos"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0205",
+      "target": "es",
+      "cloze": "El músico ___ la sinfonía con una precisión y elegancia excepcionales.",
+      "answer": "tocó",
+      "context": "The musician played the symphony with exceptional precision and elegance.",
+      "distractors": [
+        "compuso",
+        "grabó",
+        "dirigió"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0206",
+      "target": "es",
+      "cloze": "___ que su propuesta no sea aceptada por los miembros del comité.",
+      "answer": "Teme",
+      "context": "He fears that his proposal will not be accepted by the committee members.",
+      "distractors": [
+        "Espera",
+        "Confía",
+        "Cree"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0207",
+      "target": "es",
+      "cloze": "La empresa ___ una fábrica nueva con tecnología de punta en la región.",
+      "answer": "construyó",
+      "context": "The company built a new factory with cutting-edge technology in the region.",
+      "distractors": [
+        "demolió",
+        "alquiló",
+        "vendió"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0208",
+      "target": "es",
+      "cloze": "Es aconsejable que ___ en educación continua para mejorar tu carrera profesional.",
+      "answer": "inviertas",
+      "context": "It is advisable that you invest in continuous education to improve your professional career.",
+      "distractors": [
+        "malgastes",
+        "ahorres",
+        "derroches"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0209",
+      "target": "es",
+      "cloze": "El compositor ___ una melodía hermosa que cautivó a toda la audiencia presente.",
+      "answer": "creó",
+      "context": "The composer created a beautiful melody that captivated the entire audience present.",
+      "distractors": [
+        "destruyó",
+        "copiò",
+        "robó"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0210",
+      "target": "es",
+      "cloze": "___ o no tus errores, debes aprender de ellos para crecer personalmente.",
+      "answer": "Reconozcas",
+      "context": "Whether you acknowledge your mistakes or not, you must learn from them to grow personally.",
+      "distractors": [
+        "Niegues",
+        "Justifiques",
+        "Ocultes"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0211",
+      "target": "es",
+      "cloze": "El historiador ___ los documentos antiguos con gran conocimiento y perspicacia.",
+      "answer": "interpretó",
+      "context": "The historian interpreted the ancient documents with great knowledge and perspicacity.",
+      "distractors": [
+        "perdió",
+        "quemó",
+        "vendió"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0212",
+      "target": "es",
+      "cloze": "Prefiero que ___ por el parque temprano en la mañana para relajarse.",
+      "answer": "caminara",
+      "context": "I prefer that you walk through the park early in the morning to relax.",
+      "distractors": [
+        "corriera",
+        "nadara",
+        "volara"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0213",
+      "target": "es",
+      "cloze": "El filósofo ___ sus argumentos para que la audiencia comprenda mejor su teoría.",
+      "answer": "amplíe",
+      "context": "The philosopher expanded his arguments so that the audience could better understand his theory.",
+      "distractors": [
+        "reduzca",
+        "elimine",
+        "simplifique"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0214",
+      "target": "es",
+      "cloze": "Aunque fue ___ por sus maestros, desarrolló un estilo artístico único y personal.",
+      "answer": "influido",
+      "context": "Although he was influenced by his teachers, he developed a unique and personal artistic style.",
+      "distractors": [
+        "instruido",
+        "engañado",
+        "abandonado"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0215",
+      "target": "es",
+      "cloze": "El médico ___ enfermedades mediante campañas de conciencia sobre la salud pública.",
+      "answer": "prevenía",
+      "context": "The doctor prevented diseases through awareness campaigns about public health.",
+      "distractors": [
+        "provocaba",
+        "curaba",
+        "diagnosticaba"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0216",
+      "target": "es",
+      "cloze": "Espero que mañana ___ mejor tiempo para nuestra excursión.",
+      "answer": "haga",
+      "context": "I hope that tomorrow the weather will be better for our excursion.",
+      "distractors": [
+        "sea",
+        "esté",
+        "viene"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0217",
+      "target": "es",
+      "cloze": "El médico recomendó que ___ una dieta más saludable.",
+      "answer": "siguieras",
+      "context": "The doctor recommended that you follow a healthier diet.",
+      "distractors": [
+        "hagas",
+        "comes",
+        "bebes"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0218",
+      "target": "es",
+      "cloze": "Es importante que los estudiantes ___ los conceptos fundamentales.",
+      "answer": "comprendan",
+      "context": "It is important that students understand the fundamental concepts.",
+      "distractors": [
+        "aprendan",
+        "olviden",
+        "recuerden"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0219",
+      "target": "es",
+      "cloze": "Dudo que ___ terminar el proyecto antes del viernes.",
+      "answer": "puedas",
+      "context": "I doubt that you can finish the project before Friday.",
+      "distractors": [
+        "logres",
+        "quieras",
+        "intentes"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0220",
+      "target": "es",
+      "cloze": "Le aconsejé que no ___ tanto dinero en ropa innecesaria.",
+      "answer": "gastara",
+      "context": "I advised her not to spend so much money on unnecessary clothes.",
+      "distractors": [
+        "ahorrara",
+        "guardara",
+        "invirtiera"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0221",
+      "target": "es",
+      "cloze": "Es probable que ___ durante la tarde según el pronóstico.",
+      "answer": "llueva",
+      "context": "It is likely that it will rain during the afternoon according to the forecast.",
+      "distractors": [
+        "nieve",
+        "truene",
+        "granize"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0222",
+      "target": "es",
+      "cloze": "Queremos que ___ de tus vacaciones sin preocupaciones.",
+      "answer": "disfrutes",
+      "context": "We want you to enjoy your vacation without worries.",
+      "distractors": [
+        "descanses",
+        "viajes",
+        "relajes"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0223",
+      "target": "es",
+      "cloze": "No creo que ___ posible resolver este problema matemático tan rápido.",
+      "answer": "sea",
+      "context": "I do not believe it is possible to solve this math problem so quickly.",
+      "distractors": [
+        "esté",
+        "fuera",
+        "haya"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0224",
+      "target": "es",
+      "cloze": "Te pido que me ___ con las tareas del hogar esta semana.",
+      "answer": "ayudes",
+      "context": "I ask you to help me with the household chores this week.",
+      "distractors": [
+        "apoyes",
+        "colabores",
+        "participes"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0225",
+      "target": "es",
+      "cloze": "Es necesario que todos ___ al bienestar de nuestra comunidad.",
+      "answer": "contribuyamos",
+      "context": "It is necessary that we all contribute to the well-being of our community.",
+      "distractors": [
+        "ayudemos",
+        "trabajemos",
+        "participemos"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0226",
+      "target": "es",
+      "cloze": "Insisto en que ___ las opiniones de los demás siempre.",
+      "answer": "respetes",
+      "context": "I insist that you respect the opinions of others always.",
+      "distractors": [
+        "valores",
+        "escuches",
+        "aceptes"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0227",
+      "target": "es",
+      "cloze": "Es fundamental que ___ tu información personal en internet.",
+      "answer": "protejas",
+      "context": "It is fundamental that you protect your personal information on the internet.",
+      "distractors": [
+        "cuides",
+        "guardes",
+        "resguardes"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0228",
+      "target": "es",
+      "cloze": "Sugiero que ___ el museo de arte contemporáneo el próximo mes.",
+      "answer": "visitemos",
+      "context": "I suggest that we visit the contemporary art museum next month.",
+      "distractors": [
+        "exploremos",
+        "recorramos",
+        "conozcamos"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0229",
+      "target": "es",
+      "cloze": "Es vital que ___ tus errores para poder mejorar continuamente.",
+      "answer": "reconozcas",
+      "context": "It is vital that you recognize your mistakes in order to improve continuously.",
+      "distractors": [
+        "admitas",
+        "aceptes",
+        "veas"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0230",
+      "target": "es",
+      "cloze": "Prefiero que no ___ este asunto delante de mis padres.",
+      "answer": "menciones",
+      "context": "I prefer that you do not mention this matter in front of my parents.",
+      "distractors": [
+        "hables",
+        "comentes",
+        "cuentes"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0231",
+      "target": "es",
+      "cloze": "El profesor exige que ___ la tarea completamente resuelta.",
+      "answer": "entregues",
+      "context": "The teacher demands that you turn in the assignment completely solved.",
+      "distractors": [
+        "presentes",
+        "muestres",
+        "compartas"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0232",
+      "target": "es",
+      "cloze": "Es conveniente que ___ a estudiar para el examen final ahora.",
+      "answer": "empieces",
+      "context": "It is convenient that you start studying for the final exam now.",
+      "distractors": [
+        "comiences",
+        "inicies",
+        "arranques"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0233",
+      "target": "es",
+      "cloze": "No permitiré que ___ tus sueños por miedo al fracaso.",
+      "answer": "abandones",
+      "context": "I will not allow you to abandon your dreams out of fear of failure.",
+      "distractors": [
+        "dejes",
+        "renuncies",
+        "olvides"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0234",
+      "target": "es",
+      "cloze": "Es posible que ___ alcanzar nuestras metas si trabajamos juntos.",
+      "answer": "lograremos",
+      "context": "It is possible that we will achieve our goals if we work together.",
+      "distractors": [
+        "conseguiremos",
+        "alcanzaremos",
+        "realizaremos"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0235",
+      "target": "es",
+      "cloze": "Te ruego que no ___ tarde a la reunión de mañana.",
+      "answer": "llegues",
+      "context": "I beg you not to arrive late to tomorrow's meeting.",
+      "distractors": [
+        "vengas",
+        "acudas",
+        "asistas"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0236",
+      "target": "es",
+      "cloze": "Es importante que ___ flores en el jardín durante la primavera.",
+      "answer": "siembren",
+      "context": "It is important that they plant flowers in the garden during spring.",
+      "distractors": [
+        "planten",
+        "cultiven",
+        "arranquen"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0237",
+      "target": "es",
+      "cloze": "Espero que ___ en tu carrera profesional a pesar de los obstáculos.",
+      "answer": "perseveres",
+      "context": "I hope you persevere in your professional career despite the obstacles.",
+      "distractors": [
+        "persistas",
+        "continúes",
+        "aguantes"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0238",
+      "target": "es",
+      "cloze": "Es recomendable que ___ tiempo en actividades que te apasionan.",
+      "answer": "inviertas",
+      "context": "It is advisable that you invest time in activities that you are passionate about.",
+      "distractors": [
+        "dediques",
+        "gastes",
+        "emplees"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0239",
+      "target": "es",
+      "cloze": "No es probable que ___ el informe antes de las cinco de la tarde.",
+      "answer": "termine",
+      "context": "It is not likely that I will finish the report before five in the afternoon.",
+      "distractors": [
+        "acabe",
+        "concluya",
+        "finalice"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0240",
+      "target": "es",
+      "cloze": "Deseo que ___ tus horizontes viajando a nuevos países cada año.",
+      "answer": "amplíes",
+      "context": "I wish that you broaden your horizons by traveling to new countries each year.",
+      "distractors": [
+        "expandes",
+        "extiendes",
+        "aumentas"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0241",
+      "target": "es",
+      "cloze": "Espero que no ___ tus responsabilidades durante este período difícil.",
+      "answer": "descuides",
+      "context": "I hope you don't neglect your responsibilities during this difficult period.",
+      "distractors": [
+        "abandones",
+        "olvides",
+        "ignores"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0242",
+      "target": "es",
+      "cloze": "El maestro sugirió que ___ nuestro conocimiento mediante la lectura constante.",
+      "answer": "ampliáramos",
+      "context": "The teacher suggested that we expand our knowledge through constant reading.",
+      "distractors": [
+        "profundizáramos",
+        "mejoráramos",
+        "desarrolláramos"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0243",
+      "target": "es",
+      "cloze": "Es probable que ___ mañana, así que lleva un paraguas contigo.",
+      "answer": "llueva",
+      "context": "It's likely to rain tomorrow, so bring an umbrella with you.",
+      "distractors": [
+        "nieve",
+        "granizce",
+        "truene"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0244",
+      "target": "es",
+      "cloze": "Dudo que hayas ___ completamente el significado profundo de esa metáfora literaria.",
+      "answer": "comprendido",
+      "context": "I doubt you fully understood the deep meaning of that literary metaphor.",
+      "distractors": [
+        "interpretado",
+        "analizado",
+        "estudiado"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0245",
+      "target": "es",
+      "cloze": "Te ruego que no ___ tus sueños aunque enfrentes obstáculos inesperados.",
+      "answer": "abandones",
+      "context": "I beg you not to abandon your dreams even though you face unexpected obstacles.",
+      "distractors": [
+        "desistas",
+        "renuncies",
+        "postergues"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0246",
+      "target": "es",
+      "cloze": "Es fundamental que ___ en tus esfuerzos para alcanzar la excelencia académica.",
+      "answer": "perseveres",
+      "context": "It is fundamental that you persevere in your efforts to achieve academic excellence.",
+      "distractors": [
+        "insistas",
+        "continúes",
+        "resistas"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0247",
+      "target": "es",
+      "cloze": "Aunque sea difícil, es importante que ___ las opiniones de los demás.",
+      "answer": "respetes",
+      "context": "Although it's difficult, it's important that you respect others' opinions.",
+      "distractors": [
+        "valores",
+        "consideres",
+        "escuches"
+      ],
+      "difficulty": "advanced"
+    },
+    {
+      "id": "es-0248",
+      "target": "es",
+      "cloze": "El científico recomendó que ___ más recursos en la investigación sostenible.",
+      "answer": "invirtiéramos",
+      "context": "The scientist recommended that we invest more resources in sustainable research.",
+      "distractors": [
+        "destináramos",
+        "asignáramos",
+        "empleáramos"
+      ],
+      "difficulty": "advanced"
+    }
+  ]
+}

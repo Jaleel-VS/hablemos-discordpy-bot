@@ -63,10 +63,10 @@ See [`cogs/crossword.md`](./cogs/crossword.md) for the full feature.
 ## Activity games (embedded app)
 
 The bot has an embedded [Discord Activity](./activity.md) hosting single-player
-Spanish games (Wordle, Conjugation). These commands post a button that launches
-the app. The app shows a game hub when more than one game is registered, so a
-launcher button lands on the menu (Discord's launch has no deep-link parameter —
-see [`cogs/wordle.md`](./cogs/wordle.md)).
+Spanish games (Wordle, Conjugation, Cloze). These commands post a button that
+launches the app. The app shows a game hub when more than one game is
+registered, so a launcher button lands on the menu (Discord's launch has no
+deep-link parameter — see [`cogs/wordle.md`](./cogs/wordle.md)).
 
 | Command | Description |
 |---------|-------------|
@@ -81,8 +81,8 @@ Owner-only, for inspecting what the Activity has persisted (see
 | `$activity_stats` / `$astats` | Server-wide totals per game (bare call). |
 | `$activity_stats totals` | Games, players, daily/free split, wins, unpublished daily rows, per game. |
 | `$activity_stats health` | Results-poster backlog: unposted daily count, oldest pending age, target channel. |
-| `$activity_stats streaks [game]` | Top 10 daily streaks for a game (default `wordle`). |
-| `$activity_stats user <member> [game]` | A player's daily games/wins/streaks/distribution (default `wordle`). |
+| `$activity_stats streaks [game]` | Top 10 daily streaks for a game (default `wordle`; also `conjugation`, `cloze`). |
+| `$activity_stats user <member> [game]` | A player's daily games/wins/streaks/distribution (default `wordle`; also `conjugation`, `cloze`). |
 
 ## Introductions
 

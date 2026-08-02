@@ -7,6 +7,7 @@
 import type { ComponentType } from "react";
 import Wordle from "./wordle/Wordle";
 import Conjugation from "./conjugation/Conjugation";
+import Cloze from "./cloze/Cloze";
 
 export interface GameProps {
   accessToken: string;
@@ -35,5 +36,11 @@ export const GAME_REGISTRY: Record<string, GameMeta> = {
     glyph: "↻",
     hue: 285,
     component: Conjugation,
+  },
+  cloze: {
+    tagline: "Completa la palabra que falta",
+    glyph: "▭",
+    hue: 35,
+    component: Cloze,
   },
 };
