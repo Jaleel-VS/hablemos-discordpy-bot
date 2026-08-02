@@ -1283,3 +1283,13 @@ body {
   max-width: 460px;
   margin: 0 auto;
 }
+
+.round-daily-tag {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: oklch(0.72 0.15 35);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: oklch(0.72 0.15 35 / 0.12);
+}

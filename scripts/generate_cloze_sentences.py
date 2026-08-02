@@ -93,6 +93,12 @@ _LANG_NAMES = {
 #: the output token budget and keep a single bad batch cheap to discard.
 _BATCH = 25
 
+#: Hard floor per (target, difficulty) bucket regardless of --min-fill: a deck
+#: needs at least a full daily round (10) of cards per difficulty, plus headroom
+#: so the deterministic daily can pick a non-repeating set. Mirrors the engine's
+#: ROUND_SIZE (kept in sync manually — both are 10).
+ROUND_MIN = 10
+
 #: Bedrock inference config — deterministic-ish, bounded output.
 _MAX_TOKENS = 4096
 _TEMPERATURE = 0.8
@@ -142,8 +148,18 @@ def _prompt(target: str, difficulty: str, count: int, avoid: list[str]) -> str:
         f"- The answer word must appear EXACTLY as written in the {target_name} "
         f"sentence (same spelling and accents, case-insensitive).\n"
         f"- Provide exactly 3 distractor words in {target_name}: the same part of "
-        f"speech as the answer, plausible but clearly WRONG in this sentence, all "
-        f"different from each other and from the answer.\n"
+        f"speech AND the same grammatical form (tense, mood, number, gender) as "
+        f"the answer, but each clearly WRONG in this sentence because its MEANING "
+        f"does not fit. A distractor must NEVER be a synonym or near-synonym of "
+        f"the answer, and must never be an equally-correct alternative — exactly "
+        f"one word (the answer) may correctly complete the sentence. All three "
+        f"distractors differ from each other and from the answer.\n"
+        f"- Grammar must be correct: if the sentence needs the subjunctive "
+        f"(e.g. after 'dudo que', 'es posible que', 'prefiero que', 'para que', "
+        f"'ojalá'), the answer AND all distractors must be in the correct "
+        f"subjunctive form. The answer's tense/mood must match the "
+        f"{context_name} translation (a past-tense translation needs a past-tense "
+        f"answer, etc.).\n"
         f"- Keep sentences wholesome and generally useful for learners.{avoid_clause}\n\n"
         f'Return ONLY a JSON array of exactly {count} objects, no prose, no markdown '
         f'fences. Each object: '
@@ -224,6 +240,29 @@ def _norm(text: str) -> str:
     return " ".join(unicodedata.normalize("NFC", text).strip().lower().split())
 
 
+# Private-use codepoint that shields ñ/Ñ from the combining-mark strip — the
+# exact same technique the runtime normalizer uses, so this key matches the
+# grader's notion of "equal ignoring accents" (its CLOSE tier).
+_ENYE_SENTINEL = "\uE000"
+
+
+def _accent_key(text: str) -> str:
+    """Accent-stripped comparison key, preserving ñ as a letter.
+
+    Mirrors ``app.games.conjugation.normalize._strip_accents``: the runtime
+    grader gives **full credit (CLOSE)** when two forms match after stripping
+    accents, so a distractor that differs from the answer *only* by accents
+    (e.g. answer ``él`` vs distractor ``el``) would be accepted as correct.
+    Building distractor-dedup on this key lets validation reject such
+    accent-equivalent distractors, keeping validation aligned with grading.
+    """
+    normalized = unicodedata.normalize("NFC", text).strip().lower()
+    shielded = normalized.replace("ñ", _ENYE_SENTINEL)
+    decomposed = unicodedata.normalize("NFD", shielded)
+    stripped = "".join(ch for ch in decomposed if unicodedata.category(ch) != "Mn")
+    return " ".join(stripped.replace(_ENYE_SENTINEL, "ñ").split())
+
+
 # Word-boundary match that is Unicode-aware (Python's \b treats accented letters
 # as word chars), so we can confirm the answer appears as a whole word and build
 # the blanked form by replacing that occurrence.
@@ -289,14 +328,18 @@ def _validate_card(
         return None  # answer not present as a whole word — unusable prompt
 
     # Distractors: strings, non-empty, distinct from each other and the answer.
+    # Dedup on the ACCENT-STRIPPED key (not just _norm), because the runtime
+    # grader awards full credit (CLOSE) when a guess matches ignoring accents —
+    # so a distractor that differs from the answer only by accents would grade
+    # as correct if picked. Rejecting on _accent_key keeps validation aligned
+    # with grading and prevents that false-positive.
     clean_distractors: list[str] = []
-    answer_key = _norm(answer)
-    seen_local = {answer_key}
+    seen_local = {_accent_key(answer)}
     for d in distractors:
         if not isinstance(d, str):
             continue
         d = d.strip()
-        key = _norm(d)
+        key = _accent_key(d)
         if not d or key in seen_local:
             continue
         seen_local.add(key)
@@ -411,6 +454,15 @@ def main() -> int:
         help="print a summary without writing the JSON",
     )
     parser.add_argument(
+        "--min-fill", type=float, default=0.8,
+        help=("minimum fraction of each bucket's per-difficulty target that must "
+              "be reached before writing (default: 0.8); ignored with --merge"),
+    )
+    parser.add_argument(
+        "--allow-underfill", action="store_true",
+        help="write even if some buckets fall below --min-fill (after review)",
+    )
+    parser.add_argument(
         "--no-auth", action="store_true",
         help="skip the `ada credentials update` refresh (assume creds are fresh)",
     )
@@ -476,6 +528,39 @@ def main() -> int:
     for bucket in sorted(counts):
         print(f"  {bucket}: {counts[bucket]}")
     print(f"  TOTAL: {len(combined)}")
+
+    # Underfill guard: a partially-successful run (Bedrock throttling, a run of
+    # unparseable batches) can leave a bucket far short of target. Writing that
+    # would silently replace a healthy corpus with a lopsided one — e.g. a deck
+    # with too few cards for a non-repeating daily round. Refuse unless every
+    # (target, difficulty) bucket reaches --min-fill of its per-difficulty goal.
+    # --merge is exempt (the existing pool backstops thin new buckets); a run
+    # can still be forced with --allow-underfill after review.
+    if not args.merge:
+        floor = max(ROUND_MIN, int(per_difficulty * args.min_fill))
+        thin = {
+            f"{t}/{dfc}": counts.get(f"{t}/{dfc}", 0)
+            for t in targets for dfc in DIFFICULTIES
+            if counts.get(f"{t}/{dfc}", 0) < floor
+        }
+        if thin:
+            print(
+                f"\nUnderfilled buckets (< {floor} = {args.min_fill:.0%} of "
+                f"{per_difficulty}):",
+                file=sys.stderr,
+            )
+            for bucket in sorted(thin):
+                print(f"  - {bucket}: {thin[bucket]}", file=sys.stderr)
+            if not args.allow_underfill:
+                print(
+                    "\nRefusing to write a lopsided corpus (would shrink a deck's "
+                    "daily/freeplay pool). Re-run — or pass --allow-underfill once "
+                    "you've accepted these counts, or --merge to top up in place.",
+                    file=sys.stderr,
+                )
+                return 1
+            print("\n--allow-underfill set: writing the thin corpus anyway.",
+                  file=sys.stderr)
 
     if args.dry_run:
         print("\n--dry-run: not writing. Sample cards:")

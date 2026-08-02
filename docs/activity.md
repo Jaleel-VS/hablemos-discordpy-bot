@@ -210,8 +210,12 @@ conjugation sprint).
   its verbecc paradigms. Re-run with `--merge` to grow the pool over time.
 - **Daily** is a deterministic 10-card pick by date (hash of puzzle number +
   position, non-repeating within a round) so everyone drills the same cards; it
-  counts toward streaks and posts to the results channel. **Freeplay** is a
-  random round with the player's chosen deck / difficulty / answer mode.
+  counts toward streaks and posts to the results channel. Because it feeds
+  streaks, the daily must be **completed** (all 10 cards answered) to count — an
+  early "Terminar" is rejected and an abandoned daily simply doesn't count that
+  day, and a saved daily token is rejected once its date has passed (mirrors the
+  Wordle daily date gate). **Freeplay** is a random round with the player's
+  chosen deck / difficulty / answer mode and may be ended any time.
 - **Daily anti-harvest.** Like the conjugation daily, per-card feedback
   **withholds the answer in daily mode** (the client gets the
   `exact`/`close`/`wrong` flag but not the correct word — disclosed only in the

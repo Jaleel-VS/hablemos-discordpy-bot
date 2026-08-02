@@ -2664,9 +2664,9 @@
       "answer": "contains",
       "context": "El pastel contiene huevos, harina y azúcar.",
       "distractors": [
-        "needs",
-        "requires",
-        "includes"
+        "hides",
+        "weighs",
+        "breaks"
       ],
       "difficulty": "intermediate"
     },
@@ -3730,9 +3730,9 @@
       "answer": "felices",
       "context": "The children are very happy in the park now.",
       "distractors": [
-        "contentos",
-        "alegres",
-        "emocionados"
+        "cansados",
+        "aburridos",
+        "enojados"
       ],
       "difficulty": "intermediate"
     },
@@ -4369,7 +4369,7 @@
       "distractors": [
         "cautious",
         "anxious",
-        "determined"
+        "hesitant"
       ],
       "difficulty": "advanced"
     },
@@ -5898,12 +5898,12 @@
       "id": "es-0204",
       "target": "es",
       "cloze": "Dudo que ___ completar toda la obra antes del próximo mes.",
-      "answer": "lograremos",
+      "answer": "logremos",
       "context": "I doubt that we will manage to complete all the work before next month.",
       "distractors": [
-        "impediremos",
-        "atrasaremos",
-        "suspenderemos"
+        "impidamos",
+        "retrasemos",
+        "abandonemos"
       ],
       "difficulty": "advanced"
     },
@@ -6002,12 +6002,12 @@
       "id": "es-0212",
       "target": "es",
       "cloze": "Prefiero que ___ por el parque temprano en la mañana para relajarse.",
-      "answer": "caminara",
+      "answer": "camines",
       "context": "I prefer that you walk through the park early in the morning to relax.",
       "distractors": [
-        "corriera",
-        "nadara",
-        "volara"
+        "corras",
+        "nades",
+        "vueles"
       ],
       "difficulty": "advanced"
     },
@@ -6015,12 +6015,12 @@
       "id": "es-0213",
       "target": "es",
       "cloze": "El filósofo ___ sus argumentos para que la audiencia comprenda mejor su teoría.",
-      "answer": "amplíe",
+      "answer": "amplió",
       "context": "The philosopher expanded his arguments so that the audience could better understand his theory.",
       "distractors": [
-        "reduzca",
-        "elimine",
-        "simplifique"
+        "redujo",
+        "eliminó",
+        "simplificó"
       ],
       "difficulty": "advanced"
     },
@@ -6288,12 +6288,12 @@
       "id": "es-0234",
       "target": "es",
       "cloze": "Es posible que ___ alcanzar nuestras metas si trabajamos juntos.",
-      "answer": "lograremos",
+      "answer": "logremos",
       "context": "It is possible that we will achieve our goals if we work together.",
       "distractors": [
-        "conseguiremos",
-        "alcanzaremos",
-        "realizaremos"
+        "evitemos",
+        "perdamos",
+        "ignoremos"
       ],
       "difficulty": "advanced"
     },

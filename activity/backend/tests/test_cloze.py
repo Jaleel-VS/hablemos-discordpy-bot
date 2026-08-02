@@ -180,6 +180,37 @@ def test_finish_ends_round_early(engine):
     assert oc2.client_view["last"] is None
 
 
+def test_daily_early_finish_is_rejected(engine):
+    # The daily feeds streaks; ending it early must not bank a completed-daily
+    # win/streak for a partial run. An early daily finish is rejected.
+    oc = engine.new_game(mode="daily", user_id="1", options={})
+    with pytest.raises(GameError):
+        engine.submit(state=oc.state, guess="", finish=True)
+    # And answering all cards then finishing is unnecessary but harmless (the
+    # round already ended on the last answer).
+    state = oc.state
+    for _ in range(ROUND_SIZE):
+        cur = state["cards"][state["seq"]]
+        state = engine.submit(state=state, guess=cur["answer"]).state
+    assert engine.is_over(state)
+
+
+def test_daily_expires_next_day(engine):
+    # A daily token whose date is no longer today must be rejected (stale
+    # puzzle can't be finished later to credit a streak).
+    oc = engine.new_game(mode="daily", user_id="1", options={})
+    oc.state["date"] = "2020-01-01"  # force an expired daily
+    with pytest.raises(GameError):
+        engine.submit(state=oc.state, guess="whatever")
+
+
+def test_type_mode_hides_options(engine):
+    # In type-in mode the options contain the answer, so they must NOT appear in
+    # the client view (that would hand over the answer).
+    oc = engine.new_game(mode="free", user_id="1", options={"answer_mode": "type"})
+    assert "options" not in oc.client_view["prompt"]
+
+
 def test_submit_after_over_is_rejected(engine):
     oc = engine.new_game(mode="free", user_id="1")
     over = engine.submit(state=oc.state, guess="", finish=True).state
@@ -249,3 +280,27 @@ def test_validate_rejects_out_of_range_seq(engine):
 def test_validate_rejects_non_dict_state(engine):
     with pytest.raises(GameError):
         engine.submit(state="not a dict", guess="x")  # type: ignore[arg-type]
+
+
+def test_validate_rejects_non_int_counters(engine):
+    oc = engine.new_game(mode="free", user_id="1")
+    state = oc.state
+    state["correct"] = "lots"  # forged non-int counter
+    with pytest.raises(GameError):
+        engine.submit(state=state, guess="x")
+
+
+def test_validate_rejects_round_size_mismatch(engine):
+    oc = engine.new_game(mode="free", user_id="1")
+    state = oc.state
+    state["round_size"] = 999  # no longer matches len(cards)
+    with pytest.raises(GameError):
+        engine.submit(state=state, guess="x")
+
+
+def test_validate_rejects_overlong_answered_log(engine):
+    oc = engine.new_game(mode="free", user_id="1")
+    state = oc.state
+    state["answered"] = [{"x": 1}] * (len(state["cards"]) + 5)  # impossible history
+    with pytest.raises(GameError):
+        engine.submit(state=state, guess="x")

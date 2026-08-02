@@ -48,13 +48,21 @@ export default function Round({ view, busy, error, onAnswer, onFinish }: RoundPr
 
   const [before, after] = splitBlank(prompt.cloze);
   const progress = `${Math.min(view.seq + 1, view.round_size)} / ${view.round_size}`;
+  // The daily feeds streaks and only counts when every card is answered, so the
+  // backend rejects an early daily finish. Don't offer "Terminar" for the daily
+  // (freeplay is practice and may be ended any time).
+  const canFinish = view.mode !== "daily";
 
   return (
     <div className="cloze cloze-round">
       <div className="round-top">
-        <button className="finish-btn" onClick={onFinish} disabled={busy}>
-          Terminar
-        </button>
+        {canFinish ? (
+          <button className="finish-btn" onClick={onFinish} disabled={busy}>
+            Terminar
+          </button>
+        ) : (
+          <span className="round-daily-tag">Reto diario</span>
+        )}
         <div className="score-pills">
           <span className="pill pill-progress">{progress}</span>
           <span className="pill pill-score">

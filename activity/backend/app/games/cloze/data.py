@@ -89,16 +89,24 @@ class Card:
             out[i], out[j] = out[j], out[i]
         return out
 
-    def prompt(self, *, seed: str) -> dict[str, Any]:
-        """Answer-free view of the card (what the client renders)."""
-        return {
+    def prompt(self, *, seed: str, include_options: bool = True) -> dict[str, Any]:
+        """Answer-free view of the card (what the client renders).
+
+        ``options`` (the shuffled answer + distractors) is included only for
+        multiple-choice play. In type-in mode the options *contain the answer*,
+        so emitting them would hand the client the answer outright — they are
+        omitted there.
+        """
+        view: dict[str, Any] = {
             "id": self.id,
             "target": self.target,
             "cloze": self.cloze,
             "context": self.context,
             "difficulty": self.difficulty,
-            "options": self.options(seed=seed),
         }
+        if include_options:
+            view["options"] = self.options(seed=seed)
+        return view
 
     def as_state(self) -> dict[str, Any]:
         """Full serialization (includes the answer) for sealed state."""

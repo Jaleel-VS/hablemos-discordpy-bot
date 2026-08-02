@@ -138,9 +138,23 @@ class ClozeEngine:
         if state["status"] != "playing":
             raise GameError("Esta partida ya terminó.")
 
-        # A cloze round has no clock; an explicit finish ends it immediately
-        # (e.g. the player taps "Terminar" to bail out early).
+        # Daily is a fixed once-per-day sequence that feeds streaks, so a saved
+        # token can't be finished on a later day (which would credit a streak
+        # for a stale puzzle). Reject a daily submit once the state's date is no
+        # longer today — mirrors Wordle's daily date gate. Freeplay has no date.
+        if state.get("mode") == "daily" and state.get("date") != _now().date().isoformat():
+            raise GameError("El reto diario de ese día ya expiró.")
+
+        # A cloze round has no clock. Freeplay may be ended early via "Terminar"
+        # (it's practice, no streak stakes). The DAILY, however, feeds streaks —
+        # allowing an early finish would let a player bank a completed-daily win
+        # (and streak bump) for a 0/0 or partial run, then never actually drill.
+        # So a daily may only finish by answering every card; an early daily
+        # finish is rejected and nothing is persisted (an abandoned daily simply
+        # doesn't count today).
         if finish:
+            if state.get("mode") == "daily" and state.get("seq", 0) < state.get("round_size", 0):
+                raise GameError("Termina el reto diario para que cuente.")
             state["status"] = "over"
             state["last"] = None
             return GuessOutcome(state=state, client_view=self.client_view(state))
@@ -233,7 +247,10 @@ class ClozeEngine:
             "last": self._client_last(state),
         }
         if not self.is_over(state):
-            view["prompt"] = self._current_card(state).prompt(seed=state.get("seed", ""))
+            view["prompt"] = self._current_card(state).prompt(
+                seed=state.get("seed", ""),
+                include_options=state.get("answer_mode") == "choice",
+            )
         else:
             view["result"] = self.result_payload(state)
         return view
@@ -294,6 +311,21 @@ class ClozeEngine:
             raise GameError("Estado de partida inválido.")
         seq = state.get("seq")
         if not isinstance(seq, int) or seq < 0:
+            raise GameError("Estado de partida inválido.")
+        # Scoring counters must be well-typed ints — submit() does arithmetic on
+        # them (``correct += 1``, ``max(best_streak, streak)``), so a hostile
+        # string/None would raise a raw TypeError instead of a clean GameError.
+        for key in ("correct", "streak", "best_streak"):
+            if not isinstance(state.get(key), int):
+                raise GameError("Estado de partida inválido.")
+        # round_size is the loop bound for "round over"; it must match the deck
+        # actually carried in state, or a tampered value could end early / never.
+        if state.get("round_size") != len(cards):
+            raise GameError("Estado de partida inválido.")
+        # The answered log can never exceed the cards served so far (seq); a
+        # longer log is a forged/replayed state.
+        answered = state.get("answered", [])
+        if len(answered) > len(cards):
             raise GameError("Estado de partida inválido.")
         # The current card (when still playing) must be a dict with a str answer.
         if state.get("status") == "playing":
