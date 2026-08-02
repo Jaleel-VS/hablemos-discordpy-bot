@@ -492,7 +492,7 @@ class AdminCog(BaseCog):
     # ── Message export ──
 
     @commands.command(name='fetch')
-    @commands.is_owner()
+    @commands.has_permissions(manage_messages=True)
     async def fetch_messages(
         self, ctx: commands.Context, channel: discord.TextChannel | discord.Thread | None = None, count: int = 50,
     ):

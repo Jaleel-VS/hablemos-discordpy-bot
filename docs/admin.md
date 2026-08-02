@@ -173,7 +173,7 @@ See [`cogs/admin.md`](./cogs/admin.md), [`cogs/database.md`](./cogs/database.md)
 | `$notes [limit]` / `$mynotes` / `$listnotes` | List your recent notes (default 5, max 20). | Owner-only |
 | `$deletenote <id>` / `$delnote` / `$removenote` | Delete a note you own. | Owner-only |
 | `$parrot [guild_id] [channel_id] <message>` | Relay a message to another guild/channel. | Owner-only |
-| `$fetch [#channel] [count]` | Export messages as markdown (default 50, max 500). In a thread with no args, exports all. | Owner-only |
+| `$fetch [#channel] [count]` | Export messages as markdown (default 50, max 500). In a thread with no args, exports all. | `manage_messages` |
 | `$fetchrange <start_link> <end_link>` / `$fetchr` | Export messages between two links (max 1000). | Owner-only |
 | `$rawembed <message_link>` | Show raw embed JSON from a message. | Owner-only |
 | `$sync [guild_id]` | Sync slash commands globally or to a guild. | Owner-only |

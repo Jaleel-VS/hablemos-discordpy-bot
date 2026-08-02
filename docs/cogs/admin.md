@@ -15,9 +15,8 @@ The admin cog is the bot owner's control panel. It provides:
 - **Slash command sync**: Manually sync slash commands to Discord.
 - **Daily cleanup task**: Rolls up old metrics and purges stale data.
 
-All commands are owner-only (except where noted). Some utilities
-(`$vcenrich`, `$fetch`, `$fetchrange`, `$rawembed`) allow `manage_messages`
-users.
+All commands are owner-only except where noted. `$vcenrich` and `$fetch`
+allow users with `manage_messages`.
 
 ## Commands
 
@@ -54,7 +53,7 @@ users.
 
 | Command | Description | Permissions |
 |---------|-------------|-------------|
-| `$fetch [#channel] [count]` | Export the last N messages from a channel (default 50, max 500). In a thread with no args, exports all messages. Returns a markdown file. | Owner-only |
+| `$fetch [#channel] [count]` | Export the last N messages from a channel (default 50, max 500). In a thread with no args, exports all messages. Returns a markdown file. | `manage_messages` |
 | `$fetchrange <start_link> <end_link>` / `$fetchr` | Export all messages between two message links (same channel). Max 1000 messages. Returns a markdown file. | Owner-only |
 
 ### Voice channel enrichment
