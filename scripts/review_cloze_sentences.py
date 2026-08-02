@@ -266,7 +266,12 @@ def main() -> int:
         pending = [c for c in pending if c["id"] not in verdicts]
 
     # Classify. A card the model didn't return a verdict for is "unreviewed" —
-    # surfaced explicitly, never assumed OK.
+    # surfaced explicitly, never assumed OK. model-pass and human force-keep
+    # are tracked separately (not merged into one "ok" bucket) so the report
+    # and meta.last_review can show how many survivors were actually graded by
+    # the model vs. kept solely on a human's say-so.
+    model_pass_ids: list[str] = []
+    force_keep_ids: list[str] = []
     ok_ids: list[str] = []
     suspect: list[dict[str, Any]] = []
     unreviewed: list[str] = []
@@ -277,6 +282,7 @@ def main() -> int:
             suspect.append({**c, "_review": {"verdict": "suspect", "reasons": ["human override"], "suggested_answer": ""}})
             continue
         if cid in force_keep:
+            force_keep_ids.append(cid)
             ok_ids.append(cid)
             continue
         v = verdicts.get(cid)
@@ -293,11 +299,13 @@ def main() -> int:
         elif v["verdict"] == "suspect":
             suspect.append({**c, "_review": v})
         else:
+            model_pass_ids.append(cid)
             ok_ids.append(cid)
 
     # ── report ──────────────────────────────────────────────────────────────
     print("\n=== Review summary ===")
-    print(f"  ok:         {len(ok_ids)}")
+    print(f"  ok:         {len(ok_ids)}  ({len(model_pass_ids)} model-pass, "
+          f"{len(force_keep_ids)} human force-keep)")
     print(f"  suspect:    {len(suspect)}  (incl. {len(unreviewed)} unreviewed → failed closed)")
     if suspect:
         print("\nSuspect cards:")
@@ -317,6 +325,8 @@ def main() -> int:
                 "reviewed_at": datetime.now(UTC).isoformat(),
                 "reviewed": len(review_cards),
                 "ok": len(ok_ids),
+                "model_pass": len(model_pass_ids),
+                "human_force_keep": len(force_keep_ids),
                 "suspect": len(suspect),
                 "unreviewed": len(unreviewed),
             },
@@ -331,10 +341,6 @@ def main() -> int:
     # ── quarantine ────────────────────────────────────────────────────────────
     if not args.quarantine:
         print("\n(dry-run: corpus unchanged. Re-run with --quarantine to remove suspects.)")
-        return 0
-
-    if not suspect:
-        print("\nNo suspects to quarantine. Corpus unchanged.")
         return 0
 
     suspect_ids = {s["id"] for s in suspect}
@@ -352,7 +358,13 @@ def main() -> int:
         {k: v for k, v in s.items()} for s in suspect if s["id"] not in q_seen
     ]
 
-    # Recompute the corpus counts/meta after removal.
+    # Recompute the corpus counts/meta after removal. This runs even on a
+    # no-suspects (all-pass) run — an early return here previously skipped
+    # updating meta.last_review, leaving stale provenance (model/reviewed_at)
+    # on the shipped corpus after a run that reviewed everything and found
+    # nothing wrong. The on-disk corpus is only rewritten when something
+    # actually changed (`kept != cards`); the meta refresh itself is
+    # unconditional whenever --quarantine ran.
     counts: dict[str, int] = {}
     for c in kept:
         bucket = f"{c['target']}/{c['difficulty']}"
@@ -365,18 +377,28 @@ def main() -> int:
     # run (no --limit) and that no unreviewed card survived (they fail closed
     # into quarantine). survivors_all_passed is only true when every shipped
     # card either passed the model or was a human force-keep — so the commit can
-    # prove the 392-or-whatever survivors were actually verified.
+    # prove the 392-or-whatever survivors were actually verified. model_pass /
+    # human_force_keep are recorded separately so a run that kept everything
+    # via override (0 model passes) is distinguishable from a real review pass.
     reviewed_all = args.limit == 0
     corpus["meta"]["last_review"] = {
         "model": args.model,
         "reviewed_at": datetime.now(UTC).isoformat(),
         "quarantined": len(quarantined_now),
+        "model_pass": len(model_pass_ids),
+        "human_force_keep": len(force_keep_ids),
         "reviewed_all": reviewed_all,
         "unreviewed_after_retries": len(unreviewed),
         "survivors_all_passed": reviewed_all and len(unreviewed) == 0,
     }
 
     _DATA.write_text(json.dumps(corpus, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    if not suspect:
+        print("\nNo suspects to quarantine. Corpus content unchanged; "
+              "meta.last_review refreshed.")
+        return 0
+
     _QUARANTINE.write_text(
         json.dumps(
             {

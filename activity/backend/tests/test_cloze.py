@@ -7,6 +7,8 @@ conjugation normalizer), config resolution/normalization, the round flow,
 daily determinism + answer-withholding, and hostile-state guards. It also
 guards the committed content JSON so a bad regeneration can't silently ship.
 """
+import copy
+
 import pytest
 from app.games.base import GameError
 from app.games.cloze import data as d
@@ -229,16 +231,65 @@ def test_daily_is_deterministic_across_users(engine):
 
 def test_daily_withholds_all_feedback(engine):
     # The daily is a deterministic shared sequence and state round-trips as a
-    # sealed token, so ANY per-card feedback (even just the result flag) lets a
-    # choice-mode player replay the previous turn's token and probe options.
-    # Daily play therefore returns no per-card feedback at all; corrections come
-    # only in the end-of-round recap.
+    # sealed token, so ANY grading signal — the per-card result flag OR the
+    # running counters — lets a choice-mode player replay the previous turn's
+    # token and probe options. Daily play therefore returns no per-card feedback
+    # AND withholds correct/streak/best_streak; everything is disclosed only in
+    # the end-of-round recap.
     oc = engine.new_game(mode="daily", user_id="1", options={"answer_mode": "choice"})
     answer = oc.state["cards"][0]["answer"]
     oc2 = engine.submit(state=oc.state, guess=answer)
-    assert oc2.client_view["last"] is None   # no answer AND no result flag
-    # The score still advances (that leaks nothing about the current card).
+    view = oc2.client_view
+    assert view["last"] is None          # no answer AND no result flag
+    assert view["correct"] is None       # counters withheld during daily play
+    assert view["streak"] is None
+    assert view["best_streak"] is None
+    # Progress still advances (leaks nothing about the current card's answer).
+    assert view["answered_count"] == 1
+    # The internal state still tracks the real score for the recap.
+    assert oc2.state["correct"] == 1
+
+
+def test_daily_replay_oracle_is_closed(engine):
+    # Direct regression for the round-3 advisor finding: replaying the SAME
+    # daily token against each of the 4 choice options must yield byte-for-byte
+    # identical client views. If any field (result flag, counters, or anything
+    # else) differed by which option was guessed, that field would itself be
+    # the replay oracle — the attacker never needs the withheld answer, only a
+    # field that varies with the guess.
+    oc = engine.new_game(mode="daily", user_id="1", options={"answer_mode": "choice"})
+    options = oc.client_view["prompt"]["options"]
+    assert len(options) == 4
+    views = []
+    for opt in options:
+        state_copy = copy.deepcopy(oc.state)
+        outcome = engine.submit(state=state_copy, guess=opt)
+        views.append(outcome.client_view)
+    assert all(v == views[0] for v in views), (
+        "daily client_view must not vary with the guessed option "
+        f"(replay oracle reopened): {views}"
+    )
+
+
+def test_freeplay_shows_live_counters(engine):
+    # Freeplay has no streak stakes, so the live score is shown during play.
+    oc = engine.new_game(mode="free", user_id="1", options={"answer_mode": "choice"})
+    answer = oc.state["cards"][0]["answer"]
+    oc2 = engine.submit(state=oc.state, guess=answer)
     assert oc2.client_view["correct"] == 1
+
+
+def test_daily_recap_reveals_counters(engine):
+    # Once the daily round is over, the recap (and top-level counters) disclose
+    # the real score — there's no more token to replay.
+    oc = engine.new_game(mode="daily", user_id="1", options={"answer_mode": "choice"})
+    state = oc.state
+    for _ in range(ROUND_SIZE):
+        cur = state["cards"][state["seq"]]
+        state = engine.submit(state=state, guess=cur["answer"]).state
+    view = engine.client_view(state)
+    assert view["correct"] == ROUND_SIZE
+    assert view["result"]["score"] == f"{ROUND_SIZE}/{ROUND_SIZE}"
 
 
 def test_freeplay_reveals_answer_in_feedback(engine):
@@ -370,5 +421,23 @@ def test_validate_rejects_malformed_answered_entry(engine):
     oc = engine.new_game(mode="free", user_id="1")
     state = oc.state
     state["answered"] = [{"no_result_key": True}]
+    with pytest.raises(GameError):
+        engine.submit(state=state, guess="x")
+
+
+def test_validate_rejects_non_str_answered_fields(engine):
+    # Forged answer/given (e.g. {}) flow into the recap misses list and reach
+    # React as non-renderable values — must be rejected as a clean GameError.
+    oc = engine.new_game(mode="free", user_id="1")
+    state = oc.state
+    state["answered"] = [{"result": "wrong", "answer": {}, "given": {}}]
+    with pytest.raises(GameError):
+        engine.submit(state=state, guess="x")
+
+
+def test_validate_rejects_out_of_enum_result(engine):
+    oc = engine.new_game(mode="free", user_id="1")
+    state = oc.state
+    state["answered"] = [{"result": "bogus", "answer": "a", "given": "b"}]
     with pytest.raises(GameError):
         engine.submit(state=state, guess="x")

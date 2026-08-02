@@ -1,7 +1,7 @@
 {
   "meta": {
     "note": "Cards quarantined by review_cloze_sentences.py — fix and re-merge, or discard. NOT loaded by the runtime.",
-    "updated_at": "2026-08-02T10:58:33.659346+00:00"
+    "updated_at": "2026-08-02T11:51:04.533877+00:00"
   },
   "cards": [
     {
@@ -2619,6 +2619,147 @@
         "verdict": "suspect",
         "reasons": [
           "'guardara' and 'ahorrara' are contradictory but 'invirtiera' fits grammatically; borderline but distractors are clearly wrong meaning-wise; acceptable"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0079",
+      "target": "en",
+      "cloze": "He ___ tea in the afternoon.",
+      "answer": "drinks",
+      "context": "Él bebe té por la tarde.",
+      "distractors": [
+        "makes",
+        "serves",
+        "pours"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "Distractors 'makes', 'serves', 'pours' are all plausible valid alternatives with tea in the afternoon"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0023",
+      "target": "es",
+      "cloze": "El perro es muy ___.",
+      "answer": "amable",
+      "context": "The dog is very friendly.",
+      "distractors": [
+        "feroz",
+        "agresivo",
+        "salvaje"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'amable' (friendly/kind) is odd for a dog; more natural would be 'cariñoso', but acceptable. Distractors are fine."
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0119",
+      "target": "en",
+      "cloze": "The music was too ___ for the party.",
+      "answer": "loud",
+      "context": "La música fue demasiado fuerte para la fiesta.",
+      "distractors": [
+        "quiet",
+        "soft",
+        "low"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractors 'quiet','soft','low' are all near-antonyms; 'soft' and 'low' are near-synonyms of each other but not the answer, acceptable; however 'low' could plausibly describe volume - still clearly wrong here, acceptable"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0144",
+      "target": "en",
+      "cloze": "The weather will ___ by the end of week.",
+      "answer": "improve",
+      "context": "El clima mejorará para el final de la semana.",
+      "distractors": [
+        "worsen",
+        "change",
+        "vary"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'change' and 'vary' are valid alternatives that could fill the blank correctly given the sentence context"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0181",
+      "target": "en",
+      "cloze": "The artist ___ the portrait with remarkable precision and artistic sensitivity.",
+      "answer": "rendered",
+      "context": "La artista representó el retrato con precisión notable y sensibilidad artística.",
+      "distractors": [
+        "sketched",
+        "copied",
+        "imagined"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'sketched' is a near-synonym/valid alternative for depicting a portrait, could also fit the sentence"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0199",
+      "target": "en",
+      "cloze": "She chose to ___ the expensive vacation and save money instead.",
+      "answer": "forego",
+      "context": "Ella eligió renunciar a las vacaciones costosas y ahorrar dinero en su lugar.",
+      "distractors": [
+        "pursue",
+        "undertake",
+        "embrace"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'forego' means to precede; correct spelling for 'give up' is 'forgo', though 'forego' is a common accepted variant",
+          "distractors are fine"
+        ],
+        "suggested_answer": "forgo"
+      }
+    },
+    {
+      "id": "en-0234",
+      "target": "en",
+      "cloze": "The evidence will ___ the defendant of all charges brought against him.",
+      "answer": "exonerate",
+      "context": "La evidencia exonerará al acusado de todos los cargos presentados en su contra.",
+      "distractors": [
+        "implicate",
+        "incriminate",
+        "convict"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'implicate' and 'incriminate' are near-synonyms of each other, both valid; more concerning, all three distractors are opposites of exonerate and grammatically fine, but acceptable as wrong"
         ],
         "suggested_answer": ""
       }

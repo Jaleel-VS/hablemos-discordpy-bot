@@ -248,6 +248,15 @@ class ClozeEngine:
 
     def client_view(self, state: dict[str, Any]) -> dict[str, Any]:
         """What the client may see. Excludes the pending answer while playing."""
+        # During DAILY play every grading signal is withheld (see _client_last):
+        # the state round-trips as a replayable sealed token, so exposing the
+        # running correct/streak/best_streak counters lets a choice-mode player
+        # replay the previous turn's token against each of the four options and
+        # watch which one bumps the counters — a replay oracle for the answer.
+        # The counters are disclosed only in the end-of-round recap
+        # (result_payload), reachable solely by answering every card. Freeplay
+        # shows them live (no streak stakes, nothing to game).
+        daily_in_progress = state.get("mode") == "daily" and not self.is_over(state)
         view: dict[str, Any] = {
             "game": self.key,
             "mode": state["mode"],
@@ -257,13 +266,22 @@ class ClozeEngine:
             "puzzle_no": state.get("puzzle_no"),
             "round_size": state.get("round_size", 0),
             "seq": state.get("seq", 0),
-            "correct": state.get("correct", 0),
-            "streak": state.get("streak", 0),
-            "best_streak": state.get("best_streak", 0),
+            # Progress (seq / answered_count) advances regardless of correctness,
+            # so it leaks nothing about the current card and is always shown.
             "answered_count": len(state.get("answered", [])),
             "status": state["status"],
             "last": self._client_last(state),
         }
+        if daily_in_progress:
+            # Null (not the running value) so the client can render a neutral
+            # placeholder without inferring anything from the number.
+            view["correct"] = None
+            view["streak"] = None
+            view["best_streak"] = None
+        else:
+            view["correct"] = state.get("correct", 0)
+            view["streak"] = state.get("streak", 0)
+            view["best_streak"] = state.get("best_streak", 0)
         if not self.is_over(state):
             view["prompt"] = self._current_card(state).prompt(
                 seed=state.get("seed", ""),
@@ -285,8 +303,10 @@ class ClozeEngine:
         "real" branch. Withholding the *answer* alone doesn't close this — the
         result flag itself is the probing signal.
 
-        So during daily play we return **no per-card feedback at all** (only the
-        running score/streak, which leak nothing about the current card). The
+        So during daily play we return **no per-card feedback at all**. Note the
+        grading counters (correct/streak/best_streak) are ALSO withheld during
+        daily play by ``client_view`` for the same reason — otherwise a replayed
+        token would reveal the answer by which option bumps the score. The
         correct words — and which ones were missed — are disclosed only in the
         end-of-round recap, which is reachable solely by answering every card
         (an early daily finish is rejected). Freeplay reveals normally (it feeds
@@ -341,6 +361,20 @@ class ClozeEngine:
         including inside each card and each answered entry, so downstream code
         (``result_payload``, ``_emoji_grid``, ``_current_card``, ``options``)
         can trust the shape.
+
+        Deferred (round-3 advisor #optional): a Pydantic model for this state
+        would make the shape declarative instead of this hand-rolled check, and
+        would type-check at the model boundary rather than relying on every
+        downstream reader to have been audited here. Not done in this pass
+        because (a) ``wordle`` and ``conjugation`` validate their sealed state
+        the same hand-rolled way — migrating only ``cloze`` would make this one
+        engine inconsistent with its siblings rather than establishing a
+        pattern, and (b) the state round-trips through ``json.dumps`` in
+        ``sealed_state.seal``/``unseal`` as a plain dict, so adopting Pydantic
+        here would mean converting at every seal/unseal boundary across all
+        three engines to stay consistent — a cross-cutting change bigger than
+        this game. Worth doing as a dedicated follow-up across all engines at
+        once, not as a one-off on cloze.
         """
         def bad() -> GameError:
             return GameError("Estado de partida inválido.")
@@ -387,13 +421,22 @@ class ClozeEngine:
             if not isinstance(card.get("distractors"), list):
                 raise bad()
         # The answered log can never exceed the cards served; and every entry
-        # must be a dict carrying a str ``result`` (result_payload / _emoji_grid
-        # index a["result"] on each), or a forged entry raises a raw error.
+        # must be a fully-typed record. These fields flow into result_payload
+        # (the recap "misses" list) and reach the client, so a forged entry with
+        # a non-str answer/given (e.g. {}), or an out-of-enum result, must be
+        # rejected here — otherwise a non-renderable value reaches React.
         answered = state.get("answered")
         if not isinstance(answered, list) or len(answered) > len(cards):
             raise bad()
+        valid_results = {m.value for m in Match}
         for entry in answered:
-            if not isinstance(entry, dict) or not isinstance(entry.get("result"), str):
+            if not isinstance(entry, dict):
+                raise bad()
+            if entry.get("result") not in valid_results:
+                raise bad()
+            if not isinstance(entry.get("answer"), str):
+                raise bad()
+            if not isinstance(entry.get("given"), str):
                 raise bad()
         # While playing, the current card must be in range (submit indexes it).
         if state.get("status") == "playing" and seq >= len(cards):

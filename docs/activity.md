@@ -238,10 +238,26 @@ conjugation sprint).
   Wordle daily date gate). **Freeplay** is a random round with the player's
   chosen deck / difficulty / answer mode and may be ended any time.
 - **Daily anti-harvest.** Like the conjugation daily, per-card feedback
-  **withholds the answer in daily mode** (the client gets the
-  `exact`/`close`/`wrong` flag but not the correct word — disclosed only in the
-  end-of-round recap); freeplay reveals normally. The same honor-system boundary
-  documented for the conjugation daily applies (stateless sealed-token design).
+  **withholds the answer in daily mode** — the client gets no per-card
+  feedback at all (not even the `exact`/`close`/`wrong` flag), and the running
+  `correct`/`streak`/`best_streak` counters are withheld (`null`) too. Because
+  the daily's state round-trips as a replayable sealed token, exposing even the
+  result flag or the score would let a choice-mode player replay the previous
+  turn's token against each of the 4 options and read the answer off of which
+  one moves the flag/score. Everything — per-card result, the correct word, and
+  the running score — is disclosed only in the end-of-round recap. Freeplay
+  reveals both normally (no streak stakes, nothing to game).
+- **Streak boundary: attendance, not enforced effort.** The daily streak (like
+  every daily game here) measures that the player **completed** a round, not
+  that they tried. `result_payload` marks a finished daily `won: True`
+  unconditionally — a player who submits 10 junk-but-non-empty guesses still
+  banks a `won=True` `0/10` and the streak bump, same as someone who answered
+  well. Only a truly *empty* guess is rejected (`submit`'s empty-guess guard);
+  anything non-empty grades as `wrong` and advances. Closing this would need
+  server-side per-guess attempt consumption (see the honor-system limit above)
+  — a cost deliberately not paid for a cosmetic streak. This is a documented,
+  accepted boundary, not a bug: the stateless design can't distinguish "tried
+  and missed" from "mashed junk to finish" without that added cost.
 
 ### Persistence
 

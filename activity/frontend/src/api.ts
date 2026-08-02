@@ -176,9 +176,12 @@ export interface ClozeView {
   puzzle_no: number | null;
   round_size: number;
   seq: number;
-  correct: number;
-  streak: number;
-  best_streak: number;
+  // Withheld (null) during daily play so a replayed token can't probe the
+  // answer via which option bumps the score; present in freeplay and once the
+  // daily round is over.
+  correct: number | null;
+  streak: number | null;
+  best_streak: number | null;
   answered_count: number;
   status: "playing" | "over";
   last: ClozeFeedback | null;

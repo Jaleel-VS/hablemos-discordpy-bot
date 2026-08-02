@@ -3,18 +3,20 @@
     "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
     "generated_at": "2026-08-02T09:49:28.750478+00:00",
     "counts": {
-      "en/beginner": 63,
-      "es/beginner": 70,
-      "en/intermediate": 64,
+      "en/beginner": 62,
+      "es/beginner": 69,
+      "en/intermediate": 62,
       "es/intermediate": 54,
-      "en/advanced": 72,
+      "en/advanced": 69,
       "es/advanced": 44
     },
-    "total": 367,
+    "total": 360,
     "last_review": {
       "model": "us.anthropic.claude-opus-4-8",
-      "reviewed_at": "2026-08-02T10:58:33.655776+00:00",
-      "quarantined": 25,
+      "reviewed_at": "2026-08-02T11:51:04.530055+00:00",
+      "quarantined": 7,
+      "model_pass": 360,
+      "human_force_keep": 0,
       "reviewed_all": true,
       "unreviewed_after_retries": 0,
       "survivors_all_passed": true
@@ -282,7 +284,7 @@
       "distractors": [
         "wash",
         "clean",
-        "fix"
+        "paint"
       ],
       "difficulty": "beginner"
     },
@@ -781,19 +783,6 @@
       "difficulty": "beginner"
     },
     {
-      "id": "en-0079",
-      "target": "en",
-      "cloze": "He ___ tea in the afternoon.",
-      "answer": "drinks",
-      "context": "Él bebe té por la tarde.",
-      "distractors": [
-        "makes",
-        "serves",
-        "pours"
-      ],
-      "difficulty": "beginner"
-    },
-    {
       "id": "en-0080",
       "target": "en",
       "cloze": "My friend has a yellow ___.",
@@ -1050,19 +1039,6 @@
         "zapatos",
         "sombreros",
         "bolsas"
-      ],
-      "difficulty": "beginner"
-    },
-    {
-      "id": "es-0023",
-      "target": "es",
-      "cloze": "El perro es muy ___.",
-      "answer": "amable",
-      "context": "The dog is very friendly.",
-      "distractors": [
-        "feroz",
-        "agresivo",
-        "salvaje"
       ],
       "difficulty": "beginner"
     },
@@ -2146,19 +2122,6 @@
       "difficulty": "intermediate"
     },
     {
-      "id": "en-0119",
-      "target": "en",
-      "cloze": "The music was too ___ for the party.",
-      "answer": "loud",
-      "context": "La música fue demasiado fuerte para la fiesta.",
-      "distractors": [
-        "quiet",
-        "soft",
-        "low"
-      ],
-      "difficulty": "intermediate"
-    },
-    {
       "id": "en-0120",
       "target": "en",
       "cloze": "She ___ to study medicine at university.",
@@ -2319,7 +2282,7 @@
       "target": "en",
       "cloze": "The birds ___ loudly in the early morning.",
       "answer": "sang",
-      "context": "Los pájaros cantaron fuertemente en la madrugada.",
+      "context": "Los pájaros cantaron con fuerza en la madrugada.",
       "distractors": [
         "flew",
         "rested",
@@ -2337,19 +2300,6 @@
         "seek",
         "enjoy",
         "prefer"
-      ],
-      "difficulty": "intermediate"
-    },
-    {
-      "id": "en-0144",
-      "target": "en",
-      "cloze": "The weather will ___ by the end of week.",
-      "answer": "improve",
-      "context": "El clima mejorará para el final de la semana.",
-      "distractors": [
-        "worsen",
-        "change",
-        "vary"
       ],
       "difficulty": "intermediate"
     },
@@ -3433,19 +3383,6 @@
       "difficulty": "advanced"
     },
     {
-      "id": "en-0181",
-      "target": "en",
-      "cloze": "The artist ___ the portrait with remarkable precision and artistic sensitivity.",
-      "answer": "rendered",
-      "context": "La artista representó el retrato con precisión notable y sensibilidad artística.",
-      "distractors": [
-        "sketched",
-        "copied",
-        "imagined"
-      ],
-      "difficulty": "advanced"
-    },
-    {
       "id": "en-0182",
       "target": "en",
       "cloze": "The scholar's meticulous research ___ the theory that had been questioned for decades.",
@@ -3580,7 +3517,7 @@
       "target": "en",
       "cloze": "The diplomat sought to ___ tensions between the two neighboring nations.",
       "answer": "ameliorate",
-      "context": "El diplomático buscó mejorar las tensiones entre las dos naciones vecinas.",
+      "context": "El diplomático buscó aliviar las tensiones entre las dos naciones vecinas.",
       "distractors": [
         "worsen",
         "prolong",
@@ -3637,19 +3574,6 @@
         "convict",
         "incriminate",
         "condemn"
-      ],
-      "difficulty": "advanced"
-    },
-    {
-      "id": "en-0199",
-      "target": "en",
-      "cloze": "She chose to ___ the expensive vacation and save money instead.",
-      "answer": "forego",
-      "context": "Ella eligió renunciar a las vacaciones costosas y ahorrar dinero en su lugar.",
-      "distractors": [
-        "pursue",
-        "undertake",
-        "embrace"
       ],
       "difficulty": "advanced"
     },
@@ -4040,19 +3964,6 @@
         "abandon",
         "suppress",
         "diminish"
-      ],
-      "difficulty": "advanced"
-    },
-    {
-      "id": "en-0234",
-      "target": "en",
-      "cloze": "The evidence will ___ the defendant of all charges brought against him.",
-      "answer": "exonerate",
-      "context": "La evidencia exonerará al acusado de todos los cargos presentados en su contra.",
-      "distractors": [
-        "implicate",
-        "incriminate",
-        "convict"
       ],
       "difficulty": "advanced"
     },

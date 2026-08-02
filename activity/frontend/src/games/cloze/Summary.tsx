@@ -43,7 +43,7 @@ export default function Summary({ result, onReplay }: SummaryProps) {
         <div className="misses">
           <h2 className="misses-title">Para repasar</h2>
           <ul className="misses-list">
-            {misses.slice(0, 8).map((m, i) => (
+            {misses.map((m, i) => (
               <li className={`miss miss--${m.result}`} key={i}>
                 <span className="miss-answer">
                   <span className="miss-given">{m.given || "—"}</span>
@@ -59,9 +59,6 @@ export default function Summary({ result, onReplay }: SummaryProps) {
               </li>
             ))}
           </ul>
-          {misses.length > 8 && (
-            <p className="muted misses-more">y {misses.length - 8} más</p>
-          )}
         </div>
       )}
 

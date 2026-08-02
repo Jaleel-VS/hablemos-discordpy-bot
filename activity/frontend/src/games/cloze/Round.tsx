@@ -65,12 +65,19 @@ export default function Round({ view, busy, error, onAnswer, onFinish }: RoundPr
         )}
         <div className="score-pills">
           <span className="pill pill-progress">{progress}</span>
-          <span className="pill pill-score">
-            <strong>{view.correct}</strong> ✓
-          </span>
-          <span className={`pill pill-streak${view.streak >= 3 ? " pill-streak--hot" : ""}`}>
-            {view.streak >= 3 ? "🔥" : ""} {view.streak}
-          </span>
+          {/* correct/streak are withheld (null) during daily play so the score
+              can't be used as a replay oracle; show them only when present
+              (freeplay, or the daily recap). Progress is always safe. */}
+          {view.correct !== null && (
+            <span className="pill pill-score">
+              <strong>{view.correct}</strong> ✓
+            </span>
+          )}
+          {view.streak !== null && (
+            <span className={`pill pill-streak${view.streak >= 3 ? " pill-streak--hot" : ""}`}>
+              {view.streak >= 3 ? "🔥" : ""} {view.streak}
+            </span>
+          )}
         </div>
       </div>
 
