@@ -53,23 +53,20 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import subprocess
 import sys
 import time
-import unicodedata
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-# ── Bedrock / AWS CLI configuration ──────────────────────────────────────────
-# Mirrors the ~/.zshrc `_bedrock_ask` helper so behaviour matches the user's
-# working setup. Region + model are fixed to the tested pairing.
-_ACCOUNT = "195950944512"
-_ROLE = "Jaleel"
-_PROVIDER = "isengard"
-_PROFILE = "bedrock-how"
-_REGION = "us-east-1"
-_MODEL_ID = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+from _bedrock import (
+    MODEL_HAIKU,
+    accent_key,
+    bedrock_auth,
+    bedrock_converse,
+    extract_json_array,
+    norm,
+)
 
 # ── Paths ────────────────────────────────────────────────────────────────────
 _REPO = Path(__file__).resolve().parent.parent
@@ -168,101 +165,6 @@ def _prompt(target: str, difficulty: str, count: int, avoid: list[str]) -> str:
     )
 
 
-def _bedrock_auth() -> None:
-    """Refresh the bedrock-how credential profile (best-effort, silent)."""
-    subprocess.run(
-        [
-            "ada", "credentials", "update",
-            "--account", _ACCOUNT, "--role", _ROLE,
-            "--provider", _PROVIDER, "--profile", _PROFILE, "--once",
-        ],
-        check=False,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
-
-
-def _bedrock_converse(prompt: str) -> str:
-    """Send one prompt to Bedrock via the AWS CLI, returning the model text.
-
-    Passes the request body as a temp JSON file (``--cli-input-json``) rather
-    than an inline ``--messages`` string, so sentence text with quotes/newlines
-    can't break shell/CLI parsing. Raises ``RuntimeError`` on any CLI failure.
-    """
-    request = {
-        "modelId": _MODEL_ID,
-        "messages": [{"role": "user", "content": [{"text": prompt}]}],
-        "inferenceConfig": {"maxTokens": _MAX_TOKENS, "temperature": _TEMPERATURE},
-    }
-    proc = subprocess.run(
-        [
-            "aws", "bedrock-runtime", "converse",
-            "--region", _REGION, "--profile", _PROFILE,
-            "--cli-input-json", json.dumps(request),
-            "--query", "output.message.content[0].text",
-            "--output", "text",
-        ],
-        capture_output=True,
-        text=True,
-    )
-    if proc.returncode != 0:
-        raise RuntimeError(
-            f"bedrock converse failed (exit {proc.returncode}): "
-            f"{proc.stderr.strip()[:400]}"
-        )
-    return proc.stdout
-
-
-def _extract_json_array(text: str) -> list[Any]:
-    """Parse a JSON array out of the model's raw text.
-
-    Tolerates stray markdown fences or leading/trailing prose by slicing from
-    the first ``[`` to the last ``]``. Returns ``[]`` if nothing parses.
-    """
-    text = text.strip()
-    # Strip a leading ```json / ``` fence if the model added one.
-    if text.startswith("```"):
-        text = re.sub(r"^```[a-zA-Z]*\n?", "", text)
-        text = re.sub(r"\n?```$", "", text).strip()
-    start = text.find("[")
-    end = text.rfind("]")
-    if start == -1 or end == -1 or end <= start:
-        return []
-    try:
-        parsed = json.loads(text[start : end + 1])
-    except json.JSONDecodeError:
-        return []
-    return parsed if isinstance(parsed, list) else []
-
-
-def _norm(text: str) -> str:
-    """Lowercase + NFC-normalize + collapse whitespace for comparison/dedup."""
-    return " ".join(unicodedata.normalize("NFC", text).strip().lower().split())
-
-
-# Private-use codepoint that shields ñ/Ñ from the combining-mark strip — the
-# exact same technique the runtime normalizer uses, so this key matches the
-# grader's notion of "equal ignoring accents" (its CLOSE tier).
-_ENYE_SENTINEL = "\uE000"
-
-
-def _accent_key(text: str) -> str:
-    """Accent-stripped comparison key, preserving ñ as a letter.
-
-    Mirrors ``app.games.conjugation.normalize._strip_accents``: the runtime
-    grader gives **full credit (CLOSE)** when two forms match after stripping
-    accents, so a distractor that differs from the answer *only* by accents
-    (e.g. answer ``él`` vs distractor ``el``) would be accepted as correct.
-    Building distractor-dedup on this key lets validation reject such
-    accent-equivalent distractors, keeping validation aligned with grading.
-    """
-    normalized = unicodedata.normalize("NFC", text).strip().lower()
-    shielded = normalized.replace("ñ", _ENYE_SENTINEL)
-    decomposed = unicodedata.normalize("NFD", shielded)
-    stripped = "".join(ch for ch in decomposed if unicodedata.category(ch) != "Mn")
-    return " ".join(stripped.replace(_ENYE_SENTINEL, "ñ").split())
-
-
 # Word-boundary match that is Unicode-aware (Python's \b treats accented letters
 # as word chars), so we can confirm the answer appears as a whole word and build
 # the blanked form by replacing that occurrence.
@@ -334,12 +236,12 @@ def _validate_card(
     # as correct if picked. Rejecting on _accent_key keeps validation aligned
     # with grading and prevents that false-positive.
     clean_distractors: list[str] = []
-    seen_local = {_accent_key(answer)}
+    seen_local = {accent_key(answer)}
     for d in distractors:
         if not isinstance(d, str):
             continue
         d = d.strip()
-        key = _accent_key(d)
+        key = accent_key(d)
         if not d or key in seen_local:
             continue
         seen_local.add(key)
@@ -364,7 +266,7 @@ def _card_id(target: str, index: int) -> str:
 
 def _dedup_key(card: dict[str, Any]) -> tuple[str, str, str]:
     """Cards are the same if same target + same answer + same blanked sentence."""
-    return (card["target"], _norm(card["answer"]), _norm(card["cloze"]))
+    return (card["target"], norm(card["answer"]), norm(card["cloze"]))
 
 
 def _generate(
@@ -381,12 +283,12 @@ def _generate(
         batch_n = min(_BATCH, want - len(cards) + 5)  # slight over-ask
         prompt = _prompt(target, difficulty, batch_n, list(answers))
         try:
-            text = _bedrock_converse(prompt)
+            text = bedrock_converse(prompt, model=MODEL_HAIKU, max_tokens=_MAX_TOKENS, temperature=_TEMPERATURE)
         except RuntimeError as exc:
             print(f"  ! {target}/{difficulty}: {exc}", file=sys.stderr)
             time.sleep(2)
             continue
-        raw_items = _extract_json_array(text)
+        raw_items = extract_json_array(text)
         if not raw_items:
             print(f"  ! {target}/{difficulty}: no JSON parsed from batch", file=sys.stderr)
             continue
@@ -399,7 +301,7 @@ def _generate(
             if key in seen:
                 continue
             seen.add(key)
-            answers.add(_norm(card["answer"]))
+            answers.add(norm(card["answer"]))
             cards.append(card)
             added += 1
             if len(cards) >= want:
@@ -478,7 +380,7 @@ def main() -> int:
 
     if not args.no_auth:
         print("Refreshing Bedrock credentials (bedrock-how)…")
-        _bedrock_auth()
+        bedrock_auth()
 
     # Split the total evenly across targets, then evenly across difficulties.
     per_target = args.total // len(targets)
@@ -486,7 +388,7 @@ def main() -> int:
 
     print(
         f"Generating ~{args.total} cards: {len(targets)} target(s) × "
-        f"{len(DIFFICULTIES)} difficulties (~{per_difficulty} each) via {_MODEL_ID}"
+        f"{len(DIFFICULTIES)} difficulties (~{per_difficulty} each) via {MODEL_HAIKU}"
     )
 
     fresh: list[dict[str, Any]] = []
@@ -570,7 +472,7 @@ def main() -> int:
 
     out = {
         "meta": {
-            "model": _MODEL_ID,
+            "model": MODEL_HAIKU,
             "generated_at": datetime.now(UTC).isoformat(),
             "counts": counts,
             "total": len(combined),

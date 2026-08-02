@@ -1,0 +1,2126 @@
+{
+  "meta": {
+    "note": "Cards quarantined by review_cloze_sentences.py — fix and re-merge, or discard. NOT loaded by the runtime.",
+    "updated_at": "2026-08-02T10:26:22.031859+00:00"
+  },
+  "cards": [
+    {
+      "id": "en-0006",
+      "target": "en",
+      "cloze": "The weather is very ___ today.",
+      "answer": "cold",
+      "context": "El clima es muy frío hoy.",
+      "distractors": [
+        "hot",
+        "warm",
+        "cool"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'warm' and 'cool' are near-synonyms in the temperature context and could arguably fill the gap; 'cool' especially is a valid mild-cold alternative"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0008",
+      "target": "en",
+      "cloze": "He runs very ___ in the park.",
+      "answer": "fast",
+      "context": "Él corre muy rápido en el parque.",
+      "distractors": [
+        "slow",
+        "quick",
+        "hard"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'quick' is a synonym of 'fast' and could work adverbially (informally 'run quick'); too close to the answer"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0009",
+      "target": "en",
+      "cloze": "We ___ breakfast at seven o'clock.",
+      "answer": "eat",
+      "context": "Comemos desayuno a las siete.",
+      "distractors": [
+        "make",
+        "cook",
+        "prepare"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "context_translation 'Comemos desayuno' is unnatural Spanish (should be 'Desayunamos' or 'Tomamos el desayuno'), minor translation issue"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0014",
+      "target": "en",
+      "cloze": "I ___ my friends every week.",
+      "answer": "see",
+      "context": "Veo a mis amigos cada semana.",
+      "distractors": [
+        "hear",
+        "call",
+        "visit"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'visit' is a valid alternative for 'ver a mis amigos' in the sense of visiting friends"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0018",
+      "target": "en",
+      "cloze": "My sister is very ___ and intelligent.",
+      "answer": "smart",
+      "context": "Mi hermana es muy inteligente.",
+      "distractors": [
+        "silly",
+        "lazy",
+        "busy"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'smart' and the sentence's own 'intelligent' plus context 'inteligente' make it redundant; answer is fine but translation omits 'smart' — minor; acceptable"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0020",
+      "target": "en",
+      "cloze": "The music is ___ and fun.",
+      "answer": "loud",
+      "context": "La música es fuerte y divertida.",
+      "distractors": [
+        "quiet",
+        "soft",
+        "low"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractors 'quiet', 'soft', 'low' are all near-synonyms of each other but each is opposite of 'loud'; these are valid wrong options — actually acceptable",
+          "reconsidered: all are clearly wrong for 'fuerte', ok"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0027",
+      "target": "en",
+      "cloze": "She has a ___ apartment downtown.",
+      "answer": "small",
+      "context": "Ella tiene un apartamento pequeño en el centro.",
+      "distractors": [
+        "tiny",
+        "narrow",
+        "short"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'tiny' is a near-synonym of 'small' and could validly fill the blank"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0033",
+      "target": "en",
+      "cloze": "She is very ___ and creative.",
+      "answer": "intelligent",
+      "context": "Ella es muy inteligente y creativa.",
+      "distractors": [
+        "clever",
+        "wise",
+        "talented"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'clever' is a near-synonym of 'intelligent' and could validly fill the blank"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0037",
+      "target": "en",
+      "cloze": "The flowers are very ___.",
+      "answer": "colorful",
+      "context": "Las flores son muy coloridas.",
+      "distractors": [
+        "bright",
+        "pretty",
+        "fresh"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'bright' and 'pretty' are plausible valid alternatives to describe flowers"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0039",
+      "target": "en",
+      "cloze": "They speak Spanish and English ___.",
+      "answer": "well",
+      "context": "Hablan español e inglés bien.",
+      "distractors": [
+        "fluently",
+        "clearly",
+        "perfectly"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'fluently', 'clearly', 'perfectly' are all valid adverbs that could fill the blank"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0041",
+      "target": "en",
+      "cloze": "The music is very ___ tonight.",
+      "answer": "loud",
+      "context": "La música es muy fuerte esta noche.",
+      "distractors": [
+        "noisy",
+        "strong",
+        "intense"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'noisy' is a near-synonym; 'strong' is the literal translation of 'fuerte' and could be considered valid"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0043",
+      "target": "en",
+      "cloze": "She writes ___ to her friends.",
+      "answer": "letters",
+      "context": "Ella escribe cartas a sus amigos.",
+      "distractors": [
+        "emails",
+        "messages",
+        "notes"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'notes' and 'messages' are near-synonyms of written correspondence; 'cartas' specifically means letters but distractors are too close"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0047",
+      "target": "en",
+      "cloze": "I like to ___ to music.",
+      "answer": "listen",
+      "context": "Me gusta escuchar música.",
+      "distractors": [
+        "watch",
+        "hear",
+        "feel"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'hear' is a near-synonym of 'listen'"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0067",
+      "target": "en",
+      "cloze": "The sun is very ___ today.",
+      "answer": "bright",
+      "context": "El sol es muy brillante hoy.",
+      "distractors": [
+        "dark",
+        "dim",
+        "dull"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'dim' and 'dull' are near-synonyms; but they are opposites of bright, so wrong - however 'dull' could arguably fit differently. Main concern: all three are valid antonym distractors, acceptable"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0070",
+      "target": "en",
+      "cloze": "The ___ is very loud here.",
+      "answer": "music",
+      "context": "La música es muy ruidosa aquí.",
+      "distractors": [
+        "noise",
+        "sound",
+        "voice"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'noise' and 'sound' could plausibly fill the blank ('The noise is very loud here'), making them valid alternatives"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0077",
+      "target": "en",
+      "cloze": "She ___ letters every day.",
+      "answer": "writes",
+      "context": "Ella escribe cartas todos los días.",
+      "distractors": [
+        "draws",
+        "sends",
+        "types"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'types' letters is a plausible valid alternative; 'sends' also plausible for letters"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0013",
+      "target": "es",
+      "cloze": "Ella tiene dos hermanos ___.",
+      "answer": "pequeños",
+      "context": "She has two small brothers.",
+      "distractors": [
+        "altos",
+        "rubios",
+        "jóvenes"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'jóvenes' is a near-synonym/valid alternative for 'pequeños' when describing brothers (young), could fill the gap naturally"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0014",
+      "target": "es",
+      "cloze": "Yo llego a la escuela ___.",
+      "answer": "temprano",
+      "context": "I arrive at school early.",
+      "distractors": [
+        "tarde",
+        "pronto",
+        "rápido"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'pronto' is a synonym/valid alternative for 'temprano' in this context"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0020",
+      "target": "es",
+      "cloze": "Ellos ___ la televisión por la noche.",
+      "answer": "miran",
+      "context": "They watch television at night.",
+      "distractors": [
+        "escuchan",
+        "tocan",
+        "ven"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'ven' (ver la televisión) is a valid alternative to 'miran' and is arguably more natural"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0024",
+      "target": "es",
+      "cloze": "Nosotros ___ a los abuelos los domingos.",
+      "answer": "visitamos",
+      "context": "We visit our grandparents on Sundays.",
+      "distractors": [
+        "llamamos",
+        "saludamos",
+        "vemos"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'vemos' is a valid alternative to 'visitamos' for visiting grandparents"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0051",
+      "target": "es",
+      "cloze": "Mi hermana ___ medicina en la universidad.",
+      "answer": "estudia",
+      "context": "My sister studies medicine at the university.",
+      "distractors": [
+        "enseña",
+        "aprende",
+        "trabaja"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'aprende' is a near-synonym/valid alternative: 'aprende medicina' works and means studies/learns medicine"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0052",
+      "target": "es",
+      "cloze": "El café está muy ___ hoy.",
+      "answer": "caliente",
+      "context": "The coffee is very hot today.",
+      "distractors": [
+        "frío",
+        "tibio",
+        "dulce"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'tibio' (warm/lukewarm) is a near-synonym of 'caliente' and could arguably fill the gap"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0064",
+      "target": "es",
+      "cloze": "Nosotros ___ el museo el domingo.",
+      "answer": "visitamos",
+      "context": "We visit the museum on Sunday.",
+      "distractors": [
+        "vemos",
+        "conocemos",
+        "exploramos"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'conocemos' can mean 'we visit' a place and is a valid alternative for visiting a museum"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0079",
+      "target": "es",
+      "cloze": "Nosotros vivimos en una ___ grande.",
+      "answer": "ciudad",
+      "context": "We live in a big city.",
+      "distractors": [
+        "montaña",
+        "playa",
+        "pueblo"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'pueblo' is a near-synonym of 'ciudad' and could arguably fit 'a big place to live'; borderline valid alternative"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0082",
+      "target": "es",
+      "cloze": "Tú escribes ___ muy bonitos a tu amiga.",
+      "answer": "mensajes",
+      "context": "You write very nice messages to your friend.",
+      "distractors": [
+        "cartas",
+        "poemas",
+        "emails"
+      ],
+      "difficulty": "beginner",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'cartas', 'emails', 'poemas' are all valid alternatives that fit 'write very nice ___ to your friend'; multiple correct answers"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0108",
+      "target": "en",
+      "cloze": "The ___ noise from the construction woke me up early.",
+      "answer": "loud",
+      "context": "El ruido fuerte de la construcción me despertó temprano.",
+      "distractors": [
+        "quiet",
+        "soft",
+        "distant"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'soft' is a valid alternative meaning quiet, opposite of loud, but as distractor could work; more concerning is 'quiet' and 'soft' both being antonyms - acceptable. Reconsider: distractors are all wrong. OK actually."
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0118",
+      "target": "en",
+      "cloze": "We should ___ at the airport early tomorrow.",
+      "answer": "arrive",
+      "context": "Debemos llegar al aeropuerto temprano mañana.",
+      "distractors": [
+        "leave",
+        "depart",
+        "return"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "Distractor 'depart' is not a valid fill (opposite), but 'return' and 'leave' also opposites; all clearly wrong - actually fine",
+          "Reconsider: distractors are all opposites/wrong, none synonymous with arrive"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0122",
+      "target": "en",
+      "cloze": "I will ___ you after I finish work.",
+      "answer": "call",
+      "context": "Te llamaré después de que termine el trabajo.",
+      "distractors": [
+        "text",
+        "email",
+        "visit"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'text', 'email', and 'visit' are all valid alternatives that could naturally fill the blank"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0123",
+      "target": "en",
+      "cloze": "The flowers ___ beautifully in the spring.",
+      "answer": "bloomed",
+      "context": "Las flores florecieron hermosamente en la primavera.",
+      "distractors": [
+        "grew",
+        "opened",
+        "appeared"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'opened' is a near-synonym for flowers blooming; 'grew' also plausible"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0127",
+      "target": "en",
+      "cloze": "The music sounds ___ and cheerful today.",
+      "answer": "bright",
+      "context": "La música suena alegre y animada hoy.",
+      "distractors": [
+        "dark",
+        "sad",
+        "slow"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "translation says 'alegre y animada' (cheerful/lively), not 'bright'; 'bright' doesn't match context_translation well"
+        ],
+        "suggested_answer": "cheerful"
+      }
+    },
+    {
+      "id": "en-0128",
+      "target": "en",
+      "cloze": "She ___ letters to her family every week.",
+      "answer": "writes",
+      "context": "Ella escribe cartas a su familia cada semana.",
+      "distractors": [
+        "reads",
+        "sends",
+        "receives"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'sends' is a valid alternative that naturally fits 'letters to her family every week'"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0130",
+      "target": "en",
+      "cloze": "We will ___ to Spain next summer vacation.",
+      "answer": "travel",
+      "context": "Viajaremos a España el próximo verano.",
+      "distractors": [
+        "move",
+        "fly",
+        "drive"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'fly' and 'drive' are valid alternatives for traveling to Spain"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0131",
+      "target": "en",
+      "cloze": "He ___ the museum yesterday with his class.",
+      "answer": "visited",
+      "context": "Él visitó el museo ayer con su clase.",
+      "distractors": [
+        "toured",
+        "explored",
+        "attended"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'toured' and 'explored' are near-synonyms of visiting a museum"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0137",
+      "target": "en",
+      "cloze": "The movie was quite ___ and too long.",
+      "answer": "boring",
+      "context": "La película fue bastante aburrida y demasiado larga.",
+      "distractors": [
+        "exciting",
+        "thrilling",
+        "engaging"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'change' not present but distractors exciting/thrilling/engaging are all antonyms - actually fine",
+          "reconsider: all distractors are clearly wrong antonyms"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0138",
+      "target": "en",
+      "cloze": "His family ___ to a different country last year.",
+      "answer": "moved",
+      "context": "Su familia se mudó a un país diferente el año pasado.",
+      "distractors": [
+        "stayed",
+        "remained",
+        "settled"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'settled' can mean moved and settled in a new country, a near-valid alternative given context"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0150",
+      "target": "en",
+      "cloze": "The test will ___ your understanding of the material.",
+      "answer": "measure",
+      "context": "La prueba medirá tu comprensión del material.",
+      "distractors": [
+        "test",
+        "grade",
+        "evaluate"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'evaluate' is a synonym of 'measure' in this context and could validly fill the gap",
+          "'test' also plausible but redundant with sentence subject"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0163",
+      "target": "en",
+      "cloze": "The restaurant ___ traditional Mexican food every evening.",
+      "answer": "serves",
+      "context": "El restaurante sirve comida mexicana tradicional cada noche.",
+      "distractors": [
+        "cooks",
+        "prepares",
+        "makes"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "Distractors 'cooks','prepares','makes' could arguably fit the context of a restaurant offering food, near-synonyms of 'serves' in loose usage"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0165",
+      "target": "en",
+      "cloze": "The project ___ careful planning and hard work.",
+      "answer": "requires",
+      "context": "El proyecto requiere planificación cuidadosa y trabajo duro.",
+      "distractors": [
+        "suggests",
+        "allows",
+        "permits"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'allows' and 'permits' are synonyms of each other; both are distractors but that is acceptable; however answer 'requires' is clearly correct and distractors are wrong—reconsidered: distractors do not fit, ok"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0166",
+      "target": "en",
+      "cloze": "The meeting will ___ at five o'clock today.",
+      "answer": "finish",
+      "context": "La reunión terminará a las cinco hoy.",
+      "distractors": [
+        "start",
+        "begin",
+        "commence"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'begin' and 'commence' are synonyms of each other and both are distractors; also all three are valid opposites but distractors being mutual synonyms is a minor issue, still each is wrong for the blank"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0085",
+      "target": "es",
+      "cloze": "Nosotros ___ al cine el próximo viernes.",
+      "answer": "iremos",
+      "context": "We will go to the cinema next Friday.",
+      "distractors": [
+        "vendremos",
+        "llegaremos",
+        "saldremos"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'vendremos','llegaremos','saldremos' — 'llegaremos al cine' and 'saldremos' differ, but 'iremos al cine' is standard; distractors are wrong for 'al cine' though 'vendremos' could be near context; acceptable but flag 'llegaremos' as plausible (llegar al cine)"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0091",
+      "target": "es",
+      "cloze": "Yo ___ comprar leche en el supermercado mañana.",
+      "answer": "necesito",
+      "context": "I need to buy milk at the supermarket tomorrow.",
+      "distractors": [
+        "quiero",
+        "puedo",
+        "debo"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'debo' is a valid alternative meaning 'I have to/must buy', very close to 'necesito' in this context"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0095",
+      "target": "es",
+      "cloze": "Ella ___ la cena para toda la familia.",
+      "answer": "preparará",
+      "context": "She will prepare dinner for the whole family.",
+      "distractors": [
+        "cocinará",
+        "beberá",
+        "comerá"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'cocinará' is a synonym/valid alternative for preparing dinner"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0109",
+      "target": "es",
+      "cloze": "El café ___ muy caliente esta mañana.",
+      "answer": "está",
+      "context": "The coffee is very hot this morning.",
+      "distractors": [
+        "parece",
+        "queda",
+        "sigue"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "Distractor 'sigue' could work: 'sigue muy caliente' is a valid natural alternative"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0111",
+      "target": "es",
+      "cloze": "Las flores del jardín son muy ___ este año.",
+      "answer": "hermosas",
+      "context": "The flowers in the garden are very beautiful this year.",
+      "distractors": [
+        "coloridas",
+        "grandes",
+        "raras"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'coloridas' and 'grandes' are valid adjectives that fit the sentence grammatically and semantically"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0113",
+      "target": "es",
+      "cloze": "Mi abuela ___ una comida deliciosa para la familia.",
+      "answer": "cocinó",
+      "context": "My grandmother cooked a delicious meal for the family.",
+      "distractors": [
+        "preparó",
+        "sirvió",
+        "probó"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'preparó' is a near-synonym and equally valid for cooking a meal"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0115",
+      "target": "es",
+      "cloze": "El problema es muy ___ para resolver solo.",
+      "answer": "difícil",
+      "context": "The problem is very difficult to solve alone.",
+      "distractors": [
+        "complicado",
+        "imposible",
+        "raro"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'complicado' is a synonym of 'difícil' and equally valid"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0117",
+      "target": "es",
+      "cloze": "La película fue muy ___ y todos la disfrutaron.",
+      "answer": "emocionante",
+      "context": "The movie was very exciting and everyone enjoyed it.",
+      "distractors": [
+        "interesante",
+        "divertida",
+        "sorprendente"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'interesante', 'divertida', 'sorprendente' are all valid adjectives that fit naturally"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0121",
+      "target": "es",
+      "cloze": "Ella ___ estudiar más para pasar el examen final.",
+      "answer": "necesita",
+      "context": "She needs to study more to pass the final exam.",
+      "distractors": [
+        "debe",
+        "tiene",
+        "puede"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'debe' is a valid alternative meaning 'should/needs to' fitting the sentence"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0123",
+      "target": "es",
+      "cloze": "Nosotros ___ a España durante el verano pasado.",
+      "answer": "viajamos",
+      "context": "We traveled to Spain during last summer.",
+      "distractors": [
+        "visitamos",
+        "exploramos",
+        "cruzamos"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'cruzamos' works less, but 'visitamos' is a valid alternative for traveling to a place"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0124",
+      "target": "es",
+      "cloze": "El paisaje de las montañas es verdaderamente ___.",
+      "answer": "maravilloso",
+      "context": "The landscape of the mountains is truly wonderful.",
+      "distractors": [
+        "espectacular",
+        "increíble",
+        "magnífico"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'espectacular', 'increíble', and 'magnífico' are all synonyms/valid alternatives for 'maravilloso'"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0126",
+      "target": "es",
+      "cloze": "La tarea es ___ pero no es muy complicada.",
+      "answer": "larga",
+      "context": "The homework is long but not very complicated.",
+      "distractors": [
+        "extensa",
+        "pesada",
+        "difícil"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'extensa' is a synonym of 'larga' and a valid alternative"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0127",
+      "target": "es",
+      "cloze": "Nosotros ___ a casa antes de las seis.",
+      "answer": "llegaremos",
+      "context": "We will arrive home before six o'clock.",
+      "distractors": [
+        "regresaremos",
+        "volveremos",
+        "entraremos"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'regresaremos' and 'volveremos' are valid alternatives meaning arrive/return home"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0130",
+      "target": "es",
+      "cloze": "Mi madre ___ la cena para toda la familia.",
+      "answer": "preparará",
+      "context": "My mother will prepare dinner for the whole family.",
+      "distractors": [
+        "cocinará",
+        "hará",
+        "servirá"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'cocinará' is a valid near-synonym for preparing dinner"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0131",
+      "target": "es",
+      "cloze": "Las flores ___ del jardín atraen muchas mariposas.",
+      "answer": "coloridas",
+      "context": "The colorful flowers in the garden attract many butterflies.",
+      "distractors": [
+        "brillantes",
+        "hermosas",
+        "vistosas"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'vistosas' is a synonym/valid alternative for 'coloridas'"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0133",
+      "target": "es",
+      "cloze": "El profesor ___ la lección con mucha paciencia hoy.",
+      "answer": "explica",
+      "context": "The teacher explains the lesson with great patience today.",
+      "distractors": [
+        "entiende",
+        "pregunta",
+        "enseña"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'enseña' is a valid alternative for 'explica' the lesson"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0141",
+      "target": "es",
+      "cloze": "El médico ___ descansar más durante las próximas semanas.",
+      "answer": "recomendó",
+      "context": "The doctor recommended resting more during the next weeks.",
+      "distractors": [
+        "prohibió",
+        "permitió",
+        "sugirió"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "Distractor 'sugirió' is a near-synonym of 'recomendó' and would validly fill the gap"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0144",
+      "target": "es",
+      "cloze": "Las flores ___ rápidamente en primavera con mucha agua.",
+      "answer": "crecen",
+      "context": "The flowers grow quickly in spring with plenty of water.",
+      "distractors": [
+        "mueren",
+        "florecen",
+        "se marchitan"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "Distractor 'florecen' is a near-synonym/valid alternative for flowers growing in spring"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0149",
+      "target": "es",
+      "cloze": "Nosotros ___ museos históricos durante nuestras vacaciones.",
+      "answer": "visitamos",
+      "context": "We visited historical museums during our vacation.",
+      "distractors": [
+        "exploramos",
+        "conocemos",
+        "observamos"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'conocemos' could work naturally as 'we visit/get to know museums'; near-valid alternative"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0150",
+      "target": "es",
+      "cloze": "El cielo estaba ___ pero no llovió en toda la noche.",
+      "answer": "nublado",
+      "context": "The sky was cloudy but it didn't rain all night.",
+      "distractors": [
+        "despejado",
+        "claro",
+        "azul"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'despejado', 'claro', 'azul' are antonyms/contrasting but grammatically all fit; however they are clearly wrong given 'pero no llovió'—actually they contradict cloudy, so OK. But 'claro' and 'despejado' are valid opposites, still wrong here. Acceptable.",
+          "On review distractors are all wrong"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0154",
+      "target": "es",
+      "cloze": "El restaurante ___ comida italiana excelente todas las noches.",
+      "answer": "sirve",
+      "context": "The restaurant serves excellent Italian food every night.",
+      "distractors": [
+        "cocina",
+        "prepara",
+        "vende"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'prepara' is a near-synonym valid for serving/making food; 'cocina' also plausible"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0155",
+      "target": "es",
+      "cloze": "Ella ___ viajar a Europa el próximo verano con familia.",
+      "answer": "decidió",
+      "context": "She decided to travel to Europe next summer with family.",
+      "distractors": [
+        "pensó",
+        "soñó",
+        "planeó"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'planeó' is a valid near-synonym: 'planned to travel' works naturally"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0161",
+      "target": "es",
+      "cloze": "Él siempre llega ___ a sus reuniones de trabajo.",
+      "answer": "temprano",
+      "context": "He always arrives early to his work meetings.",
+      "distractors": [
+        "rápido",
+        "tarde",
+        "pronto"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'pronto' is a near-synonym of 'temprano' and could validly fill the gap"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0165",
+      "target": "es",
+      "cloze": "El restaurante ___ comida italiana muy deliciosa.",
+      "answer": "sirve",
+      "context": "The restaurant serves very delicious Italian food.",
+      "distractors": [
+        "vende",
+        "prepara",
+        "ofrece"
+      ],
+      "difficulty": "intermediate",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'ofrece' and 'prepara' are plausible valid alternatives for what a restaurant does with food"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0175",
+      "target": "en",
+      "cloze": "The detective ___ the evidence meticulously to uncover the truth about the crime.",
+      "answer": "scrutinized",
+      "context": "El detective examinó la evidencia meticulosamente para descubrir la verdad sobre el crimen.",
+      "distractors": [
+        "ignored",
+        "glanced",
+        "mentioned"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'glanced' is a plausible verb but wrong meaning; acceptable",
+          "'examined' translation is fine",
+          "'scrutinized' correct; distractors are grammatically odd (glanced/mentioned need object) but meaning-wise distinct - actually acceptable"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0178",
+      "target": "en",
+      "cloze": "We suggest that you ___ the entire document before submitting your formal application.",
+      "answer": "peruse",
+      "context": "Sugerimos que leas el documento completo antes de presentar tu solicitud formal.",
+      "distractors": [
+        "sign",
+        "scan",
+        "ignore"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'scan' is a near-synonym of 'peruse' (both meaning to read/skim through), making it a valid alternative"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0185",
+      "target": "en",
+      "cloze": "The philanthropist's generous donations ___ the suffering of countless disadvantaged communities.",
+      "answer": "ameliorated",
+      "context": "Las donaciones generosas del filántropo mejoraron el sufrimiento de innumerables comunidades desfavorecidas.",
+      "distractors": [
+        "worsened",
+        "ignored",
+        "delayed"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'ameliorated the suffering' is awkward collocation; one typically 'alleviates' suffering, though ameliorate is arguably valid",
+          "Translation matches"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0206",
+      "target": "en",
+      "cloze": "The teacher encouraged students to ___ the assigned chapters carefully.",
+      "answer": "peruse",
+      "context": "La maestra animó a los estudiantes a leer cuidadosamente los capítulos asignados.",
+      "distractors": [
+        "skip",
+        "ignore",
+        "skim"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'skim' is a near-synonym of peruse in its common (mistaken) meaning 'read quickly'; but peruse traditionally means read carefully, so skim is ambiguous and could be a valid alternative depending on interpretation"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0219",
+      "target": "en",
+      "cloze": "The chef will ___ the plate with fresh herbs and edible flowers.",
+      "answer": "garnish",
+      "context": "El chef adornará el plato con hierbas frescas y flores comestibles.",
+      "distractors": [
+        "season",
+        "arrange",
+        "present"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'arrange' and 'present' could plausibly fit the context of preparing a plate; 'season' is close in culinary context, making distractors weak alternatives"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "en-0232",
+      "target": "en",
+      "cloze": "The architect ___ the building design with remarkable precision and detail.",
+      "answer": "rendered",
+      "context": "El arquitecto presentó el diseño del edificio con precisión y detalle notables.",
+      "distractors": [
+        "sketched",
+        "imagined",
+        "conceived"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "context_translation says 'presentó' (presented), but 'rendered' means to depict/represent; translation mismatch, and 'rendered' is odd for architect presenting a design"
+        ],
+        "suggested_answer": "presented"
+      }
+    },
+    {
+      "id": "en-0241",
+      "target": "en",
+      "cloze": "The volunteers will ___ their weekend plans to help with the community cleanup.",
+      "answer": "forego",
+      "context": "Los voluntarios renunciarán a sus planes de fin de semana para ayudar con la limpieza comunitaria.",
+      "distractors": [
+        "schedule",
+        "arrange",
+        "plan"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'forego' means to precede; the intended meaning 'give up' is 'forgo'; spelling/word choice error"
+        ],
+        "suggested_answer": "forgo"
+      }
+    },
+    {
+      "id": "en-0242",
+      "target": "en",
+      "cloze": "The ambassador will ___ to negotiate a peaceful resolution between the two nations.",
+      "answer": "endeavor",
+      "context": "El embajador se esforzará por negociar una resolución pacífica entre las dos naciones.",
+      "distractors": [
+        "attempt",
+        "refuse",
+        "delay"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'attempt' is a valid synonym of 'endeavor' and fits the sentence naturally"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0168",
+      "target": "es",
+      "cloze": "Aunque sea difícil, debemos ___ en nuestros objetivos profesionales.",
+      "answer": "perseverar",
+      "context": "Although it may be difficult, we must persevere in our professional goals.",
+      "distractors": [
+        "abandonar",
+        "rendirse",
+        "dudar"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'dudar' works but distinct; however 'abandonar' and 'rendirse' are near-synonyms of each other but opposites of answer, all clearly wrong - acceptable",
+          "reconsider: all distractors are wrong for the sentence, no synonym of perseverar"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0178",
+      "target": "es",
+      "cloze": "El artista ___ un cuadro extraordinario que reflejaba sus emociones más profundas.",
+      "answer": "pintó",
+      "context": "The artist painted an extraordinary painting that reflected his deepest emotions.",
+      "distractors": [
+        "esculpió",
+        "grabó",
+        "dibujó"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "Distractor 'dibujó' (drew) is a near-synonym/valid alternative for painting a picture"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0185",
+      "target": "es",
+      "cloze": "Aunque sea costoso, debemos ___ en educación para asegurar nuestro futuro.",
+      "answer": "invertir",
+      "context": "Although it may be expensive, we must invest in education to ensure our future.",
+      "distractors": [
+        "gastar",
+        "perder",
+        "derrochar"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'gastar' (spend) is a valid near-synonym that could fit 'invertir en educación' contextually"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0209",
+      "target": "es",
+      "cloze": "El compositor ___ una melodía hermosa que cautivó a toda la audiencia presente.",
+      "answer": "creó",
+      "context": "The composer created a beautiful melody that captivated the entire audience present.",
+      "distractors": [
+        "destruyó",
+        "copiò",
+        "robó"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'copiò' has wrong accent (should be 'copió'), a typo but not a synonym; distractors are otherwise valid opposites"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0212",
+      "target": "es",
+      "cloze": "Prefiero que ___ por el parque temprano en la mañana para relajarse.",
+      "answer": "camines",
+      "context": "I prefer that you walk through the park early in the morning to relax.",
+      "distractors": [
+        "corras",
+        "nades",
+        "vueles"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "reflexive mismatch: 'que camines... para relajarse' should be 'relajarte'; translation says 'to relax' but Spanish pronoun is inconsistent"
+        ],
+        "suggested_answer": "camines"
+      }
+    },
+    {
+      "id": "es-0213",
+      "target": "es",
+      "cloze": "El filósofo ___ sus argumentos para que la audiencia comprenda mejor su teoría.",
+      "answer": "amplió",
+      "context": "The philosopher expanded his arguments so that the audience could better understand his theory.",
+      "distractors": [
+        "redujo",
+        "eliminó",
+        "simplificó"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'para que la audiencia comprenda' needs subjunctive which is correct; distractor 'simplificó' vs 'amplió' fine, but 'redujo/eliminó/simplificó' all antonyms - ok. However main verb 'amplió' fine. Actually distractor 'simplificó' is opposite, valid wrong. No issue",
+          "reconsider: all distractors wrong"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0217",
+      "target": "es",
+      "cloze": "El médico recomendó que ___ una dieta más saludable.",
+      "answer": "siguieras",
+      "context": "The doctor recommended that you follow a healthier diet.",
+      "distractors": [
+        "hagas",
+        "comes",
+        "bebes"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'hagas' (hacer dieta) is a valid natural alternative meaning 'follow/do a diet'"
+        ],
+        "suggested_answer": "siguieras"
+      }
+    },
+    {
+      "id": "es-0218",
+      "target": "es",
+      "cloze": "Es importante que los estudiantes ___ los conceptos fundamentales.",
+      "answer": "comprendan",
+      "context": "It is important that students understand the fundamental concepts.",
+      "distractors": [
+        "aprendan",
+        "olviden",
+        "recuerden"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractor 'aprendan' is a near-synonym and valid alternative in this context"
+        ],
+        "suggested_answer": "comprendan"
+      }
+    },
+    {
+      "id": "es-0222",
+      "target": "es",
+      "cloze": "Queremos que ___ de tus vacaciones sin preocupaciones.",
+      "answer": "disfrutes",
+      "context": "We want you to enjoy your vacation without worries.",
+      "distractors": [
+        "descanses",
+        "viajes",
+        "relajes"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'relajes' is a valid alternative meaning; 'disfrutes de' fits but 'relajes' (te relajes) could also fit context of vacation without worries; however 'descanses' and 'viajes' are clearly different",
+          "'relajes' borderline but reflexive needed so it's actually wrong without 'te'; acceptable"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0223",
+      "target": "es",
+      "cloze": "No creo que ___ posible resolver este problema matemático tan rápido.",
+      "answer": "sea",
+      "context": "I do not believe it is possible to solve this math problem so quickly.",
+      "distractors": [
+        "esté",
+        "fuera",
+        "haya"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'fuera' could arguably work but tense mismatch makes it wrong; distractors mostly fine",
+          "'esté' possible reading? 'ser posible' is the fixed expression, so 'sea' correct"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0224",
+      "target": "es",
+      "cloze": "Te pido que me ___ con las tareas del hogar esta semana.",
+      "answer": "ayudes",
+      "context": "I ask you to help me with the household chores this week.",
+      "distractors": [
+        "apoyes",
+        "colabores",
+        "participes"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'apoyes' and 'colabores' are near-synonyms/valid alternatives for helping with chores",
+          "distractors too close in meaning"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0225",
+      "target": "es",
+      "cloze": "Es necesario que todos ___ al bienestar de nuestra comunidad.",
+      "answer": "contribuyamos",
+      "context": "It is necessary that we all contribute to the well-being of our community.",
+      "distractors": [
+        "ayudemos",
+        "trabajemos",
+        "participemos"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'ayudemos' and 'participemos' are near-synonyms and valid alternatives (contribuir al bienestar / ayudar / participar)"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0226",
+      "target": "es",
+      "cloze": "Insisto en que ___ las opiniones de los demás siempre.",
+      "answer": "respetes",
+      "context": "I insist that you respect the opinions of others always.",
+      "distractors": [
+        "valores",
+        "escuches",
+        "aceptes"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'aceptes' and 'valores' could be valid alternatives for respecting opinions",
+          "distractors semantically close"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0227",
+      "target": "es",
+      "cloze": "Es fundamental que ___ tu información personal en internet.",
+      "answer": "protejas",
+      "context": "It is fundamental that you protect your personal information on the internet.",
+      "distractors": [
+        "cuides",
+        "guardes",
+        "resguardes"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'cuides', 'guardes', 'resguardes' are near-synonyms of 'protejas' for protecting info",
+          "valid alternatives"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0228",
+      "target": "es",
+      "cloze": "Sugiero que ___ el museo de arte contemporáneo el próximo mes.",
+      "answer": "visitemos",
+      "context": "I suggest that we visit the contemporary art museum next month.",
+      "distractors": [
+        "exploremos",
+        "recorramos",
+        "conozcamos"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'conozcamos', 'recorramos', 'exploremos' are all valid alternatives for visiting a museum"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0229",
+      "target": "es",
+      "cloze": "Es vital que ___ tus errores para poder mejorar continuamente.",
+      "answer": "reconozcas",
+      "context": "It is vital that you recognize your mistakes in order to improve continuously.",
+      "distractors": [
+        "admitas",
+        "aceptes",
+        "veas"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'admitas' and 'aceptes' are near-synonyms of 'reconozcas' (recognize/admit mistakes)",
+          "valid alternatives"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0230",
+      "target": "es",
+      "cloze": "Prefiero que no ___ este asunto delante de mis padres.",
+      "answer": "menciones",
+      "context": "I prefer that you do not mention this matter in front of my parents.",
+      "distractors": [
+        "hables",
+        "comentes",
+        "cuentes"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'comentes' and 'cuentes' are valid alternatives for mentioning a matter",
+          "distractors too close in meaning"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0231",
+      "target": "es",
+      "cloze": "El profesor exige que ___ la tarea completamente resuelta.",
+      "answer": "entregues",
+      "context": "The teacher demands that you turn in the assignment completely solved.",
+      "distractors": [
+        "presentes",
+        "muestres",
+        "compartas"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'presentes' is a valid alternative for turning in an assignment",
+          "distractor synonym"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0232",
+      "target": "es",
+      "cloze": "Es conveniente que ___ a estudiar para el examen final ahora.",
+      "answer": "empieces",
+      "context": "It is convenient that you start studying for the final exam now.",
+      "distractors": [
+        "comiences",
+        "inicies",
+        "arranques"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'comiences' and 'inicies' are synonyms of 'empieces' and equally valid in the blank"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0233",
+      "target": "es",
+      "cloze": "No permitiré que ___ tus sueños por miedo al fracaso.",
+      "answer": "abandones",
+      "context": "I will not allow you to abandon your dreams out of fear of failure.",
+      "distractors": [
+        "dejes",
+        "renuncies",
+        "olvides"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'dejes' and 'renuncies' (renuncies a) are near-synonyms and valid alternatives for abandoning dreams"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0235",
+      "target": "es",
+      "cloze": "Te ruego que no ___ tarde a la reunión de mañana.",
+      "answer": "llegues",
+      "context": "I beg you not to arrive late to tomorrow's meeting.",
+      "distractors": [
+        "vengas",
+        "acudas",
+        "asistas"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'acudas' and 'asistas' are valid ways to say arrive/attend the meeting; 'acudas tarde' is natural"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0236",
+      "target": "es",
+      "cloze": "Es importante que ___ flores en el jardín durante la primavera.",
+      "answer": "siembren",
+      "context": "It is important that they plant flowers in the garden during spring.",
+      "distractors": [
+        "planten",
+        "cultiven",
+        "arranquen"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'planten' and 'cultiven' are synonyms/valid alternatives for planting flowers"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0237",
+      "target": "es",
+      "cloze": "Espero que ___ en tu carrera profesional a pesar de los obstáculos.",
+      "answer": "perseveres",
+      "context": "I hope you persevere in your professional career despite the obstacles.",
+      "distractors": [
+        "persistas",
+        "continúes",
+        "aguantes"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'persistas' and 'continúes' are near-synonyms and valid in this context"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0238",
+      "target": "es",
+      "cloze": "Es recomendable que ___ tiempo en actividades que te apasionan.",
+      "answer": "inviertas",
+      "context": "It is advisable that you invest time in activities that you are passionate about.",
+      "distractors": [
+        "dediques",
+        "gastes",
+        "emplees"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'dediques' and 'emplees' are valid alternatives for 'invest time'"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0239",
+      "target": "es",
+      "cloze": "No es probable que ___ el informe antes de las cinco de la tarde.",
+      "answer": "termine",
+      "context": "It is not likely that I will finish the report before five in the afternoon.",
+      "distractors": [
+        "acabe",
+        "concluya",
+        "finalice"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'acabe', 'concluya', 'finalice' are all synonyms of 'termine' and equally valid"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0240",
+      "target": "es",
+      "cloze": "Deseo que ___ tus horizontes viajando a nuevos países cada año.",
+      "answer": "amplíes",
+      "context": "I wish that you broaden your horizons by traveling to new countries each year.",
+      "distractors": [
+        "expandes",
+        "extiendes",
+        "aumentas"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "distractors are indicative forms, not subjunctive, so grammatically wrong regardless; but 'extiendas'/'expandas' would be near-synonyms — distractors incorrectly conjugated"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0241",
+      "target": "es",
+      "cloze": "Espero que no ___ tus responsabilidades durante este período difícil.",
+      "answer": "descuides",
+      "context": "I hope you don't neglect your responsibilities during this difficult period.",
+      "distractors": [
+        "abandones",
+        "olvides",
+        "ignores"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'abandones', 'olvides', 'ignores' are near-synonyms and plausible for neglect responsibilities"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0242",
+      "target": "es",
+      "cloze": "El maestro sugirió que ___ nuestro conocimiento mediante la lectura constante.",
+      "answer": "ampliáramos",
+      "context": "The teacher suggested that we expand our knowledge through constant reading.",
+      "distractors": [
+        "profundizáramos",
+        "mejoráramos",
+        "desarrolláramos"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'profundizáramos', 'mejoráramos', 'desarrolláramos' are valid alternatives for expanding knowledge"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0243",
+      "target": "es",
+      "cloze": "Es probable que ___ mañana, así que lleva un paraguas contigo.",
+      "answer": "llueva",
+      "context": "It's likely to rain tomorrow, so bring an umbrella with you.",
+      "distractors": [
+        "nieve",
+        "granizce",
+        "truene"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'granizce' is misspelled (should be 'granice'); distractors otherwise fine but spelling error"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0244",
+      "target": "es",
+      "cloze": "Dudo que hayas ___ completamente el significado profundo de esa metáfora literaria.",
+      "answer": "comprendido",
+      "context": "I doubt you fully understood the deep meaning of that literary metaphor.",
+      "distractors": [
+        "interpretado",
+        "analizado",
+        "estudiado"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'interpretado' and 'analizado' are near-synonyms that could naturally fill the gap in this context"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0245",
+      "target": "es",
+      "cloze": "Te ruego que no ___ tus sueños aunque enfrentes obstáculos inesperados.",
+      "answer": "abandones",
+      "context": "I beg you not to abandon your dreams even though you face unexpected obstacles.",
+      "distractors": [
+        "desistas",
+        "renuncies",
+        "postergues"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'desistas' and 'renuncies' are valid alternatives meaning to give up on dreams"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0246",
+      "target": "es",
+      "cloze": "Es fundamental que ___ en tus esfuerzos para alcanzar la excelencia académica.",
+      "answer": "perseveres",
+      "context": "It is fundamental that you persevere in your efforts to achieve academic excellence.",
+      "distractors": [
+        "insistas",
+        "continúes",
+        "resistas"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'insistas', 'continúes', 'resistas' are near-synonyms; 'continúes' especially works naturally with 'en tus esfuerzos'"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0247",
+      "target": "es",
+      "cloze": "Aunque sea difícil, es importante que ___ las opiniones de los demás.",
+      "answer": "respetes",
+      "context": "Although it's difficult, it's important that you respect others' opinions.",
+      "distractors": [
+        "valores",
+        "consideres",
+        "escuches"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'consideres' is a valid near-synonym for respecting/considering others' opinions"
+        ],
+        "suggested_answer": ""
+      }
+    },
+    {
+      "id": "es-0248",
+      "target": "es",
+      "cloze": "El científico recomendó que ___ más recursos en la investigación sostenible.",
+      "answer": "invirtiéramos",
+      "context": "The scientist recommended that we invest more resources in sustainable research.",
+      "distractors": [
+        "destináramos",
+        "asignáramos",
+        "empleáramos"
+      ],
+      "difficulty": "advanced",
+      "_review": {
+        "verdict": "suspect",
+        "reasons": [
+          "'destináramos', 'asignáramos', 'empleáramos' are all valid alternatives for investing/allocating resources"
+        ],
+        "suggested_answer": ""
+      }
+    }
+  ]
+}

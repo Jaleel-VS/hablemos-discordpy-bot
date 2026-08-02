@@ -204,10 +204,26 @@ conjugation sprint).
   `app/games/data/cloze_sentences.json` (~500 cards, evenly split across both
   decks and three difficulties). The generator validates every card in Python
   (exactly one blank, the answer present as a whole word or a pre-blanked
-  sentence, exactly 3 distinct distractors, no answer/distractor collision),
-  dedupes, and buckets by difficulty. The **runtime never calls an LLM** — it
-  just reads the committed JSON, the same rule the conjugation game follows with
-  its verbecc paradigms. Re-run with `--merge` to grow the pool over time.
+  sentence, exactly 3 distinct distractors, no answer/distractor collision —
+  the distractor check strips accents to match the runtime grader's CLOSE
+  tier), dedupes, and buckets by difficulty. It refuses to write when any
+  (target, difficulty) bucket falls below `--min-fill` of target (default 80%,
+  hard floor of one round) so a partial run can't ship a lopsided corpus. The
+  **runtime never calls an LLM** — it just reads the committed JSON, the same
+  rule the conjugation game follows with its verbecc paradigms. Re-run with
+  `--merge` to grow the pool over time.
+- **Content is machine-reviewed by a second, stronger model.** Structural
+  checks can't catch a wrong translation, a grammatically-wrong answer, or a
+  distractor that's actually a synonym. `scripts/review_cloze_sentences.py`
+  grades every committed card with **Claude Opus 4.8** (a different, stronger
+  model than the Haiku generator — not the same model checking its own
+  homework), judging translation, answer correctness (incl. subjunctive/tense),
+  distractor validity, and difficulty. Suspects are **quarantined** out of
+  `cloze_sentences.json` into a sibling `cloze_sentences.quarantine.json`
+  (never loaded at runtime) for human fix-and-reinstate; a `--decisions` file
+  lets a human force-keep or force-quarantine specific ids. Run `--dry-run`
+  first for a report without modifying the corpus. Both scripts share Bedrock
+  plumbing in `scripts/_bedrock.py`.
 - **Daily** is a deterministic 10-card pick by date (hash of puzzle number +
   position, non-repeating within a round) so everyone drills the same cards; it
   counts toward streaks and posts to the results channel. Because it feeds
