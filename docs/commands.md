@@ -70,6 +70,7 @@ deep-link parameter — see [`cogs/wordle.md`](./cogs/wordle.md)).
 
 | Command | Description |
 |---------|-------------|
+| `$jaleo` | Post a generic button that launches the Activity game hub. |
 | `$wordle` / `$palabra` | Post a button that launches the Activity (Wordle-themed entry point). |
 | `$conjuga` / `$conjugar` | Post a button that launches the Activity (Conjugation-themed entry point). |
 

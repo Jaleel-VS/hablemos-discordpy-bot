@@ -6,14 +6,15 @@ without hunting the 🚀 Activity Shelf.
 ## Overview
 
 Discord Activities normally launch from the Activity Shelf, which most users
-never find. `$wordle` and `$conjuga` post a message with a button that launches
+never find. `$jaleo` provides the generic game-hub entry point; `$wordle` and
+`$conjuga` remain themed alternatives. Each command posts a button that launches
 the Activity directly, using the `LAUNCH_ACTIVITY` interaction response
 (discord.py 2.6+ `interaction.response.launch_activity()`, callback type 12).
 
 Discord opens the Activity in the channel the button was clicked from — servers
 and DMs are both valid launch contexts, so no voice channel is required.
 
-The two launcher cogs share one implementation,
+The launcher cogs share one implementation,
 [`cogs/utils/activity_launch.py`](../../cogs/utils/activity_launch.py)
 (`ActivityLaunchView`); each cog only supplies its button label/emoji and embed.
 
@@ -21,6 +22,7 @@ The two launcher cogs share one implementation,
 
 | Command | Description | Cooldown |
 |---------|-------------|----------|
+| `$jaleo` | Post a generic "Abrir Jaleo" button for the game hub. | 10s/user |
 | `$wordle` / `$palabra` | Post an embed with a "Jugar Wordle" button. | 10s/user |
 | `$conjuga` / `$conjugar` | Post an embed with a "Jugar Conjugación" button. | 10s/user |
 
@@ -40,11 +42,11 @@ button opens the same app. The app decides what to show:
 - **Two or more** → it shows the game **hub/menu**.
 
 The `LAUNCH_ACTIVITY` callback carries **no deep-link parameter**, so a per-game
-command cannot pre-select a game — `$wordle` and `$conjuga` are themed,
-discoverable entry points that both land on the hub once multiple games exist.
-This is a Discord platform constraint, not a bug. (The SDK's user-facing
-`shareLink` does support custom query params, but that's for links a *user*
-shares, not the bot's launch.)
+command cannot pre-select a game. `$jaleo` is the neutral hub command, while
+`$wordle` and `$conjuga` are themed, backward-compatible alternatives; all
+three land on the hub once multiple games exist. This is a Discord platform
+constraint, not a bug. (The SDK's user-facing `shareLink` does support custom
+query params, but that's for links a *user* shares, not the bot's launch.)
 
 ## Known edge cases & gotchas
 

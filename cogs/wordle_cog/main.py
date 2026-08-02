@@ -1,11 +1,11 @@
-"""$wordle — launch the Spanish Wordle Activity from a button.
+"""Activity launcher commands for the Jaleo game hub.
 
 Discord Activities are normally opened from the Activity Shelf (the 🚀 button),
 which is hard to find. This cog gives players a discoverable entry point:
-``$wordle`` posts a message with a button that launches the Activity. The launch
-opens the one embedded app; with more than one game registered the app shows its
-hub, so this button lands on the game menu (the ``LAUNCH_ACTIVITY`` callback has
-no deep-link parameter — see ``cogs/utils/activity_launch.py``).
+``$jaleo`` posts a generic launcher, while ``$wordle`` remains as a themed
+entry point. Both launch the one embedded app; with more than one game
+registered the app shows its hub (the ``LAUNCH_ACTIVITY`` callback has no
+deep-link parameter — see ``cogs/utils/activity_launch.py``).
 """
 from __future__ import annotations
 
@@ -25,7 +25,22 @@ logger = logging.getLogger(__name__)
 
 
 class WordleCog(BaseCog):
-    """User-facing entry point to launch the Activity (Wordle-themed)."""
+    """User-facing entry points for the Activity game hub."""
+
+    @commands.command(name="jaleo")
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    async def jaleo(self, ctx: commands.Context) -> None:
+        """Post a generic button that launches the Jaleo Activity hub."""
+        embed = discord.Embed(
+            title="🎮 Juegos de Jaleo",
+            description=(
+                "Elige entre Wordle, Conjugación, Cloze y más.\n\n"
+                "Pulsa el botón para elegir un juego."
+            ),
+            color=0x43B581,
+        )
+        view = ActivityLaunchView(label="Abrir Jaleo", emoji="🎮")
+        await ctx.send(embed=embed, view=view)
 
     @commands.command(name="wordle", aliases=["palabra"])
     @commands.cooldown(1, 10, commands.BucketType.user)
