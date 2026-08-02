@@ -105,7 +105,7 @@ Introduction cooldown enforcement. See [`cogs/intro.md`](./cogs/intro.md) for th
 | `$introtracker add <channel_id>` | Track a channel for intro cooldown enforcement. |
 | `$introtracker remove <channel_id>` | Stop tracking a channel. |
 | `$introtracker list` | List all tracked channels. |
-| `$resetintro <user_id>` (alias: `$clearintro`) | Clear a user's intro history. Allowed with `manage_messages` **or** the Server Staff role (`258819531193974784`). |
+| `$resetintro <user_id>` (alias: `$clearintro`) | Clear a user's intro history. Allowed with `manage_messages` **or** the Trail Staff Helper role (`591745589054668817`) and above. |
 | `$introexempt <user_id>` | Exempt a user from intro tracking (requires `manage_messages`). |
 
 ## `$wcpredict` (group, owner-only)

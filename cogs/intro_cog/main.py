@@ -17,12 +17,11 @@ from discord import (
 from discord.ext import commands
 from discord.ext.commands import (
     Cog,
-    check_any,
-    has_any_role,
     has_permissions,
 )
 
 from base_cog import BaseCog
+from cogs.utils.checks import min_role
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
 from .config import (
@@ -237,10 +236,7 @@ class IntroductionTracker(BaseCog):
         logger.info("Intro warn channel set to %s by %s", channel.id, ctx.author)
 
     @commands.command(aliases=['clearintro'])
-    # has_any_role returns Callable[[T], T] which pyright rejects as a
-    # check_any() arg, but this is discord.py's documented usage pattern
-    # and works at runtime (stub inconsistency in check_any's signature).
-    @check_any(has_permissions(manage_messages=True), has_any_role(RESETINTRO_ROLE_ID))  # type: ignore[arg-type]
+    @min_role(RESETINTRO_ROLE_ID, fallback="manage_messages")
     async def resetintro(self, ctx: commands.Context, user_id: int | None = None):
         """Clear a user's introduction history so they can post again."""
         if user_id is None:

@@ -24,5 +24,6 @@ EXEMPT_ROLE_IDS = (
     1082402633979011082,  # Retired Staff
 )
 
-# Role allowed to use $resetintro (in addition to users with Manage Messages)
-RESETINTRO_ROLE_ID = 258819531193974784  # Server Staff
+# Minimum role allowed to use $resetintro (this role and any higher role);
+# falls back to Manage Messages if the role is missing/misconfigured.
+RESETINTRO_ROLE_ID = 591745589054668817  # Trail Staff Helper

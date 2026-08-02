@@ -22,7 +22,7 @@ for a traditional text-based introductions channel.
 | `$introtracker list` | List all tracked channels. | `manage_messages` |
 | `$introtracker alertchannel #channel` | Set the staff alert channel. | `manage_messages` |
 | `$introtracker warnchannel #channel` | Set the user warning channel. | `manage_messages` |
-| `$resetintro <user_id>` (alias: `$clearintro`) | Clear a user's intro history so they can post again. | `manage_messages` **or** Server Staff role (`258819531193974784`) |
+| `$resetintro <user_id>` (alias: `$clearintro`) | Clear a user's intro history so they can post again. | `manage_messages` **or** Trail Staff Helper role (`591745589054668817`) and above |
 | `$introexempt <user_id>` | Exempt a user from intro tracking. | `manage_messages` |
 
 ## Configuration
