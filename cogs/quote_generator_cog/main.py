@@ -548,3 +548,13 @@ async def setup(bot):
 
     from cogs.quote_generator_cog.admin import QuoteAdminCog
     await bot.add_cog(QuoteAdminCog(bot))
+
+
+async def teardown(bot):
+    # QuoteAdminCog lives in a different submodule (.admin), so discord.py's
+    # extension unload won't remove it automatically — do it explicitly.
+    # The context menu command is registered directly on the tree and is not
+    # module-tracked either, so remove it here as well. Without this, a
+    # disable/enable cycle raises "Cog named 'QuoteAdminCog' already loaded".
+    await bot.remove_cog("QuoteAdminCog")
+    bot.tree.remove_command("Quote this", type=discord.AppCommandType.message)
