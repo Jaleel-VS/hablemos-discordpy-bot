@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Spanish-language learning Discord bot built with discord.py 2.x. Prefix-based commands (`$`) and slash commands across multiple cogs. PostgreSQL via asyncpg, deployed on Railway via Docker. Python 3.12+. Linted with ruff.
+Spanish-language learning Discord bot built with discord.py 2.x. Prefix-based commands (`$`) and slash commands across multiple cogs. PostgreSQL via asyncpg, deployed on AWS Lightsail container services via Docker. Python 3.12+. Linted with ruff.
 
 ## Architecture
 
@@ -112,8 +112,8 @@ When something is broken in production (bot won't start, a feature is
 stuck, bets not paying out, etc.), start with the runbook
 [`docs/playbook.md`](./docs/playbook.md) — it has per-symptom diagnosis
 and recovery steps. To read production logs programmatically (grep for
-errors, tracebacks, a specific event), use `scripts/railway_logs.py`
-(see [`docs/deployment.md`](./docs/deployment.md#querying-railway-logs-programmatically)).
+errors, tracebacks, a specific event), use `scripts/lightsail_logs.py`
+(see [`docs/deployment.md`](./docs/deployment.md#querying-lightsail-logs-programmatically)).
 When you resolve a new failure mode, add it to the playbook.
 
 ### Security

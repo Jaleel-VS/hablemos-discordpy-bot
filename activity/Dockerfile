@@ -7,7 +7,7 @@ FROM node:22-slim AS frontend
 WORKDIR /build/frontend
 
 # The client bundle needs the Discord client id at *build* time (Vite inlines
-# VITE_* vars). Railway passes it as a build arg.
+# VITE_* vars). The deploy passes it as a build arg (see scripts/lightsail_deploy.sh).
 ARG VITE_DISCORD_CLIENT_ID
 ENV VITE_DISCORD_CLIENT_ID=$VITE_DISCORD_CLIENT_ID
 
@@ -31,7 +31,8 @@ COPY backend/ ./
 # default is ../static relative to app/, i.e. /app/static).
 COPY --from=frontend /build/frontend/dist ./static
 
-# Railway sets $PORT; default to 8080 for local `docker run`.
+# The Lightsail container spec sets $PORT (deploy/activity.containers.json);
+# default to 8080 for local `docker run`.
 ENV PORT=8080
 EXPOSE 8080
 

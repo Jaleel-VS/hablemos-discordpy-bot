@@ -1,7 +1,10 @@
 # Deployment & Configuration
 
-The bot runs on **Railway**, containerized via the repo's `Dockerfile`.
-PostgreSQL is a Railway add-on reachable via `DATABASE_URL`.
+The bot runs on an **AWS Lightsail container service**, containerized via the
+repo's `Dockerfile`. PostgreSQL is the managed Lightsail database
+`hablemos-postgres`, reachable via `DATABASE_URL`. See
+[`../deploy/README.md`](../deploy/README.md) for the deploy pipeline (CI/CD,
+manual deploy, rollback).
 
 ## Required environment variables
 
@@ -55,15 +58,15 @@ Defaults come from `config.py` (`load_settings`) or from a cog's own
 ## Activity (embedded app)
 
 The companion Discord Activity (see [`activity.md`](./activity.md)) is a
-**separate Railway web service** with its own variables. It shares the bot's
-PostgreSQL database but has no `BOT_TOKEN`.
+**separate Lightsail container service** (`hablemos-activity`) with its own
+variables. It shares the bot's PostgreSQL database but has no `BOT_TOKEN`.
 
 | Name | Where | Purpose |
 |---|---|---|
 | `DISCORD_CLIENT_ID` | Activity service (runtime) | The Discord application's client ID (same app as the bot). |
 | `DISCORD_CLIENT_SECRET` | Activity service (runtime) | Client secret for the OAuth2 code→token exchange. Server-only — never shipped to the frontend. |
 | `VITE_DISCORD_CLIENT_ID` | Activity service (**build-time**) | Same client ID, inlined into the SPA bundle by Vite. Declared as a Docker build `ARG`. |
-| `PORT` | Activity service | Provided by Railway; FastAPI binds it. Defaults to `8080` locally. |
+| `PORT` | Activity service | Set in the Lightsail container spec (`deploy/activity.containers.json`); FastAPI binds it. Defaults to `8080` locally. |
 | `ACTIVITY_STATIC_DIR` | Activity service (optional) | Override for the built SPA directory. Defaults to `../static` next to the app (where the Dockerfile places `dist/`). |
 
 ## Cog-specific config
@@ -103,34 +106,32 @@ no command required.
 ## Logs
 
 - Rotating file handler at `bot.log` (see `logger.py`).
-- Stdout (captured by Railway's logs view).
+- Stdout (captured by Lightsail's container logs).
 - Per-module loggers via `logging.getLogger(__name__)`. Never
   `print()`.
 
-### Querying Railway logs programmatically
+### Querying Lightsail logs programmatically
 
-Railway has no native log drain and only ~7 days of in-app retention.
-To pull recent runtime logs into your terminal (grep/jq-friendly) use
-`scripts/railway_logs.py`, which hits Railway's public GraphQL API:
+Lightsail keeps only ~3 days of container-log retention and has no native
+log drain. To pull recent runtime logs into your terminal (grep/jq-friendly)
+use `scripts/lightsail_logs.py`, which calls the Lightsail `GetContainerLog`
+API (authenticate first — the repo uses the `Jaleel` AWS profile, e.g. `jda`
+to refresh Isengard creds):
 
 ```bash
-export RAILWAY_TOKEN="..."            # railway.com/account/tokens (account token)
+# List services and their containers:
+python scripts/lightsail_logs.py --discover
 
-# Find your IDs (or use Cmd/Ctrl+K → Copy Service/Environment ID in the dashboard):
-python scripts/railway_logs.py --discover
+# Bot logs (default service), grep for the settlement crash:
+python scripts/lightsail_logs.py --limit 1000 | grep "poll failed"
 
-export RAILWAY_SERVICE_ID="..."
-export RAILWAY_ENVIRONMENT_ID="..."
-
-python scripts/railway_logs.py --limit 1000 | grep "poll failed"
-python scripts/railway_logs.py --filter "@level:error" --json
+# Activity service, errors only, as JSON:
+python scripts/lightsail_logs.py --service hablemos-activity --filter ERROR --json
 ```
 
-It resolves the latest deployment automatically. The Railway GraphQL
-schema shifts occasionally; if a field is rejected the script prints the
-exact GraphQL error naming it, which makes the fix obvious. For
-*persistent* searchable history, deploy the Locomotive sidecar to ship
-logs to Axiom/BetterStack instead.
+It resolves the service's running container automatically. For *persistent*
+searchable history (30-day retention, charts, alerts), the `logforwarder/`
+service ships these same logs to Axiom on an interval.
 
 ## Local development
 

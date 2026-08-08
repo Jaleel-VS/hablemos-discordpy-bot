@@ -80,6 +80,9 @@ def load_settings() -> Settings:
         owner_id=get_int_env("BOT_OWNER_ID", "216848576549093376"),
         gemini_api_key=os.getenv("GEMINI_API_KEY") or None,
         environment=get_str_env("ENVIRONMENT", "development"),
+        # External companion-website API (website_manager_cog), not part of this
+        # bot's AWS stack. Currently unused/dormant; the default host is still on
+        # Railway on purpose — override WEBSITE_API_URL if the site moves.
         website_api_url=get_str_env(
             "WEBSITE_API_URL",
             "https://spa-eng-discord-website-backend-production.up.railway.app/api",

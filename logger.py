@@ -50,7 +50,7 @@ def setup_logging():
     file_handler.setFormatter(log_formatter)
     file_handler.setLevel(level)
 
-    # Stream Handler - use stdout so Railway doesn't mark INFO as errors
+    # Stream Handler - use stdout so the log capture doesn't mark INFO as errors
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setFormatter(log_formatter)
     stream_handler.setLevel(level)

@@ -123,9 +123,9 @@ class Database:
     async def connect(self, *, retries: int = 5) -> None:
         """Create the pool and ensure the schema, retrying transient failures.
 
-        Railway's internal DNS (``*.railway.internal``) can lag briefly on a
-        cold start, so we back off and retry rather than give up on the first
-        connection error.
+        A freshly-started container can race the managed Postgres endpoint
+        (DNS/network not ready yet) on a cold start, so we back off and retry
+        rather than give up on the first connection error.
         """
         for attempt in range(1, retries + 1):
             try:

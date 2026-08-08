@@ -7,8 +7,8 @@ timed verb-conjugation sprint, and a Clozemaster-style fill-in-the-blank game �
 behind a game **hub/menu**. When a daily game finishes, the result posts to a
 configured channel.
 
-The Activity is a **separate Railway web service** from the gateway bot. They
-share the same PostgreSQL database. The code lives in
+The Activity is a **separate Lightsail container service** from the gateway
+bot. They share the same PostgreSQL database. The code lives in
 [`../activity/`](../activity/) (see its
 [`README.md`](../activity/README.md) for the internal layout).
 
@@ -285,7 +285,7 @@ your app:
    Entry Point ("Launch") command.
 2. **Activities → URL Mappings.** Add a root mapping:
    - Prefix: `/`  →  Target: your host **without** `https://`
-     (the cloudflared tunnel host in dev, the Railway domain in prod).
+     (the cloudflared tunnel host in dev, the Lightsail service domain in prod).
    - The target must be a **directory, not a file**. If you add more specific
      prefixes later, list them **longest-first**.
 3. **OAuth2 → Redirects.** Add at least one redirect URI or `authorize()`
@@ -329,32 +329,31 @@ In dev the Vite server ([`vite.config.ts`](../activity/frontend/vite.config.ts))
 proxies both `/.proxy/api/*` and `/api/*` to the FastAPI backend, so the same
 `fetch("/.proxy/api/…")` code works locally and in Discord.
 
-## Production deploy (Railway)
+## Production deploy (Lightsail)
 
-The Activity is **one new web service** in the existing Railway project. A
+The Activity is the `hablemos-activity` **Lightsail container service**. A
 single [`Dockerfile`](../activity/Dockerfile) builds the SPA (Node stage) and
 runs FastAPI serving both the static `dist/` and `/api/*` (Python stage), so
 it's one HTTPS origin — no CORS, no cross-origin cookies.
 
-```bash
-# From activity/ — requires an authenticated Railway CLI (railway login,
-# or export RAILWAY_TOKEN=… from railway.com/account/tokens).
-railway service create hablemos-activity     # or create it in the dashboard
-railway up --service hablemos-activity        # build + deploy the Dockerfile
-```
+Deploy is via GitHub Actions on push to `main` (an `activity/**` change only
+redeploys the activity), or manually with `scripts/lightsail_deploy.sh`. See
+[`../deploy/README.md`](../deploy/README.md) for the full pipeline, manual
+deploy, and rollback.
 
-Set these as **service variables** on the new service (see the env table in
+Config is set on the service via `deploy/activity.containers.json` (CI fills
+`${VAR}` placeholders from GitHub secrets — see the env table in
 [`deployment.md`](./deployment.md#activity-embedded-app)):
 
 - `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` — runtime (backend).
 - `VITE_DISCORD_CLIENT_ID` — **build-time** arg; Vite inlines it into the
-  client bundle. On Railway, set it as a service variable and reference it in
-  the build (the Dockerfile declares the `ARG`).
+  client bundle. Passed as a Docker `--build-arg` by the deploy script (the
+  Dockerfile declares the `ARG`).
 
-Once deployed, take the service's public domain
-(`hablemos-activity.up.railway.app`, or a custom domain) and set it as the
+The service's public domain
+(`hablemos-activity.<id>.us-east-1.cs.amazonlightsail.com`) is set as the
 production **URL Mapping** root target in the Developer Portal (no `https://`
-prefix). The `PORT` env var is provided by Railway automatically.
+prefix). `PORT` is set in the container spec.
 
 ## Verifying the handshake
 

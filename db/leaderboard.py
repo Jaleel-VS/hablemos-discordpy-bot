@@ -100,7 +100,7 @@ class LeaderboardMixin(DatabaseMixin):
         """Return (dow, hour, count) rows for a day-of-week × hour heatmap.
 
         ``dow`` is Postgres ``EXTRACT(DOW FROM ...)`` — 0=Sunday … 6=Saturday.
-        Times are in the database session timezone (UTC on Railway).
+        Times are in the database session timezone (UTC on the Lightsail DB).
         """
         return await self._fetch(
             '''

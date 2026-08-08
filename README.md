@@ -2,7 +2,7 @@
 
 A Spanish-English language learning Discord bot for the [Spanish-English Learning Server](https://discord.gg/spanish-english).
 
-Built with discord.py 2.x, PostgreSQL (asyncpg), and Google Gemini. Deployed on Railway via Docker.
+Built with discord.py 2.x, PostgreSQL (asyncpg), and Google Gemini. Deployed on AWS Lightsail container services via Docker.
 
 ## Features
 

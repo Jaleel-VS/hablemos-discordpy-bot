@@ -2,8 +2,8 @@
 
 A [Discord Activity](https://docs.discord.com/developers/activities/overview) —
 an embedded web app that runs inside Discord — hosting Spanish-language games
-(starting with a Spanish Wordle). It is a **separate Railway web service** from
-the gateway bot; the two share the same PostgreSQL database.
+(starting with a Spanish Wordle). It is a **separate Lightsail container
+service** from the gateway bot; the two share the same PostgreSQL database.
 
 - **Frontend** (`frontend/`) — Vite + React + TypeScript, using
   `@discord/embedded-app-sdk`. Runs inside Discord's sandboxed iframe.
@@ -16,7 +16,7 @@ The gateway bot (unchanged) polls a results table and posts finished-game
 cards to a configured channel.
 
 See [`../docs/activity.md`](../docs/activity.md) for the full setup guide
-(Discord Developer Portal config, local dev tunnel, Railway deploy).
+(Discord Developer Portal config, local dev tunnel, Lightsail deploy).
 
 ## Layout
 

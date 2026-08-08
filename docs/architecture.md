@@ -10,7 +10,7 @@ A map of the code. For conventions (style, patterns, what to avoid), see
   views, persistent views).
 - **PostgreSQL via `asyncpg`** — one connection pool owned by the bot,
   accessed through the `Database` class at `self.bot.db`.
-- **Railway** for hosting, `Dockerfile` for the container.
+- **AWS Lightsail** container services for hosting, `Dockerfile` for the container.
 - **Ruff** for linting (`ruff.toml`).
 
 ## Top-level layout

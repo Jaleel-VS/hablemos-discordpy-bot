@@ -327,7 +327,7 @@ class General(BaseCog):
             lines.append("  (none)")
         report = "\n".join(lines)
 
-        # Always log so Railway captures it even if all sends fail
+        # Always log so the log capture keeps it even if all sends fail
         logger.info("permdebug for channel %s (%s):\n%s", target.name, target.id, report)
 
         # Try channel first, fall back to DM

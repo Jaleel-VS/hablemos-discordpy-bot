@@ -4,46 +4,48 @@ Runbook for diagnosing and recovering from common failure modes.
 
 ## Reading production logs
 
-Many checks below say "check Railway logs." Railway has only ~7 days of
-in-app retention and no native log drain, so to grep/query logs (from a
-script or an agent session) use the puller, which hits Railway's public
-GraphQL API:
+Many checks below say "check the logs." Lightsail keeps only ~3 days of
+container-log retention and has no native log drain, so to grep/query logs
+(from a script or an agent session) use the puller, which calls the
+Lightsail `GetContainerLog` API:
 
 ```bash
-# RAILWAY_TOKEN / RAILWAY_SERVICE_ID / RAILWAY_ENVIRONMENT_ID must be set
-# (see deployment.md → "Querying Railway logs programmatically";
-#  run `python scripts/railway_logs.py --discover` to find the IDs).
-python scripts/railway_logs.py --limit 1000 | grep "poll failed"
-python scripts/railway_logs.py --filter "@level:error" --json
+# Authenticate with AWS first (repo uses the Jaleel profile — `jda`).
+# See deployment.md → "Querying Lightsail logs programmatically";
+# run `python scripts/lightsail_logs.py --discover` to list services.
+python scripts/lightsail_logs.py --limit 1000 | grep "poll failed"
+python scripts/lightsail_logs.py --filter ERROR --json
 ```
 
-It resolves the latest deployment automatically. See
-[`deployment.md`](./deployment.md) for setup and token notes.
+It resolves the service's running container automatically. See
+[`deployment.md`](./deployment.md) for setup notes. For persistent
+searchable history, `logforwarder/` ships these logs to Axiom.
 
 ## Bot won't start
 
 ### Symptom
 
-`hablemos.py` exits immediately or hangs during startup. Railway logs
+`hablemos.py` exits immediately or hangs during startup. The container logs
 show errors or no "I'm online" message.
 
 ### Checks
 
 1. **Database connection**: Check the logs for `asyncpg` connection
-   errors (`python scripts/railway_logs.py --filter asyncpg`). The bot
+   errors (`python scripts/lightsail_logs.py --filter asyncpg`). The bot
    retries DB connection 5 times with exponential
    backoff (see `setup_hook` in `hablemos.py`). If all retries fail,
    the bot exits.
    - Verify `DATABASE_URL` env var is set and correct.
-   - Check Railway's PostgreSQL add-on status. If the DB is restarting
-     or unhealthy, wait for it to stabilize.
+   - Check the `hablemos-postgres` Lightsail database status. If the DB is
+     restarting or unhealthy, wait for it to stabilize.
    - Test the connection string locally:
      ```bash
      psql $DATABASE_URL -c "SELECT 1;"
      ```
 2. **Missing required env vars**: `BOT_TOKEN` and `DATABASE_URL` are
    required. Others have defaults (see [`deployment.md`](./deployment.md)).
-   - Check Railway's environment variables dashboard.
+   - Check the service's environment variables (Lightsail container spec /
+     `deploy/*.containers.json`).
    - If testing locally, ensure `.env` file exists and is loaded.
 3. **Schema migration failure**: If a new migration in `db/schema.py`
    has a syntax error or conflicts with existing data, `initialize_schema`
@@ -91,7 +93,7 @@ startup.
    ```bash
    $cog reload <cog_name>
    ```
-   Or restart the bot (redeploy on Railway).
+   Or restart the bot (redeploy on Lightsail — see `deploy/README.md`).
 
 > **Why disable instead of unload?** Unloading a cog temporarily removes
 > it from memory but doesn't persist across restarts. Disabling writes
@@ -134,7 +136,7 @@ automatically.
 
 > **Prevention**: If crossword games frequently get stuck, check the
 > logs for `asyncio` task cancellation errors or timeout-related
-> exceptions (`python scripts/railway_logs.py --filter asyncio`). The
+> exceptions (`python scripts/lightsail_logs.py --filter asyncio`). The
 > timeout watcher is robust, but ungraceful restarts (OOM kills,
 > SIGKILL) can orphan game state.
 
@@ -248,7 +250,7 @@ announcement was posted in the winner channel.
 ### Diagnosis
 
 1. Check the logs for errors in `check_round_end` task (runs every
-   1 minute): `python scripts/railway_logs.py --filter check_round_end`.
+   1 minute): `python scripts/lightsail_logs.py --filter check_round_end`.
 2. Common causes:
    - `WINNER_CHANNEL_ID` is wrong or the bot lacks permissions to post
      in that channel.
@@ -298,7 +300,7 @@ but the match never gets a result row.
    (the ET calendar date, same as the fixture's `date`).
 3. **Is the poller erroring?** Check the logs:
    ```bash
-   python scripts/railway_logs.py --limit 1000 | grep "poll failed"
+   python scripts/lightsail_logs.py --limit 1000 | grep "poll failed"
    ```
    A repeating `World Cup results poll failed` traceback means the
    poll→settle path is throwing every cycle (and rolling back, so no
@@ -431,12 +433,12 @@ draw as normal.)
   to document. For now: roll back the deploy, fix the SQL, redeploy.)
 - **Handling a spam wave in crossword games**: (Document once we have
   abuse patterns. Consider per-user rate limits.)
-- **Backing up and restoring the database**: (Railway has automated
-  backups; document the restore process once tested.)
-- **Monitoring metrics and alerting**: (Future: integrate with a
-  metrics/logging service, or ship logs to Axiom/BetterStack via the
-  Locomotive sidecar for persistent search + alerts. For now: pull logs
-  on demand with `scripts/railway_logs.py` and manual checks.)
+- **Backing up and restoring the database**: (Lightsail managed Postgres
+  takes automated daily snapshots; document the restore process once tested.)
+- **Monitoring metrics and alerting**: (The `logforwarder/` service already
+  ships container logs to Axiom for persistent search. Future: add
+  metrics/alerting on top. For now: pull logs on demand with
+  `scripts/lightsail_logs.py` and manual checks.)
 
 ## Related
 
