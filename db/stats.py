@@ -419,7 +419,8 @@ class StatsMixin(DatabaseMixin):
             """
             SELECT
                 EXTRACT(
-                    HOUR FROM hour_bucket + ($3 || ' hours')::INTERVAL
+                    HOUR FROM (hour_bucket AT TIME ZONE 'UTC')
+                              + ($3 || ' hours')::INTERVAL
                 )::INT AS hod,
                 SUM(msg_count) AS total
             FROM user_message_counts
