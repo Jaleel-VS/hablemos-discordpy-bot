@@ -29,7 +29,6 @@ change. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules.
 - [Admin (`admin_cog`)](./cogs/admin.md)
 - [Almighty (`almighty_cog`)](./cogs/almighty.md)
 - [Ask (`ask_cog`)](./cogs/ask.md)
-- [Conjugation — native (`conjugation_cog`)](./cogs/conjugation.md)
 - [Conjugation launcher (`conjuga_cog`)](./cogs/wordle.md)
 - [Conversation (`conversation_cog`)](./cogs/conversation.md)
 - [Conversation Starter (`convo_starter_cog`)](./cogs/convo_starter.md)

@@ -1,1 +1,0 @@
-"""Conjugation cog package."""

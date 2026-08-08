@@ -50,16 +50,6 @@ Daily limit of 2 per user (unlimited for moderators). Conversations regenerate a
 
 Responses are generated with a 30-second timeout. After generation, choose to send publicly, send privately (ephemeral), or discard. Long responses are automatically paginated.
 
-### Conjugation Practice
-
-| Command | Description |
-|---------|-------------|
-| `$conj [category] [questions]` | Start a conjugation practice session |
-| `$conj_categories` | List available verb categories |
-| `$conj_stop` | Stop your current session |
-
-Categories: `high-frequency`, `regular-ar`, `regular-er-ir`, `irregulars`. Supports present, preterite, and future tenses with lenient answer checking (accent-insensitive, pronoun-optional). 59 verbs, 1,062 combinations.
-
 ### Vocabulary Notes
 
 All responses are ephemeral (private to the user).

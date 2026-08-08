@@ -27,9 +27,9 @@ Shape::
       }
     }
 
-The verb list and set membership are seeded from the existing native-Discord
-cog (``cogs/conjugation_cog/verb_data.json``) so the two features agree on which
-verbs are "high-frequency", "regular-ar", etc. Only the *forms* come from
+The verb list and set membership are seeded from
+``activity/backend/app/games/data/conjugation_seed.json`` so the verb sets stay
+stable ("high-frequency", "regular-ar", etc.). Only the *forms* come from
 verbecc (all tenses, correct irregulars) rather than the seed's hand-typed
 3-tense tables.
 
@@ -98,7 +98,7 @@ _MANUAL_FALLBACK: dict[str, dict[str, dict[str, str]]] = {
 }
 
 _REPO = Path(__file__).resolve().parent.parent
-_SEED = _REPO / "cogs" / "conjugation_cog" / "verb_data.json"
+_SEED = _REPO / "activity" / "backend" / "app" / "games" / "data" / "conjugation_seed.json"
 _OUT = _REPO / "activity" / "backend" / "app" / "games" / "data" / "conjugation_paradigms.json"
 
 

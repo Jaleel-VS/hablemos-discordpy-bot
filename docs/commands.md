@@ -100,14 +100,6 @@ See [`cogs/langex.md`](./cogs/langex.md) for the full feature. All user
 interaction is through the persistent panel buttons (Post / update
 profile, Find a partner, Delete my profile) placed by `$langexpanel`.
 
-## Conjugation
-
-See [`cogs/conjugation.md`](./cogs/conjugation.md) for the full feature.
-
-| Command | Description |
-|---------|-------------|
-| `/conjugate [mode] [tense]` | Interactive Spanish verb conjugation practice. Modes: `learn`, `test`. Tenses: `presente`, `pretérito`, `imperfecto`, `futuro`, `condicional`, and more. |
-
 ## Conversation
 
 See [`cogs/conversation.md`](./cogs/conversation.md) for the full feature.

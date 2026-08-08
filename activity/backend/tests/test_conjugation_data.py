@@ -13,7 +13,7 @@ from pathlib import Path
 from app.games.conjugation import data as d
 
 _REPO = Path(__file__).resolve().parents[3]
-_SEED = _REPO / "cogs" / "conjugation_cog" / "verb_data.json"
+_SEED = _REPO / "activity" / "backend" / "app" / "games" / "data" / "conjugation_seed.json"
 
 
 def _seed_verbs() -> set[str]:

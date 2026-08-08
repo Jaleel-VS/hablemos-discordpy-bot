@@ -127,7 +127,7 @@ time runs out.
 
 - **Data is precomputed, not live.** `scripts/generate_conjugation_paradigms.py`
   runs [verbecc](https://pypi.org/project/verbecc/) **offline** over a seed verb
-  list (from `cogs/conjugation_cog/verb_data.json`) and emits
+  list (from `activity/backend/app/games/data/conjugation_seed.json`) and emits
   `app/games/data/conjugation_paradigms.json` (verb → tense → pronoun → form).
   verbecc trains an ML model on first import (~12s) and needs
   scikit-learn/scipy/numpy, so it is a **dev/build-time** dependency only — the

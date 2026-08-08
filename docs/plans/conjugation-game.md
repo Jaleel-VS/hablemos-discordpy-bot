@@ -41,8 +41,12 @@ line, a frontend game component, and a `$conjuga` launcher cog mirroring
 
 ### Relationship to the existing `/conjugate` cog
 
-There is already a native-Discord `conjugation_cog` (`/conjugate`, embed-based).
-It stays as-is for now. The Activity version is the richer, timed, motion-driven
+> **Update (resolved):** the native `conjugation_cog` (`/conjugate`) has been
+> retired. The Activity version is the only conjugation game now. Its seed verb
+> list moved to `activity/backend/app/games/data/conjugation_seed.json`.
+
+There was a native-Discord `conjugation_cog` (`/conjugate`, embed-based).
+It stayed as-is at the time of writing. The Activity version is the richer, timed, motion-driven
 experience. Retiring `/conjugate` is a **later, separate** decision — not part of
 this MVP.
 
@@ -118,7 +122,7 @@ emit a compact `conjugation_paradigms.json` (verb → mood → tense → forms).
 on the hot path. This keeps verbecc as the authoritative source of truth while
 keeping the deployed image lean and fast.
 
-- **Seed verb list:** start from `cogs/conjugation_cog/verb_data.json` (59 verbs,
+- **Seed verb list:** start from `activity/backend/app/games/data/conjugation_seed.json` (59 verbs,
   hand-curated) for the *word list*, but generate the *forms* with verbecc so we
   get all tenses/moods correctly instead of the current 3 hand-typed tenses.
 - Fallback if precompute is deemed overkill for MVP: depend on verbecc directly
