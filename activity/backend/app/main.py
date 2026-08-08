@@ -15,6 +15,7 @@ this app, so the routes below are declared without that prefix.
 import logging
 import os
 from contextlib import asynccontextmanager
+from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
@@ -165,6 +166,22 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         except DiscordOAuthError:
             raise HTTPException(status_code=502, detail="Failed to resolve Discord user")
         return user
+
+    @app.get("/api/games/phrasal/deck")
+    async def phrasal_deck(difficulty: str | None = None) -> dict[str, Any]:
+        """Read-only vocabulary deck for the phrasal-verb Learn mode.
+
+        Browsing meanings has no submit/win state, so it lives outside the
+        game-engine contract (which is for graded rounds). No auth or sealing:
+        it's public vocabulary, the same content that ships in the client
+        bundle's reach anyway. Filtered by an optional ``difficulty`` query.
+        """
+        from .games.phrasal import data as phrasal_data
+
+        return {
+            "difficulties": phrasal_data.DIFFICULTIES,
+            "verbs": phrasal_data.learn_deck(difficulty),
+        }
 
     _mount_static(app, cfg)
     return app

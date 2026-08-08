@@ -1323,3 +1323,157 @@ body {
   padding: 1px 6px;
   border-radius: 6px;
 }
+
+/* ── Phrasal-verb game ─────────────────────────────────────────────────────
+   Reuses the cloze layout primitives (prompt-card, cloze-blank, cloze-options,
+   pills, cta, chip). Only the phrasal-specific bits are defined here. */
+.phrasal {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+.phrasal-setup {
+  overflow-y: auto;
+}
+
+.phrasal-round,
+.phrasal-learn,
+.phrasal-summary {
+  justify-content: flex-start;
+  gap: 14px;
+  padding: 16px 20px 22px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.phrasal-learn {
+  overflow-y: auto;
+}
+
+.phrasal-card {
+  gap: 14px;
+}
+
+/* Meaning hint above the sentence: optional Spanish gloss + the sense list. */
+.phrasal-meaning {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+.phrasal-gloss {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.phrasal-defs {
+  margin: 0;
+  padding-left: 1.1em;
+  color: var(--ink-dim);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  align-self: stretch;
+}
+
+.phrasal-defs li + li {
+  margin-top: 2px;
+}
+
+.phrasal-sentence {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  line-height: 1.5;
+  text-align: center;
+  margin: 0;
+  color: var(--ink);
+}
+
+.phrasal-base-hint {
+  color: var(--ink-dim);
+  font-style: italic;
+  margin-right: 0.4em;
+}
+
+/* Learn (browse) mode. */
+.learn-filter {
+  margin-bottom: 4px;
+}
+
+.learn-card {
+  gap: 14px;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
+}
+
+.learn-headword {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.learn-verb {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.learn-gloss {
+  font-size: 1rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.learn-defs {
+  margin: 0;
+  padding-left: 1.1em;
+  color: var(--ink-dim);
+  line-height: 1.5;
+  align-self: stretch;
+}
+
+.learn-defs li + li {
+  margin-top: 4px;
+}
+
+.learn-example {
+  margin: 0;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.5;
+  border-left: 2px solid var(--line-soft);
+  padding-left: 12px;
+}
+
+.learn-verb-in-ctx {
+  color: var(--accent);
+  font-style: normal;
+}
+
+.learn-nav {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: auto;
+}
+
+.learn-nav .cta {
+  flex: 1;
+}
+
+/* Recap: show the phrasal verb alongside the given→correct answers. */
+.miss-verb {
+  font-weight: 600;
+  color: var(--ink);
+  margin-right: 8px;
+}

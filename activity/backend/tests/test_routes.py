@@ -262,3 +262,50 @@ def test_conjugation_untimed_practice_finishes_on_request(client):
     assert r.status_code == 200
     assert r.json()["view"]["status"] == "over"
     assert "result" in r.json()["view"]
+
+
+# ── phrasal-verb game ───────────────────────────────────────────────────────
+
+def test_phrasal_listed(client):
+    keys = [g["key"] for g in client.get("/api/games").json()["games"]]
+    assert "phrasal" in keys
+
+
+def test_phrasal_start_hides_answer(client):
+    r = client.post(
+        "/api/games/phrasal/start",
+        json={"access_token": "t", "mode": "free",
+              "options": {"blank_mode": "particle", "answer_mode": "choice"}},
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert "prompt" in body["view"]
+    # Raw answer material (forms/particle answer) must not leak into the view.
+    assert "verbs" not in body["view"]
+    assert "forms" not in json.dumps(body["view"])
+
+
+def test_phrasal_guess_flow(client):
+    start = client.post(
+        "/api/games/phrasal/start",
+        json={"access_token": "t", "mode": "free",
+              "options": {"blank_mode": "particle", "answer_mode": "choice"}},
+    ).json()
+    # Pick one of the presented options — a valid, non-empty guess must advance.
+    option = start["view"]["prompt"]["options"][0]
+    r = client.post(
+        "/api/games/phrasal/guess",
+        json={"access_token": "t", "sealed_state": start["sealed_state"], "guess": option},
+    )
+    assert r.status_code == 200
+    assert r.json()["view"]["answered_count"] == 1
+
+
+def test_phrasal_learn_deck_is_public_and_unblanked(client):
+    r = client.get("/api/games/phrasal/deck?difficulty=beginner")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["verbs"]
+    first = body["verbs"][0]
+    assert "___" not in first["example"]  # Learn shows the verb in context
+    assert "forms" not in first           # exercise-only material stays hidden

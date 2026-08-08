@@ -6,12 +6,14 @@ persistence are all generic over ``game_key`` and need no changes.
 from app.games.base import GameEngine
 from app.games.cloze import ClozeEngine
 from app.games.conjugation import ConjugationEngine
+from app.games.phrasal import PhrasalEngine
 from app.games.wordle import WordleEngine
 
 _ENGINES: dict[str, GameEngine] = {
     WordleEngine.key: WordleEngine(),
     ConjugationEngine.key: ConjugationEngine(),
     ClozeEngine.key: ClozeEngine(),
+    PhrasalEngine.key: PhrasalEngine(),
 }
 
 

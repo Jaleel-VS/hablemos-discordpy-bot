@@ -125,6 +125,8 @@ export interface StartOptions {
   target?: string;
   difficulty?: string;
   answer_mode?: "choice" | "type";
+  // Phrasal: which part of the phrasal verb to blank.
+  blank_mode?: "particle" | "whole";
 }
 
 // ── cloze game ────────────────────────────────────────────────────────────────
@@ -304,5 +306,126 @@ export function submitCloze(
     sealed_state: sealedState,
     guess,
     finish,
+  });
+}
+
+// ── phrasal-verb game ─────────────────────────────────────────────────────────
+export interface PhrasalPrompt {
+  id: string;
+  blank_mode: "particle" | "whole";
+  example: string; // sentence with a single ___ blank
+  definitions: string[]; // all senses (unaligned to the example — see generator)
+  gloss_es: string | null; // short Spanish gloss (filled by the enrich stage)
+  difficulty: string;
+  base: string | null; // shown in particle mode (the verb whose particle is hidden)
+  options?: string[]; // present only in choice mode (particles or whole verbs)
+}
+
+export interface PhrasalFeedback {
+  result: MatchResult;
+  answer?: string; // withheld during daily play
+  verb?: string;
+  given: string;
+  definitions?: string[];
+}
+
+export interface PhrasalMiss {
+  id: string;
+  verb: string;
+  answer: string;
+  given: string;
+  result: MatchResult;
+}
+
+export interface PhrasalResult {
+  won: boolean;
+  mode: string;
+  puzzle_no: number | null;
+  blank_mode: "particle" | "whole";
+  answer_mode: "choice" | "type";
+  correct: number;
+  total: number;
+  best_streak: number;
+  score: string;
+  grid: string;
+  summary: string;
+  misses: PhrasalMiss[];
+}
+
+export interface PhrasalView {
+  game: "phrasal";
+  mode: "daily" | "free";
+  answer_mode: "choice" | "type";
+  blank_mode: "particle" | "whole";
+  difficulty: string | null;
+  puzzle_no: number | null;
+  round_size: number;
+  seq: number;
+  // Withheld (null) during daily play so a replayed token can't probe the
+  // answer via which option bumps the score; present in freeplay and once over.
+  correct: number | null;
+  streak: number | null;
+  best_streak: number | null;
+  answered_count: number;
+  status: "playing" | "over";
+  last: PhrasalFeedback | null;
+  prompt?: PhrasalPrompt;
+  result?: PhrasalResult;
+}
+
+export interface PhrasalResponse {
+  sealed_state: string;
+  view: PhrasalView;
+}
+
+export function startPhrasal(
+  accessToken: string,
+  mode: "daily" | "free",
+  options?: StartOptions,
+): Promise<PhrasalResponse> {
+  return post(`/.proxy/api/games/phrasal/start`, {
+    access_token: accessToken,
+    mode,
+    ...(options ? { options } : {}),
+  });
+}
+
+export function submitPhrasal(
+  accessToken: string,
+  sealedState: string,
+  guess: string,
+  finish = false,
+): Promise<PhrasalResponse> {
+  return post(`/.proxy/api/games/phrasal/guess`, {
+    access_token: accessToken,
+    sealed_state: sealedState,
+    guess,
+    finish,
+  });
+}
+
+// The Learn ("Aprender") deck is read-only vocabulary (no game state), so it's
+// a plain GET outside the game-engine endpoints.
+export interface PhrasalDeckEntry {
+  id: string;
+  verb: string;
+  particle: string;
+  base: string;
+  definitions: string[];
+  gloss_es: string | null;
+  example: string; // shown UNBLANKED (the verb in a real sentence)
+  difficulty: string;
+}
+
+export interface PhrasalDeck {
+  difficulties: Record<string, string>;
+  verbs: PhrasalDeckEntry[];
+}
+
+export function fetchPhrasalDeck(difficulty?: string): Promise<PhrasalDeck> {
+  const q = difficulty ? `?difficulty=${encodeURIComponent(difficulty)}` : "";
+  return fetch(`/.proxy/api/games/phrasal/deck${q}`).then((r) => {
+    if (!r.ok) throw new Error(`Error ${r.status}`);
+    return r.json() as Promise<PhrasalDeck>;
   });
 }

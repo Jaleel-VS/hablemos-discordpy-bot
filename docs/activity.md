@@ -88,6 +88,7 @@ game touches only its own module:
 - `app/games/wordle/` — the Wordle game (see below).
 - `app/games/conjugation/` — the conjugation sprint (see below).
 - `app/games/cloze/` — the fill-in-the-blank game (see below).
+- `app/games/phrasal/` — the phrasal-verb game (see below).
 
 The frontend mirrors this: `GET /api/games` drives a **hub/menu** listing every
 game. With a single game registered the app boots straight into it (no menu
@@ -258,6 +259,72 @@ conjugation sprint).
   — a cost deliberately not paid for a cosmetic streak. This is a documented,
   accepted boundary, not a bug: the stateless design can't distinguish "tried
   and missed" from "mashed junk to finish" without that added cost.
+
+### Phrasal verbs (`app/games/phrasal/`)
+
+An English-learner game for **phrasal verbs** (look up, carry out, give up) —
+high-frequency but notoriously hard because the particle is idiomatic. The UI is
+Spanish (the community is Spanish natives learning English); the content is
+English. The one hub card branches on a setup screen into two flows:
+
+- **Aprender (Learn)** — a read-only vocabulary browser: each verb with its
+  meaning(s), an optional Spanish gloss, and a real example sentence (shown
+  **unblanked**, verb highlighted). This has no submit/win state, so it is **not**
+  a `GameEngine` — it's served by a plain `GET /api/games/phrasal/deck` (public,
+  unauthenticated vocabulary; optional `?difficulty=`). Forcing a browse mode
+  through the graded-round contract would be an abuse of it.
+- **Practicar (Exercise)** — a fill-in-the-blank round implementing `GameEngine`,
+  modeled on Cloze (daily + freeplay, 10 items, no clock, sealed state, same
+  daily anti-harvest, same stats/streaks/results-posting).
+
+The exercise has two **blank modes** (`blank_mode` in start options): `particle`
+blanks only the particle and shows the base verb ("look ___ the word" → *up*),
+targeting the hard part; `whole` blanks the entire phrasal verb ("I need to ___
+that word" → *look up*), testing productive recall with other phrasal verbs as
+distractors. Two **answer modes** (`answer_mode`): `choice` (4-option MC —
+particles or whole verbs) and `type` (free text). Type mode reuses the
+conjugation **3-way exact/close/wrong grader**, extended to accept any inflected
+**derivative form** of the phrase (so "looked up" is correct for "look up"); the
+best match over all accepted forms wins.
+
+- **Data is precomputed, not live.** `scripts/generate_phrasal_verbs.py` curates
+  the ~3350-entry community dataset
+  ([WithEnglishWeCan/generated-english-phrasal-verbs](https://github.com/WithEnglishWeCan/generated-english-phrasal-verbs))
+  down to a playable corpus at `app/games/data/phrasal_verbs.json`. Two stages,
+  mirroring the cloze pipeline:
+  - **Stage 1 — filter (no LLM, default).** Keep entries with a usable
+    definition and an example that actually contains the verb (so a blank can be
+    built), rank by the source `frequency` + a common-base/particle heuristic,
+    take the top `--limit`. Ships English-only and fully playable.
+  - **Stage 2 — enrich (`--enrich`, Bedrock).** Adds a CEFR difficulty band and a
+    short **Spanish gloss** per verb via Claude (`--model haiku` for speed or
+    `--model opus` for quality; the `bedrock-how` profile, same path as the cloze
+    generator). The runtime never calls an LLM — this only runs offline and
+    commits JSON. Enrichment **checkpoints after every batch** and is
+    resume-friendly (skips already-glossed verbs), so an expiring Bedrock token
+    on a long Opus run never loses progress — just re-run to continue.
+  - The **committed corpus is 764 verbs**, Opus-enriched (glosses + CEFR:
+    136 beginner / 414 intermediate / 214 advanced), all glossed.
+- **Optional review pass (`scripts/review_phrasal_verbs.py`).** Grades every
+  verb with **Claude Opus 4.8** — verifies the gloss, checks that a listed sense
+  matches the example, rates difficulty — and **fixes in place** (better gloss,
+  corrected band, or a missing sense added), quarantining only genuinely broken
+  cards to `phrasal_verbs.quarantine.json`. It **fails closed** (aborts without
+  writing if the Bedrock token expires mid-run, so no verb is wrongly
+  quarantined). The committed corpus was **not** put through a full review pass;
+  instead, **36 verbs a prior review had proven broken** (Stage-1
+  false-positive blanks — the example contained the verb+particle words
+  coincidentally, e.g. "put a **hand on** his arm" for `hand on`) were pruned
+  deterministically (`meta.pruned_known_bad`). Running the full review later
+  would further raise quality.
+- **Known limit — sense/example alignment.** The source lists multiple senses and
+  multiple examples per verb that are **not index-aligned**, so Stage 1 keeps
+  *all* senses (the example's sense is usually among them). The optional Opus
+  review closes most of the gap by adding the example's missing sense; what
+  remains is inherent to a stateless, precomputed corpus.
+- Daily anti-harvest, empty-guess rejection, and the daily-date gate are
+  identical to the cloze game (per-item feedback and running counters withheld
+  during daily play; disclosed only in the end recap).
 
 ### Persistence
 

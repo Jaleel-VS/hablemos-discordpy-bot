@@ -8,6 +8,7 @@ import type { ComponentType } from "react";
 import Wordle from "./wordle/Wordle";
 import Conjugation from "./conjugation/Conjugation";
 import Cloze from "./cloze/Cloze";
+import Phrasal from "./phrasal/Phrasal";
 
 export interface GameProps {
   accessToken: string;
@@ -42,5 +43,11 @@ export const GAME_REGISTRY: Record<string, GameMeta> = {
     glyph: "▭",
     hue: 35,
     component: Cloze,
+  },
+  phrasal: {
+    tagline: "Domina los phrasal verbs",
+    glyph: "⇄",
+    hue: 210,
+    component: Phrasal,
   },
 };
