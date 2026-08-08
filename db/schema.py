@@ -1026,4 +1026,16 @@ async def initialize_schema(pool):
             ON user_activity(last_seen)
         ''')
 
+        # ── Stats: per-user activity-clock timezone preference ──
+        # Whole-hour UTC offset the $myclock command uses to label a user's
+        # hour-of-day chart. Stored once so the picker only appears the first
+        # time. Offset is an integer hour in [-12, 14] (see StatsMixin).
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS user_clock_prefs (
+                user_id     BIGINT PRIMARY KEY,
+                utc_offset  SMALLINT NOT NULL,
+                updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        ''')
+
         logger.info("Database schema initialized")

@@ -378,3 +378,60 @@ class StatsMixin(DatabaseMixin):
             "monthly_active": mau,
             "new_users": new_users or 0,
         }
+
+    # ── Activity clock ($myclock) ──
+
+    async def get_user_clock_tz(self, user_id: int) -> int | None:
+        """Return a user's saved whole-hour UTC offset, or None if unset.
+
+        None is the meaningful "never picked a timezone" signal the command
+        uses to decide whether to show the picker, so it is preserved here
+        rather than defaulted.
+        """
+        return await self._fetchval(
+            "SELECT utc_offset FROM user_clock_prefs WHERE user_id = $1",
+            user_id,
+        )
+
+    async def set_user_clock_tz(self, user_id: int, utc_offset: int) -> None:
+        """Persist a user's whole-hour UTC offset for the activity clock."""
+        await self._execute(
+            """
+            INSERT INTO user_clock_prefs (user_id, utc_offset, updated_at)
+            VALUES ($1, $2, NOW())
+            ON CONFLICT (user_id)
+            DO UPDATE SET utc_offset = $2, updated_at = NOW()
+            """,
+            user_id,
+            utc_offset,
+        )
+
+    async def get_user_hourly_distribution(
+        self, user_id: int, days: int, utc_offset: int
+    ) -> list[int]:
+        """Return 24 message counts by local hour-of-day for a user.
+
+        The list is always length 24, indexed by local hour (0-23) after
+        applying ``utc_offset``. Hours with no activity are 0, so callers
+        get a complete, gap-free series to render without re-checking.
+        """
+        rows = await self._fetch(
+            """
+            SELECT
+                EXTRACT(
+                    HOUR FROM hour_bucket + ($3 || ' hours')::INTERVAL
+                )::INT AS hod,
+                SUM(msg_count) AS total
+            FROM user_message_counts
+            WHERE user_id = $1
+              AND hour_bucket >= NOW() - ($2 || ' days')::INTERVAL
+            GROUP BY hod
+            """,
+            user_id,
+            str(days),
+            str(utc_offset),
+        )
+        hours = [0] * 24
+        for row in rows:
+            hours[int(row["hod"])] = int(row["total"])
+        return hours

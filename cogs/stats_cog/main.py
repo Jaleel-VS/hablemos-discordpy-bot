@@ -26,6 +26,7 @@ from .config import (
     STATS_WEEKLY_REPORT_DAY,
     STATS_WEEKLY_REPORT_HOUR_UTC,
 )
+from .views import ClockLauncherView
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -60,6 +61,10 @@ class StatsCog(BaseCog):
         self._stats_error_count = 0
         self._last_weekly_report_date: date | None = None
         self.weekly_report.start()
+        # Register the launcher button once so it survives restarts (the
+        # per-user clock flow is entirely ephemeral, keyed off the click).
+        if not any(isinstance(v, ClockLauncherView) for v in bot.persistent_views):
+            bot.add_view(ClockLauncherView(bot))
 
     def cog_unload(self) -> None:
         """Stop scheduled report task on unload."""
@@ -145,6 +150,22 @@ class StatsCog(BaseCog):
     async def before_weekly_report(self) -> None:
         """Wait until the bot is ready before scheduled reporting."""
         await self.bot.wait_until_ready()
+
+    # ── $myclock (self-serve activity clock) ──
+
+    @commands.command(name="myclock", aliases=["reloj"])
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    async def myclock(self, ctx: commands.Context) -> None:
+        """Post a button that shows your personal activity clock."""
+        embed = discord.Embed(
+            title="🕐 Tu reloj de actividad",
+            description=(
+                "Descubre a qué horas del día sueles escribir más.\n\n"
+                "Pulsa el botón para ver tu reloj (solo tú lo verás)."
+            ),
+            color=0x5865F2,
+        )
+        await ctx.send(embed=embed, view=ClockLauncherView(self.bot))
 
     # ── $stats command group ──
 

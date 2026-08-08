@@ -85,6 +85,15 @@ Owner-only, for inspecting what the Activity has persisted (see
 | `$activity_stats streaks [game]` | Top 10 daily streaks for a game (default `wordle`; also `conjugation`, `cloze`). |
 | `$activity_stats user <member> [game]` | A player's daily games/wins/streaks/distribution (default `wordle`; also `conjugation`, `cloze`). |
 
+## Server activity
+
+See [`cogs/stats.md`](./cogs/stats.md) for the full feature (the `$stats`
+group is owner-only; `$myclock` is public).
+
+| Command | Description |
+|---------|-------------|
+| `$myclock` / `$reloj` | Post a button that shows your personal 30-day activity clock — a radial hour-of-day chart of when you're most active. Each clicker sees only their own; first use asks for your timezone once. |
+
 ## Introductions
 
 See [`cogs/introduce.md`](./cogs/introduce.md) for the full feature.

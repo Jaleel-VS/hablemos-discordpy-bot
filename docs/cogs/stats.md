@@ -15,9 +15,37 @@ instead of storing message content.
 | `$stats roles [days]` | Daily message-volume chart split by native-role type. | Owner-only |
 | `$stats growth [weeks]` | New-user growth chart with total tracked users and MAU. | Owner-only |
 | `$stats heatmap [days]` | Hour-by-day activity heatmap in UTC. | Owner-only |
+| `$myclock` (alias `$reloj`) | Post a button that shows the clicker their personal 30-day activity clock (a radial hour-of-day chart). Self-serve: any member, own clock only. | None |
 
 `days` is clamped to 1-90. `weeks` for `$stats growth` is clamped to
 1-52.
+
+## Activity Clock (`$myclock`)
+
+`$myclock` posts a public message with a single **Ver mi reloj** button.
+Anyone can click it, and each clicker gets their own ephemeral clock, so
+one posted message serves the whole channel.
+
+The clock is a radial hour-of-day histogram over the last 30 days: 24
+petals, `00` at the top going clockwise. A petal's length and colour are
+both keyed to that hour's share of the busiest hour, so the peak hour is
+the longest and darkest.
+
+### Timezone
+
+Discord exposes no user timezone (only an interface *locale*, which is a
+language tag, not an offset), so the clock asks once. On first use the
+clicker picks a whole-hour UTC offset from a dropdown; each option shows
+the wall-clock time it implies right now, and the prompt embeds the
+clicker's own local time (`<t:…:t>`) as the reference to match against.
+The choice is saved in `user_clock_prefs` and reused on later clicks (a
+**Cambiar zona horaria** button re-opens the picker). Whole-hour offsets
+keep the chart exactly aligned to the UTC hour buckets the data lives in,
+so no timezone database is needed. The default offset is
+`STATS_CLOCK_TZ_OFFSET` (env, default `+1`).
+
+The renderer (`cogs/stats_cog/clock.py`) is Pillow, following the repo's
+super-sample-then-LANCZOS convention, and runs via `asyncio.to_thread`.
 
 ## Scheduled Reports
 
@@ -32,6 +60,8 @@ numbering (`0` = Monday, `6` = Sunday), and
 - `user_message_counts`: hourly message counts per user.
 - `user_activity`: first seen, last seen, and latest native-role type per
   user.
+- `user_clock_prefs`: each user's saved whole-hour UTC offset for
+  `$myclock` (so the timezone picker is a one-time step).
 
 `StatsCog.on_message` writes all three updates through
 `StatsMixin.track_message_stats()` so a message is either fully represented
