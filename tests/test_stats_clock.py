@@ -17,8 +17,10 @@ from cogs.stats_cog import clock
 from cogs.stats_cog.main import StatsCog
 from cogs.stats_cog.views import (
     ClockLauncherView,
+    ClockResultView,
     _format_offset,
     _now_at_offset,
+    _public_clock_embed,
 )
 
 
@@ -72,6 +74,25 @@ def test_now_at_offset_is_hhmm() -> None:
 
 
 # ── Command ──
+
+def test_result_view_has_post_and_change_buttons() -> None:
+    view = ClockResultView(cast(Any, object()), offset=1)
+    labels = [c.label for c in view.children if isinstance(c, discord.ui.Button)]
+    assert "Publicar en el canal" in labels
+    assert "Cambiar zona horaria" in labels
+
+
+@dataclass
+class FakeUser:
+    display_name: str = "Ada"
+
+
+def test_public_clock_embed_attributes_owner() -> None:
+    embed = _public_clock_embed(cast(Any, FakeUser()), offset=-5)
+    assert "Ada" in (embed.title or "")
+    assert "UTC−5" in (embed.description or "")
+    assert (embed.image.url or "").endswith("activity_clock.png")
+
 
 async def test_myclock_posts_launcher() -> None:
     cog = StatsCog.__new__(StatsCog)

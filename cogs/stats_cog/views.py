@@ -93,9 +93,23 @@ async def _send_clock(interaction: discord.Interaction, bot: Hablemos, offset: i
     await interaction.followup.send(
         embed=embed,
         file=file,
-        view=ChangeTimezoneView(bot),
+        view=ClockResultView(bot, offset),
         ephemeral=True,
     )
+
+
+def _public_clock_embed(user: discord.abc.User, offset: int) -> discord.Embed:
+    """Embed for a clock shared publicly — attributed to its owner."""
+    embed = discord.Embed(
+        title=f"🕐 El reloj de actividad de {user.display_name}",
+        description=(
+            f"Cuándo escribe, en los últimos **{_CLOCK_DAYS} días** "
+            f"({_format_offset(offset)})."
+        ),
+        color=0x5865F2,
+    )
+    embed.set_image(url="attachment://activity_clock.png")
+    return embed
 
 
 class ClockLauncherView(discord.ui.View):
@@ -177,12 +191,51 @@ class _TimezoneSelect(discord.ui.Select):
             await interaction.followup.send(embed=red_embed(_LAUNCH_ERROR), ephemeral=True)
 
 
-class ChangeTimezoneView(discord.ui.View):
-    """Attached under a rendered clock: lets the user re-pick their timezone."""
+class ClockResultView(discord.ui.View):
+    """Attached under a user's ephemeral clock.
 
-    def __init__(self, bot: Hablemos) -> None:
+    Offers two actions: share the clock to the current channel, or re-pick the
+    timezone. The offset is carried so "post" can re-render (a rendered
+    ``discord.File`` is single-use and cannot be re-sent from the ephemeral one).
+    """
+
+    def __init__(self, bot: Hablemos, offset: int) -> None:
         super().__init__(timeout=VIEW_TIMEOUT)
         self.bot = bot
+        self.offset = offset
+
+    @discord.ui.button(
+        label="Publicar en el canal", emoji="📤", style=discord.ButtonStyle.primary
+    )
+    async def post(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ) -> None:
+        channel = interaction.channel
+        if not isinstance(channel, discord.abc.Messageable):
+            await interaction.response.send_message(
+                embed=red_embed("No puedo publicar aquí."), ephemeral=True
+            )
+            return
+
+        await interaction.response.defer()
+        try:
+            file = await _render_clock_file(self.bot, interaction.user.id, self.offset)
+            if file is None:
+                await interaction.followup.send(
+                    embed=red_embed(_NO_DATA.format(days=_CLOCK_DAYS)), ephemeral=True
+                )
+                return
+            await channel.send(
+                embed=_public_clock_embed(interaction.user, self.offset), file=file
+            )
+        except Exception:
+            logger.exception("Failed to post clock for %s", interaction.user.id)
+            await interaction.followup.send(embed=red_embed(_LAUNCH_ERROR), ephemeral=True)
+            return
+
+        # Disable the post button so the same ephemeral message can't re-post.
+        button.disabled = True
+        await interaction.edit_original_response(view=self)
 
     @discord.ui.button(
         label="Cambiar zona horaria", emoji="🌍", style=discord.ButtonStyle.secondary

@@ -31,6 +31,11 @@ petals, `00` at the top going clockwise. A petal's length and colour are
 both keyed to that hour's share of the busiest hour, so the peak hour is
 the longest and darkest.
 
+Under a rendered clock are two buttons: **Publicar en el canal** shares it
+publicly in the current channel (attributed to its owner; disables itself
+after posting so it can't double-post), and **Cambiar zona horaria**
+re-opens the timezone picker.
+
 ### Timezone
 
 Discord exposes no user timezone (only an interface *locale*, which is a
