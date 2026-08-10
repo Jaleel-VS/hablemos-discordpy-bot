@@ -4,6 +4,7 @@ Throw tomatoes at people.
 """
 
 import logging
+import tempfile
 from io import BytesIO
 from pathlib import Path
 
@@ -33,11 +34,16 @@ class TomatoesCog(BaseCog):
         Or reply to a message with `$tomato`
         """
         output_path = None
+
         try:
             user = None
+            provided_mentions = list(filter(
+                lambda user: user.mention in ctx.message.content,
+                ctx.message.mentions
+            ))
 
-            if len(ctx.message.mentions) > 0:
-                user = ctx.message.mentions[0]
+            if len(provided_mentions) > 0:
+                user = provided_mentions[0]
             elif ctx.message.reference is not None:
                 resolved_message = ctx.message.reference.resolved
 
@@ -49,9 +55,13 @@ class TomatoesCog(BaseCog):
                 return
 
             profile_picture = user.display_avatar.with_size(512)
-            data = BytesIO(await profile_picture.read())
-            base = Image.open(data).convert("RGBA")
-            output_path = generate_tomatoes(base)
+            image = Image.open(BytesIO(await profile_picture.read()))
+            base = image.convert("RGBA")
+
+            with tempfile.NamedTemporaryFile(suffix=".webp", delete=False) as tmp:
+                output_path = tmp.name
+
+            output_path = generate_tomatoes(base, output_path)
             await ctx.send(content = user.mention, file=File(output_path))
         except Forbidden:
             logger.warning(
