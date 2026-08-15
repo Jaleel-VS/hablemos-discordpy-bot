@@ -11,7 +11,7 @@ instead of storing message content.
 | `$stats [days]` | Activity summary: top channels, messages by native-role type, total users, MAU, and new users. | Owner-only |
 | `$stats report [days]` | Period-over-period health report with message/user deltas, rising and cooling channels, role mix, and peak UTC activity window. | Owner-only |
 | `$stats channels [days]` | Top-channel message-volume chart. | Owner-only |
-| `$stats compare #a #b [#c ...] [days]` | Line chart comparing daily message volume across 2-5 channels. | Owner-only |
+| `$stats compare #a #b [#c ...] [days]` | Line chart comparing daily message volume across 2-5 channels. `days` accepts a number or duration (`7d`, `1d12h`). | Owner-only |
 | `$stats topusers [days]` | Top 10 most active users by message count, active days, and messages per active day. | Owner-only |
 | `$stats roles [days]` | Daily message-volume chart split by native-role type. | Owner-only |
 | `$stats growth [weeks]` | New-user growth chart with total tracked users and MAU. | Owner-only |

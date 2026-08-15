@@ -15,6 +15,7 @@ import discord
 from discord.ext import commands, tasks
 
 from base_cog import BaseCog
+from cogs.utils.duration import parse_duration
 from cogs.utils.embeds import red_embed
 
 from . import graphs
@@ -263,12 +264,14 @@ class StatsCog(BaseCog):
         self,
         ctx: commands.Context,
         channels: commands.Greedy[discord.TextChannel],
-        days: int = 7,
+        days: str = "7",
     ):
         """Compare daily activity across channels.
 
         Usage: $stats compare #chan-a #chan-b [#chan-c ...] [days]
-        Accepts 2-5 channels (by mention, ID, or name).
+        Accepts 2-5 channels (by mention, ID, or name). ``days`` accepts a
+        plain number or a duration like ``7d``/``1d12h`` — the chart is
+        day-granular, so sub-day parts round up to one day.
         """
         # Dedupe while preserving order; a repeated channel would draw two
         # identical lines and waste a legend slot.
@@ -296,22 +299,31 @@ class StatsCog(BaseCog):
             )
             return
 
-        days = _clamp_days(days)
+        window_days = _parse_days_arg(days)
+        if window_days is None:
+            await ctx.send(
+                embed=red_embed(
+                    f"`{days}` isn't a valid window. Use a number of days "
+                    "or a duration like `7d` or `2w`."
+                )
+            )
+            return
+
         channel_ids = [c.id for c in unique_channels]
         channel_names = {c.id: f"#{c.name}" for c in unique_channels}
 
-        data = await self.bot.db.get_channel_daily_series(channel_ids, days)
+        data = await self.bot.db.get_channel_daily_series(channel_ids, window_days)
 
         buf = await asyncio.to_thread(
             graphs.render_channel_comparison,
             data["days"],
             data["series"],
             channel_names,
-            days,
+            window_days,
         )
         file = discord.File(buf, filename="channel_compare.png")
         embed = discord.Embed(
-            title=f"📊 Channel Comparison — Last {days} days",
+            title=f"📊 Channel Comparison — Last {window_days} days",
             color=0x5865F2,
         )
         embed.set_image(url="attachment://channel_compare.png")
@@ -500,6 +512,22 @@ async def setup(bot: Hablemos):
 def _clamp_days(days: int) -> int:
     """Clamp user-provided day windows to the supported range."""
     return max(1, min(days, _MAX_STATS_DAYS))
+
+def _parse_days_arg(text: str) -> int | None:
+    """Parse a ``days`` argument into a clamped whole-day count.
+
+    Accepts a bare integer or a duration string (``7d``, ``12h``,
+    ``1d12h``) via the shared ``parse_duration`` helper. The comparison
+    chart is day-granular, so any sub-day remainder rounds up to a full
+    day and the result is clamped to 1-90. Returns ``None`` on invalid
+    input so the caller can surface a friendly error instead of raising.
+    """
+    try:
+        delta = parse_duration(text)
+    except ValueError:
+        return None
+    total_days = delta.days + (1 if delta.seconds else 0)
+    return _clamp_days(total_days)
 
 
 def _safe_average(numerator: int, denominator: int) -> float:
