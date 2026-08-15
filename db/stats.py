@@ -1,6 +1,6 @@
 """Stats database mixin — channel activity and user adoption tracking."""
 import logging
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from db import DatabaseMixin
 
@@ -308,6 +308,54 @@ class StatsMixin(DatabaseMixin):
             str(days),
         )
         return [dict(r) for r in rows]
+
+    async def get_channel_daily_series(
+        self, channel_ids: list[int], days: int = 7
+    ) -> dict:
+        """Return gap-free daily message totals for specific channels.
+
+        The returned dict has a shared ``days`` axis (a list of ``date``
+        objects, oldest first, one entry per day in the window) and a
+        ``series`` map from ``channel_id`` to a list of daily totals aligned
+        to that axis. Days with no activity are ``0``, so callers get a
+        complete, gap-free series per channel to render without re-checking
+        for missing dates (mirrors ``get_user_hourly_distribution``).
+
+        An empty ``channel_ids`` yields an empty series map (but a fully
+        populated ``days`` axis), so a caller can still draw an empty chart.
+        """
+        # Build the complete day axis up front so channels with no rows at
+        # all still get a flat zero line spanning the whole window.
+        today = datetime.now(UTC).date()
+        day_axis = [
+            today - timedelta(days=offset) for offset in range(days - 1, -1, -1)
+        ]
+        day_index = {day: i for i, day in enumerate(day_axis)}
+
+        series: dict[int, list[int]] = {cid: [0] * days for cid in channel_ids}
+        if not channel_ids:
+            return {"days": day_axis, "series": series}
+
+        rows = await self._fetch(
+            """
+            SELECT
+                channel_id,
+                (hour_bucket AT TIME ZONE 'UTC')::DATE AS day,
+                SUM(msg_count) AS total
+            FROM channel_stats
+            WHERE channel_id = ANY($1::BIGINT[])
+              AND hour_bucket >= NOW() - ($2 || ' days')::INTERVAL
+            GROUP BY channel_id, day
+            """,
+            channel_ids,
+            str(days),
+        )
+        for row in rows:
+            idx = day_index.get(row["day"])
+            if idx is None:
+                continue
+            series[int(row["channel_id"])][idx] = int(row["total"])
+        return {"days": day_axis, "series": series}
 
     async def get_hourly_heatmap(self, days: int = 7) -> list[dict]:
         """Message counts by hour-of-day and day-of-week for heatmap."""

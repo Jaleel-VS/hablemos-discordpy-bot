@@ -87,7 +87,7 @@ Adding a new domain:
   type.
 - Columns: `channel_id`, `role_type`, `hour_bucket`, `msg_count`.
 - Purpose: powers `$stats`, `$stats report`, `$stats channels`,
-  `$stats roles`, and `$stats heatmap`.
+  `$stats compare`, `$stats roles`, and `$stats heatmap`.
 - `user_message_counts` — hourly per-user message totals for the stats
   cog leaderboard.
 - Columns: `user_id`, `hour_bucket`, `msg_count`.

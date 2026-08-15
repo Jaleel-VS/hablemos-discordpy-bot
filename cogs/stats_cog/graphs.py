@@ -152,6 +152,48 @@ def render_heatmap(data: list[dict], days: int) -> io.BytesIO:
     return _fig_to_buffer(fig)
 
 
+def render_channel_comparison(
+    day_axis: list,
+    series: dict[int, list[int]],
+    channel_names: dict[int, str],
+    days: int,
+) -> io.BytesIO:
+    """Line chart comparing daily message volume across channels.
+
+    ``day_axis`` is the shared list of dates (oldest first); ``series`` maps
+    each channel_id to a list of daily totals aligned to that axis. Channels
+    with no activity render as a flat zero line so the comparison is honest.
+    """
+    fig, ax = plt.subplots(figsize=FIGSIZE, dpi=DPI)
+
+    x_labels = [d.strftime("%m/%d") for d in day_axis]
+    palette = ["#5865F2", "#FF6B6B", "#4ECDC4", "#FFD166", "#A78BFA"]
+
+    for i, (channel_id, totals) in enumerate(series.items()):
+        label = channel_names.get(channel_id, f"#{channel_id}")
+        ax.plot(
+            x_labels,
+            totals,
+            marker="o",
+            linewidth=2,
+            color=palette[i % len(palette)],
+            label=label,
+        )
+
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Messages")
+    ax.set_title(f"Channel Activity — Last {days} days")
+    ax.legend(loc="upper left")
+    ax.set_ylim(bottom=0)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    if len(x_labels) > 10:
+        plt.xticks(rotation=45, ha="right")
+
+    fig.tight_layout()
+    return _fig_to_buffer(fig)
+
 def _fig_to_buffer(fig: Figure) -> io.BytesIO:
     """Save figure to a BytesIO buffer and close it."""
     buf = io.BytesIO()

@@ -34,6 +34,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 _MAX_STATS_DAYS = 90
+_MAX_COMPARE_CHANNELS = 5
 _STATS_ERROR_LOG_INTERVAL = timedelta(minutes=5)
 _DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
@@ -254,6 +255,66 @@ class StatsCog(BaseCog):
         file = discord.File(buf, filename="top_channels.png")
         embed = discord.Embed(title=f"📊 Top Channels — Last {days} days", color=0x5865F2)
         embed.set_image(url="attachment://top_channels.png")
+        await ctx.send(embed=embed, file=file)
+
+    @stats.command(name="compare")
+    @commands.is_owner()
+    async def stats_compare(
+        self,
+        ctx: commands.Context,
+        channels: commands.Greedy[discord.TextChannel],
+        days: int = 7,
+    ):
+        """Compare daily activity across channels.
+
+        Usage: $stats compare #chan-a #chan-b [#chan-c ...] [days]
+        Accepts 2-5 channels (by mention, ID, or name).
+        """
+        # Dedupe while preserving order; a repeated channel would draw two
+        # identical lines and waste a legend slot.
+        unique_channels: list[discord.TextChannel] = []
+        seen: set[int] = set()
+        for channel in channels:
+            if channel.id not in seen:
+                seen.add(channel.id)
+                unique_channels.append(channel)
+
+        if len(unique_channels) < 2:
+            await ctx.send(
+                embed=red_embed(
+                    "Give me at least two channels to compare, e.g. "
+                    "`$stats compare #general #off-topic 7`."
+                )
+            )
+            return
+        if len(unique_channels) > _MAX_COMPARE_CHANNELS:
+            await ctx.send(
+                embed=red_embed(
+                    f"Too many channels — compare at most "
+                    f"{_MAX_COMPARE_CHANNELS} at once."
+                )
+            )
+            return
+
+        days = _clamp_days(days)
+        channel_ids = [c.id for c in unique_channels]
+        channel_names = {c.id: f"#{c.name}" for c in unique_channels}
+
+        data = await self.bot.db.get_channel_daily_series(channel_ids, days)
+
+        buf = await asyncio.to_thread(
+            graphs.render_channel_comparison,
+            data["days"],
+            data["series"],
+            channel_names,
+            days,
+        )
+        file = discord.File(buf, filename="channel_compare.png")
+        embed = discord.Embed(
+            title=f"📊 Channel Comparison — Last {days} days",
+            color=0x5865F2,
+        )
+        embed.set_image(url="attachment://channel_compare.png")
         await ctx.send(embed=embed, file=file)
 
     @stats.command(name="topusers")

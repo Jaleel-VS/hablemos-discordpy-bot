@@ -181,6 +181,7 @@ See [`cogs/admin.md`](./cogs/admin.md), [`cogs/database.md`](./cogs/database.md)
 | `$stats [days]` | Show tracked-guild activity summary: top channels, role mix, total users, MAU, and new users. | Owner-only |
 | `$stats report [days]` | Show a period-over-period community health report, including deltas, rising/cooling channels, role mix, and peak UTC activity window. | Owner-only |
 | `$stats channels [days]` | Render a top-channel message-volume chart. | Owner-only |
+| `$stats compare #a #b [#c ...] [days]` | Line chart comparing daily message volume across 2-5 channels. | Owner-only |
 | `$stats topusers [days]` | Show the top 10 most active users by message count, active days, and messages per active day in the tracked stats guild. | Owner-only |
 | `$stats roles [days]` | Render daily message volume split by native-language role. | Owner-only |
 | `$stats growth [weeks]` | Render new-user growth and total tracked users over time. | Owner-only |
