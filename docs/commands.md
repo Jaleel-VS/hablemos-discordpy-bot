@@ -203,6 +203,8 @@ See [`cogs/quote_generator.md`](./cogs/quote_generator.md) for the full feature.
 | `$quote2 <message_link>` / `$q2` | Style 2 quote image. |
 | `$quote3 <message_link>` / `$q3` | Style 3 quote image. |
 | `$quotem [count]` / `$qm` | Multi-message conversation quote (reply-based; captures the replied message plus up to `count` (1–5) earlier messages). |
+| `$quoteme [on\|off]` | Manage your own quote opt-out status (text). |
+| `$q0` / `$quoteopt` | Button panel to opt in/out of being quoted. |
 
 ## Spotify
 

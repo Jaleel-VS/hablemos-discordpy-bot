@@ -40,6 +40,7 @@ from .emoji import (
     replace_emoji_with_images,
     visual_length,
 )
+from .views import QuoteOptView, _status_embed
 
 logger = logging.getLogger(__name__)
 
@@ -174,7 +175,8 @@ class QuoteGenerator(BaseCog):
 
     async def _extract_quote_data(self, ctx, message) -> tuple[str, str, str] | None:
         """Extract (username, avatar_url, content) from a fetched message. Returns None if opted out."""
-        if await self.bot.db.is_quote_opted_out(message.author.id):
+        # A user who has opted out can still quote themselves.
+        if message.author.id != ctx.author.id and await self.bot.db.is_quote_opted_out(message.author.id):
             await ctx.send(embed=red_embed("This user has opted out of being quoted."))
             return None
 
@@ -403,12 +405,18 @@ class QuoteGenerator(BaseCog):
         # Oldest first
         collected.reverse()
 
-        # Build message tuples, checking opt-outs
+        # Reject up front if an opted-out user (other than the invoker) is in
+        # the chain — dropping their turn would produce a disjointed quote, and
+        # they've asked not to be quoted. Checked before any render-prep work.
+        others = {msg.author.id for msg in collected if msg.author.id != ctx.author.id}
+        if await self.bot.db.any_quote_opted_out(others):
+            await ctx.send(embed=red_embed("Someone in this conversation has opted out of being quoted."))
+            return
+
+        # Build message tuples.
         messages: list[tuple[str, str, str]] = []
         total_length = 0
         for msg in collected:
-            if await self.bot.db.is_quote_opted_out(msg.author.id):
-                continue
             content = await _clean_message_content(
                 msg.content, msg.mentions, msg.role_mentions,
                 msg.channel_mentions, ctx.guild, db=self.bot.db, for_render=True,
@@ -456,7 +464,7 @@ class QuoteGenerator(BaseCog):
             await interaction.response.send_message("You are not allowed to use quote commands.", ephemeral=True)
             return
 
-        if await self.bot.db.is_quote_opted_out(message.author.id):
+        if message.author.id != interaction.user.id and await self.bot.db.is_quote_opted_out(message.author.id):
             await interaction.response.send_message("This user has opted out of being quoted.", ephemeral=True)
             return
 
@@ -533,6 +541,18 @@ class QuoteGenerator(BaseCog):
                 await ctx.send(embed=yellow_embed("You were already opted in."))
         else:
             await ctx.send(embed=red_embed("Usage: `$quoteme [on|off]`"))
+
+    @command(aliases=["quoteopt"])
+    async def q0(self, ctx):
+        """
+        Manage your quote opt-out status with buttons.
+
+        Shows your current status and two buttons to opt in or out of being
+        quoted by others. A more intuitive version of `$quoteme on|off`.
+        """
+        opted_out = await self.bot.db.is_quote_opted_out(ctx.author.id)
+        view = QuoteOptView(self.bot, ctx.author.id, opted_out)
+        await ctx.send(embed=_status_embed(opted_out), view=view)
 
 
 async def setup(bot):

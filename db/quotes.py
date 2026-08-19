@@ -84,3 +84,13 @@ class QuotesMixin(DatabaseMixin):
             'SELECT user_id FROM quote_optouts WHERE user_id = $1', user_id,
         )
         return row is not None
+
+    async def any_quote_opted_out(self, user_ids: set[int]) -> bool:
+        """Check if any of the given users has opted out of being quoted."""
+        if not user_ids:
+            return False
+        row = await self._fetchrow(
+            'SELECT 1 FROM quote_optouts WHERE user_id = ANY($1::bigint[]) LIMIT 1',
+            list(user_ids),
+        )
+        return row is not None

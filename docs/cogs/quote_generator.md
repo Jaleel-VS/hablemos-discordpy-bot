@@ -17,6 +17,8 @@ reactions.
 | `$quote2 <message_link>` / `$q2` | Style 2 (alternate layout). | None | 5s/user |
 | `$quote3 <message_link>` / `$q3` | Style 3 (alternate layout). | None | 5s/user |
 | `$quotem [count]` / `$qm` | Multi-message conversation quote. Must be used as a reply; captures the replied message plus up to `count` (1–5) earlier messages via the reply chain or channel history. | None | 15s/user |
+| `$quoteme [on\|off]` | Manage your own quote opt-out status via text. `off` opts out, `on` opts back in, no arg shows status. | None | None |
+| `$q0` / `$quoteopt` | Button-based opt in/out panel — the intuitive version of `$quoteme`. Shows your current status with **Opt in** / **Opt out** buttons. | None | None |
 
 ## Configuration
 
@@ -59,6 +61,19 @@ reactions.
   emoji coverage.
 - Markdown is stripped from message content (see `markdown.py` /
   `remove_markdown_from_message`).
+- **Opt-out handling.** Users can opt out of being quoted
+  (`is_quote_opted_out`). Opting out blocks *others* from quoting them, but
+  a user can always quote **themselves** — the single-message paths
+  (`_extract_quote_data`, context-menu `_generate_from_message`) skip the
+  opt-out check when the message author is the invoker. For `$quotem`, if
+  any message in the collected chain belongs to an opted-out user *other
+  than the invoker*, the command aborts with an error rather than dropping
+  that turn (dropping it would produce a disjointed quote).
+  - Opt-out status is toggled two ways: `$quoteme on|off` (text) and `$q0`
+    (an ephemeral button panel, `QuoteOptView` in `views.py`). The view is
+    per-invoker (`interaction_check` locks it to the caller), times out
+    after `VIEW_TIMEOUT` seconds, and disables the button matching the
+    current status so the active state is obvious.
 
 ## Related
 
