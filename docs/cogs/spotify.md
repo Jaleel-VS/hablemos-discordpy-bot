@@ -45,6 +45,17 @@ Falls back to Spotify green (`#1ED760`) if extraction fails.
 The cog renders a text-based progress bar using Unicode block characters
 (▬ for filled, ─ for empty). Timestamps are formatted as `MM:SS`.
 
+### Fonts and CJK fallback
+
+`renderer.py` draws the now-playing card with Roboto (`fonts/Roboto.ttf`).
+Roboto has no CJK glyphs and Pillow does not fall back across fonts for
+missing glyphs, so Han/Kana/Hangul characters rendered as ".notdef" tofu
+boxes. Each text line is now split into runs of same script: CJK runs are
+drawn with bundled Noto Sans SC (`fonts/NotoSansSC.ttf`, OFL) and the rest
+stay Roboto. Runs share one baseline, so a pure-Latin line renders exactly
+as before. The CJK ranges are listed in `_CJK_RANGES`; both fonts are
+variable and use the same named weights (Light / Regular / SemiBold …).
+
 ## Related
 
 - [`./general.md`](./general.md) — other user-facing utility commands.
