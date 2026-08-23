@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 import time
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 import discord
@@ -252,6 +253,25 @@ class General(BaseCog):
         embed.add_field(name="API", value=f"`{api}ms`", inline=True)
         embed.add_field(name="Database", value=f"`{db}ms`", inline=True)
         await msg.edit(embed=embed)
+
+    @command()
+    async def uptime(self, ctx):
+        """Show how long the bot has been running."""
+        elapsed = datetime.now(UTC) - self.bot.launch_time
+        total_minutes = int(elapsed.total_seconds()) // 60
+        days, remainder = divmod(total_minutes, 24 * 60)
+        hours, minutes = divmod(remainder, 60)
+
+        parts = []
+        if days:
+            parts.append(f"{days} day{'s' if days != 1 else ''}")
+        if hours:
+            parts.append(f"{hours} hour{'s' if hours != 1 else ''}")
+        if minutes:
+            parts.append(f"{minutes} minute{'s' if minutes != 1 else ''}")
+
+        text = ", ".join(parts) or "less than a minute"
+        await ctx.send(embed=green_embed(text))
 
     @command()
     @commands.is_owner()

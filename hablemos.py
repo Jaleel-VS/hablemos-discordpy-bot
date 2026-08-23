@@ -2,6 +2,7 @@
 import asyncio
 import importlib
 import logging
+from datetime import UTC, datetime
 
 import discord
 from discord import Game
@@ -52,6 +53,7 @@ class Hablemos(Bot):
                           )
 
         self.settings = settings
+        self.launch_time: datetime = datetime.now(UTC)
         self.online_channel = None
         self.error_channel = None
         self.db = Database(settings.database_url)

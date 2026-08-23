@@ -16,6 +16,7 @@ users to discover what the bot can do.
 | `/info` | Show bot info: uptime, guilds, latency, code stats. | None | None |
 | `/ping` | Simple latency check. | None | None |
 | `$invite` | Post the bot invite link (if configured). | None | None |
+| `$uptime` | Show how long the bot has been running. | None | None |
 
 ## Configuration
 
