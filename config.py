@@ -39,6 +39,17 @@ def get_list_env(name: str, default: list[str]) -> list[str]:
     return [part.strip() for part in value.split(',') if part.strip()]
 
 
+def get_int_list_env(name: str, default: list[int]) -> list[int]:
+    """Return a comma-delimited integer list with a clear config error."""
+    values = get_list_env(name, [str(value) for value in default])
+    try:
+        return [int(value) for value in values]
+    except ValueError as exc:
+        raise ValueError(
+            f"{name} must be a comma-delimited list of integers"
+        ) from exc
+
+
 @dataclass(frozen=True)
 class Settings:
     """Application settings loaded from environment variables."""
@@ -64,10 +75,10 @@ class Settings:
 def load_settings() -> Settings:
     """Load settings from environment variables."""
     convo_spa_defaults = [
-        "809349064029241344",
-        "243858509123289089",
-        "388539967053496322",
-        "477630693292113932",
+        809349064029241344,
+        243858509123289089,
+        388539967053496322,
+        477630693292113932,
     ]
     return Settings(
         bot_token=get_required_env("BOT_TOKEN"),
@@ -87,10 +98,9 @@ def load_settings() -> Settings:
             "WEBSITE_API_URL",
             "https://spa-eng-discord-website-backend-production.up.railway.app/api",
         ),
-        convo_spa_channels=[
-            int(channel_id)
-            for channel_id in get_list_env("CONVO_SPA_CHANNELS", convo_spa_defaults)
-        ],
+        convo_spa_channels=get_int_list_env(
+            "CONVO_SPA_CHANNELS", convo_spa_defaults
+        ),
         intro_channel_id=get_int_env("INTRO_CHANNEL_ID", "399713966781235200"),
         general_channel_id=get_int_env("GENERAL_CHANNEL_ID", "296491080881537024"),
         intro_warn_channel_id=get_int_env("INTRO_WARN_CHANNEL_ID", "247135634265735168"),

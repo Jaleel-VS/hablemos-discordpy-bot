@@ -1,84 +1,103 @@
 """Conversation starter cog — random bilingual discussion topics."""
+
+from __future__ import annotations
+
 from random import choice
+from typing import TYPE_CHECKING
 
 from discord import Embed
 from discord.ext import commands
 
-from base_cog import COLORS as colors
-from base_cog import BaseCog
-from cogs.convo_starter_cog.convo_starter_help import (
-    categories,
-    get_random_question,
+from base_cog import COLORS, BaseCog
+from cogs.convo_starter_cog.questions import (
+    CATEGORY_DESCRIPTIONS,
+    QuestionBank,
+    load_questions,
+    resolve_category,
 )
 from cogs.utils.embeds import green_embed
 
-SOURCE_URL = 'https://docs.google.com/spreadsheets/d/10jsNQsSG9mbLZgDoYIdVrbogVSN7eAKbOfCASA5hN0A/edit?usp=sharing'
+if TYPE_CHECKING:
+    from hablemos import Hablemos
 
-# Embed Message
-ERROR_MESSAGE = "The proper format is `$topic <topic>` eg. `$topic 2`. Please see " \
-                "`$help topic` for more info"
-NOT_FOUND = "Topic not found! Please type ``$lst`` to see a list of topics"
+SOURCE_URL = (
+    "https://docs.google.com/spreadsheets/d/"
+    "10jsNQsSG9mbLZgDoYIdVrbogVSN7eAKbOfCASA5hN0A/edit?usp=sharing"
+)
 
-def embed_question(question_1a, question_1b):
-    embed = Embed(color=choice(colors))
-    embed.clear_fields()
-    embed.title = question_1a
-    embed.description = f"**{question_1b}**"
-    return embed
+
+def question_embed(primary: str, translation: str) -> Embed:
+    """Build a bilingual conversation-starter embed."""
+    return Embed(
+        description=f"**{primary}**\n\n{translation}",
+        color=choice(COLORS),
+    )
+
+
+def embed_question(primary: str, translation: str) -> Embed:
+    """Backward-compatible alias for :func:`question_embed`."""
+    return question_embed(primary, translation)
+
 
 class ConvoStarter(BaseCog):
     """Random conversation starters and discussion topics."""
 
-    def __init__(self, bot):
+    def __init__(self, bot: Hablemos) -> None:
         super().__init__(bot)
-        self.spa_channels = set(bot.settings.convo_spa_channels)
+        self.spanish_first_channels = frozenset(
+            bot.settings.convo_spa_channels
+        )
+        self.questions: QuestionBank = load_questions()
 
-    @commands.command(aliases=['top', ])
+    @commands.command(aliases=["top"])
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def topic(self, ctx, *category):
+    async def topic(
+        self,
+        ctx: commands.Context,
+        *,
+        category: str = "general",
+    ) -> None:
+        """Suggest a random conversation topic.
+
+        Categories can be selected by name or number. The default is
+        ``general``. Examples: ``$topic``, ``$topic phil``, ``$topic 5``.
         """
-        Suggest a random conversation topic.
+        try:
+            resolved_category = resolve_category(category)
+        except ValueError:
+            self.topic.reset_cooldown(ctx)
+            await ctx.send(
+                f"Topic not found. Type `{ctx.clean_prefix}lst` to see "
+                "the available categories."
+            )
+            return
 
-        Just typing `$topic` will suggest a topic from the `general` category.
-        Type `$lst` to see the list of categories.
-
-        Examples: `$topic`, `$topic phil`, `$topic 4`"""
-        table = ""
-        if len(category) > 1:
-            return await ctx.send(ERROR_MESSAGE)
-        if len(category) == 0:
-            table = "general"
-        elif category[0] in categories:
-            table = category[0]
-        elif category[0] in ['1', '2', '3', '4', '5']:
-            table = categories[int(category[0]) - 1]
+        spanish, english = choice(self.questions[resolved_category])
+        if ctx.channel.id in self.spanish_first_channels:
+            primary, translation = spanish, english
         else:
-            return await ctx.send(NOT_FOUND)
+            primary, translation = english, spanish
+        await ctx.send(embed=question_embed(primary, translation))
 
-        question_spa_eng = get_random_question(table)
-
-        if ctx.channel.id in self.spa_channels:
-            emb = embed_question(question_spa_eng[0], question_spa_eng[1])
-        else:
-            emb = embed_question(question_spa_eng[1], question_spa_eng[0])
-        await ctx.send(embed=emb)
-
-    @commands.command(aliases=['list'])
-    async def lst(self, ctx):
-        """Lists available topic categories."""
+    @commands.command(aliases=["list"])
+    async def lst(self, ctx: commands.Context) -> None:
+        """List available topic categories."""
+        category_lines = "\n".join(
+            f"`{category}`, `{index}` — {description}"
+            for index, (category, description) in enumerate(
+                CATEGORY_DESCRIPTIONS.items(), start=1
+            )
+        )
         text = (
-            "To use any one of the undermentioned topics type `$topic <category>`.\n"
-            "`$topic` or `$top` defaults to `general`\n\n"
-            "command(category) - description:\n"
-            "`general`, `1` - General questions\n"
-            "`phil`, `2` - Philosophical questions\n"
-            "`would`, `3` - *'Would you rather'* questions\n"
-            "`other`, `4` - Random questions\n"
-            "`cursed`, `5` - Cursed deals: amazing power, terrible catch\n\n"
+            f"Use `{ctx.clean_prefix}topic <category>` to choose a category.\n"
+            f"`{ctx.clean_prefix}topic` and `{ctx.clean_prefix}top` default "
+            "to `general`.\n\n"
+            f"{category_lines}\n\n"
             f"[Full list of questions]({SOURCE_URL})"
         )
         await ctx.send(embed=green_embed(text))
 
 
-async def setup(bot):
+async def setup(bot: Hablemos) -> None:
+    """Load the conversation starter cog."""
     await bot.add_cog(ConvoStarter(bot))

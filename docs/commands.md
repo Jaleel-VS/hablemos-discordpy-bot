@@ -123,7 +123,7 @@ See [`cogs/convo_starter.md`](./cogs/convo_starter.md) for the full feature.
 
 | Command | Description |
 |---------|-------------|
-| `$topic [category]` / `$top` | Post a random bilingual discussion topic. Categories: `general`, `phil`, `would`, `other`. |
+| `$topic [category]` / `$top` | Post a random bilingual discussion topic. Categories: `general`, `phil`, `would`, `other`, `cursed` (or `1`–`5`). |
 | `$lst` / `$list` | List available topic categories. |
 
 ## Dictation

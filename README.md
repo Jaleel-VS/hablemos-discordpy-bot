@@ -100,9 +100,10 @@ Categories: `animales` (199 words), `profesiones` (141), `ciudades` (49). One ga
 
 | Command | Description |
 |---------|-------------|
-| `$topic [category]` | Get a random bilingual conversation starter |
+| `$topic [category]` / `$top` | Get a random bilingual conversation starter |
+| `$lst` / `$list` | List conversation-starter categories |
 
-Categories: `general` (1), `phil` (2), `would` (3), `other` (4). Channel-aware — Spanish channels show Spanish first.
+Categories: `general` (1), `phil` (2), `would` (3), `other` (4), `cursed` (5). Names are case-insensitive. Spanish-first channels show Spanish first; all other channels show English first.
 
 ### Spotify
 

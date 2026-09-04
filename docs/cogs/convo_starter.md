@@ -1,44 +1,62 @@
 # Conversation Starter (`convo_starter_cog`)
 
-Random bilingual discussion topics to spark conversations.
-
-## Overview
-
-The conversation starter cog pulls discussion questions from a
-pre-loaded database (loaded from a Google Sheet via Python module) and
-posts them in the channel. Questions are displayed bilingually (Spanish
-+ English), with the order determined by the channel's configured
-language.
-
-Categories: General, Philosophical, Would You Rather, and Other.
+Posts random bilingual questions to spark conversation.
 
 ## Commands
 
 | Command | Description | Permissions | Cooldown |
-|---------|-------------|-------------|----------|
-| `$topic [category]` / `$top` | Post a random topic from a category. Defaults to `general`. Categories: `general` / `1`, `phil` / `2`, `would` / `3`, `other` / `4`. | None | 5s/user |
-| `$lst` / `$list` | List all available topic categories with descriptions. | None | None |
+|---|---|---|---|
+| `$topic [category]` / `$top` | Post a random question. Defaults to `general`; accepts a category name or number. | None | 5s/user |
+| `$lst` / `$list` | List every category and its numeric alias. | None | None |
 
-## Configuration
+Categories are case-insensitive:
 
-| Constant | Location | Default | Purpose |
-|---------|----------|---------|---------|
-| `CONVO_SPA_CHANNELS` | Root `config.py` | (baked-in list) | Channels where Spanish is the primary language (English shown as subtitle). |
+| Name | Number | Description |
+|---|---:|---|
+| `general` | `1` | General questions |
+| `phil` | `2` | Philosophical questions |
+| `would` | `3` | Would-you-rather questions |
+| `other` | `4` | Random questions |
+| `cursed` | `5` | Cursed deals: amazing power, terrible catch |
 
-## Behavior
+Examples:
 
-- **Spanish-primary channels** (`CONVO_SPA_CHANNELS`): Title in Spanish,
-  English in description.
-- **Other channels**: Title in English, Spanish in description.
+```text
+$topic
+$topic PHIL
+$topic 5
+```
 
-## Implementation notes
+An unknown category returns a link to `$lst` and does not consume the user's cooldown.
+Runtime messages use the bot's configured prefix rather than assuming `$`.
 
-- Questions are loaded at import time from
-  `convo_starter_help.py`. The source is a Google Sheet (link available
-  via `$lst`).
-- The `get_random_question(table)` function picks a random question from
-  the specified category.
-- Embed color is randomized (from `base_cog.COLORS`).
+## Language order
 
-> TODO: Document how to update the question database (Google Sheet →
-> Python module export).
+`CONVO_SPA_CHANNELS` is a comma-delimited list of channel IDs configured in
+root [`config.py`](../../config.py):
+
+- In a configured channel, the Spanish question is bold and appears first.
+- In every other channel, the English question is bold and appears first.
+
+Both languages are rendered in the embed description so long questions are not
+restricted by Discord's shorter embed-title limit.
+
+## Question data
+
+[`questions.py`](../../cogs/convo_starter_cog/questions.py) is the single source
+of truth for category names, numeric aliases, descriptions, and loading rules.
+Each category has a UTF-8 CSV file under `convo_starter_data/`; every row must
+contain exactly two non-empty columns in `(Spanish, English)` order.
+
+All files are loaded and validated when the cog starts. Missing files,
+empty categories, malformed rows, duplicate questions, or question pairs too
+long for a Discord embed prevent the extension from loading and identify the
+bad file and line in the startup log. Commands use that in-memory bank and
+perform no filesystem I/O.
+
+The Google Sheet linked by `$lst` is the editable source list. After updating a
+CSV export, run:
+
+```bash
+pytest -q tests/test_convo_starter.py tests/test_convo_starter_questions.py
+```

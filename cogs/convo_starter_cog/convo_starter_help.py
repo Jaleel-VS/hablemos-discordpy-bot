@@ -1,17 +1,23 @@
-"""Conversation starter question helpers."""
-import csv
-import random
-from pathlib import Path
+"""Backward-compatible conversation-starter helpers.
 
-categories = ['general', 'phil', 'would', 'other', 'cursed']
+New code should import from :mod:`cogs.convo_starter_cog.questions`.
+"""
 
-DATA_DIR = Path(__file__).resolve().parent / "convo_starter_data"
+from random import choice
+
+from cogs.convo_starter_cog.questions import (
+    CATEGORY_DESCRIPTIONS,
+    load_questions,
+    resolve_category,
+)
+
+categories = list(CATEGORY_DESCRIPTIONS)
 
 
-def get_random_question(category: str) -> tuple:
-    """Return a random (spanish, english) question pair from the given category."""
-    with open(DATA_DIR / f"{category}.csv") as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        rows = [(row[0], row[1]) for row in csv_reader]
-    spa, eng = random.choice(rows)
-    return spa, eng
+def get_random_question(category: str) -> tuple[str, str]:
+    """Return a random pair for callers of the legacy helper."""
+    questions = load_questions()
+    return choice(questions[resolve_category(category)])
+
+
+__all__ = ["categories", "get_random_question"]

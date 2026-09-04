@@ -31,7 +31,7 @@ Defaults come from `config.py` (`load_settings`) or from a cog's own
 | `GEMINI_ASK_MODEL` | falls back to `GEMINI_DEFAULT_MODEL` | Per-feature override for `$ask`. Same `GEMINI_<FEATURE>_MODEL` pattern is reserved for `summary`, `practice`, and `conversation` as those cogs migrate. |
 | `ENVIRONMENT` | `production` | Purely informational, printed on boot. |
 | `WEBSITE_API_URL` | baked-in | Companion website API endpoint. |
-| `CONVO_SPA_CHANNELS` | baked-in list | Conversation-starter channel allowlist. |
+| `CONVO_SPA_CHANNELS` | baked-in list | Comma-delimited channel IDs where conversation starters show Spanish before English. Invalid IDs fail configuration loading with a named error. |
 | `INTRO_CHANNEL_ID` | baked-in | Intro flow command channel. |
 | `GENERAL_CHANNEL_ID` | baked-in | General chat channel. |
 | `INTRO_WARN_CHANNEL_ID` | baked-in | Intro tracker warnings. |
