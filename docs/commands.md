@@ -148,7 +148,7 @@ See [`cogs/ppp.md`](./cogs/ppp.md) for the method, country resolution, and limit
 
 | Command | Description |
 |---------|-------------|
-| `$ppp <amount> <from> <to>` / `$purchasingpower` | Compare ordinary currency conversion with a national household purchasing-power estimate and render an Apple-inspired dark card. Accepts currencies (`ZAR`, `USD`), quoted countries, or an override such as `EUR:France`. |
+| `$ppp <amount> <from> <to>` or `$ppp <from> <to> <amount>` / `$purchasingpower` | Compare ordinary currency conversion with a national household purchasing-power estimate and render an Apple-inspired dark card. Accepts currencies (`ZAR`, `USD`), quoted countries, or an override such as `EUR:France`. |
 
 ## General
 

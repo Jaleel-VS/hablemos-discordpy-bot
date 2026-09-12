@@ -6,19 +6,20 @@ Compares ordinary currency conversion with a country-level household purchasing-
 
 | Command | Description | Permissions | Cooldown |
 |---------|-------------|-------------|----------|
-| `$ppp <amount> <from> <to>` | Render a dark comparison card with market value and household PPP equivalent. Alias: `$purchasingpower`. | None | 2 uses / 15 seconds / user |
+| `$ppp <amount> <from> <to>` or `$ppp <from> <to> <amount>` | Render a dark comparison card with market value and household PPP equivalent. Alias: `$purchasingpower`. | None | 2 uses / 15 seconds / user |
 
 Examples:
 
 ```text
 $ppp 7000 ZAR USD
-$ppp 1000 "South Africa" "United States"
+$ppp Bolivia Germany 1000
+$ppp "South Africa" "United States" 7000
 $ppp 1000 EUR:France USD
 ```
 
 Currency codes use a conversational default country: for example, `USD` means the United States and `EUR`
 means Germany. Specify `CURRENCY:Country` when the country matters. Country names containing spaces must be
-quoted.
+quoted. The amount may be placed first or last.
 
 ## Method and data
 
@@ -35,8 +36,9 @@ command immediately posts a fetching status because uncached comparisons can tak
 edits that message in place with either the finished card or a friendly error.
 
 The image deliberately calls the result an estimate. PPP is a national household-price comparison, not a
-personal budget, quality-of-life score, or exchange rate. The card displays the older observation year when
-the two countries' latest World Bank observations differ.
+personal budget, quality-of-life score, or exchange rate. Below the disclaimer, it translates the ratio into
+a directional national price-level sentence (lower, higher, or broadly similar). The card displays the older
+observation year when the two countries' latest World Bank observations differ.
 
 ## Configuration
 

@@ -21,6 +21,7 @@ from cogs.ppp_cog.models import PPPDataError, PPPInputError, PPPObservation
 from cogs.ppp_cog.renderer import (
     _fit_font_size,
     _font,
+    _price_interpretation,
     _ratio_label,
     render_ppp_card,
 )
@@ -46,6 +47,21 @@ def test_parses_amount_and_shell_quoted_arguments() -> None:
         "7000",
         "South Africa",
         "United States",
+    )
+    assert parse_command_arguments("Bolivia Germany 1000") == (
+        "1000",
+        "Bolivia",
+        "Germany",
+    )
+    assert parse_command_arguments('"South Africa" "United States" 7000') == (
+        "7000",
+        "South Africa",
+        "United States",
+    )
+    assert parse_command_arguments("ZAR USD 7,000.50") == (
+        "7,000.50",
+        "ZAR",
+        "USD",
     )
 
 
@@ -109,6 +125,35 @@ def test_multiplier_keeps_precision_for_small_ratios() -> None:
     assert _ratio_label(Decimal("2.087")) == "2.1×"
     assert _ratio_label(Decimal("0.0347")) == "0.03×"
     assert _ratio_label(Decimal("0.0047")) == "0.005×"
+
+
+def test_price_interpretation_describes_target_relative_to_source() -> None:
+    result = sample_result()
+    assert _price_interpretation(result) == (
+        "According to the 2025 national PPP estimates, everyday household prices "
+        "are higher in the United States than in South Africa."
+    )
+    reverse = calculate(
+        Decimal("904.40"),
+        result.target,
+        result.source,
+        MarketRate(Decimal("16.12"), "2026-09-13"),
+    )
+    assert _price_interpretation(reverse) == (
+        "According to the 2025 national PPP estimates, everyday household prices "
+        "are lower in South Africa than in the United States."
+    )
+
+
+def test_price_interpretation_calls_near_parity_similar() -> None:
+    result = sample_result()
+    similar = calculate(
+        Decimal("100"),
+        result.source,
+        PPPObservation(result.target.country, Decimal("7.8"), 2025),
+        MarketRate(Decimal("1"), "2026-09-13"),
+    )
+    assert "broadly similar" in _price_interpretation(similar)
 
 
 def test_large_amount_font_fits_before_multiplier_badge() -> None:

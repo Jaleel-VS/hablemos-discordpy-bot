@@ -123,6 +123,28 @@ def _fit_text(draw: ImageDraw.ImageDraw, value: str, size: int, max_width: int) 
     return "\n".join(lines[:3])
 
 
+def _prose_country(country: Country) -> str:
+    """Return a country name with an article where English requires one."""
+    if country.name in {"United States", "United Kingdom"}:
+        return f"the {country.name}"
+    return country.name
+
+
+def _price_interpretation(result: PPPResult) -> str:
+    """Describe the relative national household price level in plain language."""
+    ratio = result.purchasing_power_ratio
+    year = min(result.source.year, result.target.year)
+    source = _prose_country(result.source.country)
+    target = _prose_country(result.target.country)
+    if Decimal("0.95") <= ratio <= Decimal("1.05"):
+        comparison = f"everyday household prices are broadly similar in {source} and {target}"
+    elif ratio < 1:
+        comparison = f"everyday household prices are lower in {target} than in {source}"
+    else:
+        comparison = f"everyday household prices are higher in {target} than in {source}"
+    return f"According to the {year} national PPP estimates, {comparison}."
+
+
 def _short_country(country: Country) -> str:
     if country.name == "United States":
         return "United States"
@@ -173,17 +195,26 @@ def render_ppp_card(result: PPPResult) -> BytesIO:
 
     sentence = (
         f"To have roughly the same household purchasing power as {source_amount} "
-        f"in {source.name}, you would need about {ppp_amount} in {target.name}."
+        f"in {_prose_country(source)}, you would need about {ppp_amount} "
+        f"in {_prose_country(target)}."
     )
     wrapped = _fit_text(draw, sentence, 15, 710)
     _text(draw, (45, 385), wrapped, 15, SECONDARY, "Regular")
     line_count = wrapped.count("\n") + 1
     disclaimer_y = 385 + line_count * 23 + 11
-    _text(draw, (45, disclaimer_y), "An estimate—not an exchange rate or personal budget.", 10, TERTIARY)
+    _text(
+        draw,
+        (45, disclaimer_y),
+        "An estimate—not an exchange rate or personal budget.",
+        10,
+        TERTIARY,
+    )
+    interpretation = _fit_text(draw, _price_interpretation(result), 10, 710)
+    _text(draw, (45, disclaimer_y + 21), interpretation, 10, SECONDARY, "Medium")
 
     year = min(result.source.year, result.target.year)
-    _text(draw, (45, 511), f"{year} national household averages", 10, TERTIARY)
-    _text(draw, (755, 511), "World Bank  ·  Frankfurter", 10, TERTIARY, anchor="ra")
+    _text(draw, (45, 532), f"{year} national household averages", 10, TERTIARY)
+    _text(draw, (755, 532), "World Bank  ·  Frankfurter", 10, TERTIARY, anchor="ra")
 
     output = image.resize(
         (DISPLAY_WIDTH * OUTPUT_SCALE, DISPLAY_HEIGHT * OUTPUT_SCALE),

@@ -22,10 +22,11 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 USAGE = (
-    "$ppp <amount> <from> <to>\n"
+    "`$ppp <amount> <from> <to>` or `$ppp <from> <to> <amount>`\n"
     "Examples:\n"
     "`$ppp 7000 ZAR USD`\n"
-    "`$ppp 1000 Colombia United States`\n"
+    "`$ppp Bolivia Germany 1000`\n"
+    "`$ppp \"South Africa\" \"United States\" 7000`\n"
     "`$ppp 1000 EUR:France USD`"
 )
 
@@ -39,6 +40,16 @@ def parse_command_arguments(argument: str) -> tuple[str, str, str]:
     if len(parts) < 3:
         raise PPPInputError(f"Please provide an amount, source, and target.\n\n{USAGE}")
     if len(parts) == 3:
+        try:
+            parse_amount(parts[0])
+        except PPPInputError:
+            try:
+                parse_amount(parts[2])
+            except PPPInputError:
+                # Preserve the historical amount-first error: the command will
+                # report exactly why the first token is not a valid amount.
+                return parts[0], parts[1], parts[2]
+            return parts[2], parts[0], parts[1]
         return parts[0], parts[1], parts[2]
 
     # Multi-word country names are accepted when quoted. Without quotes there
