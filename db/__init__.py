@@ -31,6 +31,7 @@ class DatabaseMixin:
         async with self._pool().acquire() as conn:
             return await conn.execute(query, *args)
 
+from db.automod_watch import AutomodWatchMixin
 from db.bets import WCBetsMixin
 from db.conversations import ConversationsMixin
 from db.crossword import CrosswordMixin
@@ -53,7 +54,6 @@ from db.tasks import TasksMixin
 from db.ticket_subs import TicketSubsMixin
 from db.vocab import VocabMixin
 from db.vocab_catch import VocabCatchMixin
-from db.automod_watch import AutomodWatchMixin
 
 
 class Database(

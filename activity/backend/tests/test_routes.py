@@ -7,12 +7,11 @@ recording is covered separately.
 import base64
 import json
 
-import pytest
-from fastapi.testclient import TestClient
-
 import app.games.routes as routes_mod
+import pytest
 from app.config import Settings
 from app.main import create_app
+from fastapi.testclient import TestClient
 
 
 @pytest.fixture
@@ -61,7 +60,7 @@ def test_start_returns_sealed_state_not_answer(client):
     assert "answer" not in body["view"]
     assert "answer" not in json.dumps(body["view"])
     # Sealed state must not be plaintext-decodable to reveal the answer.
-    with pytest.raises(Exception):
+    with pytest.raises((UnicodeDecodeError, json.JSONDecodeError)):
         json.loads(base64.urlsafe_b64decode(body["sealed_state"] + "=="))
 
 

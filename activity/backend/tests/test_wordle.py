@@ -5,14 +5,12 @@ Run: pytest activity/backend/tests  (from repo root, with the backend venv)
 from datetime import date
 
 import pytest
-
 from app.games.base import GameError
 from app.games.wordle import daily as daily_mod
 from app.games.wordle.engine import WordleEngine
 from app.games.wordle.normalize import is_valid_shape, letters, normalize
 from app.games.wordle.scorer import Tile, emoji_row, score
 from app.games.wordle.words import ANSWERS
-
 
 # ── normalization ─────────────────────────────────────────────────────────
 
@@ -32,7 +30,7 @@ def test_ñ_preserved_as_single_letter():
 def test_ñ_not_destroyed_by_accent_strip():
     # The NFD trap: ñ decomposes to n + combining tilde. Must survive.
     assert normalize("ñandu") == "ñandu"
-    assert "n" != normalize("ñ")  # ñ must NOT collapse to n
+    assert normalize("ñ") != "n"  # ñ must NOT collapse to n
     assert normalize("ñ") == "ñ"
 
 

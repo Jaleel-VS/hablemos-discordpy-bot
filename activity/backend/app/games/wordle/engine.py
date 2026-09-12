@@ -19,7 +19,7 @@ Random freeplay secrets are chosen with ``secrets.choice`` (not the disallowed
 from __future__ import annotations
 
 import secrets
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from typing import Any
 
 from app.games.base import GameError, GuessOutcome, Mode
@@ -32,7 +32,7 @@ MAX_GUESSES = 6
 
 
 def _today() -> date:
-    return datetime.now(timezone.utc).date()
+    return datetime.now(UTC).date()
 
 
 class WordleEngine:
@@ -44,7 +44,7 @@ class WordleEngine:
     # ── lifecycle ─────────────────────────────────────────────────────────
 
     def new_game(
-        self, *, mode: Mode, user_id: str, options: dict[str, Any] | None = None,  # noqa: ARG002
+        self, *, mode: Mode, user_id: str, options: dict[str, Any] | None = None,
     ) -> GuessOutcome:
         today = _today()
         if mode == "daily":
@@ -65,7 +65,7 @@ class WordleEngine:
         return GuessOutcome(state=state, client_view=self.client_view(state))
 
     def submit(
-        self, *, state: dict[str, Any], guess: str, finish: bool = False,  # noqa: ARG002
+        self, *, state: dict[str, Any], guess: str, finish: bool = False,
     ) -> GuessOutcome:
         # Wordle has no open-ended mode; ``finish`` is part of the shared
         # contract but not meaningful here, so it is ignored.

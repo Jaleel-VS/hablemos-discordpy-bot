@@ -105,7 +105,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             try:
                 await db.connect()
                 db_holder["db"] = db
-            except Exception:  # noqa: BLE001 — degrade gracefully, don't crash boot
+            except Exception:
                 logger.exception("DB connect failed; running without persistence")
                 db_holder["db"] = None
         else:
@@ -150,8 +150,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             access_token = await exchange_code(
                 cfg.discord_client_id, cfg.discord_client_secret, body.code,
             )
-        except DiscordOAuthError:
-            raise HTTPException(status_code=502, detail="Discord token exchange failed")
+        except DiscordOAuthError as exc:
+            raise HTTPException(
+                status_code=502, detail="Discord token exchange failed"
+            ) from exc
         return TokenResponse(access_token=access_token)
 
     @app.post("/api/me")
@@ -163,8 +165,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         """
         try:
             user = await fetch_user(body.access_token)
-        except DiscordOAuthError:
-            raise HTTPException(status_code=502, detail="Failed to resolve Discord user")
+        except DiscordOAuthError as exc:
+            raise HTTPException(
+                status_code=502, detail="Failed to resolve Discord user"
+            ) from exc
         return user
 
     @app.get("/api/games/phrasal/deck")

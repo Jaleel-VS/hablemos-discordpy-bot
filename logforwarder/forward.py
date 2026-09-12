@@ -24,11 +24,11 @@ import json
 import os
 import sys
 import time
-import urllib.request
 import urllib.error
+import urllib.request
+from datetime import UTC
 
 import boto3
-
 
 AXIOM_TOKEN = os.environ["AXIOM_TOKEN"]
 AXIOM_DATASET = os.environ.get("AXIOM_DATASET", "hablemos")
@@ -167,8 +167,8 @@ def poll_once():
 
 
 def _epoch_dt(epoch):
-    from datetime import datetime, timezone
-    return datetime.fromtimestamp(epoch, tz=timezone.utc)
+    from datetime import datetime
+    return datetime.fromtimestamp(epoch, tz=UTC)
 
 
 def main():

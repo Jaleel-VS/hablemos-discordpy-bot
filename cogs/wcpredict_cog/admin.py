@@ -401,7 +401,7 @@ class WCPredictAdmin(BaseCog):
             f"# {target} role audit",
             f"Scanned **{len(all_messages)}** log messages · "
             f"**{len(rows)}** users touched this team · {summary}",
-            f"> UNRESOLVED rows need manual username→ID lookup",
+            "> UNRESOLVED rows need manual username→ID lookup",
             "",
             *table_lines,
         ]

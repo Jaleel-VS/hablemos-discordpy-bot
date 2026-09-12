@@ -140,7 +140,7 @@ class Database:
                     await conn.execute(_SCHEMA)
                 logger.info("Activity DB pool created and schema ensured")
                 return
-            except Exception as exc:  # noqa: BLE001 — retry any connect failure
+            except Exception as exc:
                 wait = min(2 ** attempt, 15)
                 logger.warning("DB connect attempt %d/%d failed: %s (retry in %ss)",
                                attempt, retries, exc, wait)

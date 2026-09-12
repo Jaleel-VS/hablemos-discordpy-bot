@@ -76,12 +76,16 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
     async def _verified_user_id(access_token: str) -> int:
         try:
             user = await fetch_user(access_token)
-        except DiscordOAuthError:
-            raise HTTPException(status_code=401, detail="Identidad no verificada")
+        except DiscordOAuthError as exc:
+            raise HTTPException(
+                status_code=401, detail="Identidad no verificada"
+            ) from exc
         try:
             return int(user["id"])
-        except (KeyError, ValueError):
-            raise HTTPException(status_code=401, detail="Identidad no verificada")
+        except (KeyError, ValueError) as exc:
+            raise HTTPException(
+                status_code=401, detail="Identidad no verificada"
+            ) from exc
 
     def _engine_or_404(game_key: str):
         engine = get_engine(game_key)
@@ -102,7 +106,7 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
             outcome = "won" if result.get("won") else "lost"
             try:
                 await db.end_session(session_id=session_id, outcome=outcome)
-            except Exception:  # noqa: BLE001 — engagement logging is non-critical
+            except Exception:
                 logger.exception("Failed to close session %s", session_id)
         try:
             await db.record_result(
@@ -115,7 +119,7 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
                 channel_id=discord_context.get("channel_id"),
                 guild_id=discord_context.get("guild_id"),
             )
-        except Exception:  # noqa: BLE001 — never fail the request on a stats write
+        except Exception:
             logger.exception("Failed to persist result for game=%s user=%s", game_key, user_id)
 
     def _response(engine, state: dict) -> dict[str, Any]:
@@ -163,7 +167,7 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
                     session_id=session_id, game_key=game_key,
                     user_id=user_id, mode=body.mode,
                 )
-            except Exception:  # noqa: BLE001 — engagement logging is non-critical
+            except Exception:
                 logger.exception("Failed to open session for game=%s user=%s",
                                  game_key, user_id)
         return _response(engine, outcome.state)
@@ -173,8 +177,10 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
         engine = _engine_or_404(game_key)
         try:
             state = unseal(get_secret(), body.sealed_state)
-        except StateSealError:
-            raise HTTPException(status_code=400, detail="Estado de partida inválido")
+        except StateSealError as exc:
+            raise HTTPException(
+                status_code=400, detail="Estado de partida inválido"
+            ) from exc
         # Identity comes from the sealed state (bound at start) — no per-guess
         # Discord round trip. Fall back to a token verify only if it's absent
         # (e.g. an in-flight game started before this change deployed).
@@ -187,7 +193,7 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
         try:
             outcome = engine.submit(state=state, guess=body.guess, finish=body.finish)
         except GameError as exc:
-            raise HTTPException(status_code=400, detail=str(exc))
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
         await _persist_if_over(engine, game_key, user_id, outcome.state)
         return _response(engine, outcome.state)
 
