@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import contextlib
+from decimal import Decimal
 from io import BytesIO
 from pathlib import Path
 
@@ -77,6 +78,31 @@ def _pill(draw: ImageDraw.ImageDraw, x: int, code: str, country: str) -> None:
     _text(draw, (x + 45, 126), country, 11, WHITE, "Medium", "lm")
 
 
+def _fit_font_size(
+    draw: ImageDraw.ImageDraw,
+    value: str,
+    *,
+    preferred: int,
+    minimum: int,
+    max_width: int,
+    weight: str = "SemiBold",
+) -> int:
+    """Return the largest font size that keeps one line within a width."""
+    for size in range(preferred, minimum - 1, -1):
+        if draw.textlength(value, font=_font(size, weight)) <= max_width * S:
+            return size
+    return minimum
+
+
+def _ratio_label(ratio: Decimal) -> str:
+    """Format small ratios without misleadingly rounding them to zero."""
+    if ratio >= Decimal("0.1"):
+        return f"{ratio:.1f}×"
+    if ratio >= Decimal("0.01"):
+        return f"{ratio:.2f}×"
+    return f"{ratio:.3f}×"
+
+
 def _fit_text(draw: ImageDraw.ImageDraw, value: str, size: int, max_width: int) -> str:
     font = _font(size)
     max_scaled = max_width * S
@@ -125,15 +151,24 @@ def render_ppp_card(result: PPPResult) -> BytesIO:
 
     _rounded(draw, (45, 165, 382, 335), 19, SURFACE, BORDER)
     _text(draw, (70, 193), "MARKET VALUE", 9, SECONDARY, "SemiBold")
-    _text(draw, (70, 236), market_amount, 42, WHITE, "SemiBold")
+    market_size = _fit_font_size(
+        draw, market_amount, preferred=42, minimum=25, max_width=287
+    )
+    _text(draw, (70, 236), market_amount, market_size, WHITE, "SemiBold")
     _text(draw, (70, 294), "What a currency exchange gives you", 11, SECONDARY)
 
     _rounded(draw, (417, 165, 755, 335), 19, "#102117", "#245D35")
     _text(draw, (442, 193), "HOUSEHOLD PURCHASING POWER", 9, GREEN, "SemiBold")
-    _text(draw, (442, 236), f"≈ {ppp_amount}", 42, WHITE, "SemiBold")
-    ratio = f"{result.purchasing_power_ratio:.1f}×"
-    _rounded(draw, (641, 235, 724, 263), 14, "#1D3D29")
-    _text(draw, (682, 250), ratio, 12, GREEN, "SemiBold", "mm")
+    ratio = _ratio_label(result.purchasing_power_ratio)
+    ratio_width = max(52, int(draw.textlength(ratio, font=_font(12, "SemiBold")) / S) + 24)
+    ratio_left = 730 - ratio_width
+    _rounded(draw, (ratio_left, 181, 730, 209), 14, "#1D3D29")
+    _text(draw, ((ratio_left + 730) // 2, 196), ratio, 12, GREEN, "SemiBold", "mm")
+    ppp_label = f"≈ {ppp_amount}"
+    ppp_size = _fit_font_size(
+        draw, ppp_label, preferred=42, minimum=25, max_width=288
+    )
+    _text(draw, (442, 236), ppp_label, ppp_size, WHITE, "SemiBold")
     _text(draw, (442, 294), "Adjusted for national household prices", 11, "#A9CBB2")
 
     sentence = (

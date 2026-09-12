@@ -7,7 +7,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from PIL import Image
+from PIL import Image, ImageDraw
 
 from cogs.ppp_cog.calculator import calculate, display_amount, parse_amount
 from cogs.ppp_cog.client import (
@@ -18,7 +18,12 @@ from cogs.ppp_cog.client import (
 from cogs.ppp_cog.countries import resolve_location
 from cogs.ppp_cog.main import PurchasingPower, parse_command_arguments
 from cogs.ppp_cog.models import PPPDataError, PPPInputError, PPPObservation
-from cogs.ppp_cog.renderer import render_ppp_card
+from cogs.ppp_cog.renderer import (
+    _fit_font_size,
+    _font,
+    _ratio_label,
+    render_ppp_card,
+)
 
 
 def test_resolves_common_currency_defaults_and_country_override() -> None:
@@ -98,6 +103,26 @@ def test_renders_selected_comparison_card() -> None:
     with Image.open(buffer) as image:
         assert image.format == "PNG"
         assert image.size == (1600, 1100)
+
+
+def test_multiplier_keeps_precision_for_small_ratios() -> None:
+    assert _ratio_label(Decimal("2.087")) == "2.1×"
+    assert _ratio_label(Decimal("0.0347")) == "0.03×"
+    assert _ratio_label(Decimal("0.0047")) == "0.005×"
+
+
+def test_large_amount_font_fits_before_multiplier_badge() -> None:
+    image = Image.new("RGB", (4800, 3300))
+    draw = ImageDraw.Draw(image)
+    value = "≈ BOB 987.65B"
+    size = _fit_font_size(
+        draw,
+        value,
+        preferred=42,
+        minimum=25,
+        max_width=288,
+    )
+    assert draw.textlength(value, font=_font(size, "SemiBold")) <= 288 * 6
 
 
 @pytest.mark.asyncio
