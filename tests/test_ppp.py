@@ -2,6 +2,9 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from io import BytesIO
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from PIL import Image
@@ -13,7 +16,7 @@ from cogs.ppp_cog.client import (
     parse_ppp_payload,
 )
 from cogs.ppp_cog.countries import resolve_location
-from cogs.ppp_cog.main import parse_command_arguments
+from cogs.ppp_cog.main import PurchasingPower, parse_command_arguments
 from cogs.ppp_cog.models import PPPDataError, PPPInputError, PPPObservation
 from cogs.ppp_cog.renderer import render_ppp_card
 
@@ -95,3 +98,44 @@ def test_renders_selected_comparison_card() -> None:
     with Image.open(buffer) as image:
         assert image.format == "PNG"
         assert image.size == (1600, 1100)
+
+
+@pytest.mark.asyncio
+async def test_command_edits_loading_message_with_result() -> None:
+    cog = object.__new__(PurchasingPower)
+    cog.client = SimpleNamespace(
+        get_ppp=AsyncMock(side_effect=[sample_result().source, sample_result().target]),
+        get_market_rate=AsyncMock(
+            return_value=MarketRate(Decimal("0.06203"), "2026-09-13")
+        ),
+    )
+    status = SimpleNamespace(edit=AsyncMock())
+    ctx = SimpleNamespace(send=AsyncMock(return_value=status))
+
+    command = cog.ppp.callback
+    with patch("cogs.ppp_cog.main.render_ppp_card", return_value=BytesIO(b"png")):
+        await command(cog, ctx, argument="7000 ZAR USD")
+
+    ctx.send.assert_awaited_once_with(
+        "⏳ Fetching purchasing-power data… This can take a few seconds."
+    )
+    status.edit.assert_awaited_once()
+    kwargs = status.edit.await_args.kwargs
+    assert kwargs["content"] is None
+    assert kwargs["attachments"][0].filename == "ppp-za-us.png"
+
+
+@pytest.mark.asyncio
+async def test_command_replaces_loading_message_with_data_error() -> None:
+    cog = object.__new__(PurchasingPower)
+    cog.client = SimpleNamespace(
+        get_ppp=AsyncMock(side_effect=PPPDataError("Data unavailable.")),
+        get_market_rate=AsyncMock(),
+    )
+    status = SimpleNamespace(edit=AsyncMock())
+    ctx = SimpleNamespace(send=AsyncMock(return_value=status))
+
+    await cog.ppp.callback(cog, ctx, argument="7000 ZAR USD")
+
+    status.edit.assert_awaited_once_with(content="⚠️ Data unavailable.")
+    assert ctx.send.await_count == 1

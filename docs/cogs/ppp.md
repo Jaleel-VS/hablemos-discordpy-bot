@@ -30,7 +30,9 @@ amount / source PPP factor * target PPP factor
 ```
 
 The market amount comes from Frankfurter. Both services require no API key. Responses are cached in memory
-for six hours, API requests time out after 12 seconds, and image rendering runs off the event loop.
+for six hours, API requests time out after 12 seconds, and image rendering runs off the event loop. The
+command immediately posts a fetching status because uncached comparisons can take several seconds, then
+edits that message in place with either the finished card or a friendly error.
 
 The image deliberately calls the result an estimate. PPP is a national household-price comparison, not a
 personal budget, quality-of-life score, or exchange rate. The card displays the older observation year when

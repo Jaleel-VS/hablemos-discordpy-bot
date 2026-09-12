@@ -73,6 +73,7 @@ class PurchasingPower(BaseCog):
             )
             return
 
+        status: discord.Message | None = None
         try:
             amount_text, source_text, target_text = parse_command_arguments(argument)
             amount = parse_amount(amount_text)
@@ -81,33 +82,50 @@ class PurchasingPower(BaseCog):
             if source_country == target_country:
                 raise PPPInputError("Choose two different countries to compare.")
 
-            async with ctx.typing():
-                source_ppp, target_ppp, market = await asyncio.gather(
-                    self.client.get_ppp(source_country),
-                    self.client.get_ppp(target_country),
-                    self.client.get_market_rate(
-                        source_country.currency,
-                        target_country.currency,
-                    ),
-                )
-                result = calculate(amount, source_ppp, target_ppp, market)
-                buffer = await asyncio.wait_for(
-                    asyncio.to_thread(render_ppp_card, result),
-                    timeout=20,
-                )
+            status = await ctx.send(
+                "⏳ Fetching purchasing-power data… This can take a few seconds."
+            )
+            source_ppp, target_ppp, market = await asyncio.gather(
+                self.client.get_ppp(source_country),
+                self.client.get_ppp(target_country),
+                self.client.get_market_rate(
+                    source_country.currency,
+                    target_country.currency,
+                ),
+            )
+            result = calculate(amount, source_ppp, target_ppp, market)
+            buffer = await asyncio.wait_for(
+                asyncio.to_thread(render_ppp_card, result),
+                timeout=20,
+            )
 
             filename = (
                 f"ppp-{source_country.territory.lower()}-"
                 f"{target_country.territory.lower()}.png"
             )
-            await ctx.send(file=discord.File(buffer, filename=filename))
+            await status.edit(
+                content=None,
+                attachments=[discord.File(buffer, filename=filename)],
+            )
         except PPPError as exc:
-            await ctx.send(f"⚠️ {exc}")
+            message = f"⚠️ {exc}"
+            if status is None:
+                await ctx.send(message)
+            else:
+                await status.edit(content=message)
         except TimeoutError:
-            await ctx.send("⚠️ The comparison took too long to render. Please try again.")
+            message = "⚠️ The comparison took too long to render. Please try again."
+            if status is None:
+                await ctx.send(message)
+            else:
+                await status.edit(content=message)
         except Exception:
             logger.exception("Unexpected PPP command failure")
-            await ctx.send("⚠️ I couldn't calculate that comparison right now. Please try again later.")
+            message = "⚠️ I couldn't calculate that comparison right now. Please try again later."
+            if status is None:
+                await ctx.send(message)
+            else:
+                await status.edit(content=message)
 
 
 async def setup(bot: Hablemos) -> None:
