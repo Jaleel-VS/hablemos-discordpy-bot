@@ -142,6 +142,14 @@ See [`cogs/dictionary.md`](./cogs/dictionary.md) for the full feature.
 |---------|-------------|
 | `$define <word> [source]` / `$def` | Look up a word across multiple dictionary sources (Merriam-Webster, Wiktionary, Oxford, Cambridge). |
 
+## Purchasing Power
+
+See [`cogs/ppp.md`](./cogs/ppp.md) for the method, country resolution, and limitations.
+
+| Command | Description |
+|---------|-------------|
+| `$ppp <amount> <from> <to>` / `$purchasingpower` | Compare ordinary currency conversion with a national household purchasing-power estimate and render an Apple-inspired dark card. Accepts currencies (`ZAR`, `USD`), quoted countries, or an override such as `EUR:France`. |
+
 ## General
 
 See [`cogs/general.md`](./cogs/general.md) for the full feature.

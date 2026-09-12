@@ -11,6 +11,7 @@ aiohttp~=3.13
 requests~=2.32
 
 # Parsing & Data
+Babel==2.18.0
 beautifulsoup4~=4.14
 lxml~=6.0
 langdetect~=1.0
