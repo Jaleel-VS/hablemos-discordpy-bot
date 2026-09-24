@@ -80,6 +80,7 @@ def test_solve_attempt_is_frozen() -> None:
     import dataclasses
     assert dataclasses.is_dataclass(attempt)
     try:
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         attempt.matched_idx = 99  # type: ignore[misc]
     except dataclasses.FrozenInstanceError:
         pass

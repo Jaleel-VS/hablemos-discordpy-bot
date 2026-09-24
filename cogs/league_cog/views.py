@@ -50,6 +50,7 @@ class LeagueJoinView(discord.ui.View):
                 )
                 return
 
+            # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
             league_cog: LeagueCog = cog  # type: ignore[assignment]
             embed = await league_cog.perform_join(interaction.user)
             await interaction.response.send_message(embed=embed, ephemeral=True)

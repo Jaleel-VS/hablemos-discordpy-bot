@@ -58,7 +58,7 @@ TEXT_MUTED = (185, 187, 190)
 DIVIDER_COLOR = (46, 47, 53)
 
 # Medal colors (top, bottom) for pedestal gradients.
-MEDAL_COLORS: dict[int, tuple[tuple[int, int, int], tuple[int, int, int]]] = {
+MEDAL_COLORS = {
     1: ((255, 215, 0),   (212, 175, 55)),    # gold
     2: ((232, 232, 232), (176, 176, 176)),   # silver
     3: ((244, 164, 96),  (184, 115, 51)),    # bronze
@@ -66,7 +66,7 @@ MEDAL_COLORS: dict[int, tuple[tuple[int, int, int], tuple[int, int, int]]] = {
 MEDAL_EMOJI = {1: "#1", 2: "#2", 3: "#3"}
 
 # Podium column centers (x) and heights (pixel offsets from baseline).
-PODIUM_LAYOUT: dict[int, tuple[int, int]] = {
+PODIUM_LAYOUT = {
     # rank -> (x_center, pedestal_height)
     2: (225 * S, 120 * S),
     1: (450 * S, 165 * S),

@@ -71,7 +71,8 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Any
+
+from content_models import PhrasalVerb, RawPhrasalEntry
 
 _REPO = Path(__file__).resolve().parent.parent
 _OUT = _REPO / "activity" / "backend" / "app" / "games" / "data" / "phrasal_verbs.json"
@@ -141,7 +142,7 @@ def _build_blank(example: str, forms: list[str]) -> tuple[str, str] | None:
     return None
 
 
-def _score(entry: dict[str, Any], base: str, particle: str) -> int:
+def _score(entry: RawPhrasalEntry, base: str, particle: str) -> int:
     """Heuristic usefulness score for Stage 1 ranking (higher = keep)."""
     score = 0
     freq = entry.get("frequency")
@@ -159,7 +160,7 @@ def _score(entry: dict[str, Any], base: str, particle: str) -> int:
     return score
 
 
-def _usable_definitions(entry: dict[str, Any], *, cap: int = 4) -> list[str]:
+def _usable_definitions(entry: RawPhrasalEntry, *, cap: int = 4) -> list[str]:
     """All non-empty, reasonably short definitions (senses), capped.
 
     The source lists multiple senses and multiple examples that are NOT
@@ -183,7 +184,7 @@ def _usable_definitions(entry: dict[str, Any], *, cap: int = 4) -> list[str]:
     return out
 
 
-def _forms(verb: str, entry: dict[str, Any]) -> list[str]:
+def _forms(verb: str, entry: RawPhrasalEntry) -> list[str]:
     """Accepted answer forms: the phrase plus its inflected derivatives."""
     forms = {verb.strip().lower()}
     for d in entry.get("derivatives", []):
@@ -192,9 +193,9 @@ def _forms(verb: str, entry: dict[str, Any]) -> list[str]:
     return sorted(forms)
 
 
-def stage1_filter(source: dict[str, Any], limit: int) -> list[dict[str, Any]]:
+def stage1_filter(source: dict[str, RawPhrasalEntry], limit: int) -> list[PhrasalVerb]:
     """Curate the raw source into a ranked, playable verb list (no network)."""
-    candidates: list[tuple[int, dict[str, Any]]] = []
+    candidates: list[tuple[int, PhrasalVerb]] = []
 
     for verb, entry in source.items():
         if not isinstance(entry, dict) or not isinstance(verb, str):
@@ -260,7 +261,7 @@ def _heuristic_difficulty(freq: int, base: str) -> str:
     return "advanced"
 
 
-def _attach_particle_distractors(verbs: list[dict[str, Any]]) -> None:
+def _attach_particle_distractors(verbs: list[PhrasalVerb]) -> None:
     """Give each verb 3 particle distractors (for particle-blank MC mode)."""
     for v in verbs:
         answer = v["particle"]
@@ -279,7 +280,7 @@ def _attach_particle_distractors(verbs: list[dict[str, Any]]) -> None:
         v["distractors_particle"] = picks
 
 
-def _write(verbs: list[dict[str, Any]], *, enriched: bool, dry_run: bool) -> None:
+def _write(verbs: list[PhrasalVerb], *, enriched: bool, dry_run: bool) -> None:
     """Write the corpus JSON (or print a summary for --dry-run)."""
     by_diff: dict[str, int] = {}
     for v in verbs:
@@ -376,7 +377,7 @@ def _run_enrich(*, auth: bool, dry_run: bool, model_key: str = "haiku") -> int:
     print(f"Enriching with {model} (batch {batch_size})", file=sys.stderr)
 
     payload = json.loads(_OUT.read_text(encoding="utf-8"))
-    verbs: list[dict[str, Any]] = payload["verbs"]
+    verbs: list[PhrasalVerb] = payload["verbs"]
     by_id = {v["id"]: v for v in verbs}
 
     def _checkpoint() -> None:
@@ -449,7 +450,7 @@ def _run_enrich(*, auth: bool, dry_run: bool, model_key: str = "haiku") -> int:
     return 0
 
 
-def _enrich_prompt(batch: list[dict[str, Any]]) -> str:
+def _enrich_prompt(batch: list[PhrasalVerb]) -> str:
     """Build the Bedrock prompt for one enrichment batch."""
     items = [
         {"id": v["id"], "verb": v["verb"], "definitions": v["definitions"]}

@@ -32,7 +32,7 @@ RESULT_WINDOW = timedelta(hours=30)
 
 # ESPN displayName -> our fixtures.py name. Verified against all 72
 # group-stage events: these five are the only differences.
-TEAM_NAME_ALIASES: dict[str, str] = {
+TEAM_NAME_ALIASES = {
     "Bosnia-Herzegovina": "Bosnia and Herzegovina",
     "Cape Verde": "Cabo Verde",
     "Congo DR": "DR Congo",

@@ -134,6 +134,7 @@ def test_render_produces_png_all_rarities_and_modes() -> None:
             view = resolve_card(card, mode)
             for revealed in (False, True):
                 data = render_card(
+                    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
                     cast("Card", card), dict(view), revealed=revealed,
                 ).getvalue()
                 assert data[:8] == b"\x89PNG\r\n\x1a\n"
@@ -148,6 +149,7 @@ def test_render_handles_missing_optional_fields() -> None:
     }
     view = resolve_card(minimal, MODE_ES_TO_EN)
     assert render_card(
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         cast("Card", minimal), dict(view), revealed=True,
     ).getvalue()[:8] == b"\x89PNG\r\n\x1a\n"
 
@@ -156,5 +158,6 @@ def test_render_long_word_does_not_crash() -> None:
     card = {**_CARD, "word_es": "electroencefalografista", "rarity": 5}
     view = resolve_card(card, MODE_SHOW_ES)
     assert render_card(
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         cast("Card", card), dict(view), revealed=True,
     ).getvalue()[:8] == b"\x89PNG\r\n\x1a\n"

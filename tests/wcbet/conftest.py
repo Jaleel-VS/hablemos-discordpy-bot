@@ -7,32 +7,84 @@ frozen clock injected through the `views._now_utc` seam.
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Any
+from typing import Any, TypedDict
 
 import pytest
 
 from cogs.wcbet_cog import results, views
+from cogs.wcbet_cog.results import MatchOdds
 
 USER_ID = 42
 GUILD_ID = 1
+
+class WalletRow(TypedDict):
+    user_id: int
+    guild_id: int
+    balance: int
+    last_allowance_date: object
+
+
+class BetRow(TypedDict):
+    user_id: int
+    match_id: int
+    guild_id: int
+    outcome: str
+    stake: int
+    odds: Decimal
+    status: str
+    payout: int | None
+
+
+class ParlayRow(TypedDict):
+    id: int
+    stake: int
+    combined_odds: Decimal
+    status: str
+    payout: int | None
+    legs: list[dict]
+
+
+class PlaceCall(TypedDict):
+    user_id: int
+    guild_id: int
+    match_id: int
+    outcome: str
+    stake: int
+    odds: float
+
+
+class ParlayPlaceCall(TypedDict, total=False):
+    user_id: int
+    guild_id: int
+    stake: int
+    legs: list[dict]
+    max_pending: int | None
+
+
+class MessageCall(TypedDict, total=False):
+    content: object
+    embed: object
+    view: object
+    ephemeral: bool
+
 
 
 class FakeDB:
     """Records betting DB calls; returns canned wallet/bet rows."""
 
     def __init__(self) -> None:
-        self.wallet: dict[str, Any] | None = {
+        self.wallet: WalletRow | None = {
             "user_id": USER_ID,
             "guild_id": GUILD_ID,
             "balance": 10_000,
             "last_allowance_date": None,
         }
-        self.user_bets: dict[int, dict[str, Any]] = {}  # match_id -> pending bet row
-        self.user_parlays: list[dict[str, Any]] = []  # pending parlays (with legs)
+        self.user_bets: dict[int, BetRow] = {}  # match_id -> pending bet row
+        self.user_parlays: list[ParlayRow] = []  # pending parlays (with legs)
         self.cancel_bet_calls: list[int] = []
         self.cancel_parlay_calls: list[int] = []
-        self.place_calls: list[dict[str, Any]] = []
-        self.place_parlay_calls: list[dict[str, Any]] = []
+        self.place_calls: list[PlaceCall] = []
+        self.place_parlay_calls: list[ParlayPlaceCall] = []
         self.place_result: int = 9_500
         self.place_error: Exception | None = None
         self.place_parlay_error: Exception | None = None
@@ -48,7 +100,7 @@ class FakeDB:
     async def set_wc_odds_multiplier(self, multiplier: Decimal) -> None:
         self.odds_multiplier = multiplier
 
-    async def get_wc_wallet(self, user_id: int) -> dict[str, Any] | None:
+    async def get_wc_wallet(self, user_id: int) -> WalletRow | None:
         return self.wallet
 
     async def is_wc_bet_banned(self, user_id: int) -> bool:
@@ -65,12 +117,12 @@ class FakeDB:
     ) -> int | None:
         return self.allowance_result
 
-    async def get_wc_user_bet(self, user_id: int, match_id: int) -> dict[str, Any] | None:
+    async def get_wc_user_bet(self, user_id: int, match_id: int) -> BetRow | None:
         return self.user_bets.get(match_id)
 
     async def get_wc_user_parlays(
         self, user_id: int, status: str | None = None,
-    ) -> list[dict[str, Any]]:
+    ) -> list[ParlayRow]:
         return list(self.user_parlays)
 
     async def cancel_wc_bet(self, user_id: int, match_id: int) -> int:
@@ -98,7 +150,7 @@ class FakeDB:
 
     async def get_wc_user_bets(
         self, user_id: int, status: str | None = None, limit: int | None = None,
-    ) -> list[dict[str, Any]]:
+    ) -> list[BetRow]:
         bets = list(self.user_bets.values())
         if limit is not None:
             bets = bets[:limit]
@@ -130,7 +182,7 @@ class FakeDB:
         user_id: int,
         guild_id: int,
         stake: int,
-        legs: list[dict[str, Any]],
+        legs: list[dict],
         *,
         max_pending: int | None = None,
     ) -> int:
@@ -168,15 +220,15 @@ class FakeResponse:
     """Captures interaction response calls."""
 
     def __init__(self) -> None:
-        self.sent: list[dict[str, Any]] = []
-        self.edited: list[dict[str, Any]] = []
+        self.sent: list[MessageCall] = []
+        self.edited: list[MessageCall] = []
         self.modals: list[Any] = []
 
     async def send_message(self, **kwargs: Any) -> None:
-        self.sent.append(kwargs)
+        self.sent.append(MessageCall(**kwargs))
 
     async def edit_message(self, **kwargs: Any) -> None:
-        self.edited.append(kwargs)
+        self.edited.append(MessageCall(**kwargs))
 
     async def send_modal(self, modal: Any) -> None:
         self.modals.append(modal)
@@ -186,10 +238,10 @@ class FakeFollowup:
     """Captures interaction.followup.send calls (ephemeral notices, etc.)."""
 
     def __init__(self) -> None:
-        self.sent: list[dict[str, Any]] = []
+        self.sent: list[MessageCall] = []
 
     async def send(self, content: Any = None, **kwargs: Any) -> None:
-        self.sent.append({"content": content, **kwargs})
+        self.sent.append(MessageCall(content=content, **kwargs))
 
 
 @dataclass
@@ -226,15 +278,17 @@ def clock(monkeypatch: pytest.MonkeyPatch) -> dict[str, datetime]:
 
 
 @pytest.fixture(autouse=True)
-def fake_odds(monkeypatch: pytest.MonkeyPatch) -> dict[int, Any]:
+def fake_odds(monkeypatch: pytest.MonkeyPatch) -> dict[int, MatchOdds]:
     """Stub the ESPN odds fetch — tests never touch the network.
 
     Empty by default (panel falls back to flat odds); tests insert
     `match_id -> MatchOdds` entries to simulate live DraftKings lines.
     """
-    holder: dict[int, Any] = {}
+    holder: dict[int, MatchOdds] = {}
 
-    async def fetch(fixtures: list, multiplier: Decimal | None = None) -> dict[int, Any]:
+    async def fetch(
+        fixtures: list[dict], multiplier: Decimal | None = None,
+    ) -> dict[int, MatchOdds]:
         selected = {
             f["match_id"]: holder[f["match_id"]]
             for f in fixtures

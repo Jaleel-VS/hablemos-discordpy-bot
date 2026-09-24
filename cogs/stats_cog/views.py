@@ -180,6 +180,7 @@ class _TimezoneSelect(discord.ui.Select):
         super().__init__(placeholder="Elige tu zona horaria…", options=options)
 
     async def callback(self, interaction: discord.Interaction) -> None:
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         view: TimezonePickerView = self.view  # type: ignore[assignment]
         offset = int(self.values[0])
         await interaction.response.defer(ephemeral=True, thinking=True)

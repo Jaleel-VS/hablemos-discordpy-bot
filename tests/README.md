@@ -18,6 +18,27 @@ pytest -x --tb=short         # stop on first failure, short trace
 `pytest.ini` enables `asyncio_mode=auto`, so `async def test_...` is
 picked up without any decorator.
 
+## Anti-slop audit
+
+[`anti-slop-py`](https://github.com/infoslack/anti-slop-py) is pinned as a
+development-only Flake8 plugin. It audits low-evidence typing and testing
+patterns; despite its name, it does not rewrite AI-generated prose.
+
+```bash
+python scripts/anti_slop_audit.py         # concise, fails on baseline regressions
+python scripts/anti_slop_audit.py --show  # include every finding
+python scripts/anti_slop_audit.py --strict  # fail until the count reaches zero
+```
+
+The audit targets the bot's first-party Python paths rather than virtual environments. The entire `activity/`
+subtree is excluded because it is a separately deployed project with its own architecture and dependency
+environment. `ASP002` is excluded because discord.py integration requires frequent runtime narrowing at
+framework boundaries. `ASP003` is excluded because the test suite uses pytest `monkeypatch` at deliberate
+injection seams for clocks, random choice, and network clients; replacing it with manual global mutation would
+be less isolated. All other enabled findings are enforced at zero. If a future cleanup intentionally changes
+the accepted policy, update `BASELINE` or the exclusions in `scripts/anti_slop_audit.py` in the same commit.
+The regular Ruff check remains the blocking style gate.
+
 ## Layout
 
 ```

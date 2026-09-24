@@ -217,6 +217,7 @@ async def cog_with_game(
     DB word loader or start the global timeout watcher.
     """
     fake_bot._channels[fake_channel.id] = fake_channel
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     cog = CrosswordCog(fake_bot)  # type: ignore[arg-type]
     game = build_game()
     game.channel_id = fake_channel.id

@@ -5,6 +5,7 @@ import asyncio
 import time
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
+from typing import Any
 
 import aiohttp
 
@@ -33,7 +34,7 @@ class PPPClient:
         self.timeout = aiohttp.ClientTimeout(total=timeout_seconds)
         self._ppp_cache: dict[str, tuple[float, PPPObservation]] = {}
         self._rate_cache: dict[tuple[str, str], tuple[float, MarketRate]] = {}
-        self._request_locks: dict[object, asyncio.Lock] = {}
+        self._request_locks: dict[tuple[str, ...], asyncio.Lock] = {}
         self._session: aiohttp.ClientSession | None = None
 
     async def _get_session(self) -> aiohttp.ClientSession:
@@ -108,7 +109,7 @@ class PPPClient:
             return rate
 
 
-def parse_ppp_payload(payload: object, country: Country) -> PPPObservation:
+def parse_ppp_payload(payload: Any, country: Country) -> PPPObservation:
     """Parse a World Bank response into a concrete observation."""
     if not isinstance(payload, list) or len(payload) < 2 or not isinstance(payload[1], list):
         raise PPPDataError(f"No household purchasing-power data is available for {country.name}.")
@@ -125,7 +126,7 @@ def parse_ppp_payload(payload: object, country: Country) -> PPPObservation:
     return PPPObservation(country=country, value=value, year=year)
 
 
-def parse_market_payload(payload: object, source: str, target: str) -> MarketRate:
+def parse_market_payload(payload: Any, source: str, target: str) -> MarketRate:
     """Parse a Frankfurter v2 response into a concrete market rate."""
     if not isinstance(payload, list):
         raise PPPDataError(f"No market rate is available for {source} to {target}.")

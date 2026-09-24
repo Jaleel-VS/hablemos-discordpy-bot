@@ -25,6 +25,7 @@ def _fetch_permission_check() -> Any:
 def test_fetch_allows_manage_messages() -> None:
     ctx = FakeContext(discord.Permissions(manage_messages=True))
 
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     assert _fetch_permission_check()(cast(commands.Context, ctx)) is True
 
 
@@ -32,6 +33,7 @@ def test_fetch_rejects_missing_manage_messages() -> None:
     ctx = FakeContext(discord.Permissions.none())
 
     with pytest.raises(commands.MissingPermissions) as exc_info:
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         _fetch_permission_check()(cast(commands.Context, ctx))
 
     assert exc_info.value.missing_permissions == ["manage_messages"]

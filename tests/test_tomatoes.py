@@ -48,6 +48,7 @@ async def test_tomato_no_user_does_not_raise_unbound_output_path() -> None:
     # Invoke the command's underlying coroutine directly. Before the fix this
     # raised UnboundLocalError from the finally block; now it returns cleanly
     # after sending the usage hint.
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     callback = cast(Any, cog.tomato.callback)  # bound command callback (test)
     await callback(cog, ctx)
 

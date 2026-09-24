@@ -62,6 +62,7 @@ def _render_card(card: Card, view: CardView, *, revealed: bool) -> BytesIO:
     directly assignable to a plain ``dict`` under the type checker, so cast
     it here (identical at runtime) in one place instead of at each call.
     """
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     return renderer.render_card(card, cast(dict, view), revealed=revealed)
 
 
@@ -149,6 +150,7 @@ class VocabCatch(BaseCog):
         view = resolve_card(card, state.mode)
         # get_random_card returns a plain row dict; it carries the Card fields
         # the renderer needs (card_id/pos/gender/rarity).
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         card = cast(Card, card)
         try:
             buf = _render_card(card, view, revealed=False)

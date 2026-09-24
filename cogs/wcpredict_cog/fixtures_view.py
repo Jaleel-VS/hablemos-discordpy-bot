@@ -24,7 +24,7 @@ _ET_OFFSET = timezone(timedelta(hours=-4))
 
 # ── Flag emoji mapping ────────────────────────────────────────────────────────
 
-TEAM_FLAGS: dict[str, str] = {
+TEAM_FLAGS = {
     "Mexico": "🇲🇽",
     "South Africa": "🇿🇦",
     "South Korea": "🇰🇷",
@@ -79,7 +79,7 @@ TEAM_FLAGS: dict[str, str] = {
 # Maps lower-cased Spanish (or common alternate) names to canonical English
 # team names used in GROUPS/FIXTURES. Enables $wcf alemania, $wcf brasil, etc.
 
-TEAM_ALIASES: dict[str, str] = {
+TEAM_ALIASES = {
     # Group A
     "méxico":                           "Mexico",
     "corea del sur":                    "South Korea",
@@ -244,7 +244,7 @@ def resolve_page(query: str) -> int | None:
         return "ABCDEFGHIJKL".index(q.upper())
 
     # Stage keywords
-    keyword_map: dict[str, int] = {
+    keyword_map = {
         "r32": 12, "round of 32": 12,
         "r16": 14, "round of 16": 14,
         "quarter": 15, "qf": 15,

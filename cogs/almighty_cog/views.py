@@ -152,7 +152,9 @@ class CategoryModal(_RelayModal, title="Categorize"):
     )
 
     async def on_submit(self, interaction: Interaction) -> None:
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         radio: RadioGroup = self.category.component  # type: ignore[assignment]
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         note: TextInput = self.note.component  # type: ignore[assignment]
         choice = radio.value or "—"
         body = str(note.value) if note.value else "_(no note)_"

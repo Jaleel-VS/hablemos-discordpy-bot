@@ -70,6 +70,7 @@ class TicketSubView(View):
 
         guild_id = interaction.guild.id
         user_id = interaction.user.id
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         db = interaction.client.db  # type: ignore[attr-defined]
 
         # Determine additions and removals

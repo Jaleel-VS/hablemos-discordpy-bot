@@ -7,7 +7,7 @@ import re
 import unicodedata
 
 # Accent pairs: stripped form → accented forms that are "close enough"
-_ACCENT_MAP: dict[str, str] = {
+_ACCENT_MAP = {
     "a": "áàâã", "e": "éèêë", "i": "íìîï",
     "o": "óòôõ", "u": "úùûü", "n": "ñ",
 }

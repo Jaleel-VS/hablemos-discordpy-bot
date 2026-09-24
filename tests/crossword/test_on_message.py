@@ -158,6 +158,7 @@ async def test_timeout_watcher_vs_solve_one_end_only(
     from cogs.crossword_cog.main import CrosswordCog
 
     fake_bot._channels[fake_channel.id] = fake_channel
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     cog = CrosswordCog(fake_bot)  # type: ignore[arg-type]
 
     from .conftest import build_game
@@ -194,6 +195,7 @@ async def test_timeout_watcher_vs_solve_one_end_only(
 
     await asyncio.gather(
         one_watcher_tick(),
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         cog.on_message(cast("discord.Message", solver)),  # test double
     )
 
@@ -201,6 +203,7 @@ async def test_timeout_watcher_vs_solve_one_end_only(
     # and exactly one cleanup of the DB active-game row.
     assert fake_channel.id not in cog._active
     assert fake_channel.id not in cog._locks
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     assert len(cast("FakeDB", cog.bot.db).clear_calls) == 1
 
 
@@ -234,6 +237,7 @@ async def test_many_games_lock_leak_check(
 
     from .conftest import FakeChannel, build_game
 
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     cog = CrosswordCog(fake_bot)  # type: ignore[arg-type]
     for i in range(1000):
         ch = FakeChannel(id=10_000 + i)
@@ -243,6 +247,7 @@ async def test_many_games_lock_leak_check(
         game.starter_id = 42
         cog._active[ch.id] = game
         msg = make_message(ch, FakeAuthor(42, "alice"), "quit")
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         await cog.on_message(cast("discord.Message", msg))  # test double
     assert len(cog._active) == 0
     assert len(cog._locks) == 0

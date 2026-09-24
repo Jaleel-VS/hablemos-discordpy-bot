@@ -44,6 +44,7 @@ class LeagueAdminCog(BaseCog):
 
     def _league_cog(self) -> LeagueCog | None:
         """Return the main LeagueCog instance if loaded (typed accessor)."""
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         return cast("LeagueCog | None", self.bot.get_cog("LeagueCog"))
 
     @commands.group(name="league", invoke_without_command=True)

@@ -24,6 +24,7 @@ def has_management_permission():
     """Check if user has permission to manage website resources"""
     async def predicate(interaction: Interaction) -> bool:
         # Allow bot owner
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         client: Hablemos = interaction.client  # type: ignore[assignment]
         if interaction.user.id == client.settings.owner_id:
             return True

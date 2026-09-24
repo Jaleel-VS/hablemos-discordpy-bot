@@ -17,6 +17,8 @@ import subprocess
 import unicodedata
 
 # ── AWS CLI configuration ────────────────────────────────────────────────────
+from typing import TypedDict
+
 # Mirrors the ~/.zshrc `_bedrock_ask` helper so behaviour matches the user's
 # working setup. Region is fixed to the tested pairing; the model is per-call so
 # the reviewer can use a *different* (stronger) model than the generator.
@@ -47,6 +49,13 @@ def bedrock_auth() -> None:
     )
 
 
+class InferenceConfig(TypedDict, total=False):
+    """Typed Bedrock inference settings."""
+
+    maxTokens: int
+    temperature: float
+
+
 def bedrock_converse(
     prompt: str, *, model: str, max_tokens: int = 4096, temperature: float | None = 0.4,
 ) -> str:
@@ -60,7 +69,7 @@ def bedrock_converse(
     models (e.g. Opus 4.8) reject the deprecated ``temperature`` field and error
     if it's present.
     """
-    inference: dict[str, object] = {"maxTokens": max_tokens}
+    inference: InferenceConfig = {"maxTokens": max_tokens}
     if temperature is not None:
         inference["temperature"] = temperature
     request = {

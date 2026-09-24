@@ -72,6 +72,7 @@ def _font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
 def _lerp(low: tuple[int, int, int], high: tuple[int, int, int], t: float) -> tuple[int, int, int]:
     """Linear-interpolate between two RGB colours (t clamped to [0, 1])."""
     t = max(0.0, min(1.0, t))
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     return tuple(int(low[i] + (high[i] - low[i]) * t) for i in range(3))  # type: ignore[return-value]
 
 

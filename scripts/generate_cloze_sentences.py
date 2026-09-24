@@ -67,6 +67,7 @@ from _bedrock import (
     extract_json_array,
     norm,
 )
+from content_models import ClozeCard, StoredClozeCard
 
 # ── Paths ────────────────────────────────────────────────────────────────────
 _REPO = Path(__file__).resolve().parent.parent
@@ -74,7 +75,7 @@ _OUT = _REPO / "activity" / "backend" / "app" / "games" / "data" / "cloze_senten
 
 # ── Content shape ────────────────────────────────────────────────────────────
 #: Difficulty key -> Spanish display label (shown on the freeplay setup card).
-DIFFICULTIES: dict[str, str] = {
+DIFFICULTIES = {
     "beginner": "Principiante",
     "intermediate": "Intermedio",
     "advanced": "Avanzado",
@@ -199,7 +200,7 @@ def _blank_sentence(sentence: str, answer: str) -> str | None:
 
 def _validate_card(
     raw: Any, target: str, difficulty: str, seen_answers: set[str],
-) -> dict[str, Any] | None:
+) -> ClozeCard | None:
     """Turn one raw model object into a validated card, or ``None`` to reject.
 
     Rejection reasons: wrong shape, missing fields, answer not a whole word in
@@ -264,16 +265,16 @@ def _card_id(target: str, index: int) -> str:
     return f"{target}-{index:04d}"
 
 
-def _dedup_key(card: dict[str, Any]) -> tuple[str, str, str]:
+def _dedup_key(card: ClozeCard) -> tuple[str, str, str]:
     """Cards are the same if same target + same answer + same blanked sentence."""
     return (card["target"], norm(card["answer"]), norm(card["cloze"]))
 
 
 def _generate(
     target: str, difficulty: str, want: int, verbose: bool,
-) -> list[dict[str, Any]]:
+) -> list[ClozeCard]:
     """Generate ~``want`` validated cards for one (target, difficulty)."""
-    cards: list[dict[str, Any]] = []
+    cards: list[ClozeCard] = []
     seen: set[tuple[str, str, str]] = set()
     answers: set[str] = set()
     attempts = 0
@@ -315,10 +316,10 @@ def _generate(
     return cards
 
 
-def _assign_ids(cards: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _assign_ids(cards: list[ClozeCard]) -> list[StoredClozeCard]:
     """Assign stable per-target ids in list order (es-0001, en-0001, …)."""
     counters: dict[str, int] = {}
-    out: list[dict[str, Any]] = []
+    out: list[StoredClozeCard] = []
     for card in cards:
         t = card["target"]
         counters[t] = counters.get(t, 0) + 1
@@ -326,7 +327,7 @@ def _assign_ids(cards: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return out
 
 
-def _load_existing() -> list[dict[str, Any]]:
+def _load_existing() -> list[ClozeCard]:
     if not _OUT.exists():
         return []
     try:
@@ -391,7 +392,7 @@ def main() -> int:
         f"{len(DIFFICULTIES)} difficulties (~{per_difficulty} each) via {MODEL_HAIKU}"
     )
 
-    fresh: list[dict[str, Any]] = []
+    fresh: list[ClozeCard] = []
     for target in targets:
         for difficulty in DIFFICULTIES:
             print(f"→ {target} / {difficulty} (want {per_difficulty})…")
@@ -402,7 +403,7 @@ def main() -> int:
         return 1
 
     # Merge with existing if asked, deduping across old + new.
-    combined: list[dict[str, Any]] = []
+    combined: list[ClozeCard] = []
     seen: set[tuple[str, str, str]] = set()
     source = (_load_existing() if args.merge else []) + fresh
     for card in source:

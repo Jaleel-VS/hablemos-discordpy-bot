@@ -62,6 +62,7 @@ class TaskCreateModal(Modal, title="Create a Task"):
 
     async def on_submit(self, interaction: Interaction) -> None:
         """Create the task, post embed, and ping assignees."""
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         bot: Hablemos = interaction.client  # type: ignore[assignment]
 
         if interaction.guild is None or interaction.guild_id is None:

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import io
 from dataclasses import dataclass, field
-from typing import Any, cast
+from typing import Any, TypedDict, cast
 
 import discord
 from PIL import Image
@@ -24,14 +24,26 @@ from cogs.stats_cog.views import (
 )
 
 
+class SentMessage(TypedDict, total=False):
+    """Keyword arguments captured from the fake command context."""
+
+    embed: discord.Embed
+    view: discord.ui.View
+
+
 @dataclass
 class FakeContext:
     """Minimal command context that records sent messages."""
 
-    sent: list[dict[str, Any]] = field(default_factory=list)
+    sent: list[SentMessage] = field(default_factory=list)
 
     async def send(self, **kwargs: Any) -> None:
-        self.sent.append(kwargs)
+        message: SentMessage = {}
+        if "embed" in kwargs:
+            message["embed"] = kwargs["embed"]
+        if "view" in kwargs:
+            message["view"] = kwargs["view"]
+        self.sent.append(message)
 
 
 # ── Renderer ──
@@ -76,6 +88,7 @@ def test_now_at_offset_is_hhmm() -> None:
 # ── Command ──
 
 def test_result_view_has_post_and_change_buttons() -> None:
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     view = ClockResultView(cast(Any, object()), offset=1)
     labels = [c.label for c in view.children if isinstance(c, discord.ui.Button)]
     assert "Publicar en el canal" in labels
@@ -88,6 +101,7 @@ class FakeUser:
 
 
 def test_public_clock_embed_attributes_owner() -> None:
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     embed = _public_clock_embed(cast(Any, FakeUser()), offset=-5)
     assert "Ada" in (embed.title or "")
     assert "UTC−5" in (embed.description or "")
@@ -96,15 +110,17 @@ def test_public_clock_embed_attributes_owner() -> None:
 
 async def test_myclock_posts_launcher() -> None:
     cog = StatsCog.__new__(StatsCog)
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     cog.bot = cast(Any, object())
     ctx = FakeContext()
 
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     callback = cast(Any, cog.myclock.callback)
     await callback(cog, ctx)
 
     assert len(ctx.sent) == 1
-    embed = ctx.sent[0]["embed"]
-    view = ctx.sent[0]["view"]
+    embed = ctx.sent[0].get("embed")
+    view = ctx.sent[0].get("view")
     assert isinstance(embed, discord.Embed)
     assert "reloj de actividad" in (embed.title or "")
     assert isinstance(view, ClockLauncherView)

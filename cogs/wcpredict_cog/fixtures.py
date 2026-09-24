@@ -30,7 +30,7 @@ class Fixture(TypedDict):
 
 # ── Team rosters by group ────────────────────────────────────────────────────
 
-GROUPS: dict[str, list[str]] = {
+GROUPS = {
     "A": ["Mexico", "South Africa", "South Korea", "Czechia"],
     "B": ["Canada", "Bosnia and Herzegovina", "Qatar", "Switzerland"],
     "C": ["Brazil", "Morocco", "Scotland", "Haiti"],

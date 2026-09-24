@@ -39,16 +39,16 @@ VOCATCH_DESPAWN_S: int = get_int_env("VOCATCH_DESPAWN_S", 300)
 # All channels can spawn every rarity tier; beginner channels skew commoner
 # (a Legendary is still possible, just rarer). General has the steeper
 # "more rares show up" curve.
-BEGINNER_RARITY_WEIGHTS: dict[int, int] = {1: 70, 2: 20, 3: 7, 4: 2, 5: 1}
-GENERAL_RARITY_WEIGHTS: dict[int, int] = {1: 45, 2: 27, 3: 18, 4: 7, 5: 3}
+BEGINNER_RARITY_WEIGHTS = {1: 70, 2: 20, 3: 7, 4: 2, 5: 1}
+GENERAL_RARITY_WEIGHTS = {1: 45, 2: 27, 3: 18, 4: 7, 5: 3}
 
 # Points awarded per catch, by rarity tier (shared across channels).
-RARITY_POINTS: dict[int, int] = {1: 1, 2: 3, 3: 8, 4: 15, 5: 25}
+RARITY_POINTS = {1: 1, 2: 3, 3: 8, 4: 15, 5: 25}
 
-RARITY_LABELS: dict[int, str] = {
+RARITY_LABELS = {
     1: "Common", 2: "Uncommon", 3: "Rare", 4: "Epic", 5: "Legendary",
 }
-RARITY_EMBED_COLORS: dict[int, int] = {
+RARITY_EMBED_COLORS = {
     1: 0x94A3B8, 2: 0x34D399, 3: 0x60A5FA, 4: 0xC084FC, 5: 0xFBBF24,
 }
 

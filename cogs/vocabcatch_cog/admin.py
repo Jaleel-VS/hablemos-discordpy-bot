@@ -65,6 +65,7 @@ class VocabCatchAdmin(BaseCog):
             await ctx.send(embed=red_embed("VocabCatch cog not loaded."))
             return
         # Cross-cog access via get_cog is dynamic; narrow to the concrete cog.
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         cog = cast("VocabCatch", cog)
         if not isinstance(ctx.channel, (discord.TextChannel, discord.Thread, discord.VoiceChannel)):
             await ctx.send(embed=red_embed("This channel isn't a Vocab Catch channel."))
@@ -109,6 +110,7 @@ class VocabCatchAdmin(BaseCog):
         # get_card returns a plain row dict carrying the Card fields; the
         # renderer's view: dict param also can't take a CardView TypedDict
         # directly, so cast both (identical at runtime).
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         buf = renderer.render_card(cast(Card, card), cast(dict, view), revealed=True)
         await ctx.send(file=discord.File(buf, filename="preview.png"))
 

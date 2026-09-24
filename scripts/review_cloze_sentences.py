@@ -49,13 +49,18 @@ import sys
 import time
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 from _bedrock import (
     MODEL_OPUS,
     bedrock_auth,
     bedrock_converse,
     extract_json_array,
+)
+from content_models import (
+    ClozeCorpus,
+    ReviewedClozeCard,
+    ReviewVerdict,
+    StoredClozeCard,
 )
 
 _REPO = Path(__file__).resolve().parent.parent
@@ -79,7 +84,7 @@ _MAX_REVIEW_ATTEMPTS = 3
 _LANG_NAMES = {"es": "Spanish", "en": "English"}
 
 
-def _review_prompt(cards: list[dict[str, Any]]) -> str:
+def _review_prompt(cards: list[StoredClozeCard]) -> str:
     """Build the grading instruction for one batch of cards.
 
     The card is presented with its blank filled by the answer (so the reviewer
@@ -133,7 +138,7 @@ def _review_prompt(cards: list[dict[str, Any]]) -> str:
     )
 
 
-def _load_corpus() -> dict[str, Any]:
+def _load_corpus() -> ClozeCorpus:
     if not _DATA.exists():
         print(f"content file not found: {_DATA}", file=sys.stderr)
         raise SystemExit(1)
@@ -154,7 +159,7 @@ def _load_decisions(path: str | None) -> tuple[set[str], set[str]]:
     return keep, quarantine
 
 
-def _review_batch(cards: list[dict[str, Any]], model: str, verbose: bool) -> dict[str, dict]:
+def _review_batch(cards: list[StoredClozeCard], model: str, verbose: bool) -> dict[str, ReviewVerdict]:
     """Grade one batch; return {id: {verdict, reasons, suggested_answer}}.
 
     On a transient failure or unparseable response, returns an empty dict for
@@ -170,7 +175,7 @@ def _review_batch(cards: list[dict[str, Any]], model: str, verbose: bool) -> dic
         print(f"  ! review batch failed: {exc}", file=sys.stderr)
         return {}
     items = extract_json_array(text)
-    verdicts: dict[str, dict] = {}
+    verdicts: dict[str, ReviewVerdict] = {}
     for item in items:
         if not isinstance(item, dict):
             continue
@@ -229,7 +234,7 @@ def main() -> int:
         return 1
 
     corpus = _load_corpus()
-    cards: list[dict[str, Any]] = corpus.get("cards", [])
+    cards: list[StoredClozeCard] = corpus.get("cards", [])
     if not cards:
         print("corpus has no cards.", file=sys.stderr)
         return 1
@@ -245,7 +250,7 @@ def main() -> int:
         print("Refreshing Bedrock credentials (bedrock-how)…")
         bedrock_auth()
 
-    verdicts: dict[str, dict] = {}
+    verdicts: dict[str, ReviewVerdict] = {}
     # Grade in batches, then RETRY any card the model didn't return a verdict
     # for (a transient failure or an unparseable batch), up to a few rounds.
     # Whatever is still unreviewed after retries is FAILED CLOSED below (treated
@@ -273,7 +278,7 @@ def main() -> int:
     model_pass_ids: list[str] = []
     force_keep_ids: list[str] = []
     ok_ids: list[str] = []
-    suspect: list[dict[str, Any]] = []
+    suspect: list[ReviewedClozeCard] = []
     unreviewed: list[str] = []
     for c in review_cards:
         cid = c["id"]
@@ -347,7 +352,7 @@ def main() -> int:
     kept = [c for c in cards if c["id"] not in suspect_ids]
 
     # Append to any existing quarantine sidecar (don't clobber prior batches).
-    existing_q: list[dict[str, Any]] = []
+    existing_q: list[ReviewedClozeCard] = []
     if _QUARANTINE.exists():
         try:
             existing_q = json.loads(_QUARANTINE.read_text(encoding="utf-8")).get("cards", [])

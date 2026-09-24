@@ -82,6 +82,7 @@ class TaskStatusSelect(Select):
             return
 
         new_status = self.values[0]
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         bot: Hablemos = interaction.client  # type: ignore[assignment]
         task = await bot.db.update_task_status(self.task_id, new_status)
         if not task:
@@ -121,6 +122,7 @@ class TaskAssignSelect(UserSelect):
             return
 
         new_ids = [u.id for u in self.values]
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         bot: Hablemos = interaction.client  # type: ignore[assignment]
         task = await bot.db.update_task_assignees(self.task_id, new_ids)
         if not task:

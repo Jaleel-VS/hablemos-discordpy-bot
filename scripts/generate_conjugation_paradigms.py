@@ -60,7 +60,7 @@ PRONOUNS = ["yo", "tú", "él", "nosotros", "vosotros", "ellos"]
 # Canonical tense key -> (verbecc Mood attr, verbecc Tense attr, display label).
 # MVP ships the four core indicative tenses; add subjunctive/imperative here and
 # they flow through the whole stack for free.
-TENSES: dict[str, tuple[str, str, str]] = {
+TENSES = {
     "presente":   ("Indicativo", "Presente", "Presente"),
     "pretérito":  ("Indicativo", "PretéritoPerfectoSimple", "Pretérito"),
     "imperfecto": ("Indicativo", "PretéritoImperfecto", "Imperfecto"),
@@ -84,7 +84,7 @@ _EXTRA_GLOSSES = {
 # than lose a common verb. Keyed by verb -> tense -> pronoun slot; merged in
 # only when verbecc fails so the ML source stays authoritative for everything
 # it can handle.
-_MANUAL_FALLBACK: dict[str, dict[str, dict[str, str]]] = {
+_MANUAL_FALLBACK = {
     "pasar": {
         "presente":   {"yo": "paso", "tú": "pasas", "él": "pasa",
                        "nosotros": "pasamos", "vosotros": "pasáis", "ellos": "pasan"},
@@ -120,6 +120,14 @@ def _build_forms(conjugate, verb: str) -> dict[str, dict[str, str]] | None:
     """
     from verbecc import Moods, Tenses  # local import: only needed at gen time
 
+    mood_attrs = {"Indicativo": Moods.es.Indicativo}
+    tense_attrs = {
+        "Presente": Tenses.es.Presente,
+        "PretéritoPerfectoSimple": Tenses.es.PretéritoPerfectoSimple,
+        "PretéritoImperfecto": Tenses.es.PretéritoImperfecto,
+        "Futuro": Tenses.es.Futuro,
+    }
+
     try:
         full = conjugate(verb)
     except Exception as exc:
@@ -132,8 +140,8 @@ def _build_forms(conjugate, verb: str) -> dict[str, dict[str, str]] | None:
 
     forms: dict[str, dict[str, str]] = {}
     for key, (mood_attr, tense_attr, _label) in TENSES.items():
-        mood = full[getattr(Moods.es, mood_attr)]
-        tense = mood[getattr(Tenses.es, tense_attr)]
+        mood = full[mood_attrs[mood_attr]]
+        tense = mood[tense_attrs[tense_attr]]
         slot: dict[str, str] = {}
         for conj in tense:
             pron = conj.get_pronoun().value

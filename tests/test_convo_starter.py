@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from types import SimpleNamespace
-from typing import Any, cast
+from typing import Any, TypedDict, cast
 
 import discord
 
@@ -19,6 +19,12 @@ class FakeChannel:
     id: int
 
 
+class SendKwargs(TypedDict, total=False):
+    """Keyword arguments captured from a fake context send."""
+
+    embed: discord.Embed
+
+
 @dataclass
 class FakeContext:
     """Minimal command context that records sent messages."""
@@ -26,7 +32,7 @@ class FakeContext:
     channel_id: int
     clean_prefix: str = "$"
     channel: FakeChannel = field(init=False)
-    sent: list[tuple[tuple[Any, ...], dict[str, Any]]] = field(
+    sent: list[tuple[tuple[Any, ...], SendKwargs]] = field(
         default_factory=list
     )
 
@@ -34,7 +40,10 @@ class FakeContext:
         self.channel = FakeChannel(self.channel_id)
 
     async def send(self, *args: Any, **kwargs: Any) -> None:
-        self.sent.append((args, kwargs))
+        captured: SendKwargs = {}
+        if "embed" in kwargs:
+            captured["embed"] = kwargs["embed"]
+        self.sent.append((args, captured))
 
 
 def _make_cog(spanish_first_channels: list[int] | None = None) -> ConvoStarter:
@@ -43,6 +52,7 @@ def _make_cog(spanish_first_channels: list[int] | None = None) -> ConvoStarter:
             convo_spa_channels=spanish_first_channels or []
         )
     )
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     return ConvoStarter(cast(Any, bot))
 
 
@@ -51,6 +61,7 @@ async def _run_topic(
     ctx: FakeContext,
     category: str | None = None,
 ) -> None:
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     callback = cast(Any, cog.topic.callback)
     if category is None:
         await callback(cog, ctx)
@@ -59,6 +70,7 @@ async def _run_topic(
 
 
 async def _run_list(cog: ConvoStarter, ctx: FakeContext) -> None:
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     callback = cast(Any, cog.lst.callback)
     await callback(cog, ctx)
 
@@ -101,7 +113,8 @@ async def test_topic_accepts_case_insensitive_numeric_alias(
 
     await _run_topic(cog, ctx, " 5 ")
 
-    embed = ctx.sent[0][1]["embed"]
+    embed = ctx.sent[0][1].get("embed")
+    assert embed is not None
     assert embed.title is None
     assert embed.description == "**Deal**\n\nTrato"
 
@@ -118,7 +131,8 @@ async def test_topic_places_spanish_first_in_configured_channel(
 
     await _run_topic(cog, ctx, "PHIL")
 
-    embed = ctx.sent[0][1]["embed"]
+    embed = ctx.sent[0][1].get("embed")
+    assert embed is not None
     assert isinstance(embed, discord.Embed)
     assert embed.title is None
     assert embed.description == "**Español**\n\nEnglish"
@@ -153,7 +167,8 @@ async def test_list_is_generated_from_categories_and_prefix() -> None:
 
     await _run_list(cog, ctx)
 
-    embed = ctx.sent[0][1]["embed"]
+    embed = ctx.sent[0][1].get("embed")
+    assert embed is not None
     description = embed.description or ""
     assert "`!topic <category>`" in description
     for index, category in enumerate(CATEGORY_DESCRIPTIONS, start=1):

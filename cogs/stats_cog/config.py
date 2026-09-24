@@ -22,21 +22,21 @@ ENGLISH_NATIVE_ROLE_ID: int = get_int_env("STATS_ENGLISH_NATIVE_ROLE", 243853718
 OTHER_NATIVE_ROLE_ID: int = get_int_env("STATS_OTHER_NATIVE_ROLE", 247020385730691073)
 
 # Role type labels
-ROLE_MAP: dict[int, str] = {
+ROLE_MAP = {
     SPANISH_NATIVE_ROLE_ID: "spanish_native",
     ENGLISH_NATIVE_ROLE_ID: "english_native",
     OTHER_NATIVE_ROLE_ID: "other_native",
 }
 
 # Display labels for graphs
-ROLE_LABELS: dict[str, str] = {
+ROLE_LABELS = {
     "spanish_native": "Spanish Native",
     "english_native": "English Native",
     "other_native": "Other Native",
 }
 
 # Colors for graphs (role → hex)
-ROLE_COLORS: dict[str, str] = {
+ROLE_COLORS = {
     "spanish_native": "#FF6B6B",
     "english_native": "#4ECDC4",
     "other_native": "#95A5A6",

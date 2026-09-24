@@ -70,7 +70,15 @@ class PrefsView(View):
             data = interaction.data
             values = data.get("values") if data else None
             if values:
-                setattr(self, attr, values[0])
+                value = values[0]
+                if attr == "offer_lang":
+                    self.offer_lang = value
+                elif attr == "seek_lang":
+                    self.seek_lang = value
+                elif attr == "seek_level":
+                    self.seek_level = value
+                elif attr == "region":
+                    self.region = value
             await interaction.response.defer()
 
         select.callback = cb

@@ -71,7 +71,7 @@ def test_rejects_invalid_amounts(value: str) -> None:
         parse_amount(value)
 
 
-def test_parses_real_api_payload_shapes() -> None:
+def test_parses_real_api_payloads() -> None:
     south_africa = resolve_location("ZAR")
     ppp = parse_ppp_payload(
         [

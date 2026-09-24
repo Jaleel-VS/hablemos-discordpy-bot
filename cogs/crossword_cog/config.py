@@ -32,7 +32,7 @@ class DifficultyConfig:
     label: str
 
 
-DIFFICULTIES: dict[str, DifficultyConfig] = {
+DIFFICULTIES = {
     "beginner": DifficultyConfig(
         name="beginner",
         reveal_fraction=0.3,

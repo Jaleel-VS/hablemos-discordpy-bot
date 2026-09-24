@@ -56,6 +56,7 @@ class _TestGemini(Gemini):
         self._actions: list = list(actions or [])
         self.calls: list[dict] = []
 
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     async def _generate_content(self, *, model, prompt, config):  # type: ignore[override]
         self.calls.append({"model": model, "prompt": prompt, "config": config})
         if not self._actions:

@@ -54,6 +54,7 @@ def _make_message(user_id: int):
 @pytest.fixture
 def cog(monkeypatch):
     c = VocabCatch.__new__(VocabCatch)  # bypass __init__ (no real bot)
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     c.bot = cast("Hablemos", FakeBot())  # test double
     c._channels = {}
     monkeypatch.setattr(
@@ -71,6 +72,7 @@ def cog(monkeypatch):
 def _spawn_state(mode: str) -> ChannelState:
     view = resolve_card(CARD, mode)
     state = ChannelState(mode=mode)
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     state.active = ActiveSpawn(card=cast("Card", CARD), view=view, mode=mode,
                                message_id=1, spawned_at=0.0)
     return state

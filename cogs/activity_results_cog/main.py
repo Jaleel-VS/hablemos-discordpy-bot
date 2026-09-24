@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypedDict
 
 import discord
 from discord.ext import commands, tasks
@@ -46,17 +46,32 @@ def _game_label(game_key: str) -> str:
     return _GAME_LABELS.get(game_key, game_key.capitalize())
 
 
-def _coerce_payload(raw: Any) -> dict[str, Any]:
-    """asyncpg returns JSONB as a str; normalize to a dict once, here."""
-    if isinstance(raw, dict):
-        return raw
+class ActivityResultPayload(TypedDict, total=False):
+    """Validated fields consumed from an Activity result payload."""
+
+    won: bool
+    summary: str
+    grid: str
+
+
+def _coerce_payload(raw: Any) -> ActivityResultPayload:
+    """Normalize asyncpg JSONB into the fields this cog consumes."""
     if isinstance(raw, str):
         try:
-            data = json.loads(raw)
+            raw = json.loads(raw)
         except json.JSONDecodeError:
             return {}
-        return data if isinstance(data, dict) else {}
-    return {}
+    if not isinstance(raw, dict):
+        return {}
+
+    payload: ActivityResultPayload = {}
+    if isinstance(raw.get("won"), bool):
+        payload["won"] = raw["won"]
+    if isinstance(raw.get("summary"), str):
+        payload["summary"] = raw["summary"]
+    if isinstance(raw.get("grid"), str):
+        payload["grid"] = raw["grid"]
+    return payload
 
 
 class ActivityResultsCog(BaseCog):
@@ -114,7 +129,7 @@ class ActivityResultsCog(BaseCog):
         await self.bot.db.mark_game_result_posted(result_id)
 
     @staticmethod
-    def _build_embed(*, user_id: int, payload: dict[str, Any]) -> discord.Embed:
+    def _build_embed(*, user_id: int, payload: ActivityResultPayload) -> discord.Embed:
         won = bool(payload.get("won"))
         summary = payload.get("summary") or "Resultado"
         grid = payload.get("grid") or ""

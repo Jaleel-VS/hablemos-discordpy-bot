@@ -61,13 +61,13 @@ class _KickedOff(Exception):
 
 
 # outcome -> (emoji, button label)
-OUTCOME_BUTTONS: dict[str, tuple[str, str]] = {
+OUTCOME_BUTTONS = {
     "home": ("🏠", "Home"),
     "draw": ("🤝", "Draw"),
     "away": ("✈️", "Away"),
 }
 
-STATUS_EMOJI: dict[str, str] = {
+STATUS_EMOJI = {
     "pending": "⏳",
     "won": "✅",
     "lost": "❌",
@@ -1519,7 +1519,10 @@ class StakeModal(ui.Modal, title="Custom stake"):
                 "and your balance, or 'all'."
             )
         else:
-            setattr(panel, self.stake_attr, stake)
+            if isinstance(panel, ParlayPanelView):
+                panel.stake = stake
+            else:
+                panel.selected_stake = stake
             panel.notice = None
         await panel.refresh()
         await interaction.response.edit_message(view=panel)

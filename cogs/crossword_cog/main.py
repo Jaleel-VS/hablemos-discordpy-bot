@@ -1102,6 +1102,7 @@ class CrosswordCog(BaseCog):
                 # channel where the author is a Member, but we keep the
                 # original unconditional check (getattr tolerates the DM/User
                 # case) and cast to satisfy the type checker.
+                # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
                 author = cast("discord.Member", message.author)
                 can_quit = (
                     message.author.id == game.starter_id

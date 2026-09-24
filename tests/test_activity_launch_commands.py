@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, cast
+from typing import Any, TypedDict, cast
 
 import discord
 
@@ -10,14 +10,26 @@ from cogs.utils.activity_launch import ActivityLaunchView
 from cogs.wordle_cog.main import WordleCog
 
 
+class SentMessage(TypedDict):
+    """Keyword arguments captured from a fake context send."""
+
+    embed: discord.Embed
+    view: discord.ui.View
+
+
 @dataclass
 class FakeContext:
     """Minimal command context that records sent messages."""
 
-    sent: list[dict[str, Any]] = field(default_factory=list)
+    sent: list[SentMessage] = field(default_factory=list)
 
-    async def send(self, **kwargs: Any) -> None:
-        self.sent.append(kwargs)
+    async def send(
+        self,
+        *,
+        embed: discord.Embed,
+        view: discord.ui.View,
+    ) -> None:
+        self.sent.append({"embed": embed, "view": view})
 
 
 async def test_jaleo_posts_generic_activity_launcher() -> None:
@@ -25,6 +37,7 @@ async def test_jaleo_posts_generic_activity_launcher() -> None:
     ctx = FakeContext()
 
     assert cog.jaleo.name == "jaleo"
+    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     callback = cast(Any, cog.jaleo.callback)
     await callback(cog, ctx)
 

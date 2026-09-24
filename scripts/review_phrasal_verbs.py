@@ -41,7 +41,6 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _bedrock import (  # local helper; sys.path set just above
@@ -50,6 +49,7 @@ from _bedrock import (  # local helper; sys.path set just above
     bedrock_converse,
     extract_json_array,
 )
+from content_models import PhrasalCorpus, PhrasalReview, PhrasalVerb
 
 _REPO = Path(__file__).resolve().parent.parent
 _DATA = _REPO / "activity" / "backend" / "app" / "games" / "data" / "phrasal_verbs.json"
@@ -61,7 +61,7 @@ _TEMPERATURE = None  # Opus 4.8 rejects the deprecated temperature field
 _VALID_DIFFICULTIES = {"beginner", "intermediate", "advanced"}
 
 
-def _review_prompt(verbs: list[dict[str, Any]]) -> str:
+def _review_prompt(verbs: list[PhrasalVerb]) -> str:
     """Build the grading + repair instruction for one batch of verbs."""
     lines: list[str] = []
     for v in verbs:
@@ -116,7 +116,7 @@ def _review_prompt(verbs: list[dict[str, Any]]) -> str:
     )
 
 
-def _load_corpus() -> dict[str, Any]:
+def _load_corpus() -> PhrasalCorpus:
     if not _DATA.exists():
         print(f"corpus not found: {_DATA} (run the generator first)", file=sys.stderr)
         raise SystemExit(1)
@@ -143,7 +143,7 @@ class _BedrockUnavailable(Exception):
     """
 
 
-def _review_batch(verbs: list[dict[str, Any]], model: str, verbose: bool) -> dict[str, dict]:
+def _review_batch(verbs: list[PhrasalVerb], model: str, verbose: bool) -> dict[str, PhrasalReview]:
     """Grade one batch; return {id: verdict-dict}. Empty on unparseable response.
 
     Raises :class:`_BedrockUnavailable` if the Bedrock call itself fails, so the
@@ -156,7 +156,7 @@ def _review_batch(verbs: list[dict[str, Any]], model: str, verbose: bool) -> dic
         )
     except RuntimeError as exc:
         raise _BedrockUnavailable(str(exc)) from exc
-    verdicts: dict[str, dict] = {}
+    verdicts: dict[str, PhrasalReview] = {}
     for item in extract_json_array(text):
         if not isinstance(item, dict):
             continue
@@ -203,12 +203,12 @@ def main() -> int:
 
     force_keep, force_quarantine = _load_decisions(args.decisions)
     payload = _load_corpus()
-    verbs: list[dict[str, Any]] = payload["verbs"]
+    verbs: list[PhrasalVerb] = payload["verbs"]
     if args.limit > 0:
         verbs = verbs[: args.limit]
 
     to_review = [v for v in verbs if v["id"] not in force_keep and v["id"] not in force_quarantine]
-    verdicts: dict[str, dict] = {}
+    verdicts: dict[str, PhrasalReview] = {}
     for start in range(0, len(to_review), _BATCH):
         batch = to_review[start : start + _BATCH]
         try:
@@ -229,9 +229,9 @@ def main() -> int:
 
     # Classify every verb.
     fixed: list[str] = []
-    quarantined: list[dict[str, Any]] = []
+    quarantined: list[PhrasalVerb] = []
     unreviewed: list[str] = []
-    survivors: list[dict[str, Any]] = []
+    survivors: list[PhrasalVerb] = []
 
     for v in verbs:
         vid = v["id"]
@@ -297,7 +297,7 @@ def main() -> int:
 
     # Merge newly-quarantined verbs into the sidecar (never delete).
     if quarantined:
-        existing: list[dict[str, Any]] = []
+        existing: list[PhrasalVerb] = []
         if _QUARANTINE.exists():
             existing = json.loads(_QUARANTINE.read_text(encoding="utf-8")).get("verbs", [])
         seen = {v["id"] for v in existing}

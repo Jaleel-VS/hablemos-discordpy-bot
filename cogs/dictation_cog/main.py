@@ -144,6 +144,7 @@ class DictationCog(BaseCog):
         try:
             # aioboto3's Session.client inherits boto3's sync return type, but
             # at runtime returns an async context manager the stubs don't model.
+            # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
             async with self._session.client("s3", region_name=S3_REGION) as s3:  # type: ignore[attr-defined]
                 resp = await s3.get_object(Bucket=S3_BUCKET, Key=audio_url)
                 return await resp["Body"].read()

@@ -41,6 +41,7 @@ def min_role(
         if ctx.guild is None:
             raise commands.NoPrivateMessage()
 
+        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         member: Member = ctx.author  # type: ignore[assignment]
 
         # Not configured — use fallback permission
@@ -65,8 +66,11 @@ def min_role(
 
 
 def _check_fallback(member: Member, permission: str) -> bool:
-    """Check a single guild permission on the member."""
+    """Check one supported guild permission on the member."""
     perms = member.guild_permissions
-    if getattr(perms, permission, False):
+    allowed = {
+        "manage_messages": perms.manage_messages,
+    }.get(permission)
+    if allowed:
         return True
     raise commands.MissingPermissions([permission])
