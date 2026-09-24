@@ -365,10 +365,11 @@ $wcbetadmin setteam <match_id> <home> vs <away> [@ HH:MM]
 e.g. `$wcbetadmin setteam 73 Mexico vs Brazil`. Use exact team names as
 they appear in the group standings; manual rows are tagged `manual` and
 are **never** overwritten by auto-resolution. The resolved match becomes
-bettable once it's inside the 48h window, and ESPN settlement matches on
-the real names (`results.TEAM_NAME_ALIASES` bridges the few spelling
-differences). Resolutions persist in `wc_fixture_overrides` and re-apply
-on restart, so you only set each match once. Verify with `$wcf <team>`
+bettable once it's inside the betting window (`WCBET_BETTING_WINDOW_HOURS`,
+default 96h), and ESPN settlement matches on the real names
+(`results.TEAM_NAME_ALIASES` bridges the few spelling differences).
+Resolutions persist in `wc_fixture_overrides` and re-apply on restart, so
+you only set each match once. Verify with `$wcf <team>`
 or `$wcbetboard`.
 
 ## A match finished but bets are stuck `pending` (didn't settle)

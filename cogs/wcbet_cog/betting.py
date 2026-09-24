@@ -44,12 +44,13 @@ def kickoff_utc(fixture: Fixture) -> datetime:
 
 
 def bettable_fixtures(now_utc: datetime) -> list[Fixture]:
-    """Fixtures open for betting: resolved, not kicked off, within 48 hours.
+    """Fixtures open for betting: resolved, not kicked off, within the window.
 
     A fixture is bettable when it has real (non-placeholder) teams, has not
-    kicked off, and kicks off within the next 48 hours. Group-stage rows are
-    always resolved; knockout rows become bettable only once an owner fills
-    in the real teams via `$wcbetadmin setteam` (until then both sides are
+    kicked off, and kicks off within the next
+    ``WCBET_BETTING_WINDOW_HOURS`` hours. Group-stage rows are always
+    resolved; knockout rows become bettable only once an owner fills in
+    the real teams via `$wcbetadmin setteam` (until then both sides are
     bracket placeholders and the fixture is skipped).
 
     Using a lookahead window instead of ET-date comparison handles midnight-ET

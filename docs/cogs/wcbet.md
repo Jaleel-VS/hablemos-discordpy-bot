@@ -68,9 +68,10 @@ refunds the old stake and deducts the new one in a single DB
 transaction.
 
 **Knockout rounds.** Group-stage fixtures have fixed teams and are always
-bettable inside the 48h window. Knockout fixtures (Round of 32 onward)
-ship with bracket placeholders ("Winner Group A", "Winner Match 73") and
-are **not** bettable or settleable until their real teams are resolved.
+bettable inside the betting window (`WCBET_BETTING_WINDOW_HOURS`, default
+96h). Knockout fixtures (Round of 32 onward) ship with bracket
+placeholders ("Winner Group A", "Winner Match 73") and are **not**
+bettable or settleable until their real teams are resolved.
 
 Resolution is **automatic**: the results poller (and startup) calls
 `espn.fetch_knockout_resolutions`, which reads ESPN's scheduled bracket

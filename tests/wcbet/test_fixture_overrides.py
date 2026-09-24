@@ -17,6 +17,7 @@ import pytest
 
 from cogs.wcbet_cog.admin import _parse_result_arg, _parse_setteam
 from cogs.wcbet_cog.betting import bettable_fixtures, kickoff_utc
+from cogs.wcbet_cog.config import WCBET_BETTING_WINDOW_HOURS
 from cogs.wcpredict_cog.fixtures import (
     FIXTURE_BY_ID,
     apply_fixture_override,
@@ -110,10 +111,12 @@ def test_resolved_knockout_is_bettable(restore_match_73) -> None:
     assert R32_MATCH_ID in ids
 
 
-def test_resolved_knockout_respects_48h_window(restore_match_73) -> None:
+def test_resolved_knockout_respects_betting_window(restore_match_73) -> None:
     apply_fixture_override(R32_MATCH_ID, "Mexico", "Brazil")
-    # Three days before kickoff — outside the 48h lookahead.
-    far = kickoff_utc(FIXTURE_BY_ID[R32_MATCH_ID]) - timedelta(hours=72)
+    # One hour before the fixture enters the configured lookahead window.
+    far = kickoff_utc(FIXTURE_BY_ID[R32_MATCH_ID]) - timedelta(
+        hours=WCBET_BETTING_WINDOW_HOURS + 1,
+    )
     ids = {f["match_id"] for f in bettable_fixtures(far)}
     assert R32_MATCH_ID not in ids
 
