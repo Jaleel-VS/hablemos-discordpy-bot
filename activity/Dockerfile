@@ -20,12 +20,21 @@ RUN npm run build
 # --- Stage 2: python runtime -------------------------------------------------
 FROM python:3.12-slim-bookworm AS runtime
 
+COPY --from=ghcr.io/astral-sh/uv:0.10.4 /uv /uvx /bin/
+
+ENV UV_PYTHON_DOWNLOADS=0 \
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
+
 WORKDIR /app
 
-COPY backend/requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+COPY backend/pyproject.toml backend/uv.lock ./
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-dev --no-install-project
 
 COPY backend/ ./
+
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Bring the built SPA in where the backend expects it (ACTIVITY_STATIC_DIR
 # default is ../static relative to app/, i.e. /app/static).

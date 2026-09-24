@@ -341,8 +341,8 @@ def _print_summary(generated: int, rejected: int):
         print(f"Batch file: {OUTPUT_CSV} ({batch_total} rows)")
     print("\nNext steps:")
     print(f"  1. Review: head -20 {OUTPUT_CSV}")
-    print("  2. Consolidate: .venv/bin/python cogs/crossword_cog/load_words.py")
-    print("  3. Load to DB: .venv/bin/python cogs/crossword_cog/load_words.py \"$DATABASE_URL\"")
+    print("  2. Consolidate: uv run python cogs/crossword_cog/load_words.py")
+    print("  3. Load to DB: uv run python cogs/crossword_cog/load_words.py \"$DATABASE_URL\"")
 
 
 if __name__ == "__main__":

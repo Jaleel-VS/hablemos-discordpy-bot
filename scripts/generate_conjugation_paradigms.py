@@ -35,8 +35,7 @@ verbecc (all tenses, correct irregulars) rather than the seed's hand-typed
 
 Usage::
 
-    pip install verbecc
-    python scripts/generate_conjugation_paradigms.py
+    uv run --with verbecc python scripts/generate_conjugation_paradigms.py
 
 The generator **fails loudly** (exit 1, no write) if any seed verb or any
 configured tense would be dropped from the output — a silent shrink would
@@ -202,7 +201,7 @@ def main() -> int:
         from verbecc import CompleteConjugator
         from verbecc import LangCodeISO639_1 as Lang
     except ImportError:
-        print("verbecc is not installed. Run: pip install verbecc", file=sys.stderr)
+        print("verbecc is not installed. Run: uv run --with verbecc python scripts/generate_conjugation_paradigms.py", file=sys.stderr)
         return 1
 
     print(f"Conjugating {len(all_verbs)} verbs with verbecc (trains model on first run)…")

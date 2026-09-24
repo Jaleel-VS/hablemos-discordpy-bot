@@ -1,0 +1,8 @@
+[project]
+name = "hablemos-logforwarder"
+version = "0.1.0"
+description = "Forwards Lightsail container logs to Axiom"
+requires-python = "==3.12.*"
+dependencies = [
+    "boto3~=1.35",
+]

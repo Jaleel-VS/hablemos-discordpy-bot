@@ -31,7 +31,7 @@ activity/
       main.py        app factory, static serving, routers
       config.py      env config (mirrors root config.py helpers)
       discord_oauth.py  token exchange + users/@me verification
-    requirements.txt
+    pyproject.toml   deps (uv); uv.lock pins them
   Dockerfile         builds SPA, then runs FastAPI serving dist/ + /api
 ```
 

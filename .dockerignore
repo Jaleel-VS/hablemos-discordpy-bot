@@ -7,6 +7,10 @@ __pycache__/
 .ruff_cache/
 .cache/
 
+# Local virtualenv — the image builds its own at /app/.venv, and `COPY . .`
+# would otherwise overwrite it with a macOS venv.
+.venv/
+
 # Secrets & VCS
 .env
 .env.*
@@ -31,7 +35,7 @@ CLAUDE.md
 pyrightconfig.json
 pytest.ini
 ruff.toml
-requirements-dev.txt
+.python-version
 Dockerfile
 .dockerignore
 .railwayignore

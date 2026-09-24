@@ -8,11 +8,11 @@ made against them.
 ## Running
 
 ```bash
-pip install -r requirements-dev.txt
-pytest                       # full suite
-pytest tests/crossword/      # one cog
-pytest -k race               # just the concurrency tests
-pytest -x --tb=short         # stop on first failure, short trace
+uv sync                             # installs the dev group by default
+uv run pytest                       # full suite
+uv run pytest tests/crossword/      # one cog
+uv run pytest -k race               # just the concurrency tests
+uv run pytest -x --tb=short         # stop on first failure, short trace
 ```
 
 `pytest.ini` enables `asyncio_mode=auto`, so `async def test_...` is
@@ -25,9 +25,9 @@ development-only Flake8 plugin. It audits low-evidence typing and testing
 patterns; despite its name, it does not rewrite AI-generated prose.
 
 ```bash
-python scripts/anti_slop_audit.py         # concise, fails on baseline regressions
-python scripts/anti_slop_audit.py --show  # include every finding
-python scripts/anti_slop_audit.py --strict  # fail until the count reaches zero
+uv run python scripts/anti_slop_audit.py           # concise, fails on baseline regressions
+uv run python scripts/anti_slop_audit.py --show    # include every finding
+uv run python scripts/anti_slop_audit.py --strict  # fail until the count reaches zero
 ```
 
 The audit targets the bot's first-party Python paths rather than virtual environments. The entire `activity/`

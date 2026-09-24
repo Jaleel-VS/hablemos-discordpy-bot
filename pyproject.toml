@@ -1,0 +1,42 @@
+[project]
+name = "hablemos-discordpy-bot"
+version = "0.1.0"
+description = "Spanish-language learning Discord bot"
+requires-python = "==3.12.*"
+dependencies = [
+    # Core
+    "discord.py~=2.7",
+    "asyncpg~=0.31",
+    "python-dotenv~=1.2",
+    # AI
+    "google-genai~=1.68",
+    # Web/HTTP
+    "aiohttp~=3.13",
+    "requests~=2.32",
+    # Parsing & Data
+    "Babel==2.18.0",
+    "beautifulsoup4~=4.14",
+    "lxml~=6.0",
+    "langdetect~=1.0",
+    # Image
+    "Pillow~=12.1",
+    "imgkit~=1.2",
+    # Plotting (league heatmap, future visualizations)
+    "matplotlib~=3.10",
+    "seaborn~=0.13",
+    # Spaced Repetition
+    "fsrs~=6.3",
+    # Utilities
+    "aioboto3~=15.5",
+    "demoji~=1.1",
+    "yarl~=1.23",
+]
+
+[dependency-groups]
+dev = [
+    "ruff~=0.11",
+    "anti-slop-py==0.1.1",
+    "vulture~=2.11",
+    "pytest~=8.3",
+    "pytest-asyncio~=0.24",
+]

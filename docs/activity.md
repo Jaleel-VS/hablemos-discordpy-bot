@@ -370,10 +370,9 @@ tunnel to your local machine.
 
 ```bash
 # 1. Backend (FastAPI) — from activity/backend
-python3.12 -m venv .venv && . .venv/bin/activate
-pip install -r requirements.txt
+uv sync                          # own pyproject.toml + uv.lock, separate from the bot's
 cp ../.env.example .env          # fill in DISCORD_CLIENT_ID + DISCORD_CLIENT_SECRET
-uvicorn app.main:app --reload --port 8080
+uv run uvicorn app.main:app --reload --port 8080
 
 # 2. Frontend (Vite) — from activity/frontend, in another shell
 npm install

@@ -11,6 +11,8 @@ A map of the code. For conventions (style, patterns, what to avoid), see
 - **PostgreSQL via `asyncpg`** — one connection pool owned by the bot,
   accessed through the `Database` class at `self.bot.db`.
 - **AWS Lightsail** container services for hosting, `Dockerfile` for the container.
+- **uv** for dependencies (`pyproject.toml` + `uv.lock`). The bot, `activity/backend/`, and
+  `logforwarder/` each have their own lockfile because each builds from its own Docker context.
 - **Ruff** for linting (`ruff.toml`).
 
 ## Top-level layout

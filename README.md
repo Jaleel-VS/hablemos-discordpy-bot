@@ -172,15 +172,20 @@ INTRO_ALERT_CHANNEL_ID= # Intro alert channel ID (optional)
 
 ### Run Locally
 
+Dependencies are managed with [uv](https://docs.astral.sh/uv/). `pyproject.toml` declares them
+and `uv.lock` pins the exact versions the Docker image installs.
+
 ```bash
-pip install -r requirements.txt
-python hablemos.py
+uv sync                  # creates .venv with runtime + dev deps
+uv run python hablemos.py
 ```
+
+To add or bump a dependency, use `uv add <pkg>` (or `uv add --dev <pkg>`) and commit the updated
+`uv.lock`. The Docker build runs `uv sync --locked` and fails if the lockfile is stale.
 
 ### Dead Code Checks
 
 ```bash
-pip install -r requirements-dev.txt
 ./scripts/check_deadcode.sh
 ```
 
