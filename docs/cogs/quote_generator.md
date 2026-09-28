@@ -75,6 +75,13 @@ reactions.
     after `VIEW_TIMEOUT` seconds, and disables the button matching the
     current status so the active state is obvious.
 
+
+- **Native-language role colors.** In `$quotem` images, usernames use the
+  configured language-role color when the quoted member has a matching role:
+  Spanish native is green, other native is purple, and English native is blue.
+  Members without one of those roles keep the default neutral username color.
+  If multiple configured roles are present, Spanish native takes precedence,
+  followed by other native and then English native.
 ## Related
 
 - [`./general.md`](./general.md) — other utility commands.

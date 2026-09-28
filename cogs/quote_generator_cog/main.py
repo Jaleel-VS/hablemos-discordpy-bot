@@ -34,7 +34,15 @@ from cogs.quote_generator_cog.quote_generator_helper.image_creator_multi import 
 )
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
-from .config import FEATURE_KEY_EMOJI
+from .config import (
+    FEATURE_KEY_EMOJI,
+    ROLE_COLOR_ENGLISH_NATIVE,
+    ROLE_COLOR_OTHER_NATIVE,
+    ROLE_COLOR_SPANISH_NATIVE,
+    ROLE_ID_ENGLISH_NATIVE,
+    ROLE_ID_OTHER_NATIVE,
+    ROLE_ID_SPANISH_NATIVE,
+)
 from .emoji import (
     render_visual_length,
     replace_emoji_with_images,
@@ -192,6 +200,18 @@ class QuoteGenerator(BaseCog):
         )
         avatar = _get_img_url(author.display_avatar)
         return username, avatar, content
+
+    @staticmethod
+    def _quotem_username_color(member) -> tuple[int, int, int] | None:
+        """Return the configured native-language color for a member."""
+        role_ids = {role.id for role in getattr(member, 'roles', [])}
+        if ROLE_ID_SPANISH_NATIVE in role_ids:
+            return ROLE_COLOR_SPANISH_NATIVE
+        if ROLE_ID_OTHER_NATIVE in role_ids:
+            return ROLE_COLOR_OTHER_NATIVE
+        if ROLE_ID_ENGLISH_NATIVE in role_ids:
+            return ROLE_COLOR_ENGLISH_NATIVE
+        return None
 
     async def _fetch_message_safe(self, ctx, channel, message_id):
         """Fetch a message, sending an error embed on failure. Returns the message or None."""
@@ -414,7 +434,7 @@ class QuoteGenerator(BaseCog):
             return
 
         # Build message tuples.
-        messages: list[tuple[str, str, str]] = []
+        messages: list[tuple[str, str, str, tuple[int, int, int] | None]] = []
         total_length = 0
         for msg in collected:
             content = await _clean_message_content(
@@ -428,7 +448,8 @@ class QuoteGenerator(BaseCog):
                 break
             username = _get_safe_username(msg.author, ctx.guild)
             avatar = _get_img_url(msg.author.display_avatar)
-            messages.append((username, avatar, content))
+            username_color = self._quotem_username_color(msg.author)
+            messages.append((username, avatar, content, username_color))
 
         if not messages:
             await ctx.send(embed=red_embed("No quotable messages found."))

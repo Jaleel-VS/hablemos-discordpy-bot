@@ -246,7 +246,7 @@ def _wrap_content(
 
 
 def create_multi_image(
-    messages: list[tuple[str, str, str]],
+    messages: list[tuple[str, str, str, tuple[int, int, int] | None]],
     *,
     output_path: str | None = None,
 ) -> str:
@@ -255,14 +255,16 @@ def create_multi_image(
     Parameters
     ----------
     messages:
-        List of (username, avatar_url, content) tuples, oldest first.
+        List of (username, avatar_url, content, username_color) tuples,
+        oldest first. ``username_color`` is an RGB tuple or ``None`` for
+        the default neutral name color.
     output_path:
         Optional output file path. Defaults to ``picture_multi.png`` next
         to this module.
 
     Returns the output file path.
     """
-    total_length = sum(render_visual_length(c) for _, _, c in messages)
+    total_length = sum(render_visual_length(c) for _, _, c, _ in messages)
     body_px = _compute_font_size(total_length)
 
     name_font = _font(NAME_FONT_PX, bold=True)
@@ -291,8 +293,8 @@ def create_multi_image(
     emoji_cache: dict[str, Image.Image | None] = {}
 
     # Lay out every row first so we can compute the total height.
-    laid_out: list[tuple[str, str, list[list[_Segment]], int]] = []
-    for username, avatar_url, content in messages:
+    laid_out: list[tuple[str, str, list[list[_Segment]], int, tuple[int, int, int] | None]] = []
+    for username, avatar_url, content, username_color in messages:
         lines = _wrap_content(
             content, text_font, text_max_w, emoji_px, emoji_cache, measure,
         )
@@ -300,15 +302,15 @@ def create_multi_image(
             len(lines) * text_line_h + max(0, len(lines) - 1) * line_spacing
         )
         row_h = max(avatar_sz, name_h + name_gap + text_block_h)
-        laid_out.append((username, avatar_url, lines, row_h))
+        laid_out.append((username, avatar_url, lines, row_h, username_color))
 
-    total_h = pad_y * 2 + sum(h for *_, h in laid_out) + row_gap * max(0, len(laid_out) - 1)
+    total_h = pad_y * 2 + sum(row[3] for row in laid_out) + row_gap * max(0, len(laid_out) - 1)
 
     image = Image.new("RGB", (width, total_h), BG_COLOR)
     draw = ImageDraw.Draw(image, "RGBA")
 
     y = pad_y
-    for idx, (username, avatar_url, lines, row_h) in enumerate(laid_out):
+    for idx, (username, avatar_url, lines, row_h, username_color) in enumerate(laid_out):
         # Divider above every row except the first.
         if idx > 0:
             divider_y = y - row_gap // 2
@@ -322,7 +324,10 @@ def create_multi_image(
         image.paste(avatar, (pad_x, y), avatar)
 
         # Name line.
-        draw.text((text_x, y), username, fill=NAME_COLOR, font=name_font, anchor="la")
+        draw.text(
+            (text_x, y), username, fill=username_color or NAME_COLOR,
+            font=name_font, anchor="la",
+        )
 
         # Text lines.
         ty = y + name_h + name_gap
