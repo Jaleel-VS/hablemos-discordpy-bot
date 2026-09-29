@@ -38,9 +38,18 @@ CREATE TABLE IF NOT EXISTS game_results (
     payload      JSONB       NOT NULL,
     channel_id   BIGINT,
     guild_id     BIGINT,
+    user_name    TEXT        NOT NULL DEFAULT '',
     created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     posted_at    TIMESTAMPTZ
 );
+
+-- Tables created before the leaderboard shipped lack user_name.
+ALTER TABLE game_results ADD COLUMN IF NOT EXISTS user_name TEXT NOT NULL DEFAULT '';
+
+-- Per-server leaderboard: a guild's daily results for one game.
+CREATE INDEX IF NOT EXISTS game_results_guild_daily
+    ON game_results (game_key, guild_id, puzzle_no)
+    WHERE mode = 'daily' AND guild_id IS NOT NULL;
 
 -- One daily result per user per puzzle per game (freeplay rows have NULL
 -- puzzle_no and are not constrained). Enables idempotent daily submission.
@@ -111,6 +120,34 @@ def compute_streak(
 def distribution_key(*, won: bool, guesses_used: int | None) -> str:
     """Distribution bucket for a result: guess count for wins, else ``"X"``."""
     return str(guesses_used) if (won and guesses_used) else "X"
+
+
+def rank_daily(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Order one puzzle's daily results best-first and shape them for the UI.
+
+    Wins outrank losses. Among wins, a game that reports ``correct`` (the
+    sprint/round games) ranks more correct first; Wordle, which has no
+    ``correct``, ranks fewer guesses first. Ties go to the earlier finisher.
+    ``user_id`` is a string because Discord snowflakes exceed JS's safe integer.
+    """
+
+    def key(row: dict[str, Any]) -> tuple[int, int, Any]:
+        payload = row["payload"]
+        if "correct" in payload:
+            primary = -int(payload["correct"])
+        else:
+            primary = int(payload.get("guesses_used") or 0)
+        return (0 if row["won"] else 1, primary, row["created_at"])
+
+    return [
+        {
+            "rank": i,
+            "user_id": str(row["user_id"]),
+            "name": row["user_name"],
+            "score": row["payload"].get("score", ""),
+        }
+        for i, row in enumerate(sorted(rows, key=key), start=1)
+    ]
 
 
 class Database:
@@ -205,6 +242,7 @@ class Database:
         payload: dict[str, Any],
         channel_id: int | None,
         guild_id: int | None,
+        user_name: str = "",
     ) -> bool:
         """Insert a finished-game result.
 
@@ -222,15 +260,15 @@ class Database:
                 """
                 INSERT INTO game_results
                     (game_key, user_id, mode, won, puzzle_no, payload,
-                     channel_id, guild_id)
-                VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7, $8)
+                     channel_id, guild_id, user_name)
+                VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7, $8, $9)
                 ON CONFLICT (game_key, user_id, puzzle_no)
                     WHERE puzzle_no IS NOT NULL AND mode = 'daily'
                 DO NOTHING
                 RETURNING id
                 """,
                 game_key, user_id, mode, won, puzzle_no, json.dumps(payload),
-                channel_id, guild_id,
+                channel_id, guild_id, user_name,
             )
             inserted = row is not None
             if inserted and mode == "daily":
@@ -309,6 +347,40 @@ class Database:
         dist = data.get("distribution")
         data["distribution"] = json.loads(dist) if isinstance(dist, str) else (dist or {})
         return data
+
+    async def daily_leaderboard(
+        self, *, game_key: str, guild_id: int, limit: int = 10,
+    ) -> dict[str, Any]:
+        """Top daily results in a server for its most recent puzzle.
+
+        "Most recent" is the highest ``puzzle_no`` anyone in the guild has
+        finished, so a quiet day shows yesterday's board (labelled by number).
+        Returns ``{"puzzle_no": None, "entries": []}`` when the guild has none.
+        """
+        rows = await self._p().fetch(
+            """
+            SELECT user_id, user_name, won, payload, created_at, puzzle_no
+            FROM game_results
+            WHERE game_key = $1 AND guild_id = $2 AND mode = 'daily'
+              AND puzzle_no = (
+                  SELECT MAX(puzzle_no) FROM game_results
+                  WHERE game_key = $1 AND guild_id = $2 AND mode = 'daily'
+              )
+            """,
+            game_key, guild_id,
+        )
+        results = []
+        for r in rows:
+            data = dict(r)
+            payload = data["payload"]
+            data["payload"] = json.loads(payload) if isinstance(payload, str) else payload
+            results.append(data)
+        if not results:
+            return {"puzzle_no": None, "entries": []}
+        return {
+            "puzzle_no": results[0]["puzzle_no"],
+            "entries": rank_daily(results)[:limit],
+        }
 
     async def _bump_daily_stats(
         self,

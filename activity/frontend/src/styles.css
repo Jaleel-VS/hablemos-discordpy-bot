@@ -499,10 +499,10 @@ body {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: safe center; /* centre when it fits, scroll from the top when not */
   padding: 20px 20px 28px;
   gap: 20px;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .home-head {
@@ -522,6 +522,80 @@ body {
   color: var(--ink-dim);
   margin: 6px 0 0;
   font-size: 0.9rem;
+}
+
+/* server leaderboard, under the game rows */
+.board {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.board-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin: 0 0 10px;
+}
+
+.board-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.board-tab {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-dim);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.board-tab[aria-selected="true"] {
+  color: var(--ink);
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 18%, transparent);
+}
+
+.board-puzzle {
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+  margin: 0 0 6px;
+}
+
+.board-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: 2ch 1fr auto;
+  gap: 12px;
+  align-items: baseline;
+  padding: 7px 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.board-row.me {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.board-rank,
+.board-score {
+  font-variant-numeric: tabular-nums;
+}
+
+.board-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .home-list {

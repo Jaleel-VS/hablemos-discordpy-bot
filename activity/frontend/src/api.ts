@@ -196,6 +196,17 @@ export interface ClozeResponse {
   view: ClozeView;
 }
 
+// The server (guild) the Activity was launched in, set once after the SDK
+// handshake. Sent with every game start so finished results are attributed to
+// it for the server leaderboard. null in DMs.
+let guildId: string | null = null;
+
+export function setGuildId(id: string | null): void {
+  guildId = id;
+}
+
+const guildField = () => (guildId ? { guild_id: guildId } : {});
+
 async function post<T>(path: string, body: unknown): Promise<T> {
   const resp = await fetch(path, {
     method: "POST",
@@ -232,6 +243,7 @@ export function startGame(
   return post(`/.proxy/api/games/${gameKey}/start`, {
     access_token: accessToken,
     mode,
+    ...guildField(),
     ...(options ? { options } : {}),
   });
 }
@@ -246,6 +258,7 @@ export function startConjugation(
   return post(`/.proxy/api/games/conjugation/start`, {
     access_token: accessToken,
     mode,
+    ...guildField(),
     ...(options ? { options } : {}),
   });
 }
@@ -281,6 +294,25 @@ export function fetchStats(gameKey: string, accessToken: string): Promise<Stats>
   return post(`/.proxy/api/games/${gameKey}/stats`, { access_token: accessToken });
 }
 
+export interface LeaderboardEntry {
+  rank: number;
+  user_id: string; // string: snowflakes exceed Number.MAX_SAFE_INTEGER
+  name: string;
+  score: string;
+}
+
+export interface Leaderboard {
+  puzzle_no: number | null; // null when nobody in the server has played yet
+  entries: LeaderboardEntry[];
+}
+
+export function fetchLeaderboard(gameKey: string, accessToken: string): Promise<Leaderboard> {
+  return post(`/.proxy/api/games/${gameKey}/leaderboard`, {
+    access_token: accessToken,
+    ...guildField(),
+  });
+}
+
 // Cloze shares the generic start/guess endpoints but returns its own view
 // shape, so it gets typed wrappers (like conjugation).
 export function startCloze(
@@ -291,6 +323,7 @@ export function startCloze(
   return post(`/.proxy/api/games/cloze/start`, {
     access_token: accessToken,
     mode,
+    ...guildField(),
     ...(options ? { options } : {}),
   });
 }
@@ -386,6 +419,7 @@ export function startPhrasal(
   return post(`/.proxy/api/games/phrasal/start`, {
     access_token: accessToken,
     mode,
+    ...guildField(),
     ...(options ? { options } : {}),
   });
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { listGames, type GameInfo } from "./api";
+import { listGames, setGuildId, type GameInfo } from "./api";
 import { startSession, type Session } from "./discord";
 import Home from "./Home";
 import { GAME_REGISTRY } from "./games/registry";
@@ -21,6 +21,7 @@ export default function App() {
     Promise.all([startSession(), listGames()])
       .then(([session, { games }]) => {
         if (cancelled) return;
+        setGuildId(session.guildId);
         const playable = games.filter((g) => GAME_REGISTRY[g.key]);
         setStatus({ phase: "ready", session, games: playable });
         // Single game → open it straight away (no menu friction). This is what
@@ -86,7 +87,13 @@ export default function App() {
       {GameComponent && activeInfo ? (
         <GameComponent accessToken={session.accessToken} onExit={onExit} />
       ) : (
-        <Home games={games} onPick={setActive} />
+        <Home
+          games={games}
+          onPick={setActive}
+          accessToken={session.accessToken}
+          userId={session.user.id}
+          inGuild={session.guildId !== null}
+        />
       )}
     </main>
   );

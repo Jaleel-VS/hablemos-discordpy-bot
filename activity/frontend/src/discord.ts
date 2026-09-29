@@ -25,6 +25,7 @@ export interface Session {
   sdk: DiscordSDK;
   user: DiscordUser;
   accessToken: string;
+  guildId: string | null; // null when launched from a DM
 }
 
 async function postJson<T>(path: string, body: unknown): Promise<T> {
@@ -70,5 +71,5 @@ export async function startSession(): Promise<Session> {
     access_token,
   });
 
-  return { sdk, user, accessToken: access_token };
+  return { sdk, user, accessToken: access_token, guildId: sdk.guildId };
 }

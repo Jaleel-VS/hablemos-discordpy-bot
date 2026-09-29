@@ -1,10 +1,15 @@
 import type { CSSProperties } from "react";
 import type { GameInfo } from "./api";
 import { GAME_REGISTRY } from "./games/registry";
+import Leaderboard from "./Leaderboard";
 
 interface HomeProps {
   games: GameInfo[];
   onPick: (key: string) => void;
+  accessToken: string;
+  userId: string;
+  // The server leaderboard only exists inside a server (not in DMs).
+  inGuild: boolean;
 }
 
 // The hub. Lists every registered game as a full-bleed row the player taps to
@@ -12,7 +17,7 @@ interface HomeProps {
 // game is a wide row carrying its own accent hue and oversized glyph, stacked
 // with editorial rhythm. Only shown when 2+ games exist; a single game boots
 // straight in (see App.tsx).
-export default function Home({ games, onPick }: HomeProps) {
+export default function Home({ games, onPick, accessToken, userId, inGuild }: HomeProps) {
   const known = games.filter((g) => GAME_REGISTRY[g.key]);
   return (
     <div className="home">
@@ -45,6 +50,7 @@ export default function Home({ games, onPick }: HomeProps) {
           );
         })}
       </ul>
+      {inGuild && <Leaderboard games={known} accessToken={accessToken} userId={userId} />}
     </div>
   );
 }

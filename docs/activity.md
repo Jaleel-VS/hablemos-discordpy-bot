@@ -81,10 +81,12 @@ game touches only its own module:
 - `app/games/registry.py` — the one place that lists games. Add a game = add
   one line here.
 - `app/games/routes.py` — generic routes for **every** game:
-  `POST /api/games/{key}/start`, `/guess`, `/stats`, and `GET /api/games`.
+  `POST /api/games/{key}/start`, `/guess`, `/stats`, `/leaderboard`, and
+  `GET /api/games`.
   `start` accepts an optional untrusted `options` object for game-specific
   config (the conjugation game's verb set / tenses / pronouns); each engine
-  normalizes or ignores it.
+  normalizes or ignores it. It also accepts the launch server's `guild_id`
+  (see [Server leaderboard](#server-leaderboard)).
 - `app/games/wordle/` — the Wordle game (see below).
 - `app/games/conjugation/` — the conjugation sprint (see below).
 - `app/games/cloze/` — the fill-in-the-blank game (see below).
@@ -326,13 +328,39 @@ best match over all accepted forms wins.
   identical to the cloze game (per-item feedback and running counters withheld
   during daily play; disclosed only in the end recap).
 
+### Server leaderboard
+
+The hub shows a **Clasificación** panel (one tab per game) with the top 10
+results in the current server for the most recent daily puzzle anyone there has
+finished, labelled `Reto #N`. It is hidden when the Activity is launched from a
+DM (no `guildId`).
+
+- The SPA reads `sdk.guildId` and sends it as `guild_id` on every `start`. The
+  backend binds it, plus the player's display name (`global_name`, else
+  `username`, from the verified `users/@me`), into the **sealed state**
+  (`_gid`, `_uname`). When the game ends they are stored on the `game_results`
+  row (`guild_id`, `user_name`), so `/guess` needs no extra Discord call.
+- `POST /api/games/{key}/leaderboard` takes `{access_token, guild_id}` and
+  returns `{puzzle_no, entries: [{rank, user_id, name, score}]}`. `user_id` is a
+  string because snowflakes exceed JS's safe integer. No `guild_id`, or no
+  database, returns an empty board.
+- Ranking (`rank_daily` in `db.py`): wins before losses; then more `correct`
+  first for the round/sprint games, or fewer `guesses_used` first for Wordle;
+  ties go to the earlier finisher.
+- **Honor system.** `guild_id` is client-declared: the Activity requests only
+  the `identify` scope, so it cannot check guild membership. A player could
+  post to, or read, another server's board by sending its id.
+
 ### Persistence
 
 The Activity backend opens its **own asyncpg pool** to the same Postgres the
 bot uses (`DATABASE_URL`). Tables are game-agnostic, keyed by `game_key`:
 `game_results` (one row per finished game, `posted_at` NULL until the Phase 2
 bot posts it) and `game_stats` (per-user daily aggregates + streak +
-guess-distribution). The Activity creates these idempotently on boot. If
+guess-distribution). The Activity creates these idempotently on boot, and adds
+`game_results.user_name` (`ALTER TABLE … ADD COLUMN IF NOT EXISTS`) to tables
+created before the leaderboard. Rows finished before then have no guild or name
+and never appear on a board. If
 `DATABASE_URL` is unset the game still plays; stats just read as zeros.
 
 The daily-result insert and the streak/stats bump run in **one transaction**

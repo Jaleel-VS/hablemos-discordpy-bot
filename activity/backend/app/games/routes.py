@@ -4,6 +4,7 @@
     POST /api/games/{game_key}/guess   -> submit a guess, get updated view
     GET  /api/games                    -> list available games
     POST /api/games/{game_key}/stats   -> the caller's per-user daily stats
+    POST /api/games/{game_key}/leaderboard -> a server's top daily results
 
 Identity is verified against Discord (``users/@me``) once at ``/start`` and
 bound into the sealed state as ``_uid``. Because the seal is authenticated,
@@ -40,11 +41,16 @@ logger = logging.getLogger(__name__)
 _MAX_TOKEN = 512
 _MAX_SEALED = 8192
 _MAX_GUESS = 128
+_MAX_NAME = 32
+_MAX_SNOWFLAKE = 2**63 - 1  # Postgres BIGINT ceiling; Discord ids fit
 
 
 class StartRequest(BaseModel):
     access_token: str = Field(max_length=_MAX_TOKEN)
     mode: Mode = "daily"
+    # Server the Activity was launched in (SDK ``guildId``); None in DMs.
+    # Client-declared, so the leaderboard it feeds is honor-system.
+    guild_id: int | None = Field(default=None, ge=1, le=_MAX_SNOWFLAKE)
     # Optional, game-specific config (e.g. conjugation verb set / tenses).
     # Untrusted: each engine normalizes or ignores it.
     options: dict[str, Any] | None = None
@@ -63,6 +69,11 @@ class StatsRequest(BaseModel):
     access_token: str = Field(max_length=_MAX_TOKEN)
 
 
+class LeaderboardRequest(BaseModel):
+    access_token: str = Field(max_length=_MAX_TOKEN)
+    guild_id: int | None = Field(default=None, ge=1, le=_MAX_SNOWFLAKE)
+
+
 def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> APIRouter:
     """Create the games router.
 
@@ -73,7 +84,8 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
     """
     router = APIRouter(prefix="/api/games")
 
-    async def _verified_user_id(access_token: str) -> int:
+    async def _verified_identity(access_token: str) -> tuple[int, str]:
+        """Return the verified ``(user_id, display_name)`` for a token."""
         try:
             user = await fetch_user(access_token)
         except DiscordOAuthError as exc:
@@ -81,11 +93,16 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
                 status_code=401, detail="Identidad no verificada"
             ) from exc
         try:
-            return int(user["id"])
+            user_id = int(user["id"])
         except (KeyError, ValueError) as exc:
             raise HTTPException(
                 status_code=401, detail="Identidad no verificada"
             ) from exc
+        name = user.get("global_name") or user.get("username") or ""
+        return user_id, name[:_MAX_NAME]
+
+    async def _verified_user_id(access_token: str) -> int:
+        return (await _verified_identity(access_token))[0]
 
     def _engine_or_404(game_key: str):
         engine = get_engine(game_key)
@@ -117,7 +134,8 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
                 puzzle_no=result.get("puzzle_no"),
                 payload=result,
                 channel_id=discord_context.get("channel_id"),
-                guild_id=discord_context.get("guild_id"),
+                guild_id=state.get("_gid"),
+                user_name=state.get("_uname", ""),
             )
         except Exception:
             logger.exception("Failed to persist result for game=%s user=%s", game_key, user_id)
@@ -137,12 +155,17 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
         # subsequent guesses trust the id in the state instead of re-hitting
         # Discord's users/@me on every answer (which dominated per-guess
         # latency: ~100ms hop vs. <1ms of actual game work).
-        user_id = await _verified_user_id(body.access_token)
+        user_id, user_name = await _verified_identity(body.access_token)
         # Pass the verified id to the engine (per the GameEngine contract — a
         # game may seed per-user daily state on it) AND bind it into the sealed
         # state so subsequent guesses trust it without re-hitting Discord.
         outcome = engine.new_game(mode=body.mode, user_id=str(user_id), options=body.options)
         outcome.state["_uid"] = user_id
+        # Leaderboard attribution rides the same seal, so /guess can persist it
+        # without another Discord hop and the client can't edit it mid-game.
+        outcome.state["_uname"] = user_name
+        if body.guild_id is not None:
+            outcome.state["_gid"] = body.guild_id
         # Daily is a once-per-day fixed sequence: refuse a replay so a player
         # can't retry the same puzzle for a better score (or farm the honor
         # -system streak). Freeplay carries no puzzle_no and is never blocked.
@@ -205,5 +228,14 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
         if db is None:
             return {"games": 0, "wins": 0, "current_streak": 0, "max_streak": 0, "distribution": {}}
         return await db.get_stats(game_key=game_key, user_id=user_id)
+
+    @router.post("/{game_key}/leaderboard")
+    async def leaderboard(game_key: str, body: LeaderboardRequest) -> dict[str, Any]:
+        _engine_or_404(game_key)
+        await _verified_user_id(body.access_token)
+        db = get_db()
+        if db is None or body.guild_id is None:
+            return {"puzzle_no": None, "entries": []}
+        return await db.daily_leaderboard(game_key=game_key, guild_id=body.guild_id)
 
     return router
