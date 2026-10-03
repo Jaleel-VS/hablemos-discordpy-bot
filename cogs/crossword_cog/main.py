@@ -604,19 +604,24 @@ class CrosswordCog(BaseCog):
             type(channel).__name__, getattr(channel, "guild", "NO_ATTR"),
         )
 
-        if use_v2:
-            view, file = _build_v2_view(game)
-            if followup:
-                msg = await followup.send(view=view, file=file, wait=True)
+        try:
+            if use_v2:
+                view, file = _build_v2_view(game)
+                if followup:
+                    msg = await followup.send(view=view, file=file, wait=True)
+                else:
+                    msg = await channel.send(view=view, file=file)
             else:
-                msg = await channel.send(view=view, file=file)
-        else:
-            embed = game.build_embed()
-            img = game.render()
-            if followup:
-                msg = await followup.send(embed=embed, file=img, wait=True)
-            else:
-                msg = await channel.send(embed=embed, file=img)
+                embed = game.build_embed()
+                img = game.render()
+                if followup:
+                    msg = await followup.send(embed=embed, file=img, wait=True)
+                else:
+                    msg = await channel.send(embed=embed, file=img)
+        except (discord.Forbidden, discord.HTTPException):
+            self._remove_game(channel_id)
+            logger.exception("Failed to post crossword board in #%s", channel_id)
+            return "❌ Couldn't post the crossword. Try again!"
 
         game.message = msg
 

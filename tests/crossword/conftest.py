@@ -146,6 +146,7 @@ class FakeDB:
         self.bump_calls: list[int] = []
         self.clear_calls: list[int] = []
         self.persisted: list[dict] = []
+        self.saved_active: list[dict] = []
         self.pool = None  # not used by tests that bypass cog_load
 
     async def crossword_bump_solved(self, channel_id: int) -> None:
@@ -156,6 +157,9 @@ class FakeDB:
 
     async def crossword_persist_game_outcome(self, **kwargs: Any) -> None:
         self.persisted.append(kwargs)
+
+    async def crossword_save_active_game(self, **kwargs: Any) -> None:
+        self.saved_active.append(kwargs)
 
     async def crossword_get_all_active_games(self) -> list[dict]:
         return []

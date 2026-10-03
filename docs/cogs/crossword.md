@@ -135,7 +135,9 @@ game timeout — it's not persistent across restarts.
 
 - **One game per channel**: A second `$crossword` in the same channel is
   rejected with an error message. The first game must end (solved,
-  timeout, quit, reveal) before a new one can start.
+  timeout, quit, reveal) before a new one can start. If the initial
+  board send fails, the in-memory reservation is cleared so a retry is
+  not blocked by a ghost game.
 - **Multi-word answers**: The word pool includes some multi-word entries.
   These are filtered out during grid generation (see `_build_game`) to
   avoid placement failures. If you add new words, ensure single-token
