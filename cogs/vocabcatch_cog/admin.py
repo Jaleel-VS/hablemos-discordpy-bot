@@ -14,7 +14,8 @@ from discord.ext import commands
 from base_cog import BaseCog
 from cogs.utils.embeds import blue_embed, green_embed, red_embed
 
-from . import renderer
+from . import anniversary_renderer, renderer
+from .anniversary_words import TIER_RARITY, TIERS
 from .catch_logic import resolve_card
 from .config import (
     MODE_SHOW_ES,
@@ -38,7 +39,8 @@ class VocabCatchAdmin(BaseCog):
     @commands.is_owner()
     async def vocatchadmin(self, ctx: commands.Context) -> None:
         """Admin tools for the Vocab Catch minigame."""
-        await ctx.send("Usage: `$vocatchadmin <seed|spawn|addcard|preview|stats>`")
+        await ctx.send(
+            "Usage: `$vocatchadmin <seed|seedanniversary|spawn|addcard|preview|stats>`")
 
     @vocatchadmin.command(name="seed")
     @commands.is_owner()
@@ -55,6 +57,18 @@ class VocabCatchAdmin(BaseCog):
                 example_es=ex_es, example_en=ex_en, rarity=rarity)
         await ctx.send(embed=green_embed(f"Seeded {len(SEED_CARDS)} cards into the pool."))
         logger.info("vocatch: pool seeded with %s cards by %s", len(SEED_CARDS), ctx.author)
+
+    @vocatchadmin.command(name="seedanniversary")
+    @commands.is_owner()
+    async def seedanniversary(self, ctx: commands.Context) -> None:
+        """Add the 250-word anniversary bank; words already in the pool are skipped."""
+        cards = [
+            (*entry, TIER_RARITY[tier]) for tier, entries in TIERS.items() for entry in entries
+        ]
+        added = await self.bot.db.add_missing_cards(cards)
+        await ctx.send(embed=green_embed(
+            f"Added {added} anniversary card(s); {len(cards) - added} already in the pool."))
+        logger.info("vocatch: anniversary seed added %s cards by %s", added, ctx.author)
 
     @vocatchadmin.command(name="spawn")
     @commands.is_owner()
@@ -97,21 +111,34 @@ class VocabCatchAdmin(BaseCog):
 
     @vocatchadmin.command(name="preview")
     @commands.is_owner()
-    async def preview(self, ctx: commands.Context, card_id: int, mode: str = MODE_SHOW_ES) -> None:
-        """Render a card (revealed) in a given mode to preview the art.
+    async def preview(
+        self, ctx: commands.Context, card_id: int, mode: str = MODE_SHOW_ES,
+        style: str = "classic",
+    ) -> None:
+        """Render a card (revealed) in a given mode and style to preview the art.
 
         mode: `show_es` (default), `en_to_es`, or `es_to_en`.
+        style: `classic` (default), `sello` (anniversary stamp), or `tinta`
+        (anniversary ink card).
         """
+        if style not in ("classic", "sello", "tinta"):
+            await ctx.send(embed=red_embed("Style must be `classic`, `sello`, or `tinta`."))
+            return
         card = await self.bot.db.get_card(card_id)
         if card is None:
             await ctx.send(embed=red_embed(f"No card #{card_id}."))
             return
         view = resolve_card(card, mode)
-        # get_card returns a plain row dict carrying the Card fields; the
-        # renderer's view: dict param also can't take a CardView TypedDict
-        # directly, so cast both (identical at runtime).
-        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
-        buf = renderer.render_card(cast(Card, card), cast(dict, view), revealed=True)
+        # get_card returns a plain row dict carrying the renderer's card
+        # fields; cast to the TypedDicts (identical at runtime).
+        if style == "sello":
+            buf = anniversary_renderer.render_stamp(
+                cast(anniversary_renderer.AnniversaryCard, card), view, revealed=True)
+        elif style == "tinta":
+            buf = anniversary_renderer.render_ink(
+                cast(anniversary_renderer.AnniversaryCard, card), view, revealed=True)
+        else:
+            buf = renderer.render_card(cast(Card, card), cast(dict, view), revealed=True)
         await ctx.send(file=discord.File(buf, filename="preview.png"))
 
     @vocatchadmin.command(name="stats")

@@ -87,6 +87,38 @@ channel mode (`renderer.render_card(card, view, revealed=...)`, where
 Fonts are vendored under `cogs/vocabcatch_cog/fonts/` (Fraunces, Sora,
 Inter, Spectral Italic — all SIL OFL, with license files).
 
+### Anniversary designs (10 años, 2026-10-04 → 2026-11-03)
+
+`anniversary_renderer.py` adds two **typographic** designs — no
+illustrations, so nothing to license and no generated art. Pattern and
+colour are seeded from `card_id`, so a card always looks the same and no
+two cards match.
+
+- **Sello** (`render_stamp`, common tier): perforated postage stamp with
+  the `SPANISH · ENGLISH / LEARNING SERVER` header. The hero is the bare
+  word in Fraunces Black with its article in a pill, a syllable line
+  (stressed syllable in bold caps), and a guilloche rosette. Wild cards
+  show the answer hint; caught cards show the translation and a
+  `10 AÑOS` postmark with the catch date.
+- **Tinta** (`render_ink`, rare tier): ink tabletop card — the word's
+  initial as a hatched wood-type capital with a coral offset shadow, a
+  points tab, `ES → EN` direction chips, and the example on a black
+  panel. Wild cards show `ATRÁPALA · type the … word`.
+
+While wild, both designs print only the prompt-language example so the
+answer never leaks; caught cards print both. Syllables (`syllables.py`)
+use RAE rules (digraphs, silent `u` in `qu`/`gu`, hiatus vs diphthong,
+inseparable clusters) and are only drawn for single Spanish words.
+
+The word bank lives in `anniversary_words.py`: **250** bilingual cards,
+ranked within three tiers — básico (100, rarity 1), intermedio (90,
+rarity 3), avanzado (60, rarity 5). Each word has one dominant
+translation, no US/UK spelling splits, and a one-line example per
+language. Load it with `$vocatchadmin seedanniversary`.
+
+The designs are not wired into spawns yet; preview them with
+`$vocatchadmin preview <card_id> [mode] sello|tinta`.
+
 ## Commands
 
 ### User-facing
@@ -104,9 +136,10 @@ See [`../admin.md`](../admin.md#vocatchadmin-group-owner-only).
 | Subcommand | Description |
 |-----------|-------------|
 | `$vocatchadmin seed` | Seed the starter card pool (no-op if the pool already has cards). |
+| `$vocatchadmin seedanniversary` | Add the 250-word anniversary bank; words already in the pool (matched on `word_es`) are skipped, so it is safe to re-run. |
 | `$vocatchadmin spawn` | Force a spawn in the **current** channel (must be a configured game channel). |
 | `$vocatchadmin addcard <1-5> "<word_es>" <word_en>` | Add a bidirectional card to the pool. |
-| `$vocatchadmin preview <card_id> [mode]` | Render a card revealed in a mode (`show_es`/`en_to_es`/`es_to_en`) to preview the art. |
+| `$vocatchadmin preview <card_id> [mode] [style]` | Render a card revealed in a mode (`show_es`/`en_to_es`/`es_to_en`) and style (`classic`/`sello`/`tinta`) to preview the art. |
 | `$vocatchadmin stats` | Active card count + configured channels and their modes. |
 
 ## Database tables

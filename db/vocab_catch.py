@@ -145,6 +145,31 @@ class VocabCatchMixin(DatabaseMixin):
         )
         return row['card_id']
 
+    async def add_missing_cards(
+        self,
+        cards: list[tuple[str, str, str | None, str | None, str | None, str | None, int]],
+    ) -> int:
+        """Bulk-insert cards whose ``word_es`` isn't in the pool yet.
+
+        Each tuple is ``(word_es, word_en, part_of_speech, gender,
+        example_es, example_en, rarity)``. Existing words are left
+        untouched, so re-running is safe. Returns how many were inserted.
+        """
+        if not cards:
+            return 0
+        cols = list(zip(*cards, strict=True))
+        rows = await self._fetch(
+            'INSERT INTO vocab_card_pool '
+            '(word_es, word_en, part_of_speech, gender, example_es, example_en, rarity) '
+            'SELECT t.* FROM unnest($1::text[], $2::text[], $3::text[], $4::text[], '
+            '$5::text[], $6::text[], $7::smallint[]) '
+            'AS t(word_es, word_en, part_of_speech, gender, example_es, example_en, rarity) '
+            'WHERE NOT EXISTS (SELECT 1 FROM vocab_card_pool p WHERE p.word_es = t.word_es) '
+            'RETURNING card_id',
+            *[list(c) for c in cols],
+        )
+        return len(rows)
+
     async def count_pool_cards(self) -> int:
         """Number of active cards in the pool (for seeding/admin checks)."""
         n = await self._fetchval(

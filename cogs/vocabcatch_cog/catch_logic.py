@@ -58,6 +58,19 @@ def answer_matches(guess: str, answer: str, *, answer_lang: str = "es") -> bool:
     return False
 
 
+def split_article(word: str, lang: str) -> tuple[str, str]:
+    """Split a leading article: ``("la", "casa")``; ``("", word)`` if none.
+
+    Uses the article set for ``lang`` (``'es'`` or ``'en'``). Only splits
+    two-part entries so phrases like ``"the house of cards"`` stay whole.
+    """
+    parts = word.split(maxsplit=1)
+    articles = _EN_ARTICLES if lang == "en" else _ES_ARTICLES
+    if len(parts) == 2 and parts[0].casefold() in articles and " " not in parts[1]:
+        return parts[0], parts[1]
+    return "", word
+
+
 def resolve_card(card: dict, mode: str) -> CardView:
     """Resolve a bidirectional card into a one-directional view for ``mode``.
 
