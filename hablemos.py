@@ -56,6 +56,7 @@ class Hablemos(Bot):
         self.launch_time: datetime = datetime.now(UTC)
         self.online_channel = None
         self.error_channel = None
+        self._announced_online = False
         self.db = Database(settings.database_url)
         self.gemini: Gemini | None = None  # populated in setup_hook
 
@@ -129,10 +130,25 @@ class Hablemos(Bot):
 
         logger.info("BOT LOADED!")
 
-        if isinstance(self.online_channel, discord.TextChannel):
-            await self.online_channel.send("I'm online bra :smiling_imp:")
+        if (
+            not self._announced_online
+            and isinstance(self.online_channel, discord.abc.Messageable)
+        ):
+            try:
+                await self.online_channel.send("I'm online bra :smiling_imp:")
+            except (discord.Forbidden, discord.HTTPException):
+                logger.warning(
+                    "Failed to post online announcement to channel %s",
+                    self.settings.online_channel_id,
+                    exc_info=True,
+                )
+            else:
+                self._announced_online = True
 
-        await self.change_presence(activity=Game(f'{self.command_prefix}help'))
+        try:
+            await self.change_presence(activity=Game(f'{self.command_prefix}help'))
+        except discord.HTTPException:
+            logger.warning("Failed to set presence", exc_info=True)
 
     async def on_command_completion(self, ctx):
         logger.info("Command %s completed successfully by %s in %s.", ctx.command, ctx.author, ctx.guild)

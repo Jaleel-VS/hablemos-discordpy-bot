@@ -37,8 +37,9 @@ AGENTS.md            Agent contract (code style, patterns, git rules)
 - `setup_hook` connects the DB (with retry), loads all auto-discovered
   extensions, and skips anything in the "disabled cogs" set stored in
   the database.
-- `on_ready` resolves the configured online/error channels and posts an
-  "I'm online" message.
+- `on_ready` resolves the configured online/error channels, posts an
+  "I'm online" message once per process (reconnects skip the send),
+  and swallows Discord send/presence failures so readiness cannot crash.
 - `on_command_completion` / `on_app_command_completion` record usage to
   `command_metrics` for the metrics rollup.
 
