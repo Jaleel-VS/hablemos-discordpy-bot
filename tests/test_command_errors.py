@@ -128,3 +128,49 @@ async def test_error_handler_unexpected_error_replies_once() -> None:
 
     assert ctx.sent == ["An unexpected error occurred. Please try again later."]
     db.record_command.assert_awaited_once()
+
+
+async def test_command_not_found_without_match_still_replies() -> None:
+    db = SimpleNamespace(record_command=AsyncMock())
+    ping = SimpleNamespace(name="ping", hidden=False)
+    bot = SimpleNamespace(
+        db=db,
+        command_prefix="$",
+        settings=SimpleNamespace(league_guild_id=3),
+        commands=[ping],
+        error_channel=None,
+    )
+    handler = ErrorHandler(cast(Any, bot))
+    ctx = FakeContext()
+    ctx.invoked_with = "doesnotexist"
+    ctx.message = SimpleNamespace(content="$doesnotexist")
+    ctx.guild = SimpleNamespace(id=3, name="league")
+    ctx.author = SimpleNamespace(id=2)
+    ctx.channel = SimpleNamespace(id=1)
+
+    await handler.on_command_error(ctx, commands.CommandNotFound())
+
+    assert ctx.sent == ["Command not found. Use `$help` to see available commands."]
+
+
+async def test_command_not_found_with_match_suggests() -> None:
+    db = SimpleNamespace(record_command=AsyncMock())
+    ping = SimpleNamespace(name="ping", hidden=False)
+    bot = SimpleNamespace(
+        db=db,
+        command_prefix="$",
+        settings=SimpleNamespace(league_guild_id=3),
+        commands=[ping],
+        error_channel=None,
+    )
+    handler = ErrorHandler(cast(Any, bot))
+    ctx = FakeContext()
+    ctx.invoked_with = "png"
+    ctx.message = SimpleNamespace(content="$png")
+    ctx.guild = SimpleNamespace(id=3, name="league")
+    ctx.author = SimpleNamespace(id=2)
+    ctx.channel = SimpleNamespace(id=1)
+
+    await handler.on_command_error(ctx, commands.CommandNotFound())
+
+    assert ctx.sent == ["Command not found. Did you mean `$ping`?"]

@@ -59,9 +59,12 @@ class ErrorHandler(BaseCog):
                     if invoked is not None
                     else []
                 )
+                prefix = self.bot.command_prefix
                 if close:
-                    suggestions = ", ".join(f"`{self.bot.command_prefix}{c}`" for c in close)
+                    suggestions = ", ".join(f"`{prefix}{c}`" for c in close)
                     await ctx.send(f"Command not found. Did you mean {suggestions}?")
+                else:
+                    await ctx.send(f"Command not found. Use `{prefix}help` to see available commands.")
 
                 error_channel = self.bot.error_channel
                 if isinstance(error_channel, discord.TextChannel) and ctx.guild:
