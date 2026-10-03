@@ -77,12 +77,12 @@ class HangmanController(BaseCog):
                 logger.info("Starting new hangman game in channel %s with category '%s'", channel_id, category)
                 await self._start_new_game(ctx, channel_id, category)
                 logger.info("Hangman game successfully started in channel %s", channel_id)
-            except Exception as e:
+            except Exception:
                 # Ensure cleanup on any error
                 self.active_games.pop(channel_id, None)
-                logger.error("Failed to start hangman game in channel %s: %s", channel_id, e, exc_info=True)
+                logger.exception("Failed to start hangman game in channel %s", channel_id)
                 await ctx.send("❌ Failed to start game. Please try again later.")
-                raise
+                return
             # Successfully started; nothing else to send here
 
     async def _start_new_game(self, ctx, channel_id: int, category: str):

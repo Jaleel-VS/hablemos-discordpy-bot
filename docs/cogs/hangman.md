@@ -38,6 +38,8 @@ guess; the game auto-exits after 45 seconds of inactivity.
 - Cleanup is automatic on game end.
 - An unknown category resets the 30s channel cooldown so a typo can be
   retried immediately.
+- A failed start answers once and does not re-raise into the global
+  unexpected-error reply.
 
 
 ## Related
