@@ -34,3 +34,29 @@ async def test_failed_board_send_clears_active_game(seeded_random, monkeypatch) 
     assert err == "❌ Couldn't post the crossword. Try again!"
     assert channel.id not in cog._active
     assert bot.db.saved_active == []
+
+
+@pytest.mark.asyncio
+async def test_slash_dm_start_uses_classic_embed(seeded_random, monkeypatch) -> None:
+    channel = FakeChannel(id=100)
+    channel.guild = None
+    author = FakeAuthor(id=42, display_name="alice")
+    bot = FakeBot()
+    cog = CrosswordCog(bot)  # type: ignore[arg-type]
+    cog._words = list(CORPUS)
+    monkeypatch.setattr(
+        "cogs.crossword_cog.main._build_game",
+        lambda *_args, **_kwargs: build_game(),
+    )
+    monkeypatch.setattr(
+        "cogs.crossword_cog.main._build_v2_view",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("v2 in DM")),
+    )
+
+    err = await cog._start_game(
+        channel, channel.id, author, "beginner", "es", use_v2=True,
+    )
+
+    assert err is None
+    assert cog._active[channel.id].use_v2 is False
+    assert "embed" in channel.sent[0]

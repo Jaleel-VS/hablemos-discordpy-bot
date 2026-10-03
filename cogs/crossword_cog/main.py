@@ -605,7 +605,7 @@ class CrosswordCog(BaseCog):
         )
 
         try:
-            if use_v2:
+            if game.use_v2:
                 view, file = _build_v2_view(game)
                 if followup:
                     msg = await followup.send(view=view, file=file, wait=True)

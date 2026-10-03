@@ -159,6 +159,8 @@ game timeout — it's not persistent across restarts.
   if called from within the timeout watcher task. The timeout fallback
   sends a plain embed instead. See commits `6294726`, `a40efef`,
   `71e3bf5`, `6a01301` for the debugging history.
+- **Slash in DMs**: `/crossword` requests V2, but DMs have no
+  `channel.guild`, so the board is posted as a classic embed.
 
 ## Testing & debugging
 
