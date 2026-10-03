@@ -48,6 +48,8 @@ search volume data.
 - The `GameView` class provides "Higher" and "Lower" buttons.
 - If the player times out, the `on_timeout` callback posts the timeout
   result automatically.
+- If the opening `$hol` message cannot be posted, the in-memory
+  reservation is dropped so a retry is not blocked by a ghost game.
 
 ## Related
 

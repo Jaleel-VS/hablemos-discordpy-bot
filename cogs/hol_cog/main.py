@@ -210,7 +210,12 @@ class HigherOrLower(BaseCog):
         self._active[ctx.author.id] = game
 
         embed = _round_embed(game.known, game.known_vol, game.mystery, 0)
-        msg = await ctx.send(embed=embed, view=game)
+        try:
+            msg = await ctx.send(embed=embed, view=game)
+        except (discord.Forbidden, discord.HTTPException):
+            self._active.pop(ctx.author.id, None)
+            logger.exception("Failed to post HOL game for user %s", ctx.author.id)
+            return
         game.message = msg
 
 

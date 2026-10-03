@@ -3,11 +3,14 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 from typing import Any, cast
+from unittest.mock import AsyncMock
 
+import discord
 import pytest
 
+from cogs.hol_cog.config import HOL_CHANNEL_IDS
 from cogs.hol_cog.data import TERMS, pick_pair
-from cogs.hol_cog.main import GameView
+from cogs.hol_cog.main import GameView, HigherOrLower
 
 
 def test_pick_pair_excludes_seen_terms() -> None:
@@ -41,3 +44,23 @@ def test_chained_view_keeps_selected_round_not_a_fresh_pair() -> None:
     assert view.mystery == "WhatsApp"
     assert view.streak == 3
     assert view.seen is seen
+
+
+class _Forbidden(discord.Forbidden):
+    def __init__(self) -> None:
+        Exception.__init__(self, "forbidden")
+
+
+@pytest.mark.asyncio
+async def test_failed_hol_send_clears_active_game() -> None:
+    ctx = SimpleNamespace(
+        author=SimpleNamespace(id=7),
+        channel=SimpleNamespace(id=HOL_CHANNEL_IDS[0]),
+        send=AsyncMock(side_effect=_Forbidden()),
+    )
+    cog = HigherOrLower(cast(Any, SimpleNamespace()))
+    cog._active = {}
+
+    await HigherOrLower.hol.callback(cog, ctx)
+
+    assert 7 not in cog._active
