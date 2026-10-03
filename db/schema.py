@@ -22,7 +22,8 @@ async def initialize_schema(pool):
             CREATE TABLE IF NOT EXISTS introductions (
                 id SERIAL PRIMARY KEY,
                 user_id BIGINT NOT NULL,
-                posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                accepted BOOLEAN NOT NULL DEFAULT TRUE
             )
         ''')
 
@@ -42,6 +43,11 @@ async def initialize_schema(pool):
         await conn.execute('''
             CREATE INDEX IF NOT EXISTS idx_introductions_user_id
             ON introductions(user_id)
+        ''')
+
+        await conn.execute('''
+            ALTER TABLE introductions
+            ADD COLUMN IF NOT EXISTS accepted BOOLEAN NOT NULL DEFAULT TRUE
         ''')
 
         # Intro exempt users table

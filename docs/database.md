@@ -102,7 +102,9 @@ Adding a new domain:
   transaction.
 
 ### Introductions / Exchange
-- `introductions` — per-user intro post tracking.
+- `introductions` — per-user intro post tracking. `accepted` is true
+  for a kept introduction and false for a deleted duplicate. Cooldown
+  checks only accepted rows so a retry cannot reset the 90-day window.
 - `exchange_posts` — active exchange posts, one per user, with repost
   cooldown timestamps and stored post data.
 

@@ -38,19 +38,20 @@ for a traditional text-based introductions channel.
 
 On every message in a tracked channel:
 
-1. Check if user has posted in this channel before (within cooldown).
+1. Check if the user has an **accepted** introduction within the cooldown.
 2. If yes:
    - Post a **warning** in the warn channel (mod-only).
    - Post an **alert** in the alert channel (public reminder).
-   - Track the second (or third, etc.) intro in the DB.
+   - Record the duplicate as an unaccepted attempt (does **not**
+     extend the 90-day window).
 3. If no:
-   - Record the first intro timestamp.
+   - Record an accepted intro timestamp.
 
 ## Database tables
 
 | Table | Owns | Description |
 |-------|------|-------------|
-| `introductions` | `IntroductionsMixin` | User intro records (one row per channel per user). Columns: `user_id`, `channel_id`, `created_at`, `updated_at`. |
+| `introductions` | `IntroductionsMixin` | One row per intro *attempt*. `accepted` is true for a kept intro (starts the cooldown) and false for a deleted duplicate. |
 
 See [`../database.md`](../database.md) for query methods (in
 `IntroductionsMixin`).

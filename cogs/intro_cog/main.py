@@ -156,7 +156,7 @@ class IntroductionTracker(BaseCog):
             existing = await self.bot.db.check_user_introduction(message.author.id, INTRO_COOLDOWN_DAYS)
 
             if existing:
-                await self.bot.db.record_introduction(message.author.id)
+                await self.bot.db.record_introduction(message.author.id, accepted=False)
                 attempt_count = await self.bot.db.get_introduction_count(message.author.id)
                 await self._handle_duplicate_intro(message, attempt_count)
             else:

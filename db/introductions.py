@@ -8,11 +8,12 @@ logger = logging.getLogger(__name__)
 
 class IntroductionsMixin(DatabaseMixin):
     async def check_user_introduction(self, user_id: int, cooldown_days: int = 90) -> dict | None:
-        """Check if user has posted an introduction within the cooldown window."""
+        """Check if the user has an accepted introduction within the cooldown window."""
         row = await self._fetchrow('''
             SELECT id, user_id, posted_at
             FROM introductions
             WHERE user_id = $1
+            AND accepted
             AND posted_at > NOW() - make_interval(days => $2)
             ORDER BY posted_at DESC
             LIMIT 1
@@ -20,7 +21,7 @@ class IntroductionsMixin(DatabaseMixin):
         return dict(row) if row else None
 
     async def get_introduction_count(self, user_id: int) -> int:
-        """Get total number of introductions a user has posted."""
+        """Get total number of introduction attempts a user has posted."""
         count = await self._fetchval(
             'SELECT COUNT(*) FROM introductions WHERE user_id = $1', user_id,
         )
@@ -32,11 +33,13 @@ class IntroductionsMixin(DatabaseMixin):
             'DELETE FROM introductions WHERE user_id = $1', user_id,
         )
 
-    async def record_introduction(self, user_id: int) -> bool:
-        """Record a user's introduction attempt."""
+    async def record_introduction(self, user_id: int, *, accepted: bool = True) -> bool:
+        """Record an introduction. Only accepted rows start or extend the cooldown."""
         try:
             await self._execute(
-                'INSERT INTO introductions (user_id, posted_at) VALUES ($1, NOW())', user_id,
+                'INSERT INTO introductions (user_id, posted_at, accepted) VALUES ($1, NOW(), $2)',
+                user_id,
+                accepted,
             )
             return True
         except Exception as e:
