@@ -86,7 +86,7 @@ class ErrorHandler(BaseCog):
                 if isinstance(error, commands.CommandInvokeError) and isinstance(error.original, discord.Forbidden):
                     logger.debug("Forbidden error (likely blocked): %s", error.original)
                     return
-                logger.error("Unhandled error: %s in command %s", error, ctx.command)
+                logger.error("Unhandled error in command %s", ctx.command, exc_info=error)
                 await ctx.send("An unexpected error occurred. Please try again later.")
         except discord.HTTPException:
             pass

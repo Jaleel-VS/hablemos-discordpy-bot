@@ -32,9 +32,9 @@ to determine the main guild for command-not-found suggestions.
   Up to 3 suggestions are shown.
 - The cog checks `ctx.error_handled` to avoid double-handling if a
   cog-level or command-level handler already dealt with the error.
-- Unexpected invoke errors log server-side and send a generic
-  "try again later" reply. `discord.Forbidden` is dropped (user
-  likely blocked the bot).
+- Unexpected invoke errors log the traceback server-side and send a
+  generic "try again later" reply. `discord.Forbidden` is dropped
+  (user likely blocked the bot).
 
 ## Error channel
 
