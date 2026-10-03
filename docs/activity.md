@@ -113,7 +113,10 @@ opaque token and an answer-free `view`.
 - **Two-pass duplicate-safe scorer** (`scorer.py`) — greens claim letters
   first, then yellows from what remains.
 - **Daily** (deterministic by date, counts toward streaks, will post to a
-  channel) and **freeplay** (random, no streaks, no posting).
+  channel) and **freeplay** (random, no streaks, no posting). Switching to
+  Diario after today's daily is already finished keeps the current board and
+  toasts `Ya jugaste el reto diario de hoy.` instead of highlighting Diario
+  over a leftover Libre game.
 - The answer is authoritative on the server and never sent to the client until
   the game ends.
 - **Daily expires at date rollover.** A daily `submit` is rejected once the

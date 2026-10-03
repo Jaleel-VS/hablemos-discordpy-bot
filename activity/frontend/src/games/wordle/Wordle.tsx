@@ -36,12 +36,13 @@ export default function Wordle({ accessToken }: GameProps) {
     async (m: Mode) => {
       setBusy(true);
       setError(null);
-      setCurrent("");
-      setRevealRow(null);
       try {
         const resp = await startGame(GAME_KEY, accessToken, m);
         setSealed(resp.sealed_state);
         setView(resp.view);
+        setMode(m);
+        setCurrent("");
+        setRevealRow(null);
       } catch (e) {
         setError(e instanceof Error ? e.message : "No se pudo iniciar el juego");
       } finally {
@@ -52,11 +53,12 @@ export default function Wordle({ accessToken }: GameProps) {
   );
 
   useEffect(() => {
-    newGame(mode);
+    void newGame(mode);
     loadStats();
-    // Intentionally run on mode change only.
+    // Intentionally run on mount only. Later mode switches go through newGame
+    // so a failed start (e.g. daily already played) keeps the current board.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode]);
+  }, []);
 
   const triggerShake = useCallback(() => {
     setShake(true);
@@ -137,10 +139,20 @@ export default function Wordle({ accessToken }: GameProps) {
   return (
     <div className="wordle">
       <div className="mode-toggle">
-        <button className={mode === "daily" ? "active" : ""} onClick={() => setMode("daily")}>
-          Diario{view.puzzle_no ? ` #${view.puzzle_no}` : ""}
+        <button
+          className={mode === "daily" ? "active" : ""}
+          onClick={() => {
+            if (mode !== "daily") void newGame("daily");
+          }}
+        >
+          Diario{view.puzzle_no && view.mode === "daily" ? ` #${view.puzzle_no}` : ""}
         </button>
-        <button className={mode === "free" ? "active" : ""} onClick={() => setMode("free")}>
+        <button
+          className={mode === "free" ? "active" : ""}
+          onClick={() => {
+            if (mode !== "free") void newGame("free");
+          }}
+        >
           Libre
         </button>
       </div>
@@ -157,7 +169,7 @@ export default function Wordle({ accessToken }: GameProps) {
       {/* Zero-height anchor so the toast floats in the board/keyboard gap
           WITHOUT taking flow space (an in-flow message shrinks the board). */}
       <div className="toast-anchor">
-        {error && !over && (
+        {error && (
           <div className="toast" role="status" key={error}>
             {error}
           </div>
@@ -174,8 +186,8 @@ export default function Wordle({ accessToken }: GameProps) {
           )}
           <pre className="grid-share">{result.grid}</pre>
           <p className="muted">{result.summary}</p>
-          {mode === "free" && (
-            <button className="cta" onClick={() => newGame("free")}>
+          {view.mode === "free" && (
+            <button className="cta" onClick={() => void newGame("free")}>
               Jugar otra
             </button>
           )}
