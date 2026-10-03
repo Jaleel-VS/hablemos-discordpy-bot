@@ -71,11 +71,10 @@ class Hablemos(Bot):
                 break
             except Exception:
                 logger.warning("DB not ready, attempt %s/5", attempt + 1, exc_info=True)
-                if attempt < 4:
-                    await asyncio.sleep(2 ** attempt)
-        else:
-            logger.error("Database unavailable after 5 retries — aborting setup")
-            return
+                if attempt == 4:
+                    logger.error("Database unavailable after 5 attempts — aborting setup")
+                    raise
+                await asyncio.sleep(2 ** attempt)
 
         if self.settings.gemini_api_key:
             try:

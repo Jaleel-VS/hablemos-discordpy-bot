@@ -32,9 +32,13 @@ show errors or no "I'm online" message.
 
 1. **Database connection**: Check the logs for `asyncpg` connection
    errors (`python scripts/lightsail_logs.py --filter asyncpg`). The bot
-   retries DB connection 5 times with exponential
-   backoff (see `setup_hook` in `hablemos.py`). If all retries fail,
-   the bot exits.
+   makes up to 5 DB connection attempts with exponential backoff
+   (1, 2, 4, then 8 seconds; see `setup_hook` in `hablemos.py`). If all
+   attempts fail, the final database exception propagates and the process
+   exits nonzero before connecting to the Discord gateway or loading cogs.
+   Look for `Database unavailable after 5 attempts — aborting setup` and
+   the original database traceback; the bot must not appear online without
+   its commands.
    - Verify `DATABASE_URL` env var is set and correct.
    - Check the `hablemos-postgres` Lightsail database status. If the DB is
      restarting or unhealthy, wait for it to stabilize.
