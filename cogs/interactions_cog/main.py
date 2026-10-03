@@ -139,6 +139,7 @@ class InteractionsCog(BaseCog):
         try:
             td = parse_duration(duration)
         except ValueError as exc:
+            self.interactions.reset_cooldown(ctx)
             await ctx.send(str(exc))
             return
 
@@ -264,6 +265,7 @@ class InteractionsCog(BaseCog):
         try:
             td = parse_duration(duration)
         except ValueError as exc:
+            self.whotalks.reset_cooldown(ctx)
             await ctx.send(str(exc))
             return
 

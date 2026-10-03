@@ -94,3 +94,36 @@ async def test_deleted_referenced_message_is_ignored() -> None:
 
     assert result is None
     fetch.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_invalid_duration_resets_interactions_cooldown() -> None:
+    channel = object.__new__(discord.TextChannel)
+    ctx = SimpleNamespace(channel=channel, send=AsyncMock())
+    calls: list[str] = []
+    cog = SimpleNamespace(
+        interactions=SimpleNamespace(reset_cooldown=lambda _ctx: calls.append("reset")),
+    )
+
+    await InteractionsCog.interactions.callback(cog, ctx, channel=channel, duration="nonsense")
+
+    assert calls == ["reset"]
+    ctx.send.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_invalid_duration_resets_whotalks_cooldown() -> None:
+    ctx = SimpleNamespace(
+        guild=SimpleNamespace(id=1),
+        author=SimpleNamespace(id=2),
+        send=AsyncMock(),
+    )
+    calls: list[str] = []
+    cog = SimpleNamespace(
+        whotalks=SimpleNamespace(reset_cooldown=lambda _ctx: calls.append("reset")),
+    )
+
+    await InteractionsCog.whotalks.callback(cog, ctx, channel=None, duration="nonsense")
+
+    assert calls == ["reset"]
+    ctx.send.assert_awaited_once()

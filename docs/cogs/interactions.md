@@ -61,7 +61,8 @@ See [`../database.md`](../database.md) for query methods (in
 - The cog uses a `VisibilityView` (from `cogs/utils/visibility.py`) to
   let users toggle between public and ephemeral visibility for results.
 - Duration parsing supports human-friendly strings like `7d`, `1d12h`,
-  `30m` (see `cogs/utils/duration.py`).
+  `30m` (see `cogs/utils/duration.py`). A bad duration resets the
+  command cooldown so a typo does not lock the channel or user out.
 - The cog suppresses repeated DB errors to avoid log spam — if recording
   fails 3 times, further errors are muted until success.
 
