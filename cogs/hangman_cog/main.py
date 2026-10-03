@@ -63,6 +63,7 @@ class HangmanController(BaseCog):
         # Validate category
         if category not in CATEGORIES:
             logger.warning("Invalid category '%s' requested by %s (%s)", category, ctx.author, user_id)
+            self.hangman.reset_cooldown(ctx)
             available = ', '.join(f'`{cat}` ({count})' for cat, count in CATEGORIES.items())
             return await ctx.send(f"❌ Category not found!\n\n**Available categories:**\n{available}")
 

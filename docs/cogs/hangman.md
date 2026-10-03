@@ -36,6 +36,9 @@ guess; the game auto-exits after 45 seconds of inactivity.
 - The `on_message` listener checks every message in active game channels
   and delegates to the game instance.
 - Cleanup is automatic on game end.
+- An unknown category resets the 30s channel cooldown so a typo can be
+  retried immediately.
+
 
 ## Related
 
