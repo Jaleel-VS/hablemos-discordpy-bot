@@ -26,13 +26,19 @@ class BaseCog(Cog):
         self.bot = bot
 
     async def cog_command_error(self, ctx, error):
-        """Handle errors for commands in this cog"""
+        """Reply once for expected prefix-command failures.
+
+        discord.py always dispatches `on_command_error` after this method.
+        Setting ``ctx.error_handled`` is what stops ErrorHandler from
+        sending a second user-facing message.
+        """
         if getattr(ctx, 'error_handled', False):
             return
         if isinstance(error, CommandOnCooldown):
-            await ctx.send(f"⏱️ Command is on cooldown. Try again in {error.retry_after:.1f} seconds.")
+            await ctx.send(
+                f"⏱️ Command is on cooldown. Try again in {error.retry_after:.1f} seconds."
+            )
         elif isinstance(error, CheckFailure):
-            # Look for fail_msg metadata on the check predicate
             msg = None
             if ctx.command:
                 for check in ctx.command.checks:
@@ -41,9 +47,13 @@ class BaseCog(Cog):
                         break
             await ctx.send(msg or "You don't have permission to use this command.")
         elif isinstance(error, UserInputError):
-            usage = f"Usage: `{ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}`" if ctx.command else ""
-            await ctx.send(f"Invalid input: {error}\n{usage}")
+            usage = (
+                f"Usage: `{ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}`"
+                if ctx.command
+                else ""
+            )
+            await ctx.send(f"Invalid input: {error}\n{usage}".rstrip())
         else:
-            logger.error('An error occurred: %s in %s', error, ctx.channel)
-            raise error
+            # Unexpected: leave user reply + logging to ErrorHandler.
+            return
         ctx.__dict__["error_handled"] = True

@@ -157,9 +157,17 @@ LANCZOS-downsample on save.
 
 ## Error handling
 
-- `cogs/error_handler_cog/` posts command failures to a configured
-  error channel.
-- Cogs override `BaseCog.cog_command_error` for cog-level handling.
+- `BaseCog.cog_command_error` answers expected prefix-command failures
+  once: cooldown, check/permission failure (honors `fail_msg` on the
+  check), and user-input/usage errors. It sets `ctx.error_handled` so
+  the global listener does not send a second reply.
+- `cogs/error_handler_cog/` handles what BaseCog cannot: `CommandNotFound`
+  (fuzzy suggestions in the league guild, plus the error channel),
+  failed-command metrics, and unexpected invoke errors (log + generic
+  user reply). It skips any error already marked `error_handled`.
+- Do not override `cog_command_error` to re-state cooldown or
+  permission copy. Command-local `@command.error` is fine for
+  command-specific usage (see `nogif_cog`).
 - Interaction callbacks use a decorator (`handle_interaction_errors` in
   `league_cog/main.py` and similar) to wrap ephemeral failure embeds.
 - User-facing messages never leak raw exception strings; the traceback

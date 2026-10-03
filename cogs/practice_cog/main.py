@@ -559,16 +559,6 @@ class PracticeCog(BaseCog):
         except discord.InteractionResponded:
             await interaction.followup.send(view=view, ephemeral=True)
 
-    async def cog_command_error(self, ctx, error):
-        """Handle command errors"""
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.send("You need moderator permissions to use this command.")
-        elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(f"Command on cooldown. Try again in {error.retry_after:.1f}s.")
-        else:
-            logger.error("Unhandled error in practice cog: %s", error, exc_info=True)
-            await ctx.send("An error occurred. Please try again later.")
-
 async def setup(bot):
     """Required setup function for loading the cog"""
     if bot.gemini is None:

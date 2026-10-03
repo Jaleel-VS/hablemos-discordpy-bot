@@ -499,18 +499,6 @@ class ConversationCog(BaseCog):
 
         await ctx.send(embed=embed)
 
-    async def cog_command_error(self, ctx, error):
-        """Handle command errors"""
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.send("❌ You need moderator permissions (Manage Messages) to use this command.")
-        elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(f"⏱️ Command on cooldown. Try again in {error.retry_after:.1f} seconds.")
-        elif isinstance(error, commands.CheckFailure):
-            await ctx.send("❌ You don't have permission to use this command.")
-        else:
-            logger.error("Unhandled error in conversation cog: %s", error, exc_info=True)
-            await ctx.send("❌ An error occurred. Please try again later.")
-
 async def setup(bot: Hablemos):
     """Required setup function for loading the cog"""
     if bot.gemini is None:

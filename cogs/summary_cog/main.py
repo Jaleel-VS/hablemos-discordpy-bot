@@ -334,17 +334,6 @@ class SummaryCog(BaseCog):
         count = self.cache.clear()
         await ctx.send(f"Cache cleared. Removed {count} entries.")
 
-    async def cog_command_error(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.send("You need Manage Messages permission to use this.")
-        elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(f"Cooldown. Try again in {error.retry_after:.0f}s.")
-        elif isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send("Usage: `$sum <start_link> <end_link> [topic]`")
-        else:
-            await super().cog_command_error(ctx, error)
-
-
 async def setup(bot: Hablemos):
     if bot.gemini is None:
         logger.info("bot.gemini is None — SummaryCog will not load")

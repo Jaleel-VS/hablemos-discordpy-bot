@@ -1,23 +1,25 @@
 # Error Handler (`error_handler_cog`)
 
-Global command error handler with friendly user messages and fuzzy
-command suggestions.
+Global catch-all for prefix-command errors that `BaseCog` does not
+already answer.
 
 ## Overview
 
-This cog listens to `on_command_error` and provides consistent,
-user-friendly error messages for common failure modes:
+discord.py always runs `Cog.cog_command_error` first, then dispatches
+`on_command_error`. Split of responsibility:
 
-- **Command not found**: Suggests similar commands via fuzzy matching
-  (only in the main guild).
-- **Cooldown**: Tells the user how long to wait.
-- **Permission denied**: Shows a motivational quote + owner mention.
-- **User input error**: Delegated to cog-level handlers (typically
-  handled by `BaseCog.cog_command_error`).
-- **Other errors**: Logs server-side, sends generic "try again later"
-  message to user.
+- **`BaseCog.cog_command_error`**: cooldown, check/permission failure
+  (including `fail_msg` on the predicate), user-input/usage. Sets
+  `ctx.error_handled`.
+- **This cog**: `CommandNotFound` (fuzzy suggestions, only in the
+  league guild), failed-command metrics, unexpected invoke errors.
+  Skips anything already marked `error_handled`.
 
-All failed commands are recorded to `command_metrics` with `failed=TRUE`.
+User-facing copy for expected failures lives in one place (`base_cog.py`).
+Do not re-implement cooldown or permission replies in individual cogs.
+
+All failed commands that reach this listener are recorded to
+`command_metrics` with `failed=TRUE`.
 
 ## Configuration
 
@@ -30,10 +32,9 @@ to determine the main guild for command-not-found suggestions.
   Up to 3 suggestions are shown.
 - The cog checks `ctx.error_handled` to avoid double-handling if a
   cog-level or command-level handler already dealt with the error.
-- `discord.Forbidden` errors are silently dropped (user likely blocked
-  the bot).
-- Permission-denied quotes are randomly selected from a hardcoded list
-  of 30+ motivational quotes.
+- Unexpected invoke errors log server-side and send a generic
+  "try again later" reply. `discord.Forbidden` is dropped (user
+  likely blocked the bot).
 
 ## Error channel
 

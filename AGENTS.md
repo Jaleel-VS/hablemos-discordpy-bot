@@ -55,7 +55,7 @@ Always use `self.bot.db` (the shared `Database` instance). All queries go throug
 - Handle values that can be `None` Rust-esque — deal with the absence explicitly at the boundary (guard clause / early return / explicit default, like `unwrap_or`) instead of letting `None` propagate implicitly and fail later. Treat optionals like Rust's `Option`: handle the `None` case deliberately rather than assuming presence.
 - Always bounds-check string/list indexing in parsers — the bot must never crash on user input
 - Wrap Discord API calls (`fetch_message`, `get_channel`, etc.) in try/except with specific exceptions (`NotFound`, `Forbidden`, `HTTPException`)
-- Use `BaseCog.cog_command_error` for cog-level error handling; don't silently swallow exceptions
+- Expected prefix-command failures (cooldown, check/permission, usage) are answered once by `BaseCog.cog_command_error`, which sets `ctx.error_handled`. Don't override it to re-state that copy. Command-local `@command.error` is fine for command-specific usage. Unexpected errors fall through to `ErrorHandler`.
 - Never leak raw exception messages to users — show a friendly message and log the traceback server-side
 - On hot paths (e.g., `on_message` listeners), suppress repeated errors to avoid log flooding
 - When verifying discord.py behavior/API, check the installed package source in the local `.venv/` first (ground truth for the exact runtime version); only fall back to the discord.py docs online if no local `.venv/` is available
@@ -152,6 +152,7 @@ When you resolve a new failure mode, add it to the playbook.
 - Don't propagate `None` past its origin — normalize at the DB/parser/API boundary so callers get concrete values (see [Optionals & `None`](#optionals--none))
 - Don't `assert x is not None` to appease the type checker — restructure or handle the absence
 - Don't re-check a value for `None` after an early-return guard has already ruled it out
+- Don't override `BaseCog.cog_command_error` just to restate cooldown or permission copy — BaseCog already replies once
 
 ### Refactoring Safety
 - Before renaming or deleting any function, class, or constant, check all call sites with `lsp references` — a symbol used by another module will cause an `ImportError` at bot startup even if tests pass
