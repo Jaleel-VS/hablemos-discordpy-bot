@@ -53,10 +53,10 @@ See [`../database.md`](../database.md) for query methods (in
 - The cog uses `aioboto3` to fetch audio from S3 on demand (not cached
   locally).
 - One pending dictation per channel (enforced via `self._pending` dict).
-- The `on_message` listener checks every message in channels with
-  pending dictations and scores answers.
-- Timeout is handled via `asyncio` task that clears the pending state
-  after `ANSWER_TIMEOUT_SECONDS`.
+  The channel is reserved *before* defer/DB/S3 so two overlapping
+  `/dictation` invocations cannot both start.
+- The command waits for the starter's next message via
+  `bot.wait_for("message")` and times out after `ANSWER_TIMEOUT_SECONDS`.
 
 ## Related
 

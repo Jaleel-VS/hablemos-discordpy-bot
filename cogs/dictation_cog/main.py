@@ -78,20 +78,28 @@ class DictationCog(BaseCog):
             )
             return
 
-        await interaction.response.defer()
+        # Reserve immediately so a second /dictation cannot sneak in during
+        # defer / DB / S3. Placeholder is replaced once the sentence is known.
+        self._pending[channel_id] = (0, "", user_id)
+        try:
+            await interaction.response.defer()
 
-        sentence = await self.bot.db.get_random_dictation(
-            language.value, level.value, user_id,
-        )
-        if not sentence:
-            await interaction.followup.send("❌ No sentences available for that combination.")
-            return
+            sentence = await self.bot.db.get_random_dictation(
+                language.value, level.value, user_id,
+            )
+            if not sentence:
+                self._pending.pop(channel_id, None)
+                await interaction.followup.send("❌ No sentences available for that combination.")
+                return
 
-        # Fetch audio from S3
-        audio_bytes = await self._fetch_audio(sentence["audio_url"])
-        if not audio_bytes:
-            await interaction.followup.send("❌ Could not load audio file. Try again later.")
-            return
+            audio_bytes = await self._fetch_audio(sentence["audio_url"])
+            if not audio_bytes:
+                self._pending.pop(channel_id, None)
+                await interaction.followup.send("❌ Could not load audio file. Try again later.")
+                return
+        except Exception:
+            self._pending.pop(channel_id, None)
+            raise
 
         self._pending[channel_id] = (sentence["id"], sentence["sentence"], user_id)
 
