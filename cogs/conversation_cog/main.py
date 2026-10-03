@@ -102,15 +102,14 @@ class ConversationCog(BaseCog):
             level = params['level']
             category = params['category']
 
-            # Check daily limit (2 per day) - moderators are exempt.
+            # Reserve a daily slot (2 per day) - moderators are exempt.
             # In DMs, ctx.author is a User (no guild_permissions), so default to False.
             guild_perms = getattr(ctx.author, 'guild_permissions', None)
             is_moderator = bool(guild_perms and guild_perms.manage_messages)
+            daily_limit = 2
             if not is_moderator:
-                daily_limit = 2
-                usage = await self.bot.db.check_daily_limit(ctx.author.id, daily_limit)
-
-                if usage >= daily_limit:
+                reserved = await self.bot.db.try_reserve_daily_usage(ctx.author.id, daily_limit)
+                if not reserved:
                     embed = discord.Embed(
                         title="⏱️ Daily Limit Reached",
                         description=(
@@ -146,6 +145,8 @@ class ConversationCog(BaseCog):
                 )
 
                 if not success:
+                    if not is_moderator:
+                        await self.bot.db.refund_daily_usage(ctx.author.id)
                     embed.title = "❌ Generation Failed"
                     embed.description = "Failed to generate conversations. Please try again later."
                     embed.color = 0xED4245
@@ -160,6 +161,8 @@ class ConversationCog(BaseCog):
                 await loading_msg.delete()
 
                 if not conversation:
+                    if not is_moderator:
+                        await self.bot.db.refund_daily_usage(ctx.author.id)
                     await ctx.send("❌ Error retrieving conversation after generation.")
                     return
 
@@ -178,18 +181,12 @@ class ConversationCog(BaseCog):
                 self._background_tasks.add(task)
                 task.add_done_callback(self._background_tasks.discard)
 
-            # Display conversation
-            # Calculate remaining uses for display (only for non-moderators)
             remaining_after = None
             if not is_moderator:
-                remaining_after = await self.bot.db.get_daily_usage_remaining(ctx.author.id, daily_limit) - 1
+                remaining_after = await self.bot.db.get_daily_usage_remaining(ctx.author.id, daily_limit)
 
             embed = self.format_conversation_embed(conversation, remaining_uses=remaining_after)
             await ctx.send(embed=embed)
-
-            # Increment daily usage count (only for non-moderators)
-            if not is_moderator:
-                await self.bot.db.increment_daily_usage(ctx.author.id)
 
     async def generate_conversations_batch(self, language: str, level: str,
                                           category: str, count: int = 10) -> int:

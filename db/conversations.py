@@ -71,7 +71,7 @@ class ConversationsMixin(DatabaseMixin):
         return int(result.split()[-1]) if result and result.split() else 0
 
     async def check_daily_limit(self, user_id: int, limit: int = 2) -> int:
-        """Check how many conversations a user has requested today"""
+        """Check how many conversations a user has requested today."""
         row = await self._fetchrow('''
             SELECT conversation_count
             FROM user_conversation_limits
@@ -79,21 +79,37 @@ class ConversationsMixin(DatabaseMixin):
         ''', user_id)
         return row['conversation_count'] if row else 0
 
-    async def increment_daily_usage(self, user_id: int) -> None:
-        """Increment a user's daily conversation count"""
-        await self._execute('''
+    async def try_reserve_daily_usage(self, user_id: int, limit: int = 2) -> bool:
+        """Atomically consume one daily slot. False if the user is already at the limit."""
+        reserved = await self._fetchval('''
             INSERT INTO user_conversation_limits (user_id, date, conversation_count)
             VALUES ($1, CURRENT_DATE, 1)
             ON CONFLICT (user_id) DO UPDATE
             SET conversation_count = CASE
-                WHEN user_conversation_limits.date = CURRENT_DATE
-                THEN user_conversation_limits.conversation_count + 1
-                ELSE 1 END,
+                    WHEN user_conversation_limits.date = CURRENT_DATE
+                    THEN user_conversation_limits.conversation_count + 1
+                    ELSE 1
+                END,
                 date = CURRENT_DATE
+            WHERE user_conversation_limits.date <> CURRENT_DATE
+               OR user_conversation_limits.conversation_count < $2
+            RETURNING conversation_count
+        ''', user_id, limit)
+        return reserved is not None
+
+    async def refund_daily_usage(self, user_id: int) -> None:
+        """Give back one reserved slot from today, if any remain."""
+        await self._execute('''
+            UPDATE user_conversation_limits
+            SET conversation_count = conversation_count - 1
+            WHERE user_id = $1
+              AND date = CURRENT_DATE
+              AND conversation_count > 0
         ''', user_id)
 
+
     async def get_daily_usage_remaining(self, user_id: int, limit: int = 2) -> int:
-        """Get how many conversations a user has remaining today"""
+        """Get how many conversations a user has remaining today."""
         used = await self.check_daily_limit(user_id, limit)
         return max(0, limit - used)
 

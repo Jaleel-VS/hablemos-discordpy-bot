@@ -115,7 +115,7 @@ See [`cogs/conversation.md`](./cogs/conversation.md) for the full feature.
 
 | Command | Description |
 |---------|-------------|
-| `$conversation <category> [level] [language] [length]` / `$convo` | Generate an AI conversation for practice. Categories: `general`, `travel`, `food`, etc. Levels: `beginner`, `intermediate`, `advanced`. |
+| `$conversation <category> [level] [language] [length]` / `$convo` | Generate an AI conversation for practice. Categories: `general`, `travel`, `food`, etc. Levels: `beginner`, `intermediate`, `advanced`. Non-moderators: 2 per day. |
 
 ## Conversation Starter
 

@@ -43,6 +43,9 @@ vocabulary building.
 - Conversations are generated on-demand (not cached).
 - Background tasks are tracked in ``self._background_tasks`` to allow
   cleanup on cog unload.
+- Non-moderators get **2 conversations per UTC day**. The slot is
+  reserved atomically before generation, so two overlapping `$convo`
+  invocations cannot both slip through.
 - Per-iteration ``GeminiError`` handling in ``generate_conversations_batch``
   keeps batch semantics: a transient failure on one scenario logs a
   warning and the iteration is counted as a failure; the loop
