@@ -184,6 +184,15 @@ See [`cogs/hol.md`](./cogs/hol.md) for the full feature.
 |---------|-------------|
 | `$hol` / `$higherloower` | Guess which search term is more popular. Interactive button game. |
 
+## Tomatoes
+
+See [`cogs/tomatoes.md`](./cogs/tomatoes.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `$tomato [@user]` / `$tomatoes` | Throw a still tomato image at a mentioned user, or reply to their message. |
+| `$tomato2 [@user]` / `$t2` | Animated GIF version of the same throw. |
+
 ## Practice
 
 See [`cogs/practice.md`](./cogs/practice.md) for the full feature.

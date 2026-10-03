@@ -19,6 +19,17 @@ from cogs.utils.embeds import red_embed
 
 logger = logging.getLogger(__name__)
 
+def _target_user(ctx: Context):
+    """Mention in the command text, else the replied-to author."""
+    for user in ctx.message.mentions:
+        if user.mention in ctx.message.content:
+            return user
+    resolved = ctx.message.reference.resolved if ctx.message.reference else None
+    if isinstance(resolved, Message):
+        return resolved.author
+    return None
+
+
 class TomatoesCog(BaseCog):
     """Throw tomatoes at people."""
 
@@ -36,20 +47,7 @@ class TomatoesCog(BaseCog):
         output_path = None
 
         try:
-            user = None
-            provided_mentions = list(filter(
-                lambda user: user.mention in ctx.message.content,
-                ctx.message.mentions
-            ))
-
-            if len(provided_mentions) > 0:
-                user = provided_mentions[0]
-            elif ctx.message.reference is not None:
-                resolved_message = ctx.message.reference.resolved
-
-                if isinstance(resolved_message, Message):
-                    user = resolved_message.author
-
+            user = _target_user(ctx)
             if user is None:
                 await ctx.send(embed=red_embed("Please type `$help tomato` for info on correct usage."))
                 return
@@ -96,15 +94,7 @@ class TomatoesCog(BaseCog):
         Or reply to a message with `$tomato2`
         """
         try:
-            user = None
-
-            if len(ctx.message.mentions) > 0:
-                user = ctx.message.mentions[0]
-            elif ctx.message.reference is not None:
-                resolved_message = ctx.message.reference.resolved
-                if isinstance(resolved_message, Message):
-                    user = resolved_message.author
-
+            user = _target_user(ctx)
             if user is None:
                 await ctx.send(embed=red_embed("Mention someone or reply to a message! `$t2 @user`"))
                 return

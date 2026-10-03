@@ -9,11 +9,12 @@ initializes `output_path = None` up front; this test pins that behavior.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from types import SimpleNamespace
 from typing import Any, cast
 
 import pytest
 
-from cogs.tomatoes_cog.main import TomatoesCog
+from cogs.tomatoes_cog.main import TomatoesCog, _target_user
 
 
 @dataclass
@@ -53,3 +54,19 @@ async def test_tomato_no_user_does_not_raise_unbound_output_path() -> None:
     await callback(cog, ctx)
 
     assert ctx.sent, "should send a usage hint when no user is supplied"
+
+
+def test_target_user_prefers_mention_in_command_text() -> None:
+    mentioned = SimpleNamespace(mention="<@1>", id=1)
+    reply_author = SimpleNamespace(mention="<@2>", id=2)
+    ctx = SimpleNamespace(
+        message=SimpleNamespace(
+            content="$tomato <@1>",
+            mentions=[mentioned],
+            reference=SimpleNamespace(
+                resolved=SimpleNamespace(author=reply_author),
+            ),
+        ),
+    )
+    assert _target_user(ctx) is mentioned
+

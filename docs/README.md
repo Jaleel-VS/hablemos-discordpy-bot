@@ -54,6 +54,7 @@ change. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules.
 - [Summary (`summary_cog`)](./cogs/summary.md)
 - [Tasks (`tasks_cog`)](./cogs/tasks.md)
 - [Tickets (`tickets_cog`)](./cogs/tickets.md)
+- [Tomatoes (`tomatoes_cog`)](./cogs/tomatoes.md)
 - [Vocab (`vocab_cog`)](./cogs/vocab.md)
 - [Website Manager (`website_manager_cog`)](./cogs/website_manager.md)
 - [Activity launchers (`wordle_cog` / `conjuga_cog`)](./cogs/wordle.md)
