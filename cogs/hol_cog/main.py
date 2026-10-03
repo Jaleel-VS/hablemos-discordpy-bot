@@ -65,21 +65,41 @@ def _result_embed(
 class GameView(ui.View):
     """Interactive Higher-or-Lower buttons."""
 
-    def __init__(self, cog: HigherOrLower, player: discord.Member | discord.User):
+    def __init__(
+        self,
+        cog: HigherOrLower,
+        player: discord.Member | discord.User,
+        *,
+        known: str,
+        known_vol: int,
+        mystery: str,
+        mystery_vol: int,
+        streak: int = 0,
+        seen: set[str] | None = None,
+    ):
         super().__init__(timeout=TIMEOUT)
         self.cog = cog
         self.player = player
-        self.streak = 0
-        self.seen: set[str] = set()
+        self.streak = streak
+        self.seen = seen if seen is not None else {known, mystery}
         self.message: discord.Message | None = None
         self.game_over = False
-
-        known, known_vol, mystery, mystery_vol = pick_pair()
         self.known = known
         self.known_vol = known_vol
         self.mystery = mystery
         self.mystery_vol = mystery_vol
-        self.seen.update({known, mystery})
+
+    @classmethod
+    def new_game(cls, cog: HigherOrLower, player: discord.Member | discord.User) -> GameView:
+        known, known_vol, mystery, mystery_vol = pick_pair()
+        return cls(
+            cog,
+            player,
+            known=known,
+            known_vol=known_vol,
+            mystery=mystery,
+            mystery_vol=mystery_vol,
+        )
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.player.id:
@@ -116,14 +136,16 @@ class GameView(ui.View):
 
             self.seen.add(self.mystery)
 
-            # Send next round as a new message with fresh buttons
-            new_view = GameView(self.cog, self.player)
-            new_view.streak = self.streak
-            new_view.seen = self.seen
-            new_view.known = self.known
-            new_view.known_vol = self.known_vol
-            new_view.mystery = self.mystery
-            new_view.mystery_vol = self.mystery_vol
+            new_view = GameView(
+                self.cog,
+                self.player,
+                known=self.known,
+                known_vol=self.known_vol,
+                mystery=self.mystery,
+                mystery_vol=self.mystery_vol,
+                streak=self.streak,
+                seen=self.seen,
+            )
 
             embed = _round_embed(self.known, self.known_vol, self.mystery, self.streak)
             msg = await interaction.followup.send(embed=embed, view=new_view, wait=True)
@@ -184,7 +206,7 @@ class HigherOrLower(BaseCog):
             await ctx.send("You already have an active game! Finish it first.")
             return
 
-        game = GameView(self, ctx.author)
+        game = GameView.new_game(self, ctx.author)
         self._active[ctx.author.id] = game
 
         embed = _round_embed(game.known, game.known_vol, game.mystery, 0)

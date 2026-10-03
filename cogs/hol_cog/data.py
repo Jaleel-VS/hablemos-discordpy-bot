@@ -94,7 +94,10 @@ def pick_pair(exclude: set[str] | None = None) -> tuple[str, int, str, int]:
     """Pick two distinct terms, avoiding any in *exclude*.
 
     Returns (known_term, known_volume, mystery_term, mystery_volume).
+    Raises ValueError if fewer than two unused terms remain.
     """
-    pool = [t for t in TERMS if not exclude or t[0] not in exclude]
+    pool = [t for t in TERMS if exclude is None or t[0] not in exclude]
+    if len(pool) < 2:
+        raise ValueError("not enough unused terms")
     a, b = random.sample(pool, 2)
     return a[0], a[1], b[0], b[1]

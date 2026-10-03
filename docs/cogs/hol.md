@@ -42,8 +42,10 @@ search volume data.
 
 - The `pick_pair()` function (in `data.py`) picks two terms from the
   pool. Avoids duplicates within a session via `self.seen`.
-- The `GameView` class provides "Higher" and "Lower" buttons (and a
-  "Continue" button between rounds).
+- `GameView.new_game` samples the opening pair. A correct guess
+  constructs the next view with the already-chosen terms so chaining
+  does not throw away a second `pick_pair()` sample.
+- The `GameView` class provides "Higher" and "Lower" buttons.
 - If the player times out, the `on_timeout` callback posts the timeout
   result automatically.
 
