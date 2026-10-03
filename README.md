@@ -239,7 +239,7 @@ Cogs are auto-discovered at startup. Database access is via `self.bot.db` (async
 - [x] Align cog error handling so failures log once and user feedback is consistent
 - [x] Harden on_ready channel/guild fetch handling with safe fallbacks
 - [x] Prefer asyncio.get_running_loop() over get_event_loop() in async code
-- [ ] Guard against double-including boundary messages in summaries
+- [x] Guard against double-including boundary messages in summaries
 
 ---
 

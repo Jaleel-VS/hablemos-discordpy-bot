@@ -14,7 +14,7 @@ from base_cog import COLORS, BaseCog
 from cogs.utils.gemini import GeminiError
 
 from .cache import SummaryCache
-from .message_parser import parse_message_link
+from .message_parser import collect_range_messages, parse_message_link
 from .prompts import (
     FOCUSED_SUMMARY_PROMPT,
     SUGGEST_TOPICS_PROMPT,
@@ -108,34 +108,23 @@ class SummaryCog(BaseCog):
                 await processing.edit(content="I don't have permission to access that channel.")
                 return
 
-            # Fetch messages in the range (inclusive of start, up to end)
-            messages = []
-            async for msg in channel.history(
-                limit=MAX_MESSAGES,
-                after=start_msg,
-                before=end_msg,
-                oldest_first=True,
-            ):
-                if not msg.author.bot and msg.content.strip():
-                    messages.append({
-                        'author': msg.author.display_name,
-                        'content': msg.content,
-                        'timestamp': msg.created_at,
-                        'link': f"https://discord.com/channels/{ctx.guild.id}/{start_channel}/{msg.id}",
-                    })
-
-            # Include start and end messages themselves if they're from users
-            for boundary_msg in (start_msg, end_msg):
-                if not boundary_msg.author.bot and boundary_msg.content.strip():
-                    messages.append({
-                        'author': boundary_msg.author.display_name,
-                        'content': boundary_msg.content,
-                        'timestamp': boundary_msg.created_at,
-                        'link': f"https://discord.com/channels/{ctx.guild.id}/{start_channel}/{boundary_msg.id}",
-                    })
-
-            # Sort by timestamp (boundary messages were appended at the end)
-            messages.sort(key=lambda m: m['timestamp'])
+            history = [
+                msg
+                async for msg in channel.history(
+                    limit=MAX_MESSAGES,
+                    after=start_msg,
+                    before=end_msg,
+                    oldest_first=True,
+                )
+            ]
+            messages = collect_range_messages(
+                history,
+                start_msg,
+                end_msg,
+                include_link=True,
+                guild_id=ctx.guild.id,
+                channel_id=start_channel,
+            )
 
             if not messages:
                 await processing.edit(content="No user messages found in that range.")
@@ -254,29 +243,16 @@ class SummaryCog(BaseCog):
                 await processing.edit(content="I don't have permission to access that channel.")
                 return
 
-            messages = []
-            async for msg in channel.history(
-                limit=MAX_MESSAGES,
-                after=start_msg,
-                before=end_msg,
-                oldest_first=True,
-            ):
-                if not msg.author.bot and msg.content.strip():
-                    messages.append({
-                        'author': msg.author.display_name,
-                        'content': msg.content,
-                        'timestamp': msg.created_at,
-                    })
-
-            for boundary_msg in (start_msg, end_msg):
-                if not boundary_msg.author.bot and boundary_msg.content.strip():
-                    messages.append({
-                        'author': boundary_msg.author.display_name,
-                        'content': boundary_msg.content,
-                        'timestamp': boundary_msg.created_at,
-                    })
-
-            messages.sort(key=lambda m: m['timestamp'])
+            history = [
+                msg
+                async for msg in channel.history(
+                    limit=MAX_MESSAGES,
+                    after=start_msg,
+                    before=end_msg,
+                    oldest_first=True,
+                )
+            ]
+            messages = collect_range_messages(history, start_msg, end_msg)
 
             if not messages:
                 await processing.edit(content="No user messages found in that range.")

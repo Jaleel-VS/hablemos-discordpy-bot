@@ -41,6 +41,9 @@ caches results to avoid re-processing the same range.
   (already formatted: 404 names the env var, 429 says "try again in a
   minute", etc.).
 - Message parsing is in ``message_parser.py`` (``parse_message_link``).
+  Inclusive range collection is ``collect_range_messages``: history is
+  exclusive of the two links, so boundaries are added by id and a
+  one-message range is never duplicated.
 - Summaries are cached in ``SummaryCache`` (``cache.py``) with a 1-hour
   TTL. The cache key includes the topic suffix so overview and
   focused summaries don't collide.
