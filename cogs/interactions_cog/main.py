@@ -47,6 +47,43 @@ class InteractionsCog(BaseCog):
             elif self._interaction_errors == 4:
                 logger.error("Suppressing further interaction recording errors")
 
+    @staticmethod
+    async def _author_from_reference(
+        *,
+        resolved: object | None,
+        message_id: int | None,
+        ref_type: object | None,
+        fetch,
+    ) -> discord.abc.User | None:
+        """Resolve the replied-to author from a cached message or a fetch."""
+        if message_id is None:
+            return None
+        if ref_type is discord.MessageReferenceType.forward:
+            return None
+        if isinstance(resolved, discord.DeletedReferencedMessage):
+            return None
+        author = getattr(resolved, "author", None)
+        if author is not None:
+            return author
+        try:
+            fetched = await fetch(message_id)
+        except (discord.NotFound, discord.Forbidden, discord.HTTPException):
+            return None
+        return fetched.author
+
+    @staticmethod
+    async def _reply_target(message: discord.Message) -> discord.abc.User | None:
+        """Author of the replied-to message, fetching if Discord left it unresolved."""
+        ref = message.reference
+        if ref is None:
+            return None
+        return await InteractionsCog._author_from_reference(
+            resolved=ref.resolved,
+            message_id=ref.message_id,
+            ref_type=getattr(ref, "type", None),
+            fetch=message.channel.fetch_message,
+        )
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         """Track reply and mention interactions to the database."""
@@ -57,14 +94,11 @@ class InteractionsCog(BaseCog):
         channel_id = message.channel.id
         guild_id = message.guild.id
 
-        # Track replies
         replied_to_id = None
-        ref = message.reference
-        if ref and ref.resolved and not isinstance(ref.resolved, discord.DeletedReferencedMessage):
-            target = ref.resolved.author
-            if not target.bot and target.id != author_id:
-                replied_to_id = target.id
-                await self._record(channel_id, guild_id, author_id, target.id, "reply")
+        target = await self._reply_target(message)
+        if target is not None and not target.bot and target.id != author_id:
+            replied_to_id = target.id
+            await self._record(channel_id, guild_id, author_id, target.id, "reply")
 
         # Track mentions (skip the reply target — Discord auto-mentions them)
         for mentioned in message.mentions:

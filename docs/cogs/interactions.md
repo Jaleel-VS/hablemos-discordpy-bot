@@ -26,7 +26,10 @@ daily. All tracking is automatic; no user action required.
 For every message in a guild:
 
 1. **Reply tracking**: If the message is a reply to a non-bot user
-   (other than the author), record a `reply` interaction.
+   (other than the author), record a `reply` interaction. Cached
+   `reference.resolved` is used when Discord provides it; otherwise the
+   referenced message is fetched. Deleted, forbidden, or forwarded
+   references are skipped.
 2. **Mention tracking**: For each mentioned non-bot user (other than the
    author and the reply target), record a `mention` interaction.
 
