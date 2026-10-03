@@ -75,6 +75,17 @@ async def test_basecog_missing_permissions_uses_generic_check_copy() -> None:
     assert ctx.__dict__["error_handled"] is True
 
 
+
+async def test_basecog_user_input_error_omits_raw_exception() -> None:
+    cog = BaseCog(cast(Any, SimpleNamespace()))
+    ctx = FakeContext()
+
+    await cog.cog_command_error(ctx, commands.BadArgument("internal converter boom"))
+
+    assert ctx.sent == ["Invalid input.\nUsage: `$practice [action]`"]
+    assert "internal converter boom" not in ctx.sent[0]
+    assert ctx.__dict__["error_handled"] is True
+
 async def test_basecog_unexpected_error_does_not_claim_handled() -> None:
     cog = BaseCog(cast(Any, SimpleNamespace()))
     ctx = FakeContext()

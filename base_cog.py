@@ -52,7 +52,7 @@ class BaseCog(Cog):
                 if ctx.command
                 else ""
             )
-            await ctx.send(f"Invalid input: {error}\n{usage}".rstrip())
+            await ctx.send(f"Invalid input.\n{usage}".rstrip())
         else:
             # Unexpected: leave user reply + logging to ErrorHandler.
             return
