@@ -124,7 +124,7 @@ class PhrasalEngine:
         return GuessOutcome(state=state, client_view=self.client_view(state))
 
     def submit(
-        self, *, state: dict[str, Any], guess: str, finish: bool = False,
+        self, *, state: dict[str, Any], guess: str, finish: bool = False, action: str = "answer",
     ) -> GuessOutcome:
         self._validate_state(state)
         if state["status"] != "playing":

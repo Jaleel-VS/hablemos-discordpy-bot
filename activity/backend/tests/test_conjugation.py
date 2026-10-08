@@ -281,3 +281,235 @@ def test_end_of_timer_flush_still_finishes_timed_game(engine):
     oc = engine.submit(state=state, guess="", finish=True)
     assert engine.is_over(oc.state)
     assert "result" in oc.client_view
+
+
+# ── new Contract behaviour ────────────────────────────────────────────────
+
+def test_daily_tenses_pinned_regardless_of_data_tenses(engine, monkeypatch):
+    """Daily config must stay on the 4 pinned tenses even if TENSES grows."""
+    extra = dict(d.TENSES)
+    extra["condicional"] = "Condicional"
+    monkeypatch.setattr(d, "TENSES", extra)
+    oc = engine.new_game(mode="daily", user_id="1")
+    cfg = d.Config.from_state(oc.state["config"])
+    assert cfg.tenses == ["presente", "pretérito", "imperfecto", "futuro"]
+    assert "condicional" not in cfg.tenses
+
+
+def test_strict_close_scores_like_wrong(engine):
+    """In strict mode a CLOSE result must NOT increment correct or streak."""
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False, "strict": True})
+    # Pin an accented form so the de-accented guess is deterministically CLOSE.
+    oc.state["current"] = d.make_question("hablar", "pretérito", "yo").as_state()
+    assert oc.state["current"]["expected"] == "hablé"
+    oc2 = engine.submit(state=oc.state, guess="hable")
+    assert oc2.client_view["last"]["result"] == "close"
+    assert oc2.client_view["correct"] == 0   # strict: close doesn't score
+    assert oc2.client_view["streak"] == 0    # strict: streak resets
+    assert oc2.client_view["awaiting_retry"] is True  # still a miss → retry
+
+
+def test_skip_recorded_streak_reset_and_excluded_from_total(engine):
+    """Skip records an entry, resets streak, and excludes from accuracy total."""
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False})
+    # Answer one correctly first.
+    oc = engine.submit(state=oc.state, guess=oc.state["current"]["expected"])
+    assert oc.client_view["streak"] == 1
+    # Now skip.
+    oc = engine.submit(state=oc.state, guess="", action="skip")
+    assert oc.client_view["streak"] == 0
+    assert oc.client_view["answered_count"] == 2
+    # Finish and verify total excludes the skip.
+    oc = engine.submit(state=oc.state, guess="", finish=True)
+    rp = oc.client_view["result"]
+    assert rp["total"] == 1        # skip not counted
+    assert rp["skipped"] == 1
+    assert rp["correct"] == 1
+    assert rp["score"] == "1/1"
+
+
+def test_skip_not_allowed_while_awaiting_retry(engine):
+    """Skip raises GameError when awaiting_retry is True."""
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False})
+    # Submit a wrong answer to enter awaiting_retry.
+    oc = engine.submit(state=oc.state, guess="zzzzz")
+    assert oc.client_view["awaiting_retry"] is True
+    with pytest.raises(GameError):
+        engine.submit(state=oc.state, guess="", action="skip")
+
+
+def test_retry_flow_wrong_in_untimed_enters_retry_mode(engine):
+    """Wrong answer in untimed free mode sets awaiting_retry; same prompt stays."""
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False})
+    expected_verb = oc.state["current"]["verb"]
+    oc = engine.submit(state=oc.state, guess="zzzzz")
+    view = oc.client_view
+    assert view["awaiting_retry"] is True
+    assert view["last"]["result"] == "wrong"
+    # Prompt must be the same question.
+    assert view["prompt"]["verb"] == expected_verb
+    # Counts unchanged.
+    assert view["correct"] == 0
+
+
+def test_retry_exact_advances_and_keeps_score(engine):
+    """Typing the correct form on retry clears awaiting_retry and advances."""
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False})
+    correct = oc.state["current"]["expected"]
+    # First wrong.
+    oc = engine.submit(state=oc.state, guess="zzzzz")
+    assert oc.client_view["awaiting_retry"] is True
+    before_seq = oc.state["seq"]
+    # Retry correctly.
+    oc = engine.submit(state=oc.state, guess=correct, action="retry")
+    assert oc.client_view["awaiting_retry"] is False
+    # Score NOT changed by the retry (wrong already logged, no extra credit).
+    assert oc.client_view["correct"] == 0
+    # Advanced to a new prompt.
+    assert oc.state["seq"] == before_seq + 1
+
+
+def test_retry_two_failed_retries_advances_anyway(engine):
+    """After _MAX_RETRY_ATTEMPTS (2) failed retries the prompt advances."""
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False})
+    # Enter retry mode.
+    oc = engine.submit(state=oc.state, guess="zzzzz")
+    assert oc.client_view["awaiting_retry"] is True
+    before_seq = oc.state["seq"]
+    # First failed retry.
+    oc = engine.submit(state=oc.state, guess="zzzzz", action="retry")
+    assert oc.client_view["awaiting_retry"] is True
+    assert oc.state["retry_attempts"] == 1
+    # Second failed retry — should advance.
+    oc = engine.submit(state=oc.state, guess="zzzzz", action="retry")
+    assert oc.client_view["awaiting_retry"] is False
+    assert oc.state["seq"] == before_seq + 1
+
+
+def test_timed_mode_never_awaits_retry(engine):
+    """In timed mode (default) a wrong answer never sets awaiting_retry."""
+    oc = engine.new_game(mode="free", user_id="1")  # default = timed
+    oc = engine.submit(state=oc.state, guess="zzzzz")
+    assert oc.client_view["awaiting_retry"] is False
+    # The game should have advanced (seq incremented).
+    assert oc.state["seq"] == 1
+
+
+def test_items_autofinish_at_n(engine):
+    """Untimed set mode auto-finishes when answered count reaches items."""
+    items = 2
+    oc = engine.new_game(
+        mode="free", user_id="1",
+        options={"timed": False, "items": items, "pronouns": ["yo"]},
+    )
+    assert oc.client_view["items"] == items
+    assert oc.client_view["remaining_items"] == items
+    # Answer `items` questions correctly.
+    for _ in range(items):
+        assert oc.client_view["status"] == "playing"
+        oc = engine.submit(state=oc.state, guess=oc.state["current"]["expected"])
+    assert oc.client_view["status"] == "over"
+    assert "result" in oc.client_view
+
+
+def test_breakdown_totals_exclude_skipped(engine):
+    """Tense/pronoun breakdown totals must not count skipped entries."""
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False})
+    # Skip one.
+    oc = engine.submit(state=oc.state, guess="", action="skip")
+    # Answer one correctly.
+    oc = engine.submit(state=oc.state, guess=oc.state["current"]["expected"])
+    oc = engine.submit(state=oc.state, guess="", finish=True)
+    rp = oc.client_view["result"]
+    # Each tense total in breakdown must be ≤ total (excluding skips).
+    for tense_stats in rp["breakdown"]["tenses"].values():
+        assert tense_stats["total"] <= rp["total"]
+    # Sum of all tense totals == total answered (excluding skips).
+    tense_sum = sum(v["total"] for v in rp["breakdown"]["tenses"].values())
+    assert tense_sum == rp["total"]
+
+
+def test_review_verbs_distinct_and_capped(engine):
+    """review_verbs must have distinct verbs, capped at MAX_REVIEW_VERBS."""
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False})
+    # Produce some misses (wrong answers).
+    for _ in range(3):
+        oc = engine.submit(state=oc.state, guess="zzzzz")
+        if oc.client_view["awaiting_retry"]:
+            oc = engine.submit(state=oc.state, guess="zzzzz", action="retry")
+            oc = engine.submit(state=oc.state, guess="zzzzz", action="retry")
+    oc = engine.submit(state=oc.state, guess="", finish=True)
+    rp = oc.client_view["result"]
+    review = rp["review_verbs"]
+    assert len(review) == len(set(review))          # distinct
+    assert len(review) <= d.MAX_REVIEW_VERBS        # capped
+
+
+def test_daily_withholds_note_and_row(engine):
+    """Daily mode must not expose note or row in per-answer feedback."""
+    oc = engine.new_game(mode="daily", user_id="1")
+    oc = engine.submit(state=oc.state, guess="definitely-wrong")
+    last = oc.client_view["last"]
+    assert "note" not in last
+    assert "row" not in last
+    # Raw state still carries them for the recap.
+    assert "expected" in oc.state["last"]
+
+
+def test_freeplay_includes_note_and_row_in_feedback(engine):
+    """Free mode must include note and row in per-answer feedback."""
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False})
+    oc = engine.submit(state=oc.state, guess="zzzzz")
+    last = oc.client_view["last"]
+    assert "note" in last
+    assert "row" in last
+
+
+def test_result_payload_has_new_fields(engine):
+    """result_payload must carry skipped, close, strict, breakdown, review_verbs."""
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False})
+    oc = engine.submit(state=oc.state, guess="", finish=True)
+    rp = oc.client_view["result"]
+    assert "skipped" in rp
+    assert "close" in rp
+    assert "strict" in rp
+    assert "breakdown" in rp
+    assert "tenses" in rp["breakdown"]
+    assert "pronouns" in rp["breakdown"]
+    assert "review_verbs" in rp
+
+
+def test_config_stored_and_restored_with_full_fields(engine):
+    """Config round-trips through state with strict/variants/items/verbs_override."""
+    oc = engine.new_game(
+        mode="free", user_id="1",
+        options={"timed": False, "strict": True, "variants": False, "items": 5},
+    )
+    cfg = d.Config.from_state(oc.state["config"])
+    assert cfg.strict is True
+    assert cfg.items == 5
+
+
+def test_invalid_action_raises(engine):
+    """submit must raise GameError for an unrecognized action."""
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False})
+    with pytest.raises(GameError):
+        engine.submit(state=oc.state, guess="x", action="teleport")
+
+
+def test_retry_action_without_awaiting_raises(engine):
+    """retry action raises GameError when awaiting_retry is False."""
+    oc = engine.new_game(mode="free", user_id="1", options={"timed": False})
+    with pytest.raises(GameError):
+        engine.submit(state=oc.state, guess="x", action="retry")
+
+
+def test_client_view_has_items_and_remaining(engine):
+    """client_view must include items and remaining_items for untimed set mode."""
+    oc = engine.new_game(
+        mode="free", user_id="1",
+        options={"timed": False, "items": 3, "pronouns": ["yo"]},
+    )
+    view = oc.client_view
+    assert view["items"] == 3
+    assert view["remaining_items"] == 3

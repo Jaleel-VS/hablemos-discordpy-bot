@@ -33,7 +33,8 @@ class ConjugaCog(BaseCog):
         embed = discord.Embed(
             title="↻ Conjugación en español",
             description=(
-                "Conjuga tantos verbos como puedas en 60 segundos.\n\n"
+                "Reto diario de 60 segundos, sprint personalizado o práctica sin "
+                "reloj con explicaciones de cada irregularidad.\n\n"
                 "Pulsa el botón para jugar."
             ),
             color=0x5865F2,

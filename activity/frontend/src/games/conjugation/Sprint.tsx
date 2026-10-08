@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ConjugationView } from "../../api";
+import AccentBar from "./AccentBar";
+import { getLang, t, tenseLabel, type Lang } from "./i18n";
 
 interface SprintProps {
   view: ConjugationView;
   busy: boolean;
   error: string | null;
-  onAnswer: (guess: string) => void;
+  onAnswer: (guess: string, finish?: boolean, action?: "answer" | "skip" | "retry") => void;
   onTimeout: () => void;
   onFinish: () => void;
 }
@@ -28,14 +30,13 @@ function useCountdown(deadlineIso: string | null, onZero: () => void): number {
   onZeroRef.current = onZero;
 
   useEffect(() => {
-    if (!deadlineIso) return; // untimed: no ticking, no auto-finish
-    firedRef.current = false; // reset only for a genuinely new game (new deadline)
-    const deadline = Date.parse(deadlineIso);
+    if (!deadlineIso) return;
+    firedRef.current = false;
     const tick = () => {
-      const secs = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
-      setRemaining(secs);
-      if (secs <= 0 && !firedRef.current) {
-        firedRef.current = true; // fire exactly once per game
+      const s = Math.max(0, Math.ceil((Date.parse(deadlineIso) - Date.now()) / 1000));
+      setRemaining(s);
+      if (s === 0 && !firedRef.current) {
+        firedRef.current = true;
         onZeroRef.current();
       }
     };
@@ -50,23 +51,29 @@ function useCountdown(deadlineIso: string | null, onZero: () => void): number {
 export default function Sprint({ view, busy, error, onAnswer, onTimeout, onFinish }: SprintProps) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const [lang] = useState<Lang>(getLang);
   const remaining = useCountdown(view.deadline, onTimeout);
 
   const prompt = view.prompt;
   const last = view.last;
+  const isRetry = view.awaiting_retry;
 
   // Re-focus and clear the field whenever a new prompt arrives (keyed on the
-  // answered count so it fires once per advance).
+  // answered count so it fires once per advance). Don't clear during retry —
+  // the player needs to see what they typed.
   useEffect(() => {
-    setValue("");
+    if (!isRetry) {
+      setValue("");
+    }
     inputRef.current?.focus();
-  }, [view.answered_count]);
+  }, [view.answered_count, isRetry]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const g = value.trim();
     if (!g || busy) return;
-    onAnswer(g);
+    const action = isRetry ? "retry" : "answer";
+    onAnswer(g, false, action);
   };
 
   // Fraction of time remaining, for the depleting timer bar (timed only).
@@ -84,6 +91,51 @@ export default function Sprint({ view, busy, error, onAnswer, onTimeout, onFinis
     );
   }
 
+  // ── feedback line (timed modes or exact results) ──────────────────────────
+  const feedbackLine = last && !isRetry ? (() => {
+    const r = last.result;
+    // A retype after the reveal: acknowledge, don't celebrate (it didn't score).
+    if (last.retry) {
+      return (
+        <span>
+          {r === "wrong"
+            ? t(lang, "feedback.retry.moveon", { expected: last.expected ?? "" })
+            : t(lang, "feedback.retry.ok", { expected: last.expected ?? "" })}
+        </span>
+      );
+    }
+    if (r === "exact") return <span>{t(lang, "feedback.exact")}</span>;
+    if (r === "skipped") return <span>{t(lang, "feedback.skipped")}</span>;
+    if (r === "close") {
+      if (view.strict) {
+        return (
+          <span>
+            {last.expected
+              ? t(lang, "feedback.close.strict.expected", { expected: last.expected })
+              : t(lang, "feedback.close.strict")}
+          </span>
+        );
+      }
+      return (
+        <span>
+          {last.expected
+            ? t(lang, "feedback.close.expected", { expected: last.expected })
+            : t(lang, "feedback.close")}
+          {last.note ? <em className="feedback-note"> · {last.note}</em> : null}
+        </span>
+      );
+    }
+    // wrong
+    return (
+      <span>
+        {last.expected
+          ? t(lang, "feedback.wrong.expected", { expected: last.expected })
+          : t(lang, "feedback.wrong")}
+        {last.note ? <em className="feedback-note"> · {last.note}</em> : null}
+      </span>
+    );
+  })() : null;
+
   return (
     <div className="conj conj-sprint">
       <div className="sprint-top">
@@ -94,9 +146,17 @@ export default function Sprint({ view, busy, error, onAnswer, onTimeout, onFinis
               <div className="timer-fill" style={{ transform: `scaleX(${frac})` }} />
             </div>
           </div>
+        ) : view.items > 0 ? (
+          /* Set-mode: show answered/total instead of timer */
+          <span className="pill pill-progress">
+            {t(lang, "sprint.progress", {
+              done: view.answered_count,
+              total: view.items,
+            })}
+          </span>
         ) : (
           <button className="finish-btn" onClick={onFinish} disabled={busy}>
-            Terminar
+            {t(lang, "sprint.finish")}
           </button>
         )}
         <div className="score-pills">
@@ -109,8 +169,7 @@ export default function Sprint({ view, busy, error, onAnswer, onTimeout, onFinis
         </div>
       </div>
 
-      {/* Submit errors (e.g. a network failure) float as a toast so they never
-          resize the prompt card. Zero-height anchor = no layout shift. */}
+      {/* Submit errors float as a toast so they never resize the prompt card. */}
       <div className="toast-anchor">
         {error && (
           <div className="toast" role="status" key={error}>
@@ -120,42 +179,56 @@ export default function Sprint({ view, busy, error, onAnswer, onTimeout, onFinis
       </div>
 
       {/* The prompt card. `key` on answered_count forces a remount so the
-          enter animation replays for every new prompt (the swap motion). */}
-      <div className="prompt-card" key={view.answered_count}>
-        <span className="prompt-pronoun">{prompt.pronoun}</span>
+          enter animation replays for every new prompt (the swap motion).
+          During retry we keep the same answered_count so the card stays. */}
+      <div className="prompt-card" key={isRetry ? "retry" : view.answered_count}>
+        <div className="prompt-pronoun-block">
+          <span className="prompt-pronoun">{prompt.pronoun}</span>
+          {lang === "en" && prompt.pronoun_english && (
+            <span className="prompt-pronoun-en">{prompt.pronoun_english}</span>
+          )}
+        </div>
         <span className="prompt-verb">{prompt.verb}</span>
         <span className="prompt-meta">
-          {prompt.tense_label}
+          {tenseLabel(lang, { label: prompt.tense_label, english: prompt.tense_english })}
           {prompt.english ? <em className="prompt-gloss"> · {prompt.english}</em> : null}
         </span>
       </div>
 
-      {/* Inline feedback from the previous answer, flashed above the input. */}
-      <div className="feedback-slot">
-        {last ? (
-          <p className={`feedback feedback--${last.result}`} key={view.answered_count}>
-            {last.result === "exact" && <span>¡Correcto!</span>}
-            {/* `expected` is withheld during the daily sprint, so fall back to
-                an answer-free message when it's absent. */}
-            {last.result === "close" &&
-              (last.expected ? (
-                <span>
-                  ¡Casi! <strong>{last.expected}</strong> (acentos)
-                </span>
-              ) : (
-                <span>¡Casi! (acentos)</span>
-              ))}
-            {last.result === "wrong" &&
-              (last.expected ? (
-                <span>
-                  Era <strong>{last.expected}</strong>
-                </span>
-              ) : (
-                <span>Incorrecto</span>
-              ))}
-          </p>
-        ) : null}
-      </div>
+      {/* Retry reveal card replaces normal feedback in untimed free mode */}
+      {isRetry && last ? (
+        <div className="reveal-card">
+          <p className="reveal-expected">{last.expected}</p>
+          {last.note && <p className="reveal-note">{last.note}</p>}
+          {last.row && (
+            <table className="row-table">
+              <tbody>
+                {Object.entries(last.row).map(([slot, form]) => (
+                  <tr
+                    key={slot}
+                    className={slot === last.pronoun ? "row-table__row--active" : undefined}
+                  >
+                    <td className="row-table__pronoun">{slot}</td>
+                    <td className="row-table__form">{form}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          <p className="reveal-instruction">{t(lang, "retry.instruction")}</p>
+        </div>
+      ) : (
+        /* Normal inline feedback slot */
+        <div className="feedback-slot">
+          {feedbackLine ? (
+            <p className={`feedback feedback--${last!.result}`} key={view.answered_count}>
+              {feedbackLine}
+            </p>
+          ) : null}
+        </div>
+      )}
+
+      <AccentBar inputRef={inputRef} value={value} onChange={setValue} />
 
       <form className="answer-form" onSubmit={submit}>
         <input
@@ -163,19 +236,36 @@ export default function Sprint({ view, busy, error, onAnswer, onTimeout, onFinis
           className="answer-input"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="escribe la conjugación…"
+          placeholder={t(lang, "sprint.placeholder")}
           autoComplete="off"
           autoCapitalize="off"
           autoCorrect="off"
           spellCheck={false}
           enterKeyHint="go"
           disabled={busy}
-          aria-label={`Conjuga ${prompt.verb} para ${prompt.pronoun}`}
+          aria-label={`${isRetry ? t(lang, "retry.instruction") : "Conjugate"} ${prompt.verb} ${prompt.pronoun}`}
         />
         <button className="answer-go" type="submit" disabled={busy || !value.trim()}>
           →
         </button>
       </form>
+
+      {/* Skip button — hidden while awaiting retry */}
+      {!isRetry && (
+        <button
+          className="skip-btn"
+          type="button"
+          onClick={() => onAnswer("", false, "skip")}
+          disabled={busy}
+        >
+          {t(lang, "sprint.skip")}
+        </button>
+      )}
+
+      {/* Format hint under input on first prompt */}
+      {view.answered_count === 0 && (
+        <p className="sprint-format-hint muted">{t(lang, "sprint.format.hint")}</p>
+      )}
     </div>
   );
 }

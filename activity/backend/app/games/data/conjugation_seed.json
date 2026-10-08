@@ -38,7 +38,10 @@
       "tenses": [
         "presente",
         "pretérito",
-        "futuro"
+        "futuro",
+        "imperfecto",
+        "condicional",
+        "subjuntivo"
       ]
     },
     "regular-ar": {
@@ -64,12 +67,22 @@
         "buscar",
         "caminar",
         "esperar",
-        "preguntar"
+        "preguntar",
+        "tocar",
+        "pagar",
+        "empezar",
+        "comenzar",
+        "sacar",
+        "enviar",
+        "continuar"
       ],
       "tenses": [
         "presente",
         "pretérito",
-        "futuro"
+        "futuro",
+        "imperfecto",
+        "condicional",
+        "subjuntivo"
       ]
     },
     "regular-er-ir": {
@@ -92,12 +105,22 @@
         "sufrir",
         "subir",
         "dividir",
-        "discutir"
+        "discutir",
+        "entender",
+        "perder",
+        "servir",
+        "repetir",
+        "preferir",
+        "mentir",
+        "sentir"
       ],
       "tenses": [
         "presente",
         "pretérito",
-        "futuro"
+        "futuro",
+        "imperfecto",
+        "condicional",
+        "subjuntivo"
       ]
     },
     "irregulars": {
@@ -118,12 +141,31 @@
         "dar",
         "ver",
         "salir",
-        "traer"
+        "traer",
+        "pedir",
+        "dormir",
+        "morir",
+        "jugar",
+        "recordar",
+        "contar",
+        "mostrar",
+        "oír",
+        "caer",
+        "conducir",
+        "traducir",
+        "construir",
+        "huir",
+        "elegir",
+        "reír",
+        "sonreír"
       ],
       "tenses": [
         "presente",
         "pretérito",
-        "futuro"
+        "futuro",
+        "imperfecto",
+        "condicional",
+        "subjuntivo"
       ]
     }
   },
@@ -1115,7 +1157,7 @@
       }
     },
     "bailar": {
-      "english": "",
+      "english": "to dance",
       "conjugations": {
         "presente": {
           "yo": "bailo",
@@ -1144,7 +1186,7 @@
       }
     },
     "cantar": {
-      "english": "",
+      "english": "to sing",
       "conjugations": {
         "presente": {
           "yo": "canto",
@@ -1202,7 +1244,7 @@
       }
     },
     "cocinar": {
-      "english": "",
+      "english": "to cook",
       "conjugations": {
         "presente": {
           "yo": "cocino",
@@ -1260,7 +1302,7 @@
       }
     },
     "caminar": {
-      "english": "",
+      "english": "to walk",
       "conjugations": {
         "presente": {
           "yo": "camino",
@@ -1376,7 +1418,7 @@
       }
     },
     "beber": {
-      "english": "",
+      "english": "to drink",
       "conjugations": {
         "presente": {
           "yo": "bebo",
@@ -1753,7 +1795,7 @@
       }
     },
     "dividir": {
-      "english": "",
+      "english": "to divide",
       "conjugations": {
         "presente": {
           "yo": "divido",
@@ -1782,7 +1824,7 @@
       }
     },
     "discutir": {
-      "english": "",
+      "english": "to argue",
       "conjugations": {
         "presente": {
           "yo": "discuto",
@@ -1838,6 +1880,96 @@
           "ellos/ellas": "traerán"
         }
       }
+    },
+    "tocar": {
+      "english": "to touch, to play (an instrument)"
+    },
+    "pagar": {
+      "english": "to pay"
+    },
+    "empezar": {
+      "english": "to begin, to start"
+    },
+    "comenzar": {
+      "english": "to begin, to start"
+    },
+    "sacar": {
+      "english": "to take out, to get"
+    },
+    "enviar": {
+      "english": "to send"
+    },
+    "continuar": {
+      "english": "to continue"
+    },
+    "entender": {
+      "english": "to understand"
+    },
+    "perder": {
+      "english": "to lose"
+    },
+    "servir": {
+      "english": "to serve"
+    },
+    "repetir": {
+      "english": "to repeat"
+    },
+    "preferir": {
+      "english": "to prefer"
+    },
+    "mentir": {
+      "english": "to lie"
+    },
+    "sentir": {
+      "english": "to feel, to be sorry"
+    },
+    "pedir": {
+      "english": "to ask for, to request"
+    },
+    "dormir": {
+      "english": "to sleep"
+    },
+    "morir": {
+      "english": "to die"
+    },
+    "jugar": {
+      "english": "to play (a game or sport)"
+    },
+    "recordar": {
+      "english": "to remember, to remind"
+    },
+    "contar": {
+      "english": "to count, to tell"
+    },
+    "mostrar": {
+      "english": "to show"
+    },
+    "oír": {
+      "english": "to hear"
+    },
+    "caer": {
+      "english": "to fall"
+    },
+    "conducir": {
+      "english": "to drive, to conduct"
+    },
+    "traducir": {
+      "english": "to translate"
+    },
+    "construir": {
+      "english": "to build, to construct"
+    },
+    "huir": {
+      "english": "to flee, to escape"
+    },
+    "elegir": {
+      "english": "to choose, to elect"
+    },
+    "reír": {
+      "english": "to laugh"
+    },
+    "sonreír": {
+      "english": "to smile"
     }
   }
 }

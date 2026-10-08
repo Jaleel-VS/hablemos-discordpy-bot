@@ -27,12 +27,18 @@ export default function Conjugation({ accessToken }: GameProps) {
   // the in-flight request settles — otherwise the buzzer flush is dropped and
   // the game hangs at 0s.
   const pendingFlushRef = useRef(false);
+  // Remember the last free-mode options so the review CTA can start a
+  // targeted session with the same tense/pronoun selection.
+  const lastFreeOptionsRef = useRef<StartOptions>({});
 
   const begin = useCallback(
     async (mode: "daily" | "free", options?: StartOptions) => {
       setBusy(true);
       setError(null);
       overRef.current = false;
+      if (mode === "free" && options) {
+        lastFreeOptionsRef.current = options;
+      }
       try {
         const resp = await startConjugation(accessToken, mode, options);
         setSealed(resp.sealed_state);
@@ -48,12 +54,12 @@ export default function Conjugation({ accessToken }: GameProps) {
   );
 
   const answer = useCallback(
-    async (guess: string, finish = false) => {
+    async (guess: string, finish = false, action: "answer" | "skip" | "retry" = "answer") => {
       if (!sealed || busy || overRef.current) return;
       setBusy(true);
-      setError(null); // clear any prior submit-error toast
+      setError(null);
       try {
-        let resp = await submitConjugation(accessToken, sealed, guess, finish);
+        let resp = await submitConjugation(accessToken, sealed, guess, finish, action);
         // If the buzzer fired while this answer was in flight, finalize now —
         // using THIS response's fresh sealed state (not the stale closure), so
         // the answer we just graded is preserved before the game ends.
@@ -107,6 +113,21 @@ export default function Conjugation({ accessToken }: GameProps) {
     void answer("", true);
   }, [answer, busy]);
 
+  const startReview = useCallback(
+    (verbs: string[]) => {
+      const last = lastFreeOptionsRef.current;
+      void begin("free", {
+        tenses: last.tenses,
+        pronouns: last.pronouns,
+        strict: last.strict,
+        timed: false,
+        items: Math.min(20, verbs.length * 2),
+        verbs,
+      });
+    },
+    [begin],
+  );
+
   if (screen === "setup") {
     return <Setup onStart={begin} busy={busy} error={error} />;
   }
@@ -116,6 +137,7 @@ export default function Conjugation({ accessToken }: GameProps) {
       <Summary
         result={view.result}
         onReplay={() => setScreen("setup")}
+        onReview={startReview}
       />
     );
   }

@@ -29,6 +29,8 @@ from pydantic import BaseModel, Field
 
 from app.discord_oauth import DiscordOAuthError, fetch_user
 from app.games.base import GameError, Mode
+from app.games.conjugation import data as conj_data
+from app.games.conjugation.engine import SET_LABELS, daily_config
 from app.games.registry import available_games, get_engine
 from app.games.sealed_state import StateSealError, seal, unseal
 
@@ -63,7 +65,9 @@ class GuessRequest(BaseModel):
     # Request that an open-ended game end now (untimed conjugation practice).
     # Ignored by games without such a mode.
     finish: bool = False
-
+    # Action for the conjugation engine: "answer" | "skip" | "retry".
+    # Ignored by games that don't implement the retry/skip mechanic.
+    action: str = Field(default="answer", max_length=16)
 
 class StatsRequest(BaseModel):
     access_token: str = Field(max_length=_MAX_TOKEN)
@@ -214,7 +218,9 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
             user_id = await _verified_user_id(body.access_token)
             state["_uid"] = user_id
         try:
-            outcome = engine.submit(state=state, guess=body.guess, finish=body.finish)
+            outcome = engine.submit(
+                state=state, guess=body.guess, finish=body.finish, action=body.action,
+            )
         except GameError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         await _persist_if_over(engine, game_key, user_id, outcome.state)
@@ -238,4 +244,32 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
             return {"puzzle_no": None, "entries": []}
         return await db.daily_leaderboard(game_key=game_key, guild_id=body.guild_id)
 
+    @router.get("/conjugation/catalog")
+    async def conjugation_catalog() -> dict[str, Any]:
+        """Public (no-auth) catalog of tenses, pronouns, verb sets, and daily config.
+
+        Used by the frontend setup screen so the chips track the data file
+        (new tenses/sets appear without a frontend change). Teaching order:
+        tenses per ``TENSE_ORDER``, sets per ``SET_LABELS``; anything else in
+        the data follows.
+        """
+        ordered_sets = [k for k in SET_LABELS if k in conj_data.SETS] + [
+            k for k in conj_data.SETS if k not in SET_LABELS
+        ]
+        return {
+            "tenses": conj_data.tense_catalog(),
+            "pronouns": [
+                {"key": p, "english": conj_data.PRONOUN_ENGLISH.get(p, p)}
+                for p in conj_data.PRONOUNS
+            ],
+            "sets": [
+                {
+                    "key": k,
+                    "label": SET_LABELS.get(k) or k.replace("-", " ").title(),
+                    "size": len(conj_data.SETS[k]),
+                }
+                for k in ordered_sets
+            ],
+            "daily_tenses": daily_config().tenses,
+        }
     return router

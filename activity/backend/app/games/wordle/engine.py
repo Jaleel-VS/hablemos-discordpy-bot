@@ -65,7 +65,7 @@ class WordleEngine:
         return GuessOutcome(state=state, client_view=self.client_view(state))
 
     def submit(
-        self, *, state: dict[str, Any], guess: str, finish: bool = False,
+        self, *, state: dict[str, Any], guess: str, finish: bool = False, action: str = "answer",
     ) -> GuessOutcome:
         # Wordle has no open-ended mode; ``finish`` is part of the shared
         # contract but not meaningful here, so it is ignored.

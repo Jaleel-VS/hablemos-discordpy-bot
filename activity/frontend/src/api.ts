@@ -55,10 +55,12 @@ export interface ConjugationPrompt {
   english: string;
   tense: string;
   tense_label: string;
+  tense_english: string;
   pronoun: string;
+  pronoun_english: string;
 }
 
-export type MatchResult = "exact" | "close" | "wrong";
+export type MatchResult = "exact" | "close" | "wrong" | "skipped";
 
 export interface ConjugationFeedback {
   result: MatchResult;
@@ -67,7 +69,14 @@ export interface ConjugationFeedback {
   expected?: string;
   given: string;
   verb: string;
+  // True when this feedback is the retype after a reveal (untimed practice);
+  // it did not score, so the UI acknowledges rather than celebrates.
+  retry?: boolean;
   pronoun: string;
+  tense: string;
+  // Present in free mode only (withheld in daily anti-harvest).
+  note?: string;
+  row?: Record<string, string>;
 }
 
 export interface ConjugationMiss {
@@ -90,6 +99,14 @@ export interface ConjugationResult {
   grid: string;
   summary: string;
   misses: ConjugationMiss[];
+  skipped: number;
+  close: number;
+  strict: boolean;
+  breakdown: {
+    tenses: Record<string, { correct: number; total: number }>;
+    pronouns: Record<string, { correct: number; total: number }>;
+  };
+  review_verbs: string[];
 }
 
 export interface ConjugationView {
@@ -107,6 +124,10 @@ export interface ConjugationView {
   last: ConjugationFeedback | null;
   prompt?: ConjugationPrompt;
   result?: ConjugationResult;
+  awaiting_retry: boolean;
+  strict: boolean;
+  items: number;          // 0 = open-ended
+  remaining_items: number | null;
 }
 
 export interface ConjugationResponse {
@@ -121,12 +142,45 @@ export interface StartOptions {
   tenses?: string[];
   pronouns?: string[];
   timed?: boolean;
+  // Conjugation: strict accent grading, show variant pronouns, item count cap,
+  // review-mode verb override.
+  strict?: boolean;
+  variants?: boolean;
+  items?: number;
+  verbs?: string[];
   // Cloze: target language (which word is blanked), difficulty, and answer mode.
   target?: string;
   difficulty?: string;
   answer_mode?: "choice" | "type";
   // Phrasal: which part of the phrasal verb to blank.
   blank_mode?: "particle" | "whole";
+}
+
+// ── conjugation catalog ───────────────────────────────────────────────────────
+export interface ConjugationTenseInfo {
+  key: string;
+  label: string;
+  english: string;
+  hint: string;
+  example: string;
+}
+
+export interface ConjugationPronounInfo {
+  key: string;
+  english: string;
+}
+
+export interface ConjugationSetInfo {
+  key: string;
+  label: string;
+  size: number;
+}
+
+export interface ConjugationCatalog {
+  tenses: ConjugationTenseInfo[];
+  pronouns: ConjugationPronounInfo[];
+  sets: ConjugationSetInfo[];
+  daily_tenses: string[];
 }
 
 // ── cloze game ────────────────────────────────────────────────────────────────
@@ -268,12 +322,21 @@ export function submitConjugation(
   sealedState: string,
   guess: string,
   finish = false,
+  action: "answer" | "skip" | "retry" = "answer",
 ): Promise<ConjugationResponse> {
   return post(`/.proxy/api/games/conjugation/guess`, {
     access_token: accessToken,
     sealed_state: sealedState,
     guess,
     finish,
+    action,
+  });
+}
+
+export function fetchConjugationCatalog(): Promise<ConjugationCatalog> {
+  return fetch("/.proxy/api/games/conjugation/catalog").then((r) => {
+    if (!r.ok) throw new Error(`Error ${r.status}`);
+    return r.json() as Promise<ConjugationCatalog>;
   });
 }
 

@@ -72,7 +72,7 @@ class GameEngine(Protocol):
         ...
 
     def submit(
-        self, *, state: dict[str, Any], guess: str, finish: bool = False,
+        self, *, state: dict[str, Any], guess: str, finish: bool = False, action: str = "answer",
     ) -> GuessOutcome:
         """Apply one guess to ``state`` (authoritatively) and return the next.
 

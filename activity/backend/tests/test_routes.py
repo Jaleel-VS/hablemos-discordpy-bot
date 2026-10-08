@@ -308,3 +308,41 @@ def test_phrasal_learn_deck_is_public_and_unblanked(client):
     first = body["verbs"][0]
     assert "___" not in first["example"]  # Learn shows the verb in context
     assert "forms" not in first           # exercise-only material stays hidden
+
+
+# ── conjugation catalog (unauthenticated GET) ──────────────────────────────
+
+def test_conjugation_catalog_shape(client):
+    """GET /api/games/conjugation/catalog returns tenses, pronouns, sets, daily_tenses."""
+    r = client.get("/api/games/conjugation/catalog")
+    assert r.status_code == 200
+    body = r.json()
+    # Required top-level keys.
+    assert "tenses" in body
+    assert "pronouns" in body
+    assert "sets" in body
+    assert "daily_tenses" in body
+    # tenses: list of objects with at least key and label.
+    assert isinstance(body["tenses"], list) and len(body["tenses"]) > 0
+    first_tense = body["tenses"][0]
+    assert "key" in first_tense
+    assert "label" in first_tense
+    # pronouns: list of objects with key and english.
+    assert isinstance(body["pronouns"], list) and len(body["pronouns"]) > 0
+    first_pronoun = body["pronouns"][0]
+    assert "key" in first_pronoun
+    assert "english" in first_pronoun
+    # sets: list of objects with key, label, size.
+    assert isinstance(body["sets"], list) and len(body["sets"]) > 0
+    first_set = body["sets"][0]
+    assert "key" in first_set
+    assert "label" in first_set
+    assert "size" in first_set
+    # daily_tenses: pinned 4-tense list.
+    assert body["daily_tenses"] == ["presente", "pretérito", "imperfecto", "futuro"]
+
+
+def test_conjugation_catalog_no_auth_required(client):
+    """Catalog must work without any access token (no auth header)."""
+    r = client.get("/api/games/conjugation/catalog")
+    assert r.status_code == 200

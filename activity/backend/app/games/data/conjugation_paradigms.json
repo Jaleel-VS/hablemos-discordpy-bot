@@ -8,6 +8,22 @@
     "ellos"
   ],
   "sets": {
+    "go-verbs": [
+      "caer",
+      "conducir",
+      "conocer",
+      "decir",
+      "hacer",
+      "oír",
+      "parecer",
+      "poner",
+      "salir",
+      "seguir",
+      "tener",
+      "traducir",
+      "traer",
+      "venir"
+    ],
     "high-frequency": [
       "ser",
       "estar",
@@ -55,7 +71,23 @@
       "dar",
       "ver",
       "salir",
-      "traer"
+      "traer",
+      "pedir",
+      "dormir",
+      "morir",
+      "jugar",
+      "recordar",
+      "contar",
+      "mostrar",
+      "oír",
+      "caer",
+      "conducir",
+      "traducir",
+      "construir",
+      "huir",
+      "elegir",
+      "reír",
+      "sonreír"
     ],
     "regular-ar": [
       "hablar",
@@ -77,7 +109,14 @@
       "buscar",
       "caminar",
       "esperar",
-      "preguntar"
+      "preguntar",
+      "tocar",
+      "pagar",
+      "empezar",
+      "comenzar",
+      "sacar",
+      "enviar",
+      "continuar"
     ],
     "regular-er-ir": [
       "comer",
@@ -96,19 +135,100 @@
       "sufrir",
       "subir",
       "dividir",
-      "discutir"
+      "discutir",
+      "entender",
+      "perder",
+      "servir",
+      "repetir",
+      "preferir",
+      "mentir",
+      "sentir"
+    ],
+    "spelling-changers": [
+      "buscar",
+      "caer",
+      "comenzar",
+      "construir",
+      "creer",
+      "empezar",
+      "huir",
+      "jugar",
+      "leer",
+      "llegar",
+      "oír",
+      "pagar",
+      "sacar",
+      "tocar"
+    ],
+    "stem-changers": [
+      "comenzar",
+      "construir",
+      "contar",
+      "continuar",
+      "decir",
+      "dormir",
+      "elegir",
+      "empezar",
+      "encontrar",
+      "entender",
+      "enviar",
+      "huir",
+      "jugar",
+      "mentir",
+      "morir",
+      "mostrar",
+      "pedir",
+      "pensar",
+      "perder",
+      "poder",
+      "preferir",
+      "querer",
+      "recordar",
+      "repetir",
+      "seguir",
+      "sentir",
+      "servir",
+      "tener",
+      "venir",
+      "volver"
+    ],
+    "strong-preterite": [
+      "conducir",
+      "decir",
+      "hacer",
+      "poder",
+      "poner",
+      "querer",
+      "saber",
+      "tener",
+      "traducir",
+      "traer",
+      "venir"
     ]
   },
   "tenses": {
+    "condicional": "Condicional",
     "futuro": "Futuro",
     "imperfecto": "Imperfecto",
     "presente": "Presente",
-    "pretérito": "Pretérito"
+    "pretérito": "Pretérito",
+    "subjuntivo": "Subjuntivo"
   },
   "verbs": {
     "abrir": {
+      "classes": [
+        "regular"
+      ],
       "english": "to open",
       "forms": {
+        "condicional": {
+          "ellos": "abrirían",
+          "nosotros": "abriríamos",
+          "tú": "abrirías",
+          "vosotros": "abriríais",
+          "yo": "abriría",
+          "él": "abriría"
+        },
         "futuro": {
           "ellos": "abrirán",
           "nosotros": "abriremos",
@@ -140,12 +260,32 @@
           "vosotros": "abristeis",
           "yo": "abrí",
           "él": "abrió"
+        },
+        "subjuntivo": {
+          "ellos": "abran",
+          "nosotros": "abramos",
+          "tú": "abras",
+          "vosotros": "abráis",
+          "yo": "abra",
+          "él": "abra"
         }
-      }
+      },
+      "notes": {}
     },
     "aprender": {
+      "classes": [
+        "regular"
+      ],
       "english": "to learn",
       "forms": {
+        "condicional": {
+          "ellos": "aprenderían",
+          "nosotros": "aprenderíamos",
+          "tú": "aprenderías",
+          "vosotros": "aprenderíais",
+          "yo": "aprendería",
+          "él": "aprendería"
+        },
         "futuro": {
           "ellos": "aprenderán",
           "nosotros": "aprenderemos",
@@ -177,12 +317,32 @@
           "vosotros": "aprendisteis",
           "yo": "aprendí",
           "él": "aprendió"
+        },
+        "subjuntivo": {
+          "ellos": "aprendan",
+          "nosotros": "aprendamos",
+          "tú": "aprendas",
+          "vosotros": "aprendáis",
+          "yo": "aprenda",
+          "él": "aprenda"
         }
-      }
+      },
+      "notes": {}
     },
     "bailar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to dance",
       "forms": {
+        "condicional": {
+          "ellos": "bailarían",
+          "nosotros": "bailaríamos",
+          "tú": "bailarías",
+          "vosotros": "bailaríais",
+          "yo": "bailaría",
+          "él": "bailaría"
+        },
         "futuro": {
           "ellos": "bailarán",
           "nosotros": "bailaremos",
@@ -214,12 +374,32 @@
           "vosotros": "bailasteis",
           "yo": "bailé",
           "él": "bailó"
+        },
+        "subjuntivo": {
+          "ellos": "bailen",
+          "nosotros": "bailemos",
+          "tú": "bailes",
+          "vosotros": "bailéis",
+          "yo": "baile",
+          "él": "baile"
         }
-      }
+      },
+      "notes": {}
     },
     "beber": {
+      "classes": [
+        "regular"
+      ],
       "english": "to drink",
       "forms": {
+        "condicional": {
+          "ellos": "beberían",
+          "nosotros": "beberíamos",
+          "tú": "beberías",
+          "vosotros": "beberíais",
+          "yo": "bebería",
+          "él": "bebería"
+        },
         "futuro": {
           "ellos": "beberán",
           "nosotros": "beberemos",
@@ -251,12 +431,32 @@
           "vosotros": "bebisteis",
           "yo": "bebí",
           "él": "bebió"
+        },
+        "subjuntivo": {
+          "ellos": "beban",
+          "nosotros": "bebamos",
+          "tú": "bebas",
+          "vosotros": "bebáis",
+          "yo": "beba",
+          "él": "beba"
         }
-      }
+      },
+      "notes": {}
     },
     "buscar": {
+      "classes": [
+        "spelling-change-car-gar-zar"
+      ],
       "english": "to look for",
       "forms": {
+        "condicional": {
+          "ellos": "buscarían",
+          "nosotros": "buscaríamos",
+          "tú": "buscarías",
+          "vosotros": "buscaríais",
+          "yo": "buscaría",
+          "él": "buscaría"
+        },
         "futuro": {
           "ellos": "buscarán",
           "nosotros": "buscaremos",
@@ -288,12 +488,97 @@
           "vosotros": "buscasteis",
           "yo": "busqué",
           "él": "buscó"
+        },
+        "subjuntivo": {
+          "ellos": "busquen",
+          "nosotros": "busquemos",
+          "tú": "busques",
+          "vosotros": "busquéis",
+          "yo": "busque",
+          "él": "busque"
         }
+      },
+      "notes": {
+        "pretérito": "Spelling change yo only: busqué. Other persons regular.",
+        "subjuntivo": "Spelling from infinitive applied throughout: yo busque."
+      }
+    },
+    "caer": {
+      "classes": [
+        "go-verb",
+        "y-insertion"
+      ],
+      "english": "to fall",
+      "forms": {
+        "condicional": {
+          "ellos": "caerían",
+          "nosotros": "caeríamos",
+          "tú": "caerías",
+          "vosotros": "caeríais",
+          "yo": "caería",
+          "él": "caería"
+        },
+        "futuro": {
+          "ellos": "caerán",
+          "nosotros": "caeremos",
+          "tú": "caerás",
+          "vosotros": "caeréis",
+          "yo": "caeré",
+          "él": "caerá"
+        },
+        "imperfecto": {
+          "ellos": "caían",
+          "nosotros": "caíamos",
+          "tú": "caías",
+          "vosotros": "caíais",
+          "yo": "caía",
+          "él": "caía"
+        },
+        "presente": {
+          "ellos": "caen",
+          "nosotros": "caemos",
+          "tú": "caes",
+          "vosotros": "caéis",
+          "yo": "caigo",
+          "él": "cae"
+        },
+        "pretérito": {
+          "ellos": "cayeron",
+          "nosotros": "caímos",
+          "tú": "caíste",
+          "vosotros": "caísteis",
+          "yo": "caí",
+          "él": "cayó"
+        },
+        "subjuntivo": {
+          "ellos": "caigan",
+          "nosotros": "caigamos",
+          "tú": "caigas",
+          "vosotros": "caigáis",
+          "yo": "caiga",
+          "él": "caiga"
+        }
+      },
+      "notes": {
+        "presente": "Irregular yo: caigo (-go verb).",
+        "pretérito": "y-insertion in 3rd persons: cayó, cayeron.",
+        "subjuntivo": "Subjunctive built from yo present stem (-go → -ga): caiga."
       }
     },
     "caminar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to walk",
       "forms": {
+        "condicional": {
+          "ellos": "caminarían",
+          "nosotros": "caminaríamos",
+          "tú": "caminarías",
+          "vosotros": "caminaríais",
+          "yo": "caminaría",
+          "él": "caminaría"
+        },
         "futuro": {
           "ellos": "caminarán",
           "nosotros": "caminaremos",
@@ -325,12 +610,32 @@
           "vosotros": "caminasteis",
           "yo": "caminé",
           "él": "caminó"
+        },
+        "subjuntivo": {
+          "ellos": "caminen",
+          "nosotros": "caminemos",
+          "tú": "camines",
+          "vosotros": "caminéis",
+          "yo": "camine",
+          "él": "camine"
         }
-      }
+      },
+      "notes": {}
     },
     "cantar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to sing",
       "forms": {
+        "condicional": {
+          "ellos": "cantarían",
+          "nosotros": "cantaríamos",
+          "tú": "cantarías",
+          "vosotros": "cantaríais",
+          "yo": "cantaría",
+          "él": "cantaría"
+        },
         "futuro": {
           "ellos": "cantarán",
           "nosotros": "cantaremos",
@@ -362,12 +667,32 @@
           "vosotros": "cantasteis",
           "yo": "canté",
           "él": "cantó"
+        },
+        "subjuntivo": {
+          "ellos": "canten",
+          "nosotros": "cantemos",
+          "tú": "cantes",
+          "vosotros": "cantéis",
+          "yo": "cante",
+          "él": "cante"
         }
-      }
+      },
+      "notes": {}
     },
     "cocinar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to cook",
       "forms": {
+        "condicional": {
+          "ellos": "cocinarían",
+          "nosotros": "cocinaríamos",
+          "tú": "cocinarías",
+          "vosotros": "cocinaríais",
+          "yo": "cocinaría",
+          "él": "cocinaría"
+        },
         "futuro": {
           "ellos": "cocinarán",
           "nosotros": "cocinaremos",
@@ -399,12 +724,94 @@
           "vosotros": "cocinasteis",
           "yo": "cociné",
           "él": "cocinó"
+        },
+        "subjuntivo": {
+          "ellos": "cocinen",
+          "nosotros": "cocinemos",
+          "tú": "cocines",
+          "vosotros": "cocinéis",
+          "yo": "cocine",
+          "él": "cocine"
         }
+      },
+      "notes": {}
+    },
+    "comenzar": {
+      "classes": [
+        "spelling-change-car-gar-zar",
+        "stem-change-e-ie"
+      ],
+      "english": "to begin, to start",
+      "forms": {
+        "condicional": {
+          "ellos": "comenzarían",
+          "nosotros": "comenzaríamos",
+          "tú": "comenzarías",
+          "vosotros": "comenzaríais",
+          "yo": "comenzaría",
+          "él": "comenzaría"
+        },
+        "futuro": {
+          "ellos": "comenzarán",
+          "nosotros": "comenzaremos",
+          "tú": "comenzarás",
+          "vosotros": "comenzaréis",
+          "yo": "comenzaré",
+          "él": "comenzará"
+        },
+        "imperfecto": {
+          "ellos": "comenzaban",
+          "nosotros": "comenzábamos",
+          "tú": "comenzabas",
+          "vosotros": "comenzabais",
+          "yo": "comenzaba",
+          "él": "comenzaba"
+        },
+        "presente": {
+          "ellos": "comienzan",
+          "nosotros": "comenzamos",
+          "tú": "comienzas",
+          "vosotros": "comenzáis",
+          "yo": "comienzo",
+          "él": "comienza"
+        },
+        "pretérito": {
+          "ellos": "comenzaron",
+          "nosotros": "comenzamos",
+          "tú": "comenzaste",
+          "vosotros": "comenzasteis",
+          "yo": "comencé",
+          "él": "comenzó"
+        },
+        "subjuntivo": {
+          "ellos": "comiencen",
+          "nosotros": "comencemos",
+          "tú": "comiences",
+          "vosotros": "comencéis",
+          "yo": "comience",
+          "él": "comience"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→ie in yo/tú/él/ellos (e.g. comienzas); nosotros comenzamos.",
+        "pretérito": "Spelling change yo only: comencé. Other persons regular.",
+        "subjuntivo": "Spelling from infinitive applied throughout: yo comience."
       }
     },
     "comer": {
+      "classes": [
+        "regular"
+      ],
       "english": "to eat",
       "forms": {
+        "condicional": {
+          "ellos": "comerían",
+          "nosotros": "comeríamos",
+          "tú": "comerías",
+          "vosotros": "comeríais",
+          "yo": "comería",
+          "él": "comería"
+        },
         "futuro": {
           "ellos": "comerán",
           "nosotros": "comeremos",
@@ -436,12 +843,32 @@
           "vosotros": "comisteis",
           "yo": "comí",
           "él": "comió"
+        },
+        "subjuntivo": {
+          "ellos": "coman",
+          "nosotros": "comamos",
+          "tú": "comas",
+          "vosotros": "comáis",
+          "yo": "coma",
+          "él": "coma"
         }
-      }
+      },
+      "notes": {}
     },
     "comprar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to buy",
       "forms": {
+        "condicional": {
+          "ellos": "comprarían",
+          "nosotros": "compraríamos",
+          "tú": "comprarías",
+          "vosotros": "compraríais",
+          "yo": "compraría",
+          "él": "compraría"
+        },
         "futuro": {
           "ellos": "comprarán",
           "nosotros": "compraremos",
@@ -473,12 +900,94 @@
           "vosotros": "comprasteis",
           "yo": "compré",
           "él": "compró"
+        },
+        "subjuntivo": {
+          "ellos": "compren",
+          "nosotros": "compremos",
+          "tú": "compres",
+          "vosotros": "compréis",
+          "yo": "compre",
+          "él": "compre"
         }
+      },
+      "notes": {}
+    },
+    "conducir": {
+      "classes": [
+        "strong-preterite",
+        "zco-verb"
+      ],
+      "english": "to drive, to conduct",
+      "forms": {
+        "condicional": {
+          "ellos": "conducirían",
+          "nosotros": "conduciríamos",
+          "tú": "conducirías",
+          "vosotros": "conduciríais",
+          "yo": "conduciría",
+          "él": "conduciría"
+        },
+        "futuro": {
+          "ellos": "conducirán",
+          "nosotros": "conduciremos",
+          "tú": "conducirás",
+          "vosotros": "conduciréis",
+          "yo": "conduciré",
+          "él": "conducirá"
+        },
+        "imperfecto": {
+          "ellos": "conducían",
+          "nosotros": "conducíamos",
+          "tú": "conducías",
+          "vosotros": "conducíais",
+          "yo": "conducía",
+          "él": "conducía"
+        },
+        "presente": {
+          "ellos": "conducen",
+          "nosotros": "conducimos",
+          "tú": "conduces",
+          "vosotros": "conducís",
+          "yo": "conduzco",
+          "él": "conduce"
+        },
+        "pretérito": {
+          "ellos": "condujeron",
+          "nosotros": "condujimos",
+          "tú": "condujiste",
+          "vosotros": "condujisteis",
+          "yo": "conduje",
+          "él": "condujo"
+        },
+        "subjuntivo": {
+          "ellos": "conduzcan",
+          "nosotros": "conduzcamos",
+          "tú": "conduzcas",
+          "vosotros": "conduzcáis",
+          "yo": "conduzca",
+          "él": "conduzca"
+        }
+      },
+      "notes": {
+        "presente": "Irregular yo: conduzco (-zco verb). Other present forms regular.",
+        "pretérito": "Strong preterite: conduje, condujiste. No accents on endings.",
+        "subjuntivo": "Irregular subjunctive: yo conduzca."
       }
     },
     "conocer": {
+      "classes": [
+        "zco-verb"
+      ],
       "english": "to be familiar with, to know",
       "forms": {
+        "condicional": {
+          "ellos": "conocerían",
+          "nosotros": "conoceríamos",
+          "tú": "conocerías",
+          "vosotros": "conoceríais",
+          "yo": "conocería",
+          "él": "conocería"
+        },
         "futuro": {
           "ellos": "conocerán",
           "nosotros": "conoceremos",
@@ -510,12 +1019,217 @@
           "vosotros": "conocisteis",
           "yo": "conocí",
           "él": "conoció"
+        },
+        "subjuntivo": {
+          "ellos": "conozcan",
+          "nosotros": "conozcamos",
+          "tú": "conozcas",
+          "vosotros": "conozcáis",
+          "yo": "conozca",
+          "él": "conozca"
         }
+      },
+      "notes": {
+        "presente": "Irregular yo: conozco (-zco verb). Other present forms regular.",
+        "subjuntivo": "Irregular subjunctive: yo conozca."
+      }
+    },
+    "construir": {
+      "classes": [
+        "stem-change-e-i",
+        "y-insertion"
+      ],
+      "english": "to build, to construct",
+      "forms": {
+        "condicional": {
+          "ellos": "construirían",
+          "nosotros": "construiríamos",
+          "tú": "construirías",
+          "vosotros": "construiríais",
+          "yo": "construiría",
+          "él": "construiría"
+        },
+        "futuro": {
+          "ellos": "construirán",
+          "nosotros": "construiremos",
+          "tú": "construirás",
+          "vosotros": "construiréis",
+          "yo": "construiré",
+          "él": "construirá"
+        },
+        "imperfecto": {
+          "ellos": "construían",
+          "nosotros": "construíamos",
+          "tú": "construías",
+          "vosotros": "construíais",
+          "yo": "construía",
+          "él": "construía"
+        },
+        "presente": {
+          "ellos": "construyen",
+          "nosotros": "construimos",
+          "tú": "construyes",
+          "vosotros": "construís",
+          "yo": "construyo",
+          "él": "construye"
+        },
+        "pretérito": {
+          "ellos": "construyeron",
+          "nosotros": "construimos",
+          "tú": "construiste",
+          "vosotros": "construisteis",
+          "yo": "construí",
+          "él": "construyó"
+        },
+        "subjuntivo": {
+          "ellos": "construyan",
+          "nosotros": "construyamos",
+          "tú": "construyas",
+          "vosotros": "construyáis",
+          "yo": "construya",
+          "él": "construya"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→i in yo/tú/él/ellos (e.g. construyes); nosotros construimos.",
+        "pretérito": "y-insertion in 3rd persons: construyó, construyeron.",
+        "subjuntivo": "-ir stem changer also shifts in subjunctive: yo construya."
+      }
+    },
+    "contar": {
+      "classes": [
+        "stem-change-o-ue"
+      ],
+      "english": "to count, to tell",
+      "forms": {
+        "condicional": {
+          "ellos": "contarían",
+          "nosotros": "contaríamos",
+          "tú": "contarías",
+          "vosotros": "contaríais",
+          "yo": "contaría",
+          "él": "contaría"
+        },
+        "futuro": {
+          "ellos": "contarán",
+          "nosotros": "contaremos",
+          "tú": "contarás",
+          "vosotros": "contaréis",
+          "yo": "contaré",
+          "él": "contará"
+        },
+        "imperfecto": {
+          "ellos": "contaban",
+          "nosotros": "contábamos",
+          "tú": "contabas",
+          "vosotros": "contabais",
+          "yo": "contaba",
+          "él": "contaba"
+        },
+        "presente": {
+          "ellos": "cuentan",
+          "nosotros": "contamos",
+          "tú": "cuentas",
+          "vosotros": "contáis",
+          "yo": "cuento",
+          "él": "cuenta"
+        },
+        "pretérito": {
+          "ellos": "contaron",
+          "nosotros": "contamos",
+          "tú": "contaste",
+          "vosotros": "contasteis",
+          "yo": "conté",
+          "él": "contó"
+        },
+        "subjuntivo": {
+          "ellos": "cuenten",
+          "nosotros": "contemos",
+          "tú": "cuentes",
+          "vosotros": "contéis",
+          "yo": "cuente",
+          "él": "cuente"
+        }
+      },
+      "notes": {
+        "presente": "Stem o→ue in yo/tú/él/ellos (e.g. cuentas); nosotros contamos.",
+        "subjuntivo": "Irregular subjunctive: yo cuente."
+      }
+    },
+    "continuar": {
+      "classes": [
+        "stem-change-e-i"
+      ],
+      "english": "to continue",
+      "forms": {
+        "condicional": {
+          "ellos": "continuarían",
+          "nosotros": "continuaríamos",
+          "tú": "continuarías",
+          "vosotros": "continuaríais",
+          "yo": "continuaría",
+          "él": "continuaría"
+        },
+        "futuro": {
+          "ellos": "continuarán",
+          "nosotros": "continuaremos",
+          "tú": "continuarás",
+          "vosotros": "continuaréis",
+          "yo": "continuaré",
+          "él": "continuará"
+        },
+        "imperfecto": {
+          "ellos": "continuaban",
+          "nosotros": "continuábamos",
+          "tú": "continuabas",
+          "vosotros": "continuabais",
+          "yo": "continuaba",
+          "él": "continuaba"
+        },
+        "presente": {
+          "ellos": "continúan",
+          "nosotros": "continuamos",
+          "tú": "continúas",
+          "vosotros": "continuáis",
+          "yo": "continúo",
+          "él": "continúa"
+        },
+        "pretérito": {
+          "ellos": "continuaron",
+          "nosotros": "continuamos",
+          "tú": "continuaste",
+          "vosotros": "continuasteis",
+          "yo": "continué",
+          "él": "continuó"
+        },
+        "subjuntivo": {
+          "ellos": "continúen",
+          "nosotros": "continuemos",
+          "tú": "continúes",
+          "vosotros": "continuéis",
+          "yo": "continúe",
+          "él": "continúe"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→i in yo/tú/él/ellos (e.g. continúas); nosotros continuamos.",
+        "subjuntivo": "Irregular subjunctive: yo continúe."
       }
     },
     "correr": {
+      "classes": [
+        "regular"
+      ],
       "english": "to run",
       "forms": {
+        "condicional": {
+          "ellos": "correrían",
+          "nosotros": "correríamos",
+          "tú": "correrías",
+          "vosotros": "correríais",
+          "yo": "correría",
+          "él": "correría"
+        },
         "futuro": {
           "ellos": "correrán",
           "nosotros": "correremos",
@@ -547,12 +1261,32 @@
           "vosotros": "corristeis",
           "yo": "corrí",
           "él": "corrió"
+        },
+        "subjuntivo": {
+          "ellos": "corran",
+          "nosotros": "corramos",
+          "tú": "corras",
+          "vosotros": "corráis",
+          "yo": "corra",
+          "él": "corra"
         }
-      }
+      },
+      "notes": {}
     },
     "creer": {
+      "classes": [
+        "y-insertion"
+      ],
       "english": "to believe, to think",
       "forms": {
+        "condicional": {
+          "ellos": "creerían",
+          "nosotros": "creeríamos",
+          "tú": "creerías",
+          "vosotros": "creeríais",
+          "yo": "creería",
+          "él": "creería"
+        },
         "futuro": {
           "ellos": "creerán",
           "nosotros": "creeremos",
@@ -584,12 +1318,34 @@
           "vosotros": "creísteis",
           "yo": "creí",
           "él": "creyó"
+        },
+        "subjuntivo": {
+          "ellos": "crean",
+          "nosotros": "creamos",
+          "tú": "creas",
+          "vosotros": "creáis",
+          "yo": "crea",
+          "él": "crea"
         }
+      },
+      "notes": {
+        "pretérito": "y-insertion in 3rd persons: creyó, creyeron."
       }
     },
     "dar": {
+      "classes": [
+        "fully-irregular"
+      ],
       "english": "to give",
       "forms": {
+        "condicional": {
+          "ellos": "darían",
+          "nosotros": "daríamos",
+          "tú": "darías",
+          "vosotros": "daríais",
+          "yo": "daría",
+          "él": "daría"
+        },
         "futuro": {
           "ellos": "darán",
           "nosotros": "daremos",
@@ -621,12 +1377,36 @@
           "vosotros": "disteis",
           "yo": "di",
           "él": "dio"
+        },
+        "subjuntivo": {
+          "ellos": "den",
+          "nosotros": "demos",
+          "tú": "des",
+          "vosotros": "deis",
+          "yo": "dé",
+          "él": "dé"
         }
+      },
+      "notes": {
+        "presente": "Fully irregular: yo doy, tú das. Memorise all forms.",
+        "pretérito": "Fully irregular: yo di, tú diste. Memorise all forms.",
+        "subjuntivo": "Fully irregular: yo dé, tú des. Memorise all forms."
       }
     },
     "deber": {
+      "classes": [
+        "regular"
+      ],
       "english": "to should, to ought, to owe",
       "forms": {
+        "condicional": {
+          "ellos": "deberían",
+          "nosotros": "deberíamos",
+          "tú": "deberías",
+          "vosotros": "deberíais",
+          "yo": "debería",
+          "él": "debería"
+        },
         "futuro": {
           "ellos": "deberán",
           "nosotros": "deberemos",
@@ -658,12 +1438,32 @@
           "vosotros": "debisteis",
           "yo": "debí",
           "él": "debió"
+        },
+        "subjuntivo": {
+          "ellos": "deban",
+          "nosotros": "debamos",
+          "tú": "debas",
+          "vosotros": "debáis",
+          "yo": "deba",
+          "él": "deba"
         }
-      }
+      },
+      "notes": {}
     },
     "decidir": {
+      "classes": [
+        "regular"
+      ],
       "english": "to decide",
       "forms": {
+        "condicional": {
+          "ellos": "decidirían",
+          "nosotros": "decidiríamos",
+          "tú": "decidirías",
+          "vosotros": "decidiríais",
+          "yo": "decidiría",
+          "él": "decidiría"
+        },
         "futuro": {
           "ellos": "decidirán",
           "nosotros": "decidiremos",
@@ -695,12 +1495,35 @@
           "vosotros": "decidisteis",
           "yo": "decidí",
           "él": "decidió"
+        },
+        "subjuntivo": {
+          "ellos": "decidan",
+          "nosotros": "decidamos",
+          "tú": "decidas",
+          "vosotros": "decidáis",
+          "yo": "decida",
+          "él": "decida"
         }
-      }
+      },
+      "notes": {}
     },
     "decir": {
+      "classes": [
+        "go-verb",
+        "irregular-future",
+        "stem-change-e-i",
+        "strong-preterite"
+      ],
       "english": "to say, to tell",
       "forms": {
+        "condicional": {
+          "ellos": "dirían",
+          "nosotros": "diríamos",
+          "tú": "dirías",
+          "vosotros": "diríais",
+          "yo": "diría",
+          "él": "diría"
+        },
         "futuro": {
           "ellos": "dirán",
           "nosotros": "diremos",
@@ -732,12 +1555,38 @@
           "vosotros": "dijisteis",
           "yo": "dije",
           "él": "dijo"
+        },
+        "subjuntivo": {
+          "ellos": "digan",
+          "nosotros": "digamos",
+          "tú": "digas",
+          "vosotros": "digáis",
+          "yo": "diga",
+          "él": "diga"
         }
+      },
+      "notes": {
+        "condicional": "Irregular conditional stem dir-: diría, dirías.",
+        "futuro": "Irregular future stem dir-: diré, dirás.",
+        "presente": "Irregular yo: digo (-go verb). Stem e→i in tú/él/ellos (e.g. dices).",
+        "pretérito": "Strong preterite: dije, dijiste. No accents on endings.",
+        "subjuntivo": "Subjunctive built from yo present stem (-go → -ga): diga."
       }
     },
     "dejar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to let, to allow, to leave, to leave behind",
       "forms": {
+        "condicional": {
+          "ellos": "dejarían",
+          "nosotros": "dejaríamos",
+          "tú": "dejarías",
+          "vosotros": "dejaríais",
+          "yo": "dejaría",
+          "él": "dejaría"
+        },
         "futuro": {
           "ellos": "dejarán",
           "nosotros": "dejaremos",
@@ -769,12 +1618,32 @@
           "vosotros": "dejasteis",
           "yo": "dejé",
           "él": "dejó"
+        },
+        "subjuntivo": {
+          "ellos": "dejen",
+          "nosotros": "dejemos",
+          "tú": "dejes",
+          "vosotros": "dejéis",
+          "yo": "deje",
+          "él": "deje"
         }
-      }
+      },
+      "notes": {}
     },
     "discutir": {
+      "classes": [
+        "regular"
+      ],
       "english": "to argue",
       "forms": {
+        "condicional": {
+          "ellos": "discutirían",
+          "nosotros": "discutiríamos",
+          "tú": "discutirías",
+          "vosotros": "discutiríais",
+          "yo": "discutiría",
+          "él": "discutiría"
+        },
         "futuro": {
           "ellos": "discutirán",
           "nosotros": "discutiremos",
@@ -806,12 +1675,32 @@
           "vosotros": "discutisteis",
           "yo": "discutí",
           "él": "discutió"
+        },
+        "subjuntivo": {
+          "ellos": "discutan",
+          "nosotros": "discutamos",
+          "tú": "discutas",
+          "vosotros": "discutáis",
+          "yo": "discuta",
+          "él": "discuta"
         }
-      }
+      },
+      "notes": {}
     },
     "dividir": {
+      "classes": [
+        "regular"
+      ],
       "english": "to divide",
       "forms": {
+        "condicional": {
+          "ellos": "dividirían",
+          "nosotros": "dividiríamos",
+          "tú": "dividirías",
+          "vosotros": "dividiríais",
+          "yo": "dividiría",
+          "él": "dividiría"
+        },
         "futuro": {
           "ellos": "dividirán",
           "nosotros": "dividiremos",
@@ -843,12 +1732,216 @@
           "vosotros": "dividisteis",
           "yo": "dividí",
           "él": "dividió"
+        },
+        "subjuntivo": {
+          "ellos": "dividan",
+          "nosotros": "dividamos",
+          "tú": "dividas",
+          "vosotros": "dividáis",
+          "yo": "divida",
+          "él": "divida"
         }
+      },
+      "notes": {}
+    },
+    "dormir": {
+      "classes": [
+        "stem-change-o-ue"
+      ],
+      "english": "to sleep",
+      "forms": {
+        "condicional": {
+          "ellos": "dormirían",
+          "nosotros": "dormiríamos",
+          "tú": "dormirías",
+          "vosotros": "dormiríais",
+          "yo": "dormiría",
+          "él": "dormiría"
+        },
+        "futuro": {
+          "ellos": "dormirán",
+          "nosotros": "dormiremos",
+          "tú": "dormirás",
+          "vosotros": "dormiréis",
+          "yo": "dormiré",
+          "él": "dormirá"
+        },
+        "imperfecto": {
+          "ellos": "dormían",
+          "nosotros": "dormíamos",
+          "tú": "dormías",
+          "vosotros": "dormíais",
+          "yo": "dormía",
+          "él": "dormía"
+        },
+        "presente": {
+          "ellos": "duermen",
+          "nosotros": "dormimos",
+          "tú": "duermes",
+          "vosotros": "dormís",
+          "yo": "duermo",
+          "él": "duerme"
+        },
+        "pretérito": {
+          "ellos": "durmieron",
+          "nosotros": "dormimos",
+          "tú": "dormiste",
+          "vosotros": "dormisteis",
+          "yo": "dormí",
+          "él": "durmió"
+        },
+        "subjuntivo": {
+          "ellos": "duerman",
+          "nosotros": "durmamos",
+          "tú": "duermas",
+          "vosotros": "durmáis",
+          "yo": "duerma",
+          "él": "duerma"
+        }
+      },
+      "notes": {
+        "presente": "Stem o→ue in yo/tú/él/ellos (e.g. duermes); nosotros dormimos.",
+        "pretérito": "Irregular preterite: dormí, dormiste.",
+        "subjuntivo": "-ir stem changer also shifts in subjunctive: yo duerma."
+      }
+    },
+    "elegir": {
+      "classes": [
+        "stem-change-e-i"
+      ],
+      "english": "to choose, to elect",
+      "forms": {
+        "condicional": {
+          "ellos": "elegirían",
+          "nosotros": "elegiríamos",
+          "tú": "elegirías",
+          "vosotros": "elegiríais",
+          "yo": "elegiría",
+          "él": "elegiría"
+        },
+        "futuro": {
+          "ellos": "elegirán",
+          "nosotros": "elegiremos",
+          "tú": "elegirás",
+          "vosotros": "elegiréis",
+          "yo": "elegiré",
+          "él": "elegirá"
+        },
+        "imperfecto": {
+          "ellos": "elegían",
+          "nosotros": "elegíamos",
+          "tú": "elegías",
+          "vosotros": "elegíais",
+          "yo": "elegía",
+          "él": "elegía"
+        },
+        "presente": {
+          "ellos": "eligen",
+          "nosotros": "elegimos",
+          "tú": "eliges",
+          "vosotros": "elegís",
+          "yo": "elijo",
+          "él": "elige"
+        },
+        "pretérito": {
+          "ellos": "eligieron",
+          "nosotros": "elegimos",
+          "tú": "elegiste",
+          "vosotros": "elegisteis",
+          "yo": "elegí",
+          "él": "eligió"
+        },
+        "subjuntivo": {
+          "ellos": "elijan",
+          "nosotros": "elijamos",
+          "tú": "elijas",
+          "vosotros": "elijáis",
+          "yo": "elija",
+          "él": "elija"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→i in yo/tú/él/ellos (e.g. eliges); nosotros elegimos.",
+        "pretérito": "Irregular preterite: elegí, elegiste.",
+        "subjuntivo": "-ir stem changer also shifts in subjunctive: yo elija."
+      }
+    },
+    "empezar": {
+      "classes": [
+        "spelling-change-car-gar-zar",
+        "stem-change-e-ie"
+      ],
+      "english": "to begin, to start",
+      "forms": {
+        "condicional": {
+          "ellos": "empezarían",
+          "nosotros": "empezaríamos",
+          "tú": "empezarías",
+          "vosotros": "empezaríais",
+          "yo": "empezaría",
+          "él": "empezaría"
+        },
+        "futuro": {
+          "ellos": "empezarán",
+          "nosotros": "empezaremos",
+          "tú": "empezarás",
+          "vosotros": "empezaréis",
+          "yo": "empezaré",
+          "él": "empezará"
+        },
+        "imperfecto": {
+          "ellos": "empezaban",
+          "nosotros": "empezábamos",
+          "tú": "empezabas",
+          "vosotros": "empezabais",
+          "yo": "empezaba",
+          "él": "empezaba"
+        },
+        "presente": {
+          "ellos": "empiezan",
+          "nosotros": "empezamos",
+          "tú": "empiezas",
+          "vosotros": "empezáis",
+          "yo": "empiezo",
+          "él": "empieza"
+        },
+        "pretérito": {
+          "ellos": "empezaron",
+          "nosotros": "empezamos",
+          "tú": "empezaste",
+          "vosotros": "empezasteis",
+          "yo": "empecé",
+          "él": "empezó"
+        },
+        "subjuntivo": {
+          "ellos": "empiecen",
+          "nosotros": "empecemos",
+          "tú": "empieces",
+          "vosotros": "empecéis",
+          "yo": "empiece",
+          "él": "empiece"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→ie in yo/tú/él/ellos (e.g. empiezas); nosotros empezamos.",
+        "pretérito": "Spelling change yo only: empecé. Other persons regular.",
+        "subjuntivo": "Spelling from infinitive applied throughout: yo empiece."
       }
     },
     "encontrar": {
+      "classes": [
+        "stem-change-o-ue"
+      ],
       "english": "to find, to encounter",
       "forms": {
+        "condicional": {
+          "ellos": "encontrarían",
+          "nosotros": "encontraríamos",
+          "tú": "encontrarías",
+          "vosotros": "encontraríais",
+          "yo": "encontraría",
+          "él": "encontraría"
+        },
         "futuro": {
           "ellos": "encontrarán",
           "nosotros": "encontraremos",
@@ -880,12 +1973,155 @@
           "vosotros": "encontrasteis",
           "yo": "encontré",
           "él": "encontró"
+        },
+        "subjuntivo": {
+          "ellos": "encuentren",
+          "nosotros": "encontremos",
+          "tú": "encuentres",
+          "vosotros": "encontréis",
+          "yo": "encuentre",
+          "él": "encuentre"
         }
+      },
+      "notes": {
+        "presente": "Stem o→ue in yo/tú/él/ellos (e.g. encuentras); nosotros encontramos.",
+        "subjuntivo": "Irregular subjunctive: yo encuentre."
+      }
+    },
+    "entender": {
+      "classes": [
+        "stem-change-e-ie"
+      ],
+      "english": "to understand",
+      "forms": {
+        "condicional": {
+          "ellos": "entenderían",
+          "nosotros": "entenderíamos",
+          "tú": "entenderías",
+          "vosotros": "entenderíais",
+          "yo": "entendería",
+          "él": "entendería"
+        },
+        "futuro": {
+          "ellos": "entenderán",
+          "nosotros": "entenderemos",
+          "tú": "entenderás",
+          "vosotros": "entenderéis",
+          "yo": "entenderé",
+          "él": "entenderá"
+        },
+        "imperfecto": {
+          "ellos": "entendían",
+          "nosotros": "entendíamos",
+          "tú": "entendías",
+          "vosotros": "entendíais",
+          "yo": "entendía",
+          "él": "entendía"
+        },
+        "presente": {
+          "ellos": "entienden",
+          "nosotros": "entendemos",
+          "tú": "entiendes",
+          "vosotros": "entendéis",
+          "yo": "entiendo",
+          "él": "entiende"
+        },
+        "pretérito": {
+          "ellos": "entendieron",
+          "nosotros": "entendimos",
+          "tú": "entendiste",
+          "vosotros": "entendisteis",
+          "yo": "entendí",
+          "él": "entendió"
+        },
+        "subjuntivo": {
+          "ellos": "entiendan",
+          "nosotros": "entendamos",
+          "tú": "entiendas",
+          "vosotros": "entendáis",
+          "yo": "entienda",
+          "él": "entienda"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→ie in yo/tú/él/ellos (e.g. entiendes); nosotros entendemos.",
+        "subjuntivo": "Irregular subjunctive: yo entienda."
+      }
+    },
+    "enviar": {
+      "classes": [
+        "stem-change-e-i"
+      ],
+      "english": "to send",
+      "forms": {
+        "condicional": {
+          "ellos": "enviarían",
+          "nosotros": "enviaríamos",
+          "tú": "enviarías",
+          "vosotros": "enviaríais",
+          "yo": "enviaría",
+          "él": "enviaría"
+        },
+        "futuro": {
+          "ellos": "enviarán",
+          "nosotros": "enviaremos",
+          "tú": "enviarás",
+          "vosotros": "enviaréis",
+          "yo": "enviaré",
+          "él": "enviará"
+        },
+        "imperfecto": {
+          "ellos": "enviaban",
+          "nosotros": "enviábamos",
+          "tú": "enviabas",
+          "vosotros": "enviabais",
+          "yo": "enviaba",
+          "él": "enviaba"
+        },
+        "presente": {
+          "ellos": "envían",
+          "nosotros": "enviamos",
+          "tú": "envías",
+          "vosotros": "enviáis",
+          "yo": "envío",
+          "él": "envía"
+        },
+        "pretérito": {
+          "ellos": "enviaron",
+          "nosotros": "enviamos",
+          "tú": "enviaste",
+          "vosotros": "enviasteis",
+          "yo": "envié",
+          "él": "envió"
+        },
+        "subjuntivo": {
+          "ellos": "envíen",
+          "nosotros": "enviemos",
+          "tú": "envíes",
+          "vosotros": "enviéis",
+          "yo": "envíe",
+          "él": "envíe"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→i in yo/tú/él/ellos (e.g. envías); nosotros enviamos.",
+        "subjuntivo": "Irregular subjunctive: yo envíe."
       }
     },
     "escribir": {
+      "classes": [
+        "regular"
+      ],
       "english": "to write",
       "forms": {
+        "condicional": {
+          "ellos": "escribirían",
+          "nosotros": "escribiríamos",
+          "tú": "escribirías",
+          "vosotros": "escribiríais",
+          "yo": "escribiría",
+          "él": "escribiría"
+        },
         "futuro": {
           "ellos": "escribirán",
           "nosotros": "escribiremos",
@@ -917,12 +2153,32 @@
           "vosotros": "escribisteis",
           "yo": "escribí",
           "él": "escribió"
+        },
+        "subjuntivo": {
+          "ellos": "escriban",
+          "nosotros": "escribamos",
+          "tú": "escribas",
+          "vosotros": "escribáis",
+          "yo": "escriba",
+          "él": "escriba"
         }
-      }
+      },
+      "notes": {}
     },
     "escuchar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to listen to",
       "forms": {
+        "condicional": {
+          "ellos": "escucharían",
+          "nosotros": "escucharíamos",
+          "tú": "escucharías",
+          "vosotros": "escucharíais",
+          "yo": "escucharía",
+          "él": "escucharía"
+        },
         "futuro": {
           "ellos": "escucharán",
           "nosotros": "escucharemos",
@@ -954,12 +2210,32 @@
           "vosotros": "escuchasteis",
           "yo": "escuché",
           "él": "escuchó"
+        },
+        "subjuntivo": {
+          "ellos": "escuchen",
+          "nosotros": "escuchemos",
+          "tú": "escuches",
+          "vosotros": "escuchéis",
+          "yo": "escuche",
+          "él": "escuche"
         }
-      }
+      },
+      "notes": {}
     },
     "esperar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to wait, to hope",
       "forms": {
+        "condicional": {
+          "ellos": "esperarían",
+          "nosotros": "esperaríamos",
+          "tú": "esperarías",
+          "vosotros": "esperaríais",
+          "yo": "esperaría",
+          "él": "esperaría"
+        },
         "futuro": {
           "ellos": "esperarán",
           "nosotros": "esperaremos",
@@ -991,12 +2267,32 @@
           "vosotros": "esperasteis",
           "yo": "esperé",
           "él": "esperó"
+        },
+        "subjuntivo": {
+          "ellos": "esperen",
+          "nosotros": "esperemos",
+          "tú": "esperes",
+          "vosotros": "esperéis",
+          "yo": "espere",
+          "él": "espere"
         }
-      }
+      },
+      "notes": {}
     },
     "estar": {
+      "classes": [
+        "fully-irregular"
+      ],
       "english": "to be",
       "forms": {
+        "condicional": {
+          "ellos": "estarían",
+          "nosotros": "estaríamos",
+          "tú": "estarías",
+          "vosotros": "estaríais",
+          "yo": "estaría",
+          "él": "estaría"
+        },
         "futuro": {
           "ellos": "estarán",
           "nosotros": "estaremos",
@@ -1028,12 +2324,36 @@
           "vosotros": "estuvisteis",
           "yo": "estuve",
           "él": "estuvo"
+        },
+        "subjuntivo": {
+          "ellos": "estén",
+          "nosotros": "estemos",
+          "tú": "estés",
+          "vosotros": "estéis",
+          "yo": "esté",
+          "él": "esté"
         }
+      },
+      "notes": {
+        "presente": "Fully irregular: yo estoy, tú estás. Memorise all forms.",
+        "pretérito": "Fully irregular: yo estuve, tú estuviste. Memorise all forms.",
+        "subjuntivo": "Fully irregular: yo esté, tú estés. Memorise all forms."
       }
     },
     "estudiar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to study",
       "forms": {
+        "condicional": {
+          "ellos": "estudiarían",
+          "nosotros": "estudiaríamos",
+          "tú": "estudiarías",
+          "vosotros": "estudiaríais",
+          "yo": "estudiaría",
+          "él": "estudiaría"
+        },
         "futuro": {
           "ellos": "estudiarán",
           "nosotros": "estudiaremos",
@@ -1065,12 +2385,32 @@
           "vosotros": "estudiasteis",
           "yo": "estudié",
           "él": "estudió"
+        },
+        "subjuntivo": {
+          "ellos": "estudien",
+          "nosotros": "estudiemos",
+          "tú": "estudies",
+          "vosotros": "estudiéis",
+          "yo": "estudie",
+          "él": "estudie"
         }
-      }
+      },
+      "notes": {}
     },
     "hablar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to speak, to talk",
       "forms": {
+        "condicional": {
+          "ellos": "hablarían",
+          "nosotros": "hablaríamos",
+          "tú": "hablarías",
+          "vosotros": "hablaríais",
+          "yo": "hablaría",
+          "él": "hablaría"
+        },
         "futuro": {
           "ellos": "hablarán",
           "nosotros": "hablaremos",
@@ -1102,12 +2442,34 @@
           "vosotros": "hablasteis",
           "yo": "hablé",
           "él": "habló"
+        },
+        "subjuntivo": {
+          "ellos": "hablen",
+          "nosotros": "hablemos",
+          "tú": "hables",
+          "vosotros": "habléis",
+          "yo": "hable",
+          "él": "hable"
         }
-      }
+      },
+      "notes": {}
     },
     "hacer": {
+      "classes": [
+        "go-verb",
+        "irregular-future",
+        "strong-preterite"
+      ],
       "english": "to make, to do",
       "forms": {
+        "condicional": {
+          "ellos": "harían",
+          "nosotros": "haríamos",
+          "tú": "harías",
+          "vosotros": "haríais",
+          "yo": "haría",
+          "él": "haría"
+        },
         "futuro": {
           "ellos": "harán",
           "nosotros": "haremos",
@@ -1139,12 +2501,100 @@
           "vosotros": "hicisteis",
           "yo": "hice",
           "él": "hizo"
+        },
+        "subjuntivo": {
+          "ellos": "hagan",
+          "nosotros": "hagamos",
+          "tú": "hagas",
+          "vosotros": "hagáis",
+          "yo": "haga",
+          "él": "haga"
         }
+      },
+      "notes": {
+        "condicional": "Irregular conditional stem har-: haría, harías.",
+        "futuro": "Irregular future stem har-: haré, harás.",
+        "presente": "Irregular yo: hago (-go verb).",
+        "pretérito": "Strong preterite: hice, hiciste. No accents on endings.",
+        "subjuntivo": "Subjunctive built from yo present stem (-go → -ga): haga."
+      }
+    },
+    "huir": {
+      "classes": [
+        "stem-change-e-i",
+        "y-insertion"
+      ],
+      "english": "to flee, to escape",
+      "forms": {
+        "condicional": {
+          "ellos": "huirían",
+          "nosotros": "huiríamos",
+          "tú": "huirías",
+          "vosotros": "huiríais",
+          "yo": "huiría",
+          "él": "huiría"
+        },
+        "futuro": {
+          "ellos": "huirán",
+          "nosotros": "huiremos",
+          "tú": "huirás",
+          "vosotros": "huiréis",
+          "yo": "huiré",
+          "él": "huirá"
+        },
+        "imperfecto": {
+          "ellos": "huían",
+          "nosotros": "huíamos",
+          "tú": "huías",
+          "vosotros": "huíais",
+          "yo": "huía",
+          "él": "huía"
+        },
+        "presente": {
+          "ellos": "huyen",
+          "nosotros": "huimos",
+          "tú": "huyes",
+          "vosotros": "huís",
+          "yo": "huyo",
+          "él": "huye"
+        },
+        "pretérito": {
+          "ellos": "huyeron",
+          "nosotros": "huimos",
+          "tú": "huiste",
+          "vosotros": "huisteis",
+          "yo": "huí",
+          "él": "huyó"
+        },
+        "subjuntivo": {
+          "ellos": "huyan",
+          "nosotros": "huyamos",
+          "tú": "huyas",
+          "vosotros": "huyáis",
+          "yo": "huya",
+          "él": "huya"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→i in yo/tú/él/ellos (e.g. huyes); nosotros huimos.",
+        "pretérito": "y-insertion in 3rd persons: huyó, huyeron.",
+        "subjuntivo": "-ir stem changer also shifts in subjunctive: yo huya."
       }
     },
     "ir": {
+      "classes": [
+        "fully-irregular"
+      ],
       "english": "to go",
       "forms": {
+        "condicional": {
+          "ellos": "irían",
+          "nosotros": "iríamos",
+          "tú": "irías",
+          "vosotros": "iríais",
+          "yo": "iría",
+          "él": "iría"
+        },
         "futuro": {
           "ellos": "irán",
           "nosotros": "iremos",
@@ -1176,12 +2626,99 @@
           "vosotros": "fuisteis",
           "yo": "fui",
           "él": "fue"
+        },
+        "subjuntivo": {
+          "ellos": "vayan",
+          "nosotros": "vayamos",
+          "tú": "vayas",
+          "vosotros": "vayáis",
+          "yo": "vaya",
+          "él": "vaya"
         }
+      },
+      "notes": {
+        "imperfecto": "Fully irregular: yo iba, tú ibas. Memorise all forms.",
+        "presente": "Fully irregular: yo voy, tú vas. Memorise all forms.",
+        "pretérito": "Fully irregular: yo fui, tú fuiste. Memorise all forms.",
+        "subjuntivo": "Fully irregular: yo vaya, tú vayas. Memorise all forms."
+      }
+    },
+    "jugar": {
+      "classes": [
+        "spelling-change-car-gar-zar",
+        "stem-change-u-ue"
+      ],
+      "english": "to play (a game or sport)",
+      "forms": {
+        "condicional": {
+          "ellos": "jugarían",
+          "nosotros": "jugaríamos",
+          "tú": "jugarías",
+          "vosotros": "jugaríais",
+          "yo": "jugaría",
+          "él": "jugaría"
+        },
+        "futuro": {
+          "ellos": "jugarán",
+          "nosotros": "jugaremos",
+          "tú": "jugarás",
+          "vosotros": "jugaréis",
+          "yo": "jugaré",
+          "él": "jugará"
+        },
+        "imperfecto": {
+          "ellos": "jugaban",
+          "nosotros": "jugábamos",
+          "tú": "jugabas",
+          "vosotros": "jugabais",
+          "yo": "jugaba",
+          "él": "jugaba"
+        },
+        "presente": {
+          "ellos": "juegan",
+          "nosotros": "jugamos",
+          "tú": "juegas",
+          "vosotros": "jugáis",
+          "yo": "juego",
+          "él": "juega"
+        },
+        "pretérito": {
+          "ellos": "jugaron",
+          "nosotros": "jugamos",
+          "tú": "jugaste",
+          "vosotros": "jugasteis",
+          "yo": "jugué",
+          "él": "jugó"
+        },
+        "subjuntivo": {
+          "ellos": "jueguen",
+          "nosotros": "juguemos",
+          "tú": "juegues",
+          "vosotros": "juguéis",
+          "yo": "juegue",
+          "él": "juegue"
+        }
+      },
+      "notes": {
+        "presente": "Stem u→ue in yo/tú/él/ellos (e.g. juegas); nosotros jugamos.",
+        "pretérito": "Spelling change yo only: jugué. Other persons regular.",
+        "subjuntivo": "Spelling from infinitive applied throughout: yo juegue."
       }
     },
     "leer": {
+      "classes": [
+        "y-insertion"
+      ],
       "english": "to read",
       "forms": {
+        "condicional": {
+          "ellos": "leerían",
+          "nosotros": "leeríamos",
+          "tú": "leerías",
+          "vosotros": "leeríais",
+          "yo": "leería",
+          "él": "leería"
+        },
         "futuro": {
           "ellos": "leerán",
           "nosotros": "leeremos",
@@ -1213,12 +2750,34 @@
           "vosotros": "leísteis",
           "yo": "leí",
           "él": "leyó"
+        },
+        "subjuntivo": {
+          "ellos": "lean",
+          "nosotros": "leamos",
+          "tú": "leas",
+          "vosotros": "leáis",
+          "yo": "lea",
+          "él": "lea"
         }
+      },
+      "notes": {
+        "pretérito": "y-insertion in 3rd persons: leyó, leyeron."
       }
     },
     "llamar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to call, to call oneself",
       "forms": {
+        "condicional": {
+          "ellos": "llamarían",
+          "nosotros": "llamaríamos",
+          "tú": "llamarías",
+          "vosotros": "llamaríais",
+          "yo": "llamaría",
+          "él": "llamaría"
+        },
         "futuro": {
           "ellos": "llamarán",
           "nosotros": "llamaremos",
@@ -1250,12 +2809,32 @@
           "vosotros": "llamasteis",
           "yo": "llamé",
           "él": "llamó"
+        },
+        "subjuntivo": {
+          "ellos": "llamen",
+          "nosotros": "llamemos",
+          "tú": "llames",
+          "vosotros": "llaméis",
+          "yo": "llame",
+          "él": "llame"
         }
-      }
+      },
+      "notes": {}
     },
     "llegar": {
+      "classes": [
+        "spelling-change-car-gar-zar"
+      ],
       "english": "to arrive",
       "forms": {
+        "condicional": {
+          "ellos": "llegarían",
+          "nosotros": "llegaríamos",
+          "tú": "llegarías",
+          "vosotros": "llegaríais",
+          "yo": "llegaría",
+          "él": "llegaría"
+        },
         "futuro": {
           "ellos": "llegarán",
           "nosotros": "llegaremos",
@@ -1287,12 +2866,35 @@
           "vosotros": "llegasteis",
           "yo": "llegué",
           "él": "llegó"
+        },
+        "subjuntivo": {
+          "ellos": "lleguen",
+          "nosotros": "lleguemos",
+          "tú": "llegues",
+          "vosotros": "lleguéis",
+          "yo": "llegue",
+          "él": "llegue"
         }
+      },
+      "notes": {
+        "pretérito": "Spelling change yo only: llegué. Other persons regular.",
+        "subjuntivo": "Spelling from infinitive applied throughout: yo llegue."
       }
     },
     "llevar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to take, to carry, to wear",
       "forms": {
+        "condicional": {
+          "ellos": "llevarían",
+          "nosotros": "llevaríamos",
+          "tú": "llevarías",
+          "vosotros": "llevaríais",
+          "yo": "llevaría",
+          "él": "llevaría"
+        },
         "futuro": {
           "ellos": "llevarán",
           "nosotros": "llevaremos",
@@ -1324,12 +2926,93 @@
           "vosotros": "llevasteis",
           "yo": "llevé",
           "él": "llevó"
+        },
+        "subjuntivo": {
+          "ellos": "lleven",
+          "nosotros": "llevemos",
+          "tú": "lleves",
+          "vosotros": "llevéis",
+          "yo": "lleve",
+          "él": "lleve"
         }
+      },
+      "notes": {}
+    },
+    "mentir": {
+      "classes": [
+        "stem-change-e-ie"
+      ],
+      "english": "to lie",
+      "forms": {
+        "condicional": {
+          "ellos": "mentirían",
+          "nosotros": "mentiríamos",
+          "tú": "mentirías",
+          "vosotros": "mentiríais",
+          "yo": "mentiría",
+          "él": "mentiría"
+        },
+        "futuro": {
+          "ellos": "mentirán",
+          "nosotros": "mentiremos",
+          "tú": "mentirás",
+          "vosotros": "mentiréis",
+          "yo": "mentiré",
+          "él": "mentirá"
+        },
+        "imperfecto": {
+          "ellos": "mentían",
+          "nosotros": "mentíamos",
+          "tú": "mentías",
+          "vosotros": "mentíais",
+          "yo": "mentía",
+          "él": "mentía"
+        },
+        "presente": {
+          "ellos": "mienten",
+          "nosotros": "mentimos",
+          "tú": "mientes",
+          "vosotros": "mentís",
+          "yo": "miento",
+          "él": "miente"
+        },
+        "pretérito": {
+          "ellos": "mintieron",
+          "nosotros": "mentimos",
+          "tú": "mentiste",
+          "vosotros": "mentisteis",
+          "yo": "mentí",
+          "él": "mintió"
+        },
+        "subjuntivo": {
+          "ellos": "mientan",
+          "nosotros": "mintamos",
+          "tú": "mientas",
+          "vosotros": "mintáis",
+          "yo": "mienta",
+          "él": "mienta"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→ie in yo/tú/él/ellos (e.g. mientes); nosotros mentimos.",
+        "pretérito": "Irregular preterite: mentí, mentiste.",
+        "subjuntivo": "-ir stem changer also shifts in subjunctive: yo mienta."
       }
     },
     "mirar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to look, to watch",
       "forms": {
+        "condicional": {
+          "ellos": "mirarían",
+          "nosotros": "miraríamos",
+          "tú": "mirarías",
+          "vosotros": "miraríais",
+          "yo": "miraría",
+          "él": "miraría"
+        },
         "futuro": {
           "ellos": "mirarán",
           "nosotros": "miraremos",
@@ -1361,12 +3044,279 @@
           "vosotros": "mirasteis",
           "yo": "miré",
           "él": "miró"
+        },
+        "subjuntivo": {
+          "ellos": "miren",
+          "nosotros": "miremos",
+          "tú": "mires",
+          "vosotros": "miréis",
+          "yo": "mire",
+          "él": "mire"
         }
+      },
+      "notes": {}
+    },
+    "morir": {
+      "classes": [
+        "stem-change-o-ue"
+      ],
+      "english": "to die",
+      "forms": {
+        "condicional": {
+          "ellos": "morirían",
+          "nosotros": "moriríamos",
+          "tú": "morirías",
+          "vosotros": "moriríais",
+          "yo": "moriría",
+          "él": "moriría"
+        },
+        "futuro": {
+          "ellos": "morirán",
+          "nosotros": "moriremos",
+          "tú": "morirás",
+          "vosotros": "moriréis",
+          "yo": "moriré",
+          "él": "morirá"
+        },
+        "imperfecto": {
+          "ellos": "morían",
+          "nosotros": "moríamos",
+          "tú": "morías",
+          "vosotros": "moríais",
+          "yo": "moría",
+          "él": "moría"
+        },
+        "presente": {
+          "ellos": "mueren",
+          "nosotros": "morimos",
+          "tú": "mueres",
+          "vosotros": "morís",
+          "yo": "muero",
+          "él": "muere"
+        },
+        "pretérito": {
+          "ellos": "murieron",
+          "nosotros": "morimos",
+          "tú": "moriste",
+          "vosotros": "moristeis",
+          "yo": "morí",
+          "él": "murió"
+        },
+        "subjuntivo": {
+          "ellos": "mueran",
+          "nosotros": "muramos",
+          "tú": "mueras",
+          "vosotros": "muráis",
+          "yo": "muera",
+          "él": "muera"
+        }
+      },
+      "notes": {
+        "presente": "Stem o→ue in yo/tú/él/ellos (e.g. mueres); nosotros morimos.",
+        "pretérito": "Irregular preterite: morí, moriste.",
+        "subjuntivo": "-ir stem changer also shifts in subjunctive: yo muera."
+      }
+    },
+    "mostrar": {
+      "classes": [
+        "stem-change-o-ue"
+      ],
+      "english": "to show",
+      "forms": {
+        "condicional": {
+          "ellos": "mostrarían",
+          "nosotros": "mostraríamos",
+          "tú": "mostrarías",
+          "vosotros": "mostraríais",
+          "yo": "mostraría",
+          "él": "mostraría"
+        },
+        "futuro": {
+          "ellos": "mostrarán",
+          "nosotros": "mostraremos",
+          "tú": "mostrarás",
+          "vosotros": "mostraréis",
+          "yo": "mostraré",
+          "él": "mostrará"
+        },
+        "imperfecto": {
+          "ellos": "mostraban",
+          "nosotros": "mostrábamos",
+          "tú": "mostrabas",
+          "vosotros": "mostrabais",
+          "yo": "mostraba",
+          "él": "mostraba"
+        },
+        "presente": {
+          "ellos": "muestran",
+          "nosotros": "mostramos",
+          "tú": "muestras",
+          "vosotros": "mostráis",
+          "yo": "muestro",
+          "él": "muestra"
+        },
+        "pretérito": {
+          "ellos": "mostraron",
+          "nosotros": "mostramos",
+          "tú": "mostraste",
+          "vosotros": "mostrasteis",
+          "yo": "mostré",
+          "él": "mostró"
+        },
+        "subjuntivo": {
+          "ellos": "muestren",
+          "nosotros": "mostremos",
+          "tú": "muestres",
+          "vosotros": "mostréis",
+          "yo": "muestre",
+          "él": "muestre"
+        }
+      },
+      "notes": {
+        "presente": "Stem o→ue in yo/tú/él/ellos (e.g. muestras); nosotros mostramos.",
+        "subjuntivo": "Irregular subjunctive: yo muestre."
+      }
+    },
+    "oír": {
+      "classes": [
+        "go-verb",
+        "irregular-future",
+        "y-insertion"
+      ],
+      "english": "to hear",
+      "forms": {
+        "condicional": {
+          "ellos": "oirían",
+          "nosotros": "oiríamos",
+          "tú": "oirías",
+          "vosotros": "oiríais",
+          "yo": "oiría",
+          "él": "oiría"
+        },
+        "futuro": {
+          "ellos": "oirán",
+          "nosotros": "oiremos",
+          "tú": "oirás",
+          "vosotros": "oiréis",
+          "yo": "oiré",
+          "él": "oirá"
+        },
+        "imperfecto": {
+          "ellos": "oían",
+          "nosotros": "oíamos",
+          "tú": "oías",
+          "vosotros": "oíais",
+          "yo": "oía",
+          "él": "oía"
+        },
+        "presente": {
+          "ellos": "oyen",
+          "nosotros": "oímos",
+          "tú": "oyes",
+          "vosotros": "oís",
+          "yo": "oigo",
+          "él": "oye"
+        },
+        "pretérito": {
+          "ellos": "oyeron",
+          "nosotros": "oímos",
+          "tú": "oíste",
+          "vosotros": "oísteis",
+          "yo": "oí",
+          "él": "oyó"
+        },
+        "subjuntivo": {
+          "ellos": "oigan",
+          "nosotros": "oigamos",
+          "tú": "oigas",
+          "vosotros": "oigáis",
+          "yo": "oiga",
+          "él": "oiga"
+        }
+      },
+      "notes": {
+        "condicional": "Irregular conditional stem oir-: oiría, oirías.",
+        "futuro": "Irregular future stem oir-: oiré, oirás.",
+        "imperfecto": "Irregular imperfect: yo oía. Memorise all forms.",
+        "presente": "Irregular yo: oigo (-go verb).",
+        "pretérito": "y-insertion in 3rd persons: oyó, oyeron.",
+        "subjuntivo": "Subjunctive built from yo present stem (-go → -ga): oiga."
+      }
+    },
+    "pagar": {
+      "classes": [
+        "spelling-change-car-gar-zar"
+      ],
+      "english": "to pay",
+      "forms": {
+        "condicional": {
+          "ellos": "pagarían",
+          "nosotros": "pagaríamos",
+          "tú": "pagarías",
+          "vosotros": "pagaríais",
+          "yo": "pagaría",
+          "él": "pagaría"
+        },
+        "futuro": {
+          "ellos": "pagarán",
+          "nosotros": "pagaremos",
+          "tú": "pagarás",
+          "vosotros": "pagaréis",
+          "yo": "pagaré",
+          "él": "pagará"
+        },
+        "imperfecto": {
+          "ellos": "pagaban",
+          "nosotros": "pagábamos",
+          "tú": "pagabas",
+          "vosotros": "pagabais",
+          "yo": "pagaba",
+          "él": "pagaba"
+        },
+        "presente": {
+          "ellos": "pagan",
+          "nosotros": "pagamos",
+          "tú": "pagas",
+          "vosotros": "pagáis",
+          "yo": "pago",
+          "él": "paga"
+        },
+        "pretérito": {
+          "ellos": "pagaron",
+          "nosotros": "pagamos",
+          "tú": "pagaste",
+          "vosotros": "pagasteis",
+          "yo": "pagué",
+          "él": "pagó"
+        },
+        "subjuntivo": {
+          "ellos": "paguen",
+          "nosotros": "paguemos",
+          "tú": "pagues",
+          "vosotros": "paguéis",
+          "yo": "pague",
+          "él": "pague"
+        }
+      },
+      "notes": {
+        "pretérito": "Spelling change yo only: pagué. Other persons regular.",
+        "subjuntivo": "Spelling from infinitive applied throughout: yo pague."
       }
     },
     "parecer": {
+      "classes": [
+        "zco-verb"
+      ],
       "english": "to seem, to look like",
       "forms": {
+        "condicional": {
+          "ellos": "parecerían",
+          "nosotros": "pareceríamos",
+          "tú": "parecerías",
+          "vosotros": "pareceríais",
+          "yo": "parecería",
+          "él": "parecería"
+        },
         "futuro": {
           "ellos": "parecerán",
           "nosotros": "pareceremos",
@@ -1398,12 +3348,35 @@
           "vosotros": "parecisteis",
           "yo": "parecí",
           "él": "pareció"
+        },
+        "subjuntivo": {
+          "ellos": "parezcan",
+          "nosotros": "parezcamos",
+          "tú": "parezcas",
+          "vosotros": "parezcáis",
+          "yo": "parezca",
+          "él": "parezca"
         }
+      },
+      "notes": {
+        "presente": "Irregular yo: parezco (-zco verb). Other present forms regular.",
+        "subjuntivo": "Irregular subjunctive: yo parezca."
       }
     },
     "pasar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to pass, to spend",
       "forms": {
+        "condicional": {
+          "ellos": "pasarían",
+          "nosotros": "pasaríamos",
+          "tú": "pasarías",
+          "vosotros": "pasaríais",
+          "yo": "pasaría",
+          "él": "pasaría"
+        },
         "futuro": {
           "ellos": "pasarán",
           "nosotros": "pasaremos",
@@ -1435,12 +3408,93 @@
           "vosotros": "pasasteis",
           "yo": "pasé",
           "él": "pasó"
+        },
+        "subjuntivo": {
+          "ellos": "pasen",
+          "nosotros": "pasemos",
+          "tú": "pases",
+          "vosotros": "paséis",
+          "yo": "pase",
+          "él": "pase"
         }
+      },
+      "notes": {}
+    },
+    "pedir": {
+      "classes": [
+        "stem-change-e-i"
+      ],
+      "english": "to ask for, to request",
+      "forms": {
+        "condicional": {
+          "ellos": "pedirían",
+          "nosotros": "pediríamos",
+          "tú": "pedirías",
+          "vosotros": "pediríais",
+          "yo": "pediría",
+          "él": "pediría"
+        },
+        "futuro": {
+          "ellos": "pedirán",
+          "nosotros": "pediremos",
+          "tú": "pedirás",
+          "vosotros": "pediréis",
+          "yo": "pediré",
+          "él": "pedirá"
+        },
+        "imperfecto": {
+          "ellos": "pedían",
+          "nosotros": "pedíamos",
+          "tú": "pedías",
+          "vosotros": "pedíais",
+          "yo": "pedía",
+          "él": "pedía"
+        },
+        "presente": {
+          "ellos": "piden",
+          "nosotros": "pedimos",
+          "tú": "pides",
+          "vosotros": "pedís",
+          "yo": "pido",
+          "él": "pide"
+        },
+        "pretérito": {
+          "ellos": "pidieron",
+          "nosotros": "pedimos",
+          "tú": "pediste",
+          "vosotros": "pedisteis",
+          "yo": "pedí",
+          "él": "pidió"
+        },
+        "subjuntivo": {
+          "ellos": "pidan",
+          "nosotros": "pidamos",
+          "tú": "pidas",
+          "vosotros": "pidáis",
+          "yo": "pida",
+          "él": "pida"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→i in yo/tú/él/ellos (e.g. pides); nosotros pedimos.",
+        "pretérito": "Irregular preterite: pedí, pediste.",
+        "subjuntivo": "-ir stem changer also shifts in subjunctive: yo pida."
       }
     },
     "pensar": {
+      "classes": [
+        "stem-change-e-ie"
+      ],
       "english": "to think, to plan",
       "forms": {
+        "condicional": {
+          "ellos": "pensarían",
+          "nosotros": "pensaríamos",
+          "tú": "pensarías",
+          "vosotros": "pensaríais",
+          "yo": "pensaría",
+          "él": "pensaría"
+        },
         "futuro": {
           "ellos": "pensarán",
           "nosotros": "pensaremos",
@@ -1472,12 +3526,95 @@
           "vosotros": "pensasteis",
           "yo": "pensé",
           "él": "pensó"
+        },
+        "subjuntivo": {
+          "ellos": "piensen",
+          "nosotros": "pensemos",
+          "tú": "pienses",
+          "vosotros": "penséis",
+          "yo": "piense",
+          "él": "piense"
         }
+      },
+      "notes": {
+        "presente": "Stem e→ie in yo/tú/él/ellos (e.g. piensas); nosotros pensamos.",
+        "subjuntivo": "Irregular subjunctive: yo piense."
+      }
+    },
+    "perder": {
+      "classes": [
+        "stem-change-e-ie"
+      ],
+      "english": "to lose",
+      "forms": {
+        "condicional": {
+          "ellos": "perderían",
+          "nosotros": "perderíamos",
+          "tú": "perderías",
+          "vosotros": "perderíais",
+          "yo": "perdería",
+          "él": "perdería"
+        },
+        "futuro": {
+          "ellos": "perderán",
+          "nosotros": "perderemos",
+          "tú": "perderás",
+          "vosotros": "perderéis",
+          "yo": "perderé",
+          "él": "perderá"
+        },
+        "imperfecto": {
+          "ellos": "perdían",
+          "nosotros": "perdíamos",
+          "tú": "perdías",
+          "vosotros": "perdíais",
+          "yo": "perdía",
+          "él": "perdía"
+        },
+        "presente": {
+          "ellos": "pierden",
+          "nosotros": "perdemos",
+          "tú": "pierdes",
+          "vosotros": "perdéis",
+          "yo": "pierdo",
+          "él": "pierde"
+        },
+        "pretérito": {
+          "ellos": "perdieron",
+          "nosotros": "perdimos",
+          "tú": "perdiste",
+          "vosotros": "perdisteis",
+          "yo": "perdí",
+          "él": "perdió"
+        },
+        "subjuntivo": {
+          "ellos": "pierdan",
+          "nosotros": "perdamos",
+          "tú": "pierdas",
+          "vosotros": "perdáis",
+          "yo": "pierda",
+          "él": "pierda"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→ie in yo/tú/él/ellos (e.g. pierdes); nosotros perdemos.",
+        "subjuntivo": "Irregular subjunctive: yo pierda."
       }
     },
     "permitir": {
+      "classes": [
+        "regular"
+      ],
       "english": "to allow, to permit",
       "forms": {
+        "condicional": {
+          "ellos": "permitirían",
+          "nosotros": "permitiríamos",
+          "tú": "permitirías",
+          "vosotros": "permitiríais",
+          "yo": "permitiría",
+          "él": "permitiría"
+        },
         "futuro": {
           "ellos": "permitirán",
           "nosotros": "permitiremos",
@@ -1509,12 +3646,34 @@
           "vosotros": "permitisteis",
           "yo": "permití",
           "él": "permitió"
+        },
+        "subjuntivo": {
+          "ellos": "permitan",
+          "nosotros": "permitamos",
+          "tú": "permitas",
+          "vosotros": "permitáis",
+          "yo": "permita",
+          "él": "permita"
         }
-      }
+      },
+      "notes": {}
     },
     "poder": {
+      "classes": [
+        "irregular-future",
+        "stem-change-o-ue",
+        "strong-preterite"
+      ],
       "english": "to be able to, to can",
       "forms": {
+        "condicional": {
+          "ellos": "podrían",
+          "nosotros": "podríamos",
+          "tú": "podrías",
+          "vosotros": "podríais",
+          "yo": "podría",
+          "él": "podría"
+        },
         "futuro": {
           "ellos": "podrán",
           "nosotros": "podremos",
@@ -1546,12 +3705,40 @@
           "vosotros": "pudisteis",
           "yo": "pude",
           "él": "pudo"
+        },
+        "subjuntivo": {
+          "ellos": "puedan",
+          "nosotros": "podamos",
+          "tú": "puedas",
+          "vosotros": "podáis",
+          "yo": "pueda",
+          "él": "pueda"
         }
+      },
+      "notes": {
+        "condicional": "Irregular conditional stem podr-: podría, podrías.",
+        "futuro": "Irregular future stem podr-: podré, podrás.",
+        "presente": "Stem o→ue in yo/tú/él/ellos (e.g. puedes); nosotros podemos.",
+        "pretérito": "Strong preterite: pude, pudiste. No accents on endings.",
+        "subjuntivo": "Irregular subjunctive: yo pueda."
       }
     },
     "poner": {
+      "classes": [
+        "go-verb",
+        "irregular-future",
+        "strong-preterite"
+      ],
       "english": "to put, to place",
       "forms": {
+        "condicional": {
+          "ellos": "pondrían",
+          "nosotros": "pondríamos",
+          "tú": "pondrías",
+          "vosotros": "pondríais",
+          "yo": "pondría",
+          "él": "pondría"
+        },
         "futuro": {
           "ellos": "pondrán",
           "nosotros": "pondremos",
@@ -1583,12 +3770,99 @@
           "vosotros": "pusisteis",
           "yo": "puse",
           "él": "puso"
+        },
+        "subjuntivo": {
+          "ellos": "pongan",
+          "nosotros": "pongamos",
+          "tú": "pongas",
+          "vosotros": "pongáis",
+          "yo": "ponga",
+          "él": "ponga"
         }
+      },
+      "notes": {
+        "condicional": "Irregular conditional stem pondr-: pondría, pondrías.",
+        "futuro": "Irregular future stem pondr-: pondré, pondrás.",
+        "presente": "Irregular yo: pongo (-go verb).",
+        "pretérito": "Strong preterite: puse, pusiste. No accents on endings.",
+        "subjuntivo": "Subjunctive built from yo present stem (-go → -ga): ponga."
+      }
+    },
+    "preferir": {
+      "classes": [
+        "stem-change-e-ie"
+      ],
+      "english": "to prefer",
+      "forms": {
+        "condicional": {
+          "ellos": "preferirían",
+          "nosotros": "preferiríamos",
+          "tú": "preferirías",
+          "vosotros": "preferiríais",
+          "yo": "preferiría",
+          "él": "preferiría"
+        },
+        "futuro": {
+          "ellos": "preferirán",
+          "nosotros": "preferiremos",
+          "tú": "preferirás",
+          "vosotros": "preferiréis",
+          "yo": "preferiré",
+          "él": "preferirá"
+        },
+        "imperfecto": {
+          "ellos": "preferían",
+          "nosotros": "preferíamos",
+          "tú": "preferías",
+          "vosotros": "preferíais",
+          "yo": "prefería",
+          "él": "prefería"
+        },
+        "presente": {
+          "ellos": "prefieren",
+          "nosotros": "preferimos",
+          "tú": "prefieres",
+          "vosotros": "preferís",
+          "yo": "prefiero",
+          "él": "prefiere"
+        },
+        "pretérito": {
+          "ellos": "prefirieron",
+          "nosotros": "preferimos",
+          "tú": "preferiste",
+          "vosotros": "preferisteis",
+          "yo": "preferí",
+          "él": "prefirió"
+        },
+        "subjuntivo": {
+          "ellos": "prefieran",
+          "nosotros": "prefiramos",
+          "tú": "prefieras",
+          "vosotros": "prefiráis",
+          "yo": "prefiera",
+          "él": "prefiera"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→ie in yo/tú/él/ellos (e.g. prefieres); nosotros preferimos.",
+        "pretérito": "Irregular preterite: preferí, preferiste.",
+        "subjuntivo": "-ir stem changer also shifts in subjunctive: yo prefiera."
       }
     },
     "preguntar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to ask",
       "forms": {
+        "condicional": {
+          "ellos": "preguntarían",
+          "nosotros": "preguntaríamos",
+          "tú": "preguntarías",
+          "vosotros": "preguntaríais",
+          "yo": "preguntaría",
+          "él": "preguntaría"
+        },
         "futuro": {
           "ellos": "preguntarán",
           "nosotros": "preguntaremos",
@@ -1620,12 +3894,32 @@
           "vosotros": "preguntasteis",
           "yo": "pregunté",
           "él": "preguntó"
+        },
+        "subjuntivo": {
+          "ellos": "pregunten",
+          "nosotros": "preguntemos",
+          "tú": "preguntes",
+          "vosotros": "preguntéis",
+          "yo": "pregunte",
+          "él": "pregunte"
         }
-      }
+      },
+      "notes": {}
     },
     "quedar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to remain, to stay",
       "forms": {
+        "condicional": {
+          "ellos": "quedarían",
+          "nosotros": "quedaríamos",
+          "tú": "quedarías",
+          "vosotros": "quedaríais",
+          "yo": "quedaría",
+          "él": "quedaría"
+        },
         "futuro": {
           "ellos": "quedarán",
           "nosotros": "quedaremos",
@@ -1657,12 +3951,34 @@
           "vosotros": "quedasteis",
           "yo": "quedé",
           "él": "quedó"
+        },
+        "subjuntivo": {
+          "ellos": "queden",
+          "nosotros": "quedemos",
+          "tú": "quedes",
+          "vosotros": "quedéis",
+          "yo": "quede",
+          "él": "quede"
         }
-      }
+      },
+      "notes": {}
     },
     "querer": {
+      "classes": [
+        "irregular-future",
+        "stem-change-e-ie",
+        "strong-preterite"
+      ],
       "english": "to wish, to want, to love",
       "forms": {
+        "condicional": {
+          "ellos": "querrían",
+          "nosotros": "querríamos",
+          "tú": "querrías",
+          "vosotros": "querríais",
+          "yo": "querría",
+          "él": "querría"
+        },
         "futuro": {
           "ellos": "querrán",
           "nosotros": "querremos",
@@ -1694,12 +4010,38 @@
           "vosotros": "quisisteis",
           "yo": "quise",
           "él": "quiso"
+        },
+        "subjuntivo": {
+          "ellos": "quieran",
+          "nosotros": "queramos",
+          "tú": "quieras",
+          "vosotros": "queráis",
+          "yo": "quiera",
+          "él": "quiera"
         }
+      },
+      "notes": {
+        "condicional": "Irregular conditional stem querr-: querría, querrías.",
+        "futuro": "Irregular future stem querr-: querré, querrás.",
+        "presente": "Stem e→ie in yo/tú/él/ellos (e.g. quieres); nosotros queremos.",
+        "pretérito": "Strong preterite: quise, quisiste. No accents on endings.",
+        "subjuntivo": "Irregular subjunctive: yo quiera."
       }
     },
     "recibir": {
+      "classes": [
+        "regular"
+      ],
       "english": "to receive",
       "forms": {
+        "condicional": {
+          "ellos": "recibirían",
+          "nosotros": "recibiríamos",
+          "tú": "recibirías",
+          "vosotros": "recibiríais",
+          "yo": "recibiría",
+          "él": "recibiría"
+        },
         "futuro": {
           "ellos": "recibirán",
           "nosotros": "recibiremos",
@@ -1731,12 +4073,218 @@
           "vosotros": "recibisteis",
           "yo": "recibí",
           "él": "recibió"
+        },
+        "subjuntivo": {
+          "ellos": "reciban",
+          "nosotros": "recibamos",
+          "tú": "recibas",
+          "vosotros": "recibáis",
+          "yo": "reciba",
+          "él": "reciba"
         }
+      },
+      "notes": {}
+    },
+    "recordar": {
+      "classes": [
+        "stem-change-o-ue"
+      ],
+      "english": "to remember, to remind",
+      "forms": {
+        "condicional": {
+          "ellos": "recordarían",
+          "nosotros": "recordaríamos",
+          "tú": "recordarías",
+          "vosotros": "recordaríais",
+          "yo": "recordaría",
+          "él": "recordaría"
+        },
+        "futuro": {
+          "ellos": "recordarán",
+          "nosotros": "recordaremos",
+          "tú": "recordarás",
+          "vosotros": "recordaréis",
+          "yo": "recordaré",
+          "él": "recordará"
+        },
+        "imperfecto": {
+          "ellos": "recordaban",
+          "nosotros": "recordábamos",
+          "tú": "recordabas",
+          "vosotros": "recordabais",
+          "yo": "recordaba",
+          "él": "recordaba"
+        },
+        "presente": {
+          "ellos": "recuerdan",
+          "nosotros": "recordamos",
+          "tú": "recuerdas",
+          "vosotros": "recordáis",
+          "yo": "recuerdo",
+          "él": "recuerda"
+        },
+        "pretérito": {
+          "ellos": "recordaron",
+          "nosotros": "recordamos",
+          "tú": "recordaste",
+          "vosotros": "recordasteis",
+          "yo": "recordé",
+          "él": "recordó"
+        },
+        "subjuntivo": {
+          "ellos": "recuerden",
+          "nosotros": "recordemos",
+          "tú": "recuerdes",
+          "vosotros": "recordéis",
+          "yo": "recuerde",
+          "él": "recuerde"
+        }
+      },
+      "notes": {
+        "presente": "Stem o→ue in yo/tú/él/ellos (e.g. recuerdas); nosotros recordamos.",
+        "subjuntivo": "Irregular subjunctive: yo recuerde."
+      }
+    },
+    "repetir": {
+      "classes": [
+        "stem-change-e-i"
+      ],
+      "english": "to repeat",
+      "forms": {
+        "condicional": {
+          "ellos": "repetirían",
+          "nosotros": "repetiríamos",
+          "tú": "repetirías",
+          "vosotros": "repetiríais",
+          "yo": "repetiría",
+          "él": "repetiría"
+        },
+        "futuro": {
+          "ellos": "repetirán",
+          "nosotros": "repetiremos",
+          "tú": "repetirás",
+          "vosotros": "repetiréis",
+          "yo": "repetiré",
+          "él": "repetirá"
+        },
+        "imperfecto": {
+          "ellos": "repetían",
+          "nosotros": "repetíamos",
+          "tú": "repetías",
+          "vosotros": "repetíais",
+          "yo": "repetía",
+          "él": "repetía"
+        },
+        "presente": {
+          "ellos": "repiten",
+          "nosotros": "repetimos",
+          "tú": "repites",
+          "vosotros": "repetís",
+          "yo": "repito",
+          "él": "repite"
+        },
+        "pretérito": {
+          "ellos": "repitieron",
+          "nosotros": "repetimos",
+          "tú": "repetiste",
+          "vosotros": "repetisteis",
+          "yo": "repetí",
+          "él": "repitió"
+        },
+        "subjuntivo": {
+          "ellos": "repitan",
+          "nosotros": "repitamos",
+          "tú": "repitas",
+          "vosotros": "repitáis",
+          "yo": "repita",
+          "él": "repita"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→i in yo/tú/él/ellos (e.g. repites); nosotros repetimos.",
+        "pretérito": "Irregular preterite: repetí, repetiste.",
+        "subjuntivo": "-ir stem changer also shifts in subjunctive: yo repita."
+      }
+    },
+    "reír": {
+      "classes": [
+        "irregular-future"
+      ],
+      "english": "to laugh",
+      "forms": {
+        "condicional": {
+          "ellos": "reirían",
+          "nosotros": "reiríamos",
+          "tú": "reirías",
+          "vosotros": "reiríais",
+          "yo": "reiría",
+          "él": "reiría"
+        },
+        "futuro": {
+          "ellos": "reirán",
+          "nosotros": "reiremos",
+          "tú": "reirás",
+          "vosotros": "reiréis",
+          "yo": "reiré",
+          "él": "reirá"
+        },
+        "imperfecto": {
+          "ellos": "reían",
+          "nosotros": "reíamos",
+          "tú": "reías",
+          "vosotros": "reíais",
+          "yo": "reía",
+          "él": "reía"
+        },
+        "presente": {
+          "ellos": "ríen",
+          "nosotros": "reímos",
+          "tú": "ríes",
+          "vosotros": "reís",
+          "yo": "río",
+          "él": "ríe"
+        },
+        "pretérito": {
+          "ellos": "rieron",
+          "nosotros": "reímos",
+          "tú": "reíste",
+          "vosotros": "reísteis",
+          "yo": "reí",
+          "él": "rió"
+        },
+        "subjuntivo": {
+          "ellos": "rían",
+          "nosotros": "riamos",
+          "tú": "rías",
+          "vosotros": "riáis",
+          "yo": "ría",
+          "él": "ría"
+        }
+      },
+      "notes": {
+        "condicional": "Irregular conditional stem reir-: reiría, reirías.",
+        "futuro": "Irregular future stem reir-: reiré, reirás.",
+        "imperfecto": "Irregular imperfect: yo reía. Memorise all forms.",
+        "presente": "Irregular present: yo río.",
+        "pretérito": "Irregular preterite: reí, reíste.",
+        "subjuntivo": "Irregular subjunctive: yo ría."
       }
     },
     "saber": {
+      "classes": [
+        "irregular-future",
+        "strong-preterite"
+      ],
       "english": "to know a fact, how to do something (present), to find out (preterite)",
       "forms": {
+        "condicional": {
+          "ellos": "sabrían",
+          "nosotros": "sabríamos",
+          "tú": "sabrías",
+          "vosotros": "sabríais",
+          "yo": "sabría",
+          "él": "sabría"
+        },
         "futuro": {
           "ellos": "sabrán",
           "nosotros": "sabremos",
@@ -1768,12 +4316,99 @@
           "vosotros": "supisteis",
           "yo": "supe",
           "él": "supo"
+        },
+        "subjuntivo": {
+          "ellos": "sepan",
+          "nosotros": "sepamos",
+          "tú": "sepas",
+          "vosotros": "sepáis",
+          "yo": "sepa",
+          "él": "sepa"
         }
+      },
+      "notes": {
+        "condicional": "Irregular conditional stem sabr-: sabría, sabrías.",
+        "futuro": "Irregular future stem sabr-: sabré, sabrás.",
+        "presente": "Irregular present: yo sé.",
+        "pretérito": "Strong preterite: supe, supiste. No accents on endings.",
+        "subjuntivo": "Irregular subjunctive: yo sepa."
+      }
+    },
+    "sacar": {
+      "classes": [
+        "spelling-change-car-gar-zar"
+      ],
+      "english": "to take out, to get",
+      "forms": {
+        "condicional": {
+          "ellos": "sacarían",
+          "nosotros": "sacaríamos",
+          "tú": "sacarías",
+          "vosotros": "sacaríais",
+          "yo": "sacaría",
+          "él": "sacaría"
+        },
+        "futuro": {
+          "ellos": "sacarán",
+          "nosotros": "sacaremos",
+          "tú": "sacarás",
+          "vosotros": "sacaréis",
+          "yo": "sacaré",
+          "él": "sacará"
+        },
+        "imperfecto": {
+          "ellos": "sacaban",
+          "nosotros": "sacábamos",
+          "tú": "sacabas",
+          "vosotros": "sacabais",
+          "yo": "sacaba",
+          "él": "sacaba"
+        },
+        "presente": {
+          "ellos": "sacan",
+          "nosotros": "sacamos",
+          "tú": "sacas",
+          "vosotros": "sacáis",
+          "yo": "saco",
+          "él": "saca"
+        },
+        "pretérito": {
+          "ellos": "sacaron",
+          "nosotros": "sacamos",
+          "tú": "sacaste",
+          "vosotros": "sacasteis",
+          "yo": "saqué",
+          "él": "sacó"
+        },
+        "subjuntivo": {
+          "ellos": "saquen",
+          "nosotros": "saquemos",
+          "tú": "saques",
+          "vosotros": "saquéis",
+          "yo": "saque",
+          "él": "saque"
+        }
+      },
+      "notes": {
+        "pretérito": "Spelling change yo only: saqué. Other persons regular.",
+        "subjuntivo": "Spelling from infinitive applied throughout: yo saque."
       }
     },
     "salir": {
+      "classes": [
+        "go-verb",
+        "irregular-future"
+      ],
       "english": "to leave, to go out",
       "forms": {
+        "condicional": {
+          "ellos": "saldrían",
+          "nosotros": "saldríamos",
+          "tú": "saldrías",
+          "vosotros": "saldríais",
+          "yo": "saldría",
+          "él": "saldría"
+        },
         "futuro": {
           "ellos": "saldrán",
           "nosotros": "saldremos",
@@ -1805,12 +4440,38 @@
           "vosotros": "salisteis",
           "yo": "salí",
           "él": "salió"
+        },
+        "subjuntivo": {
+          "ellos": "salgan",
+          "nosotros": "salgamos",
+          "tú": "salgas",
+          "vosotros": "salgáis",
+          "yo": "salga",
+          "él": "salga"
         }
+      },
+      "notes": {
+        "condicional": "Irregular conditional stem saldr-: saldría, saldrías.",
+        "futuro": "Irregular future stem saldr-: saldré, saldrás.",
+        "presente": "Irregular yo: salgo (-go verb).",
+        "subjuntivo": "Subjunctive built from yo present stem (-go → -ga): salga."
       }
     },
     "seguir": {
+      "classes": [
+        "go-verb",
+        "stem-change-e-i"
+      ],
       "english": "to follow, to continue",
       "forms": {
+        "condicional": {
+          "ellos": "seguirían",
+          "nosotros": "seguiríamos",
+          "tú": "seguirías",
+          "vosotros": "seguiríais",
+          "yo": "seguiría",
+          "él": "seguiría"
+        },
         "futuro": {
           "ellos": "seguirán",
           "nosotros": "seguiremos",
@@ -1842,12 +4503,97 @@
           "vosotros": "seguisteis",
           "yo": "seguí",
           "él": "siguió"
+        },
+        "subjuntivo": {
+          "ellos": "sigan",
+          "nosotros": "sigamos",
+          "tú": "sigas",
+          "vosotros": "sigáis",
+          "yo": "siga",
+          "él": "siga"
         }
+      },
+      "notes": {
+        "presente": "Irregular yo: sigo (-go verb). Stem e→i in tú/él/ellos (e.g. sigues).",
+        "pretérito": "Irregular preterite: seguí, seguiste.",
+        "subjuntivo": "Subjunctive built from yo present stem (-go → -ga): siga."
+      }
+    },
+    "sentir": {
+      "classes": [
+        "stem-change-e-ie"
+      ],
+      "english": "to feel, to be sorry",
+      "forms": {
+        "condicional": {
+          "ellos": "sentirían",
+          "nosotros": "sentiríamos",
+          "tú": "sentirías",
+          "vosotros": "sentiríais",
+          "yo": "sentiría",
+          "él": "sentiría"
+        },
+        "futuro": {
+          "ellos": "sentirán",
+          "nosotros": "sentiremos",
+          "tú": "sentirás",
+          "vosotros": "sentiréis",
+          "yo": "sentiré",
+          "él": "sentirá"
+        },
+        "imperfecto": {
+          "ellos": "sentían",
+          "nosotros": "sentíamos",
+          "tú": "sentías",
+          "vosotros": "sentíais",
+          "yo": "sentía",
+          "él": "sentía"
+        },
+        "presente": {
+          "ellos": "sienten",
+          "nosotros": "sentimos",
+          "tú": "sientes",
+          "vosotros": "sentís",
+          "yo": "siento",
+          "él": "siente"
+        },
+        "pretérito": {
+          "ellos": "sintieron",
+          "nosotros": "sentimos",
+          "tú": "sentiste",
+          "vosotros": "sentisteis",
+          "yo": "sentí",
+          "él": "sintió"
+        },
+        "subjuntivo": {
+          "ellos": "sientan",
+          "nosotros": "sintamos",
+          "tú": "sientas",
+          "vosotros": "sintáis",
+          "yo": "sienta",
+          "él": "sienta"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→ie in yo/tú/él/ellos (e.g. sientes); nosotros sentimos.",
+        "pretérito": "Irregular preterite: sentí, sentiste.",
+        "subjuntivo": "-ir stem changer also shifts in subjunctive: yo sienta."
       }
     },
     "ser": {
+      "classes": [
+        "fully-irregular"
+      ],
       "english": "to be",
       "forms": {
+        "condicional": {
+          "ellos": "serían",
+          "nosotros": "seríamos",
+          "tú": "serías",
+          "vosotros": "seríais",
+          "yo": "sería",
+          "él": "sería"
+        },
         "futuro": {
           "ellos": "serán",
           "nosotros": "seremos",
@@ -1879,12 +4625,162 @@
           "vosotros": "fuisteis",
           "yo": "fui",
           "él": "fue"
+        },
+        "subjuntivo": {
+          "ellos": "sean",
+          "nosotros": "seamos",
+          "tú": "seas",
+          "vosotros": "seáis",
+          "yo": "sea",
+          "él": "sea"
         }
+      },
+      "notes": {
+        "imperfecto": "Fully irregular: yo era, tú eras. Memorise all forms.",
+        "presente": "Fully irregular: yo soy, tú eres. Memorise all forms.",
+        "pretérito": "Fully irregular: yo fui, tú fuiste. Memorise all forms.",
+        "subjuntivo": "Fully irregular: yo sea, tú seas. Memorise all forms."
+      }
+    },
+    "servir": {
+      "classes": [
+        "stem-change-e-i"
+      ],
+      "english": "to serve",
+      "forms": {
+        "condicional": {
+          "ellos": "servirían",
+          "nosotros": "serviríamos",
+          "tú": "servirías",
+          "vosotros": "serviríais",
+          "yo": "serviría",
+          "él": "serviría"
+        },
+        "futuro": {
+          "ellos": "servirán",
+          "nosotros": "serviremos",
+          "tú": "servirás",
+          "vosotros": "serviréis",
+          "yo": "serviré",
+          "él": "servirá"
+        },
+        "imperfecto": {
+          "ellos": "servían",
+          "nosotros": "servíamos",
+          "tú": "servías",
+          "vosotros": "servíais",
+          "yo": "servía",
+          "él": "servía"
+        },
+        "presente": {
+          "ellos": "sirven",
+          "nosotros": "servimos",
+          "tú": "sirves",
+          "vosotros": "servís",
+          "yo": "sirvo",
+          "él": "sirve"
+        },
+        "pretérito": {
+          "ellos": "sirvieron",
+          "nosotros": "servimos",
+          "tú": "serviste",
+          "vosotros": "servisteis",
+          "yo": "serví",
+          "él": "sirvió"
+        },
+        "subjuntivo": {
+          "ellos": "sirvan",
+          "nosotros": "sirvamos",
+          "tú": "sirvas",
+          "vosotros": "sirváis",
+          "yo": "sirva",
+          "él": "sirva"
+        }
+      },
+      "notes": {
+        "presente": "Stem e→i in yo/tú/él/ellos (e.g. sirves); nosotros servimos.",
+        "pretérito": "Irregular preterite: serví, serviste.",
+        "subjuntivo": "-ir stem changer also shifts in subjunctive: yo sirva."
+      }
+    },
+    "sonreír": {
+      "classes": [
+        "irregular-future"
+      ],
+      "english": "to smile",
+      "forms": {
+        "condicional": {
+          "ellos": "sonreirían",
+          "nosotros": "sonreiríamos",
+          "tú": "sonreirías",
+          "vosotros": "sonreiríais",
+          "yo": "sonreiría",
+          "él": "sonreiría"
+        },
+        "futuro": {
+          "ellos": "sonreirán",
+          "nosotros": "sonreiremos",
+          "tú": "sonreirás",
+          "vosotros": "sonreiréis",
+          "yo": "sonreiré",
+          "él": "sonreirá"
+        },
+        "imperfecto": {
+          "ellos": "sonreían",
+          "nosotros": "sonreíamos",
+          "tú": "sonreías",
+          "vosotros": "sonreíais",
+          "yo": "sonreía",
+          "él": "sonreía"
+        },
+        "presente": {
+          "ellos": "sonríen",
+          "nosotros": "sonreímos",
+          "tú": "sonríes",
+          "vosotros": "sonreís",
+          "yo": "sonrío",
+          "él": "sonríe"
+        },
+        "pretérito": {
+          "ellos": "sonrieron",
+          "nosotros": "sonreímos",
+          "tú": "sonreíste",
+          "vosotros": "sonreísteis",
+          "yo": "sonreí",
+          "él": "sonrió"
+        },
+        "subjuntivo": {
+          "ellos": "sonrían",
+          "nosotros": "sonriamos",
+          "tú": "sonrías",
+          "vosotros": "sonriáis",
+          "yo": "sonría",
+          "él": "sonría"
+        }
+      },
+      "notes": {
+        "condicional": "Irregular conditional stem sonreir-: sonreiría, sonreirías.",
+        "futuro": "Irregular future stem sonreir-: sonreiré, sonreirás.",
+        "imperfecto": "Irregular imperfect: yo sonreía. Memorise all forms.",
+        "presente": "Irregular present: yo sonrío.",
+        "pretérito": "Irregular preterite: sonreí, sonreíste.",
+        "subjuntivo": "Irregular subjunctive: yo sonría."
       }
     },
     "subir": {
+      "classes": [
+        "regular"
+      ],
       "english": "to go up",
       "forms": {
+        "condicional": {
+          "ellos": "subirían",
+          "nosotros": "subiríamos",
+          "tú": "subirías",
+          "vosotros": "subiríais",
+          "yo": "subiría",
+          "él": "subiría"
+        },
         "futuro": {
           "ellos": "subirán",
           "nosotros": "subiremos",
@@ -1916,12 +4812,32 @@
           "vosotros": "subisteis",
           "yo": "subí",
           "él": "subió"
+        },
+        "subjuntivo": {
+          "ellos": "suban",
+          "nosotros": "subamos",
+          "tú": "subas",
+          "vosotros": "subáis",
+          "yo": "suba",
+          "él": "suba"
         }
-      }
+      },
+      "notes": {}
     },
     "sufrir": {
+      "classes": [
+        "regular"
+      ],
       "english": "to suffer, to undergo",
       "forms": {
+        "condicional": {
+          "ellos": "sufrirían",
+          "nosotros": "sufriríamos",
+          "tú": "sufrirías",
+          "vosotros": "sufriríais",
+          "yo": "sufriría",
+          "él": "sufriría"
+        },
         "futuro": {
           "ellos": "sufrirán",
           "nosotros": "sufriremos",
@@ -1953,12 +4869,35 @@
           "vosotros": "sufristeis",
           "yo": "sufrí",
           "él": "sufrió"
+        },
+        "subjuntivo": {
+          "ellos": "sufran",
+          "nosotros": "suframos",
+          "tú": "sufras",
+          "vosotros": "sufráis",
+          "yo": "sufra",
+          "él": "sufra"
         }
-      }
+      },
+      "notes": {}
     },
     "tener": {
+      "classes": [
+        "go-verb",
+        "irregular-future",
+        "stem-change-e-ie",
+        "strong-preterite"
+      ],
       "english": "to have, to possess",
       "forms": {
+        "condicional": {
+          "ellos": "tendrían",
+          "nosotros": "tendríamos",
+          "tú": "tendrías",
+          "vosotros": "tendríais",
+          "yo": "tendría",
+          "él": "tendría"
+        },
         "futuro": {
           "ellos": "tendrán",
           "nosotros": "tendremos",
@@ -1990,12 +4929,98 @@
           "vosotros": "tuvisteis",
           "yo": "tuve",
           "él": "tuvo"
+        },
+        "subjuntivo": {
+          "ellos": "tengan",
+          "nosotros": "tengamos",
+          "tú": "tengas",
+          "vosotros": "tengáis",
+          "yo": "tenga",
+          "él": "tenga"
         }
+      },
+      "notes": {
+        "condicional": "Irregular conditional stem tendr-: tendría, tendrías.",
+        "futuro": "Irregular future stem tendr-: tendré, tendrás.",
+        "presente": "Irregular yo: tengo (-go verb). Stem e→ie in tú/él/ellos (e.g. tienes).",
+        "pretérito": "Strong preterite: tuve, tuviste. No accents on endings.",
+        "subjuntivo": "Subjunctive built from yo present stem (-go → -ga): tenga."
+      }
+    },
+    "tocar": {
+      "classes": [
+        "spelling-change-car-gar-zar"
+      ],
+      "english": "to touch, to play (an instrument)",
+      "forms": {
+        "condicional": {
+          "ellos": "tocarían",
+          "nosotros": "tocaríamos",
+          "tú": "tocarías",
+          "vosotros": "tocaríais",
+          "yo": "tocaría",
+          "él": "tocaría"
+        },
+        "futuro": {
+          "ellos": "tocarán",
+          "nosotros": "tocaremos",
+          "tú": "tocarás",
+          "vosotros": "tocaréis",
+          "yo": "tocaré",
+          "él": "tocará"
+        },
+        "imperfecto": {
+          "ellos": "tocaban",
+          "nosotros": "tocábamos",
+          "tú": "tocabas",
+          "vosotros": "tocabais",
+          "yo": "tocaba",
+          "él": "tocaba"
+        },
+        "presente": {
+          "ellos": "tocan",
+          "nosotros": "tocamos",
+          "tú": "tocas",
+          "vosotros": "tocáis",
+          "yo": "toco",
+          "él": "toca"
+        },
+        "pretérito": {
+          "ellos": "tocaron",
+          "nosotros": "tocamos",
+          "tú": "tocaste",
+          "vosotros": "tocasteis",
+          "yo": "toqué",
+          "él": "tocó"
+        },
+        "subjuntivo": {
+          "ellos": "toquen",
+          "nosotros": "toquemos",
+          "tú": "toques",
+          "vosotros": "toquéis",
+          "yo": "toque",
+          "él": "toque"
+        }
+      },
+      "notes": {
+        "pretérito": "Spelling change yo only: toqué. Other persons regular.",
+        "subjuntivo": "Spelling from infinitive applied throughout: yo toque."
       }
     },
     "tomar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to take, to ingest, to drink",
       "forms": {
+        "condicional": {
+          "ellos": "tomarían",
+          "nosotros": "tomaríamos",
+          "tú": "tomarías",
+          "vosotros": "tomaríais",
+          "yo": "tomaría",
+          "él": "tomaría"
+        },
         "futuro": {
           "ellos": "tomarán",
           "nosotros": "tomaremos",
@@ -2027,12 +5052,32 @@
           "vosotros": "tomasteis",
           "yo": "tomé",
           "él": "tomó"
+        },
+        "subjuntivo": {
+          "ellos": "tomen",
+          "nosotros": "tomemos",
+          "tú": "tomes",
+          "vosotros": "toméis",
+          "yo": "tome",
+          "él": "tome"
         }
-      }
+      },
+      "notes": {}
     },
     "trabajar": {
+      "classes": [
+        "regular"
+      ],
       "english": "to work",
       "forms": {
+        "condicional": {
+          "ellos": "trabajarían",
+          "nosotros": "trabajaríamos",
+          "tú": "trabajarías",
+          "vosotros": "trabajaríais",
+          "yo": "trabajaría",
+          "él": "trabajaría"
+        },
         "futuro": {
           "ellos": "trabajarán",
           "nosotros": "trabajaremos",
@@ -2064,12 +5109,95 @@
           "vosotros": "trabajasteis",
           "yo": "trabajé",
           "él": "trabajó"
+        },
+        "subjuntivo": {
+          "ellos": "trabajen",
+          "nosotros": "trabajemos",
+          "tú": "trabajes",
+          "vosotros": "trabajéis",
+          "yo": "trabaje",
+          "él": "trabaje"
         }
+      },
+      "notes": {}
+    },
+    "traducir": {
+      "classes": [
+        "strong-preterite",
+        "zco-verb"
+      ],
+      "english": "to translate",
+      "forms": {
+        "condicional": {
+          "ellos": "traducirían",
+          "nosotros": "traduciríamos",
+          "tú": "traducirías",
+          "vosotros": "traduciríais",
+          "yo": "traduciría",
+          "él": "traduciría"
+        },
+        "futuro": {
+          "ellos": "traducirán",
+          "nosotros": "traduciremos",
+          "tú": "traducirás",
+          "vosotros": "traduciréis",
+          "yo": "traduciré",
+          "él": "traducirá"
+        },
+        "imperfecto": {
+          "ellos": "traducían",
+          "nosotros": "traducíamos",
+          "tú": "traducías",
+          "vosotros": "traducíais",
+          "yo": "traducía",
+          "él": "traducía"
+        },
+        "presente": {
+          "ellos": "traducen",
+          "nosotros": "traducimos",
+          "tú": "traduces",
+          "vosotros": "traducís",
+          "yo": "traduzco",
+          "él": "traduce"
+        },
+        "pretérito": {
+          "ellos": "tradujeron",
+          "nosotros": "tradujimos",
+          "tú": "tradujiste",
+          "vosotros": "tradujisteis",
+          "yo": "traduje",
+          "él": "tradujo"
+        },
+        "subjuntivo": {
+          "ellos": "traduzcan",
+          "nosotros": "traduzcamos",
+          "tú": "traduzcas",
+          "vosotros": "traduzcáis",
+          "yo": "traduzca",
+          "él": "traduzca"
+        }
+      },
+      "notes": {
+        "presente": "Irregular yo: traduzco (-zco verb). Other present forms regular.",
+        "pretérito": "Strong preterite: traduje, tradujiste. No accents on endings.",
+        "subjuntivo": "Irregular subjunctive: yo traduzca."
       }
     },
     "traer": {
+      "classes": [
+        "go-verb",
+        "strong-preterite"
+      ],
       "english": "to bring, to carry",
       "forms": {
+        "condicional": {
+          "ellos": "traerían",
+          "nosotros": "traeríamos",
+          "tú": "traerías",
+          "vosotros": "traeríais",
+          "yo": "traería",
+          "él": "traería"
+        },
         "futuro": {
           "ellos": "traerán",
           "nosotros": "traeremos",
@@ -2101,12 +5229,36 @@
           "vosotros": "trajisteis",
           "yo": "traje",
           "él": "trajo"
+        },
+        "subjuntivo": {
+          "ellos": "traigan",
+          "nosotros": "traigamos",
+          "tú": "traigas",
+          "vosotros": "traigáis",
+          "yo": "traiga",
+          "él": "traiga"
         }
+      },
+      "notes": {
+        "presente": "Irregular yo: traigo (-go verb).",
+        "pretérito": "Strong preterite: traje, trajiste. No accents on endings.",
+        "subjuntivo": "Subjunctive built from yo present stem (-go → -ga): traiga."
       }
     },
     "vender": {
+      "classes": [
+        "regular"
+      ],
       "english": "to sell",
       "forms": {
+        "condicional": {
+          "ellos": "venderían",
+          "nosotros": "venderíamos",
+          "tú": "venderías",
+          "vosotros": "venderíais",
+          "yo": "vendería",
+          "él": "vendería"
+        },
         "futuro": {
           "ellos": "venderán",
           "nosotros": "venderemos",
@@ -2138,12 +5290,35 @@
           "vosotros": "vendisteis",
           "yo": "vendí",
           "él": "vendió"
+        },
+        "subjuntivo": {
+          "ellos": "vendan",
+          "nosotros": "vendamos",
+          "tú": "vendas",
+          "vosotros": "vendáis",
+          "yo": "venda",
+          "él": "venda"
         }
-      }
+      },
+      "notes": {}
     },
     "venir": {
+      "classes": [
+        "go-verb",
+        "irregular-future",
+        "stem-change-e-ie",
+        "strong-preterite"
+      ],
       "english": "to come",
       "forms": {
+        "condicional": {
+          "ellos": "vendrían",
+          "nosotros": "vendríamos",
+          "tú": "vendrías",
+          "vosotros": "vendríais",
+          "yo": "vendría",
+          "él": "vendría"
+        },
         "futuro": {
           "ellos": "vendrán",
           "nosotros": "vendremos",
@@ -2175,12 +5350,38 @@
           "vosotros": "vinisteis",
           "yo": "vine",
           "él": "vino"
+        },
+        "subjuntivo": {
+          "ellos": "vengan",
+          "nosotros": "vengamos",
+          "tú": "vengas",
+          "vosotros": "vengáis",
+          "yo": "venga",
+          "él": "venga"
         }
+      },
+      "notes": {
+        "condicional": "Irregular conditional stem vendr-: vendría, vendrías.",
+        "futuro": "Irregular future stem vendr-: vendré, vendrás.",
+        "presente": "Irregular yo: vengo (-go verb). Stem e→ie in tú/él/ellos (e.g. vienes).",
+        "pretérito": "Strong preterite: vine, viniste. No accents on endings.",
+        "subjuntivo": "Subjunctive built from yo present stem (-go → -ga): venga."
       }
     },
     "ver": {
+      "classes": [
+        "fully-irregular"
+      ],
       "english": "to see",
       "forms": {
+        "condicional": {
+          "ellos": "verían",
+          "nosotros": "veríamos",
+          "tú": "verías",
+          "vosotros": "veríais",
+          "yo": "vería",
+          "él": "vería"
+        },
         "futuro": {
           "ellos": "verán",
           "nosotros": "veremos",
@@ -2212,12 +5413,37 @@
           "vosotros": "visteis",
           "yo": "vi",
           "él": "vio"
+        },
+        "subjuntivo": {
+          "ellos": "vean",
+          "nosotros": "veamos",
+          "tú": "veas",
+          "vosotros": "veáis",
+          "yo": "vea",
+          "él": "vea"
         }
+      },
+      "notes": {
+        "imperfecto": "Fully irregular: yo veía, tú veías. Memorise all forms.",
+        "presente": "Fully irregular: yo veo, tú ves. Memorise all forms.",
+        "pretérito": "Fully irregular: yo vi, tú viste. Memorise all forms.",
+        "subjuntivo": "Fully irregular: yo vea, tú veas. Memorise all forms."
       }
     },
     "vivir": {
+      "classes": [
+        "regular"
+      ],
       "english": "to live",
       "forms": {
+        "condicional": {
+          "ellos": "vivirían",
+          "nosotros": "viviríamos",
+          "tú": "vivirías",
+          "vosotros": "viviríais",
+          "yo": "viviría",
+          "él": "viviría"
+        },
         "futuro": {
           "ellos": "vivirán",
           "nosotros": "viviremos",
@@ -2249,12 +5475,32 @@
           "vosotros": "vivisteis",
           "yo": "viví",
           "él": "vivió"
+        },
+        "subjuntivo": {
+          "ellos": "vivan",
+          "nosotros": "vivamos",
+          "tú": "vivas",
+          "vosotros": "viváis",
+          "yo": "viva",
+          "él": "viva"
         }
-      }
+      },
+      "notes": {}
     },
     "volver": {
+      "classes": [
+        "stem-change-o-ue"
+      ],
       "english": "to return, to do something again",
       "forms": {
+        "condicional": {
+          "ellos": "volverían",
+          "nosotros": "volveríamos",
+          "tú": "volverías",
+          "vosotros": "volveríais",
+          "yo": "volvería",
+          "él": "volvería"
+        },
         "futuro": {
           "ellos": "volverán",
           "nosotros": "volveremos",
@@ -2286,7 +5532,19 @@
           "vosotros": "volvisteis",
           "yo": "volví",
           "él": "volvió"
+        },
+        "subjuntivo": {
+          "ellos": "vuelvan",
+          "nosotros": "volvamos",
+          "tú": "vuelvas",
+          "vosotros": "volváis",
+          "yo": "vuelva",
+          "él": "vuelva"
         }
+      },
+      "notes": {
+        "presente": "Stem o→ue in yo/tú/él/ellos (e.g. vuelves); nosotros volvemos.",
+        "subjuntivo": "Irregular subjunctive: yo vuelva."
       }
     }
   }

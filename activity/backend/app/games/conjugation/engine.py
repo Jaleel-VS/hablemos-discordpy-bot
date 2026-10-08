@@ -15,17 +15,25 @@ State shape::
     {
       "game": "conjugation",
       "mode": "daily" | "free",
-      "duration": 60,
+      "timed": true | false,
+      "duration": 60 | null,
       "started_at": "<iso>",
-      "deadline":   "<iso>",              # started_at + duration
+      "deadline":   "<iso>",              # started_at + duration (timed only)
       "puzzle_no":  <int | null>,         # set for daily
       "seq":        <int>,                # 0-based index of the current prompt
-      "current":    {verb, english, tense, pronoun, expected},
+      "config":     {verb_set, tenses, pronouns, strict, variants, items,
+                     verbs_override},
+      "current":    {verb, english, tense, pronoun, shown, expected},
       "answered":   [{verb, tense, pronoun, expected, given, result}, ...],
-      "correct":    <int>,                # exact + close
+      "correct":    <int>,                # exact; close counts only when !strict
       "streak":     <int>,                # current in-run streak
       "best_streak":<int>,
+      "skipped":    <int>,                # number of skipped prompts
+      "close":      <int>,                # number of close answers
+      "awaiting_retry": false,            # true after wrong/close in untimed free
+      "retry_attempts": <int>,            # failed retries since awaiting_retry=true
       "status":     "playing" | "over",
+      "last":       {result, given, verb, pronoun, tense, expected?, note?, row?},
       "date":       "YYYY-MM-DD"
     }
 
@@ -52,17 +60,41 @@ _GRACE = timedelta(seconds=1.5)
 #: Puzzle #1 epoch for the daily sprint number (matches Wordle's launch epoch).
 _EPOCH = date(2026, 1, 1)
 
+#: Human-readable labels for the known verb sets. Unknown keys are title-cased.
+SET_LABELS: dict[str, str] = {
+    "high-frequency": "High Frequency",
+    "regular-ar": "Regular -AR",
+    "regular-er-ir": "Regular -ER/-IR",
+    "irregulars": "Irregulars",
+    "stem-changers": "Stem-Changers",
+    "go-verbs": "Go-Verbs",
+    "strong-preterite": "Strong Preterite",
+    "spelling-changers": "Spelling-Changers",
+}
+
+_VALID_ACTIONS = {"answer", "skip", "retry"}
+#: After this many failed retries in retry mode, advance anyway.
+_MAX_RETRY_ATTEMPTS = 2
+
 
 def _now() -> datetime:
     return datetime.now(UTC)
 
 
-def _daily_config() -> d.Config:
-    """Fixed daily config so everyone drills the same pools on a given day."""
+def daily_config() -> d.Config:
+    """Fixed daily config so everyone drills the same pools on a given day.
+
+    Tenses are pinned explicitly so that adding new tenses to the JSON file
+    does NOT change the daily sequence — new tenses only appear after being
+    deliberately added to this list.
+    """
     return d.Config(
         verb_set="high-frequency",
-        tenses=list(d.TENSES),
+        tenses=["presente", "pretérito", "imperfecto", "futuro"],
         pronouns=[p for p in d.PRONOUNS if p != "vosotros"],
+        strict=False,
+        variants=False,
+        items=0,
     )
 
 
@@ -101,7 +133,7 @@ class ConjugationEngine:
         today = now.date()
         if mode == "daily":
             # Daily is always the fixed timed sprint (it feeds streaks).
-            config = _daily_config()
+            config = daily_config()
             puzzle_no = (today - _EPOCH).days + 1
             timed = True
             first = _deterministic_question(config, seed=puzzle_no, index=0)
@@ -116,11 +148,7 @@ class ConjugationEngine:
         state: dict[str, Any] = {
             "game": self.key,
             "mode": mode,
-            "config": {
-                "verb_set": config.verb_set,
-                "tenses": config.tenses,
-                "pronouns": config.pronouns,
-            },
+            "config": config.as_state(),
             "timed": timed,
             "duration": DURATION if timed else None,
             "started_at": now.isoformat(),
@@ -134,17 +162,30 @@ class ConjugationEngine:
             "correct": 0,
             "streak": 0,
             "best_streak": 0,
+            "skipped": 0,
+            "close": 0,
+            "awaiting_retry": False,
+            "retry_attempts": 0,
             "status": "playing",
             "date": today.isoformat(),
         }
         return GuessOutcome(state=state, client_view=self.client_view(state))
 
     def submit(
-        self, *, state: dict[str, Any], guess: str, finish: bool = False,
+        self,
+        *,
+        state: dict[str, Any],
+        guess: str,
+        finish: bool = False,
+        action: str = "answer",
     ) -> GuessOutcome:
         self._validate_state(state)
         if state["status"] != "playing":
             raise GameError("Esta partida ya terminó.")
+
+        # Validate action.
+        if action not in _VALID_ACTIONS:
+            raise GameError(f"Acción inválida: {action!r}.")
 
         # Explicit end (untimed practice "Terminar", or a client timer flush).
         # Finalize without grading this call's guess.
@@ -167,10 +208,86 @@ class ConjugationEngine:
             state["last"] = None
             return GuessOutcome(state=state, client_view=self.client_view(state))
 
-        current = self._config_question(state)
-        result = grade(guess, current.expected)
-        is_correct = result in (Match.EXACT, Match.CLOSE)
+        config = self._config(state)
+        current = d.Question.from_state(state["current"])
+        timed = state.get("timed", True)
+        awaiting_retry = bool(state.get("awaiting_retry", False))
 
+        # ── skip ──────────────────────────────────────────────────────────
+        if action == "skip":
+            if awaiting_retry:
+                raise GameError("No puedes saltar mientras esperas el reintento.")
+            state["answered"].append({
+                "verb": current.verb,
+                "tense": current.tense,
+                "pronoun": current.pronoun,
+                "expected": current.expected,
+                "given": "",
+                "result": "skipped",
+            })
+            state["skipped"] = state.get("skipped", 0) + 1
+            state["streak"] = 0
+            state["last"] = {
+                "result": "skipped",
+                "given": "",
+                "verb": current.verb,
+                "pronoun": current.pronoun,
+                "tense": current.tense,
+            }
+            state["awaiting_retry"] = False
+            state["retry_attempts"] = 0
+            state["seq"] += 1
+            state["current"] = self._next_question(state).as_state()
+            self._check_items_autofinish(state, config)
+            return GuessOutcome(state=state, client_view=self.client_view(state))
+
+        # ── retry (untimed free mode) ──────────────────────────────────────
+        if action == "retry":
+            if not awaiting_retry:
+                raise GameError("No hay reintento pendiente.")
+            if not guess.strip():
+                raise GameError("Escribe la forma correcta para continuar.")
+            result = grade(guess, current.expected)
+            advance = result in (Match.EXACT, Match.CLOSE)
+            retry_attempts = state.get("retry_attempts", 0) + 1
+            if not advance and retry_attempts >= _MAX_RETRY_ATTEMPTS:
+                advance = True  # forced advance after 2 failed retries
+            # Retry does NOT change score/streak/correct/close counts.
+            reveal = current.reveal()
+            state["last"] = {
+                "result": result.value,
+                # Marks this feedback as a retype, not a scored answer, so the
+                # client doesn't celebrate it as a fresh "Correct!".
+                "retry": True,
+                "given": guess.strip(),
+                "verb": current.verb,
+                "pronoun": current.pronoun,
+                "tense": current.tense,
+                "expected": current.expected,
+                "note": reveal["note"],
+                "row": reveal["row"],
+            }
+            if advance:
+                state["awaiting_retry"] = False
+                state["retry_attempts"] = 0
+                state["seq"] += 1
+                state["current"] = self._next_question(state).as_state()
+                self._check_items_autofinish(state, config)
+            else:
+                state["awaiting_retry"] = True
+                state["retry_attempts"] = retry_attempts
+            return GuessOutcome(state=state, client_view=self.client_view(state))
+
+        # ── answer (default) ──────────────────────────────────────────────
+        # If client is awaiting_retry and sends action="answer", treat as retry
+        # (lenient: avoids race where client didn't see the awaiting_retry flag).
+        if awaiting_retry:
+            return self.submit(state=state, guess=guess, finish=finish, action="retry")
+
+        result = grade(guess, current.expected)
+        is_correct = result == Match.EXACT or (result == Match.CLOSE and not config.strict)
+
+        reveal = current.reveal()
         state["answered"].append({
             "verb": current.verb,
             "tense": current.tense,
@@ -179,6 +296,9 @@ class ConjugationEngine:
             "given": guess.strip(),
             "result": result.value,
         })
+        if result == Match.CLOSE:
+            state["close"] = state.get("close", 0) + 1
+
         if is_correct:
             state["correct"] += 1
             state["streak"] += 1
@@ -188,17 +308,32 @@ class ConjugationEngine:
 
         # Feedback on the answer just graded (client flashes this before the
         # next prompt animates in).
-        state["last"] = {
+        last: dict[str, Any] = {
             "result": result.value,
-            "expected": current.expected,
             "given": guess.strip(),
             "verb": current.verb,
             "pronoun": current.pronoun,
+            "tense": current.tense,
+            "expected": current.expected,
+            "note": reveal["note"],
+            "row": reveal["row"],
         }
+        state["last"] = last
+
+        # In untimed free mode: after a wrong/close answer, enter retry mode
+        # instead of advancing immediately.
+        if not timed and not is_correct:
+            state["awaiting_retry"] = True
+            state["retry_attempts"] = 0
+            # Current stays the same.
+            return GuessOutcome(state=state, client_view=self.client_view(state))
 
         # Advance to the next prompt.
+        state["awaiting_retry"] = False
+        state["retry_attempts"] = 0
         state["seq"] += 1
         state["current"] = self._next_question(state).as_state()
+        self._check_items_autofinish(state, config)
         return GuessOutcome(state=state, client_view=self.client_view(state))
 
     def is_over(self, state: dict[str, Any]) -> bool:
@@ -207,9 +342,13 @@ class ConjugationEngine:
     # ── result card ───────────────────────────────────────────────────────
 
     def result_payload(self, state: dict[str, Any]) -> dict[str, Any]:
+        config = self._config(state)
         correct = int(state.get("correct", 0))
         answered = state.get("answered", [])
-        total = len(answered)
+        skipped = int(state.get("skipped", 0) or 0)
+        close_count = int(state.get("close", 0) or 0)
+        # Total excludes skipped for accuracy denominator.
+        total = len([a for a in answered if a.get("result") != "skipped"])
         best_streak = int(state.get("best_streak", 0))
 
         header = "Conjugación"
@@ -217,6 +356,42 @@ class ConjugationEngine:
             header = f"Conjugación #{state['puzzle_no']}"
         noun = "correcta" if correct == 1 else "correctas"
         summary = f"{header} · {correct} {noun}"
+        if config.strict:
+            summary += " · estricto"
+
+        # misses = wrong + close in answered order.
+        misses = [a for a in answered if a.get("result") in (Match.WRONG.value, Match.CLOSE.value)]
+
+        # review_verbs: distinct verbs from misses, capped at MAX_REVIEW_VERBS.
+        seen: set[str] = set()
+        review_verbs: list[str] = []
+        for a in misses:
+            v = a.get("verb", "")
+            if v and v not in seen:
+                seen.add(v)
+                review_verbs.append(v)
+                if len(review_verbs) >= d.MAX_REVIEW_VERBS:
+                    break
+
+        # Breakdown by tense and pronoun (totals exclude skipped).
+        tense_breakdown: dict[str, dict[str, int]] = {}
+        pronoun_breakdown: dict[str, dict[str, int]] = {}
+        for a in answered:
+            if a.get("result") == "skipped":
+                continue
+            t = a.get("tense", "")
+            p = a.get("pronoun", "")
+            c = 1 if a.get("result") == Match.EXACT.value or (
+                a.get("result") == Match.CLOSE.value and not config.strict
+            ) else 0
+            if t:
+                tb = tense_breakdown.setdefault(t, {"correct": 0, "total": 0})
+                tb["correct"] += c
+                tb["total"] += 1
+            if p:
+                pb = pronoun_breakdown.setdefault(p, {"correct": 0, "total": 0})
+                pb["correct"] += c
+                pb["total"] += 1
 
         return {
             # Daily is a practice streak (showing up counts), so completing the
@@ -228,19 +403,36 @@ class ConjugationEngine:
             "guesses_used": correct,
             "correct": correct,
             "total": total,
+            "skipped": skipped,
+            "close": close_count,
+            "strict": config.strict,
             "best_streak": best_streak,
             # Always the N/M shape (a zero-answer run — now reachable via the
             # untimed "Terminar" — reads "0/0", not a bare "0").
             "score": f"{correct}/{total}",
             "grid": self._emoji_grid(answered),
             "summary": summary,
-            "misses": [a for a in answered if a["result"] == Match.WRONG.value],
+            "misses": misses,
+            "review_verbs": review_verbs,
+            "breakdown": {
+                "tenses": tense_breakdown,
+                "pronouns": pronoun_breakdown,
+            },
         }
 
     # ── helpers ───────────────────────────────────────────────────────────
 
     def client_view(self, state: dict[str, Any]) -> dict[str, Any]:
         """What the client may see. Excludes the pending answer while playing."""
+        config = self._config(state)
+        answered = state.get("answered", [])
+        items = config.items
+        remaining: int | None = None
+        if items > 0 and not state.get("timed", True):
+            # Skips consume an item too: a 10-prompt set is 10 prompts seen,
+            # so the client's "answered/items" progress stays monotonic.
+            remaining = max(0, items - len(answered))
+
         view: dict[str, Any] = {
             "game": self.key,
             "mode": state["mode"],
@@ -251,12 +443,16 @@ class ConjugationEngine:
             "correct": state.get("correct", 0),
             "streak": state.get("streak", 0),
             "best_streak": state.get("best_streak", 0),
-            "answered_count": len(state.get("answered", [])),
+            "answered_count": len(answered),
             "status": state["status"],
+            "awaiting_retry": bool(state.get("awaiting_retry", False)),
+            "strict": config.strict,
+            "items": items,
+            "remaining_items": remaining,
             "last": self._client_last(state),
         }
         if not self.is_over(state):
-            view["prompt"] = self._config_question(state).prompt()
+            view["prompt"] = d.Question.from_state(state["current"]).prompt()
         else:
             view["result"] = self.result_payload(state)
         return view
@@ -268,40 +464,44 @@ class ConjugationEngine:
         so revealing each graded form mid-run would let a player harvest the
         whole day's answers (mash junk, read ``expected``, restart, ace it).
         Daily play therefore gets the result flag (exact/close/wrong) but not
-        ``expected`` — the correct forms are disclosed only in the end-of-game
-        recap. Freeplay/practice reveals normally (there's nothing to game).
+        ``expected``, ``note``, or ``row`` — the correct forms are disclosed
+        only in the end-of-game recap. Freeplay/practice reveals normally
+        (there's nothing to game).
         """
         last = state.get("last")
         if last is None:
             return None
         if state.get("mode") == "daily":
-            return {k: v for k, v in last.items() if k != "expected"}
+            return {k: v for k, v in last.items() if k not in ("expected", "note", "row")}
         return last
 
     def _config(self, state: dict[str, Any]) -> d.Config:
         cfg = state.get("config", {})
+        if isinstance(cfg, dict):
+            return d.Config.from_state(cfg)
+        # Fallback for old state lacking full config.
         return d.Config(
-            verb_set=cfg.get("verb_set", "high-frequency"),
-            tenses=cfg.get("tenses") or list(d.TENSES),
-            pronouns=cfg.get("pronouns") or list(d.PRONOUNS),
-        )
-
-    def _config_question(self, state: dict[str, Any]) -> d.Question:
-        """Rebuild the current Question from stored state (answer included)."""
-        cur = state["current"]
-        return d.Question(
-            verb=cur["verb"],
-            english=cur.get("english", ""),
-            tense=cur["tense"],
-            pronoun=cur["pronoun"],
-            expected=cur["expected"],
+            verb_set="high-frequency",
+            tenses=list(d.TENSES),
+            pronouns=list(d.PRONOUNS),
         )
 
     def _next_question(self, state: dict[str, Any]) -> d.Question:
         config = self._config(state)
         if state["mode"] == "daily" and state.get("puzzle_no") is not None:
             return _deterministic_question(config, seed=state["puzzle_no"], index=state["seq"])
-        return d.pick_question(config, avoid=self._config_question(state))
+        current = d.Question.from_state(state["current"])
+        return d.pick_question(config, avoid=current)
+
+    @staticmethod
+    def _check_items_autofinish(state: dict[str, Any], config: d.Config) -> None:
+        """Auto-finish set mode once ``items`` prompts (incl. skips) are done."""
+        if (
+            config.items > 0
+            and not state.get("timed", True)
+            and len(state.get("answered", [])) >= config.items
+        ):
+            state["status"] = "over"
 
     @staticmethod
     def _deadline(state: dict[str, Any]) -> datetime:
@@ -309,11 +509,12 @@ class ConjugationEngine:
 
     @staticmethod
     def _emoji_grid(answered: list[dict[str, Any]]) -> str:
-        """Compact ✅/🟨/❌ block for the channel card, 10 per row, capped."""
+        """Compact ✅/🟨/❌/⏭ block for the channel card, 10 per row, capped."""
         marks = {
             Match.EXACT.value: "✅",
             Match.CLOSE.value: "🟨",
             Match.WRONG.value: "❌",
+            "skipped": "⏭",
         }
         cells = [marks.get(a["result"], "⬜") for a in answered[:40]]
         rows = ["".join(cells[i:i + 10]) for i in range(0, len(cells), 10)]
@@ -332,6 +533,13 @@ class ConjugationEngine:
             raise GameError("Estado de partida inválido.")
         current = state.get("current")
         if not isinstance(current, dict) or not isinstance(current.get("expected"), str):
+            raise GameError("Estado de partida inválido.")
+        # current must carry tense and pronoun (required by from_state).
+        if not isinstance(current.get("tense"), str) or not isinstance(current.get("pronoun"), str):
+            raise GameError("Estado de partida inválido.")
+        # Reject non-bool awaiting_retry if present.
+        ar = state.get("awaiting_retry")
+        if ar is not None and not isinstance(ar, bool):
             raise GameError("Estado de partida inválido.")
         # A timed game must carry a parseable deadline; an untimed one has none.
         # Reject the incoherent timed+null-deadline combo up front, otherwise

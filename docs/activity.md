@@ -124,53 +124,102 @@ opaque token and an answer-free `view`.
   later (which `compute_streak`, keyed on consecutive `puzzle_no`, would
   otherwise still credit). Freeplay has no date gate.
 
-### Conjugation sprint (`app/games/conjugation/`)
+### Conjugation (`app/games/conjugation/`)
 
-A timed verb-conjugation drill modeled on Conjuguemos: show a verb + subject
-pronoun + tense, the player types the conjugated form, get instant graded
-feedback, repeat against a **60-second** clock. Score = correct answers before
-time runs out.
+A verb-conjugation drill built for English speakers learning Spanish: show a
+verb + subject pronoun + tense, the player types the conjugated form, get
+graded feedback *with an explanation*, repeat. The daily and the sprint run
+against a **60-second** clock; practice is untimed and pauses on every miss so
+the learner retypes the correct form before moving on.
 
 - **Data is precomputed, not live.** `scripts/generate_conjugation_paradigms.py`
   runs [verbecc](https://pypi.org/project/verbecc/) **offline** over a seed verb
   list (from `activity/backend/app/games/data/conjugation_seed.json`) and emits
-  `app/games/data/conjugation_paradigms.json` (verb → tense → pronoun → form).
-  verbecc trains an ML model on first import (~12s) and needs
-  scikit-learn/scipy/numpy, so it is a **dev/build-time** dependency only — the
-  runtime image just reads the committed JSON (like the Wordle word lists). Add
-  a tense in the generator's `TENSES` map and regenerate to grow the game. The
-  generator **refuses to write** (exit 1) if a verbecc change would drop any
-  seed verb or tense — a silent shrink would shift the deterministic daily
-  sequence and reduce freeplay pools; pass `--allow-drops` to accept reviewed
-  drops. `tests/test_conjugation_data.py` guards the committed JSON the same way
-  in CI (full seed grid present, no leaked pronoun prefixes).
+  `app/games/data/conjugation_paradigms.json` (verb → tense → pronoun → form,
+  plus per-verb `classes` and per-tense `notes`). verbecc trains an ML model on
+  first import (~12s) and needs scikit-learn/scipy/numpy, so it is a
+  **dev/build-time** dependency only — the runtime image just reads the
+  committed JSON. Six tenses ship: presente, pretérito, imperfecto, futuro,
+  condicional, subjuntivo (presente); 89 verbs. Add a tense in the generator's
+  `TENSES` map and regenerate to grow the game. The generator **refuses to
+  write** (exit 1) if a verbecc change would drop any seed verb or tense; pass
+  `--allow-drops` to accept reviewed drops. `tests/test_conjugation_data.py`
+  guards the committed JSON (full grid present, notes/classes present, derived
+  sets non-trivial, and the exact 30-verb `high-frequency` list pinned).
+- **Irregularity classifier.** The generator synthesises the fully-regular
+  paradigm for each verb and diffs it against verbecc's forms to tag classes
+  (`stem-change-e-ie`, `go-verb`, `strong-preterite`,
+  `spelling-change-car-gar-zar`, `y-insertion`, `irregular-future`,
+  `fully-irregular`, …) and write a one-line English `note` per *irregular*
+  tense ("Strong preterite: tuve, tuviste. No accents on endings."). Regular
+  tenses get no note. Classes also derive extra verb sets — `stem-changers`,
+  `go-verbs`, `strong-preterite`, `spelling-changers` — alongside the seed
+  categories. Set labels live in `engine.py:SET_LABELS`.
+- **Teaching copy** lives in `data.py`: `TENSE_META` (English name, when-to-use
+  hint, `hablar` example), `PRONOUN_ENGLISH`, and `PRONOUN_VARIANTS`
+  (`usted`→`él` slot, `ustedes`→`ellos`, `ella`, `nosotras`, …). The public
+  **`GET /api/games/conjugation/catalog`** (no auth) returns tenses (teaching
+  order), pronouns, sets and the pinned daily tenses, so the setup screen
+  tracks the data file without a frontend change.
 - **Three-way grading** (`normalize.py`): `exact`, `close` (correct except
-  accents — counts, but the UI flags it), `wrong`. Reuses the same ñ-safe
-  accent handling as Wordle (ñ is a letter, not an accent).
-- **Three modes.** **Reto diario** — a deterministic 60s sprint (hash of puzzle
-  number + index) so everyone drills the same prompts; counts toward streaks and
-  posts to the results channel. **Sprint 60s** — freeplay against the clock with
-  the player's chosen verb set / tenses / pronouns. **Práctica libre** — the same
-  freeplay pools but **untimed**: no deadline, ends only when the player taps
-  "Terminar" (or leaves).
+  accents), `wrong`. ñ is a letter, not an accent. By default `close` counts;
+  the **strict accents** option (`options.strict`) scores `close` as wrong
+  while still reporting it as `close` so the UI can say "accent".
+- **Modes.** **Daily** — a deterministic 60s sprint (hash of puzzle number +
+  index) so everyone drills the same prompts; counts toward streaks and posts to
+  the results channel. **Sprint 60s** — freeplay against the clock with the
+  player's chosen verb set / tenses / pronouns / options. **Practice** —
+  untimed; either a fixed set of N prompts (`options.items`, 10/20, auto-finish)
+  or open-ended (`items: 0`, ends on "Finish").
+- **Daily config is pinned**, not derived from the data: `engine.daily_config()`
+  hardcodes `["presente","pretérito","imperfecto","futuro"]`, `high-frequency`,
+  all pronouns except vosotros. Adding tenses/verbs to the JSON must not shift
+  the deterministic daily sequence, so never replace the pin with
+  `list(d.TENSES)`.
+- **Learning loop (untimed practice).** A wrong/close answer does **not**
+  advance: the state enters `awaiting_retry`, the client shows a reveal card
+  (expected form, irregularity note, the full six-form row with the asked
+  person highlighted) and the player retypes it (`action: "retry"`). Retries
+  never change score/streak/answered; after two failed retries the game
+  advances anyway. Timed modes never pause.
+- **Skip** (`action: "skip"`, any mode) records a `skipped` entry, resets the
+  streak, and is excluded from the accuracy total (`score` is `correct/total`
+  with skips removed; the grid shows ⏭). Not allowed while awaiting a retry.
+- **Result card** adds `skipped`, `close`, `strict`, a per-tense and
+  per-pronoun `breakdown` (`{correct,total}`, totals exclude skips), and
+  `review_verbs` (distinct verbs from wrong+close, max 40). `misses` includes
+  close entries (distinguished by `result`). The Summary screen renders the
+  breakdown and offers **"Practise these N verbs"**, which starts an untimed
+  set with `options.verbs = review_verbs` (an explicit verb list overrides the
+  named set; unknown verbs are dropped). Review is client-side — nothing is
+  persisted beyond the normal result row.
+- **Frontend (EN by default).** `games/conjugation/i18n.ts` holds EN/ES tables;
+  the toggle persists in `localStorage["conj.lang"]`. EN mode labels tenses as
+  "Preterite (pretérito)" with a `?` popover (hint + example), glosses pronouns
+  ("you (formal)"), and shows an accent bar (`á é í ó ú ñ ü`, caret-aware
+  insert) above the input. The `variants` option shows `usted`/`ella`/
+  `ustedes` for the same paradigm slot so the pronoun→person mapping is drilled.
 - **Timing is server-authoritative** for timed modes: every `submit` re-checks
   the deadline (a 1.5s grace covers request latency), so the client countdown is
   presentational only and can't be gamed. Untimed practice carries a `null`
   deadline and ends via an explicit `finish` action on `submit` (part of the
-  shared `GameEngine` contract; games without an open-ended mode ignore it).
-- Freeplay config and the `timed` flag ride in the `start` `options` object;
-  the engine normalizes untrusted values, defaulting to the timed sprint.
+  shared `GameEngine` contract) or by reaching `items`.
+- Freeplay config (`set`, `tenses`, `pronouns`, `timed`, `strict`, `variants`,
+  `items`, `verbs`) rides in the `start` `options` object; `data.resolve_config`
+  normalizes untrusted values, defaulting to the timed sprint.
+- `submit` takes `action` (`answer` | `skip` | `retry`, default `answer`) via
+  `GuessRequest.action`; other engines accept and ignore it.
 - The pending answer lives in sealed state and is never in the client view
   until it's been submitted.
 - **Daily anti-harvest.** The daily is a fixed, deterministic sequence shared by
   everyone, so revealing each form mid-run would let a player mash junk, read the
   answers, and restart to ace it. Two guards close this: (1) conjugation's
-  per-answer feedback **withholds `expected` in daily mode** (the client gets the
-  exact/close/wrong flag but not the correct form — disclosed only in the
-  end-of-game recap; freeplay/practice reveals normally since there's nothing to
-  game); (2) the shared `start` route **refuses a second daily** for a puzzle a
-  player already finished (`409`) — applies to any game with a `puzzle_no`,
-  Wordle included.
+  per-answer feedback **withholds `expected`, `note` and `row` in daily mode**
+  (the client gets the exact/close/wrong flag only — the correct forms are
+  disclosed in the end-of-game recap; freeplay/practice reveals normally since
+  there's nothing to game); (2) the shared `start` route **refuses a second
+  daily** for a puzzle a player already finished (`409`) — applies to any game
+  with a `puzzle_no`, Wordle included.
 - **Known limit — the daily is honor-system, by design.** Because the backend
   is stateless (state round-trips as a sealed token) and the repo is
   open-source with a deterministic daily, a determined player *can* still cheat
