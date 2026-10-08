@@ -70,6 +70,7 @@ SET_LABELS: dict[str, str] = {
     "go-verbs": "Go-Verbs",
     "strong-preterite": "Strong Preterite",
     "spelling-changers": "Spelling-Changers",
+    "accent-shifters": "Accent Shifters (actúo, reúno)",
 }
 
 _VALID_ACTIONS = {"answer", "skip", "retry"}

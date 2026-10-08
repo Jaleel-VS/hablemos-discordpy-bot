@@ -74,7 +74,116 @@
         "comenzar",
         "sacar",
         "enviar",
-        "continuar"
+        "continuar",
+        "abrazar",
+        "acabar",
+        "aceptar",
+        "acompañar",
+        "adivinar",
+        "aguantar",
+        "ahorrar",
+        "alcanzar",
+        "alquilar",
+        "amar",
+        "apagar",
+        "apoyar",
+        "arreglar",
+        "aumentar",
+        "avisar",
+        "ayudar",
+        "bajar",
+        "bañar",
+        "besar",
+        "borrar",
+        "brindar",
+        "cambiar",
+        "cobrar",
+        "colocar",
+        "completar",
+        "contestar",
+        "cortar",
+        "crear",
+        "cruzar",
+        "cuidar",
+        "descansar",
+        "desear",
+        "dibujar",
+        "disfrutar",
+        "durar",
+        "echar",
+        "empujar",
+        "encantar",
+        "enseñar",
+        "entrar",
+        "entregar",
+        "evitar",
+        "explicar",
+        "faltar",
+        "fijar",
+        "firmar",
+        "formar",
+        "fumar",
+        "funcionar",
+        "ganar",
+        "gastar",
+        "girar",
+        "gritar",
+        "guardar",
+        "gustar",
+        "importar",
+        "intentar",
+        "interesar",
+        "invitar",
+        "lavar",
+        "levantar",
+        "limpiar",
+        "lograr",
+        "luchar",
+        "mandar",
+        "manejar",
+        "marcar",
+        "matar",
+        "mejorar",
+        "mezclar",
+        "molestar",
+        "nadar",
+        "necesitar",
+        "odiar",
+        "olvidar",
+        "ordenar",
+        "organizar",
+        "parar",
+        "participar",
+        "pegar",
+        "peinar",
+        "pescar",
+        "pintar",
+        "planear",
+        "plantar",
+        "practicar",
+        "presentar",
+        "prestar",
+        "quejar",
+        "quemar",
+        "quitar",
+        "realizar",
+        "regalar",
+        "regresar",
+        "reservar",
+        "robar",
+        "saludar",
+        "secar",
+        "señalar",
+        "significar",
+        "soportar",
+        "terminar",
+        "tirar",
+        "tratar",
+        "usar",
+        "utilizar",
+        "viajar",
+        "visitar",
+        "votar"
       ],
       "tenses": [
         "presente",
@@ -112,7 +221,36 @@
         "repetir",
         "preferir",
         "mentir",
-        "sentir"
+        "sentir",
+        "admitir",
+        "aplaudir",
+        "asistir",
+        "añadir",
+        "coger",
+        "comprender",
+        "consistir",
+        "convencer",
+        "cubrir",
+        "cumplir",
+        "depender",
+        "describir",
+        "descubrir",
+        "dirigir",
+        "escoger",
+        "esconder",
+        "existir",
+        "meter",
+        "ocurrir",
+        "partir",
+        "prometer",
+        "proteger",
+        "responder",
+        "romper",
+        "sorprender",
+        "temer",
+        "toser",
+        "unir",
+        "vencer"
       ],
       "tenses": [
         "presente",
@@ -157,7 +295,63 @@
         "huir",
         "elegir",
         "reír",
-        "sonreír"
+        "sonreír",
+        "acordar",
+        "acostar",
+        "actuar",
+        "agradecer",
+        "almorzar",
+        "andar",
+        "aparecer",
+        "apretar",
+        "aprobar",
+        "atender",
+        "atraer",
+        "cerrar",
+        "colgar",
+        "competir",
+        "conseguir",
+        "convertir",
+        "corregir",
+        "costar",
+        "crecer",
+        "defender",
+        "despertar",
+        "destruir",
+        "detener",
+        "devolver",
+        "doler",
+        "encender",
+        "freír",
+        "hervir",
+        "incluir",
+        "mantener",
+        "medir",
+        "merecer",
+        "mover",
+        "nacer",
+        "negar",
+        "obtener",
+        "ofrecer",
+        "pertenecer",
+        "probar",
+        "producir",
+        "prohibir",
+        "proponer",
+        "reconocer",
+        "reducir",
+        "resolver",
+        "reunir",
+        "sentar",
+        "soler",
+        "sonar",
+        "soñar",
+        "sugerir",
+        "suponer",
+        "torcer",
+        "valer",
+        "vestir",
+        "volar"
       ],
       "tenses": [
         "presente",
@@ -1970,6 +2164,588 @@
     },
     "sonreír": {
       "english": "to smile"
+    },
+    "abrazar": {
+      "english": "to hug"
+    },
+    "aceptar": {
+      "english": "to accept"
+    },
+    "acabar": {
+      "english": "to finish, to end up"
+    },
+    "acompañar": {
+      "english": "to accompany"
+    },
+    "acordar": {
+      "english": "to agree"
+    },
+    "acostar": {
+      "english": "to put to bed"
+    },
+    "actuar": {
+      "english": "to act"
+    },
+    "adivinar": {
+      "english": "to guess"
+    },
+    "admitir": {
+      "english": "to admit"
+    },
+    "agradecer": {
+      "english": "to thank"
+    },
+    "aguantar": {
+      "english": "to put up with"
+    },
+    "ahorrar": {
+      "english": "to save (money)"
+    },
+    "alcanzar": {
+      "english": "to reach"
+    },
+    "almorzar": {
+      "english": "to have lunch"
+    },
+    "alquilar": {
+      "english": "to rent"
+    },
+    "amar": {
+      "english": "to love"
+    },
+    "andar": {
+      "english": "to walk, to go"
+    },
+    "añadir": {
+      "english": "to add"
+    },
+    "apagar": {
+      "english": "to turn off"
+    },
+    "aparecer": {
+      "english": "to appear"
+    },
+    "aplaudir": {
+      "english": "to applaud"
+    },
+    "apoyar": {
+      "english": "to support"
+    },
+    "aprobar": {
+      "english": "to pass, to approve"
+    },
+    "apretar": {
+      "english": "to squeeze, to press"
+    },
+    "arreglar": {
+      "english": "to fix"
+    },
+    "asistir": {
+      "english": "to attend"
+    },
+    "atender": {
+      "english": "to attend to"
+    },
+    "atraer": {
+      "english": "to attract"
+    },
+    "aumentar": {
+      "english": "to increase"
+    },
+    "avisar": {
+      "english": "to warn, to notify"
+    },
+    "ayudar": {
+      "english": "to help"
+    },
+    "bajar": {
+      "english": "to go down, to lower"
+    },
+    "bañar": {
+      "english": "to bathe"
+    },
+    "besar": {
+      "english": "to kiss"
+    },
+    "borrar": {
+      "english": "to erase"
+    },
+    "brindar": {
+      "english": "to toast, to offer"
+    },
+    "cambiar": {
+      "english": "to change"
+    },
+    "cerrar": {
+      "english": "to close"
+    },
+    "cobrar": {
+      "english": "to charge, to get paid"
+    },
+    "coger": {
+      "english": "to take, to catch"
+    },
+    "colgar": {
+      "english": "to hang"
+    },
+    "colocar": {
+      "english": "to place"
+    },
+    "competir": {
+      "english": "to compete"
+    },
+    "completar": {
+      "english": "to complete"
+    },
+    "comprender": {
+      "english": "to understand"
+    },
+    "conseguir": {
+      "english": "to get, to achieve"
+    },
+    "consistir": {
+      "english": "to consist"
+    },
+    "contestar": {
+      "english": "to answer"
+    },
+    "convencer": {
+      "english": "to convince"
+    },
+    "convertir": {
+      "english": "to convert"
+    },
+    "corregir": {
+      "english": "to correct"
+    },
+    "cortar": {
+      "english": "to cut"
+    },
+    "costar": {
+      "english": "to cost"
+    },
+    "crear": {
+      "english": "to create"
+    },
+    "crecer": {
+      "english": "to grow"
+    },
+    "cruzar": {
+      "english": "to cross"
+    },
+    "cubrir": {
+      "english": "to cover"
+    },
+    "cuidar": {
+      "english": "to take care of"
+    },
+    "cumplir": {
+      "english": "to fulfil, to turn (age)"
+    },
+    "defender": {
+      "english": "to defend"
+    },
+    "depender": {
+      "english": "to depend"
+    },
+    "descansar": {
+      "english": "to rest"
+    },
+    "describir": {
+      "english": "to describe"
+    },
+    "descubrir": {
+      "english": "to discover"
+    },
+    "desear": {
+      "english": "to wish"
+    },
+    "despertar": {
+      "english": "to wake"
+    },
+    "destruir": {
+      "english": "to destroy"
+    },
+    "detener": {
+      "english": "to stop, to detain"
+    },
+    "devolver": {
+      "english": "to return (something)"
+    },
+    "dibujar": {
+      "english": "to draw"
+    },
+    "dirigir": {
+      "english": "to direct"
+    },
+    "disfrutar": {
+      "english": "to enjoy"
+    },
+    "doler": {
+      "english": "to hurt"
+    },
+    "durar": {
+      "english": "to last"
+    },
+    "echar": {
+      "english": "to throw, to pour"
+    },
+    "empujar": {
+      "english": "to push"
+    },
+    "encender": {
+      "english": "to turn on, to light"
+    },
+    "encantar": {
+      "english": "to delight"
+    },
+    "enseñar": {
+      "english": "to teach, to show"
+    },
+    "entrar": {
+      "english": "to enter"
+    },
+    "entregar": {
+      "english": "to hand in, to deliver"
+    },
+    "escoger": {
+      "english": "to choose"
+    },
+    "esconder": {
+      "english": "to hide"
+    },
+    "evitar": {
+      "english": "to avoid"
+    },
+    "existir": {
+      "english": "to exist"
+    },
+    "explicar": {
+      "english": "to explain"
+    },
+    "faltar": {
+      "english": "to be missing"
+    },
+    "fijar": {
+      "english": "to fix, to set"
+    },
+    "firmar": {
+      "english": "to sign"
+    },
+    "formar": {
+      "english": "to form"
+    },
+    "freír": {
+      "english": "to fry"
+    },
+    "fumar": {
+      "english": "to smoke"
+    },
+    "funcionar": {
+      "english": "to work (function)"
+    },
+    "ganar": {
+      "english": "to win, to earn"
+    },
+    "gastar": {
+      "english": "to spend"
+    },
+    "girar": {
+      "english": "to turn"
+    },
+    "gritar": {
+      "english": "to shout"
+    },
+    "guardar": {
+      "english": "to keep, to put away"
+    },
+    "gustar": {
+      "english": "to please, to like"
+    },
+    "hervir": {
+      "english": "to boil"
+    },
+    "importar": {
+      "english": "to matter"
+    },
+    "incluir": {
+      "english": "to include"
+    },
+    "intentar": {
+      "english": "to try"
+    },
+    "interesar": {
+      "english": "to interest"
+    },
+    "invitar": {
+      "english": "to invite"
+    },
+    "lavar": {
+      "english": "to wash"
+    },
+    "levantar": {
+      "english": "to lift, to raise"
+    },
+    "limpiar": {
+      "english": "to clean"
+    },
+    "lograr": {
+      "english": "to achieve"
+    },
+    "luchar": {
+      "english": "to fight"
+    },
+    "mandar": {
+      "english": "to send, to order"
+    },
+    "manejar": {
+      "english": "to drive, to handle"
+    },
+    "mantener": {
+      "english": "to maintain"
+    },
+    "marcar": {
+      "english": "to mark, to dial"
+    },
+    "matar": {
+      "english": "to kill"
+    },
+    "medir": {
+      "english": "to measure"
+    },
+    "mejorar": {
+      "english": "to improve"
+    },
+    "merecer": {
+      "english": "to deserve"
+    },
+    "meter": {
+      "english": "to put in"
+    },
+    "mezclar": {
+      "english": "to mix"
+    },
+    "molestar": {
+      "english": "to bother"
+    },
+    "mover": {
+      "english": "to move"
+    },
+    "nacer": {
+      "english": "to be born"
+    },
+    "nadar": {
+      "english": "to swim"
+    },
+    "necesitar": {
+      "english": "to need"
+    },
+    "negar": {
+      "english": "to deny"
+    },
+    "obtener": {
+      "english": "to obtain"
+    },
+    "ocurrir": {
+      "english": "to happen"
+    },
+    "odiar": {
+      "english": "to hate"
+    },
+    "ofrecer": {
+      "english": "to offer"
+    },
+    "olvidar": {
+      "english": "to forget"
+    },
+    "ordenar": {
+      "english": "to order, to tidy"
+    },
+    "organizar": {
+      "english": "to organize"
+    },
+    "parar": {
+      "english": "to stop"
+    },
+    "participar": {
+      "english": "to participate"
+    },
+    "partir": {
+      "english": "to leave, to split"
+    },
+    "pegar": {
+      "english": "to hit, to stick"
+    },
+    "peinar": {
+      "english": "to comb"
+    },
+    "pertenecer": {
+      "english": "to belong"
+    },
+    "pescar": {
+      "english": "to fish"
+    },
+    "pintar": {
+      "english": "to paint"
+    },
+    "planear": {
+      "english": "to plan"
+    },
+    "plantar": {
+      "english": "to plant"
+    },
+    "practicar": {
+      "english": "to practise"
+    },
+    "presentar": {
+      "english": "to present, to introduce"
+    },
+    "prestar": {
+      "english": "to lend"
+    },
+    "probar": {
+      "english": "to try, to taste"
+    },
+    "producir": {
+      "english": "to produce"
+    },
+    "prohibir": {
+      "english": "to forbid"
+    },
+    "prometer": {
+      "english": "to promise"
+    },
+    "proponer": {
+      "english": "to propose"
+    },
+    "proteger": {
+      "english": "to protect"
+    },
+    "quejar": {
+      "english": "to complain"
+    },
+    "quemar": {
+      "english": "to burn"
+    },
+    "quitar": {
+      "english": "to remove, to take off"
+    },
+    "realizar": {
+      "english": "to carry out"
+    },
+    "reconocer": {
+      "english": "to recognize"
+    },
+    "reducir": {
+      "english": "to reduce"
+    },
+    "regalar": {
+      "english": "to give (a gift)"
+    },
+    "regresar": {
+      "english": "to return"
+    },
+    "reservar": {
+      "english": "to reserve"
+    },
+    "resolver": {
+      "english": "to solve"
+    },
+    "responder": {
+      "english": "to answer"
+    },
+    "reunir": {
+      "english": "to gather"
+    },
+    "robar": {
+      "english": "to steal"
+    },
+    "romper": {
+      "english": "to break"
+    },
+    "saludar": {
+      "english": "to greet"
+    },
+    "secar": {
+      "english": "to dry"
+    },
+    "sentar": {
+      "english": "to seat"
+    },
+    "señalar": {
+      "english": "to point out"
+    },
+    "significar": {
+      "english": "to mean"
+    },
+    "soler": {
+      "english": "to usually do"
+    },
+    "sonar": {
+      "english": "to sound, to ring"
+    },
+    "soñar": {
+      "english": "to dream"
+    },
+    "soportar": {
+      "english": "to bear, to withstand"
+    },
+    "sorprender": {
+      "english": "to surprise"
+    },
+    "sugerir": {
+      "english": "to suggest"
+    },
+    "suponer": {
+      "english": "to suppose"
+    },
+    "temer": {
+      "english": "to fear"
+    },
+    "terminar": {
+      "english": "to finish"
+    },
+    "tirar": {
+      "english": "to throw, to pull"
+    },
+    "torcer": {
+      "english": "to twist"
+    },
+    "toser": {
+      "english": "to cough"
+    },
+    "tratar": {
+      "english": "to try, to treat"
+    },
+    "unir": {
+      "english": "to join"
+    },
+    "usar": {
+      "english": "to use"
+    },
+    "utilizar": {
+      "english": "to use, to utilize"
+    },
+    "valer": {
+      "english": "to be worth"
+    },
+    "vencer": {
+      "english": "to defeat"
+    },
+    "vestir": {
+      "english": "to dress"
+    },
+    "viajar": {
+      "english": "to travel"
+    },
+    "visitar": {
+      "english": "to visit"
+    },
+    "volar": {
+      "english": "to fly"
+    },
+    "votar": {
+      "english": "to vote"
     }
   }
 }

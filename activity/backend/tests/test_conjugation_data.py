@@ -100,6 +100,8 @@ def test_classes_are_valid_strings():
         "y-insertion",
         "irregular-future",
         "fully-irregular",
+        "accent-shift",
+        "spelling-change-ger-gir",
     }
     unknown: list[str] = []
     for verb, entry in d.VERBS.items():

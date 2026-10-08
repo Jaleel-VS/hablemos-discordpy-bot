@@ -140,7 +140,7 @@ the learner retypes the correct form before moving on.
   first import (~12s) and needs scikit-learn/scipy/numpy, so it is a
   **dev/build-time** dependency only — the runtime image just reads the
   committed JSON. Six tenses ship: presente, pretérito, imperfecto, futuro,
-  condicional, subjuntivo (presente); 89 verbs. Add a tense in the generator's
+  condicional, subjuntivo (presente); 283 verbs. Add a tense in the generator's
   `TENSES` map and regenerate to grow the game. The generator **refuses to
   write** (exit 1) if a verbecc change would drop any seed verb or tense; pass
   `--allow-drops` to accept reviewed drops. `tests/test_conjugation_data.py`
@@ -149,12 +149,16 @@ the learner retypes the correct form before moving on.
 - **Irregularity classifier.** The generator synthesises the fully-regular
   paradigm for each verb and diffs it against verbecc's forms to tag classes
   (`stem-change-e-ie`, `go-verb`, `strong-preterite`,
-  `spelling-change-car-gar-zar`, `y-insertion`, `irregular-future`,
+  `spelling-change-car-gar-zar`, `spelling-change-ger-gir` (cojo/venzo),
+  `accent-shift` (actúo/reúno), `y-insertion`, `irregular-future`,
   `fully-irregular`, …) and write a one-line English `note` per *irregular*
   tense ("Strong preterite: tuve, tuviste. No accents on endings."). Regular
   tenses get no note. Classes also derive extra verb sets — `stem-changers`,
-  `go-verbs`, `strong-preterite`, `spelling-changers` — alongside the seed
-  categories. Set labels live in `engine.py:SET_LABELS`.
+  `go-verbs`, `strong-preterite`, `spelling-changers`, `accent-shifters` —
+  alongside the seed categories. Set labels live in `engine.py:SET_LABELS`.
+  Seed categories bucket new verbs by class: pure spelling-rule verbs
+  (`buscar`, `coger`) stay in `regular-*`; anything with a real stem/ending
+  irregularity goes to `irregulars`.
 - **Teaching copy** lives in `data.py`: `TENSE_META` (English name, when-to-use
   hint, `hablar` example), `PRONOUN_ENGLISH`, and `PRONOUN_VARIANTS`
   (`usted`→`él` slot, `ustedes`→`ellos`, `ella`, `nosotras`, …). The public

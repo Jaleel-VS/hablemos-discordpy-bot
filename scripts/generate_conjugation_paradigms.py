@@ -50,6 +50,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import unicodedata
 from pathlib import Path
 
 # ── canonical teaching paradigm ──────────────────────────────────────────────
@@ -182,7 +183,9 @@ def _regular_paradigm(verb: str, tense: str) -> dict[str, str] | None:
     elif verb.endswith("er"):
         conj = "er"
         stem = verb[:-2]
-    elif verb.endswith("ir"):
+    elif verb.endswith(("ir", "ír")):
+        # reír / oír / freír carry an orthographic accent on the infinitive;
+        # the regular stem is still the letters before -ir.
         conj = "ir"
         stem = verb[:-2]
     else:
@@ -206,10 +209,10 @@ def _regular_paradigm(verb: str, tense: str) -> dict[str, str] | None:
         else:
             endings = ["ía", "ías", "ía", "íamos", "íais", "ían"]
     elif tense == "futuro":
-        stem = verb  # regular future stem IS the infinitive
+        stem = _strip_accents(verb)  # infinitive; reír → reiré drops the accent
         endings = ["é", "ás", "á", "emos", "éis", "án"]
     elif tense == "condicional":
-        stem = verb  # regular conditional stem IS the infinitive
+        stem = _strip_accents(verb)
         endings = ["ía", "ías", "ía", "íamos", "íais", "ían"]
     elif tense == "subjuntivo":
         if conj == "ar":
@@ -267,7 +270,17 @@ def _classify_verb(
     nos_match = (pres.get("nosotros") == reg_pres.get("nosotros")
                  and pres.get("vosotros") == reg_pres.get("vosotros"))
 
-    if non_yo_boot_changed and nos_match and reg_pres:
+    if verb.endswith("eír"):
+        # reír / freír / sonreír: e→i in the boot forms (río, ríes) with a
+        # written accent on the i; nosotros keeps the infinitive's accent
+        # (reímos), so the generic nosotros check below would never match.
+        classes.add("stem-change-e-i")
+    elif verb.endswith("uir") and not verb.endswith("guir") and pres.get("yo", "").endswith("yo"):
+        # construir / huir / incluir: a y is inserted before the ending in the
+        # boot forms (construyo, construyes). Handled by the y-insertion
+        # check below — don't also call it a vowel stem change.
+        pass
+    elif non_yo_boot_changed and nos_match and reg_pres:
         # Use tú to determine the change type (yo may be a go-verb form).
         tu_actual = pres.get("tú", "")
         tu_reg    = reg_pres.get("tú", "")
@@ -276,7 +289,11 @@ def _classify_verb(
         tu_actual_stem = tu_actual[:-len(tu_end)] if tu_actual.endswith(tu_end) else tu_actual
         tu_reg_stem    = tu_reg[:-len(tu_end)]    if tu_reg.endswith(tu_end)    else tu_reg
 
-        if "ie" in tu_actual_stem and "ie" not in tu_reg_stem:
+        if _strip_accents(tu_actual_stem) == tu_reg_stem:
+            # actúas, reúnes, prohíbes: same letters, a written accent
+            # breaks the diphthong in the boot forms. Not a vowel change.
+            classes.add("accent-shift")
+        elif "ie" in tu_actual_stem and "ie" not in tu_reg_stem:
             classes.add("stem-change-e-ie")
         elif "ue" in tu_actual_stem and "ue" not in tu_reg_stem:
             if verb.endswith("ugar"):
@@ -285,6 +302,15 @@ def _classify_verb(
                 classes.add("stem-change-o-ue")
         elif tu_actual_stem != tu_reg_stem:
             classes.add("stem-change-e-i")
+
+    # ── -ger/-gir g→j, consonant+-cer c→z in yo presente (cojo, venzo) ──────
+    # Predictable spelling rules (keep the consonant's sound before -o), not a
+    # stem change; they carry into the whole present subjunctive.
+    if (
+        (verb.endswith(("ger", "gir")) and yo_pres.endswith("jo"))
+        or (verb.endswith("cer") and yo_pres.endswith("zo"))
+    ) and reg_pres.get("yo", "").endswith(("go", "co")):
+        classes.add("spelling-change-ger-gir")
 
     # ── strong preterite ─────────────────────────────────────────────────────
     # yo pretérito ends in an unaccented 'e' (tuve, puse, hice…).
@@ -310,14 +336,12 @@ def _classify_verb(
         classes.add("y-insertion")
 
     # ── irregular future ─────────────────────────────────────────────────────
+    # Compare accent-stripped so freír → freiré (regular stem, accent dropped
+    # by the orthography) isn't mistaken for a tendr-/podr- style stem.
     yo_fut = forms.get("futuro", {}).get("yo", "")
-    if yo_fut and yo_fut != verb + "é":
+    if yo_fut and _strip_accents(yo_fut) != _strip_accents(verb + "é"):
         classes.add("irregular-future")
 
-    # ── coger/proteger-type spelling (-ger/-gir: g→j in yo) ─────────────────
-    # These are not an explicit class in the spec; they fold into regular if
-    # nothing else triggers (the yo change is predictable, not a true stem shift).
-    # Already covered by falling through to "regular" if no other class fires.
 
     if not classes:
         classes.add("regular")
@@ -384,6 +408,13 @@ def _build_notes(
                 note += f" Stem {sc_desc} in tú/él/ellos (e.g. {tu_f})."
         elif "zco-verb" in classes:
             note = f"Irregular yo: {yo_f} (-zco verb). Other present forms regular."
+        elif "spelling-change-ger-gir" in classes:
+            swap = "c→z" if verb.endswith("cer") else "g→j"
+            note = f"Spelling only: {swap} in yo ({yo_f}) to keep the sound. Rest regular."
+        elif "accent-shift" in classes:
+            tu_f  = pres.get("tú", "")
+            nos_f = pres.get("nosotros", "")
+            note = f"Written accent in yo/tú/él/ellos ({yo_f}, {tu_f}); nosotros {nos_f}."
         elif sc_class:
             tu_f  = pres.get("tú", "")
             nos_f = pres.get("nosotros", "")
@@ -408,6 +439,11 @@ def _build_notes(
             el_f    = pret.get("él", "")
             ellos_f = pret.get("ellos", "")
             note = f"y-insertion in 3rd persons: {el_f}, {ellos_f}."
+        elif sc_class and verb.endswith(("ir", "ír")):
+            el_f    = pret.get("él", "")
+            ellos_f = pret.get("ellos", "")
+            shift = "o→u" if sc_class == "stem-change-o-ue" else "e→i"
+            note = f"-ir stem changer: {shift} in él/ellos only ({el_f}, {ellos_f}). Rest regular."
         else:
             note = f"Irregular preterite: {yo_f}, {tu_f}."
         notes["pretérito"] = note[:120]
@@ -441,8 +477,19 @@ def _build_notes(
         yo_f = subj.get("yo", "")
         if "go-verb" in classes:
             note = f"Subjunctive built from yo present stem (-go → -ga): {yo_f}."
+        elif "zco-verb" in classes:
+            note = f"Subjunctive built from yo present stem (-zco → -zca): {yo_f}."
+        elif "spelling-change-ger-gir" in classes:
+            swap = "c→z" if verb.endswith("cer") else "g→j"
+            note = f"{swap} throughout the subjunctive (from yo {pres.get('yo', '')}): {yo_f}."
+        elif "y-insertion" in classes and verb.endswith("uir"):
+            note = f"Keeps the y from the present throughout: yo {yo_f}, nosotros {subj.get('nosotros', '')}."
+        elif "accent-shift" in classes:
+            note = f"Same accent pattern as the present: yo {yo_f}, nosotros {subj.get('nosotros', '')}."
         elif sc_class and verb.endswith("ir"):
             note = f"-ir stem changer also shifts in subjunctive: yo {yo_f}."
+        elif sc_class:
+            note = f"Stem {sc_desc} in the boot forms, like the present: yo {yo_f}."
         elif "spelling-change-car-gar-zar" in classes:
             note = f"Spelling from infinitive applied throughout: yo {yo_f}."
         else:
@@ -462,6 +509,13 @@ def _strip_pronoun(pronoun: str, conjugated: str) -> str:
     """
     prefix = pronoun + " "
     return conjugated[len(prefix):] if conjugated.startswith(prefix) else conjugated
+
+
+def _strip_accents(text: str) -> str:
+    """``actúas`` → ``actuas`` (ñ is preserved; it's a letter, not an accent)."""
+    decomposed = unicodedata.normalize("NFD", text.replace("ñ", "\x00"))
+    stripped = "".join(ch for ch in decomposed if unicodedata.category(ch) != "Mn")
+    return stripped.replace("\x00", "ñ")
 
 
 def _build_forms(conjugate, verb: str) -> dict[str, dict[str, str]] | None:
@@ -606,7 +660,14 @@ def main() -> int:
         ],
         "spelling-changers": [
             v for v, d in verbs_out.items()
-            if any(c in ("spelling-change-car-gar-zar", "y-insertion") for c in d["classes"])
+            if any(
+                c in ("spelling-change-car-gar-zar", "spelling-change-ger-gir", "y-insertion")
+                for c in d["classes"]
+            )
+        ],
+        "accent-shifters": [
+            v for v, d in verbs_out.items()
+            if "accent-shift" in d["classes"]
         ],
     }
     for dkey, dverbs in derived.items():
