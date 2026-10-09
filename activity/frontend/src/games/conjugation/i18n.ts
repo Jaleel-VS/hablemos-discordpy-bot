@@ -1,17 +1,12 @@
-// Minimal i18n for the conjugation game. All UI copy goes through `t()`.
-// Language is persisted in localStorage so it survives Discord Activity restarts.
+// Conjugation UI strings. Language preference and lookup are shared across
+// games (src/i18n/lang.tsx); this file only owns the string tables and the
+// tense-label helper.
+import { type Lang, translate } from "../../i18n/lang";
 
-export type Lang = "en" | "es";
+export type { Lang };
 
-const STORAGE_KEY = "conj.lang";
-
-export function getLang(): Lang {
-  return localStorage.getItem(STORAGE_KEY) === "es" ? "es" : "en";
-}
-
-export function setLang(lang: Lang): void {
-  localStorage.setItem(STORAGE_KEY, lang);
-}
+/** Conjugation's audience is English speakers learning Spanish. */
+export const DEFAULT_LANG: Lang = "en";
 
 export interface TenseMeta {
   label: string;
@@ -157,16 +152,7 @@ const ES: Record<string, string> = {
 
 const TABLES: Record<Lang, Record<string, string>> = { en: EN, es: ES };
 
-/**
- * Look up a UI string, substituting `{key}` placeholders from `vars`.
- * Falls back to EN then to the raw key if a translation is missing.
- */
-export function t(
-  lang: Lang,
-  key: string,
-  vars?: Record<string, string | number>,
-): string {
-  const val = TABLES[lang][key] ?? EN[key] ?? key;
-  if (!vars) return val;
-  return val.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ""));
+/** Look up a conjugation UI string (see `translate` for fallback rules). */
+export function t(lang: Lang, key: string, vars?: Record<string, string | number>): string {
+  return translate(TABLES, lang, key, vars);
 }

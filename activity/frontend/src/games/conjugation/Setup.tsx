@@ -6,7 +6,8 @@ import {
   type ConjugationTenseInfo,
   type StartOptions,
 } from "../../api";
-import { getLang, setLang, t, tenseLabel, type Lang } from "./i18n";
+import { LangToggle, useLang } from "../../i18n/lang";
+import { DEFAULT_LANG, t, tenseLabel } from "./i18n";
 
 interface SetupProps {
   onStart: (mode: "daily" | "free", options?: StartOptions) => void;
@@ -50,7 +51,7 @@ function toggle(list: string[], key: string): string[] {
 type PracticeItems = 10 | 20 | 0;
 
 export default function Setup({ onStart, busy, error }: SetupProps) {
-  const [lang, setLangState] = useState<Lang>(getLang());
+  const [lang, switchLang] = useLang(DEFAULT_LANG);
   const [catalog, setCatalog] = useState<ConjugationCatalog | null>(null);
   const [verbSet, setVerbSet] = useState("high-frequency");
   const [tenses, setTenses] = useState<string[]>(["presente", "pretérito"]);
@@ -87,10 +88,6 @@ export default function Setup({ onStart, busy, error }: SetupProps) {
   const pronounList = catalog?.pronouns ?? FALLBACK_PRONOUNS;
   const setList = catalog?.sets ?? FALLBACK_SETS;
 
-  const switchLang = (l: Lang) => {
-    setLang(l);
-    setLangState(l);
-  };
 
   const freeplay = (timed: boolean, items: number) =>
     onStart("free", { set: verbSet, tenses, pronouns, timed, strict, variants, items });
@@ -98,23 +95,7 @@ export default function Setup({ onStart, busy, error }: SetupProps) {
   return (
     <div className="conj conj-setup">
     <div className="conj-inner">
-      {/* Language toggle */}
-      <div className="lang-toggle">
-        <button
-          className={`lang-btn${lang === "en" ? " lang-btn--on" : ""}`}
-          onClick={() => switchLang("en")}
-          aria-pressed={lang === "en"}
-        >
-          {t(lang, "lang.en")}
-        </button>
-        <button
-          className={`lang-btn${lang === "es" ? " lang-btn--on" : ""}`}
-          onClick={() => switchLang("es")}
-          aria-pressed={lang === "es"}
-        >
-          {t(lang, "lang.es")}
-        </button>
-      </div>
+      <LangToggle lang={lang} onChange={switchLang} />
 
       <div className="setup-lede">
         <h1 className="setup-title">{t(lang, "setup.title")}</h1>

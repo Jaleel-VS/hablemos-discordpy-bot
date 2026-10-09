@@ -1,6 +1,6 @@
-import { useState } from "react";
 import type { ConjugationResult } from "../../api";
-import { getLang, t, type Lang } from "./i18n";
+import { useLang } from "../../i18n/lang";
+import { DEFAULT_LANG, t } from "./i18n";
 import PetReaction from "../../pet/PetReaction";
 
 interface SummaryProps {
@@ -38,7 +38,7 @@ function BreakdownBar({ correct, total }: BarProps) {
 }
 
 export default function Summary({ result, onReplay, onReview, accessToken }: SummaryProps) {
-  const [lang] = useState<Lang>(getLang);
+  const [lang] = useLang(DEFAULT_LANG);
   const { correct, total, best_streak, misses, skipped = 0, close = 0, strict = false, breakdown, review_verbs = [], grid, mode } = result;
   const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
   const outcome: "win" | "meh" = total > 0 && correct / total >= 0.8 ? "win" : "meh";

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ConjugationView } from "../../api";
-import AccentBar from "./AccentBar";
-import { getLang, t, tenseLabel, type Lang } from "./i18n";
+import AccentBar from "../../components/AccentBar";
+import { useLang } from "../../i18n/lang";
+import { DEFAULT_LANG, t, tenseLabel } from "./i18n";
 
 interface SprintProps {
   view: ConjugationView;
@@ -51,7 +52,7 @@ function useCountdown(deadlineIso: string | null, onZero: () => void): number {
 export default function Sprint({ view, busy, error, onAnswer, onTimeout, onFinish }: SprintProps) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const [lang] = useState<Lang>(getLang);
+  const [lang] = useLang(DEFAULT_LANG);
   const remaining = useCountdown(view.deadline, onTimeout);
 
   const prompt = view.prompt;
