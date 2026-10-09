@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchLeaderboard, type GameInfo, type Leaderboard as Board } from "./api";
+import { GAME_REGISTRY } from "./games/registry";
 
 interface LeaderboardProps {
   games: GameInfo[];
@@ -27,21 +28,32 @@ export default function Leaderboard({ games, accessToken, userId }: LeaderboardP
     };
   }, [gameKey, accessToken]);
 
+  // "HI-SCORES · WORDLE #282"
+  const gameDisplay = games.find((g) => g.key === gameKey)?.display_name.toUpperCase() ?? "";
+  const puzzleNo = load.phase === "ready" && load.board.puzzle_no != null
+    ? ` #${load.board.puzzle_no}`
+    : "";
+  const title = `HI-SCORES · ${gameDisplay}${puzzleNo}`;
+
   return (
     <section className="lb" aria-label="Clasificación del servidor">
-      <h2 className="lb-title">Clasificación</h2>
+      <h2 className="lb-title">{title}</h2>
       <div className="lb-tabs" role="tablist">
-        {games.map((g) => (
-          <button
-            key={g.key}
-            role="tab"
-            aria-selected={g.key === gameKey}
-            className="lb-tab"
-            onClick={() => setGameKey(g.key)}
-          >
-            {g.display_name}
-          </button>
-        ))}
+        {games.map((g) => {
+          const meta = GAME_REGISTRY[g.key];
+          return (
+            <button
+              key={g.key}
+              role="tab"
+              aria-selected={g.key === gameKey}
+              className="lb-tab"
+              onClick={() => setGameKey(g.key)}
+              aria-label={g.display_name}
+            >
+              {meta?.glyph ?? ""} {g.display_name.toUpperCase()}
+            </button>
+          );
+        })}
       </div>
       {load.phase === "loading" && <p className="muted">Cargando…</p>}
       {load.phase === "error" && <p className="muted">No se pudo cargar la clasificación.</p>}
@@ -49,18 +61,15 @@ export default function Leaderboard({ games, accessToken, userId }: LeaderboardP
         <p className="muted">Nadie ha jugado el reto diario todavía.</p>
       )}
       {load.phase === "ready" && load.board.entries.length > 0 && (
-        <>
-          <p className="lb-puzzle">Reto #{load.board.puzzle_no}</p>
-          <ol className="lb-list">
-            {load.board.entries.map((e) => (
-              <li key={e.user_id} className={e.user_id === userId ? "lb-row me" : "lb-row"}>
-                <span className="lb-rank">{e.rank}</span>
-                <span className="lb-name">{e.name || "Jugador"}</span>
-                <span className="lb-score">{e.score}</span>
-              </li>
-            ))}
-          </ol>
-        </>
+        <ol className="lb-list">
+          {load.board.entries.map((e) => (
+            <li key={e.user_id} className={e.user_id === userId ? "lb-row me" : "lb-row"}>
+              <span className="lb-rank">{e.rank}</span>
+              <span className="lb-name">{e.name || "Jugador"}</span>
+              <span className="lb-score">{e.score}</span>
+            </li>
+          ))}
+        </ol>
       )}
     </section>
   );

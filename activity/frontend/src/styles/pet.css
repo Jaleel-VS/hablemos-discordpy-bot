@@ -22,11 +22,14 @@
   animation: pet-reaction-enter 280ms ease both;
 }
 
+/* pixel face caption matches arcade tone */
 .pet-reaction__caption {
+  font-family: var(--font-pixel);
+  font-weight: 400;
   font-size: 0.85rem;
-  font-weight: 600;
   color: var(--ink-dim);
   letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 /* ══ pet (hub) ══════════════════════════════════════════════════════════════ */
@@ -41,31 +44,43 @@ canvas.pet {
   cursor: pointer;
 }
 
-/* ── pet-card: full-bleed row above the game list, not a button ────────── */
+/* ── pet-card: cabinet bezel + inner CRT screen ───────────────────────── */
 .pet-card {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 108px 1fr;
   gap: 16px;
-  padding: 16px 18px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--bg-raised);
-  min-height: 96px; /* reserve space while loading to prevent layout jump */
+  align-items: center;
+  margin-bottom: 4px;
 }
 
 .pet-card--loading {
-  min-height: 96px;
-  border-color: transparent;
-  background: color-mix(in oklab, var(--bg-raised) 60%, transparent);
+  min-height: 108px;
+  background: transparent;
 }
 
 .pet-card--picking {
-  align-items: stretch;
-  min-height: unset;
+  display: block;
 }
 
-.pet-card-critter {
+/* bezel: --bg-raised frame */
+.pet-card-bezel {
+  width: 108px;
+  height: 108px;
+  background: var(--bg-raised);
+  padding: 10px;
+  border-radius: var(--radius);
   flex: none;
+}
+
+/* inner CRT screen: near-black with glow bloom */
+.pet-card-screen {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-sunken);
+  display: grid;
+  place-items: center;
+  border-radius: 2px;
+  box-shadow: inset 0 0 18px var(--glow);
 }
 
 .pet-card-info {
@@ -76,28 +91,36 @@ canvas.pet {
   gap: 3px;
 }
 
+/* pixel face, accent colour */
 .pet-card-name {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.1rem;
-  letter-spacing: 0.005em;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: 1.05rem;
+  color: var(--accent);
+  letter-spacing: 0.01em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+/* status in DM Sans */
 .pet-card-status {
-  color: var(--ink-dim);
-  font-size: 0.85rem;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-top: 6px;
 }
 
+/* meta: smaller, dimmed */
 .pet-card-stats {
   color: var(--ink-dim);
-  font-size: 0.78rem;
+  font-family: var(--font-ui);
+  font-size: 0.83rem;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .pet-card-fav::before {
@@ -105,23 +128,24 @@ canvas.pet {
   margin-right: 6px;
 }
 
+/* quiet text button — no border box, just text */
 .pet-card-change {
+  display: inline;
   flex: none;
-  border: 1px solid var(--line);
-  border-radius: 999px;
+  border: none;
   background: transparent;
-  color: var(--ink-dim);
+  color: var(--ink-faint);
   font-family: var(--font-ui);
   font-size: 0.8rem;
-  padding: 6px 14px;
+  padding: 0;
   cursor: pointer;
   min-height: 44px;
-  transition: color 0.15s var(--ease), border-color 0.15s var(--ease);
+  min-width: 44px;
+  transition: color 0.15s var(--ease);
 }
 
 .pet-card-change:hover {
-  color: var(--ink);
-  border-color: var(--accent);
+  color: var(--accent-3);
 }
 
 /* ── pet-picker: species chips + swatches + name + live preview ────────── */
@@ -139,6 +163,7 @@ canvas.pet {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin: 0;
+  font-family: var(--font-ui);
 }
 
 .pet-picker-hint {
@@ -153,22 +178,25 @@ canvas.pet {
   gap: 8px;
 }
 
+/* chips: --line border, selected = --accent outline */
 .pet-chip {
-  width: 44px;
-  height: 44px;
-  padding: 2px;
-  border: 2px solid transparent;
-  border-radius: 10px;
+  width: 52px;
+  height: 52px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   background: var(--bg-raised);
   cursor: pointer;
   display: grid;
   place-items: center;
-  transition: border-color 0.12s var(--ease);
+  transition: border-color 0.12s var(--ease), outline-color 0.12s var(--ease);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
 }
 
 .pet-chip--selected {
   border-color: var(--accent);
-  background: color-mix(in oklab, var(--accent) 15%, var(--bg-raised));
+  outline-color: var(--accent);
 }
 
 .pet-picker-swatches {
@@ -220,16 +248,18 @@ canvas.pet {
 }
 
 .pet-preview-name {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-pixel);
+  font-weight: 400;
   font-size: 1.05rem;
   color: var(--ink-dim);
+  letter-spacing: 0.01em;
 }
 
 .pet-picker-error {
-  color: oklch(0.68 0.18 25);
+  color: var(--danger);
   font-size: 0.88rem;
   margin: 0;
+  font-family: var(--font-ui);
 }
 
 .pet-picker-actions {
@@ -238,10 +268,11 @@ canvas.pet {
   padding-top: 4px;
 }
 
+/* Guardar = accent fill with --accent-ink text */
 .pet-picker-save {
   flex: 1;
   background: var(--accent);
-  color: oklch(0.98 0.004 var(--hue));
+  color: var(--accent-ink);
   border: none;
   border-radius: var(--radius);
   font-family: var(--font-ui);

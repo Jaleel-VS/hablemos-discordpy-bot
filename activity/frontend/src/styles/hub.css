@@ -1,13 +1,11 @@
 /* ══ home / hub ═══════════════════════════════════════════════════════════
- * Not a grid of identical cards. Full-width rows, each with its own accent hue
- * and an oversized glyph, stacked with editorial rhythm and a staggered rise.
+ * Recreativo: title in pixel face, select-screen game list, leaderboard panel.
  */
 .home {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: safe center; /* centre when it fits, scroll from the top when not */
   padding: 20px 20px 28px;
   gap: 20px;
   overflow-y: auto;
@@ -18,61 +16,177 @@
 }
 
 .home-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.8rem, 8vw, 2.6rem);
-  line-height: 1;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: 1.65rem;
+  line-height: 1.25;
   margin: 0;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+/* blinking cursor — steps(1) = hard blink; off under prefers-reduced-motion */
+.home-cursor {
+  color: var(--accent-2);
+  animation: hub-blink 1.1s steps(1) infinite;
+}
+
+@keyframes hub-blink {
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-cursor {
+    animation: none;
+  }
 }
 
 .home-sub {
   color: var(--ink-dim);
   margin: 6px 0 0;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
+  font-family: var(--font-ui);
 }
 
-/* server leaderboard, under the game rows */
-.lb {
+/* ── select screen: one row per game ──────────────────────────────────── */
+
+.home-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   border-top: 1px solid var(--line);
-  padding-top: 16px;
+}
+
+.game-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-ui);
+  /* one motion moment per screen: cursor slide-in on first game handled by
+     opacity toggle; row itself only transitions color */
+  transition: color 0.18s var(--ease);
+}
+
+.game-cursor {
+  font-family: var(--font-pixel);
+  font-size: 0.9rem;
+  color: transparent;
+  transition: color 0.18s var(--ease);
+}
+
+/* show cursor on hover/focus, and always on the first-not-done game */
+.game-row:hover .game-cursor,
+.game-row:focus-visible .game-cursor,
+.game-row--sel .game-cursor {
+  color: var(--accent-2);
+}
+
+.game-row:hover .game-name,
+.game-row:focus-visible .game-name {
+  color: var(--accent-3);
+}
+
+.game-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.game-name {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  transition: color 0.18s var(--ease);
+}
+
+.game-tagline {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.84rem;
+  color: var(--ink-dim);
+  margin-top: 3px;
+}
+
+.game-state {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-family: var(--font-ui);
+  white-space: nowrap;
+}
+
+.game-state--clear {
+  color: var(--accent);
+}
+
+/* ── leaderboard panel ──────────────────────────────────────────────────── */
+
+.lb {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px;
 }
 
 .lb-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.25rem;
-  margin: 0 0 10px;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: 0.9rem;
+  margin: 0 0 8px;
+  color: var(--accent-2);
+  letter-spacing: 0.01em;
 }
 
 .lb-tabs {
   display: flex;
-  gap: 6px;
+  gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .lb-tab {
-  border: 1px solid var(--line);
-  border-radius: 999px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
   background: transparent;
-  color: var(--ink-dim);
-  font-family: var(--font-ui);
-  font-size: 0.8rem;
-  padding: 5px 12px;
+  color: var(--ink-faint);
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  padding: 2px 0 4px;
   cursor: pointer;
+  transition: color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+
+.lb-tab:hover {
+  color: var(--ink-dim);
 }
 
 .lb-tab[aria-selected="true"] {
-  color: var(--ink);
-  border-color: var(--accent);
-  background: color-mix(in oklab, var(--accent) 18%, transparent);
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: transparent;
 }
 
 .lb-puzzle {
   color: var(--ink-dim);
   font-size: 0.8rem;
   margin: 0 0 6px;
+  font-family: var(--font-ui);
 }
 
 .lb-list {
@@ -84,20 +198,30 @@
 .lb-row {
   display: grid;
   grid-template-columns: 2ch 1fr auto;
-  gap: 12px;
-  align-items: baseline;
-  padding: 7px 4px;
-  border-bottom: 1px solid var(--line);
+  gap: 10px;
+  align-items: center;
+  height: 32px;
+  font-size: 0.92rem;
+  font-family: var(--font-ui);
 }
 
 .lb-row.me {
   color: var(--accent);
-  font-weight: 600;
 }
 
-.lb-rank,
-.lb-score {
+.lb-rank {
+  font-family: var(--font-pixel);
+  font-size: 0.8rem;
+  color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
+}
+
+.lb-row:first-child .lb-rank {
+  color: var(--accent);
+}
+
+.lb-row.me .lb-rank {
+  color: var(--accent);
 }
 
 .lb-name {
@@ -106,90 +230,12 @@
   white-space: nowrap;
 }
 
-.home-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.game-row {
-  --game: oklch(0.62 0.19 var(--game-hue, 285));
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 18px 18px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: linear-gradient(
-    100deg,
-    color-mix(in oklab, var(--game) 14%, var(--bg-raised)),
-    var(--bg-raised) 62%
-  );
-  color: var(--ink);
-  cursor: pointer;
-  text-align: left;
-  font-family: var(--font-ui);
-  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease),
-    filter 0.18s var(--ease);
-  animation: rise 0.5s var(--ease) both;
-  animation-delay: calc(var(--i) * 0.07s);
-}
-
-.game-row:hover {
-  transform: translateY(-2px);
-  border-color: color-mix(in oklab, var(--game) 55%, var(--line));
-  filter: brightness(1.06);
-}
-
-.game-row:active {
-  transform: translateY(0) scale(0.99);
-}
-
-.game-glyph {
-  flex: none;
-  width: 52px;
-  height: 52px;
-  display: grid;
-  place-items: center;
-  border-radius: 13px;
-  background: color-mix(in oklab, var(--game) 26%, transparent);
-  color: color-mix(in oklab, var(--game) 72%, var(--ink));
-  font-size: 1.7rem;
-  line-height: 1;
-}
-
-.game-copy {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.game-name {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.25rem;
-  letter-spacing: 0.005em;
-}
-
-.game-tagline {
+.lb-score {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
   color: var(--ink-dim);
-  font-size: 0.85rem;
 }
 
-.game-go {
-  flex: none;
-  color: var(--ink-dim);
-  font-size: 1.3rem;
-  transition: transform 0.18s var(--ease), color 0.18s var(--ease);
-}
-
-.game-row:hover .game-go {
-  color: var(--ink);
-  transform: translateX(3px);
+.lb-row.me .lb-score {
+  color: var(--accent);
 }

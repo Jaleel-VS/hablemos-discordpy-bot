@@ -14,7 +14,7 @@
   display: inline-flex;
   background: var(--bg-raised);
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--radius);
   padding: 3px;
   gap: 2px;
 }
@@ -23,7 +23,7 @@
   background: transparent;
   color: var(--ink-dim);
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius);
   padding: 6px 16px;
   font-family: var(--font-ui);
   font-size: 0.82rem;
@@ -38,7 +38,7 @@
 
 .mode-toggle button.active {
   background: var(--accent);
-  color: oklch(0.98 0.01 285);
+  color: var(--accent-ink);
 }
 
 /* Board area flexes to fill remaining height; tile size is derived from both
@@ -89,9 +89,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-ui);
+  font-family: var(--font-pixel);
   font-size: calc(var(--tile) * 0.46);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   border: 2px solid var(--line);
   border-radius: var(--radius);
@@ -108,27 +108,27 @@
  * can swap to them generically at the reveal midpoint (without the keyframe
  * needing to know which color this tile is). */
 .tile--green {
-  --fill: var(--green);
-  --ink-on: oklch(0.98 0.02 155);
+  --fill: var(--ok);
+  --tile-ink: var(--accent-ink);
   background: var(--fill);
   border-color: var(--fill);
-  color: var(--ink-on);
+  color: var(--tile-ink);
 }
 
 .tile--yellow {
-  --fill: var(--yellow);
-  --ink-on: oklch(0.22 0.03 85);
+  --fill: var(--warn);
+  --tile-ink: var(--accent-ink);
   background: var(--fill);
   border-color: var(--fill);
-  color: var(--ink-on);
+  color: var(--tile-ink);
 }
 
 .tile--gray {
   --fill: var(--absent);
-  --ink-on: var(--ink);
+  --tile-ink: var(--ink);
   background: var(--fill);
   border-color: var(--fill);
-  color: var(--ink-on);
+  color: var(--tile-ink);
 }
 
 /* Flip-reveal: the tile looks EMPTY (neutral, letter hidden) while it rotates
@@ -157,13 +157,13 @@
   50.01% {
     background: var(--fill);
     border-color: var(--fill);
-    color: var(--ink-on);
+    color: var(--tile-ink);
   }
   100% {
     transform: rotateX(0deg);
     background: var(--fill);
     border-color: var(--fill);
-    color: var(--ink-on);
+    color: var(--tile-ink);
   }
 }
 
@@ -211,7 +211,7 @@
   min-width: 0;
   height: clamp(44px, 7.5vh, 56px);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: var(--key);
   color: var(--ink);
   font-family: var(--font-ui);
@@ -237,8 +237,8 @@
   letter-spacing: 0.03em;
 }
 
-.key--green { background: var(--green); color: oklch(0.98 0.02 155); }
-.key--yellow { background: var(--yellow); color: oklch(0.22 0.03 85); }
+.key--green { background: var(--ok); color: var(--accent-ink); }
+.key--yellow { background: var(--warn); color: var(--accent-ink); }
 .key--gray { background: var(--absent); color: var(--ink-dim); }
 
 /* ── result ──────────────────────────────────────────────────────────── */
@@ -264,7 +264,7 @@
 
 .result h2 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1.5rem;
   margin: 0;
 }
@@ -277,27 +277,6 @@
   margin: 2px 0;
 }
 
-.cta {
-  background: var(--accent);
-  color: oklch(0.98 0.01 285);
-  border: none;
-  border-radius: 999px;
-  padding: 10px 24px;
-  font-family: var(--font-ui);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.1s var(--ease), filter 0.15s var(--ease);
-}
-
-.cta:hover {
-  filter: brightness(1.08);
-}
-
-.cta:active {
-  transform: scale(0.96);
-}
-
 /* ── stats strip ─────────────────────────────────────────────────────── */
 .stats {
   display: flex;
@@ -305,6 +284,7 @@
   font-size: 0.78rem;
   color: var(--ink-dim);
   padding-top: 2px;
+  font-variant-numeric: tabular-nums;
 }
 
 .stats strong {

@@ -1,5 +1,5 @@
-import type { CSSProperties } from "react";
-import type { GameInfo } from "./api";
+import { useMemo, useState } from "react";
+import type { GameInfo, PetState } from "./api";
 import { GAME_REGISTRY } from "./games/registry";
 import Leaderboard from "./Leaderboard";
 import PetCard from "./pet/PetCard";
@@ -13,40 +13,67 @@ interface HomeProps {
   inGuild: boolean;
 }
 
-// The hub. Lists every registered game as a full-bleed row the player taps to
-// enter. Deliberately not a grid of identical cards (an AI-slop tell) — each
-// game is a wide row carrying its own accent hue and oversized glyph, stacked
-// with editorial rhythm. Only shown when 2+ games exist; a single game boots
-// straight in (see App.tsx).
+/** Spanish weekday + date, e.g. "Jueves 9 oct" */
+function todayLabel(): string {
+  const now = new Date();
+  const fmt = new Intl.DateTimeFormat("es", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+  });
+  const parts = fmt.formatToParts(now);
+  const weekday = parts.find((p) => p.type === "weekday")?.value ?? "";
+  const day = parts.find((p) => p.type === "day")?.value ?? "";
+  const month = parts.find((p) => p.type === "month")?.value ?? "";
+  return `${weekday.charAt(0).toUpperCase() + weekday.slice(1)} ${day} ${month}`;
+}
+
+// The hub. Lists every registered game as a select-screen row the player taps to
+// enter. Title in pixel face with a blinking cursor, date + streak sub-line,
+// pet cabinet, game select list, leaderboard.
 export default function Home({ games, onPick, accessToken, userId, inGuild }: HomeProps) {
   const known = games.filter((g) => GAME_REGISTRY[g.key]);
+  const dateStr = useMemo(todayLabel, []);
+  const [streakDays, setStreakDays] = useState(0);
+
+  // PetCard calls onStreak once the pet state resolves.
+  const handleStreak = useMemo(
+    () => (state: PetState) => setStreakDays(state.streak_days ?? 0),
+    [],
+  );
+
+  const subLine = streakDays > 0
+    ? `${dateStr} · racha ×${streakDays}`
+    : dateStr;
+
+  // First row is always the "selected" cursor default (PRESS START for all;
+  // per-game today data is not available in the API without extra calls).
+  const selIndex = 0;
+
   return (
     <div className="home">
       <div className="home-head">
-        <h1 className="home-title">Juegos</h1>
-        <p className="home-sub">Elige cómo practicar hoy</p>
+        <h1 className="home-title">
+          Elige tu juego<span className="home-cursor" aria-hidden>_</span>
+        </h1>
+        <p className="home-sub">{subLine}</p>
       </div>
-      <PetCard accessToken={accessToken} games={known} />
+      <PetCard accessToken={accessToken} games={known} onStreak={handleStreak} />
       <ul className="home-list">
         {known.map((g, i) => {
           const meta = GAME_REGISTRY[g.key];
-          const style = {
-            ["--game-hue" as string]: meta.hue,
-            ["--i" as string]: i,
-          } as CSSProperties;
           return (
             <li key={g.key}>
-              <button className="game-row" style={style} onClick={() => onPick(g.key)}>
-                <span className="game-glyph" aria-hidden>
-                  {meta.glyph}
-                </span>
+              <button
+                className={`game-row${i === selIndex ? " game-row--sel" : ""}`}
+                onClick={() => onPick(g.key)}
+              >
+                <span className="game-cursor" aria-hidden>▶</span>
                 <span className="game-copy">
-                  <span className="game-name">{g.display_name}</span>
+                  <span className="game-name">{g.display_name.toUpperCase()}</span>
                   <span className="game-tagline">{meta.tagline}</span>
                 </span>
-                <span className="game-go" aria-hidden>
-                  →
-                </span>
+                <span className="game-state">PRESS START</span>
               </button>
             </li>
           );

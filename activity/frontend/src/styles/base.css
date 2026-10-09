@@ -295,3 +295,35 @@ body {
 .app-back:hover {
   color: var(--accent);
 }
+
+/* ── shared primary button ───────────────────────────────────────────── */
+/* Every game's main action. Accent fill, on-accent ink; variants (.cta-ghost,
+ * .cta-daily, .cta-learn) live with the screens that use them. */
+.cta {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  border-radius: var(--radius);
+  min-height: 44px;
+  padding: 10px 24px;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s var(--ease), filter 0.15s var(--ease);
+}
+
+.cta:hover {
+  filter: brightness(1.08);
+}
+
+.cta:active {
+  transform: scale(0.97);
+}
+
+.cta:disabled {
+  opacity: 0.5;
+  cursor: default;
+  transform: none;
+  filter: none;
+}

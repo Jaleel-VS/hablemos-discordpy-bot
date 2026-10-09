@@ -48,11 +48,15 @@
    context sentence in the other language underneath. */
 .cloze-card {
   gap: 16px;
+  background: var(--bg-sunken);
+  box-shadow: inset 0 0 18px var(--glow);
+  border-radius: var(--radius);
+  padding: 16px;
 }
 
 .cloze-sentence {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-family: var(--font-ui);
+  font-size: 1.35rem;
   line-height: 1.5;
   text-align: center;
   margin: 0;
@@ -64,11 +68,32 @@
   min-width: 2.4em;
   padding: 0 0.35em;
   margin: 0 0.1em;
-  border-radius: 8px;
-  background: oklch(0.72 0.15 35 / 0.18);
-  border-bottom: 2px solid oklch(0.72 0.15 35 / 0.7);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border-bottom: 2px solid var(--accent);
   color: transparent;
   transform: translateY(2px);
+  transition: background 0.15s ease-out, border-color 0.15s ease-out,
+    color 0.15s ease-out;
+}
+
+/* Blank filled-state modifiers (applied after choice/input answer). */
+.cloze-blank--correct {
+  background: color-mix(in srgb, var(--ok) 16%, transparent);
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+.cloze-blank--close {
+  background: color-mix(in srgb, var(--warn) 16%, transparent);
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.cloze-blank--wrong {
+  background: color-mix(in srgb, var(--danger) 16%, transparent);
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 .cloze-context {
@@ -89,7 +114,7 @@
 
 .cloze-option {
   padding: 16px 14px;
-  border-radius: 14px;
+  border-radius: var(--radius);
   background: var(--bg-raised);
   border: 1px solid var(--line);
   color: var(--ink);
@@ -97,13 +122,13 @@
   font-size: 1.05rem;
   font-weight: 500;
   cursor: pointer;
-  transition: transform 0.08s var(--ease), border-color 0.12s var(--ease),
-    background 0.12s var(--ease);
+  transition: transform 0.15s ease-out, border-color 0.15s ease-out,
+    background 0.15s ease-out;
 }
 
 .cloze-option:hover:not(:disabled) {
-  border-color: oklch(0.72 0.15 35 / 0.7);
-  background: oklch(0.72 0.15 35 / 0.08);
+  border-color: var(--accent-3);
+  background: color-mix(in srgb, var(--accent-3) 8%, transparent);
 }
 
 .cloze-option:active:not(:disabled) {
@@ -130,10 +155,10 @@
   font-family: var(--font-ui);
   font-size: 0.85rem;
   font-weight: 600;
-  color: oklch(0.72 0.15 35);
+  color: var(--accent);
   padding: 6px 12px;
-  border-radius: 999px;
-  background: oklch(0.72 0.15 35 / 0.12);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
 /* Daily has no per-card feedback (backend withholds it); this is the muted
@@ -157,8 +182,8 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: oklch(0.78 0.13 85);
-  background: oklch(0.78 0.13 85 / 0.16);
+  color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 16%, transparent);
   padding: 1px 6px;
-  border-radius: 6px;
+  border-radius: var(--radius);
 }

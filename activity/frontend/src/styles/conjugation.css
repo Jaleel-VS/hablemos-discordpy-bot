@@ -35,33 +35,45 @@
 }
 
 .setup-title {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-pixel);
+  font-weight: 700;
   font-size: 2rem;
   margin: 0 0 4px;
-  letter-spacing: -0.01em;
 }
 
-.cta-daily {
+/* Daily challenge: a raised cabinet panel, not a filled button. It sets its
+ * own ink so it never inherits .cta's on-accent text colour. Shared by every
+ * game's setup (conjugation, cloze, phrasal). */
+.cta.cta-daily {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   width: 100%;
-  padding: 15px 20px;
-  border-radius: 14px;
+  padding: 14px 18px;
+  border-radius: var(--radius);
   align-items: center;
+  background: var(--bg-raised);
+  border: 1px solid var(--accent);
+  color: var(--ink);
+  box-shadow: inset 0 0 18px var(--glow);
+}
+
+.cta.cta-daily:hover {
+  background: color-mix(in oklab, var(--accent) 10%, var(--bg-raised));
 }
 
 .cta-daily-main {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.15rem;
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--accent);
 }
 
 .cta-daily-sub {
-  font-size: 0.74rem;
-  opacity: 0.82;
+  font-size: 0.8rem;
+  color: var(--ink-dim);
   font-weight: 500;
+  text-align: center;
 }
 
 .setup-divider {
@@ -91,11 +103,12 @@
 }
 
 .setup-group legend {
-  color: var(--ink-dim);
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+  color: var(--ink-dim);
   padding: 0 0 8px;
 }
 
@@ -109,8 +122,9 @@
   background: var(--bg-raised);
   border: 1px solid var(--line);
   color: var(--ink-dim);
-  border-radius: 999px;
-  padding: 8px 15px;
+  border-radius: var(--radius);
+  min-height: 40px;
+  padding: 8px 14px;
   font-family: var(--font-ui);
   font-size: 0.85rem;
   font-weight: 500;
@@ -128,9 +142,9 @@
 }
 
 .chip--on {
-  background: color-mix(in oklab, var(--accent) 24%, var(--bg-raised));
-  border-color: color-mix(in oklab, var(--accent) 60%, var(--line));
-  color: var(--ink);
+  background: var(--bg-raised);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* Reserve space for the (usually absent) error so it can't shift the buttons. */
@@ -197,8 +211,8 @@
 }
 
 .timer-num {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-pixel);
+  font-weight: 400;
   font-size: 1.35rem;
   font-variant-numeric: tabular-nums;
   min-width: 2ch;
@@ -210,7 +224,7 @@
   flex: 1;
   height: 6px;
   border-radius: 999px;
-  background: var(--bg-raised);
+  background: var(--line);
   overflow: hidden;
 }
 
@@ -224,11 +238,11 @@
 }
 
 .timer--low .timer-num {
-  color: oklch(0.68 0.19 25);
+  color: var(--danger);
 }
 
 .timer--low .timer-fill {
-  background: oklch(0.62 0.2 25);
+  background: var(--danger);
 }
 
 /* Untimed practice: replaces the timer with an end-run button. */
@@ -243,7 +257,7 @@
   background: transparent;
   border: 1px solid var(--line-soft);
   color: var(--ink-dim);
-  border-radius: 999px;
+  border-radius: var(--radius);
   padding: 7px 16px;
   font-family: var(--font-ui);
   font-size: 0.85rem;
@@ -267,7 +281,7 @@
 }
 
 .pill {
-  border-radius: 999px;
+  border-radius: var(--radius);
   padding: 5px 11px;
   font-size: 0.82rem;
   font-weight: 500;
@@ -283,8 +297,8 @@
 }
 
 .pill-streak--hot {
-  background: color-mix(in oklab, oklch(0.7 0.18 40) 22%, var(--bg-raised));
-  border-color: color-mix(in oklab, oklch(0.7 0.18 40) 50%, var(--line));
+  background: color-mix(in oklab, var(--warn) 22%, var(--bg-raised));
+  border-color: color-mix(in oklab, var(--warn) 50%, var(--line));
   color: var(--ink);
 }
 
@@ -300,10 +314,11 @@
   justify-content: center;
   gap: 10px;
   padding: 24px;
-  border-radius: 20px;
-  background: var(--bg-raised);
-  border: 1px solid var(--line);
-  animation: prompt-in 0.34s var(--ease) both;
+  border-radius: var(--radius);
+  background: var(--bg-sunken);
+  border: none;
+  box-shadow: inset 0 0 18px var(--glow);
+  animation: prompt-in 0.3s var(--ease) both;
 }
 
 @keyframes prompt-in {
@@ -318,15 +333,15 @@
 }
 
 .prompt-pronoun {
-  font-family: var(--font-ui);
-  font-size: 1.1rem;
-  font-weight: 500;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: 1rem;
   color: var(--accent);
   letter-spacing: 0.02em;
 }
 
 .prompt-verb {
-  font-family: var(--font-display);
+  font-family: var(--font-ui);
   font-weight: 600;
   font-size: clamp(2.4rem, 13vw, 3.6rem);
   line-height: 1;
@@ -373,7 +388,7 @@
 }
 
 .feedback--wrong {
-  color: oklch(0.7 0.15 25);
+  color: var(--danger);
 }
 
 @keyframes feedback-pop {
@@ -398,7 +413,7 @@
   min-width: 0;
   background: var(--bg-raised);
   border: 2px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius);
   padding: 14px 16px;
   color: var(--ink);
   font-family: var(--font-ui);
@@ -421,9 +436,9 @@
   flex: none;
   width: 54px;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--accent);
-  color: oklch(0.98 0.01 285);
+  color: var(--accent-ink);
   font-size: 1.3rem;
   cursor: pointer;
   transition: transform 0.1s var(--ease), filter 0.15s var(--ease);
@@ -455,8 +470,8 @@
 }
 
 .summary-verdict {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-pixel);
+  font-weight: 700;
   font-size: 1.5rem;
   margin: 6px 0 0;
 }
@@ -469,8 +484,8 @@
 }
 
 .summary-big {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-pixel);
+  font-weight: 400;
   font-size: clamp(3.6rem, 22vw, 5.5rem);
   line-height: 0.95;
   color: var(--accent);
@@ -504,8 +519,8 @@
 }
 
 .misses-title {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-pixel);
+  font-weight: 700;
   font-size: 1.05rem;
   margin: 0 0 10px;
   color: var(--ink);
@@ -526,7 +541,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: var(--bg-raised);
   font-size: 0.9rem;
 }
@@ -542,7 +557,7 @@
 }
 
 .miss-given {
-  color: oklch(0.65 0.14 25);
+  color: var(--danger);
   text-decoration: line-through;
   opacity: 0.75;
 }
@@ -575,7 +590,7 @@
 .lang-btn {
   background: transparent;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--radius);
   padding: 5px 12px;
   font-family: var(--font-ui);
   font-size: 0.78rem;
@@ -632,9 +647,9 @@
   max-width: 240px;
   background: var(--bg-raised);
   border: 1px solid var(--line-soft);
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 10px 13px;
-  box-shadow: 0 8px 24px oklch(0.1 0.02 var(--hue) / 0.5);
+  box-shadow: 0 8px 24px color-mix(in oklab, var(--bg) 70%, transparent);
   font-size: 0.82rem;
 }
 
@@ -725,7 +740,7 @@
   display: flex;
   background: var(--bg-raised);
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--radius);
   overflow: hidden;
   width: 100%;
 }
@@ -773,7 +788,7 @@
 }
 
 .accent-btn {
-  background: var(--bg-raised);
+  background: var(--key);
   border: 1px solid var(--line);
   border-radius: 8px;
   width: 44px;
@@ -809,7 +824,7 @@
   font-weight: 500;
   cursor: pointer;
   padding: 6px 12px;
-  border-radius: 999px;
+  border-radius: var(--radius);
   min-height: 44px;
   transition: color 0.15s var(--ease), background 0.15s var(--ease);
 }
@@ -841,9 +856,9 @@
 /* ── reveal card (retry state) ─────────────────────────────────────────── */
 .reveal-card {
   width: 100%;
-  background: color-mix(in oklab, var(--yellow) 10%, var(--bg-raised));
-  border: 1px solid color-mix(in oklab, var(--yellow) 40%, var(--line));
-  border-radius: 14px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
   padding: 18px 20px;
   display: flex;
   flex-direction: column;
@@ -853,10 +868,10 @@
 }
 
 .reveal-expected {
-  font-family: var(--font-display);
+  font-family: var(--font-pixel);
   font-size: clamp(1.8rem, 10vw, 2.8rem);
   font-weight: 700;
-  color: var(--ink);
+  color: var(--accent);
   margin: 0;
   letter-spacing: -0.01em;
 }
@@ -892,7 +907,7 @@
 .row-table__row--active td {
   color: var(--ink);
   font-weight: 700;
-  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  background: color-mix(in oklab, var(--accent) 14%, transparent);
 }
 
 .row-table__pronoun {
@@ -903,7 +918,7 @@
 
 .row-table__form {
   padding-left: 10px;
-  font-family: var(--font-display);
+  font-family: var(--font-pixel);
 }
 
 /* ── breakdown section (summary) ──────────────────────────────────────── */
@@ -914,7 +929,7 @@
 }
 
 .breakdown-title {
-  font-family: var(--font-display);
+  font-family: var(--font-pixel);
   font-weight: 600;
   font-size: 1rem;
   margin: 0 0 10px;
@@ -963,7 +978,7 @@
   flex: 1;
   height: 8px;
   border-radius: 999px;
-  background: var(--bg-raised);
+  background: var(--line);
   overflow: hidden;
 }
 

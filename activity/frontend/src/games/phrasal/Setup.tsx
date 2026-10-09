@@ -48,7 +48,7 @@ export default function Setup({ onStart, onLearn, busy, error }: SetupProps) {
 
       {/* The two top-level branches: browse to learn, or play the daily. */}
       <button className="cta cta-learn" onClick={onLearn} disabled={busy}>
-        <span className="cta-daily-main">Aprender 📖</span>
+        <span className="cta-daily-main">Aprender</span>
         <span className="cta-daily-sub">Explora los verbos con su significado y ejemplo</span>
       </button>
 
