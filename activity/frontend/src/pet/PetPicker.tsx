@@ -1,6 +1,7 @@
-// PetPicker: first-visit onboarding and critter re-customisation.
+// PetPicker: change the critter from the hub's "Cambiar" button.
 // Species chips (tiny 40 px Pet previews), 8 colour swatches, name input,
 // live 120 px preview. All copy is Spanish to match the hub.
+// SWATCHES is mirrored by COLORS in backend app/pet.py (the default pet).
 import { useState } from "react";
 import type { PetChoice, PetState } from "../api";
 import { choosePet } from "../api";
@@ -31,18 +32,18 @@ const SWATCH_LABELS: Record<string, string> = {
 
 interface PetPickerProps {
   accessToken: string;
-  /** Pre-filled values when editing an existing pet. */
-  initial?: { species: Species; color: string; name: string };
+  /** The current pet (stored or the server's default). */
+  initial: { species: Species; color: string; name: string };
   /** Called with the fresh PetState after a successful save. */
   onDone: (state: PetState) => void;
-  /** Offered only when editing; the card restores the state it already had. */
-  onCancel?: () => void;
+  /** The card restores the state it already had. */
+  onCancel: () => void;
 }
 
 export default function PetPicker({ accessToken, initial, onDone, onCancel }: PetPickerProps) {
-  const [species, setSpecies] = useState<Species>(initial?.species ?? "blob");
-  const [color, setColor] = useState(initial?.color ?? SWATCHES[0]);
-  const [name, setName] = useState(initial?.name ?? "");
+  const [species, setSpecies] = useState<Species>(initial.species);
+  const [color, setColor] = useState(initial.color);
+  const [name, setName] = useState(initial.name);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,7 +64,7 @@ export default function PetPicker({ accessToken, initial, onDone, onCancel }: Pe
   }
 
   return (
-    <div className="pet-picker" aria-label="Elige tu mascota">
+    <div className="pet-picker" aria-label="Cambia tu mascota">
       <p className="pet-picker-label">Elige tu especie</p>
       <div className="pet-picker-chips" role="radiogroup" aria-label="Especie">
         {SPECIES.map((sp) => (
@@ -127,11 +128,9 @@ export default function PetPicker({ accessToken, initial, onDone, onCancel }: Pe
         >
           {saving ? "Guardando…" : "Guardar"}
         </button>
-        {onCancel !== undefined && (
-          <button type="button" className="pet-picker-cancel" disabled={saving} onClick={onCancel}>
-            Cancelar
-          </button>
-        )}
+        <button type="button" className="pet-picker-cancel" disabled={saving} onClick={onCancel}>
+          Cancelar
+        </button>
       </div>
     </div>
   );

@@ -498,8 +498,13 @@ not a second game: no XP, feeding, or decay.
   (shared 15 fps ticker across all mounted pets; `cue={{kind,n}}` plays a
   one-shot `hop`/`squish`/`dizzy`/`love` when `n` changes; `interactive`
   enables gaze + tap).
+- **Every player has a pet from the first visit.** Until they customise it,
+  `pet.default_pet(user_id)` derives species and colour from a hash of the
+  Discord id (stable, unnamed, nothing stored; `COLORS` mirrors the picker
+  swatches). There is no onboarding step.
 - **Storage is the choice only**: `activity_pets(user_id PK, species, color,
-  name)`. Mood is **derived at request time** from `game_results` across all
+  name)`, written only when the player saves the picker. Mood is **derived
+  at request time** from `game_results` across all
   games (`db.pet_activity`): distinct UTC play dates (60 days), games in the
   last 7 days, most-played game in 30 days. `pet.derive_mood(play_dates,
   today)` is pure: played today → `happy` if the day-streak ≥ 3 else `idle`;
@@ -507,19 +512,21 @@ not a second game: no XP, feeding, or decay.
   last play ≥ 7 days ago → `sleepy`; otherwise `idle`. `today` is the UTC date
   so it matches the SQL bucketing.
 - **Routes**: `POST /api/pet/me {access_token}` →
-  `{pet|null, mood, streak_days, played_today, games_this_week,
-  favorite_game}`; `POST /api/pet/choose {access_token, species, color,
-  name?}` validates (known species, `#rrggbb`, name ≤ 20) and upserts. Without
-  `DATABASE_URL` both return zero stats (and `/choose` echoes the choice) so
-  the dev flow works.
-- **Hub** (`PetCard`): first visit shows `PetPicker` inline (species chips are
-  live mini-pets in the chosen colour; live 120 px preview). Afterwards: 96 px
-  interactive pet, name, one status line keyed to mood, weekly count and
-  favourite game, `Cambiar` to re-open the picker (cancel restores the shown
-  state). A `happy` load plays one `hop`.
+  `{pet, mood, streak_days, played_today, games_this_week, favorite_game}`
+  (`pet` is the stored row or the default, never null);
+  `POST /api/pet/choose {access_token, species, color, name?}` validates
+  (known species, `#rrggbb`, name ≤ 20) and upserts. Without `DATABASE_URL`
+  both return zero stats (`/me` the default pet, `/choose` echoes the
+  choice) so the dev flow works.
+- **Hub** (`PetCard`): 96 px interactive pet, name (species name when
+  unnamed), one status line keyed to mood, weekly count and favourite game.
+  `Cambiar` opens `PetPicker` (species chips are live mini-pets in the chosen
+  colour; live 120 px preview) pre-filled with the current pet; cancel
+  restores it. A `happy` load plays one `hop`. If the fetch fails the card is
+  omitted.
 - **Summaries** (`PetReaction`): all four games mount a 64 px pet with one
   reaction — `hop` + "¡Olé!" on a win (Wordle `won`; others accuracy ≥ 80 %),
-  `squish` + "Casi…" otherwise. Renders nothing when the player has no pet.
+  `squish` + "Casi…" otherwise. Renders nothing only if the fetch fails.
   Never shown during play.
 
 ### Look, language, and the shared learning loop (`frontend/src/`)

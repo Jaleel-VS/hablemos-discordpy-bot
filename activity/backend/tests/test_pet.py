@@ -12,7 +12,7 @@ import app.pet as pet_mod
 import pytest
 from app.config import Settings
 from app.main import create_app
-from app.pet import SPECIES, derive_mood, validate_choice
+from app.pet import COLORS, SPECIES, default_pet, derive_mood, validate_choice
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
@@ -142,6 +142,26 @@ class TestValidateChoice:
             validate_choice(sp, "#aabbcc", "")  # should not raise
 
 
+class TestDefaultPet:
+    def test_stable_per_user(self):
+        assert default_pet(123456789) == default_pet(123456789)
+
+    def test_valid_and_unnamed(self):
+        """The default must pass the same validation as a picked pet."""
+        for uid in range(200):
+            pet = default_pet(uid)
+            assert validate_choice(pet["species"], pet["color"], pet["name"]) == (
+                pet["species"], pet["color"], "",
+            )
+
+    def test_spreads_sequential_ids(self):
+        """Consecutive snowflakes shouldn't all land on one species/colour."""
+        base = 1_100_000_000_000_000_000
+        pets = [default_pet(base + i) for i in range(200)]
+        assert {p["species"] for p in pets} == set(SPECIES)
+        assert {p["color"] for p in pets} == set(COLORS)
+
+
 # ── route integration tests (db=None) ────────────────────────────────────────
 
 @pytest.fixture
@@ -166,11 +186,11 @@ def pet_client(monkeypatch):
 
 
 class TestPetRoutes:
-    def test_me_zero_shape(self, pet_client):
+    def test_me_without_choice_returns_default(self, pet_client):
         r = pet_client.post("/api/pet/me", json={"access_token": "t"})
         assert r.status_code == 200
         body = r.json()
-        assert body["pet"] is None
+        assert body["pet"] == default_pet(42)
         assert body["mood"] == "idle"
         assert body["streak_days"] == 0
         assert body["played_today"] is False

@@ -1,7 +1,8 @@
 // PetCard: the player's critter shown above the game list on the hub.
-// On mount it loads the pet via fetchPet. If no pet exists yet it renders
-// PetPicker inline (first-visit onboarding). Otherwise it shows the critter
-// in an arcade cabinet bezel, status line, weekly stats, and a ghost "Cambiar" button.
+// Every player has a pet from the first visit (the server derives a default
+// from their id), so the card shows it straight away: arcade cabinet bezel,
+// status line, weekly stats, and a ghost "Cambiar" button that opens
+// PetPicker to change species, colour and name.
 import { useEffect, useRef, useState } from "react";
 import type { GameInfo, PetState } from "../api";
 import { fetchPet } from "../api";
@@ -20,8 +21,9 @@ interface PetCardProps {
 
 type CardPhase =
   | { kind: "loading" }
+  | { kind: "failed" }
   | { kind: "ready"; state: PetState }
-  | { kind: "picking"; state: PetState | null };
+  | { kind: "picking"; state: PetState };
 
 function statusLine(state: PetState): string {
   const { mood, streak_days: streak, played_today } = state;
@@ -51,19 +53,16 @@ export default function PetCard({ accessToken, games, onStreak }: PetCardProps) 
     fetchPet(accessToken)
       .then((state) => {
         if (cancelled) return;
-        if (state.pet === null) {
-          setPhase({ kind: "picking", state: null });
-        } else {
-          setPhase({ kind: "ready", state });
-          onStreak?.(state);
-          if (state.mood === "happy" && !hopSent.current) {
-            hopSent.current = true;
-            setHopN(1);
-          }
+        setPhase({ kind: "ready", state });
+        onStreak?.(state);
+        if (state.mood === "happy" && !hopSent.current) {
+          hopSent.current = true;
+          setHopN(1);
         }
       })
       .catch(() => {
-        if (!cancelled) setPhase({ kind: "picking", state: null });
+        // No pet to show; the hub works without it.
+        if (!cancelled) setPhase({ kind: "failed" });
       });
     return () => {
       cancelled = true;
@@ -71,7 +70,6 @@ export default function PetCard({ accessToken, games, onStreak }: PetCardProps) 
   }, [accessToken]);
 
   function onDone(state: PetState) {
-    if (state.pet === null) return;
     setPhase({ kind: "ready", state });
     onStreak?.(state);
     hopSent.current = false;
@@ -85,6 +83,7 @@ export default function PetCard({ accessToken, games, onStreak }: PetCardProps) 
   if (phase.kind === "loading") {
     return <div className="pet-card pet-card--loading" aria-hidden />;
   }
+  if (phase.kind === "failed") return null;
 
   if (phase.kind === "picking") {
     const prev = phase.state;
@@ -92,17 +91,13 @@ export default function PetCard({ accessToken, games, onStreak }: PetCardProps) 
       <div className="pet-card pet-card--picking">
         <PetPicker
           accessToken={accessToken}
-          initial={
-            prev?.pet
-              ? {
-                  species: prev.pet.species as Species,
-                  color: prev.pet.color,
-                  name: prev.pet.name,
-                }
-              : undefined
-          }
+          initial={{
+            species: prev.pet.species as Species,
+            color: prev.pet.color,
+            name: prev.pet.name,
+          }}
           onDone={onDone}
-          onCancel={prev ? () => setPhase({ kind: "ready", state: prev }) : undefined}
+          onCancel={() => setPhase({ kind: "ready", state: prev })}
         />
       </div>
     );
@@ -110,7 +105,6 @@ export default function PetCard({ accessToken, games, onStreak }: PetCardProps) 
 
   const { state } = phase;
   const { pet, mood, games_this_week, favorite_game } = state;
-  if (pet === null) return null;
 
   const displayName = pet.name || SPECIES_NAMES[pet.species as Species] || pet.species;
   const isHappy = mood === "happy";

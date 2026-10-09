@@ -601,7 +601,8 @@ export interface PetProfile {
 export type PetMood = "idle" | "sleepy" | "waiting" | "happy";
 
 export interface PetState {
-  pet: PetProfile | null;
+  /** Always present: a default derived from the user id until customised. */
+  pet: PetProfile;
   mood: PetMood;
   streak_days: number;
   played_today: boolean;

@@ -1,16 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { fetchPet, type PetProfile } from "../api";
 import Pet from "./Pet";
 import type { Species } from "./model";
-
-interface PetData {
-  species: Species;
-  color: string;
-  name: string;
-}
-
-interface PetResponse {
-  pet: PetData | null;
-}
 
 interface PetReactionProps {
   accessToken: string;
@@ -18,25 +9,20 @@ interface PetReactionProps {
 }
 
 /** Renders the user's critter with a one-shot reaction cue on every game
- *  summary screen. The component fetches the pet data once; if the user has no
- *  pet configured or the fetch fails it renders nothing. */
+ *  summary screen. Every player has a pet (a default until customised), so
+ *  this only renders nothing while loading or if the fetch fails. */
 export default function PetReaction({ accessToken, outcome }: PetReactionProps) {
-  const [pet, setPet] = useState<PetData | null | undefined>(undefined); // undefined = loading
+  const [pet, setPet] = useState<PetProfile | null>(null);
   const [cueN, setCueN] = useState(0);
   const triggered = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/.proxy/api/pet/me", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ access_token: accessToken }),
-    })
-      .then((r) => r.json() as Promise<PetResponse>)
-      .then((data) => {
+    fetchPet(accessToken)
+      .then((state) => {
         if (cancelled) return;
-        setPet(data.pet ?? null);
-        if (data.pet && !triggered.current) {
+        setPet(state.pet);
+        if (!triggered.current) {
           // Pet ignores the cue it mounts with; flip to n=1 ~150ms after data
           // arrives so the reaction visibly plays.
           window.setTimeout(() => {
@@ -48,14 +34,14 @@ export default function PetReaction({ accessToken, outcome }: PetReactionProps) 
         }
       })
       .catch(() => {
-        if (!cancelled) setPet(null);
+        // Summary works without the pet; nothing to show.
       });
     return () => {
       cancelled = true;
     };
   }, [accessToken]);
 
-  if (!pet) return null;
+  if (pet === null) return null;
 
   const kind = outcome === "win" ? "hop" : "squish";
   const caption = outcome === "win" ? "¡Olé!" : "Casi…";
@@ -63,7 +49,7 @@ export default function PetReaction({ accessToken, outcome }: PetReactionProps) 
   return (
     <div className="pet-reaction">
       <Pet
-        species={pet.species}
+        species={pet.species as Species}
         color={pet.color}
         size={64}
         mood="idle"

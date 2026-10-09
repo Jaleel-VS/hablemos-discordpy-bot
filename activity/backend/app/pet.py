@@ -1,16 +1,19 @@
 """Pet feature for the Hablemos Activity.
 
-One procedurally-drawn pixel critter per user, chosen once and shown on the
-hub and game summary screens.  Mood is *derived* from play history at request
-time — never stored.
+One procedurally-drawn pixel critter per user, shown on the hub and game
+summary screens.  Every player has one from the first visit: until they
+customise it, :func:`default_pet` derives species and colour from their
+Discord id (stable, nothing stored).  Mood is *derived* from play history at
+request time — never stored.
 
 Routes (all POST a body with ``access_token``, matching the site convention):
 
-    POST /api/pet/me       — fetch stored pet + derived mood/stats
+    POST /api/pet/me       — fetch the pet (stored or default) + mood/stats
     POST /api/pet/choose   — create or replace the pet (upsert)
 """
 from __future__ import annotations
 
+import hashlib
 import re
 from datetime import UTC, date, datetime, timedelta
 from typing import Any
@@ -27,9 +30,31 @@ SPECIES: tuple[str, ...] = (
     "bun", "star", "mochi", "cube", "pebble",
 )
 
+#: Mirror of the picker swatches (PetPicker.tsx), in the same order.
+COLORS: tuple[str, ...] = (
+    "#5fc9b5", "#f28c6a", "#8fa8ff", "#7ccf6a",
+    "#c9a0ff", "#ffd166", "#ff8fab", "#9be7ff",
+)
+
 _COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 _MAX_NAME = 20
 _MAX_TOKEN = 512
+
+
+def default_pet(user_id: int) -> dict[str, Any]:
+    """The pet a player has before customising: stable per Discord id.
+
+    Hashing (rather than ``user_id % n``) spreads sequential snowflakes
+    across species and colours. Nothing is stored, so changing the picker
+    later simply upserts over it. ``name`` is empty: the UI shows the
+    species name, as it does for a customised pet left unnamed.
+    """
+    digest = hashlib.sha256(str(user_id).encode()).digest()
+    return {
+        "species": SPECIES[digest[0] % len(SPECIES)],
+        "color": COLORS[digest[1] % len(COLORS)],
+        "name": "",
+    }
 
 
 # ── validation ────────────────────────────────────────────────────────────────
@@ -116,7 +141,7 @@ def derive_mood(
 
 # ── zero-stats helper ─────────────────────────────────────────────────────────
 
-def _zero_response(pet: dict[str, Any] | None) -> dict[str, Any]:
+def _zero_response(pet: dict[str, Any]) -> dict[str, Any]:
     """Response shape used when the database is unavailable."""
     return {
         "pet": pet,
@@ -173,7 +198,7 @@ def build_pet_router(get_db) -> APIRouter:
         # same calendar or a late-evening player sees tomorrow's mood.
         return datetime.now(UTC).date()
 
-    async def _state(db, user_id: int, pet: dict[str, Any] | None) -> dict[str, Any]:
+    async def _state(db, user_id: int, pet: dict[str, Any]) -> dict[str, Any]:
         activity = await db.pet_activity(user_id)
         mood, streak_days, played_today = derive_mood(activity["play_dates"], _today())
         return {
@@ -189,15 +214,16 @@ def build_pet_router(get_db) -> APIRouter:
     async def pet_me(body: PetMeRequest) -> dict[str, Any]:
         """Return the caller's pet and derived mood/stats.
 
-        When no ``DATABASE_URL`` is configured (``get_db()`` returns ``None``),
-        returns a zero-stats response with ``pet: null`` so the dev flow
-        (no Postgres) still renders the chooser UI.
+        A player who never customised gets :func:`default_pet`, so ``pet`` is
+        always present. With no ``DATABASE_URL`` (``get_db()`` is ``None``) the
+        stats are zero.
         """
         user_id = await _verified_user_id(body.access_token)
         db = get_db()
         if db is None:
-            return _zero_response(None)
-        return await _state(db, user_id, await db.get_pet(user_id))
+            return _zero_response(default_pet(user_id))
+        stored = await db.get_pet(user_id)
+        return await _state(db, user_id, stored if stored is not None else default_pet(user_id))
 
     @router.post("/choose")
     async def pet_choose(body: PetChooseRequest) -> dict[str, Any]:
