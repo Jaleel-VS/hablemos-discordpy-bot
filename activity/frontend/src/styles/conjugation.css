@@ -579,34 +579,6 @@
 
 /* ══ conjugation additions ════════════════════════════════════════════════ */
 
-/* ── language toggle (top-right of setup) ─────────────────────────────── */
-.lang-toggle {
-  display: flex;
-  gap: 4px;
-  align-self: flex-end;
-  margin-bottom: -8px;
-}
-
-.lang-btn {
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 5px 12px;
-  font-family: var(--font-ui);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: color 0.15s var(--ease), background 0.15s var(--ease),
-    border-color 0.15s var(--ease);
-}
-
-.lang-btn--on {
-  background: color-mix(in oklab, var(--accent) 22%, var(--bg-raised));
-  border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
-  color: var(--ink);
-}
-
 /* ── chip info affordance ─────────────────────────────────────────────── */
 .chip-wrap {
   position: relative;

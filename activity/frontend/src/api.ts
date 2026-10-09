@@ -19,6 +19,31 @@ export interface ResultPayload {
   answer: string;
 }
 
+// ── wordle game ───────────────────────────────────────────────────────────────
+export interface WordleLearningCard {
+  display: string;
+  pos: "noun" | "verb" | "adjective" | "adverb" | "other";
+  en: string;
+  example_es: string;
+  example_en: string;
+  lemma: string;
+  form: string;
+}
+
+export interface WordleHint {
+  pos: string;
+  en: string;
+}
+
+export interface WordleResultPayload extends ResultPayload {
+  learning_card?: WordleLearningCard;
+}
+
+export interface WordleView extends GameView {
+  result?: WordleResultPayload;
+  hint?: WordleHint;
+}
+
 export interface GameView {
   game: string;
   mode: "daily" | "free";
@@ -152,8 +177,9 @@ export interface StartOptions {
   target?: string;
   difficulty?: string;
   answer_mode?: "choice" | "type";
-  // Phrasal: which part of the phrasal verb to blank.
+  // Phrasal: which part of the phrasal verb to blank; review-mode id override.
   blank_mode?: "particle" | "whole";
+  ids?: string[];
 }
 
 // ── conjugation catalog ───────────────────────────────────────────────────────
@@ -185,13 +211,13 @@ export interface ConjugationCatalog {
 
 // ── cloze game ────────────────────────────────────────────────────────────────
 export interface ClozePrompt {
-  id: string;
   target: string; // language of the blanked word ("es" | "en")
   cloze: string; // sentence with a single ___ blank
   context: string; // full sentence in the OTHER language
   difficulty: string;
-  options: string[]; // 4 shuffled multiple-choice options (answer + 3 distractors)
+  options?: string[]; // 4 shuffled options (choice mode only; omitted in type mode)
 }
+
 
 export interface ClozeFeedback {
   result: MatchResult;
@@ -200,13 +226,21 @@ export interface ClozeFeedback {
   answer?: string;
   given: string;
   context: string;
+  // Freeplay only: the completed sentence (blank filled in) for the miss reveal.
+  sentence?: string;
+  // True when this feedback is from a retry, not a fresh scored answer.
+  retry?: boolean;
 }
+
 
 export interface ClozeMiss {
   id: string;
   answer: string;
   given: string;
   result: MatchResult;
+  // Completed sentence + translation for the recap reveal.
+  sentence?: string;
+  context?: string;
 }
 export interface ClozeResult {
   won: boolean;
@@ -221,7 +255,10 @@ export interface ClozeResult {
   grid: string;
   summary: string;
   misses: ClozeMiss[];
+  // Ids of wrong+close cards (max 10) for the "Practise these N" CTA.
+  review_ids: string[];
 }
+
 
 export interface ClozeView {
   game: "cloze";
@@ -240,10 +277,15 @@ export interface ClozeView {
   best_streak: number | null;
   answered_count: number;
   status: "playing" | "over";
+  // Type mode (freeplay): same card stays; client must retype, or send skip.
+  awaiting_retry: boolean;
+  // Choice mode (freeplay): reveal card shown; client sends action="continue".
+  awaiting_continue: boolean;
   last: ClozeFeedback | null;
   prompt?: ClozePrompt;
   result?: ClozeResult;
 }
+
 
 export interface ClozeResponse {
   sealed_state: string;
@@ -396,33 +438,46 @@ export function submitCloze(
   sealedState: string,
   guess: string,
   finish = false,
+  action: "answer" | "retry" | "skip" | "continue" = "answer",
 ): Promise<ClozeResponse> {
   return post(`/.proxy/api/games/cloze/guess`, {
     access_token: accessToken,
     sealed_state: sealedState,
     guess,
     finish,
+    action,
   });
 }
 
+
 // ── phrasal-verb game ─────────────────────────────────────────────────────────
 export interface PhrasalPrompt {
-  id: string;
+  // id intentionally absent: never in the in-play prompt view (security invariant).
   blank_mode: "particle" | "whole";
   example: string; // sentence with a single ___ blank
-  definitions: string[]; // all senses (unaligned to the example — see generator)
-  gloss_es: string | null; // short Spanish gloss (filled by the enrich stage)
+  // gloss_es is the primary meaning anchor; first EN definition is behind disclosure.
+  gloss_es: string | null;
+  definitions: string[]; // all EN senses
   difficulty: string;
   base: string | null; // shown in particle mode (the verb whose particle is hidden)
-  options?: string[]; // present only in choice mode (particles or whole verbs)
+  // Particle mode: the inflected verb is already written into `example`
+  // ("signing ___"), so the "(sign)" prefix hint is redundant.
+  base_inline?: boolean;
+  options?: string[]; // present only in choice mode
 }
 
 export interface PhrasalFeedback {
   result: MatchResult;
-  answer?: string; // withheld during daily play
+  answer?: string;   // withheld during daily play
   verb?: string;
   given: string;
+  gloss_es?: string | null;
+  sentence?: string; // example with answer filled in (freeplay miss reveal)
   definitions?: string[];
+  retry?: boolean;   // true if this is a retype confirmation, not a new answer
+  // The full inflected span the sentence's blank stands for ("signing over");
+  // the reveal highlights this so particle mode reads as real English.
+  span?: string;
 }
 
 export interface PhrasalMiss {
@@ -431,6 +486,9 @@ export interface PhrasalMiss {
   answer: string;
   given: string;
   result: MatchResult;
+  gloss_es?: string | null;
+  sentence?: string; // example with answer filled in (shown in recap)
+  span?: string; // full inflected span to highlight in `sentence`
 }
 
 export interface PhrasalResult {
@@ -446,6 +504,7 @@ export interface PhrasalResult {
   grid: string;
   summary: string;
   misses: PhrasalMiss[];
+  review_ids: string[]; // wrong+close ids, validated, capped 10, daily ids excluded
 }
 
 export interface PhrasalView {
@@ -464,6 +523,8 @@ export interface PhrasalView {
   best_streak: number | null;
   answered_count: number;
   status: "playing" | "over";
+  awaiting_retry: boolean;
+  awaiting_continue: boolean;
   last: PhrasalFeedback | null;
   prompt?: PhrasalPrompt;
   result?: PhrasalResult;
@@ -492,12 +553,14 @@ export function submitPhrasal(
   sealedState: string,
   guess: string,
   finish = false,
+  action: "answer" | "retry" | "continue" = "answer",
 ): Promise<PhrasalResponse> {
   return post(`/.proxy/api/games/phrasal/guess`, {
     access_token: accessToken,
     sealed_state: sealedState,
     guess,
     finish,
+    action,
   });
 }
 

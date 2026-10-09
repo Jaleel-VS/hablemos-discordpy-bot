@@ -327,3 +327,66 @@ body {
   transform: none;
   filter: none;
 }
+
+/* ── shared EN/ES toggle (src/i18n/lang.tsx LangToggle) ──────────────── */
+/* Lives in base because every game's setup uses it. align-self keeps it
+ * top-right inside a column layout; inside a row it's a plain group. */
+.lang-toggle {
+  display: flex;
+  gap: 4px;
+  align-self: flex-end;
+  margin-bottom: -8px;
+}
+
+.lang-toggle .lang-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 5px 12px;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: color 0.15s var(--ease), background 0.15s var(--ease),
+    border-color 0.15s var(--ease);
+}
+
+.lang-toggle .lang-btn--on {
+  background: color-mix(in oklab, var(--accent) 22%, var(--bg-raised));
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
+  color: var(--ink);
+}
+
+
+/* Outline variant of .cta: the secondary action beside a primary one. */
+.cta.cta-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line-soft);
+}
+
+.cta.cta-ghost:hover {
+  border-color: var(--accent);
+  filter: none;
+}
+
+/* ── summary action bar ──────────────────────────────────────────────── */
+/* End-of-round actions (review misses / play again). Sticky to the bottom of
+ * the scrolling summary so they're reachable however many miss cards sit
+ * above; a solid backdrop keeps card text from showing through. */
+.summary-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 0 4px;
+  margin-top: auto;
+  background: linear-gradient(to bottom, transparent, var(--bg) 14px);
+}
+
+.summary-actions .cta {
+  flex: 1;
+}

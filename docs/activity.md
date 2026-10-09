@@ -109,14 +109,37 @@ opaque token and an answer-free `view`.
 
 - **27-letter alphabet, Ñ distinct, accents stripped** (`normalize.py` — with
   the NFD ñ-protection). Word lists in `app/games/data/`
-  (`wordle_answers.txt` curated, `wordle_guesses.txt` permissive superset).
+  (`wordle_answers.txt` 334-word curated answer pool, `wordle_guesses.txt`
+  permissive superset accepted as a guess).
 - **Two-pass duplicate-safe scorer** (`scorer.py`) — greens claim letters
   first, then yellows from what remains.
 - **Daily** (deterministic by date, counts toward streaks, will post to a
-  channel) and **freeplay** (random, no streaks, no posting). Switching to
-  Diario after today's daily is already finished keeps the current board and
-  toasts `Ya jugaste el reto diario de hoy.` instead of highlighting Diario
-  over a leftover Libre game.
+  channel) draws from the full 334-word `ANSWERS` list (byte-stable; adding
+  or removing words would renumber every puzzle). **Freeplay** draws from
+  `FREE_ANSWERS` — `ANSWERS` minus a retired list
+  (`wordle_answers_retired.txt`) of obscure or low-utility words for A1–B1
+  learners — so daily puzzle numbers are never disturbed by curation changes.
+- **Learning card** (`wordle_lexicon.json`, generated offline via
+  `scripts/generate_wordle_lexicon.py` — Haiku generation + Opus review).
+  Every answer has an entry with `display` (accented), `pos`, short English
+  `en` gloss, `example_es` / `example_en` sentence pair, `lemma`, and `form`
+  (non-empty only for inflected answers). The card is derived at result time
+  from the static JSON and appended to `result_payload` as `learning_card` on
+  both win **and** loss. It is never stored in sealed state.
+- **Accent rule** (W2): a one-line note under the board (i18n) explains that
+  accents don't count but Ñ is its own letter. No virtual accent keys.
+- **Typed errors** (W3): the two backend Spanish error messages
+  (`La palabra debe tener … letras` / `Esa palabra no está en la lista`) are
+  mapped to i18n keys client-side and shown in the player's language.
+  The physical-keyboard handler skips events from `input`/`textarea`/
+  `contenteditable` targets. ENTER and DELETE keys are wider on the on-screen
+  keyboard and carry localized `aria-label`s.
+- **Freeplay hint** (W4): after 3 non-winning guesses, the client view includes
+  `hint: {pos, en}` derived from the lexicon at view time. Daily never
+  receives a hint.
+- **i18n chrome** (W5): `DEFAULT_LANG = "en"` (audience: English-speaking
+  Spanish learners). `LangToggle` is on the mode row. Every visible string
+  uses the `t()` helper from `games/wordle/i18n.ts`.
 - The answer is authoritative on the server and never sent to the client until
   the game ends.
 - **Daily expires at date rollover.** A daily `submit` is rejected once the
@@ -260,17 +283,18 @@ conjugation sprint).
   `scripts/generate_cloze_sentences.py` runs **offline** against Amazon Bedrock
   (Claude Haiku 4.5, via the author's `bedrock-how` AWS profile — the same path
   as the shell `how`/`howdo` helpers), batching sentence pairs and emitting
-  `app/games/data/cloze_sentences.json` (~500 cards, evenly split across both
-  decks and three difficulties). The generator validates every card in Python
-  (exactly one blank, the answer present as a whole word or a pre-blanked
-  sentence, exactly 3 distinct distractors, no answer/distractor collision —
-  the distractor check strips accents to match the runtime grader's CLOSE
-  tier), dedupes, and buckets by difficulty. It refuses to write when any
-  (target, difficulty) bucket falls below `--min-fill` of target (default 80%,
-  hard floor of one round) so a partial run can't ship a lopsided corpus. The
-  **runtime never calls an LLM** — it just reads the committed JSON, the same
-  rule the conjugation game follows with its verbecc paradigms. Re-run with
-  `--merge` to grow the pool over time.
+  `app/games/data/cloze_sentences.json` (**360 cards** across both decks and
+  three difficulties; bucket counts: es/beginner 69, es/intermediate 54,
+  es/advanced 44, en/beginner 62, en/intermediate 62, en/advanced 69). The
+  generator validates every card in Python (exactly one blank, the answer
+  present as a whole word or a pre-blanked sentence, exactly 3 distinct
+  distractors, no answer/distractor collision — the distractor check strips
+  accents to match the runtime grader's CLOSE tier), dedupes, and buckets by
+  difficulty. It refuses to write when any (target, difficulty) bucket falls
+  below `--min-fill` of target (default 80%, hard floor of one round) so a
+  partial run can't ship a lopsided corpus. The **runtime never calls an LLM**
+  — it just reads the committed JSON, the same rule the conjugation game follows
+  with its verbecc paradigms. Re-run with `--merge` to grow the pool over time.
 - **Content is machine-reviewed by a second, stronger model.** Structural
   checks can't catch a wrong translation, a grammatically-wrong answer, or a
   distractor that's actually a synonym. `scripts/review_cloze_sentences.py`
@@ -322,15 +346,18 @@ conjugation sprint).
 
 An English-learner game for **phrasal verbs** (look up, carry out, give up) —
 high-frequency but notoriously hard because the particle is idiomatic. The UI is
-Spanish (the community is Spanish natives learning English); the content is
-English. The one hub card branches on a setup screen into two flows:
+Spanish (the community is Spanish natives learning English, ES chrome default);
+the content is English. The setup screen leads with **Aprender** (entry for
+beginners), then **Práctica libre** as the primary action, then **Reto diario**
+(labelled "Sin pistas hasta el final"). The setup carries a `LangToggle` (EN/ES,
+persisted in `localStorage`).
 
 - **Aprender (Learn)** — a read-only vocabulary browser: each verb with its
-  meaning(s), an optional Spanish gloss, and a real example sentence (shown
-  **unblanked**, verb highlighted). This has no submit/win state, so it is **not**
-  a `GameEngine` — it's served by a plain `GET /api/games/phrasal/deck` (public,
-  unauthenticated vocabulary; optional `?difficulty=`). Forcing a browse mode
-  through the graded-round contract would be an abuse of it.
+  meaning(s), a Spanish gloss, and a real example sentence (shown **unblanked**,
+  verb highlighted). Shown in batches of 10 with page controls (← Anterior /
+  Siguiente →); a **"Practicar estos 10"** button starts a freeplay round with
+  the page's ids via `options.ids`. Not a `GameEngine` — served by plain
+  `GET /api/games/phrasal/deck`.
 - **Practicar (Exercise)** — a fill-in-the-blank round implementing `GameEngine`,
   modeled on Cloze (daily + freeplay, 10 items, no clock, sealed state, same
   daily anti-harvest, same stats/streaks/results-posting).
@@ -345,6 +372,14 @@ conjugation **3-way exact/close/wrong grader**, extended to accept any inflected
 **derivative form** of the phrase (so "looked up" is correct for "look up"); the
 best match over all accepted forms wins.
 
+- **Slim sealed state (P0).** The sealed state stores only verb **ids** (`verb_ids`
+  list), not the full verb objects. On every `submit` the engine rebuilds verb
+  objects from the in-memory id index (`data._ID_INDEX`) in O(1); an unknown id
+  raises `GameError` (hostile state). This reduces the worst-case sealed size from
+  ~9356 bytes (max over 3000 random games, exceeding the 8192-byte `_MAX_SEALED`
+  limit) to ~780 bytes fresh / ~2212 bytes for a fully completed 10-item round
+  with all misses. The in-play prompt view never includes the verb id (security
+  invariant: ids are only in the final `review_ids`).
 - **Data is precomputed, not live.** `scripts/generate_phrasal_verbs.py` curates
   the ~3350-entry community dataset
   ([WithEnglishWeCan/generated-english-phrasal-verbs](https://github.com/WithEnglishWeCan/generated-english-phrasal-verbs))
@@ -355,34 +390,43 @@ best match over all accepted forms wins.
     built), rank by the source `frequency` + a common-base/particle heuristic,
     take the top `--limit`. Ships English-only and fully playable.
   - **Stage 2 — enrich (`--enrich`, Bedrock).** Adds a CEFR difficulty band and a
-    short **Spanish gloss** per verb via Claude (`--model haiku` for speed or
-    `--model opus` for quality; the `bedrock-how` profile, same path as the cloze
-    generator). The runtime never calls an LLM — this only runs offline and
-    commits JSON. Enrichment **checkpoints after every batch** and is
-    resume-friendly (skips already-glossed verbs), so an expiring Bedrock token
-    on a long Opus run never loses progress — just re-run to continue.
+    short **Spanish gloss** per verb via Claude. The runtime never calls an LLM.
   - The **committed corpus is 764 verbs**, Opus-enriched (glosses + CEFR:
     136 beginner / 414 intermediate / 214 advanced), all glossed.
 - **Optional review pass (`scripts/review_phrasal_verbs.py`).** Grades every
-  verb with **Claude Opus 4.8** — verifies the gloss, checks that a listed sense
-  matches the example, rates difficulty — and **fixes in place** (better gloss,
-  corrected band, or a missing sense added), quarantining only genuinely broken
-  cards to `phrasal_verbs.quarantine.json`. It **fails closed** (aborts without
-  writing if the Bedrock token expires mid-run, so no verb is wrongly
-  quarantined). The committed corpus was **not** put through a full review pass;
-  instead, **36 verbs a prior review had proven broken** (Stage-1
-  false-positive blanks — the example contained the verb+particle words
-  coincidentally, e.g. "put a **hand on** his arm" for `hand on`) were pruned
-  deterministically (`meta.pruned_known_bad`). Running the full review later
-  would further raise quality.
-- **Known limit — sense/example alignment.** The source lists multiple senses and
-  multiple examples per verb that are **not index-aligned**, so Stage 1 keeps
-  *all* senses (the example's sense is usually among them). The optional Opus
-  review closes most of the gap by adding the example's missing sense; what
-  remains is inherent to a stateless, precomputed corpus.
+  verb with **Claude Opus 4.8**, fixes in place, quarantines broken cards.
+  The committed corpus was not put through a full review pass; 36 known-broken
+  verbs were pruned deterministically (`meta.pruned_known_bad`).
+- **Exercise: prominent gloss + EN definition disclosure (P1).** The exercise
+  card shows `gloss_es` prominently as the primary meaning anchor; the first EN
+  definition is behind a `<details>` disclosure ("Definición en inglés / English
+  definition") so beginners are not overwhelmed by unfamiliar text.
+- **Freeplay miss reveal (P2).** On a wrong/close answer:
+  - **Type mode** — enters `awaiting_retry`: the player must retype the correct
+    form before advancing. A reveal card shows the filled example sentence (blank
+    replaced by the answer, highlighted) + the Spanish gloss. After 2 failed
+    retries the game advances automatically (same cap as conjugation). Retries
+    never change score/streak.
+  - **Choice mode** — enters `awaiting_continue`: a reveal card shows the filled
+    sentence + gloss; the player must press "Continuar →" before advancing.
+  - **Daily** — no reveal; retry/skip/continue are rejected (`GameError`);
+    reveal only in the end recap. Recap rows (misses) include `gloss_es` and
+    the filled sentence for all modes.
+- **`review_ids` + "Practicar estos N" (P3).** `result_payload` returns
+  `review_ids`: wrong+close ids, deduplicated, capped at 10, with today's
+  deterministic daily ids dropped (so the caller cannot replay daily answers
+  via freeplay). The Summary screen's "Para repasar" section shows a
+  **"Practicar estos N"** button that starts a freeplay round with those ids.
+  `options.ids` is validated on the server: deduped, capped at 10, each id
+  must exist in the deck, and any id in today's daily set is silently dropped;
+  if nothing valid remains it falls back to a random round.
 - Daily anti-harvest, empty-guess rejection, and the daily-date gate are
   identical to the cloze game (per-item feedback and running counters withheld
   during daily play; disclosed only in the end recap).
+- **Known limit — sense/example alignment.** The source lists multiple senses and
+  multiple examples per verb that are **not index-aligned**, so Stage 1 keeps
+  *all* senses. The optional Opus review closes most of the gap; what remains is
+  inherent to a stateless, precomputed corpus.
 
 ### Server leaderboard
 
@@ -463,6 +507,44 @@ not a second game: no XP, feeding, or decay.
   reaction — `hop` + "¡Olé!" on a win (Wordle `won`; others accuracy ≥ 80 %),
   `squish` + "Casi…" otherwise. Renders nothing when the player has no pet.
   Never shown during play.
+
+### Look, language, and the shared learning loop (`frontend/src/`)
+
+- **Visual system: "Recreativo"** (a seaside arcade cabinet, so the UI agrees
+  with the pixel pet). Role tokens live in `styles/base.css` with two
+  materials on `html[data-theme]`: `warm` (walnut + amber phosphor, default)
+  and `cold` (blue-black + green phosphor). The header toggle
+  (`theme.ts`, `localStorage["hablemos.theme"]`) switches them; it's applied
+  before first render so there is no flash. Never use a literal colour
+  outside `base.css`: the header comment there lists the roles (`--accent`
+  action/selection, `--accent-2` hi-score/punctuation, `--accent-3`
+  links/secondary branch, `--ok/--warn/--danger` feedback, …).
+- **Type roles.** Silkscreen (bitmap, `--font-pixel` / `.px`) only for
+  titles, game and pet names, big numbers, and Wordle tiles; never below
+  ~0.85rem and never for anything that must be read (sentences, hints,
+  table numbers). DM Sans (`--font-ui`) for everything else. Both are
+  self-hosted via fontsource (Discord's proxy CSP blocks font CDNs).
+- **Styles are split by area**: `styles/{base,hub,pet,wordle,conjugation,
+  cloze,phrasal}.css` behind `styles.css`. Shared primitives (`.cta`,
+  `.cta-ghost`, `.lang-toggle`, `.summary-actions`) are in `base.css`;
+  Phrasal intentionally reuses Cloze's blank/option primitives. The hub
+  leaderboard is `.lb*` (it used to share `.board*` with the Wordle grid and
+  its rules cascaded onto the tiles).
+- **Interface language** (`i18n/lang.tsx`): one EN/ES preference for every
+  game's chrome (`localStorage["hablemos.lang"]`; the old `conj.lang` is
+  migrated once). Tri-state on purpose: until the player toggles, each game
+  uses its audience default — Wordle and Conjugation EN (Spanish learners),
+  Phrasal ES (English learners), Cloze follows the deck. Learning content is
+  never translated by this. Each game keeps its own string tables
+  (`games/<game>/i18n.ts`) and calls the shared `translate`.
+- **The learning loop is the same in every game's freeplay**: on a miss the
+  answer appears *in place* (the blank fills, or the reveal card shows the
+  form + why), type modes require one retype (`action: "retry"`, never
+  scores, two failed retypes advance anyway), choice modes need a deliberate
+  `continue`, `skip` is always available outside a pending retry, and the
+  summary offers "Practise these N" built from `review_ids`. Daily rounds
+  keep the anti-harvest rules: no per-answer reveal, no retry/skip/continue,
+  and no ids in in-play views; review rounds drop any id from today's daily.
 
 ## Developer Portal setup (one-time)
 
