@@ -11,7 +11,8 @@ WORKDIR /build/frontend
 ARG VITE_DISCORD_CLIENT_ID
 ENV VITE_DISCORD_CLIENT_ID=$VITE_DISCORD_CLIENT_ID
 
-COPY frontend/package.json frontend/package-lock.json* ./
+# .npmrc pins the public registry so the lockfile's URLs are the ones fetched.
+COPY frontend/package.json frontend/package-lock.json* frontend/.npmrc ./
 RUN npm install
 
 COPY frontend/ ./
