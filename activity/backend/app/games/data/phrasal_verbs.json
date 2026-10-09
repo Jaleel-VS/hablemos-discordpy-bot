@@ -1,18 +1,21 @@
 {
   "meta": {
     "source": "WithEnglishWeCan/generated-english-phrasal-verbs (verb list); examples rewritten by scripts/rewrite_phrasal_examples.py",
-    "count": 718,
+    "count": 715,
     "by_difficulty": {
       "intermediate": 376,
-      "advanced": 247,
+      "advanced": 244,
       "beginner": 95
     },
     "enriched": true,
-    "glossed": 718,
+    "glossed": 715,
     "rewritten": {
-      "kept": 718,
+      "kept": 715,
       "reviewer_fixed": 93,
-      "dropped": 46
+      "dropped": 49
+    },
+    "typesafe_distractor_check": {
+      "cards_changed": 113
     }
   },
   "difficulties": {
@@ -316,9 +319,9 @@
       "difficulty": "advanced",
       "frequency": 3,
       "distractors_particle": [
-        "off",
-        "out",
-        "up"
+        "up",
+        "back",
+        "about"
       ],
       "id": "pv-0012"
     },
@@ -419,8 +422,8 @@
       "frequency": 3,
       "distractors_particle": [
         "up",
-        "in",
-        "over"
+        "over",
+        "by"
       ],
       "id": "pv-0016"
     },
@@ -518,9 +521,9 @@
       "difficulty": "advanced",
       "frequency": 3,
       "distractors_particle": [
-        "up",
         "in",
-        "over"
+        "over",
+        "for"
       ],
       "id": "pv-0020"
     },
@@ -619,8 +622,8 @@
       "frequency": 3,
       "distractors_particle": [
         "in",
-        "by",
-        "off"
+        "off",
+        "about"
       ],
       "id": "pv-0024"
     },
@@ -691,9 +694,9 @@
       "difficulty": "advanced",
       "frequency": 3,
       "distractors_particle": [
-        "off",
         "down",
-        "up"
+        "up",
+        "for"
       ],
       "id": "pv-0027"
     },
@@ -842,8 +845,8 @@
       "frequency": 3,
       "distractors_particle": [
         "off",
-        "in",
-        "about"
+        "about",
+        "for"
       ],
       "id": "pv-0034"
     },
@@ -891,9 +894,9 @@
       "difficulty": "beginner",
       "frequency": 3,
       "distractors_particle": [
-        "off",
         "back",
-        "about"
+        "about",
+        "for"
       ],
       "id": "pv-0036"
     },
@@ -1200,9 +1203,9 @@
       "difficulty": "beginner",
       "frequency": 3,
       "distractors_particle": [
-        "about",
         "across",
-        "after"
+        "after",
+        "through"
       ],
       "id": "pv-0048"
     },
@@ -1572,8 +1575,8 @@
       "frequency": 3,
       "distractors_particle": [
         "about",
-        "down",
-        "into"
+        "into",
+        "away"
       ],
       "id": "pv-0063"
     },
@@ -1597,8 +1600,8 @@
       "frequency": 3,
       "distractors_particle": [
         "up",
-        "in",
-        "off"
+        "off",
+        "out"
       ],
       "id": "pv-0064"
     },
@@ -1622,8 +1625,8 @@
       "frequency": 3,
       "distractors_particle": [
         "up",
-        "down",
-        "off"
+        "off",
+        "about"
       ],
       "id": "pv-0065"
     },
@@ -1876,8 +1879,8 @@
       "frequency": 3,
       "distractors_particle": [
         "in",
-        "off",
-        "away"
+        "away",
+        "about"
       ],
       "id": "pv-0075"
     },
@@ -2025,9 +2028,9 @@
       "difficulty": "intermediate",
       "frequency": 2,
       "distractors_particle": [
-        "up",
         "in",
-        "over"
+        "over",
+        "about"
       ],
       "id": "pv-0081"
     },
@@ -2254,8 +2257,8 @@
       "frequency": 2,
       "distractors_particle": [
         "off",
-        "over",
-        "up"
+        "up",
+        "about"
       ],
       "id": "pv-0090"
     },
@@ -2534,7 +2537,7 @@
       "distractors_particle": [
         "up",
         "off",
-        "in"
+        "away"
       ],
       "id": "pv-0102"
     },
@@ -2698,7 +2701,7 @@
         "disappoint someone by not helping"
       ],
       "gloss_es": "defraudar, decepcionar",
-      "example": "I promised to come, so I won't ___ my friend.",
+      "example": "I don't want to ___ the whole team.",
       "example_answer": "let down",
       "forms": [
         "let down",
@@ -2708,9 +2711,9 @@
       "difficulty": "intermediate",
       "frequency": 2,
       "distractors_particle": [
-        "up",
-        "in",
-        "off"
+        "about",
+        "for",
+        "over"
       ],
       "id": "pv-0111"
     },
@@ -2905,9 +2908,9 @@
       "difficulty": "intermediate",
       "frequency": 2,
       "distractors_particle": [
-        "back",
         "up",
-        "in"
+        "in",
+        "around"
       ],
       "id": "pv-0119"
     },
@@ -2956,8 +2959,8 @@
       "frequency": 2,
       "distractors_particle": [
         "down",
-        "off",
-        "in"
+        "in",
+        "about"
       ],
       "id": "pv-0121"
     },
@@ -3279,9 +3282,9 @@
       "difficulty": "beginner",
       "frequency": 2,
       "distractors_particle": [
-        "off",
         "up",
-        "away"
+        "away",
+        "about"
       ],
       "id": "pv-0137"
     },
@@ -3331,9 +3334,9 @@
       "difficulty": "intermediate",
       "frequency": 2,
       "distractors_particle": [
-        "off",
-        "up",
-        "away"
+        "over",
+        "in",
+        "along"
       ],
       "id": "pv-0139"
     },
@@ -3760,9 +3763,9 @@
       "difficulty": "beginner",
       "frequency": 3,
       "distractors_particle": [
-        "in",
         "on",
-        "over"
+        "over",
+        "for"
       ],
       "id": "pv-0156"
     },
@@ -3837,7 +3840,7 @@
       "distractors_particle": [
         "about",
         "along",
-        "over"
+        "for"
       ],
       "id": "pv-0159"
     },
@@ -4015,9 +4018,9 @@
       "difficulty": "intermediate",
       "frequency": 3,
       "distractors_particle": [
-        "in",
         "up",
-        "away"
+        "away",
+        "about"
       ],
       "id": "pv-0166"
     },
@@ -4041,8 +4044,8 @@
       "frequency": 3,
       "distractors_particle": [
         "in",
-        "up",
-        "away"
+        "away",
+        "across"
       ],
       "id": "pv-0167"
     },
@@ -4242,8 +4245,8 @@
       "frequency": 2,
       "distractors_particle": [
         "in",
-        "on",
-        "away"
+        "away",
+        "about"
       ],
       "id": "pv-0175"
     },
@@ -4292,8 +4295,8 @@
       "frequency": 3,
       "distractors_particle": [
         "in",
-        "up",
-        "away"
+        "away",
+        "along"
       ],
       "id": "pv-0177"
     },
@@ -4454,10 +4457,10 @@
       "particle": "in",
       "base": "write",
       "definitions": [
-        "add words in an empty space on paper"
+        "send a letter or message to a show or newspaper"
       ],
-      "gloss_es": "rellenar, escribir",
-      "example": "Please ___ your name at the top of the form.",
+      "gloss_es": "escribir (a un programa o periódico)",
+      "example": "Lots of listeners ___ to the radio show every week.",
       "example_answer": "write in",
       "forms": [
         "write in",
@@ -4469,9 +4472,9 @@
       "difficulty": "intermediate",
       "frequency": 3,
       "distractors_particle": [
-        "down",
-        "off",
-        "away"
+        "for",
+        "about",
+        "along"
       ],
       "id": "pv-0185"
     },
@@ -4495,9 +4498,9 @@
       "difficulty": "intermediate",
       "frequency": 1,
       "distractors_particle": [
-        "over",
-        "down",
-        "up"
+        "up",
+        "for",
+        "about"
       ],
       "id": "pv-0186"
     },
@@ -4547,8 +4550,8 @@
       "frequency": 1,
       "distractors_particle": [
         "off",
-        "up",
-        "in"
+        "in",
+        "on"
       ],
       "id": "pv-0189"
     },
@@ -4973,9 +4976,9 @@
       "difficulty": "intermediate",
       "frequency": 2,
       "distractors_particle": [
-        "in",
         "down",
-        "over"
+        "over",
+        "of"
       ],
       "id": "pv-0207"
     },
@@ -5152,7 +5155,7 @@
       "distractors_particle": [
         "in",
         "off",
-        "down"
+        "by"
       ],
       "id": "pv-0215"
     },
@@ -5505,8 +5508,8 @@
       "frequency": 2,
       "distractors_particle": [
         "in",
-        "off",
-        "away"
+        "away",
+        "through"
       ],
       "id": "pv-0230"
     },
@@ -6164,9 +6167,9 @@
       "particle": "out",
       "base": "spread",
       "definitions": [
-        "move apart to cover more space"
+        "open something so it covers a large area"
       ],
-      "gloss_es": "esparcirse, extenderse",
+      "gloss_es": "extender, desplegar",
       "example": "Let's ___ the blanket on the grass.",
       "example_answer": "spread out",
       "forms": [
@@ -6277,9 +6280,9 @@
       "difficulty": "advanced",
       "frequency": 2,
       "distractors_particle": [
-        "out",
         "off",
-        "away"
+        "about",
+        "for"
       ],
       "id": "pv-0263"
     },
@@ -6328,8 +6331,8 @@
       "frequency": 2,
       "distractors_particle": [
         "up",
-        "around",
-        "along"
+        "along",
+        "for"
       ],
       "id": "pv-0265"
     },
@@ -6408,31 +6411,6 @@
         "on"
       ],
       "id": "pv-0268"
-    },
-    {
-      "verb": "think out",
-      "particle": "out",
-      "base": "think",
-      "definitions": [
-        "plan something carefully in your mind"
-      ],
-      "gloss_es": "planear bien",
-      "example": "We need to ___ our plan before booking flights.",
-      "example_answer": "think out",
-      "forms": [
-        "think out",
-        "thinking out",
-        "thinks out",
-        "thought out"
-      ],
-      "difficulty": "advanced",
-      "frequency": 2,
-      "distractors_particle": [
-        "up",
-        "off",
-        "in"
-      ],
-      "id": "pv-0269"
     },
     {
       "verb": "walk into",
@@ -6530,9 +6508,9 @@
       "difficulty": "intermediate",
       "frequency": 2,
       "distractors_particle": [
-        "up",
         "off",
-        "over"
+        "over",
+        "away"
       ],
       "id": "pv-0273"
     },
@@ -6556,9 +6534,9 @@
       "difficulty": "intermediate",
       "frequency": 2,
       "distractors_particle": [
-        "out",
-        "down",
-        "over"
+        "over",
+        "along",
+        "away"
       ],
       "id": "pv-0274"
     },
@@ -6608,9 +6586,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "out",
         "up",
-        "down"
+        "down",
+        "about"
       ],
       "id": "pv-0276"
     },
@@ -6686,8 +6664,8 @@
       "frequency": 0,
       "distractors_particle": [
         "up",
-        "over",
-        "down"
+        "for",
+        "about"
       ],
       "id": "pv-0279"
     },
@@ -6737,7 +6715,7 @@
       "distractors_particle": [
         "on",
         "for",
-        "back"
+        "by"
       ],
       "id": "pv-0281"
     },
@@ -6796,9 +6774,9 @@
       "particle": "on",
       "base": "call",
       "definitions": [
-        "ask someone to do something"
+        "ask someone in a class to answer"
       ],
-      "gloss_es": "recurrir a, pedir",
+      "gloss_es": "preguntar a, dar la palabra a",
       "example": "The teacher often ___ me to answer.",
       "example_answer": "calls on",
       "forms": [
@@ -7088,8 +7066,8 @@
       "frequency": 0,
       "distractors_particle": [
         "off",
-        "in",
-        "back"
+        "for",
+        "at"
       ],
       "id": "pv-0295"
     },
@@ -7139,9 +7117,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "off",
-        "in",
-        "back"
+        "back",
+        "for",
+        "of"
       ],
       "id": "pv-0297"
     },
@@ -7165,8 +7143,8 @@
       "frequency": 0,
       "distractors_particle": [
         "off",
-        "in",
-        "for"
+        "for",
+        "about"
       ],
       "id": "pv-0298"
     },
@@ -7189,9 +7167,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "back",
-        "in",
-        "for"
+        "for",
+        "about",
+        "by"
       ],
       "id": "pv-0299"
     },
@@ -7438,9 +7416,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "off",
         "about",
-        "across"
+        "across",
+        "for"
       ],
       "id": "pv-0309"
     },
@@ -7512,9 +7490,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "in",
         "about",
-        "across"
+        "across",
+        "by"
       ],
       "id": "pv-0312"
     },
@@ -7658,9 +7636,9 @@
       "difficulty": "advanced",
       "frequency": 0,
       "distractors_particle": [
-        "down",
         "off",
-        "about"
+        "about",
+        "by"
       ],
       "id": "pv-0319"
     },
@@ -7810,8 +7788,8 @@
       "frequency": 0,
       "distractors_particle": [
         "off",
-        "away",
-        "down"
+        "down",
+        "for"
       ],
       "id": "pv-0325"
     },
@@ -7862,8 +7840,8 @@
       "frequency": 0,
       "distractors_particle": [
         "off",
-        "away",
-        "in"
+        "in",
+        "about"
       ],
       "id": "pv-0327"
     },
@@ -7886,9 +7864,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "off",
         "in",
-        "away"
+        "for",
+        "by"
       ],
       "id": "pv-0328"
     },
@@ -7989,7 +7967,7 @@
       "distractors_particle": [
         "in",
         "off",
-        "away"
+        "about"
       ],
       "id": "pv-0332"
     },
@@ -8415,9 +8393,9 @@
       "difficulty": "intermediate",
       "frequency": 2,
       "distractors_particle": [
-        "off",
-        "out",
-        "away"
+        "for",
+        "about",
+        "by"
       ],
       "id": "pv-0350"
     },
@@ -8441,8 +8419,8 @@
       "frequency": 2,
       "distractors_particle": [
         "off",
-        "up",
-        "down"
+        "down",
+        "for"
       ],
       "id": "pv-0351"
     },
@@ -8491,8 +8469,8 @@
       "frequency": 2,
       "distractors_particle": [
         "off",
-        "up",
-        "away"
+        "away",
+        "on"
       ],
       "id": "pv-0353"
     },
@@ -8667,7 +8645,7 @@
       "distractors_particle": [
         "off",
         "out",
-        "over"
+        "along"
       ],
       "id": "pv-0360"
     },
@@ -8967,7 +8945,7 @@
       "distractors_particle": [
         "in",
         "about",
-        "off"
+        "for"
       ],
       "id": "pv-0372"
     },
@@ -9422,9 +9400,9 @@
       "difficulty": "intermediate",
       "frequency": 1,
       "distractors_particle": [
-        "with",
         "off",
-        "on"
+        "on",
+        "across"
       ],
       "id": "pv-0390"
     },
@@ -9473,8 +9451,8 @@
       "frequency": 2,
       "distractors_particle": [
         "up",
-        "in",
-        "down"
+        "down",
+        "away"
       ],
       "id": "pv-0392"
     },
@@ -9802,7 +9780,7 @@
       "distractors_particle": [
         "down",
         "off",
-        "out"
+        "about"
       ],
       "id": "pv-0407"
     },
@@ -9927,7 +9905,7 @@
       "distractors_particle": [
         "up",
         "out",
-        "over"
+        "away"
       ],
       "id": "pv-0412"
     },
@@ -10228,9 +10206,9 @@
       "difficulty": "beginner",
       "frequency": 3,
       "distractors_particle": [
-        "off",
         "in",
-        "down"
+        "down",
+        "for"
       ],
       "id": "pv-0429"
     },
@@ -10255,7 +10233,7 @@
       "distractors_particle": [
         "off",
         "up",
-        "over"
+        "across"
       ],
       "id": "pv-0430"
     },
@@ -10507,9 +10485,9 @@
       "difficulty": "advanced",
       "frequency": 1,
       "distractors_particle": [
-        "off",
         "up",
-        "down"
+        "down",
+        "about"
       ],
       "id": "pv-0442"
     },
@@ -10608,8 +10586,8 @@
       "frequency": 0,
       "distractors_particle": [
         "back",
-        "up",
-        "over"
+        "over",
+        "across"
       ],
       "id": "pv-0446"
     },
@@ -11334,8 +11312,8 @@
       "frequency": 1,
       "distractors_particle": [
         "in",
-        "off",
-        "over"
+        "over",
+        "about"
       ],
       "id": "pv-0477"
     },
@@ -11433,9 +11411,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "after",
         "about",
-        "away"
+        "away",
+        "for"
       ],
       "id": "pv-0482"
     },
@@ -11612,7 +11590,7 @@
       "distractors_particle": [
         "off",
         "in",
-        "down"
+        "for"
       ],
       "id": "pv-0489"
     },
@@ -12035,9 +12013,9 @@
       "difficulty": "intermediate",
       "frequency": 1,
       "distractors_particle": [
-        "out",
         "down",
-        "away"
+        "away",
+        "about"
       ],
       "id": "pv-0508"
     },
@@ -12161,9 +12139,9 @@
       "difficulty": "advanced",
       "frequency": 1,
       "distractors_particle": [
-        "off",
         "up",
-        "in"
+        "in",
+        "along"
       ],
       "id": "pv-0513"
     },
@@ -12186,9 +12164,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "away",
         "in",
-        "over"
+        "for",
+        "of"
       ],
       "id": "pv-0514"
     },
@@ -12213,7 +12191,7 @@
       "distractors_particle": [
         "along",
         "in",
-        "over"
+        "for"
       ],
       "id": "pv-0515"
     },
@@ -12237,8 +12215,8 @@
       "frequency": 0,
       "distractors_particle": [
         "along",
-        "away",
-        "over"
+        "over",
+        "for"
       ],
       "id": "pv-0516"
     },
@@ -12286,9 +12264,9 @@
       "difficulty": "beginner",
       "frequency": 0,
       "distractors_particle": [
-        "along",
         "in",
-        "away"
+        "for",
+        "about"
       ],
       "id": "pv-0518"
     },
@@ -12336,9 +12314,9 @@
       "difficulty": "intermediate",
       "frequency": 1,
       "distractors_particle": [
-        "out",
         "down",
-        "away"
+        "away",
+        "for"
       ],
       "id": "pv-0520"
     },
@@ -12537,9 +12515,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "back",
-        "up",
-        "in"
+        "for",
+        "about",
+        "on"
       ],
       "id": "pv-0530"
     },
@@ -12761,8 +12739,8 @@
       "frequency": 0,
       "distractors_particle": [
         "off",
-        "up",
-        "in"
+        "in",
+        "about"
       ],
       "id": "pv-0540"
     },
@@ -12912,8 +12890,8 @@
       "frequency": 1,
       "distractors_particle": [
         "in",
-        "off",
-        "away"
+        "about",
+        "for"
       ],
       "id": "pv-0547"
     },
@@ -12936,9 +12914,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "after",
         "around",
-        "down"
+        "down",
+        "away"
       ],
       "id": "pv-0548"
     },
@@ -13090,7 +13068,7 @@
       "distractors_particle": [
         "up",
         "across",
-        "over"
+        "about"
       ],
       "id": "pv-0554"
     },
@@ -13169,32 +13147,6 @@
         "around"
       ],
       "id": "pv-0557"
-    },
-    {
-      "verb": "sing out",
-      "particle": "out",
-      "base": "sing",
-      "definitions": [
-        "shout or call out loudly"
-      ],
-      "gloss_es": "gritar, avisar",
-      "example": "Just ___ if you need any help.",
-      "example_answer": "sing out",
-      "forms": [
-        "sang out",
-        "sing out",
-        "singing out",
-        "sings out",
-        "sung out"
-      ],
-      "difficulty": "advanced",
-      "frequency": 1,
-      "distractors_particle": [
-        "up",
-        "off",
-        "in"
-      ],
-      "id": "pv-0558"
     },
     {
       "verb": "sit around",
@@ -13366,9 +13318,9 @@
       "difficulty": "advanced",
       "frequency": 1,
       "distractors_particle": [
-        "up",
-        "off",
-        "over"
+        "in",
+        "away",
+        "about"
       ],
       "id": "pv-0565"
     },
@@ -13416,9 +13368,9 @@
       "difficulty": "advanced",
       "frequency": 1,
       "distractors_particle": [
-        "off",
         "up",
-        "over"
+        "over",
+        "for"
       ],
       "id": "pv-0567"
     },
@@ -13566,9 +13518,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "up",
         "off",
-        "over"
+        "over",
+        "for"
       ],
       "id": "pv-0573"
     },
@@ -13716,9 +13668,9 @@
       "difficulty": "intermediate",
       "frequency": 1,
       "distractors_particle": [
-        "up",
         "over",
-        "off"
+        "off",
+        "about"
       ],
       "id": "pv-0579"
     },
@@ -13743,8 +13695,8 @@
       "frequency": 0,
       "distractors_particle": [
         "over",
-        "off",
-        "through"
+        "for",
+        "about"
       ],
       "id": "pv-0580"
     },
@@ -13769,8 +13721,8 @@
       "frequency": 0,
       "distractors_particle": [
         "in",
-        "up",
-        "about"
+        "about",
+        "by"
       ],
       "id": "pv-0581"
     },
@@ -14072,9 +14024,9 @@
       "difficulty": "beginner",
       "frequency": 0,
       "distractors_particle": [
-        "over",
-        "in",
-        "about"
+        "for",
+        "at",
+        "of"
       ],
       "id": "pv-0593"
     },
@@ -14298,8 +14250,8 @@
       "frequency": 0,
       "distractors_particle": [
         "in",
-        "up",
-        "over"
+        "over",
+        "for"
       ],
       "id": "pv-0603"
     },
@@ -14373,9 +14325,9 @@
       "difficulty": "advanced",
       "frequency": 0,
       "distractors_particle": [
-        "down",
         "off",
-        "over"
+        "over",
+        "for"
       ],
       "id": "pv-0606"
     },
@@ -14386,7 +14338,7 @@
       "definitions": [
         "make something fall using wind"
       ],
-      "gloss_es": "derribar el viento",
+      "gloss_es": "tumbar, derribar",
       "example": "The storm ___ several trees in our street.",
       "example_answer": "blew down",
       "forms": [
@@ -14503,8 +14455,8 @@
       "frequency": 2,
       "distractors_particle": [
         "off",
-        "away",
-        "into"
+        "into",
+        "for"
       ],
       "id": "pv-0611"
     },
@@ -14540,7 +14492,7 @@
       "definitions": [
         "pay to take full control of a business"
       ],
-      "gloss_es": "comprar la parte",
+      "gloss_es": "comprar (una empresa), adquirir",
       "example": "A bigger company tried to ___ our firm.",
       "example_answer": "buy out",
       "forms": [
@@ -14552,9 +14504,9 @@
       "difficulty": "advanced",
       "frequency": 2,
       "distractors_particle": [
-        "up",
-        "into",
-        "off"
+        "off",
+        "about",
+        "along"
       ],
       "id": "pv-0613"
     },
@@ -14590,7 +14542,7 @@
       "definitions": [
         "make someone leave because of a duty"
       ],
-      "gloss_es": "llamar para irse",
+      "gloss_es": "reclamar, hacer salir",
       "example": "The doctor was ___ during the meeting.",
       "example_answer": "called away",
       "forms": [
@@ -14604,7 +14556,7 @@
       "distractors_particle": [
         "off",
         "up",
-        "out"
+        "by"
       ],
       "id": "pv-0615"
     },
@@ -14659,30 +14611,6 @@
       "id": "pv-0617"
     },
     {
-      "verb": "cast off",
-      "particle": "off",
-      "base": "cast",
-      "definitions": [
-        "throw something off or get rid of it"
-      ],
-      "gloss_es": "desechar, quitarse",
-      "example": "She ___ her coat and sat down.",
-      "example_answer": "cast off",
-      "forms": [
-        "cast off",
-        "casting off",
-        "casts off"
-      ],
-      "difficulty": "advanced",
-      "frequency": 2,
-      "distractors_particle": [
-        "out",
-        "down",
-        "away"
-      ],
-      "id": "pv-0618"
-    },
-    {
       "verb": "cave in",
       "particle": "in",
       "base": "cave",
@@ -14727,8 +14655,8 @@
       "frequency": 0,
       "distractors_particle": [
         "up",
-        "over",
-        "after"
+        "off",
+        "away"
       ],
       "id": "pv-0620"
     },
@@ -14876,9 +14804,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "out",
         "up",
-        "off"
+        "off",
+        "across"
       ],
       "id": "pv-0626"
     },
@@ -14976,8 +14904,8 @@
       "frequency": 0,
       "distractors_particle": [
         "about",
-        "along",
-        "over"
+        "over",
+        "for"
       ],
       "id": "pv-0631"
     },
@@ -15054,8 +14982,8 @@
       "frequency": 2,
       "distractors_particle": [
         "about",
-        "along",
-        "over"
+        "for",
+        "of"
       ],
       "id": "pv-0634"
     },
@@ -15330,9 +15258,9 @@
       "difficulty": "advanced",
       "frequency": 2,
       "distractors_particle": [
-        "up",
         "off",
-        "over"
+        "over",
+        "in"
       ],
       "id": "pv-0646"
     },
@@ -15582,7 +15510,7 @@
       "distractors_particle": [
         "off",
         "in",
-        "down"
+        "about"
       ],
       "id": "pv-0659"
     },
@@ -15731,8 +15659,8 @@
       "frequency": 2,
       "distractors_particle": [
         "on",
-        "up",
-        "over"
+        "over",
+        "by"
       ],
       "id": "pv-0665"
     },
@@ -15855,9 +15783,9 @@
       "difficulty": "beginner",
       "frequency": 2,
       "distractors_particle": [
-        "up",
         "in",
-        "over"
+        "over",
+        "about"
       ],
       "id": "pv-0670"
     },
@@ -15881,8 +15809,8 @@
       "frequency": 0,
       "distractors_particle": [
         "off",
-        "away",
-        "down"
+        "about",
+        "along"
       ],
       "id": "pv-0671"
     },
@@ -15905,9 +15833,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "off",
-        "away",
-        "across"
+        "about",
+        "through",
+        "for"
       ],
       "id": "pv-0672"
     },
@@ -16207,7 +16135,7 @@
       "distractors_particle": [
         "off",
         "back",
-        "over"
+        "in"
       ],
       "id": "pv-0684"
     },
@@ -16455,9 +16383,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "away",
         "down",
-        "off"
+        "off",
+        "for"
       ],
       "id": "pv-0695"
     },
@@ -16468,7 +16396,7 @@
       "definitions": [
         "remain in the stomach without being vomited"
       ],
-      "gloss_es": "no vomitar",
+      "gloss_es": "retener (la comida)",
       "example": "He was so sick that no food would ___.",
       "example_answer": "stay down",
       "forms": [
@@ -16505,9 +16433,9 @@
       "difficulty": "intermediate",
       "frequency": 2,
       "distractors_particle": [
-        "about",
         "on",
-        "up"
+        "up",
+        "away"
       ],
       "id": "pv-0697"
     },
@@ -16656,8 +16584,8 @@
       "frequency": 0,
       "distractors_particle": [
         "off",
-        "in",
-        "up"
+        "up",
+        "away"
       ],
       "id": "pv-0703"
     },
@@ -16707,7 +16635,7 @@
       "distractors_particle": [
         "in",
         "about",
-        "over"
+        "for"
       ],
       "id": "pv-0705"
     },
@@ -16806,9 +16734,9 @@
       "difficulty": "advanced",
       "frequency": 0,
       "distractors_particle": [
-        "out",
         "in",
-        "about"
+        "about",
+        "over"
       ],
       "id": "pv-0709"
     },
@@ -16932,9 +16860,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "off",
         "in",
-        "down"
+        "down",
+        "for"
       ],
       "id": "pv-0714"
     },
@@ -17411,8 +17339,8 @@
       "frequency": 1,
       "distractors_particle": [
         "off",
-        "down",
-        "out"
+        "out",
+        "along"
       ],
       "id": "pv-0735"
     },
@@ -17561,9 +17489,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "in",
         "off",
-        "away"
+        "away",
+        "on"
       ],
       "id": "pv-0741"
     },
@@ -17761,9 +17689,9 @@
       "difficulty": "intermediate",
       "frequency": 0,
       "distractors_particle": [
-        "off",
         "down",
-        "in"
+        "in",
+        "on"
       ],
       "id": "pv-0750"
     },
@@ -17962,9 +17890,9 @@
       "difficulty": "advanced",
       "frequency": 0,
       "distractors_particle": [
-        "down",
-        "away",
-        "out"
+        "out",
+        "for",
+        "in"
       ],
       "id": "pv-0760"
     },
@@ -17989,8 +17917,8 @@
       "frequency": 0,
       "distractors_particle": [
         "off",
-        "up",
-        "over"
+        "over",
+        "along"
       ],
       "id": "pv-0761"
     },

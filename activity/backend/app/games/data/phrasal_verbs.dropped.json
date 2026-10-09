@@ -228,5 +228,20 @@
     "id": "pv-0759",
     "verb": "drum into",
     "reason": "editor: only natural split (drummed it into me)"
+  },
+  {
+    "id": "pv-0269",
+    "verb": "think out",
+    "reason": "editor: 'think out' is rare; learners use 'think through'"
+  },
+  {
+    "id": "pv-0558",
+    "verb": "sing out",
+    "reason": "editor: 'sing out' is regional/dated"
+  },
+  {
+    "id": "pv-0618",
+    "verb": "cast off",
+    "reason": "editor: 'cast off' only literary in the everyday sense"
   }
 ]

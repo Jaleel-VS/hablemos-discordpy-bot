@@ -402,8 +402,14 @@ best match over all accepted forms wins.
     in-flight games and review rounds still resolve. Progress checkpoints to
     `/tmp/phrasal_rewrite_progress.json`; dropped verbs and reasons go to
     `phrasal_verbs.dropped.json` (audit only, never loaded).
-  - The **committed corpus is 718 verbs** (95 beginner / 376 intermediate /
-    247 advanced); 46 were dropped. `scripts/review_phrasal_verbs.py` (Opus
+  - **Distractor check (TypeSafe Jev, one-off).** For every card, a yes/no
+    question per wrong option asked whether the sentence is still correct
+    with that particle ("worn ___ over time": `out` works too). 110 cards had
+    an option rated ≥0.5 likely correct; each was swapped for a particle
+    rated <0.2. The same pass flagged 16 weak sentences/glosses, fixed or
+    dropped by hand.
+  - The **committed corpus is 715 verbs** (95 beginner / 376 intermediate /
+    244 advanced); 49 were dropped. `scripts/review_phrasal_verbs.py` (Opus
     grading of the older scraped examples) is superseded by the rewrite.
 - **Exercise: prominent gloss + EN definition disclosure (P1).** The exercise
   card shows `gloss_es` prominently as the primary meaning anchor; the first EN
