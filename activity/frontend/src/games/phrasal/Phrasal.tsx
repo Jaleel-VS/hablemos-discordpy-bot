@@ -87,7 +87,7 @@ export default function Phrasal({ accessToken }: GameProps) {
   }
 
   if (screen === "done" && view?.result) {
-    return <Summary result={view.result} onReplay={() => setScreen("setup")} />;
+    return <Summary result={view.result} onReplay={() => setScreen("setup")} accessToken={accessToken} />;
   }
 
   if (view) {

@@ -94,6 +94,15 @@ CREATE INDEX IF NOT EXISTS activity_sessions_started
     ON activity_sessions (started_at DESC);
 CREATE INDEX IF NOT EXISTS activity_sessions_user
     ON activity_sessions (user_id, started_at DESC);
+
+CREATE TABLE IF NOT EXISTS activity_pets (
+    user_id    BIGINT      PRIMARY KEY,
+    species    TEXT        NOT NULL,
+    color      TEXT        NOT NULL,
+    name       TEXT        NOT NULL DEFAULT '',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 """
 
 
@@ -447,3 +456,92 @@ class Database:
             game_key, user_id, 1 if won else 0, new_streak, new_max,
             puzzle_no, dist_key,
         )
+
+    # ── pets ──────────────────────────────────────────────────────────────
+
+    async def get_pet(self, user_id: int) -> dict[str, Any] | None:
+        """Return the stored pet row for *user_id*, or ``None`` if not chosen.
+
+        ``None`` is the intentional "not chosen yet" state; callers turn it
+        into ``pet: null`` in the JSON response.
+        """
+        row = await self._p().fetchrow(
+            "SELECT species, color, name FROM activity_pets WHERE user_id = $1",
+            user_id,
+        )
+        return dict(row) if row is not None else None
+
+    async def upsert_pet(
+        self, user_id: int, species: str, color: str, name: str,
+    ) -> dict[str, Any]:
+        """Insert or update the pet for *user_id*; return the stored row."""
+        row = await self._p().fetchrow(
+            """
+            INSERT INTO activity_pets (user_id, species, color, name)
+            VALUES ($1, $2, $3, $4)
+            ON CONFLICT (user_id) DO UPDATE SET
+                species    = EXCLUDED.species,
+                color      = EXCLUDED.color,
+                name       = EXCLUDED.name,
+                updated_at = NOW()
+            RETURNING species, color, name
+            """,
+            user_id, species, color, name,
+        )
+        return dict(row)
+
+    async def pet_activity(self, user_id: int) -> dict[str, Any]:
+        """Return play-history data needed to derive pet mood.
+
+        Queries ``game_results`` only — no pet table involved.  Returns:
+
+        * ``play_dates`` — distinct UTC calendar dates the user finished any
+          game in the last 60 days, descending (most-recent first).
+        * ``games_this_week`` — finished games in the last 7 days (any mode).
+        * ``favorite_game`` — ``game_key`` with the most results in the last
+          30 days, or ``None`` when the user has no results.
+        """
+        from datetime import date
+
+        date_rows = await self._p().fetch(
+            """
+            SELECT DISTINCT (created_at AT TIME ZONE 'UTC')::date AS play_date
+            FROM game_results
+            WHERE user_id = $1
+              AND created_at >= NOW() - INTERVAL '60 days'
+            ORDER BY play_date DESC
+            """,
+            user_id,
+        )
+        play_dates: list[date] = [r["play_date"] for r in date_rows]
+
+        week_row = await self._p().fetchrow(
+            """
+            SELECT COUNT(*) AS cnt
+            FROM game_results
+            WHERE user_id = $1
+              AND created_at >= NOW() - INTERVAL '7 days'
+            """,
+            user_id,
+        )
+        games_this_week: int = int(week_row["cnt"]) if week_row else 0
+
+        fav_row = await self._p().fetchrow(
+            """
+            SELECT game_key
+            FROM game_results
+            WHERE user_id = $1
+              AND created_at >= NOW() - INTERVAL '30 days'
+            GROUP BY game_key
+            ORDER BY COUNT(*) DESC
+            LIMIT 1
+            """,
+            user_id,
+        )
+        favorite_game: str | None = fav_row["game_key"] if fav_row else None
+
+        return {
+            "play_dates": play_dates,
+            "games_this_week": games_this_week,
+            "favorite_game": favorite_game,
+        }

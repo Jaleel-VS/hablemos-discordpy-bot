@@ -31,6 +31,7 @@ from .discord_oauth import (
     fetch_user,
 )
 from .games.routes import build_router
+from .pet import build_pet_router
 
 logger = logging.getLogger(__name__)
 
@@ -124,6 +125,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             get_db=lambda: db_holder["db"],
             get_secret=lambda: cfg.discord_client_secret,
             discord_context={"channel_id": None, "guild_id": None},
+        )
+    )
+    app.include_router(
+        build_pet_router(
+            get_db=lambda: db_holder["db"],
         )
     )
 

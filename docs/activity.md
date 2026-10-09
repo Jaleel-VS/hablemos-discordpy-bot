@@ -426,6 +426,44 @@ retry that fixes it). Request fields (`access_token`, `sealed_state`, `guess`)
 are length-bounded at the Pydantic layer so an oversized body is rejected
 before any Fernet/normalization work.
 
+### Pet (`app/pet.py`, `frontend/src/pet/`)
+
+Every player has one procedurally-drawn pixel critter that lives on the hub
+and reacts once on every game's summary screen. It's a mirror of the habit,
+not a second game: no XP, feeding, or decay.
+
+- **No image assets.** `frontend/src/pet/{model,anim,raster}.ts` (ported from
+  the `ani` project) rasterise a 40×40 critter from `(species, #color)` on a
+  canvas at integer scale with `image-rendering: pixelated`. Ten species
+  (blob, drop, orb, sprout, ghost, bun, star, mochi, cube, pebble), any hex
+  colour; the UI offers 8 curated swatches. `Pet.tsx` is the React wrapper
+  (shared 15 fps ticker across all mounted pets; `cue={{kind,n}}` plays a
+  one-shot `hop`/`squish`/`dizzy`/`love` when `n` changes; `interactive`
+  enables gaze + tap).
+- **Storage is the choice only**: `activity_pets(user_id PK, species, color,
+  name)`. Mood is **derived at request time** from `game_results` across all
+  games (`db.pet_activity`): distinct UTC play dates (60 days), games in the
+  last 7 days, most-played game in 30 days. `pet.derive_mood(play_dates,
+  today)` is pure: played today → `happy` if the day-streak ≥ 3 else `idle`;
+  not today but yesterday → `waiting` (streak still counts from yesterday);
+  last play ≥ 7 days ago → `sleepy`; otherwise `idle`. `today` is the UTC date
+  so it matches the SQL bucketing.
+- **Routes**: `POST /api/pet/me {access_token}` →
+  `{pet|null, mood, streak_days, played_today, games_this_week,
+  favorite_game}`; `POST /api/pet/choose {access_token, species, color,
+  name?}` validates (known species, `#rrggbb`, name ≤ 20) and upserts. Without
+  `DATABASE_URL` both return zero stats (and `/choose` echoes the choice) so
+  the dev flow works.
+- **Hub** (`PetCard`): first visit shows `PetPicker` inline (species chips are
+  live mini-pets in the chosen colour; live 120 px preview). Afterwards: 96 px
+  interactive pet, name, one status line keyed to mood, weekly count and
+  favourite game, `Cambiar` to re-open the picker (cancel restores the shown
+  state). A `happy` load plays one `hop`.
+- **Summaries** (`PetReaction`): all four games mount a 64 px pet with one
+  reaction — `hop` + "¡Olé!" on a win (Wordle `won`; others accuracy ≥ 80 %),
+  `squish` + "Casi…" otherwise. Renders nothing when the player has no pet.
+  Never shown during play.
+
 ## Developer Portal setup (one-time)
 
 Use the **existing Hablemos application** (shared `CLIENT_ID`; the bot is

@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import type { GameInfo } from "./api";
 import { GAME_REGISTRY } from "./games/registry";
 import Leaderboard from "./Leaderboard";
+import PetCard from "./pet/PetCard";
 
 interface HomeProps {
   games: GameInfo[];
@@ -25,6 +26,7 @@ export default function Home({ games, onPick, accessToken, userId, inGuild }: Ho
         <h1 className="home-title">Juegos</h1>
         <p className="home-sub">Elige cómo practicar hoy</p>
       </div>
+      <PetCard accessToken={accessToken} games={known} />
       <ul className="home-list">
         {known.map((g, i) => {
           const meta = GAME_REGISTRY[g.key];

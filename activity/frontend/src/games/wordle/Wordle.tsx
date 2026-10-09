@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import PetReaction from "../../pet/PetReaction";
 import {
   fetchStats,
   startGame,
@@ -178,6 +179,9 @@ export default function Wordle({ accessToken }: GameProps) {
 
       {over && result ? (
         <div className="result">
+          <div className="pet-reaction-slot">
+            <PetReaction accessToken={accessToken} outcome={result.won ? "win" : "meh"} />
+          </div>
           <h2>{result.won ? "¡Ganaste!" : "¡Casi!"}</h2>
           {!result.won && (
             <p className="muted">

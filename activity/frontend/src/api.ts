@@ -526,3 +526,41 @@ export function fetchPhrasalDeck(difficulty?: string): Promise<PhrasalDeck> {
     return r.json() as Promise<PhrasalDeck>;
   });
 }
+
+// ── pet ───────────────────────────────────────────────────────────────────────
+
+export interface PetProfile {
+  species: string;
+  color: string;
+  name: string;
+}
+
+export type PetMood = "idle" | "sleepy" | "waiting" | "happy";
+
+export interface PetState {
+  pet: PetProfile | null;
+  mood: PetMood;
+  streak_days: number;
+  played_today: boolean;
+  games_this_week: number;
+  favorite_game: string | null;
+}
+
+export interface PetChoice {
+  species: string;
+  color: string;
+  name?: string;
+}
+
+export function fetchPet(accessToken: string): Promise<PetState> {
+  return post("/.proxy/api/pet/me", { access_token: accessToken });
+}
+
+export function choosePet(accessToken: string, choice: PetChoice): Promise<PetState> {
+  return post("/.proxy/api/pet/choose", {
+    access_token: accessToken,
+    species: choice.species,
+    color: choice.color,
+    name: choice.name,
+  });
+}

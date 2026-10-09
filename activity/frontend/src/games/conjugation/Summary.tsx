@@ -1,11 +1,13 @@
 import { useState } from "react";
 import type { ConjugationResult } from "../../api";
 import { getLang, t, type Lang } from "./i18n";
+import PetReaction from "../../pet/PetReaction";
 
 interface SummaryProps {
   result: ConjugationResult;
   onReplay: () => void;
   onReview: (verbs: string[]) => void;
+  accessToken: string;
 }
 
 function verdictKey(correct: number): string {
@@ -35,14 +37,18 @@ function BreakdownBar({ correct, total }: BarProps) {
   );
 }
 
-export default function Summary({ result, onReplay, onReview }: SummaryProps) {
+export default function Summary({ result, onReplay, onReview, accessToken }: SummaryProps) {
   const [lang] = useState<Lang>(getLang);
   const { correct, total, best_streak, misses, skipped = 0, close = 0, strict = false, breakdown, review_verbs = [], grid, mode } = result;
   const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+  const outcome: "win" | "meh" = total > 0 && correct / total >= 0.8 ? "win" : "meh";
 
   return (
     <div className="conj conj-summary">
     <div className="conj-inner">
+      <div className="pet-reaction-slot">
+        <PetReaction accessToken={accessToken} outcome={outcome} />
+      </div>
       <p className="summary-verdict">{t(lang, verdictKey(correct))}</p>
 
       <div className="summary-score">
@@ -74,7 +80,7 @@ export default function Summary({ result, onReplay, onReview }: SummaryProps) {
       </div>
 
       {/* Breakdown section */}
-      {breakdown && (
+      {breakdown && Object.keys(breakdown.tenses).length > 0 && (
         <div className="breakdown">
           <h2 className="breakdown-title">{t(lang, "summary.breakdown")}</h2>
           {Object.keys(breakdown.tenses).length > 0 && (

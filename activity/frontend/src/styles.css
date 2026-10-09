@@ -920,6 +920,12 @@ body {
 }
 
 /* Untimed practice: replaces the timer with an end-run button. */
+.sprint-untimed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .finish-btn {
   flex: none;
   background: transparent;
@@ -2029,4 +2035,287 @@ body {
 .pill-progress {
   font-variant-numeric: tabular-nums;
   color: var(--ink-dim);
+}
+
+/* ══ pet (reaction) ══ */
+
+/* Fixed-height slot so the reaction widget doesn't shift surrounding layout. */
+.pet-reaction-slot {
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+@keyframes pet-reaction-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pet-reaction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  animation: pet-reaction-enter 280ms ease both;
+}
+
+.pet-reaction__caption {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-dim);
+  letter-spacing: 0.02em;
+}
+
+/* ══ pet (hub) ══════════════════════════════════════════════════════════════ */
+
+/* Canvas rendering — keep pixels crisp at all integer scales. */
+canvas.pet {
+  image-rendering: pixelated;
+  display: block;
+}
+
+.pet--interactive {
+  cursor: pointer;
+}
+
+/* ── pet-card: full-bleed row above the game list, not a button ────────── */
+.pet-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--bg-raised);
+  min-height: 96px; /* reserve space while loading to prevent layout jump */
+}
+
+.pet-card--loading {
+  min-height: 96px;
+  border-color: transparent;
+  background: color-mix(in oklab, var(--bg-raised) 60%, transparent);
+}
+
+.pet-card--picking {
+  align-items: stretch;
+  min-height: unset;
+}
+
+.pet-card-critter {
+  flex: none;
+}
+
+.pet-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pet-card-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.005em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pet-card-status {
+  color: var(--ink-dim);
+  font-size: 0.85rem;
+}
+
+.pet-card-stats {
+  color: var(--ink-dim);
+  font-size: 0.78rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.pet-card-fav::before {
+  content: "·";
+  margin-right: 6px;
+}
+
+.pet-card-change {
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-dim);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  cursor: pointer;
+  min-height: 44px;
+  transition: color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+
+.pet-card-change:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
+/* ── pet-picker: species chips + swatches + name + live preview ────────── */
+.pet-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.pet-picker-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.pet-picker-hint {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.pet-picker-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pet-chip {
+  width: 44px;
+  height: 44px;
+  padding: 2px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: var(--bg-raised);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: border-color 0.12s var(--ease);
+}
+
+.pet-chip--selected {
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 15%, var(--bg-raised));
+}
+
+.pet-picker-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pet-swatch {
+  width: 36px;
+  height: 36px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  outline-offset: 2px;
+  transition: border-color 0.12s var(--ease);
+}
+
+.pet-swatch--selected {
+  border-color: var(--ink);
+  outline: 2px solid var(--accent);
+}
+
+.pet-name-input {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  padding: 10px 14px;
+  width: 100%;
+  min-height: 44px;
+  outline: none;
+}
+
+.pet-name-input:focus {
+  border-color: var(--accent);
+}
+
+.pet-picker-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 0 6px;
+}
+
+.pet-preview-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--ink-dim);
+}
+
+.pet-picker-error {
+  color: oklch(0.68 0.18 25);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.pet-picker-actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.pet-picker-save {
+  flex: 1;
+  background: var(--accent);
+  color: oklch(0.98 0.004 var(--hue));
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 12px 0;
+  min-height: 44px;
+  cursor: pointer;
+  transition: filter 0.15s var(--ease);
+}
+
+.pet-picker-save:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.pet-picker-save:disabled,
+.pet-picker-cancel:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.pet-picker-cancel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink-dim);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  padding: 12px 20px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+
+.pet-picker-cancel:hover:not(:disabled) {
+  color: var(--ink);
+  border-color: var(--ink-dim);
 }

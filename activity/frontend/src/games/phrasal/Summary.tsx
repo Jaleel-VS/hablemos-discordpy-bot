@@ -1,8 +1,10 @@
 import type { PhrasalResult } from "../../api";
+import PetReaction from "../../pet/PetReaction";
 
 interface SummaryProps {
   result: PhrasalResult;
   onReplay: () => void;
+  accessToken: string;
 }
 
 function verdict(correct: number, total: number): string {
@@ -14,12 +16,16 @@ function verdict(correct: number, total: number): string {
   return "¡A practicar!";
 }
 
-export default function Summary({ result, onReplay }: SummaryProps) {
+export default function Summary({ result, onReplay, accessToken }: SummaryProps) {
   const { correct, total, best_streak, misses } = result;
   const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+  const outcome: "win" | "meh" = total > 0 && correct / total >= 0.8 ? "win" : "meh";
 
   return (
     <div className="phrasal phrasal-summary">
+      <div className="pet-reaction-slot">
+        <PetReaction accessToken={accessToken} outcome={outcome} />
+      </div>
       <p className="summary-verdict">{verdict(correct, total)}</p>
 
       <div className="summary-score">

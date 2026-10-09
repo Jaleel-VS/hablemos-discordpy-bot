@@ -138,6 +138,7 @@ export default function Conjugation({ accessToken }: GameProps) {
         result={view.result}
         onReplay={() => setScreen("setup")}
         onReview={startReview}
+        accessToken={accessToken}
       />
     );
   }

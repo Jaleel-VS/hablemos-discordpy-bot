@@ -146,18 +146,21 @@ export default function Sprint({ view, busy, error, onAnswer, onTimeout, onFinis
               <div className="timer-fill" style={{ transform: `scaleX(${frac})` }} />
             </div>
           </div>
-        ) : view.items > 0 ? (
-          /* Set-mode: show answered/total instead of timer */
-          <span className="pill pill-progress">
-            {t(lang, "sprint.progress", {
-              done: view.answered_count,
-              total: view.items,
-            })}
-          </span>
         ) : (
-          <button className="finish-btn" onClick={onFinish} disabled={busy}>
-            {t(lang, "sprint.finish")}
-          </button>
+          /* Untimed: always offer a way out. Set mode also shows progress. */
+          <div className="sprint-untimed">
+            {view.items > 0 && (
+              <span className="pill pill-progress">
+                {t(lang, "sprint.progress", {
+                  done: view.answered_count,
+                  total: view.items,
+                })}
+              </span>
+            )}
+            <button className="finish-btn" onClick={onFinish} disabled={busy}>
+              {t(lang, "sprint.finish")}
+            </button>
+          </div>
         )}
         <div className="score-pills">
           <span className="pill pill-score">
