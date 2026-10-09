@@ -92,6 +92,13 @@
   color: var(--accent-2);
 }
 
+/* Only one cursor at a time: once the player hovers or focuses a row, the
+   default selection on the first row gives way to it. */
+.home-list:has(.game-row:hover, .game-row:focus-visible)
+  .game-row--sel:not(:hover, :focus-visible) .game-cursor {
+  color: transparent;
+}
+
 .game-row:hover .game-name,
 .game-row:focus-visible .game-name {
   color: var(--accent-3);
