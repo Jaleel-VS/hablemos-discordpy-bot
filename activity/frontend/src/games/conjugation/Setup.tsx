@@ -97,6 +97,7 @@ export default function Setup({ onStart, busy, error }: SetupProps) {
 
   return (
     <div className="conj conj-setup">
+    <div className="conj-inner">
       {/* Language toggle */}
       <div className="lang-toggle">
         <button
@@ -256,6 +257,7 @@ export default function Setup({ onStart, busy, error }: SetupProps) {
       </div>
 
       <p className="muted setup-hint">{t(lang, "setup.practice.hint")}</p>
+    </div>
     </div>
   );
 }

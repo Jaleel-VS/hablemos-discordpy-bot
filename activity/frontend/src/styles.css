@@ -698,11 +698,21 @@ body {
 }
 
 /* ── setup ─────────────────────────────────────────────────────────────── */
+/* The scroll container is full width so the scrollbar sits at the screen
+   edge; the 460px column lives on .conj-inner. (Putting max-width on the
+   scroller parks the scrollbar in the middle of a wide desktop popout.) */
 .conj-setup {
   justify-content: flex-start;
-  gap: 16px;
-  padding: 18px 20px 24px;
   overflow-y: auto; /* the only intentionally scrollable screen (many chips) */
+  padding: 18px 20px 24px;
+}
+
+.conj-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
   max-width: 460px;
   margin: 0 auto;
 }
@@ -1117,12 +1127,13 @@ body {
 /* ── summary ──────────────────────────────────────────────────────────────── */
 .conj-summary {
   justify-content: flex-start;
-  gap: 12px;
   padding: 20px 20px 24px;
-  max-width: 460px;
-  margin: 0 auto;
   overflow-y: auto;
   animation: rise 0.5s var(--ease) both;
+}
+
+.conj-summary .conj-inner {
+  gap: 12px;
 }
 
 .summary-verdict {

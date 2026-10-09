@@ -42,6 +42,7 @@ export default function Summary({ result, onReplay, onReview }: SummaryProps) {
 
   return (
     <div className="conj conj-summary">
+    <div className="conj-inner">
       <p className="summary-verdict">{t(lang, verdictKey(correct))}</p>
 
       <div className="summary-score">
@@ -142,6 +143,7 @@ export default function Summary({ result, onReplay, onReview }: SummaryProps) {
           {t(lang, "summary.play_again")}
         </button>
       </div>
+    </div>
     </div>
   );
 }
