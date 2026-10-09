@@ -380,23 +380,31 @@ best match over all accepted forms wins.
   limit) to ~780 bytes fresh / ~2212 bytes for a fully completed 10-item round
   with all misses. The in-play prompt view never includes the verb id (security
   invariant: ids are only in the final `review_ids`).
-- **Data is precomputed, not live.** `scripts/generate_phrasal_verbs.py` curates
-  the ~3350-entry community dataset
-  ([WithEnglishWeCan/generated-english-phrasal-verbs](https://github.com/WithEnglishWeCan/generated-english-phrasal-verbs))
-  down to a playable corpus at `app/games/data/phrasal_verbs.json`. Two stages,
-  mirroring the cloze pipeline:
-  - **Stage 1 — filter (no LLM, default).** Keep entries with a usable
-    definition and an example that actually contains the verb (so a blank can be
-    built), rank by the source `frequency` + a common-base/particle heuristic,
-    take the top `--limit`. Ships English-only and fully playable.
-  - **Stage 2 — enrich (`--enrich`, Bedrock).** Adds a CEFR difficulty band and a
-    short **Spanish gloss** per verb via Claude. The runtime never calls an LLM.
-  - The **committed corpus is 764 verbs**, Opus-enriched (glosses + CEFR:
-    136 beginner / 414 intermediate / 214 advanced), all glossed.
-- **Optional review pass (`scripts/review_phrasal_verbs.py`).** Grades every
-  verb with **Claude Opus 4.8**, fixes in place, quarantines broken cards.
-  The committed corpus was not put through a full review pass; 36 known-broken
-  verbs were pruned deterministically (`meta.pruned_known_bad`).
+- **Data is precomputed, not live.** The runtime never calls an LLM; it reads
+  `app/games/data/phrasal_verbs.json`. Two offline scripts build it:
+  - **`scripts/generate_phrasal_verbs.py` picks the verbs.** It curates the
+    ~3350-entry community dataset
+    ([WithEnglishWeCan/generated-english-phrasal-verbs](https://github.com/WithEnglishWeCan/generated-english-phrasal-verbs))
+    by source frequency + a common-base/particle heuristic and supplies ids and
+    inflected `forms`.
+  - **`scripts/rewrite_phrasal_examples.py` writes the teaching material.** The
+    source examples were scraped news/fiction fragments ("Both sides ___ last
+    night 's clash…") that read badly for learners. For each verb, Opus picks
+    the most common everyday sense and writes one plain definition, a Spanish
+    gloss for that sense, a 6–14 word everyday sentence, a CEFR band and three
+    particle distractors that are wrong in that sentence, or drops verbs a
+    learner doesn't need. Deterministic validation (one span, accepted form,
+    verb and particle contiguous so particle mode can inline the verb, valid
+    distractors) runs before and after a separate Opus review pass, then a
+    final naturalness audit. Cards that never pass are dropped, not shipped
+    with the old example. A short editor list drops verbs that only sound
+    natural split ("make it up to"). Ids of kept verbs are unchanged, so
+    in-flight games and review rounds still resolve. Progress checkpoints to
+    `/tmp/phrasal_rewrite_progress.json`; dropped verbs and reasons go to
+    `phrasal_verbs.dropped.json` (audit only, never loaded).
+  - The **committed corpus is 718 verbs** (95 beginner / 376 intermediate /
+    247 advanced); 46 were dropped. `scripts/review_phrasal_verbs.py` (Opus
+    grading of the older scraped examples) is superseded by the rewrite.
 - **Exercise: prominent gloss + EN definition disclosure (P1).** The exercise
   card shows `gloss_es` prominently as the primary meaning anchor; the first EN
   definition is behind a `<details>` disclosure ("Definición en inglés / English

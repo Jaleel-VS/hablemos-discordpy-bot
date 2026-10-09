@@ -1,0 +1,232 @@
+[
+  {
+    "id": "pv-0032",
+    "verb": "fall in",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0094",
+    "verb": "fall away",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0108",
+    "verb": "hold over",
+    "reason": "editor: rare; learners use 'put off'"
+  },
+  {
+    "id": "pv-0109",
+    "verb": "hold with",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0125",
+    "verb": "put about",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0127",
+    "verb": "read into",
+    "reason": "editor: only natural split (read too much into)"
+  },
+  {
+    "id": "pv-0128",
+    "verb": "ring in",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0179",
+    "verb": "set on",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0188",
+    "verb": "bring off",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0196",
+    "verb": "send down",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0211",
+    "verb": "do in",
+    "reason": "editor: only natural split (did me in)"
+  },
+  {
+    "id": "pv-0228",
+    "verb": "lay in",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0232",
+    "verb": "let into",
+    "reason": "audit: unnatural word order with 'let into'"
+  },
+  {
+    "id": "pv-0245",
+    "verb": "put over",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0314",
+    "verb": "set apart",
+    "reason": "audit rewrite invalid: need exactly one [bracketed] span, got 2"
+  },
+  {
+    "id": "pv-0348",
+    "verb": "count out",
+    "reason": "audit rewrite invalid: need exactly one [bracketed] span, got 2"
+  },
+  {
+    "id": "pv-0394",
+    "verb": "strike down",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0396",
+    "verb": "tear away",
+    "reason": "audit rewrite invalid: need exactly one [bracketed] span, got 2"
+  },
+  {
+    "id": "pv-0415",
+    "verb": "draw off",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0419",
+    "verb": "let in on",
+    "reason": "audit rewrite invalid: need exactly one [bracketed] span, got 2"
+  },
+  {
+    "id": "pv-0421",
+    "verb": "light on",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0424",
+    "verb": "make up to",
+    "reason": "editor: needs 'it' (make it up to)"
+  },
+  {
+    "id": "pv-0427",
+    "verb": "put up to",
+    "reason": "audit rewrite invalid: need exactly one [bracketed] span, got 2"
+  },
+  {
+    "id": "pv-0434",
+    "verb": "belt up",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0438",
+    "verb": "bottle out",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0448",
+    "verb": "close on",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0475",
+    "verb": "fall about",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0478",
+    "verb": "fetch up",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0500",
+    "verb": "lead off",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0507",
+    "verb": "lock out",
+    "reason": "audit rewrite invalid: need exactly one [bracketed] span, got 2"
+  },
+  {
+    "id": "pv-0526",
+    "verb": "pick off",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0527",
+    "verb": "pick over",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0538",
+    "verb": "put into",
+    "reason": "editor: only natural split (put effort into)"
+  },
+  {
+    "id": "pv-0545",
+    "verb": "ring with",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0599",
+    "verb": "write into",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0627",
+    "verb": "count with",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0636",
+    "verb": "eke out",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0647",
+    "verb": "keep in",
+    "reason": "editor: only natural split (kept them in)"
+  },
+  {
+    "id": "pv-0650",
+    "verb": "knuckle under",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0658",
+    "verb": "make into",
+    "reason": "audit rewrite invalid: need exactly one [bracketed] span, got 2"
+  },
+  {
+    "id": "pv-0692",
+    "verb": "start in",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0726",
+    "verb": "bomb out",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0730",
+    "verb": "brick in",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0747",
+    "verb": "cut away",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0755",
+    "verb": "draw down",
+    "reason": "generator: not worth teaching"
+  },
+  {
+    "id": "pv-0759",
+    "verb": "drum into",
+    "reason": "editor: only natural split (drummed it into me)"
+  }
+]

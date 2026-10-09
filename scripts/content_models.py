@@ -76,13 +76,3 @@ class PhrasalCorpus(TypedDict):
 
     meta: dict[str, int | str | bool | dict[str, int]]
     verbs: list[PhrasalVerb]
-
-
-class PhrasalReview(TypedDict):
-    """Validated phrasal semantic-review result."""
-
-    verdict: Literal["ok", "fix", "broken"]
-    reasons: list[str]
-    suggested_gloss: str
-    suggested_difficulty: str
-    suggested_definition: str

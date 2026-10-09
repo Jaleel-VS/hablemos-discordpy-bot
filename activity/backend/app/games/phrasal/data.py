@@ -1,29 +1,34 @@
 """Verb data + selection helpers for the phrasal-verb game.
 
-Loads the precomputed ``phrasal_verbs.json`` (built offline by
-``scripts/generate_phrasal_verbs.py`` from the WithEnglishWeCan dataset) once at
-import. The runtime never calls an LLM — it just reads this JSON, the same rule
-the conjugation and cloze games follow.
+Loads the precomputed ``phrasal_verbs.json`` once at import. The verb list was
+curated by ``scripts/generate_phrasal_verbs.py`` from the WithEnglishWeCan
+dataset; every definition, gloss, example and distractor was then rewritten
+into everyday learner English by ``scripts/rewrite_phrasal_examples.py``. The
+runtime never calls an LLM — it just reads this JSON, the same rule the
+conjugation and cloze games follow.
 
 Everything the engine needs to *pose an item* and *know the answer* lives here:
 the verb pool, the difficulty catalog, and the pickers (deterministic for daily,
 random for freeplay).
 
-A verb entry (see the generator for the full schema)::
+A verb entry::
 
     {
       "id": "pv-0001",
       "verb": "carry out",
       "particle": "out",
       "base": "carry",
-      "definitions": ["to do a particular piece of work, research etc"],
-      "gloss_es": null,
-      "example": "An investigation is being ___ by the prison governor.",
-      "example_answer": "carried out",
+      "definitions": ["do or complete a planned task"],
+      "gloss_es": "llevar a cabo, realizar",
+      "example": "The doctors will ___ a few tests this morning.",
+      "example_answer": "carry out",
       "forms": ["carried out", "carries out", "carry out", "carrying out"],
-      "distractors_particle": ["over", "on", "away"],
-      "difficulty": "beginner"
+      "distractors_particle": ["in", "over", "up"],
+      "difficulty": "intermediate"
     }
+
+``example_answer`` always ends with the particle (verb and particle are
+contiguous), so particle mode can write the inflected verb into the sentence.
 """
 from __future__ import annotations
 
