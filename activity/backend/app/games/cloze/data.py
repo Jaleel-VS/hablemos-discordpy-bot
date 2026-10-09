@@ -27,6 +27,7 @@ import hashlib
 import json
 import secrets
 from dataclasses import dataclass
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -92,13 +93,17 @@ class Card:
     def prompt(self, *, seed: str, include_options: bool = True) -> dict[str, Any]:
         """Answer-free view of the card (what the client renders).
 
+        ``id`` is intentionally excluded: exposing the card id in an in-play
+        prompt lets a client correlate the daily's sealed state with known card
+        ids and harvest answers offline. Ids appear only in the final result
+        ``review_ids`` (game already over, nothing left to probe).
+
         ``options`` (the shuffled answer + distractors) is included only for
         multiple-choice play. In type-in mode the options *contain the answer*,
         so emitting them would hand the client the answer outright — they are
         omitted there.
         """
         view: dict[str, Any] = {
-            "id": self.id,
             "target": self.target,
             "cloze": self.cloze,
             "context": self.context,
@@ -107,6 +112,7 @@ class Card:
         if include_options:
             view["options"] = self.options(seed=seed)
         return view
+
 
     def as_state(self) -> dict[str, Any]:
         """Full serialization (includes the answer) for sealed state."""
@@ -144,12 +150,20 @@ class Config:
 
     @property
     def pool(self) -> list[dict[str, Any]]:
+        """Cards for this config.  Raises ``GameError`` if an explicit
+        difficulty bucket is requested but is empty."""
+        from app.games.base import GameError
         cards = _BY_TARGET.get(self.target, [])
         if self.difficulty is None:
             return cards
         filtered = [c for c in cards if c.get("difficulty") == self.difficulty]
-        # Never hand back an empty pool just because a difficulty is sparse.
-        return filtered or cards
+        if not filtered:
+            raise GameError(
+                f"No hay tarjetas para el nivel '{self.difficulty}' en el mazo '{self.target}'."
+            )
+        return filtered
+
+
 
 
 def default_config() -> Config:
@@ -185,11 +199,31 @@ def daily_config() -> Config:
     return Config(target=_DEFAULT_TARGET, difficulty=None)
 
 
+#: Puzzle #1 epoch for daily id computation (matches engine._EPOCH).
+_EPOCH = date(2026, 1, 1)
+
+
+def _today_daily_ids(*, puzzle_no: int | None = None) -> set[str]:
+    """Return the set of card ids in today's deterministic daily round.
+
+    Used to validate ``options.ids`` for freeplay review rounds: any id that is
+    in today's daily set must be dropped (anti-harvest invariant).
+    """
+    if puzzle_no is None:
+        today = datetime.now(UTC).date()
+        puzzle_no = (today - _EPOCH).days + 1
+    config = daily_config()
+    cards = deterministic_cards(config, seed=puzzle_no, count=10)
+    return {c.id for c in cards}
+
+
+
 def _pool_or_raise(config: Config) -> list[dict[str, Any]]:
     pool = config.pool
     if not pool:
         raise RuntimeError("cloze card pool is empty (missing/empty data file)")
     return pool
+
 
 
 def deterministic_cards(config: Config, *, seed: int, count: int) -> list[Card]:
@@ -234,3 +268,42 @@ def random_cards(config: Config, *, count: int, avoid_ids: set[str] | None = Non
         j = secrets.randbelow(i + 1)
         shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
     return [_card_from_dict(c) for c in shuffled[:take]]
+
+
+def random_cards_by_ids(
+    ids: list[str],
+    *,
+    target: str,
+    count: int,
+    config: Config,
+) -> list[Card] | None:
+    """Draw cards matching the given ids for a freeplay review round.
+
+    Validates that each id exists in ``target``'s full deck and drops any id
+    in today's deterministic daily set (anti-harvest invariant). Dedupes and
+    caps at ``count``. Returns ``None`` when nothing valid remains (caller
+    falls back to a normal random round).
+    """
+    # Build a lookup of all cards in the target deck by id.
+    deck = {c.get("id"): c for c in _BY_TARGET.get(target, [])}
+    if not deck:
+        return None
+    # Drop daily ids.
+    daily_ids = _today_daily_ids()
+    # Dedupe preserving order, reject missing and daily ids, cap at count.
+    seen: set[str] = set()
+    valid: list[dict[str, Any]] = []
+    for raw_id in ids:
+        if not isinstance(raw_id, str):
+            continue
+        if raw_id in seen or raw_id in daily_ids:
+            continue
+        if raw_id not in deck:
+            continue
+        seen.add(raw_id)
+        valid.append(deck[raw_id])
+        if len(valid) >= count:
+            break
+    if not valid:
+        return None
+    return [_card_from_dict(c) for c in valid]

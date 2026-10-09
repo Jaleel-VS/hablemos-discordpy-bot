@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import type { ClozeView } from "../../api";
+import type { Lang } from "../../i18n/lang";
+import AccentBar from "../../components/AccentBar";
+import { t } from "./i18n";
 
 interface RoundProps {
   view: ClozeView;
+  lang: Lang;
   busy: boolean;
   error: string | null;
-  onAnswer: (guess: string) => void;
+  onAnswer: (guess: string, action?: "answer" | "retry" | "skip" | "continue") => void;
   onFinish: () => void;
 }
 
@@ -17,25 +21,38 @@ function splitBlank(cloze: string): [string, string] {
   return [cloze.slice(0, idx), cloze.slice(idx + 3)];
 }
 
-export default function Round({ view, busy, error, onAnswer, onFinish }: RoundProps) {
+export default function Round({ view, lang, busy, error, onAnswer, onFinish }: RoundProps) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const prompt = view.prompt;
   const last = view.last;
   const isChoice = view.answer_mode === "choice";
+  const awaitingRetry = view.awaiting_retry ?? false;
+  const awaitingContinue = view.awaiting_continue ?? false;
+  const revealing = awaitingRetry || awaitingContinue;
 
   // Clear the field / refocus whenever a new card arrives (keyed on the
-  // answered count so it fires once per advance).
+  // answered count so it fires once per advance, not on every re-render).
   useEffect(() => {
     setValue("");
     if (!isChoice) inputRef.current?.focus();
   }, [view.answered_count, isChoice]);
 
+  // Refocus after a retry feedback without clearing value (the player may
+  // want to keep some characters, and the error toast should not steal focus).
+  useEffect(() => {
+    if (awaitingRetry && !isChoice) inputRef.current?.focus();
+  }, [awaitingRetry, isChoice]);
+
   const submitType = (e: React.FormEvent) => {
     e.preventDefault();
     const g = value.trim();
     if (!g || busy) return;
-    onAnswer(g);
+    if (awaitingRetry) {
+      onAnswer(g, "retry");
+    } else {
+      onAnswer(g);
+    }
   };
 
   if (!prompt) {
@@ -47,7 +64,10 @@ export default function Round({ view, busy, error, onAnswer, onFinish }: RoundPr
   }
 
   const [before, after] = splitBlank(prompt.cloze);
-  const progress = `${Math.min(view.seq + 1, view.round_size)} / ${view.round_size}`;
+  const progress = t(lang, "round.progress", {
+    seq: Math.min(view.seq + 1, view.round_size),
+    total: view.round_size,
+  });
   // The daily feeds streaks and only counts when every card is answered, so the
   // backend rejects an early daily finish. Don't offer "Terminar" for the daily
   // (freeplay is practice and may be ended any time).
@@ -58,10 +78,10 @@ export default function Round({ view, busy, error, onAnswer, onFinish }: RoundPr
       <div className="round-top">
         {canFinish ? (
           <button className="finish-btn" onClick={onFinish} disabled={busy}>
-            Terminar
+            {t(lang, "round.finish")}
           </button>
         ) : (
-          <span className="round-daily-tag">Reto diario</span>
+          <span className="round-daily-tag">{t(lang, "round.daily_tag")}</span>
         )}
         <div className="score-pills">
           <span className="pill pill-progress">{progress}</span>
@@ -91,83 +111,134 @@ export default function Round({ view, busy, error, onAnswer, onFinish }: RoundPr
       </div>
 
       {/* The prompt card. `key` on answered_count forces a remount so the
-          enter animation replays for every new card. */}
+          enter animation replays for every new card. Stays visible during
+          awaiting_retry / awaiting_continue (same seq, same card) — and on a
+          miss the blank itself fills with the answer, so the correction lands
+          exactly where the learner was looking. */}
       <div className="prompt-card cloze-card" key={view.answered_count}>
         <p className="cloze-sentence">
           {before}
-          <span className="cloze-blank" aria-label="palabra que falta">
-            ？
-          </span>
+          {revealing && last?.answer ? (
+            <span className="cloze-blank cloze-blank--revealed">{last.answer}</span>
+          ) : (
+            <span className="cloze-blank" aria-label="palabra que falta">
+              ？
+            </span>
+          )}
           {after}
         </p>
         <p className="cloze-context">{prompt.context}</p>
       </div>
 
-      {/* Inline feedback from the previous answer. In the daily there is no
-          per-card feedback (the backend withholds it so a replayed token can't
-          probe answers), so show a subtle note that corrections come at the
-          end instead of an empty slot. Freeplay flashes the graded result. */}
-      <div className="feedback-slot">
-        {last ? (
-          <p className={`feedback feedback--${last.result}`} key={view.answered_count}>
-            {last.result === "exact" && <span>¡Correcto!</span>}
-            {last.result === "close" &&
-              (last.answer ? (
-                <span>
-                  ¡Casi! <strong>{last.answer}</strong> (acentos)
-                </span>
-              ) : (
-                <span>¡Casi! (acentos)</span>
-              ))}
-            {last.result === "wrong" &&
-              (last.answer ? (
-                <span>
-                  Era <strong>{last.answer}</strong>
-                </span>
-              ) : (
-                <span>Incorrecto</span>
-              ))}
+      {/* Choice mode — awaiting_continue: what they picked, then Continue. */}
+      {awaitingContinue && last ? (
+        <div className="cloze-miss" key="reveal">
+          <p className="cloze-miss-line">
+            {t(lang, "miss.you_wrote", { given: last.given || "—" })}
           </p>
-        ) : view.mode === "daily" && view.answered_count > 0 ? (
-          <p className="feedback feedback--daily" key={view.answered_count}>
-            <span>Revisa tus respuestas al final</span>
+          <button
+            className="cta cta-continue"
+            onClick={() => onAnswer("", "continue")}
+            disabled={busy}
+          >
+            {t(lang, "continue.btn")}
+          </button>
+        </div>
+      ) : awaitingRetry && last ? (
+        /* Type mode — awaiting_retry: retype the revealed word to move on. */
+        <div className="cloze-miss" key="retry">
+          <p className="cloze-miss-line">
+            {last.retry
+              ? t(lang, "miss.try_again")
+              : t(lang, "miss.you_wrote", { given: last.given || "—" })}
           </p>
-        ) : null}
-      </div>
-
-      {isChoice ? (
-        <div className="cloze-options">
-          {prompt.options.map((opt) => (
-            <button
-              key={opt}
-              className="cloze-option"
-              onClick={() => !busy && onAnswer(opt)}
-              disabled={busy}
-            >
-              {opt}
-            </button>
-          ))}
+          <p className="retry-instruction">{t(lang, "retry.instruction")}</p>
         </div>
       ) : (
-        <form className="answer-form" onSubmit={submitType}>
-          <input
-            ref={inputRef}
-            className="answer-input"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder="escribe la palabra…"
-            autoComplete="off"
-            autoCapitalize="off"
-            autoCorrect="off"
-            spellCheck={false}
-            enterKeyHint="go"
-            disabled={busy}
-            aria-label="Escribe la palabra que falta"
-          />
-          <button className="answer-go" type="submit" disabled={busy || !value.trim()}>
-            →
-          </button>
-        </form>
+        /* Normal feedback: inline flash from the previous answer. In the
+           daily there is no per-card feedback (backend withholds it) so show
+           a subtle note that corrections come at the end instead of an empty
+           slot. Freeplay flashes the graded result. */
+        <div className="feedback-slot">
+          {last ? (
+            <p className={`feedback feedback--${last.result}`} key={view.answered_count}>
+              {last.retry ? (
+                <span>{t(lang, "feedback.retry_ok", { answer: last.answer ?? "" })}</span>
+              ) : (
+                last.result === "exact" && <span>{t(lang, "feedback.correct")}</span>
+              )}
+              {!last.retry && last.result === "close" &&
+                (last.answer ? (
+                  <span>{t(lang, "feedback.close", { answer: last.answer })}</span>
+                ) : (
+                  <span>{t(lang, "feedback.close.short")}</span>
+                ))}
+              {!last.retry && last.result === "wrong" &&
+                (last.answer ? (
+                  <span>{t(lang, "feedback.wrong", { answer: last.answer })}</span>
+                ) : (
+                  <span>{t(lang, "feedback.wrong.short")}</span>
+                ))}
+            </p>
+          ) : view.mode === "daily" && view.answered_count > 0 ? (
+            <p className="feedback feedback--daily" key={view.answered_count}>
+              <span>{t(lang, "round.daily_hint")}</span>
+            </p>
+          ) : null}
+        </div>
+      )}
+
+      {/* Answer controls. During awaiting_continue the Continue button is
+          already shown in the reveal card above; during awaiting_retry the
+          type form stays live for the retype. */}
+      {!awaitingContinue && (
+        isChoice ? (
+          <div className="cloze-options">
+            {prompt.options?.map((opt) => (
+              <button
+                key={opt}
+                className="cloze-option"
+                onClick={() => !busy && onAnswer(opt)}
+                disabled={busy}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <>
+            <form className="answer-form" onSubmit={submitType}>
+              <input
+                ref={inputRef}
+                className="answer-input"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder={t(lang, "round.placeholder")}
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
+                enterKeyHint="go"
+                disabled={busy}
+                aria-label="Escribe la palabra que falta"
+              />
+              <button className="answer-go" type="submit" disabled={busy || !value.trim()}>
+                →
+              </button>
+            </form>
+            <AccentBar inputRef={inputRef} value={value} onChange={setValue} />
+            {awaitingRetry && (
+              <button
+                className="skip-btn"
+                type="button"
+                onClick={() => onAnswer("", "skip")}
+                disabled={busy}
+              >
+                {t(lang, "retry.skip")}
+              </button>
+            )}
+          </>
+        )
       )}
     </div>
   );

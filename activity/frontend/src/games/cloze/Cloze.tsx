@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
+import type { Lang } from "../../i18n/lang";
+import { storedLang } from "../../i18n/lang";
 import {
   startCloze,
   submitCloze,
@@ -9,6 +11,7 @@ import type { GameProps } from "../registry";
 import Setup from "./Setup";
 import Round from "./Round";
 import Summary from "./Summary";
+import { defaultLangForTarget, DEFAULT_LANG } from "./i18n";
 
 // Screen the player is on within the game. "setup" picks the deck/mode;
 // "playing" is the card round; "done" is the score + misses recap.
@@ -20,6 +23,18 @@ export default function Cloze({ accessToken }: GameProps) {
   const [view, setView] = useState<ClozeView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // Track the target so the round screen can display lang correctly.
+  const [currentTarget, setCurrentTarget] = useState("es");
+
+  // Chrome language: follows target deck when the player never chose explicitly.
+  const [lang, setLang] = useState<Lang>(() => storedLang() ?? DEFAULT_LANG);
+
+  // Keep lang in sync with view when the game starts.
+  useEffect(() => {
+    if (storedLang() === null) {
+      setLang(defaultLangForTarget(currentTarget));
+    }
+  }, [currentTarget]);
 
   const begin = useCallback(
     async (mode: "daily" | "free", options?: StartOptions) => {
@@ -29,6 +44,9 @@ export default function Cloze({ accessToken }: GameProps) {
         const resp = await startCloze(accessToken, mode, options);
         setSealed(resp.sealed_state);
         setView(resp.view);
+        const target = resp.view.target ?? "es";
+        setCurrentTarget(target);
+        if (storedLang() === null) setLang(defaultLangForTarget(target));
         setScreen(resp.view.status === "over" ? "done" : "playing");
       } catch (e) {
         setError(e instanceof Error ? e.message : "No se pudo iniciar");
@@ -39,13 +57,13 @@ export default function Cloze({ accessToken }: GameProps) {
     [accessToken],
   );
 
-  const answer = useCallback(
-    async (guess: string, finish = false) => {
+  const sendAction = useCallback(
+    async (guess: string, action: "answer" | "retry" | "skip" | "continue" = "answer", finish = false) => {
       if (!sealed || busy) return;
       setBusy(true);
       setError(null);
       try {
-        const resp = await submitCloze(accessToken, sealed, guess, finish);
+        const resp = await submitCloze(accessToken, sealed, guess, finish, action);
         setSealed(resp.sealed_state);
         setView(resp.view);
         if (resp.view.status === "over") setScreen("done");
@@ -58,10 +76,26 @@ export default function Cloze({ accessToken }: GameProps) {
     [accessToken, sealed, busy],
   );
 
+  // onAnswer: unified handler for answer/retry/skip/continue actions.
+  const answer = useCallback(
+    (guess: string, action: "answer" | "retry" | "skip" | "continue" = "answer") => {
+      void sendAction(guess, action, false);
+    },
+    [sendAction],
+  );
+
   // "Terminar" — end the round early and show the recap.
   const finish = useCallback(() => {
-    void answer("", true);
-  }, [answer]);
+    void sendAction("", "answer", true);
+  }, [sendAction]);
+
+  // "Practise these N" — start a freeplay round with the missed card ids.
+  const practiseMisses = useCallback(
+    (ids: string[]) => {
+      void begin("free", { target: currentTarget, answer_mode: "type", ids });
+    },
+    [begin, currentTarget],
+  );
 
   // Auto-dismiss the round error toast so it doesn't linger.
   useEffect(() => {
@@ -75,13 +109,22 @@ export default function Cloze({ accessToken }: GameProps) {
   }
 
   if (screen === "done" && view?.result) {
-    return <Summary result={view.result} onReplay={() => setScreen("setup")} accessToken={accessToken} />;
+    return (
+      <Summary
+        result={view.result}
+        lang={lang}
+        onReplay={() => setScreen("setup")}
+        onPractiseMisses={practiseMisses}
+        accessToken={accessToken}
+      />
+    );
   }
 
   if (view) {
     return (
       <Round
         view={view}
+        lang={lang}
         busy={busy}
         error={error}
         onAnswer={answer}

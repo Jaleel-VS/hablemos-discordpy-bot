@@ -46,7 +46,13 @@
 
 /* The cloze card: the target sentence with a highlighted blank, plus the
    context sentence in the other language underneath. */
+/* Content-height card: .prompt-card (conjugation) is flex:1 so the timed
+ * prompt fills its screen; a cloze sentence floating in a viewport-tall box
+ * reads as empty, so the card sizes to its text here. */
 .cloze-card {
+  flex: none;
+  min-height: 180px;
+  justify-content: center;
   gap: 16px;
   background: var(--bg-sunken);
   box-shadow: inset 0 0 18px var(--glow);
@@ -186,4 +192,180 @@
   background: color-mix(in srgb, var(--warn) 16%, transparent);
   padding: 1px 6px;
   border-radius: var(--radius);
+}
+
+/* ── Freeplay miss reveal (choice mode: awaiting_continue) ─────────────── */
+/* Modeled on conjugation's .reveal-card visual grammar: bg-raised, 1px
+   line-soft border, expected answer in pixel accent. */
+.reveal-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn 0.18s ease;
+}
+
+.reveal-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+  margin: 0;
+}
+
+.reveal-sentence {
+  font-family: var(--font-ui);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 0;
+}
+
+.reveal-context {
+  font-size: 0.9rem;
+  color: var(--ink-dim);
+  margin: 0;
+}
+
+.cta-continue {
+  align-self: flex-end;
+  min-width: 120px;
+}
+
+/* ── Freeplay miss reveal (type mode: awaiting_retry) ──────────────────── */
+.retry-reveal {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0 4px;
+}
+
+.retry-instruction {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--warn);
+  margin: 0;
+}
+
+/* Skip button during awaiting_retry */
+.skip-btn {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: var(--ink-dim);
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  align-self: flex-start;
+}
+
+.skip-btn:hover {
+  color: var(--ink);
+}
+
+/* ── Summary miss sentence + context rows ─────────────────────────────── */
+.miss-sentence {
+  display: block;
+  font-size: 0.9rem;
+  font-family: var(--font-ui);
+  color: var(--ink);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.miss-context {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--ink-dim);
+  margin-top: 2px;
+}
+
+/* ── CTA secondary variant (smaller visual weight than primary) ─────────── */
+.cta-secondary {
+  background: var(--bg-raised);
+  color: var(--ink);
+  border: 1px solid var(--line-soft);
+}
+
+.cta-secondary:hover:not(:disabled) {
+  background: var(--bg-hover, color-mix(in srgb, var(--bg-raised) 80%, var(--accent) 20%));
+}
+
+/* CTA with sub-label (practice / daily two-line buttons) */
+.cta .cta-main,
+.cta .cta-sub {
+  display: block;
+}
+
+.cta .cta-sub {
+  font-size: 0.78rem;
+  font-weight: 400;
+  opacity: 0.82;
+  margin-top: 2px;
+}
+
+/* "Practise these N" CTA: slightly narrower + accent border so it reads as
+   a learning action, not just a replay. */
+.cta-practise {
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg-raised));
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  color: var(--ink);
+}
+
+.cta-practise:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 22%, var(--bg-raised));
+}
+
+/* Setup actions: Practice (primary) above the daily panel, full width. */
+.setup-actions--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.cta.cta-stack {
+  width: 100%;
+  padding: 12px 18px;
+}
+
+/* Miss state: the answer appears *in* the blank (the learner's eye is
+ * already there), the rest of the card stays put. */
+.cloze-blank--revealed {
+  min-width: 0;
+  padding: 0 6px;
+  color: var(--accent);
+  font-weight: 600;
+  border-bottom-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 14%, transparent);
+  animation: blank-fill 0.25s var(--ease) both;
+}
+
+@keyframes blank-fill {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+
+.cloze-miss {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cloze-miss-line {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--danger);
+}
+
+.cloze-miss .cta-continue {
+  align-self: stretch;
+  margin-top: 4px;
 }

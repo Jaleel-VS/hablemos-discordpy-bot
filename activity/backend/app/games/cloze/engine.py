@@ -38,14 +38,31 @@ State shape::
       "correct": <int>,
       "streak": <int>,
       "best_streak": <int>,
+      "awaiting_retry": false,            # type mode only: true after wrong/close in freeplay
+      "retry_attempts": <int>,            # failed retries since awaiting_retry=true
+      "awaiting_continue": false,         # choice mode only: true after wrong/close in freeplay
       "status": "playing" | "over",
-      "date": "YYYY-MM-DD"
+      "date": "YYYY-MM-DD",
+      "last": <null | feedback dict>
     }
 
 The daily round is a fixed, deterministic sequence shared by everyone, so the
 per-card feedback withholds the answer in daily mode (anti-harvest) — the client
-sees the exact/close/wrong flag but not the correct word until the end recap.
-Freeplay reveals normally.
+gets no per-card feedback at all (not even the exact/close/wrong flag), and the
+running counters are also withheld. Freeplay reveals normally.
+
+Freeplay miss mechanics:
+
+* **Type mode**: after a wrong/close answer the state transitions to
+  ``awaiting_retry=True`` — the same card stays visible and the client must
+  retype the correct word (``action="retry"``).  Two failed retries force
+  advance.  ``action="skip"`` is allowed when NOT awaiting_retry.
+* **Choice mode**: after a wrong/close answer the state transitions to
+  ``awaiting_continue=True`` — the client shows the completed sentence + context
+  (reveal card) with a Continue button.  The client sends ``action="continue"``
+  to advance (no retype, no score change).
+
+Daily mode rejects ``retry``, ``skip``, and ``continue``.
 """
 from __future__ import annotations
 
@@ -63,6 +80,17 @@ ROUND_SIZE = 10
 _EPOCH = date(2026, 1, 1)
 
 _ANSWER_MODES = ("choice", "type")
+_VALID_ACTIONS = {"answer", "skip", "retry", "continue"}
+#: After this many failed retries in retry mode, force advance anyway.
+_MAX_RETRY_ATTEMPTS = 2
+#: Longest stored echo of a guess. Real answers are one word; the request
+#: allows 128 chars, and storing that verbatim in every graded row is what let
+#: a 10-card round of the heaviest cards outgrow the 8 KB sealed-state cap.
+_MAX_GIVEN = 40
+
+
+def _clip(guess: str) -> str:
+    return guess.strip()[:_MAX_GIVEN]
 
 
 def _now() -> datetime:
@@ -105,7 +133,18 @@ class ClozeEngine:
             config = d.resolve_config(options)
             puzzle_no = None
             answer_mode = _resolve_answer_mode(options)
-            cards = d.random_cards(config, count=ROUND_SIZE)
+            # options.ids: review round — use specified card ids if valid.
+            ids_raw = options.get("ids") if isinstance(options, dict) else None
+            if isinstance(ids_raw, list) and ids_raw:
+                cards_by_ids = d.random_cards_by_ids(
+                    ids_raw,
+                    target=config.target,
+                    count=ROUND_SIZE,
+                    config=config,
+                )
+                cards = cards_by_ids if cards_by_ids else d.random_cards(config, count=ROUND_SIZE)
+            else:
+                cards = d.random_cards(config, count=ROUND_SIZE)
 
         if not cards:
             raise GameError("No hay tarjetas disponibles.")
@@ -125,6 +164,9 @@ class ClozeEngine:
             "correct": 0,
             "streak": 0,
             "best_streak": 0,
+            "awaiting_retry": False,
+            "retry_attempts": 0,
+            "awaiting_continue": False,
             "status": "playing",
             "date": today.isoformat(),
             "last": None,
@@ -137,6 +179,8 @@ class ClozeEngine:
         self._validate_state(state)
         if state["status"] != "playing":
             raise GameError("Esta partida ya terminó.")
+        if action not in _VALID_ACTIONS:
+            raise GameError("Acción no válida.")
 
         # Daily is a fixed once-per-day sequence that feeds streaks, so a saved
         # token can't be finished on a later day (which would credit a streak
@@ -144,6 +188,10 @@ class ClozeEngine:
         # longer today — mirrors Wordle's daily date gate. Freeplay has no date.
         if state.get("mode") == "daily" and state.get("date") != _now().date().isoformat():
             raise GameError("El reto diario de ese día ya expiró.")
+
+        # Daily rejects retry/skip/continue (anti-harvest + finish guard).
+        if state.get("mode") == "daily" and action in {"retry", "skip", "continue"}:
+            raise GameError(f"Acción '{action}' no disponible en el reto diario.")
 
         # A cloze round has no clock. Freeplay may be ended early via "Terminar"
         # (it's practice, no streak stakes). The DAILY, however, feeds streaks —
@@ -165,17 +213,90 @@ class ClozeEngine:
         # (banking a persisted won=True, 0/N result + streak). Every real answer
         # (a typed word or a tapped option) is non-empty; the client only sends
         # "" via the finish path handled above.
-        if not guess.strip():
+        if not guess.strip() and action not in {"skip", "continue"}:
             raise GameError("Escribe o elige una respuesta.")
 
         card = self._current_card(state)
+        is_daily = state.get("mode") == "daily"
+        is_type_mode = state.get("answer_mode") == "type"
+        awaiting_retry = bool(state.get("awaiting_retry", False))
+        awaiting_continue = bool(state.get("awaiting_continue", False))
+
+        # ── continue (choice mode, freeplay only) ─────────────────────────
+        if action == "continue":
+            if not awaiting_continue:
+                raise GameError("No hay nada que continuar.")
+            state["awaiting_continue"] = False
+            state["seq"] += 1
+            if state["seq"] >= state["round_size"]:
+                state["status"] = "over"
+            return GuessOutcome(state=state, client_view=self.client_view(state))
+
+        # ── skip (freeplay only, not while a miss is pending) ─────────────
+        if action == "skip":
+            # A pending miss must be resolved (retype / continue) first; skipping
+            # it would record the same card twice and desync answered vs cards.
+            if awaiting_retry or awaiting_continue:
+                raise GameError("Termina la tarjeta actual antes de saltar.")
+            state["answered"].append({
+                "id": card.id,
+                "answer": card.answer,
+                "given": "",
+                "result": "skipped",
+            })
+            state["streak"] = 0
+            state["last"] = {"result": "skipped", "given": "", "answer": card.answer}
+            state["retry_attempts"] = 0
+            state["seq"] += 1
+            if state["seq"] >= state["round_size"]:
+                state["status"] = "over"
+            return GuessOutcome(state=state, client_view=self.client_view(state))
+
+        # ── retry (type mode, freeplay only) ──────────────────────────────
+        if action == "retry":
+            if not awaiting_retry:
+                raise GameError("No hay reintento pendiente.")
+            if not guess.strip():
+                raise GameError("Escribe la forma correcta para continuar.")
+            result = grade(guess, card.answer)
+            advance = result in (Match.EXACT, Match.CLOSE)
+            retry_attempts = state.get("retry_attempts", 0) + 1
+            if not advance and retry_attempts >= _MAX_RETRY_ATTEMPTS:
+                advance = True  # force advance after 2 failed retries
+            # Retry does NOT change score/streak counts.
+            state["last"] = {
+                "result": result.value,
+                "retry": True,
+                "given": _clip(guess),
+                "answer": card.answer,
+            }
+            if advance:
+                state["awaiting_retry"] = False
+                state["retry_attempts"] = 0
+                state["seq"] += 1
+                if state["seq"] >= state["round_size"]:
+                    state["status"] = "over"
+            else:
+                state["awaiting_retry"] = True
+                state["retry_attempts"] = retry_attempts
+            return GuessOutcome(state=state, client_view=self.client_view(state))
+
+        # ── answer (default) ──────────────────────────────────────────────
+        # If client is awaiting_retry and sends action="answer", treat as retry
+        # (lenient: avoids race where client didn't see the awaiting_retry flag).
+        if awaiting_retry:
+            return self.submit(state=state, guess=guess, finish=finish, action="retry")
+        # If awaiting_continue and sends action="answer", treat as continue.
+        if awaiting_continue:
+            return self.submit(state=state, guess=guess, finish=finish, action="continue")
+
         result = grade(guess, card.answer)
         is_correct = result in (Match.EXACT, Match.CLOSE)
 
         state["answered"].append({
             "id": card.id,
             "answer": card.answer,
-            "given": guess.strip(),
+            "given": _clip(guess),
             "result": result.value,
         })
         if is_correct:
@@ -186,18 +307,31 @@ class ClozeEngine:
             state["streak"] = 0
 
         # Feedback on the card just graded (client flashes this before the next
-        # card animates in). Answer withheld in daily (see _client_last).
-        state["last"] = {
-            "result": result.value,
-            "answer": card.answer,
-            "given": guess.strip(),
-            "context": card.context,
-        }
+        # card animates in). Answer withheld in daily (see _client_last). The
+        # completed sentence/context are derived at view time from the card, not
+        # stored: sealed state must stay small whatever cards `options.ids` picks.
+        state["last"] = {"result": result.value, "answer": card.answer, "given": _clip(guess)}
+
+        # Freeplay miss mechanics: set awaiting_retry (type) or
+        # awaiting_continue (choice) so the client shows a learning reveal.
+        if not is_daily and not is_correct:
+            if is_type_mode:
+                state["awaiting_retry"] = True
+                state["retry_attempts"] = 0
+                # Do NOT advance seq; same card stays.
+                return GuessOutcome(state=state, client_view=self.client_view(state))
+            else:
+                state["awaiting_continue"] = True
+                # Do NOT advance seq; choice reveal card shows, then "continue".
+                return GuessOutcome(state=state, client_view=self.client_view(state))
 
         # Advance; end the round when we've served every card.
         state["seq"] += 1
         if state["seq"] >= state["round_size"]:
             state["status"] = "over"
+        state["awaiting_retry"] = False
+        state["retry_attempts"] = 0
+        state["awaiting_continue"] = False
         return GuessOutcome(state=state, client_view=self.client_view(state))
 
     def is_over(self, state: dict[str, Any]) -> bool:
@@ -216,6 +350,52 @@ class ClozeEngine:
             header = f"Cloze #{state['puzzle_no']}"
         summary = f"{header} · {correct}/{total}"
 
+        # Build miss rows: wrong + close. Derive sentence/context from the
+        # precomputed card data in state — these are static fields that never
+        # change, so deriving them at result time keeps them out of sealed state
+        # (sealed state carries only the grading log).
+        cards_by_id: dict[str, dict[str, Any]] = {
+            c["id"]: c for c in state.get("cards", []) if isinstance(c, dict)
+        }
+        misses: list[dict[str, Any]] = []
+        # review_ids: the ids of wrong+close cards, deduped, capped at 10.
+        review_ids: list[str] = []
+        seen_review: set[str] = set()
+        for a in answered:
+            if a["result"] not in (Match.WRONG.value, Match.CLOSE.value):
+                continue
+            card_raw = cards_by_id.get(a.get("id", ""))
+            sentence: str | None = None
+            context: str | None = None
+            if card_raw:
+                answer_word = card_raw.get("answer", a.get("answer", ""))
+                cloze_str = card_raw.get("cloze", "")
+                sentence = cloze_str.replace("___", answer_word) if cloze_str else None
+                context = card_raw.get("context")
+            miss_entry: dict[str, Any] = {
+                "id": a.get("id", ""),
+                "answer": a["answer"],
+                "given": a["given"],
+                "result": a["result"],
+            }
+            if sentence is not None:
+                miss_entry["sentence"] = sentence
+            if context is not None:
+                miss_entry["context"] = context
+            misses.append(miss_entry)
+            card_id = a.get("id", "")
+            # Daily recap: a "practise these" round can never contain today's
+            # daily cards (data.random_cards_by_ids drops them), so offering
+            # them would start an unrelated random round. Only freeplay offers.
+            if (
+                state.get("mode") != "daily"
+                and card_id
+                and card_id not in seen_review
+                and len(review_ids) < 10
+            ):
+                seen_review.add(card_id)
+                review_ids.append(card_id)
+
         return {
             # Daily is a practice streak (completing the round counts), so it is
             # a "win" for streak/stats purposes.
@@ -232,16 +412,8 @@ class ClozeEngine:
             "score": f"{correct}/{total}",
             "grid": self._emoji_grid(answered),
             "summary": summary,
-            # The recap review list. Include both WRONG and CLOSE (accent) cards
-            # so the learner sees the correct spelling of everything they didn't
-            # nail — crucial in daily mode, where per-card feedback is withheld
-            # during play (an accent miss otherwise never surfaces the correct
-            # form). Each entry carries its ``result`` so the client can render
-            # a CLOSE differently from an outright miss.
-            "misses": [
-                a for a in answered
-                if a["result"] in (Match.WRONG.value, Match.CLOSE.value)
-            ],
+            "misses": misses,
+            "review_ids": review_ids,
         }
 
     # ── helpers ───────────────────────────────────────────────────────────
@@ -270,6 +442,8 @@ class ClozeEngine:
             # so it leaks nothing about the current card and is always shown.
             "answered_count": len(state.get("answered", [])),
             "status": state["status"],
+            "awaiting_retry": bool(state.get("awaiting_retry", False)),
+            "awaiting_continue": bool(state.get("awaiting_continue", False)),
             "last": self._client_last(state),
         }
         if daily_in_progress:
@@ -324,7 +498,16 @@ class ClozeEngine:
             return None
         if state.get("mode") == "daily":
             return None
-        return last
+        # The miss reveal needs the completed sentence and its translation; both
+        # come from the card at view time (the reveal is for the card still on
+        # screen while a miss is pending, i.e. cards[seq]), never from state.
+        view = dict(last)
+        if state.get("awaiting_retry") or state.get("awaiting_continue"):
+            # _validate_state guarantees 0 <= seq < len(cards) while playing.
+            card = self._current_card(state)
+            view["sentence"] = card.cloze.replace("___", card.answer)
+            view["context"] = card.context
+        return view
 
     def _current_card(self, state: dict[str, Any]) -> d.Card:
         """Rebuild the current Card from stored state (answer included)."""
@@ -361,20 +544,6 @@ class ClozeEngine:
         including inside each card and each answered entry, so downstream code
         (``result_payload``, ``_emoji_grid``, ``_current_card``, ``options``)
         can trust the shape.
-
-        Deferred (round-3 advisor #optional): a Pydantic model for this state
-        would make the shape declarative instead of this hand-rolled check, and
-        would type-check at the model boundary rather than relying on every
-        downstream reader to have been audited here. Not done in this pass
-        because (a) ``wordle`` and ``conjugation`` validate their sealed state
-        the same hand-rolled way — migrating only ``cloze`` would make this one
-        engine inconsistent with its siblings rather than establishing a
-        pattern, and (b) the state round-trips through ``json.dumps`` in
-        ``sealed_state.seal``/``unseal`` as a plain dict, so adopting Pydantic
-        here would mean converting at every seal/unseal boundary across all
-        three engines to stay consistent — a cross-cutting change bigger than
-        this game. Worth doing as a dedicated follow-up across all engines at
-        once, not as a one-off on cloze.
         """
         def bad() -> GameError:
             return GameError("Estado de partida inválido.")
@@ -428,7 +597,7 @@ class ClozeEngine:
         answered = state.get("answered")
         if not isinstance(answered, list) or len(answered) > len(cards):
             raise bad()
-        valid_results = {m.value for m in Match}
+        valid_results = {m.value for m in Match} | {"skipped"}
         for entry in answered:
             if not isinstance(entry, dict):
                 raise bad()
