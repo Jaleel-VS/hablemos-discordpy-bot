@@ -42,12 +42,12 @@ export default function Phrasal({ accessToken }: GameProps) {
   );
 
   const answer = useCallback(
-    async (guess: string, finish = false) => {
+    async (guess: string, finish = false, action: "answer" | "retry" | "continue" = "answer") => {
       if (!sealed || busy) return;
       setBusy(true);
       setError(null);
       try {
-        const resp = await submitPhrasal(accessToken, sealed, guess, finish);
+        const resp = await submitPhrasal(accessToken, sealed, guess, finish, action);
         setSealed(resp.sealed_state);
         setView(resp.view);
         if (resp.view.status === "over") setScreen("done");
@@ -59,10 +59,6 @@ export default function Phrasal({ accessToken }: GameProps) {
     },
     [accessToken, sealed, busy],
   );
-
-  const finish = useCallback(() => {
-    void answer("", true);
-  }, [answer]);
 
   // Auto-dismiss the round error toast so it doesn't linger.
   useEffect(() => {
@@ -83,11 +79,18 @@ export default function Phrasal({ accessToken }: GameProps) {
   }
 
   if (screen === "learn") {
-    return <Learn onBack={() => setScreen("setup")} />;
+    return <Learn onBack={() => setScreen("setup")} accessToken={accessToken} onPracticeIds={(ids) => void begin("free", { ids, answer_mode: "choice" })} />;
   }
 
   if (screen === "done" && view?.result) {
-    return <Summary result={view.result} onReplay={() => setScreen("setup")} accessToken={accessToken} />;
+    return (
+      <Summary
+        result={view.result}
+        onReplay={() => setScreen("setup")}
+        onPracticeIds={(ids) => void begin("free", { ids, answer_mode: "choice" })}
+        accessToken={accessToken}
+      />
+    );
   }
 
   if (view) {
@@ -97,7 +100,7 @@ export default function Phrasal({ accessToken }: GameProps) {
         busy={busy}
         error={error}
         onAnswer={answer}
-        onFinish={finish}
+        onFinish={() => void answer("", true)}
       />
     );
   }

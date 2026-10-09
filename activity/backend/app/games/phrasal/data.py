@@ -48,6 +48,9 @@ DIFFICULTIES: dict[str, str] = _raw.get("difficulties", {
 #: All verbs, in file (ranked) order.
 _ALL: list[dict[str, Any]] = _raw.get("verbs", [])
 
+#: Fast id → raw-dict lookup; built once at import from the stable _ALL list.
+_ID_INDEX: dict[str, dict[str, Any]] = {v["id"]: v for v in _ALL if "id" in v}
+
 _DIFFICULTY_KEYS = set(DIFFICULTIES)
 
 #: The two ways to blank the example sentence.
@@ -108,16 +111,28 @@ class Verb:
         multiple-choice play (in type mode the options would leak the answer).
         """
         view: dict[str, Any] = {
-            "id": self.id,
+            # id is intentionally excluded from the in-play prompt view so it
+            # cannot be harvested to reconstruct the daily sequence or probe
+            # the answer by replaying the previous turn's state with each id.
             "blank_mode": blank_mode,
             "example": self.example,
             "definitions": list(self.definitions),
             "gloss_es": self.gloss_es,
             "difficulty": self.difficulty,
-            # In particle mode we reveal the base verb (the learner supplies the
-            # particle); in whole mode we don't (that would give it away).
+            # Whole mode hides the base (it would give the answer away).
             "base": self.base if blank_mode == "particle" else None,
         }
+        if blank_mode == "particle":
+            # The example's blank stands for the whole inflected span
+            # ("signing over"). In particle mode, write the inflected verb
+            # into the sentence and blank only the particle
+            # ("He's nervous about signing ___ the whole farm"), so the
+            # learner reads real English instead of "(sign) ... ___ ...".
+            span = self.example_answer
+            if span.lower().endswith(" " + self.particle.lower()):
+                inflected = span[: -len(self.particle)].rstrip()
+                view["example"] = self.example.replace("___", f"{inflected} ___", 1)
+                view["base_inline"] = True
         if options is not None:
             view["options"] = options
         return view
@@ -164,6 +179,33 @@ def verb_from_dict(raw: dict[str, Any]) -> Verb:
         distractors_particle=tuple(str(p) for p in raw.get("distractors_particle", [])),
         difficulty=str(raw.get("difficulty", "")),
     )
+
+
+def verb_by_id(verb_id: str) -> Verb | None:
+    """Return the :class:`Verb` for *verb_id*, or ``None`` if unknown.
+
+    The id index is built once at import from the committed JSON, so this is
+    O(1).  Used by the engine to rebuild verb objects from the slim sealed state
+    without iterating the full pool on every submit.
+    """
+    raw = _ID_INDEX.get(verb_id)
+    if raw is None:
+        return None
+    return verb_from_dict(raw)
+
+
+def verbs_by_ids(ids: list[str]) -> list[Verb]:
+    """Return :class:`Verb` objects for each id in *ids*, in order.
+
+    Unknown ids are silently dropped (the caller should have validated them).
+    Used by the engine for the review-mode ``options.ids`` freeplay start.
+    """
+    result: list[Verb] = []
+    for vid in ids:
+        raw = _ID_INDEX.get(vid)
+        if raw is not None:
+            result.append(verb_from_dict(raw))
+    return result
 
 
 @dataclass(frozen=True)

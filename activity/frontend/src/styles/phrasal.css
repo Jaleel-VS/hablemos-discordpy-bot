@@ -30,11 +30,21 @@
   margin: 0 auto;
 }
 
-.phrasal-learn {
+/* The parent (.phrasal) hides overflow; Learn and the recap can be long, so
+ * they scroll themselves (and the summary's sticky action bar needs a
+ * scrolling ancestor to pin to). */
+.phrasal-learn,
+.phrasal-summary {
   overflow-y: auto;
 }
 
+/* Content-height card (see .cloze-card): the shared .prompt-card is flex:1
+ * for the timed conjugation prompt; a sentence in a viewport-tall box reads
+ * as empty and pushes the reveal below the fold. */
 .phrasal-card {
+  flex: none;
+  min-height: 180px;
+  justify-content: center;
   gap: 14px;
   background: var(--bg-sunken);
   box-shadow: inset 0 0 18px var(--glow);
@@ -160,21 +170,209 @@
   margin-right: 8px;
 }
 
-/* "Aprender": the primary branch on the setup screen. Solid accent with the
- * same stacked label layout as the daily panel beside it. */
+
+/* ── setup header with lang toggle ──────────────────────────────────────── */
+.setup-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+
+.setup-header .setup-lede {
+  flex: 1;
+}
+
+/* cta-main / cta-sub: generic stacked label used by learn, daily, free ctás. */
+.cta .cta-main {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.cta .cta-sub {
+  font-size: 0.82rem;
+  opacity: 0.78;
+  margin-top: 2px;
+}
+
+/* "Aprender": the beginner's door. Outline in the third phosphor, so the one
+ * solid accent button on the screen stays "Práctica libre". */
 .cta.cta-learn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   width: 100%;
-  padding: 14px 18px;
+  background: transparent;
+  border: 1px solid var(--accent-3);
+  color: var(--ink);
 }
 
-.cta.cta-learn .cta-daily-main {
-  color: var(--accent-ink);
+.cta.cta-learn:hover {
+  background: color-mix(in oklab, var(--accent-3) 10%, transparent);
+  filter: none;
 }
 
-.cta.cta-learn .cta-daily-sub {
-  color: color-mix(in oklab, var(--accent-ink) 78%, var(--accent));
+.cta.cta-learn .cta-main {
+  color: var(--accent-3);
+}
+
+.cta.cta-learn .cta-sub {
+  color: var(--ink-dim);
+  opacity: 1;
+}
+
+/* ── P1: prominent gloss + EN definition disclosure ─────────────────────── */
+.phrasal-gloss-prominent {
+  font-family: var(--font-ui);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+  text-align: center;
+}
+
+.phrasal-def-details {
+  width: 100%;
+  text-align: left;
+}
+
+.phrasal-def-summary {
+  font-size: 0.82rem;
+  color: var(--accent-3);
+  cursor: pointer;
+  list-style: none;
+  padding: 4px 0;
+}
+
+.phrasal-def-summary::marker,
+.phrasal-def-summary::-webkit-details-marker {
+  display: none;
+}
+
+.phrasal-def-summary::before {
+  content: "▸ ";
+}
+
+details[open] .phrasal-def-summary::before {
+  content: "▾ ";
+}
+
+/* ── reveal card (retry / miss reveal, copied grammar from conjugation) ─── */
+.phrasal .reveal-card {
+  width: 100%;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  animation: feedback-pop 0.26s var(--ease) both;
+}
+
+.reveal-verb {
+  font-family: var(--font-pixel);
+  font-size: clamp(1.4rem, 8vw, 2rem);
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+}
+
+.reveal-gloss {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--ink-dim);
+  font-style: italic;
+}
+
+.reveal-sentence {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.reveal-answer {
+  color: var(--ok);
+  font-weight: 700;
+  font-style: normal;
+}
+
+.reveal-meta {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.reveal-meta--wrong {
+  color: var(--danger);
+}
+
+/* ── summary miss cards ─────────────────────────────────────────────────── */
+.phrasal-miss-card {
+  align-items: flex-start;
+}
+
+.miss-given-row {
+  margin: 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.88rem;
+  color: var(--ink-dim);
+}
+
+.miss-given {
+  color: var(--danger);
+}
+
+.miss-arrow {
+  color: var(--ink-faint);
+}
+
+.miss-correct {
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.miss-tag {
+  background: color-mix(in oklab, var(--warn) 20%, transparent);
+  color: var(--warn);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.78rem;
+}
+
+/* ── learn: card list (P4: show 10 per page) ────────────────────────────── */
+.learn-cards-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+/* cta-practice-page: secondary accent below learn nav. */
+.cta.cta-practice-page {
+  margin-top: 4px;
+}
+
+/* cta-review: in summary misses section. */
+.cta.cta-review {
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* answer-actions: button row below the continue reveal card. */
+.answer-actions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

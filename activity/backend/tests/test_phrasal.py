@@ -112,8 +112,9 @@ def test_particle_mode_reveals_base_not_answer(engine):
     )
     prompt = oc.client_view["prompt"]
     assert prompt["base"]  # the base verb IS shown in particle mode
-    verb = oc.state["verbs"][0]
-    assert verb["particle"] in prompt["options"]
+    verb = d.verb_by_id(oc.state["verb_ids"][0])
+    assert verb is not None
+    assert verb.particle in prompt["options"]
     assert len(prompt["options"]) == 4
 
 
@@ -122,7 +123,7 @@ def test_particle_mode_correct_answer_scores(engine):
         mode="free", user_id="1",
         options={"blank_mode": "particle", "answer_mode": "type"},
     )
-    particle = oc.state["verbs"][0]["particle"]
+    particle = d.verb_by_id(oc.state["verb_ids"][0]).particle
     oc2 = engine.submit(state=oc.state, guess=particle)
     assert oc2.client_view["correct"] == 1
     assert oc2.client_view["last"]["result"] == "exact"
@@ -136,7 +137,7 @@ def test_whole_mode_hides_base(engine):
     prompt = oc.client_view["prompt"]
     assert prompt["base"] is None  # whole mode must NOT reveal the base verb
     # Options are whole phrasal verbs, including the answer.
-    assert oc.state["verbs"][0]["verb"] in prompt["options"]
+    assert d.verb_by_id(oc.state["verb_ids"][0]).verb in prompt["options"]
     assert len(prompt["options"]) == 4
 
 
@@ -147,10 +148,10 @@ def test_whole_mode_accepts_any_derivative_form(engine):
         mode="free", user_id="1",
         options={"blank_mode": "whole", "answer_mode": "type"},
     )
-    forms = oc.state["verbs"][0]["forms"]
+    v = d.verb_by_id(oc.state["verb_ids"][0])
+    forms = list(v.forms)
     # Pick a form that isn't the canonical base phrase, if one exists.
-    verb = oc.state["verbs"][0]["verb"]
-    alt = next((f for f in forms if f != verb), forms[0])
+    alt = next((f for f in forms if f != v.verb), forms[0])
     oc2 = engine.submit(state=oc.state, guess=alt)
     assert oc2.client_view["last"]["result"] in ("exact", "close")
     assert oc2.client_view["correct"] == 1
@@ -166,7 +167,7 @@ def test_wrong_answer_breaks_streak(engine):
         mode="free", user_id="1",
         options={"blank_mode": "particle", "answer_mode": "type"},
     )
-    p0 = oc.state["verbs"][0]["particle"]
+    p0 = d.verb_by_id(oc.state["verb_ids"][0]).particle
     oc = engine.submit(state=oc.state, guess=p0)
     assert oc.client_view["streak"] == 1
     oc = engine.submit(state=oc.state, guess="zzz-not-a-particle")
@@ -182,7 +183,7 @@ def test_round_ends_after_round_size(engine):
     state = oc.state
     for _ in range(ROUND_SIZE):
         assert not engine.is_over(state)
-        state = engine.submit(state=state, guess=state["verbs"][state["seq"]]["particle"]).state
+        state = engine.submit(state=state, guess=d.verb_by_id(state["verb_ids"][state["seq"]]).particle).state
     assert engine.is_over(state)
     result = engine.result_payload(state)
     assert result["score"] == f"{ROUND_SIZE}/{ROUND_SIZE}"
@@ -223,7 +224,7 @@ def test_submit_after_over_rejected(engine):
 
 def test_hostile_state_rejected(engine):
     with pytest.raises(GameError):
-        engine.submit(state={"game": "phrasal"}, guess="x")  # missing verbs/seq
+        engine.submit(state={"game": "phrasal"}, guess="x")  # missing verb_ids/seq
     with pytest.raises(GameError):
         engine.submit(state={"game": "wrong"}, guess="x")
 
@@ -233,12 +234,12 @@ def test_hostile_state_rejected(engine):
 def test_daily_is_deterministic_across_users(engine):
     a = engine.new_game(mode="daily", user_id="1", options={})
     b = engine.new_game(mode="daily", user_id="2", options={})
-    assert [v["id"] for v in a.state["verbs"]] == [v["id"] for v in b.state["verbs"]]
+    assert a.state["verb_ids"] == b.state["verb_ids"]
 
 
 def test_daily_withholds_all_feedback(engine):
     oc = engine.new_game(mode="daily", user_id="1", options={"answer_mode": "choice"})
-    particle = oc.state["verbs"][0]["particle"]
+    particle = d.verb_by_id(oc.state["verb_ids"][0]).particle
     oc2 = engine.submit(state=oc.state, guess=particle)
     view = oc2.client_view
     assert view["last"] is None
@@ -267,7 +268,7 @@ def test_freeplay_shows_live_counters(engine):
         mode="free", user_id="1",
         options={"blank_mode": "particle", "answer_mode": "choice"},
     )
-    oc2 = engine.submit(state=oc.state, guess=oc.state["verbs"][0]["particle"])
+    oc2 = engine.submit(state=oc.state, guess=d.verb_by_id(oc.state["verb_ids"][0]).particle)
     assert oc2.client_view["correct"] == 1
 
 

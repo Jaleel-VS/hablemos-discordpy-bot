@@ -1,5 +1,8 @@
 import { useState } from "react";
 import type { StartOptions } from "../../api";
+import { useLang } from "../../i18n/lang";
+import { LangToggle } from "../../i18n/lang";
+import { DEFAULT_LANG, t } from "./i18n";
 
 interface SetupProps {
   onStart: (mode: "daily" | "free", options?: StartOptions) => void;
@@ -10,23 +13,9 @@ interface SetupProps {
 
 // UI is Spanish (the community is Spanish natives learning English); the
 // CONTENT (the phrasal verbs) is English.
-const DIFFICULTIES: { key: string; label: string }[] = [
-  { key: "beginner", label: "Principiante" },
-  { key: "intermediate", label: "Intermedio" },
-  { key: "advanced", label: "Avanzado" },
-];
-
-const BLANK_MODES: { key: "particle" | "whole"; label: string; sub: string }[] = [
-  { key: "particle", label: "Partícula", sub: "look ___ → up" },
-  { key: "whole", label: "Verbo completo", sub: "I need to ___ → look up" },
-];
-
-const ANSWER_MODES: { key: "choice" | "type"; label: string }[] = [
-  { key: "choice", label: "Opción múltiple" },
-  { key: "type", label: "Escribir" },
-];
 
 export default function Setup({ onStart, onLearn, busy, error }: SetupProps) {
+  const [lang, setLang] = useLang(DEFAULT_LANG);
   const [difficulty, setDifficulty] = useState<string | null>(null);
   const [blankMode, setBlankMode] = useState<"particle" | "whole">("particle");
   const [answerMode, setAnswerMode] = useState<"choice" | "type">("choice");
@@ -37,36 +26,41 @@ export default function Setup({ onStart, onLearn, busy, error }: SetupProps) {
     ...(difficulty ? { difficulty } : {}),
   };
 
+  const BLANK_MODES: { key: "particle" | "whole"; label: string; sub: string }[] = [
+    { key: "particle", label: t(lang, "setup.blank.particle"), sub: t(lang, "setup.blank.particle.sub") },
+    { key: "whole",    label: t(lang, "setup.blank.whole"),    sub: t(lang, "setup.blank.whole.sub") },
+  ];
+
+  const ANSWER_MODES: { key: "choice" | "type"; label: string }[] = [
+    { key: "choice", label: t(lang, "setup.answer.choice") },
+    { key: "type",   label: t(lang, "setup.answer.type") },
+  ];
+
+  const DIFFICULTIES: { key: string; label: string }[] = [
+    { key: "beginner",     label: t(lang, "setup.diff.beginner") },
+    { key: "intermediate", label: t(lang, "setup.diff.intermediate") },
+    { key: "advanced",     label: t(lang, "setup.diff.advanced") },
+  ];
+
   return (
     <div className="phrasal phrasal-setup">
-      <div className="setup-lede">
-        <h1 className="setup-title">Phrasal Verbs</h1>
-        <p className="muted">
-          Los verbos con partícula del inglés. Aprende o practica.
-        </p>
+      <div className="setup-header">
+        <div className="setup-lede">
+          <h1 className="setup-title">{t(lang, "setup.title")}</h1>
+          <p className="muted">{t(lang, "setup.tagline")}</p>
+        </div>
+        <LangToggle lang={lang} onChange={setLang} />
       </div>
 
-      {/* The two top-level branches: browse to learn, or play the daily. */}
+      {/* 1. Aprender — entry point for beginners; kept prominent at top. */}
       <button className="cta cta-learn" onClick={onLearn} disabled={busy}>
-        <span className="cta-daily-main">Aprender</span>
-        <span className="cta-daily-sub">Explora los verbos con su significado y ejemplo</span>
+        <span className="cta-main">{t(lang, "setup.learn")}</span>
+        <span className="cta-sub">{t(lang, "setup.learn.sub")}</span>
       </button>
 
-      <button
-        className="cta cta-daily"
-        onClick={() => onStart("daily", { blank_mode: blankMode, answer_mode: answerMode })}
-        disabled={busy}
-      >
-        <span className="cta-daily-main">Reto diario</span>
-        <span className="cta-daily-sub">Mismos verbos para todos · cuenta para tu racha</span>
-      </button>
-
-      <div className="setup-divider">
-        <span>o practica libre</span>
-      </div>
-
+      {/* 2. Freeplay config + primary CTA */}
       <fieldset className="setup-group">
-        <legend>Qué completar</legend>
+        <legend>{t(lang, "setup.blank_mode")}</legend>
         <div className="chips">
           {BLANK_MODES.map((m) => (
             <button
@@ -82,28 +76,7 @@ export default function Setup({ onStart, onLearn, busy, error }: SetupProps) {
       </fieldset>
 
       <fieldset className="setup-group">
-        <legend>Nivel</legend>
-        <div className="chips">
-          <button
-            className={`chip${difficulty === null ? " chip--on" : ""}`}
-            onClick={() => setDifficulty(null)}
-          >
-            Mixto
-          </button>
-          {DIFFICULTIES.map((dfc) => (
-            <button
-              key={dfc.key}
-              className={`chip${difficulty === dfc.key ? " chip--on" : ""}`}
-              onClick={() => setDifficulty(dfc.key)}
-            >
-              {dfc.label}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-
-      <fieldset className="setup-group">
-        <legend>Respuesta</legend>
+        <legend>{t(lang, "setup.answer_mode")}</legend>
         <div className="chips">
           {ANSWER_MODES.map((m) => (
             <button
@@ -117,13 +90,44 @@ export default function Setup({ onStart, onLearn, busy, error }: SetupProps) {
         </div>
       </fieldset>
 
+      <fieldset className="setup-group">
+        <legend>{t(lang, "setup.difficulty")}</legend>
+        <div className="chips">
+          <button
+            className={`chip${difficulty === null ? " chip--on" : ""}`}
+            onClick={() => setDifficulty(null)}
+          >
+            {t(lang, "setup.diff.all")}
+          </button>
+          {DIFFICULTIES.map((dfc) => (
+            <button
+              key={dfc.key}
+              className={`chip${difficulty === dfc.key ? " chip--on" : ""}`}
+              onClick={() => setDifficulty(dfc.key)}
+            >
+              {dfc.label}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+
       <div className="setup-error-slot">{error && <p className="error">{error}</p>}</div>
 
       <div className="setup-actions">
-        <button className="cta" onClick={() => onStart("free", options)} disabled={busy}>
-          Práctica libre
+        <button className="cta cta-primary" onClick={() => onStart("free", options)} disabled={busy}>
+          {t(lang, "setup.free.cta")}
         </button>
       </div>
+
+      {/* 3. Daily — prominent but below freeplay; labelled with anti-hint note. */}
+      <button
+        className="cta cta-daily"
+        onClick={() => onStart("daily", { blank_mode: blankMode, answer_mode: answerMode })}
+        disabled={busy}
+      >
+        <span className="cta-main">{t(lang, "setup.daily.cta")}</span>
+        <span className="cta-sub">{t(lang, "setup.daily.sub")}</span>
+      </button>
     </div>
   );
 }
