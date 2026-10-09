@@ -1,0 +1,195 @@
+/* ══ home / hub ═══════════════════════════════════════════════════════════
+ * Not a grid of identical cards. Full-width rows, each with its own accent hue
+ * and an oversized glyph, stacked with editorial rhythm and a staggered rise.
+ */
+.home {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: safe center; /* centre when it fits, scroll from the top when not */
+  padding: 20px 20px 28px;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.home-head {
+  padding-left: 4px;
+}
+
+.home-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.8rem, 8vw, 2.6rem);
+  line-height: 1;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.home-sub {
+  color: var(--ink-dim);
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+}
+
+/* server leaderboard, under the game rows */
+.lb {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.lb-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin: 0 0 10px;
+}
+
+.lb-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.lb-tab {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-dim);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.lb-tab[aria-selected="true"] {
+  color: var(--ink);
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 18%, transparent);
+}
+
+.lb-puzzle {
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+  margin: 0 0 6px;
+}
+
+.lb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lb-row {
+  display: grid;
+  grid-template-columns: 2ch 1fr auto;
+  gap: 12px;
+  align-items: baseline;
+  padding: 7px 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.lb-row.me {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.lb-rank,
+.lb-score {
+  font-variant-numeric: tabular-nums;
+}
+
+.lb-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.game-row {
+  --game: oklch(0.62 0.19 var(--game-hue, 285));
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(
+    100deg,
+    color-mix(in oklab, var(--game) 14%, var(--bg-raised)),
+    var(--bg-raised) 62%
+  );
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-ui);
+  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease),
+    filter 0.18s var(--ease);
+  animation: rise 0.5s var(--ease) both;
+  animation-delay: calc(var(--i) * 0.07s);
+}
+
+.game-row:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--game) 55%, var(--line));
+  filter: brightness(1.06);
+}
+
+.game-row:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.game-glyph {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: color-mix(in oklab, var(--game) 26%, transparent);
+  color: color-mix(in oklab, var(--game) 72%, var(--ink));
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.game-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.game-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: 0.005em;
+}
+
+.game-tagline {
+  color: var(--ink-dim);
+  font-size: 0.85rem;
+}
+
+.game-go {
+  flex: none;
+  color: var(--ink-dim);
+  font-size: 1.3rem;
+  transition: transform 0.18s var(--ease), color 0.18s var(--ease);
+}
+
+.game-row:hover .game-go {
+  color: var(--ink);
+  transform: translateX(3px);
+}

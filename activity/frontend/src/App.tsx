@@ -3,6 +3,7 @@ import { listGames, setGuildId, type GameInfo } from "./api";
 import { startSession, type Session } from "./discord";
 import Home from "./Home";
 import { GAME_REGISTRY } from "./games/registry";
+import { applyTheme, getTheme, type Theme } from "./theme";
 
 type Status =
   | { phase: "loading" }
@@ -14,6 +15,7 @@ export default function App() {
   // Which game is open. null = show the menu. When only one game is
   // registered we skip the menu and open it directly (see effect below).
   const [active, setActive] = useState<string | null>(null);
+  const [theme, setTheme] = useState<Theme>(getTheme);
 
   useEffect(() => {
     let cancelled = false;
@@ -80,9 +82,26 @@ export default function App() {
             ← Juegos
           </button>
         ) : (
-          <span className="app-title">Hablemos</span>
+          <span className="app-title px">Hablemos</span>
         )}
-        <span className="app-user">{name}</span>
+        <span className="app-header-right">
+          <button
+            className="theme-toggle"
+            onClick={() => {
+              const next: Theme = theme === "warm" ? "cold" : "warm";
+              applyTheme(next);
+              setTheme(next);
+            }}
+            aria-label={`Pantalla: ${theme === "warm" ? "cálida" : "fría"}. Cambiar`}
+            title="Cambiar pantalla"
+          >
+            <span className="theme-dot" aria-hidden />
+            {theme === "warm" ? "Cálido" : "Frío"}
+          </button>
+          <span className="app-user">
+            <span className="app-user-tag px" aria-hidden>1P</span> {name}
+          </span>
+        </span>
       </header>
       {GameComponent && activeInfo ? (
         <GameComponent accessToken={session.accessToken} onExit={onExit} />

@@ -1,0 +1,297 @@
+/* Hablemos Activity — "Recreativo": the seaside arcade cabinet.
+ *
+ * One pixel critter per player lives in this app, so the UI agrees with it:
+ * a bitmap display face (Silkscreen) for the big words only, a humanist sans
+ * (DM Sans) for everything you read, flat ink on a near-black CRT with a faint
+ * scanline. Two materials, same roles: `warm` (walnut, amber phosphor — the
+ * default) and `cold` (blue-black, green phosphor), switched on
+ * `html[data-theme]` (see theme.ts). Layout is fit-to-viewport (no scroll).
+ * Motion is ease-out only.
+ *
+ * Token roles (never use a literal colour outside this block):
+ *   --bg / --bg-raised / --bg-sunken  surfaces
+ *   --line / --line-soft              separators (soft = emphasised)
+ *   --ink / --ink-dim / --ink-faint   text
+ *   --accent                          the phosphor: primary action, selection, "yours"
+ *   --accent-2                        the second phosphor: headings' punctuation, hi-scores
+ *   --accent-3                        tertiary: links, hover names
+ *   --ok / --warn / --danger          feedback (correct / close / wrong)
+ *   --key / --key-press               Wordle keyboard
+ */
+
+:root,
+html[data-theme="warm"] {
+  --bg:        #15100d;
+  --bg-raised: #1f1814;
+  --bg-sunken: #0d0907;
+  --line:      #2d241e;
+  --line-soft: #3d322a;
+  --key:       #33291f;
+  --key-press: #4a3c2f;
+
+  --ink:       #f3eadb;
+  --ink-dim:   #b3a692;
+  --ink-faint: #75685a;
+
+  --accent:    #f2b53f;   /* amber phosphor */
+  --accent-2:  #ff7a5c;   /* coral */
+  --accent-3:  #8fd6c8;   /* sea glass */
+  --accent-ink:#15100d;   /* text on an accent fill */
+
+  --ok:     #7cc96b;
+  --warn:   #f0dc6e;   /* straw: Wordle "present"; kept apart from the amber action */
+  --danger: #ff6a5c;
+  --absent: #2a221c;
+
+  --glow: rgba(242, 181, 63, 0.14); /* CRT bloom behind the pet */
+}
+
+html[data-theme="cold"] {
+  --bg:        #0a0f1e;
+  --bg-raised: #121a33;
+  --bg-sunken: #05080f;
+  --line:      #1c2748;
+  --line-soft: #2a3762;
+  --key:       #1f2a4d;
+  --key-press: #2e3d6b;
+
+  --ink:       #e6ecff;
+  --ink-dim:   #9aa7cc;
+  --ink-faint: #5e6a8c;
+
+  --accent:    #7cff6b;   /* green phosphor */
+  --accent-2:  #ff5fd2;   /* magenta */
+  --accent-3:  #5fe3ff;   /* cyan */
+  --accent-ink:#0a0f1e;
+
+  --ok:     #7cff6b;
+  --warn:   #ffd166;
+  --danger: #ff5f7a;
+  --absent: #141c33;
+
+  --glow: rgba(124, 255, 107, 0.12);
+}
+
+:root {
+  /* legacy aliases still referenced by game CSS; map onto the role tokens */
+  --green:  var(--ok);
+  --yellow: var(--warn);
+
+  --radius: 4px;
+
+  --font-pixel:   "Silkscreen", "Courier New", monospace;
+  --font-display: var(--font-pixel);
+  --font-ui: "DM Sans Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1); /* ease-out-quint-ish */
+
+  color-scheme: dark;
+}
+
+/* Bitmap type is for display roles only. Below ~0.8rem it stops being legible,
+ * so anything that must be *read* (numbers, body, labels) stays in --font-ui. */
+.px {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+/* Browser surfaces carry the design too. */
+::selection { background: var(--accent-2); color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+* { scrollbar-width: thin; scrollbar-color: var(--line-soft) transparent; }
+*::-webkit-scrollbar { width: 6px; height: 6px; }
+*::-webkit-scrollbar-thumb { background: var(--line-soft); border-radius: 3px; }
+*::-webkit-scrollbar-track { background: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── generic connect/error screen (pre-game) ─────────────────────────── */
+.screen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+}
+
+.screen h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin: 0;
+}
+
+.muted {
+  color: var(--ink-dim);
+  max-width: 34ch;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+/* Floating toast for transient messages (invalid word, too short). The anchor
+ * is a zero-height flex child so it reserves NO layout space — the toast is
+ * absolutely positioned over the board/keyboard gap and centered on the anchor,
+ * so showing it never resizes or shifts the board (the old in-flow <p> did). */
+.toast-anchor {
+  position: relative;
+  height: 0;
+  width: 100%;
+  z-index: 5;
+}
+
+.toast {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  background: var(--bg-raised);
+  color: var(--ink);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: 8px 18px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  animation: toast-in 0.22s var(--ease) both;
+  pointer-events: none;
+}
+
+@keyframes toast-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 6px));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* ── app shell ───────────────────────────────────────────────────────── */
+.app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* the whole activity fits one viewport; never scrolls */
+  position: relative;
+}
+
+/* The CRT: one quiet scanline over the whole cabinet. Pointer-transparent and
+ * below interactive layers' paint; never animates. */
+.app::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(180deg, transparent 0 3px, rgba(0, 0, 0, 0.13) 3px 4px);
+  z-index: 50;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.app-title {
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+.app-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-user {
+  color: var(--ink-dim);
+  font-size: 0.85rem;
+}
+
+.app-user-tag {
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  margin-right: 2px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink-dim);
+  font: 500 0.78rem var(--font-ui);
+  cursor: pointer;
+  transition: color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+
+.theme-toggle:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
+.theme-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+.app-back {
+  background: transparent;
+  border: none;
+  color: var(--ink-dim);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  min-height: 32px;
+  transition: color 0.15s var(--ease);
+}
+
+.app-back:hover {
+  color: var(--accent);
+}

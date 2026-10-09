@@ -1,0 +1,313 @@
+/* ── Wordle ──────────────────────────────────────────────────────────── */
+.wordle {
+  flex: 1;
+  min-height: 0; /* allow the flex child to shrink instead of overflowing */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 12px 14px;
+  gap: 10px;
+  overflow: hidden; /* nothing escapes the game area */
+}
+
+.mode-toggle {
+  display: inline-flex;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.mode-toggle button {
+  background: transparent;
+  color: var(--ink-dim);
+  border: none;
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s var(--ease), background 0.2s var(--ease);
+}
+
+.mode-toggle button:hover {
+  color: var(--ink);
+}
+
+.mode-toggle button.active {
+  background: var(--accent);
+  color: oklch(0.98 0.01 285);
+}
+
+/* Board area flexes to fill remaining height; tile size is derived from both
+ * the available height (per row) and width (per column) so it always fits. */
+/* The wrap is the flex leftover between toggle and keyboard. The board sizes
+ * itself to fit INSIDE the wrap (both dimensions), so it never overlaps its
+ * neighbours regardless of aspect ratio. No viewport magic numbers. */
+.board-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  container-type: size;
+}
+
+.board {
+  --cols: 5;
+  --rows: 6;
+  --gap: 5px;
+  /* Deterministic square tile: the largest size that fits BOTH the height
+   * budget (per row) and the width budget (per column) of the wrap, gaps
+   * subtracted exactly, capped at 62px on large screens. cq units measure the
+   * .board-wrap (container-type: size), so there is no overflow in either
+   * dimension regardless of aspect ratio. */
+  --tile: min(
+    (100cqh - (var(--rows) - 1) * var(--gap)) / var(--rows),
+    (100cqw - (var(--cols) - 1) * var(--gap)) / var(--cols),
+    62px
+  );
+  display: grid;
+  grid-auto-rows: var(--tile);
+  gap: var(--gap);
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--tile));
+  gap: var(--gap);
+  /* 3D context so tile flips render as a hinge, not a flat squash. */
+  perspective: 700px;
+}
+
+.tile {
+  width: var(--tile);
+  height: var(--tile);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-ui);
+  font-size: calc(var(--tile) * 0.46);
+  font-weight: 600;
+  text-transform: uppercase;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  user-select: none;
+}
+
+.tile--filled {
+  border-color: var(--line-soft);
+  animation: pop 0.12s var(--ease);
+}
+
+/* Each colored tile exposes its fill/ink as variables so the flip keyframes
+ * can swap to them generically at the reveal midpoint (without the keyframe
+ * needing to know which color this tile is). */
+.tile--green {
+  --fill: var(--green);
+  --ink-on: oklch(0.98 0.02 155);
+  background: var(--fill);
+  border-color: var(--fill);
+  color: var(--ink-on);
+}
+
+.tile--yellow {
+  --fill: var(--yellow);
+  --ink-on: oklch(0.22 0.03 85);
+  background: var(--fill);
+  border-color: var(--fill);
+  color: var(--ink-on);
+}
+
+.tile--gray {
+  --fill: var(--absent);
+  --ink-on: var(--ink);
+  background: var(--fill);
+  border-color: var(--fill);
+  color: var(--ink-on);
+}
+
+/* Flip-reveal: the tile looks EMPTY (neutral, letter hidden) while it rotates
+ * down to edge-on (0->90deg), then swaps to its color at the midpoint and
+ * rotates back up (90->0deg) showing the result. Because the swap happens at
+ * 90deg (invisible edge), the color never "prerenders". Staggered per-column
+ * via inline --i so tiles reveal left-to-right, one at a time. */
+.tile--revealed {
+  animation: flip 0.6s ease-in-out both;
+  animation-delay: calc(var(--i) * 0.28s);
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateX(0deg);
+    background: var(--bg-raised);
+    border-color: var(--line-soft);
+    color: transparent;
+  }
+  50% {
+    transform: rotateX(90deg);
+    background: var(--bg-raised);
+    border-color: var(--line-soft);
+    color: transparent;
+  }
+  50.01% {
+    background: var(--fill);
+    border-color: var(--fill);
+    color: var(--ink-on);
+  }
+  100% {
+    transform: rotateX(0deg);
+    background: var(--fill);
+    border-color: var(--fill);
+    color: var(--ink-on);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.9);
+  }
+  40% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* invalid-word feedback on the active row */
+.board-row.shake {
+  animation: shake 0.4s var(--ease);
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
+/* ── keyboard ────────────────────────────────────────────────────────── */
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.key {
+  flex: 1;
+  min-width: 0;
+  height: clamp(44px, 7.5vh, 56px);
+  border: none;
+  border-radius: 6px;
+  background: var(--key);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s var(--ease), transform 0.06s var(--ease);
+}
+
+.key:active {
+  transform: scale(0.94);
+  background: var(--key-press);
+}
+
+.key:disabled {
+  cursor: default;
+}
+
+.key--wide {
+  flex: 1.6;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+}
+
+.key--green { background: var(--green); color: oklch(0.98 0.02 155); }
+.key--yellow { background: var(--yellow); color: oklch(0.22 0.03 85); }
+.key--gray { background: var(--absent); color: var(--ink-dim); }
+
+/* ── result ──────────────────────────────────────────────────────────── */
+.result {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: rise 0.5s var(--ease) both;
+}
+
+@keyframes rise {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.grid-share {
+  font-family: var(--font-ui);
+  font-size: 1.15rem;
+  line-height: 1.12;
+  letter-spacing: 2px;
+  margin: 2px 0;
+}
+
+.cta {
+  background: var(--accent);
+  color: oklch(0.98 0.01 285);
+  border: none;
+  border-radius: 999px;
+  padding: 10px 24px;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s var(--ease), filter 0.15s var(--ease);
+}
+
+.cta:hover {
+  filter: brightness(1.08);
+}
+
+.cta:active {
+  transform: scale(0.96);
+}
+
+/* ── stats strip ─────────────────────────────────────────────────────── */
+.stats {
+  display: flex;
+  gap: 18px;
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  padding-top: 2px;
+}
+
+.stats strong {
+  color: var(--ink);
+  font-weight: 600;
+}

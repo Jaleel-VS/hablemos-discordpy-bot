@@ -28,15 +28,15 @@ export default function Leaderboard({ games, accessToken, userId }: LeaderboardP
   }, [gameKey, accessToken]);
 
   return (
-    <section className="board" aria-label="Clasificación del servidor">
-      <h2 className="board-title">Clasificación</h2>
-      <div className="board-tabs" role="tablist">
+    <section className="lb" aria-label="Clasificación del servidor">
+      <h2 className="lb-title">Clasificación</h2>
+      <div className="lb-tabs" role="tablist">
         {games.map((g) => (
           <button
             key={g.key}
             role="tab"
             aria-selected={g.key === gameKey}
-            className="board-tab"
+            className="lb-tab"
             onClick={() => setGameKey(g.key)}
           >
             {g.display_name}
@@ -50,13 +50,13 @@ export default function Leaderboard({ games, accessToken, userId }: LeaderboardP
       )}
       {load.phase === "ready" && load.board.entries.length > 0 && (
         <>
-          <p className="board-puzzle">Reto #{load.board.puzzle_no}</p>
-          <ol className="board-list">
+          <p className="lb-puzzle">Reto #{load.board.puzzle_no}</p>
+          <ol className="lb-list">
             {load.board.entries.map((e) => (
-              <li key={e.user_id} className={e.user_id === userId ? "board-row me" : "board-row"}>
-                <span className="board-rank">{e.rank}</span>
-                <span className="board-name">{e.name || "Jugador"}</span>
-                <span className="board-score">{e.score}</span>
+              <li key={e.user_id} className={e.user_id === userId ? "lb-row me" : "lb-row"}>
+                <span className="lb-rank">{e.rank}</span>
+                <span className="lb-name">{e.name || "Jugador"}</span>
+                <span className="lb-score">{e.score}</span>
               </li>
             ))}
           </ol>
