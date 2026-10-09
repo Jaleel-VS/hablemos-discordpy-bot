@@ -1,0 +1,3008 @@
+{
+  "abrir": {
+    "display": "abrir",
+    "en": "to open",
+    "example_en": "I am going to open the door now.",
+    "example_es": "Voy a abrir la puerta ahora.",
+    "form": "",
+    "lemma": "abrir",
+    "pos": "verb"
+  },
+  "acero": {
+    "display": "acero",
+    "en": "steel",
+    "example_en": "Steel is very resistant.",
+    "example_es": "El acero es muy resistente.",
+    "form": "",
+    "lemma": "acero",
+    "pos": "noun"
+  },
+  "actor": {
+    "display": "actor",
+    "en": "actor",
+    "example_en": "The actor works in cinema.",
+    "example_es": "El actor trabaja en el cine.",
+    "form": "",
+    "lemma": "actor",
+    "pos": "noun"
+  },
+  "aguas": {
+    "display": "aguas",
+    "en": "waters",
+    "example_en": "The waters of the river are clear.",
+    "example_es": "Las aguas del río son claras.",
+    "form": "plural of agua",
+    "lemma": "agua",
+    "pos": "noun"
+  },
+  "aires": {
+    "display": "aires",
+    "en": "airs, breezes",
+    "example_en": "Fresh breezes arrive in the morning.",
+    "example_es": "Los aires frescos llegan por la mañana.",
+    "form": "plural of aire",
+    "lemma": "aire",
+    "pos": "noun"
+  },
+  "ajeno": {
+    "display": "ajeno",
+    "en": "foreign, belonging to others",
+    "example_en": "I do not want to meddle in others' affairs.",
+    "example_es": "No quiero meterme en asuntos ajenos.",
+    "form": "",
+    "lemma": "ajeno",
+    "pos": "adjective"
+  },
+  "album": {
+    "display": "álbum",
+    "en": "album",
+    "example_en": "My photo album is very special.",
+    "example_es": "Mi álbum de fotos es muy especial.",
+    "form": "",
+    "lemma": "álbum",
+    "pos": "noun"
+  },
+  "aldea": {
+    "display": "aldea",
+    "en": "village",
+    "example_en": "The village is in the mountains.",
+    "example_es": "La aldea está en las montañas.",
+    "form": "",
+    "lemma": "aldea",
+    "pos": "noun"
+  },
+  "aleta": {
+    "display": "aleta",
+    "en": "fin",
+    "example_en": "The fish moves its fin quickly.",
+    "example_es": "El pez mueve su aleta rápidamente.",
+    "form": "",
+    "lemma": "aleta",
+    "pos": "noun"
+  },
+  "algas": {
+    "display": "algas",
+    "en": "seaweed, algae",
+    "example_en": "Algae grow in the ocean.",
+    "example_es": "Las algas crecen en el océano.",
+    "form": "plural of alga",
+    "lemma": "alga",
+    "pos": "noun"
+  },
+  "altar": {
+    "display": "altar",
+    "en": "altar",
+    "example_en": "The altar is decorated with flowers.",
+    "example_es": "El altar está decorado con flores.",
+    "form": "",
+    "lemma": "altar",
+    "pos": "noun"
+  },
+  "amigo": {
+    "display": "amigo",
+    "en": "friend",
+    "example_en": "My friend is very intelligent.",
+    "example_es": "Mi amigo es muy inteligente.",
+    "form": "",
+    "lemma": "amigo",
+    "pos": "noun"
+  },
+  "ancla": {
+    "display": "ancla",
+    "en": "anchor",
+    "example_en": "The ship throws the anchor into the water.",
+    "example_es": "El barco lanza el ancla al agua.",
+    "form": "",
+    "lemma": "ancla",
+    "pos": "noun"
+  },
+  "andar": {
+    "display": "andar",
+    "en": "to walk",
+    "example_en": "I like to walk through the park.",
+    "example_es": "Me gusta andar por el parque.",
+    "form": "",
+    "lemma": "andar",
+    "pos": "verb"
+  },
+  "angel": {
+    "display": "ángel",
+    "en": "angel",
+    "example_en": "The angel protects the children.",
+    "example_es": "El ángel protege a los niños.",
+    "form": "",
+    "lemma": "ángel",
+    "pos": "noun"
+  },
+  "animo": {
+    "display": "ánimo",
+    "en": "spirit, courage",
+    "example_en": "I have a lot of spirit to work.",
+    "example_es": "Tengo mucho ánimo para trabajar.",
+    "form": "",
+    "lemma": "ánimo",
+    "pos": "noun"
+  },
+  "anual": {
+    "display": "anual",
+    "en": "annual, yearly",
+    "example_en": "The annual meeting is in June.",
+    "example_es": "La reunión anual es en junio.",
+    "form": "",
+    "lemma": "anual",
+    "pos": "adjective"
+  },
+  "apoyo": {
+    "display": "apoyo",
+    "en": "support",
+    "example_en": "I need your support in this.",
+    "example_es": "Necesito tu apoyo en esto.",
+    "form": "",
+    "lemma": "apoyo",
+    "pos": "noun"
+  },
+  "arado": {
+    "display": "arado",
+    "en": "plow",
+    "example_en": "The plow prepares the soil.",
+    "example_es": "El arado prepara la tierra.",
+    "form": "",
+    "lemma": "arado",
+    "pos": "noun"
+  },
+  "arbol": {
+    "display": "árbol",
+    "en": "tree",
+    "example_en": "The tree is very big.",
+    "example_es": "El árbol es muy grande.",
+    "form": "",
+    "lemma": "árbol",
+    "pos": "noun"
+  },
+  "arena": {
+    "display": "arena",
+    "en": "sand",
+    "example_en": "The sand on the beach is white.",
+    "example_es": "La arena de la playa es blanca.",
+    "form": "",
+    "lemma": "arena",
+    "pos": "noun"
+  },
+  "armas": {
+    "display": "armas",
+    "en": "weapons, arms",
+    "example_en": "The weapons are stored.",
+    "example_es": "Las armas están guardadas.",
+    "form": "plural of arma",
+    "lemma": "arma",
+    "pos": "noun"
+  },
+  "arroz": {
+    "display": "arroz",
+    "en": "rice",
+    "example_en": "I eat rice every day.",
+    "example_es": "Como arroz todos los días.",
+    "form": "",
+    "lemma": "arroz",
+    "pos": "noun"
+  },
+  "asilo": {
+    "display": "asilo",
+    "en": "asylum, nursing home",
+    "example_en": "My grandmother lives in the nursing home.",
+    "example_es": "Mi abuela vive en el asilo.",
+    "form": "",
+    "lemma": "asilo",
+    "pos": "noun"
+  },
+  "atlas": {
+    "display": "atlas",
+    "en": "atlas",
+    "example_en": "I study the atlas in class.",
+    "example_es": "Estudio el atlas en la clase.",
+    "form": "",
+    "lemma": "atlas",
+    "pos": "noun"
+  },
+  "atras": {
+    "display": "atrás",
+    "en": "behind, back",
+    "example_en": "The car is behind the house.",
+    "example_es": "El coche está atrás de la casa.",
+    "form": "",
+    "lemma": "atrás",
+    "pos": "adverb"
+  },
+  "avion": {
+    "display": "avión",
+    "en": "airplane",
+    "example_en": "The airplane takes off at eight.",
+    "example_es": "El avión despega a las ocho.",
+    "form": "",
+    "lemma": "avión",
+    "pos": "noun"
+  },
+  "ayuda": {
+    "display": "ayuda",
+    "en": "help, aid",
+    "example_en": "I need your help with this.",
+    "example_es": "Necesito tu ayuda con esto.",
+    "form": "",
+    "lemma": "ayuda",
+    "pos": "noun"
+  },
+  "azote": {
+    "display": "azote",
+    "en": "whip, scourge",
+    "example_en": "The whip was an ancient punishment.",
+    "example_es": "El azote fue un castigo antiguo.",
+    "form": "",
+    "lemma": "azote",
+    "pos": "noun"
+  },
+  "bahia": {
+    "display": "bahía",
+    "en": "bay",
+    "example_en": "The bay is beautiful at sunset.",
+    "example_es": "La bahía es hermosa al atardecer.",
+    "form": "",
+    "lemma": "bahía",
+    "pos": "noun"
+  },
+  "baile": {
+    "display": "baile",
+    "en": "dance",
+    "example_en": "The dance is very fun.",
+    "example_es": "El baile es muy divertido.",
+    "form": "",
+    "lemma": "baile",
+    "pos": "noun"
+  },
+  "bajar": {
+    "display": "bajar",
+    "en": "to go down, lower",
+    "example_en": "I am going to go down the stairs.",
+    "example_es": "Voy a bajar las escaleras.",
+    "form": "",
+    "lemma": "bajar",
+    "pos": "verb"
+  },
+  "balde": {
+    "display": "balde",
+    "en": "bucket",
+    "example_en": "I fill the bucket with water.",
+    "example_es": "Lleno el balde de agua.",
+    "form": "",
+    "lemma": "balde",
+    "pos": "noun"
+  },
+  "balsa": {
+    "display": "balsa",
+    "en": "raft",
+    "example_en": "The raft floats on the river.",
+    "example_es": "La balsa flota en el río.",
+    "form": "",
+    "lemma": "balsa",
+    "pos": "noun"
+  },
+  "banca": {
+    "display": "banca",
+    "en": "banking",
+    "example_en": "I work in banking.",
+    "example_es": "Trabajo en la banca.",
+    "form": "",
+    "lemma": "banca",
+    "pos": "noun"
+  },
+  "banda": {
+    "display": "banda",
+    "en": "band, group",
+    "example_en": "The band plays rock music.",
+    "example_es": "La banda toca música rock.",
+    "form": "",
+    "lemma": "banda",
+    "pos": "noun"
+  },
+  "barco": {
+    "display": "barco",
+    "en": "boat, ship",
+    "example_en": "The ship sails on the sea.",
+    "example_es": "El barco navega en el mar.",
+    "form": "",
+    "lemma": "barco",
+    "pos": "noun"
+  },
+  "baron": {
+    "display": "barón",
+    "en": "baron",
+    "example_en": "The baron is an important nobleman.",
+    "example_es": "El barón es un noble importante.",
+    "form": "",
+    "lemma": "barón",
+    "pos": "noun"
+  },
+  "barro": {
+    "display": "barro",
+    "en": "mud, clay",
+    "example_en": "The mud is wet after the rain.",
+    "example_es": "El barro está mojado después de la lluvia.",
+    "form": "",
+    "lemma": "barro",
+    "pos": "noun"
+  },
+  "bases": {
+    "display": "bases",
+    "en": "bases, foundations",
+    "example_en": "The foundations of the project are solid.",
+    "example_es": "Las bases del proyecto son sólidas.",
+    "form": "plural of base",
+    "lemma": "base",
+    "pos": "noun"
+  },
+  "beber": {
+    "display": "beber",
+    "en": "to drink",
+    "example_en": "I like to drink cold water.",
+    "example_es": "Me gusta beber agua fría.",
+    "form": "",
+    "lemma": "beber",
+    "pos": "verb"
+  },
+  "bello": {
+    "display": "bello",
+    "en": "beautiful, lovely",
+    "example_en": "That painting is very beautiful.",
+    "example_es": "Ese cuadro es muy bello.",
+    "form": "",
+    "lemma": "bello",
+    "pos": "adjective"
+  },
+  "bicho": {
+    "display": "bicho",
+    "en": "bug, insect, creature",
+    "example_en": "A small bug entered the house.",
+    "example_es": "Un bicho pequeño entró en casa.",
+    "form": "",
+    "lemma": "bicho",
+    "pos": "noun"
+  },
+  "bolsa": {
+    "display": "bolsa",
+    "en": "bag, purse, sack",
+    "example_en": "I put my books in the bag.",
+    "example_es": "Pongo mis libros en la bolsa.",
+    "form": "",
+    "lemma": "bolsa",
+    "pos": "noun"
+  },
+  "bomba": {
+    "display": "bomba",
+    "en": "bomb, pump",
+    "example_en": "The water pump is broken.",
+    "example_es": "La bomba de agua está rota.",
+    "form": "",
+    "lemma": "bomba",
+    "pos": "noun"
+  },
+  "borde": {
+    "display": "borde",
+    "en": "edge, border, rim",
+    "example_en": "Be careful with the edge of the table.",
+    "example_es": "Cuidado con el borde de la mesa.",
+    "form": "",
+    "lemma": "borde",
+    "pos": "noun"
+  },
+  "bravo": {
+    "display": "bravo",
+    "en": "brave, fierce, wild",
+    "example_en": "The lion is a fierce animal.",
+    "example_es": "El león es un animal bravo.",
+    "form": "",
+    "lemma": "bravo",
+    "pos": "adjective"
+  },
+  "breve": {
+    "display": "breve",
+    "en": "brief, short",
+    "example_en": "I have a brief meeting today.",
+    "example_es": "Tengo una breve reunión hoy.",
+    "form": "",
+    "lemma": "breve",
+    "pos": "adjective"
+  },
+  "brisa": {
+    "display": "brisa",
+    "en": "breeze, gentle wind",
+    "example_en": "The sea breeze is fresh.",
+    "example_es": "La brisa del mar es fresca.",
+    "form": "",
+    "lemma": "brisa",
+    "pos": "noun"
+  },
+  "brote": {
+    "display": "brote",
+    "en": "sprout, shoot, outbreak",
+    "example_en": "The plant sprout grows quickly.",
+    "example_es": "El brote de la planta crece rápido.",
+    "form": "",
+    "lemma": "brote",
+    "pos": "noun"
+  },
+  "bueno": {
+    "display": "bueno",
+    "en": "good, well",
+    "example_en": "This book is very good.",
+    "example_es": "Este libro es muy bueno.",
+    "form": "",
+    "lemma": "bueno",
+    "pos": "adjective"
+  },
+  "burro": {
+    "display": "burro",
+    "en": "donkey, stubborn person",
+    "example_en": "The donkey carries the load.",
+    "example_es": "El burro lleva la carga.",
+    "form": "",
+    "lemma": "burro",
+    "pos": "noun"
+  },
+  "busca": {
+    "display": "busca",
+    "en": "search, hunt",
+    "example_en": "The search for treasure was exciting.",
+    "example_es": "La busca del tesoro fue emocionante.",
+    "form": "",
+    "lemma": "busca",
+    "pos": "noun"
+  },
+  "cable": {
+    "display": "cable",
+    "en": "cable, rope, wire",
+    "example_en": "The cable is connected to the TV.",
+    "example_es": "El cable está conectado al televisor.",
+    "form": "",
+    "lemma": "cable",
+    "pos": "noun"
+  },
+  "cabra": {
+    "display": "cabra",
+    "en": "goat",
+    "example_en": "The goat eats grass in the field.",
+    "example_es": "La cabra come hierba en el campo.",
+    "form": "",
+    "lemma": "cabra",
+    "pos": "noun"
+  },
+  "cajon": {
+    "display": "cajón",
+    "en": "drawer, box, crate",
+    "example_en": "My socks are in the drawer.",
+    "example_es": "Mis calcetines están en el cajón.",
+    "form": "",
+    "lemma": "cajón",
+    "pos": "noun"
+  },
+  "calma": {
+    "display": "calma",
+    "en": "calm, peace, tranquility",
+    "example_en": "I need calm to think well.",
+    "example_es": "Necesito calma para pensar bien.",
+    "form": "",
+    "lemma": "calma",
+    "pos": "noun"
+  },
+  "calor": {
+    "display": "calor",
+    "en": "heat, warmth",
+    "example_en": "It is very hot in summer.",
+    "example_es": "Hace mucho calor en verano.",
+    "form": "",
+    "lemma": "calor",
+    "pos": "noun"
+  },
+  "calvo": {
+    "display": "calvo",
+    "en": "bald",
+    "example_en": "My grandfather is bald.",
+    "example_es": "Mi abuelo es calvo.",
+    "form": "",
+    "lemma": "calvo",
+    "pos": "adjective"
+  },
+  "campo": {
+    "display": "campo",
+    "en": "field, countryside, camp",
+    "example_en": "We go for a walk in the countryside.",
+    "example_es": "Vamos a pasear por el campo.",
+    "form": "",
+    "lemma": "campo",
+    "pos": "noun"
+  },
+  "canal": {
+    "display": "canal",
+    "en": "channel, canal, duct",
+    "example_en": "The TV channel is popular.",
+    "example_es": "El canal de televisión es popular.",
+    "form": "",
+    "lemma": "canal",
+    "pos": "noun"
+  },
+  "canto": {
+    "display": "canto",
+    "en": "song, singing, corner",
+    "example_en": "The bird's song is beautiful.",
+    "example_es": "El canto del pájaro es hermoso.",
+    "form": "",
+    "lemma": "canto",
+    "pos": "noun"
+  },
+  "cargo": {
+    "display": "cargo",
+    "en": "position, job, cargo, load",
+    "example_en": "He has an important position at the company.",
+    "example_es": "Tiene un cargo importante en la empresa.",
+    "form": "",
+    "lemma": "cargo",
+    "pos": "noun"
+  },
+  "carne": {
+    "display": "carne",
+    "en": "meat, flesh",
+    "example_en": "I bought meat at the market.",
+    "example_es": "Compré carne en el mercado.",
+    "form": "",
+    "lemma": "carne",
+    "pos": "noun"
+  },
+  "carta": {
+    "display": "carta",
+    "en": "letter, card, menu",
+    "example_en": "I received a letter from my friend.",
+    "example_es": "Recibí una carta de mi amiga.",
+    "form": "",
+    "lemma": "carta",
+    "pos": "noun"
+  },
+  "casco": {
+    "display": "casco",
+    "en": "helmet, hull, hoof",
+    "example_en": "Wear a helmet to ride a bike.",
+    "example_es": "Usa un casco para andar en bicicleta.",
+    "form": "",
+    "lemma": "casco",
+    "pos": "noun"
+  },
+  "cauce": {
+    "display": "cauce",
+    "en": "riverbed, channel, course",
+    "example_en": "The river follows its natural course.",
+    "example_es": "El río sigue su cauce natural.",
+    "form": "",
+    "lemma": "cauce",
+    "pos": "noun"
+  },
+  "causa": {
+    "display": "causa",
+    "en": "cause, reason, case",
+    "example_en": "The cause of the problem is unknown.",
+    "example_es": "La causa del problema es desconocida.",
+    "form": "",
+    "lemma": "causa",
+    "pos": "noun"
+  },
+  "celda": {
+    "display": "celda",
+    "en": "cell, prison cell",
+    "example_en": "The prisoner is in the cell.",
+    "example_es": "El prisionero está en la celda.",
+    "form": "",
+    "lemma": "celda",
+    "pos": "noun"
+  },
+  "cenar": {
+    "display": "cenar",
+    "en": "to have dinner, to dine",
+    "example_en": "We are going to have dinner at eight.",
+    "example_es": "Vamos a cenar a las ocho.",
+    "form": "",
+    "lemma": "cenar",
+    "pos": "verb"
+  },
+  "cerdo": {
+    "display": "cerdo",
+    "en": "pig, pork",
+    "example_en": "The pig lives on the farm.",
+    "example_es": "El cerdo vive en la granja.",
+    "form": "",
+    "lemma": "cerdo",
+    "pos": "noun"
+  },
+  "cesta": {
+    "display": "cesta",
+    "en": "basket, hamper",
+    "example_en": "The basket is full of fruits.",
+    "example_es": "La cesta está llena de frutas.",
+    "form": "",
+    "lemma": "cesta",
+    "pos": "noun"
+  },
+  "chica": {
+    "display": "chica",
+    "en": "girl, young woman",
+    "example_en": "The girl is very intelligent.",
+    "example_es": "La chica es muy inteligente.",
+    "form": "",
+    "lemma": "chica",
+    "pos": "noun"
+  },
+  "chico": {
+    "display": "chico",
+    "en": "boy, young man",
+    "example_en": "The boy plays in the park.",
+    "example_es": "El chico juega en el parque.",
+    "form": "",
+    "lemma": "chico",
+    "pos": "noun"
+  },
+  "chile": {
+    "display": "chile",
+    "en": "chili pepper, Chile",
+    "example_en": "The chili pepper is very spicy.",
+    "example_es": "El chile es muy picante.",
+    "form": "",
+    "lemma": "chile",
+    "pos": "noun"
+  },
+  "chino": {
+    "display": "chino",
+    "en": "Chinese",
+    "example_en": "I love the Chinese restaurant.",
+    "example_es": "Me encanta el restaurante chino.",
+    "form": "",
+    "lemma": "chino",
+    "pos": "adjective"
+  },
+  "civil": {
+    "display": "civil",
+    "en": "civil, civilian",
+    "example_en": "The civil marriage is important.",
+    "example_es": "El matrimonio civil es importante.",
+    "form": "",
+    "lemma": "civil",
+    "pos": "adjective"
+  },
+  "claro": {
+    "display": "claro",
+    "en": "clear, bright, obvious",
+    "example_en": "The sky is clear today.",
+    "example_es": "El cielo está claro hoy.",
+    "form": "",
+    "lemma": "claro",
+    "pos": "adjective"
+  },
+  "clase": {
+    "display": "clase",
+    "en": "class, lesson, type",
+    "example_en": "The Spanish class is interesting.",
+    "example_es": "La clase de español es interesante.",
+    "form": "",
+    "lemma": "clase",
+    "pos": "noun"
+  },
+  "clave": {
+    "display": "clave",
+    "en": "key, clue, code",
+    "example_en": "The key to success is work.",
+    "example_es": "La clave del éxito es el trabajo.",
+    "form": "",
+    "lemma": "clave",
+    "pos": "noun"
+  },
+  "clima": {
+    "display": "clima",
+    "en": "climate, weather",
+    "example_en": "Spain's climate is very pleasant.",
+    "example_es": "El clima de España es muy agradable.",
+    "form": "",
+    "lemma": "clima",
+    "pos": "noun"
+  },
+  "cobro": {
+    "display": "cobro",
+    "en": "collection, payment received",
+    "example_en": "The collection of the invoice is important.",
+    "example_es": "El cobro de la factura es importante.",
+    "form": "",
+    "lemma": "cobro",
+    "pos": "noun"
+  },
+  "coche": {
+    "display": "coche",
+    "en": "car, automobile",
+    "example_en": "My car is red and very fast.",
+    "example_es": "Mi coche es rojo y muy rápido.",
+    "form": "",
+    "lemma": "coche",
+    "pos": "noun"
+  },
+  "cofre": {
+    "display": "cofre",
+    "en": "chest, trunk, coffer",
+    "example_en": "The chest contains gold coins.",
+    "example_es": "El cofre contiene monedas de oro.",
+    "form": "",
+    "lemma": "cofre",
+    "pos": "noun"
+  },
+  "coger": {
+    "display": "coger",
+    "en": "to take, to grab (Spain); vulgar in much of Latin America, use \"tomar\"/\"agarrar\" there",
+    "example_en": "I'm going to take a book from the table.",
+    "example_es": "Voy a coger un libro de la mesa.",
+    "form": "",
+    "lemma": "coger",
+    "pos": "verb"
+  },
+  "color": {
+    "display": "color",
+    "en": "color, hue",
+    "example_en": "My favorite color is blue.",
+    "example_es": "Mi color favorito es el azul.",
+    "form": "",
+    "lemma": "color",
+    "pos": "noun"
+  },
+  "comer": {
+    "display": "comer",
+    "en": "to eat",
+    "example_en": "I like to eat fresh fruit.",
+    "example_es": "Me gusta comer frutas frescas.",
+    "form": "",
+    "lemma": "comer",
+    "pos": "verb"
+  },
+  "comun": {
+    "display": "común",
+    "en": "common, ordinary",
+    "example_en": "It is a very common problem in cities.",
+    "example_es": "Es un problema muy común en las ciudades.",
+    "form": "",
+    "lemma": "común",
+    "pos": "adjective"
+  },
+  "conde": {
+    "display": "conde",
+    "en": "count, nobleman",
+    "example_en": "The count lives in a large castle.",
+    "example_es": "El conde vive en un castillo grande.",
+    "form": "",
+    "lemma": "conde",
+    "pos": "noun"
+  },
+  "coral": {
+    "display": "coral",
+    "en": "coral",
+    "example_en": "Coral is very beautiful in the ocean.",
+    "example_es": "El coral es muy bonito en el océano.",
+    "form": "",
+    "lemma": "coral",
+    "pos": "noun"
+  },
+  "corte": {
+    "display": "corte",
+    "en": "court, cut",
+    "example_en": "The king's court is very elegant.",
+    "example_es": "La corte del rey es muy elegante.",
+    "form": "",
+    "lemma": "corte",
+    "pos": "noun"
+  },
+  "costa": {
+    "display": "costa",
+    "en": "coast, shore",
+    "example_en": "Portugal's coast is beautiful.",
+    "example_es": "La costa de Portugal es hermosa.",
+    "form": "",
+    "lemma": "costa",
+    "pos": "noun"
+  },
+  "crema": {
+    "display": "crema",
+    "en": "cream",
+    "example_en": "Cream is delicious in coffee.",
+    "example_es": "La crema es deliciosa en el café.",
+    "form": "",
+    "lemma": "crema",
+    "pos": "noun"
+  },
+  "crudo": {
+    "display": "crudo",
+    "en": "raw, crude",
+    "example_en": "Raw fish is very fresh.",
+    "example_es": "El pescado crudo es muy fresco.",
+    "form": "",
+    "lemma": "crudo",
+    "pos": "adjective"
+  },
+  "cruel": {
+    "display": "cruel",
+    "en": "cruel, harsh",
+    "example_en": "Don't be cruel to animals.",
+    "example_es": "No seas cruel con los animales.",
+    "form": "",
+    "lemma": "cruel",
+    "pos": "adjective"
+  },
+  "cuero": {
+    "display": "cuero",
+    "en": "leather",
+    "example_en": "My belt is made of brown leather.",
+    "example_es": "Mi cinturón es de cuero marrón.",
+    "form": "",
+    "lemma": "cuero",
+    "pos": "noun"
+  },
+  "cueva": {
+    "display": "cueva",
+    "en": "cave",
+    "example_en": "We explored a very dark cave.",
+    "example_es": "Exploramos una cueva muy oscura.",
+    "form": "",
+    "lemma": "cueva",
+    "pos": "noun"
+  },
+  "culpa": {
+    "display": "culpa",
+    "en": "guilt, blame, fault",
+    "example_en": "It's not my fault that it's raining today.",
+    "example_es": "No es mi culpa que llueva hoy.",
+    "form": "",
+    "lemma": "culpa",
+    "pos": "noun"
+  },
+  "curso": {
+    "display": "curso",
+    "en": "course, class",
+    "example_en": "I take a Spanish course online.",
+    "example_es": "Tomo un curso de español en línea.",
+    "form": "",
+    "lemma": "curso",
+    "pos": "noun"
+  },
+  "danza": {
+    "display": "danza",
+    "en": "dance",
+    "example_en": "Dance is a very beautiful art.",
+    "example_es": "La danza es un arte muy hermoso.",
+    "form": "",
+    "lemma": "danza",
+    "pos": "noun"
+  },
+  "datos": {
+    "display": "datos",
+    "en": "data, information, facts",
+    "example_en": "The data is on the computer.",
+    "example_es": "Los datos están en la computadora.",
+    "form": "plural of dato",
+    "lemma": "dato",
+    "pos": "noun"
+  },
+  "deber": {
+    "display": "deber",
+    "en": "must, should, to owe",
+    "example_en": "You should not owe money if you can avoid it.",
+    "example_es": "No hay que deber dinero si puedes evitarlo.",
+    "form": "",
+    "lemma": "deber",
+    "pos": "verb"
+  },
+  "decir": {
+    "display": "decir",
+    "en": "to say, to tell",
+    "example_en": "What do you mean by that?",
+    "example_es": "¿Qué quieres decir con eso?",
+    "form": "",
+    "lemma": "decir",
+    "pos": "verb"
+  },
+  "delta": {
+    "display": "delta",
+    "en": "delta, river delta",
+    "example_en": "The Nile delta is very fertile.",
+    "example_es": "El delta del Nilo es muy fértil.",
+    "form": "",
+    "lemma": "delta",
+    "pos": "noun"
+  },
+  "dieta": {
+    "display": "dieta",
+    "en": "diet",
+    "example_en": "I follow a healthy and balanced diet.",
+    "example_es": "Sigo una dieta saludable y equilibrada.",
+    "form": "",
+    "lemma": "dieta",
+    "pos": "noun"
+  },
+  "disco": {
+    "display": "disco",
+    "en": "disk, record, nightclub",
+    "example_en": "I bought a classical music record.",
+    "example_es": "Compré un disco de música clásica.",
+    "form": "",
+    "lemma": "disco",
+    "pos": "noun"
+  },
+  "dolor": {
+    "display": "dolor",
+    "en": "pain, ache, sorrow",
+    "example_en": "I have a headache this morning.",
+    "example_es": "Tengo dolor de cabeza esta mañana.",
+    "form": "",
+    "lemma": "dolor",
+    "pos": "noun"
+  },
+  "dorso": {
+    "display": "dorso",
+    "en": "back, reverse side",
+    "example_en": "Write your name on the back.",
+    "example_es": "Escribe tu nombre en el dorso.",
+    "form": "",
+    "lemma": "dorso",
+    "pos": "noun"
+  },
+  "droga": {
+    "display": "droga",
+    "en": "drug, medicine",
+    "example_en": "The drug is dangerous for your health.",
+    "example_es": "La droga es peligrosa para la salud.",
+    "form": "",
+    "lemma": "droga",
+    "pos": "noun"
+  },
+  "dulce": {
+    "display": "dulce",
+    "en": "sweet, gentle",
+    "example_en": "Chocolate is very sweet and delicious.",
+    "example_es": "El chocolate es muy dulce y delicioso.",
+    "form": "",
+    "lemma": "dulce",
+    "pos": "adjective"
+  },
+  "duque": {
+    "display": "duque",
+    "en": "duke, nobleman",
+    "example_en": "The duke governs the region.",
+    "example_es": "El duque gobierna la región.",
+    "form": "",
+    "lemma": "duque",
+    "pos": "noun"
+  },
+  "durar": {
+    "display": "durar",
+    "en": "to last, to endure",
+    "example_en": "How long can this battery last?",
+    "example_es": "¿Cuánto tiempo puede durar esta batería?",
+    "form": "",
+    "lemma": "durar",
+    "pos": "verb"
+  },
+  "elite": {
+    "display": "élite",
+    "en": "elite, upper class",
+    "example_en": "He belongs to the elite of society.",
+    "example_es": "Pertenece a la élite de la sociedad.",
+    "form": "",
+    "lemma": "élite",
+    "pos": "noun"
+  },
+  "envio": {
+    "display": "envío",
+    "en": "shipment, delivery, sending",
+    "example_en": "The shipment will arrive tomorrow afternoon.",
+    "example_es": "El envío llegará mañana por la tarde.",
+    "form": "",
+    "lemma": "envío",
+    "pos": "noun"
+  },
+  "epoca": {
+    "display": "época",
+    "en": "era, period, time",
+    "example_en": "We live in an era of change.",
+    "example_es": "Vivimos en una época de cambios.",
+    "form": "",
+    "lemma": "época",
+    "pos": "noun"
+  },
+  "error": {
+    "display": "error",
+    "en": "error, mistake",
+    "example_en": "I made a mistake on the exam.",
+    "example_es": "Cometí un error en el examen.",
+    "form": "",
+    "lemma": "error",
+    "pos": "noun"
+  },
+  "estar": {
+    "display": "estar",
+    "en": "to be, to stay, to exist",
+    "example_en": "I don't want to be alone at home.",
+    "example_es": "No quiero estar solo en casa.",
+    "form": "",
+    "lemma": "estar",
+    "pos": "verb"
+  },
+  "exito": {
+    "display": "éxito",
+    "en": "success, hit",
+    "example_en": "Your project was a great success.",
+    "example_es": "Tu proyecto fue un gran éxito.",
+    "form": "",
+    "lemma": "éxito",
+    "pos": "noun"
+  },
+  "fallo": {
+    "display": "fallo",
+    "en": "failure, fault, verdict",
+    "example_en": "The system failure was unexpected.",
+    "example_es": "El fallo del sistema fue inesperado.",
+    "form": "",
+    "lemma": "fallo",
+    "pos": "noun"
+  },
+  "falso": {
+    "display": "falso",
+    "en": "false, fake, untrue",
+    "example_en": "That document is completely false.",
+    "example_es": "Ese documento es completamente falso.",
+    "form": "",
+    "lemma": "falso",
+    "pos": "adjective"
+  },
+  "fauna": {
+    "display": "fauna",
+    "en": "animals, wildlife",
+    "example_en": "The wildlife of the jungle is very diverse.",
+    "example_es": "La fauna de la selva es muy diversa.",
+    "form": "",
+    "lemma": "fauna",
+    "pos": "noun"
+  },
+  "favor": {
+    "display": "favor",
+    "en": "favor, help",
+    "example_en": "Will you do me a favor, please?",
+    "example_es": "¿Me haces un favor, por favor?",
+    "form": "",
+    "lemma": "favor",
+    "pos": "noun"
+  },
+  "ficha": {
+    "display": "ficha",
+    "en": "card, token, chip",
+    "example_en": "I have a game token in my hand.",
+    "example_es": "Tengo una ficha de juego en la mano.",
+    "form": "",
+    "lemma": "ficha",
+    "pos": "noun"
+  },
+  "final": {
+    "display": "final",
+    "en": "final, last",
+    "example_en": "This is the final exam of the course.",
+    "example_es": "Este es el examen final del curso.",
+    "form": "",
+    "lemma": "final",
+    "pos": "adjective"
+  },
+  "firma": {
+    "display": "firma",
+    "en": "signature, company",
+    "example_en": "My signature is on the document.",
+    "example_es": "Mi firma está en el documento.",
+    "form": "",
+    "lemma": "firma",
+    "pos": "noun"
+  },
+  "flora": {
+    "display": "flora",
+    "en": "plants, vegetation",
+    "example_en": "The vegetation of the forest is beautiful.",
+    "example_es": "La flora del bosque es hermosa.",
+    "form": "",
+    "lemma": "flora",
+    "pos": "noun"
+  },
+  "fondo": {
+    "display": "fondo",
+    "en": "bottom, background, fund",
+    "example_en": "The bottom of the sea is deep.",
+    "example_es": "El fondo del mar es profundo.",
+    "form": "",
+    "lemma": "fondo",
+    "pos": "noun"
+  },
+  "forma": {
+    "display": "forma",
+    "en": "shape, form, way",
+    "example_en": "The shape of the circle is round.",
+    "example_es": "La forma del círculo es redonda.",
+    "form": "",
+    "lemma": "forma",
+    "pos": "noun"
+  },
+  "frase": {
+    "display": "frase",
+    "en": "sentence, phrase",
+    "example_en": "This sentence is very important.",
+    "example_es": "Esta frase es muy importante.",
+    "form": "",
+    "lemma": "frase",
+    "pos": "noun"
+  },
+  "freno": {
+    "display": "freno",
+    "en": "brake, restraint",
+    "example_en": "I press the car's brake.",
+    "example_es": "Presiono el freno del coche.",
+    "form": "",
+    "lemma": "freno",
+    "pos": "noun"
+  },
+  "fruta": {
+    "display": "fruta",
+    "en": "fruit",
+    "example_en": "Fruit is healthy to eat.",
+    "example_es": "La fruta es saludable para comer.",
+    "form": "",
+    "lemma": "fruta",
+    "pos": "noun"
+  },
+  "fuego": {
+    "display": "fuego",
+    "en": "fire",
+    "example_en": "The fire is very hot.",
+    "example_es": "El fuego es muy caliente.",
+    "form": "",
+    "lemma": "fuego",
+    "pos": "noun"
+  },
+  "fumar": {
+    "display": "fumar",
+    "en": "to smoke",
+    "example_en": "I should not smoke in the house.",
+    "example_es": "No debo fumar en la casa.",
+    "form": "",
+    "lemma": "fumar",
+    "pos": "verb"
+  },
+  "ganar": {
+    "display": "ganar",
+    "en": "to win, to earn",
+    "example_en": "I want to win the game.",
+    "example_es": "Quiero ganar el partido.",
+    "form": "",
+    "lemma": "ganar",
+    "pos": "verb"
+  },
+  "gasto": {
+    "display": "gasto",
+    "en": "expense, spending",
+    "example_en": "My monthly expense is high.",
+    "example_es": "Mi gasto mensual es alto.",
+    "form": "",
+    "lemma": "gasto",
+    "pos": "noun"
+  },
+  "gente": {
+    "display": "gente",
+    "en": "people",
+    "example_en": "There are many people in the square.",
+    "example_es": "Hay mucha gente en la plaza.",
+    "form": "",
+    "lemma": "gente",
+    "pos": "noun"
+  },
+  "globo": {
+    "display": "globo",
+    "en": "balloon, globe",
+    "example_en": "The balloon flies in the sky.",
+    "example_es": "El globo vuela en el cielo.",
+    "form": "",
+    "lemma": "globo",
+    "pos": "noun"
+  },
+  "golpe": {
+    "display": "golpe",
+    "en": "blow, hit, strike",
+    "example_en": "I received a blow to the head.",
+    "example_es": "Recibí un golpe en la cabeza.",
+    "form": "",
+    "lemma": "golpe",
+    "pos": "noun"
+  },
+  "gorra": {
+    "display": "gorra",
+    "en": "cap, hat",
+    "example_en": "I wear a blue cap.",
+    "example_es": "Llevo una gorra azul.",
+    "form": "",
+    "lemma": "gorra",
+    "pos": "noun"
+  },
+  "grado": {
+    "display": "grado",
+    "en": "degree, grade, level",
+    "example_en": "I am in the third grade.",
+    "example_es": "Estoy en el tercer grado.",
+    "form": "",
+    "lemma": "grado",
+    "pos": "noun"
+  },
+  "grano": {
+    "display": "grano",
+    "en": "grain, pimple",
+    "example_en": "A grain of rice is small.",
+    "example_es": "Un grano de arroz es pequeño.",
+    "form": "",
+    "lemma": "grano",
+    "pos": "noun"
+  },
+  "grave": {
+    "display": "grave",
+    "en": "serious, grave",
+    "example_en": "It is a very serious situation.",
+    "example_es": "Es una situación muy grave.",
+    "form": "",
+    "lemma": "grave",
+    "pos": "adjective"
+  },
+  "gripe": {
+    "display": "gripe",
+    "en": "flu, influenza",
+    "example_en": "I have the flu and I am sick.",
+    "example_es": "Tengo gripe y estoy enfermo.",
+    "form": "",
+    "lemma": "gripe",
+    "pos": "noun"
+  },
+  "grito": {
+    "display": "grito",
+    "en": "shout, scream, cry",
+    "example_en": "I hear a shout in the night.",
+    "example_es": "Escucho un grito en la noche.",
+    "form": "",
+    "lemma": "grito",
+    "pos": "noun"
+  },
+  "grupo": {
+    "display": "grupo",
+    "en": "group",
+    "example_en": "Our group is very united.",
+    "example_es": "Nuestro grupo es muy unido.",
+    "form": "",
+    "lemma": "grupo",
+    "pos": "noun"
+  },
+  "guapo": {
+    "display": "guapo",
+    "en": "handsome, good-looking",
+    "example_en": "That boy is very handsome.",
+    "example_es": "Ese chico es muy guapo.",
+    "form": "",
+    "lemma": "guapo",
+    "pos": "adjective"
+  },
+  "guion": {
+    "display": "guion",
+    "en": "script, hyphen",
+    "example_en": "The script of the film is excellent.",
+    "example_es": "El guion de la película es excelente.",
+    "form": "",
+    "lemma": "guion",
+    "pos": "noun"
+  },
+  "gusto": {
+    "display": "gusto",
+    "en": "taste, pleasure, liking",
+    "example_en": "I like the taste of the apple.",
+    "example_es": "Me gusta el gusto de la manzana.",
+    "form": "",
+    "lemma": "gusto",
+    "pos": "noun"
+  },
+  "habla": {
+    "display": "habla",
+    "en": "speech, language, dialect",
+    "example_en": "The speech of this region is special.",
+    "example_es": "El habla de esta región es especial.",
+    "form": "",
+    "lemma": "habla",
+    "pos": "noun"
+  },
+  "hacer": {
+    "display": "hacer",
+    "en": "to do, to make",
+    "example_en": "I am going to make a cake.",
+    "example_es": "Voy a hacer una torta.",
+    "form": "",
+    "lemma": "hacer",
+    "pos": "verb"
+  },
+  "hielo": {
+    "display": "hielo",
+    "en": "ice",
+    "example_en": "Ice is cold and hard.",
+    "example_es": "El hielo es frío y duro.",
+    "form": "",
+    "lemma": "hielo",
+    "pos": "noun"
+  },
+  "hiena": {
+    "display": "hiena",
+    "en": "hyena",
+    "example_en": "The hyena is a wild animal.",
+    "example_es": "La hiena es un animal salvaje.",
+    "form": "",
+    "lemma": "hiena",
+    "pos": "noun"
+  },
+  "hijos": {
+    "display": "hijos",
+    "en": "children, sons",
+    "example_en": "I have two beautiful children.",
+    "example_es": "Tengo dos hijos hermosos.",
+    "form": "plural of hijo",
+    "lemma": "hijo",
+    "pos": "noun"
+  },
+  "himno": {
+    "display": "himno",
+    "en": "hymn, anthem",
+    "example_en": "We sing the national anthem.",
+    "example_es": "Cantamos el himno nacional.",
+    "form": "",
+    "lemma": "himno",
+    "pos": "noun"
+  },
+  "hogar": {
+    "display": "hogar",
+    "en": "home, hearth",
+    "example_en": "My home is my favorite place.",
+    "example_es": "Mi hogar es mi lugar favorito.",
+    "form": "",
+    "lemma": "hogar",
+    "pos": "noun"
+  },
+  "honor": {
+    "display": "honor",
+    "en": "honor, dignity",
+    "example_en": "I defend my honor with pride.",
+    "example_es": "Defiendo mi honor con orgullo.",
+    "form": "",
+    "lemma": "honor",
+    "pos": "noun"
+  },
+  "hueco": {
+    "display": "hueco",
+    "en": "hole, hollow, gap",
+    "example_en": "There is a hole in the wall.",
+    "example_es": "Hay un hueco en la pared.",
+    "form": "",
+    "lemma": "hueco",
+    "pos": "noun"
+  },
+  "hueso": {
+    "display": "hueso",
+    "en": "bone",
+    "example_en": "The dog eats a bone.",
+    "example_es": "El perro come un hueso.",
+    "form": "",
+    "lemma": "hueso",
+    "pos": "noun"
+  },
+  "huevo": {
+    "display": "huevo",
+    "en": "egg",
+    "example_en": "I eat an egg for breakfast.",
+    "example_es": "Como un huevo en el desayuno.",
+    "form": "",
+    "lemma": "huevo",
+    "pos": "noun"
+  },
+  "humor": {
+    "display": "humor",
+    "en": "humor, mood, wit",
+    "example_en": "He is in a good mood today.",
+    "example_es": "Tiene un buen humor hoy.",
+    "form": "",
+    "lemma": "humor",
+    "pos": "noun"
+  },
+  "ideal": {
+    "display": "ideal",
+    "en": "perfect, ideal",
+    "example_en": "This book is ideal for learning Spanish.",
+    "example_es": "Este libro es ideal para aprender español.",
+    "form": "",
+    "lemma": "ideal",
+    "pos": "adjective"
+  },
+  "ileso": {
+    "display": "ileso",
+    "en": "unharmed, uninjured",
+    "example_en": "The driver came out unharmed from the accident.",
+    "example_es": "El conductor salió ileso del accidente.",
+    "form": "",
+    "lemma": "ileso",
+    "pos": "adjective"
+  },
+  "indio": {
+    "display": "indio",
+    "en": "Native American, Indian",
+    "example_en": "The Native American lives in the mountains.",
+    "example_es": "El indio vive en la montaña.",
+    "form": "",
+    "lemma": "indio",
+    "pos": "noun"
+  },
+  "jaula": {
+    "display": "jaula",
+    "en": "cage",
+    "example_en": "The bird is in the cage.",
+    "example_es": "El pájaro está en la jaula.",
+    "form": "",
+    "lemma": "jaula",
+    "pos": "noun"
+  },
+  "jefes": {
+    "display": "jefes",
+    "en": "chiefs, bosses",
+    "example_en": "The bosses have an important meeting.",
+    "example_es": "Los jefes tienen una reunión importante.",
+    "form": "plural of jefe",
+    "lemma": "jefe",
+    "pos": "noun"
+  },
+  "joven": {
+    "display": "joven",
+    "en": "young",
+    "example_en": "My sister is very young.",
+    "example_es": "Mi hermana es muy joven.",
+    "form": "",
+    "lemma": "joven",
+    "pos": "adjective"
+  },
+  "juego": {
+    "display": "juego",
+    "en": "game, play",
+    "example_en": "I love playing the game of chess.",
+    "example_es": "Me encanta jugar al juego de ajedrez.",
+    "form": "",
+    "lemma": "juego",
+    "pos": "noun"
+  },
+  "jugar": {
+    "display": "jugar",
+    "en": "to play",
+    "example_en": "I am going to play football tomorrow.",
+    "example_es": "Voy a jugar al fútbol mañana.",
+    "form": "",
+    "lemma": "jugar",
+    "pos": "verb"
+  },
+  "labor": {
+    "display": "labor",
+    "en": "work, labor, task",
+    "example_en": "The teacher's work is important.",
+    "example_es": "La labor del profesor es importante.",
+    "form": "",
+    "lemma": "labor",
+    "pos": "noun"
+  },
+  "largo": {
+    "display": "largo",
+    "en": "long",
+    "example_en": "The river is very long.",
+    "example_es": "El río es muy largo.",
+    "form": "",
+    "lemma": "largo",
+    "pos": "adjective"
+  },
+  "laser": {
+    "display": "laser",
+    "en": "laser",
+    "example_en": "The laser is modern technology.",
+    "example_es": "El laser es una tecnología moderna.",
+    "form": "",
+    "lemma": "láser",
+    "pos": "noun"
+  },
+  "latir": {
+    "display": "latir",
+    "en": "to beat, to throb",
+    "example_en": "The heart begins to beat fast.",
+    "example_es": "El corazón comienza a latir rápido.",
+    "form": "",
+    "lemma": "latir",
+    "pos": "verb"
+  },
+  "leche": {
+    "display": "leche",
+    "en": "milk",
+    "example_en": "I drink milk at breakfast.",
+    "example_es": "Bebo leche en el desayuno.",
+    "form": "",
+    "lemma": "leche",
+    "pos": "noun"
+  },
+  "lento": {
+    "display": "lento",
+    "en": "slow",
+    "example_en": "The car moves very slowly.",
+    "example_es": "El coche se mueve muy lento.",
+    "form": "",
+    "lemma": "lento",
+    "pos": "adjective"
+  },
+  "letra": {
+    "display": "letra",
+    "en": "letter, character",
+    "example_en": "The letter A is the first of the alphabet.",
+    "example_es": "La letra A es la primera del alfabeto.",
+    "form": "",
+    "lemma": "letra",
+    "pos": "noun"
+  },
+  "libre": {
+    "display": "libre",
+    "en": "free",
+    "example_en": "On Sunday I am free.",
+    "example_es": "El domingo soy libre.",
+    "form": "",
+    "lemma": "libre",
+    "pos": "adjective"
+  },
+  "limon": {
+    "display": "limon",
+    "en": "lemon",
+    "example_en": "I like lemon juice.",
+    "example_es": "Me gusta el jugo de limon.",
+    "form": "",
+    "lemma": "limón",
+    "pos": "noun"
+  },
+  "linea": {
+    "display": "linea",
+    "en": "line",
+    "example_en": "Draw a straight line on the paper.",
+    "example_es": "Dibuja una linea recta en el papel.",
+    "form": "",
+    "lemma": "línea",
+    "pos": "noun"
+  },
+  "litro": {
+    "display": "litro",
+    "en": "liter",
+    "example_en": "I bought a liter of milk.",
+    "example_es": "Compré un litro de leche.",
+    "form": "",
+    "lemma": "litro",
+    "pos": "noun"
+  },
+  "llama": {
+    "display": "llama",
+    "en": "llama, flame",
+    "example_en": "The llama is an animal from the Andes.",
+    "example_es": "La llama es un animal de los Andes.",
+    "form": "",
+    "lemma": "llama",
+    "pos": "noun"
+  },
+  "llano": {
+    "display": "llano",
+    "en": "flat, plain",
+    "example_en": "The terrain is very flat.",
+    "example_es": "El terreno es muy llano.",
+    "form": "",
+    "lemma": "llano",
+    "pos": "adjective"
+  },
+  "llave": {
+    "display": "llave",
+    "en": "key",
+    "example_en": "I lost the key to my house.",
+    "example_es": "Perdí la llave de mi casa.",
+    "form": "",
+    "lemma": "llave",
+    "pos": "noun"
+  },
+  "lleno": {
+    "display": "lleno",
+    "en": "full",
+    "example_en": "The glass is full of water.",
+    "example_es": "El vaso está lleno de agua.",
+    "form": "",
+    "lemma": "lleno",
+    "pos": "adjective"
+  },
+  "logro": {
+    "display": "logro",
+    "en": "achievement, accomplishment",
+    "example_en": "Finishing the degree was an important achievement.",
+    "example_es": "Terminar la carrera fue un logro importante.",
+    "form": "",
+    "lemma": "logro",
+    "pos": "noun"
+  },
+  "lucha": {
+    "display": "lucha",
+    "en": "fight, struggle",
+    "example_en": "The fight for justice is important.",
+    "example_es": "La lucha por la justicia es importante.",
+    "form": "",
+    "lemma": "lucha",
+    "pos": "noun"
+  },
+  "lugar": {
+    "display": "lugar",
+    "en": "place, location",
+    "example_en": "This is a very beautiful place.",
+    "example_es": "Este es un lugar muy bonito.",
+    "form": "",
+    "lemma": "lugar",
+    "pos": "noun"
+  },
+  "lunar": {
+    "display": "lunar",
+    "en": "mole, birthmark",
+    "example_en": "I have a mole on my cheek.",
+    "example_es": "Tengo un lunar en la mejilla.",
+    "form": "",
+    "lemma": "lunar",
+    "pos": "noun"
+  },
+  "lunes": {
+    "display": "lunes",
+    "en": "Monday",
+    "example_en": "On Monday I have Spanish class.",
+    "example_es": "El lunes tengo clase de español.",
+    "form": "",
+    "lemma": "lunes",
+    "pos": "noun"
+  },
+  "macro": {
+    "display": "macro",
+    "en": "macro, large-scale",
+    "example_en": "We need a macro view of the problem.",
+    "example_es": "Necesitamos una visión macro del problema.",
+    "form": "",
+    "lemma": "macro",
+    "pos": "adjective"
+  },
+  "madre": {
+    "display": "madre",
+    "en": "mother",
+    "example_en": "My mother is very affectionate.",
+    "example_es": "Mi madre es muy cariñosa.",
+    "form": "",
+    "lemma": "madre",
+    "pos": "noun"
+  },
+  "mango": {
+    "display": "mango",
+    "en": "mango, handle",
+    "example_en": "The handle of the door is metal.",
+    "example_es": "El mango de la puerta es de metal.",
+    "form": "",
+    "lemma": "mango",
+    "pos": "noun"
+  },
+  "manos": {
+    "display": "manos",
+    "en": "hands",
+    "example_en": "Wash your hands before eating.",
+    "example_es": "Lávate las manos antes de comer.",
+    "form": "plural of mano",
+    "lemma": "mano",
+    "pos": "noun"
+  },
+  "manto": {
+    "display": "manto",
+    "en": "cloak, mantle",
+    "example_en": "The king wears a red cloak.",
+    "example_es": "El rey lleva un manto rojo.",
+    "form": "",
+    "lemma": "manto",
+    "pos": "noun"
+  },
+  "marca": {
+    "display": "marca",
+    "en": "brand, mark",
+    "example_en": "This clothing brand is very popular.",
+    "example_es": "Esta marca de ropa es muy popular.",
+    "form": "",
+    "lemma": "marca",
+    "pos": "noun"
+  },
+  "marco": {
+    "display": "marco",
+    "en": "frame",
+    "example_en": "The painting has a wooden frame.",
+    "example_es": "El cuadro tiene un marco de madera.",
+    "form": "",
+    "lemma": "marco",
+    "pos": "noun"
+  },
+  "media": {
+    "display": "media",
+    "en": "stocking, sock, average",
+    "example_en": "I need a new stocking.",
+    "example_es": "Necesito una media nueva.",
+    "form": "",
+    "lemma": "media",
+    "pos": "noun"
+  },
+  "mejor": {
+    "display": "mejor",
+    "en": "better, best",
+    "example_en": "This book is better than the other.",
+    "example_es": "Este libro es mejor que el otro.",
+    "form": "",
+    "lemma": "mejor",
+    "pos": "adjective"
+  },
+  "metro": {
+    "display": "metro",
+    "en": "meter, subway",
+    "example_en": "I go to work by subway.",
+    "example_es": "Voy al trabajo en metro.",
+    "form": "",
+    "lemma": "metro",
+    "pos": "noun"
+  },
+  "milla": {
+    "display": "milla",
+    "en": "mile",
+    "example_en": "The city is one mile from here.",
+    "example_es": "La ciudad está a una milla de aquí.",
+    "form": "",
+    "lemma": "milla",
+    "pos": "noun"
+  },
+  "minas": {
+    "display": "minas",
+    "en": "mines",
+    "example_en": "The mines produce gold and silver.",
+    "example_es": "Las minas producen oro y plata.",
+    "form": "plural of mina",
+    "lemma": "mina",
+    "pos": "noun"
+  },
+  "mitos": {
+    "display": "mitos",
+    "en": "myths",
+    "example_en": "Greek myths are very famous.",
+    "example_es": "Los mitos griegos son muy famosos.",
+    "form": "plural of mito",
+    "lemma": "mito",
+    "pos": "noun"
+  },
+  "molar": {
+    "display": "molar",
+    "en": "molar tooth",
+    "example_en": "A molar tooth hurts me.",
+    "example_es": "Me duele un molar.",
+    "form": "",
+    "lemma": "molar",
+    "pos": "noun"
+  },
+  "molde": {
+    "display": "molde",
+    "en": "mold, form",
+    "example_en": "I use a mold to make cakes.",
+    "example_es": "Uso un molde para hacer pasteles.",
+    "form": "",
+    "lemma": "molde",
+    "pos": "noun"
+  },
+  "monte": {
+    "display": "monte",
+    "en": "mountain, hill",
+    "example_en": "We climbed the mountain on Sunday.",
+    "example_es": "Subimos al monte el domingo.",
+    "form": "",
+    "lemma": "monte",
+    "pos": "noun"
+  },
+  "moral": {
+    "display": "moral",
+    "en": "moral, ethical",
+    "example_en": "He has a very strong moral compass.",
+    "example_es": "Tiene una brújula moral muy fuerte.",
+    "form": "",
+    "lemma": "moral",
+    "pos": "adjective"
+  },
+  "motor": {
+    "display": "motor",
+    "en": "motor, engine",
+    "example_en": "The car's engine works well.",
+    "example_es": "El motor del coche funciona bien.",
+    "form": "",
+    "lemma": "motor",
+    "pos": "noun"
+  },
+  "mundo": {
+    "display": "mundo",
+    "en": "world",
+    "example_en": "I will travel around the world.",
+    "example_es": "Viajaré por todo el mundo.",
+    "form": "",
+    "lemma": "mundo",
+    "pos": "noun"
+  },
+  "mural": {
+    "display": "mural",
+    "en": "mural, wall painting",
+    "example_en": "The mural on the wall is beautiful.",
+    "example_es": "El mural en la pared es hermoso.",
+    "form": "",
+    "lemma": "mural",
+    "pos": "noun"
+  },
+  "nacer": {
+    "display": "nacer",
+    "en": "to be born",
+    "example_en": "All the children are going to be born healthy.",
+    "example_es": "Todos los niños van a nacer sanos.",
+    "form": "",
+    "lemma": "nacer",
+    "pos": "verb"
+  },
+  "nariz": {
+    "display": "nariz",
+    "en": "nose",
+    "example_en": "He has a big nose.",
+    "example_es": "Tiene la nariz grande.",
+    "form": "",
+    "lemma": "nariz",
+    "pos": "noun"
+  },
+  "naval": {
+    "display": "naval",
+    "en": "naval, maritime",
+    "example_en": "The naval base is near the port.",
+    "example_es": "La base naval está cerca del puerto.",
+    "form": "",
+    "lemma": "naval",
+    "pos": "adjective"
+  },
+  "negro": {
+    "display": "negro",
+    "en": "black",
+    "example_en": "I wear a black coat.",
+    "example_es": "Llevo un abrigo negro.",
+    "form": "",
+    "lemma": "negro",
+    "pos": "adjective"
+  },
+  "nivel": {
+    "display": "nivel",
+    "en": "level",
+    "example_en": "The water level rose a lot.",
+    "example_es": "El nivel del agua subió mucho.",
+    "form": "",
+    "lemma": "nivel",
+    "pos": "noun"
+  },
+  "noble": {
+    "display": "noble",
+    "en": "noble, honorable",
+    "example_en": "He has a noble heart.",
+    "example_es": "Tiene un corazón noble.",
+    "form": "",
+    "lemma": "noble",
+    "pos": "adjective"
+  },
+  "noche": {
+    "display": "noche",
+    "en": "night",
+    "example_en": "We went out for a walk at night.",
+    "example_es": "Salimos a pasear por la noche.",
+    "form": "",
+    "lemma": "noche",
+    "pos": "noun"
+  },
+  "norma": {
+    "display": "norma",
+    "en": "rule, norm",
+    "example_en": "We must follow the rule.",
+    "example_es": "Debemos seguir la norma.",
+    "form": "",
+    "lemma": "norma",
+    "pos": "noun"
+  },
+  "norte": {
+    "display": "norte",
+    "en": "north",
+    "example_en": "The city is to the north.",
+    "example_es": "La ciudad está al norte.",
+    "form": "",
+    "lemma": "norte",
+    "pos": "noun"
+  },
+  "notas": {
+    "display": "notas",
+    "en": "notes, grades",
+    "example_en": "My grades improved this semester.",
+    "example_es": "Mis notas mejoraron este semestre.",
+    "form": "plural of nota",
+    "lemma": "nota",
+    "pos": "noun"
+  },
+  "novio": {
+    "display": "novio",
+    "en": "boyfriend, fiancé",
+    "example_en": "My boyfriend is an engineer.",
+    "example_es": "Mi novio es ingeniero.",
+    "form": "",
+    "lemma": "novio",
+    "pos": "noun"
+  },
+  "nueva": {
+    "display": "nueva",
+    "en": "new (feminine)",
+    "example_en": "I bought a new house.",
+    "example_es": "Compré una casa nueva.",
+    "form": "feminine singular of nuevo",
+    "lemma": "nuevo",
+    "pos": "adjective"
+  },
+  "obrar": {
+    "display": "obrar",
+    "en": "to act, to work",
+    "example_en": "We must act with justice.",
+    "example_es": "Debemos obrar con justicia.",
+    "form": "",
+    "lemma": "obrar",
+    "pos": "verb"
+  },
+  "omega": {
+    "display": "omega",
+    "en": "omega (Greek letter)",
+    "example_en": "Omega is the last Greek letter.",
+    "example_es": "La omega es la última letra griega.",
+    "form": "",
+    "lemma": "omega",
+    "pos": "noun"
+  },
+  "ondas": {
+    "display": "ondas",
+    "en": "waves",
+    "example_en": "The ocean waves are big.",
+    "example_es": "Las ondas del mar son grandes.",
+    "form": "plural of onda",
+    "lemma": "onda",
+    "pos": "noun"
+  },
+  "opaco": {
+    "display": "opaco",
+    "en": "opaque",
+    "example_en": "Opaque glass does not let light through.",
+    "example_es": "El vidrio opaco no deja pasar luz.",
+    "form": "",
+    "lemma": "opaco",
+    "pos": "adjective"
+  },
+  "opera": {
+    "display": "ópera",
+    "en": "opera",
+    "example_en": "We saw an opera at the theater.",
+    "example_es": "Vimos una ópera en el teatro.",
+    "form": "",
+    "lemma": "ópera",
+    "pos": "noun"
+  },
+  "orden": {
+    "display": "orden",
+    "en": "order, command",
+    "example_en": "I received an order from the boss.",
+    "example_es": "Recibí una orden del jefe.",
+    "form": "",
+    "lemma": "orden",
+    "pos": "noun"
+  },
+  "oreja": {
+    "display": "oreja",
+    "en": "ear",
+    "example_en": "My ear hurts.",
+    "example_es": "Me duele la oreja.",
+    "form": "",
+    "lemma": "oreja",
+    "pos": "noun"
+  },
+  "osado": {
+    "display": "osado",
+    "en": "bold, daring",
+    "example_en": "It was a very bold plan.",
+    "example_es": "Fue un plan muy osado.",
+    "form": "",
+    "lemma": "osado",
+    "pos": "adjective"
+  },
+  "padre": {
+    "display": "padre",
+    "en": "father",
+    "example_en": "My father works in the city.",
+    "example_es": "Mi padre trabaja en la ciudad.",
+    "form": "",
+    "lemma": "padre",
+    "pos": "noun"
+  },
+  "pagar": {
+    "display": "pagar",
+    "en": "to pay",
+    "example_en": "I have to pay the bill.",
+    "example_es": "Tengo que pagar la factura.",
+    "form": "",
+    "lemma": "pagar",
+    "pos": "verb"
+  },
+  "palma": {
+    "display": "palma",
+    "en": "palm tree, palm",
+    "example_en": "There is a palm tree in the garden.",
+    "example_es": "Hay una palma en el jardín.",
+    "form": "",
+    "lemma": "palma",
+    "pos": "noun"
+  },
+  "pared": {
+    "display": "pared",
+    "en": "wall",
+    "example_en": "I painted the wall blue.",
+    "example_es": "Pinté la pared de azul.",
+    "form": "",
+    "lemma": "pared",
+    "pos": "noun"
+  },
+  "parte": {
+    "display": "parte",
+    "en": "part, portion",
+    "example_en": "I ate a part of the cake.",
+    "example_es": "Comí una parte del pastel.",
+    "form": "",
+    "lemma": "parte",
+    "pos": "noun"
+  },
+  "pasar": {
+    "display": "pasar",
+    "en": "to pass, to happen",
+    "example_en": "Can you pass the salt, please?",
+    "example_es": "¿Puedes pasar la sal, por favor?",
+    "form": "",
+    "lemma": "pasar",
+    "pos": "verb"
+  },
+  "pasta": {
+    "display": "pasta",
+    "en": "pasta, dough",
+    "example_en": "I made homemade pasta for dinner.",
+    "example_es": "Hice pasta casera para la cena.",
+    "form": "",
+    "lemma": "pasta",
+    "pos": "noun"
+  },
+  "patio": {
+    "display": "patio",
+    "en": "patio, courtyard",
+    "example_en": "We played in the school courtyard.",
+    "example_es": "Jugamos en el patio de la escuela.",
+    "form": "",
+    "lemma": "patio",
+    "pos": "noun"
+  },
+  "pausa": {
+    "display": "pausa",
+    "en": "pause, break",
+    "example_en": "We took a break to rest.",
+    "example_es": "Hicimos una pausa para descansar.",
+    "form": "",
+    "lemma": "pausa",
+    "pos": "noun"
+  },
+  "pecho": {
+    "display": "pecho",
+    "en": "chest, breast",
+    "example_en": "His chest hurts.",
+    "example_es": "Le duele el pecho.",
+    "form": "",
+    "lemma": "pecho",
+    "pos": "noun"
+  },
+  "pelea": {
+    "display": "pelea",
+    "en": "fight, quarrel",
+    "example_en": "They had a fight in the street.",
+    "example_es": "Tuvieron una pelea en la calle.",
+    "form": "",
+    "lemma": "pelea",
+    "pos": "noun"
+  },
+  "perro": {
+    "display": "perro",
+    "en": "dog",
+    "example_en": "My dog is very friendly.",
+    "example_es": "Mi perro es muy amigable.",
+    "form": "",
+    "lemma": "perro",
+    "pos": "noun"
+  },
+  "pilar": {
+    "display": "pilar",
+    "en": "pillar, column",
+    "example_en": "The pillar supports the roof of the house.",
+    "example_es": "El pilar sostiene el techo de la casa.",
+    "form": "",
+    "lemma": "pilar",
+    "pos": "noun"
+  },
+  "pista": {
+    "display": "pista",
+    "en": "clue, track, runway",
+    "example_en": "The dance floor is full of people.",
+    "example_es": "La pista de baile está llena de gente.",
+    "form": "",
+    "lemma": "pista",
+    "pos": "noun"
+  },
+  "plano": {
+    "display": "plano",
+    "en": "flat, level, plane",
+    "example_en": "The terrain is completely flat here.",
+    "example_es": "El terreno es completamente plano aquí.",
+    "form": "",
+    "lemma": "plano",
+    "pos": "adjective"
+  },
+  "plata": {
+    "display": "plata",
+    "en": "silver, money",
+    "example_en": "The ring is made of pure silver.",
+    "example_es": "El anillo es de plata pura.",
+    "form": "",
+    "lemma": "plata",
+    "pos": "noun"
+  },
+  "plaza": {
+    "display": "plaza",
+    "en": "square, plaza, job",
+    "example_en": "We met in the town square.",
+    "example_es": "Nos encontramos en la plaza del pueblo.",
+    "form": "",
+    "lemma": "plaza",
+    "pos": "noun"
+  },
+  "poder": {
+    "display": "poder",
+    "en": "can, to be able",
+    "example_en": "I want to be able to speak Spanish fluently.",
+    "example_es": "Quiero poder hablar español con fluidez.",
+    "form": "",
+    "lemma": "poder",
+    "pos": "verb"
+  },
+  "poeta": {
+    "display": "poeta",
+    "en": "poet",
+    "example_en": "The poet writes beautiful verses.",
+    "example_es": "El poeta escribe versos hermosos.",
+    "form": "",
+    "lemma": "poeta",
+    "pos": "noun"
+  },
+  "polar": {
+    "display": "polar",
+    "en": "polar",
+    "example_en": "Polar bears live in the Arctic.",
+    "example_es": "Los osos polares viven en el Ártico.",
+    "form": "plural",
+    "lemma": "polar",
+    "pos": "adjective"
+  },
+  "polvo": {
+    "display": "polvo",
+    "en": "dust, powder",
+    "example_en": "There is dust on the table.",
+    "example_es": "Hay polvo en la mesa.",
+    "form": "",
+    "lemma": "polvo",
+    "pos": "noun"
+  },
+  "poner": {
+    "display": "poner",
+    "en": "to put, to place",
+    "example_en": "I am going to put the books on the table.",
+    "example_es": "Voy a poner los libros en la mesa.",
+    "form": "",
+    "lemma": "poner",
+    "pos": "verb"
+  },
+  "poste": {
+    "display": "poste",
+    "en": "post, pole",
+    "example_en": "The light post is on the street.",
+    "example_es": "El poste de luz está en la calle.",
+    "form": "",
+    "lemma": "poste",
+    "pos": "noun"
+  },
+  "prima": {
+    "display": "prima",
+    "en": "female cousin, bonus",
+    "example_en": "My cousin lives in Madrid.",
+    "example_es": "Mi prima vive en Madrid.",
+    "form": "feminine singular",
+    "lemma": "primo",
+    "pos": "noun"
+  },
+  "prisa": {
+    "display": "prisa",
+    "en": "hurry, rush",
+    "example_en": "I am in a hurry to arrive on time.",
+    "example_es": "Tengo prisa para llegar a tiempo.",
+    "form": "",
+    "lemma": "prisa",
+    "pos": "noun"
+  },
+  "pulso": {
+    "display": "pulso",
+    "en": "pulse, wrist",
+    "example_en": "The doctor takes my pulse.",
+    "example_es": "El médico me toma el pulso.",
+    "form": "",
+    "lemma": "pulso",
+    "pos": "noun"
+  },
+  "punto": {
+    "display": "punto",
+    "en": "point, dot, period",
+    "example_en": "I won a point in the game.",
+    "example_es": "Gané un punto en el juego.",
+    "form": "",
+    "lemma": "punto",
+    "pos": "noun"
+  },
+  "queso": {
+    "display": "queso",
+    "en": "cheese",
+    "example_en": "I love Italian cheese.",
+    "example_es": "Me encanta el queso italiano.",
+    "form": "",
+    "lemma": "queso",
+    "pos": "noun"
+  },
+  "quien": {
+    "display": "quien",
+    "en": "who, whom",
+    "example_en": "The person whom I called did not answer.",
+    "example_es": "La persona a quien llamé no respondió.",
+    "form": "",
+    "lemma": "quien",
+    "pos": "other"
+  },
+  "radio": {
+    "display": "radio",
+    "en": "radio, radius",
+    "example_en": "I listen to the radio every morning.",
+    "example_es": "Escucho la radio cada mañana.",
+    "form": "",
+    "lemma": "radio",
+    "pos": "noun"
+  },
+  "razon": {
+    "display": "razón",
+    "en": "reason, right",
+    "example_en": "You are right in your opinion.",
+    "example_es": "Tienes razón en tu opinión.",
+    "form": "",
+    "lemma": "razón",
+    "pos": "noun"
+  },
+  "reina": {
+    "display": "reina",
+    "en": "queen",
+    "example_en": "The queen lives in the palace.",
+    "example_es": "La reina vive en el palacio.",
+    "form": "",
+    "lemma": "reina",
+    "pos": "noun"
+  },
+  "reloj": {
+    "display": "reloj",
+    "en": "watch, clock",
+    "example_en": "My watch shows three o'clock.",
+    "example_es": "Mi reloj marca las tres.",
+    "form": "",
+    "lemma": "reloj",
+    "pos": "noun"
+  },
+  "renta": {
+    "display": "renta",
+    "en": "income, rent, revenue",
+    "example_en": "The monthly rent is very high.",
+    "example_es": "La renta mensual es muy alta.",
+    "form": "",
+    "lemma": "renta",
+    "pos": "noun"
+  },
+  "resta": {
+    "display": "resta",
+    "en": "subtraction",
+    "example_en": "Subtraction is easy for me.",
+    "example_es": "La resta es fácil para mí.",
+    "form": "",
+    "lemma": "resta",
+    "pos": "noun"
+  },
+  "rival": {
+    "display": "rival",
+    "en": "rival, competitor",
+    "example_en": "My rival plays very well.",
+    "example_es": "Mi rival juega muy bien.",
+    "form": "",
+    "lemma": "rival",
+    "pos": "noun"
+  },
+  "roble": {
+    "display": "roble",
+    "en": "oak tree",
+    "example_en": "The oak is a strong tree.",
+    "example_es": "El roble es un árbol fuerte.",
+    "form": "",
+    "lemma": "roble",
+    "pos": "noun"
+  },
+  "robot": {
+    "display": "robot",
+    "en": "robot",
+    "example_en": "The robot does the automatic work.",
+    "example_es": "El robot hace el trabajo automático.",
+    "form": "",
+    "lemma": "robot",
+    "pos": "noun"
+  },
+  "ronco": {
+    "display": "ronco",
+    "en": "hoarse, husky",
+    "example_en": "The old man has a hoarse tone when speaking.",
+    "example_es": "El viejo tiene un tono ronco al hablar.",
+    "form": "masculine singular",
+    "lemma": "ronco",
+    "pos": "adjective"
+  },
+  "rubio": {
+    "display": "rubio",
+    "en": "blond, fair-haired",
+    "example_en": "He has blond hair.",
+    "example_es": "Él tiene el pelo rubio.",
+    "form": "masculine singular",
+    "lemma": "rubio",
+    "pos": "adjective"
+  },
+  "rueda": {
+    "display": "rueda",
+    "en": "wheel",
+    "example_en": "The car wheel is broken.",
+    "example_es": "La rueda del coche está rota.",
+    "form": "",
+    "lemma": "rueda",
+    "pos": "noun"
+  },
+  "ruido": {
+    "display": "ruido",
+    "en": "noise, sound",
+    "example_en": "The noise is very loud.",
+    "example_es": "El ruido es muy fuerte.",
+    "form": "",
+    "lemma": "ruido",
+    "pos": "noun"
+  },
+  "rumbo": {
+    "display": "rumbo",
+    "en": "direction, course, heading",
+    "example_en": "The ship changes direction.",
+    "example_es": "El barco cambia de rumbo.",
+    "form": "",
+    "lemma": "rumbo",
+    "pos": "noun"
+  },
+  "rural": {
+    "display": "rural",
+    "en": "rural, countryside",
+    "example_en": "Rural life is peaceful.",
+    "example_es": "La vida rural es tranquila.",
+    "form": "",
+    "lemma": "rural",
+    "pos": "adjective"
+  },
+  "sabor": {
+    "display": "sabor",
+    "en": "flavor, taste",
+    "example_en": "The flavor of the food is delicious.",
+    "example_es": "El sabor de la comida es delicioso.",
+    "form": "",
+    "lemma": "sabor",
+    "pos": "noun"
+  },
+  "sacar": {
+    "display": "sacar",
+    "en": "to take out, to pull",
+    "example_en": "I am going to take out the money from the bank.",
+    "example_es": "Voy a sacar el dinero del banco.",
+    "form": "",
+    "lemma": "sacar",
+    "pos": "verb"
+  },
+  "salir": {
+    "display": "salir",
+    "en": "to leave, to go out",
+    "example_en": "I want to leave home at eight.",
+    "example_es": "Quiero salir de casa a las ocho.",
+    "form": "",
+    "lemma": "salir",
+    "pos": "verb"
+  },
+  "salsa": {
+    "display": "salsa",
+    "en": "sauce, salsa",
+    "example_en": "The tomato sauce is delicious.",
+    "example_es": "La salsa de tomate es rica.",
+    "form": "",
+    "lemma": "salsa",
+    "pos": "noun"
+  },
+  "salto": {
+    "display": "salto",
+    "en": "jump, leap",
+    "example_en": "The jump was very high.",
+    "example_es": "El salto fue muy alto.",
+    "form": "",
+    "lemma": "salto",
+    "pos": "noun"
+  },
+  "salud": {
+    "display": "salud",
+    "en": "health",
+    "example_en": "Health is very important.",
+    "example_es": "La salud es muy importante.",
+    "form": "",
+    "lemma": "salud",
+    "pos": "noun"
+  },
+  "santo": {
+    "display": "santo",
+    "en": "holy, saint",
+    "example_en": "Today is a holy day.",
+    "example_es": "Hoy es un día santo.",
+    "form": "masculine singular",
+    "lemma": "santo",
+    "pos": "adjective"
+  },
+  "savia": {
+    "display": "savia",
+    "en": "sap",
+    "example_en": "The sap flows through the tree.",
+    "example_es": "La savia fluye por el árbol.",
+    "form": "",
+    "lemma": "savia",
+    "pos": "noun"
+  },
+  "sello": {
+    "display": "sello",
+    "en": "stamp, seal",
+    "example_en": "I bought a stamp for the letter.",
+    "example_es": "Compré un sello para la carta.",
+    "form": "",
+    "lemma": "sello",
+    "pos": "noun"
+  },
+  "selva": {
+    "display": "selva",
+    "en": "jungle, rainforest",
+    "example_en": "The Amazon jungle is very large.",
+    "example_es": "La selva amazónica es muy grande.",
+    "form": "",
+    "lemma": "selva",
+    "pos": "noun"
+  },
+  "seria": {
+    "display": "seria",
+    "en": "serious, grave",
+    "example_en": "She has a serious expression.",
+    "example_es": "Ella tiene una expresión seria.",
+    "form": "feminine singular of serio",
+    "lemma": "serio",
+    "pos": "adjective"
+  },
+  "siglo": {
+    "display": "siglo",
+    "en": "century",
+    "example_en": "We live in the twenty-first century.",
+    "example_es": "Vivimos en el siglo veintiuno.",
+    "form": "",
+    "lemma": "siglo",
+    "pos": "noun"
+  },
+  "sitio": {
+    "display": "sitio",
+    "en": "place, site, spot",
+    "example_en": "This is a very beautiful place.",
+    "example_es": "Este es un sitio muy bonito.",
+    "form": "",
+    "lemma": "sitio",
+    "pos": "noun"
+  },
+  "sobre": {
+    "display": "sobre",
+    "en": "envelope",
+    "example_en": "I put the letter in the envelope.",
+    "example_es": "Puse la carta en el sobre.",
+    "form": "",
+    "lemma": "sobre",
+    "pos": "noun"
+  },
+  "solar": {
+    "display": "solar",
+    "en": "plot of land",
+    "example_en": "They bought a plot of land to build.",
+    "example_es": "Compraron un solar para construir.",
+    "form": "",
+    "lemma": "solar",
+    "pos": "noun"
+  },
+  "sopla": {
+    "display": "sopla",
+    "en": "blows, breathes air",
+    "example_en": "The wind blows hard today.",
+    "example_es": "El viento sopla fuerte hoy.",
+    "form": "3rd sg. present of soplar",
+    "lemma": "soplar",
+    "pos": "verb"
+  },
+  "sordo": {
+    "display": "sordo",
+    "en": "deaf",
+    "example_en": "My grandfather is deaf in one ear.",
+    "example_es": "Mi abuelo es sordo de un oído.",
+    "form": "",
+    "lemma": "sordo",
+    "pos": "adjective"
+  },
+  "suave": {
+    "display": "suave",
+    "en": "soft, smooth, gentle",
+    "example_en": "The fabric is very soft.",
+    "example_es": "La tela es muy suave.",
+    "form": "",
+    "lemma": "suave",
+    "pos": "adjective"
+  },
+  "subir": {
+    "display": "subir",
+    "en": "to go up, climb",
+    "example_en": "We are going to climb the mountain.",
+    "example_es": "Vamos a subir la montaña.",
+    "form": "",
+    "lemma": "subir",
+    "pos": "verb"
+  },
+  "suelo": {
+    "display": "suelo",
+    "en": "ground, floor, soil",
+    "example_en": "The floor is wet.",
+    "example_es": "El suelo está mojado.",
+    "form": "",
+    "lemma": "suelo",
+    "pos": "noun"
+  },
+  "sutil": {
+    "display": "sutil",
+    "en": "subtle, delicate, fine",
+    "example_en": "There is a subtle difference between them.",
+    "example_es": "Hay una diferencia sutil entre ellos.",
+    "form": "",
+    "lemma": "sutil",
+    "pos": "adjective"
+  },
+  "talon": {
+    "display": "talón",
+    "en": "heel",
+    "example_en": "My heel hurts.",
+    "example_es": "Me duele el talón del pie.",
+    "form": "",
+    "lemma": "talón",
+    "pos": "noun"
+  },
+  "tanto": {
+    "display": "tanto",
+    "en": "so much, as much",
+    "example_en": "I don't have so much money.",
+    "example_es": "No tengo tanto dinero.",
+    "form": "",
+    "lemma": "tanto",
+    "pos": "adjective"
+  },
+  "tapas": {
+    "display": "tapas",
+    "en": "tapas, Spanish appetizers",
+    "example_en": "We ate tapas at the bar.",
+    "example_es": "Comimos tapas en el bar.",
+    "form": "plural of tapa",
+    "lemma": "tapa",
+    "pos": "noun"
+  },
+  "tarea": {
+    "display": "tarea",
+    "en": "task, homework, chore",
+    "example_en": "I have to do the homework.",
+    "example_es": "Tengo que hacer la tarea.",
+    "form": "",
+    "lemma": "tarea",
+    "pos": "noun"
+  },
+  "techo": {
+    "display": "techo",
+    "en": "roof, ceiling",
+    "example_en": "The roof of the house is red.",
+    "example_es": "El techo de la casa es rojo.",
+    "form": "",
+    "lemma": "techo",
+    "pos": "noun"
+  },
+  "tenis": {
+    "display": "tenis",
+    "en": "tennis, sneakers",
+    "example_en": "I play tennis on Tuesdays.",
+    "example_es": "Juego tenis los martes.",
+    "form": "",
+    "lemma": "tenis",
+    "pos": "noun"
+  },
+  "texto": {
+    "display": "texto",
+    "en": "text, passage",
+    "example_en": "Read the text carefully.",
+    "example_es": "Lee el texto con cuidado.",
+    "form": "",
+    "lemma": "texto",
+    "pos": "noun"
+  },
+  "tigre": {
+    "display": "tigre",
+    "en": "tiger",
+    "example_en": "The tiger is a fierce animal.",
+    "example_es": "El tigre es un animal feroz.",
+    "form": "",
+    "lemma": "tigre",
+    "pos": "noun"
+  },
+  "tinta": {
+    "display": "tinta",
+    "en": "ink",
+    "example_en": "The pen ink ran out.",
+    "example_es": "La tinta del bolígrafo se acabó.",
+    "form": "",
+    "lemma": "tinta",
+    "pos": "noun"
+  },
+  "tomar": {
+    "display": "tomar",
+    "en": "to take, drink",
+    "example_en": "I am going to drink a coffee.",
+    "example_es": "Voy a tomar un café.",
+    "form": "",
+    "lemma": "tomar",
+    "pos": "verb"
+  },
+  "torno": {
+    "display": "torno",
+    "en": "lathe, turning tool",
+    "example_en": "The carpenter uses a lathe.",
+    "example_es": "El carpintero usa un torno.",
+    "form": "",
+    "lemma": "torno",
+    "pos": "noun"
+  },
+  "torre": {
+    "display": "torre",
+    "en": "tower",
+    "example_en": "The tower is very tall.",
+    "example_es": "La torre es muy alta.",
+    "form": "",
+    "lemma": "torre",
+    "pos": "noun"
+  },
+  "total": {
+    "display": "total",
+    "en": "total, sum",
+    "example_en": "The total is one hundred euros.",
+    "example_es": "El total es cien euros.",
+    "form": "",
+    "lemma": "total",
+    "pos": "noun"
+  },
+  "traer": {
+    "display": "traer",
+    "en": "to bring, carry",
+    "example_en": "You must bring the books tomorrow.",
+    "example_es": "Debes traer los libros mañana.",
+    "form": "",
+    "lemma": "traer",
+    "pos": "verb"
+  },
+  "traje": {
+    "display": "traje",
+    "en": "suit, outfit, costume",
+    "example_en": "I am wearing a blue suit.",
+    "example_es": "Llevo un traje azul.",
+    "form": "",
+    "lemma": "traje",
+    "pos": "noun"
+  },
+  "tramo": {
+    "display": "tramo",
+    "en": "section, stretch, segment",
+    "example_en": "This section of the road is dangerous.",
+    "example_es": "Este tramo de la carretera es peligroso.",
+    "form": "",
+    "lemma": "tramo",
+    "pos": "noun"
+  },
+  "trigo": {
+    "display": "trigo",
+    "en": "wheat",
+    "example_en": "Wheat is an important cereal.",
+    "example_es": "El trigo es un cereal importante.",
+    "form": "",
+    "lemma": "trigo",
+    "pos": "noun"
+  },
+  "trozo": {
+    "display": "trozo",
+    "en": "piece, chunk, bit",
+    "example_en": "Give me a piece of bread.",
+    "example_es": "Dame un trozo de pan.",
+    "form": "",
+    "lemma": "trozo",
+    "pos": "noun"
+  },
+  "turno": {
+    "display": "turno",
+    "en": "turn, shift",
+    "example_en": "It is my turn now.",
+    "example_es": "Es mi turno ahora.",
+    "form": "",
+    "lemma": "turno",
+    "pos": "noun"
+  },
+  "ultra": {
+    "display": "ultra",
+    "en": "ultra, extreme",
+    "example_en": "He has ultra modern ideas.",
+    "example_es": "Tiene ideas ultra modernas.",
+    "form": "",
+    "lemma": "ultra",
+    "pos": "adjective"
+  },
+  "unico": {
+    "display": "único",
+    "en": "only, unique, sole",
+    "example_en": "It is the only book I have.",
+    "example_es": "Es el único libro que tengo.",
+    "form": "",
+    "lemma": "único",
+    "pos": "adjective"
+  },
+  "unido": {
+    "display": "unido",
+    "en": "united, joined, close",
+    "example_en": "The team is very close-knit.",
+    "example_es": "El equipo está muy unido.",
+    "form": "",
+    "lemma": "unido",
+    "pos": "adjective"
+  },
+  "valer": {
+    "display": "valer",
+    "en": "to be worth, to cost",
+    "example_en": "This book must be worth a lot.",
+    "example_es": "Este libro debe valer mucho.",
+    "form": "",
+    "lemma": "valer",
+    "pos": "verb"
+  },
+  "valle": {
+    "display": "valle",
+    "en": "valley",
+    "example_en": "The valley is very green.",
+    "example_es": "El valle es muy verde.",
+    "form": "",
+    "lemma": "valle",
+    "pos": "noun"
+  },
+  "vapor": {
+    "display": "vapor",
+    "en": "steam, vapor",
+    "example_en": "Steam comes out of the pot.",
+    "example_es": "El vapor sale de la olla.",
+    "form": "",
+    "lemma": "vapor",
+    "pos": "noun"
+  },
+  "varon": {
+    "display": "varón",
+    "en": "man, male",
+    "example_en": "He is a strong man.",
+    "example_es": "Es un varón fuerte.",
+    "form": "",
+    "lemma": "varón",
+    "pos": "noun"
+  },
+  "veces": {
+    "display": "veces",
+    "en": "times, occasions",
+    "example_en": "Sometimes it rains a lot.",
+    "example_es": "A veces llueve mucho.",
+    "form": "plural of vez",
+    "lemma": "vez",
+    "pos": "noun"
+  },
+  "venda": {
+    "display": "venda",
+    "en": "bandage",
+    "example_en": "The doctor puts a bandage on my arm.",
+    "example_es": "El médico pone una venda en mi brazo.",
+    "form": "",
+    "lemma": "venda",
+    "pos": "noun"
+  },
+  "verde": {
+    "display": "verde",
+    "en": "green",
+    "example_en": "My green shirt is very beautiful.",
+    "example_es": "Mi camiseta verde es muy bonita.",
+    "form": "",
+    "lemma": "verde",
+    "pos": "adjective"
+  },
+  "video": {
+    "display": "video",
+    "en": "video",
+    "example_en": "I watch a video on YouTube every day.",
+    "example_es": "Miro un video en YouTube cada día.",
+    "form": "",
+    "lemma": "video",
+    "pos": "noun"
+  },
+  "vigor": {
+    "display": "vigor",
+    "en": "vigor, strength",
+    "example_en": "The athlete runs with great vigor.",
+    "example_es": "El atleta corre con mucho vigor.",
+    "form": "",
+    "lemma": "vigor",
+    "pos": "noun"
+  },
+  "vinos": {
+    "display": "vinos",
+    "en": "wines",
+    "example_en": "Spanish wines are excellent.",
+    "example_es": "Los vinos españoles son excelentes.",
+    "form": "plural of vino",
+    "lemma": "vino",
+    "pos": "noun"
+  },
+  "viola": {
+    "display": "viola",
+    "en": "viola (instrument)",
+    "example_en": "I play the viola in the orchestra.",
+    "example_es": "Toco la viola en la orquesta.",
+    "form": "",
+    "lemma": "viola",
+    "pos": "noun"
+  },
+  "virus": {
+    "display": "virus",
+    "en": "virus",
+    "example_en": "The virus causes many diseases.",
+    "example_es": "El virus causa muchas enfermedades.",
+    "form": "",
+    "lemma": "virus",
+    "pos": "noun"
+  },
+  "vital": {
+    "display": "vital",
+    "en": "vital, essential",
+    "example_en": "Water is vital for life.",
+    "example_es": "El agua es vital para la vida.",
+    "form": "",
+    "lemma": "vital",
+    "pos": "adjective"
+  },
+  "vivir": {
+    "display": "vivir",
+    "en": "to live",
+    "example_en": "I like to live in a big house.",
+    "example_es": "Me gusta vivir en una casa grande.",
+    "form": "infinitive",
+    "lemma": "vivir",
+    "pos": "verb"
+  },
+  "vocal": {
+    "display": "vocal",
+    "en": "vowel",
+    "example_en": "The letter 'a' is a vowel.",
+    "example_es": "La letra 'a' es una vocal.",
+    "form": "",
+    "lemma": "vocal",
+    "pos": "noun"
+  },
+  "volar": {
+    "display": "volar",
+    "en": "to fly",
+    "example_en": "Birds like to fly in the sky.",
+    "example_es": "A los pájaros les gusta volar en el cielo.",
+    "form": "infinitive",
+    "lemma": "volar",
+    "pos": "verb"
+  },
+  "vuelo": {
+    "display": "vuelo",
+    "en": "flight",
+    "example_en": "My flight leaves at ten in the morning.",
+    "example_es": "Mi vuelo sale a las diez de la mañana.",
+    "form": "",
+    "lemma": "vuelo",
+    "pos": "noun"
+  },
+  "zarpa": {
+    "display": "zarpa",
+    "en": "paw, claw",
+    "example_en": "The cat has a big paw.",
+    "example_es": "El gato tiene una zarpa grande.",
+    "form": "",
+    "lemma": "zarpa",
+    "pos": "noun"
+  },
+  "zonas": {
+    "display": "zonas",
+    "en": "zones, areas",
+    "example_en": "There are many green areas in the city.",
+    "example_es": "Hay muchas zonas verdes en la ciudad.",
+    "form": "plural of zona",
+    "lemma": "zona",
+    "pos": "noun"
+  }
+}

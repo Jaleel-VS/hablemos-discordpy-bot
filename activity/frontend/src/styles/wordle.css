@@ -291,3 +291,126 @@
   color: var(--ink);
   font-weight: 600;
 }
+
+/* ── W2 accent rule ──────────────────────────────────────────────────── */
+.wordle-accent-rule {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-ui);
+}
+
+/* ── W1 learning card ────────────────────────────────────────────────── */
+/* reveal-card: bg-raised surface, 1px line-soft border, pixel accent word.
+   Mirrors conjugation's .reveal-card visual grammar under our own class. */
+.wordle-learning-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  max-width: 340px;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: rise 0.4s var(--ease) both;
+}
+
+.wlc-word {
+  font-family: var(--font-pixel);
+  font-size: 1.3rem;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+
+.wlc-gloss {
+  font-size: 0.88rem;
+  color: var(--ink);
+}
+
+.wlc-pos {
+  color: var(--accent-2);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.wlc-sep {
+  color: var(--ink-faint);
+}
+
+.wlc-en {
+  color: var(--ink);
+}
+
+.wlc-form {
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+}
+
+.wlc-form-label {
+  color: var(--ink-faint);
+}
+
+.wlc-example {
+  font-size: 0.83rem;
+  color: var(--ink-dim);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.wlc-example-label {
+  font-style: normal;
+  color: var(--ink-faint);
+  font-size: 0.75rem;
+}
+
+.wlc-highlight {
+  color: var(--ink);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.wlc-example-en {
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+/* ── W4 freeplay hint ────────────────────────────────────────────────── */
+.wordle-hint {
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  margin: 0;
+  text-align: center;
+}
+
+.wordle-hint-label {
+  color: var(--accent-3);
+  font-weight: 600;
+}
+
+/* ── W3 wider Enter/Delete keys ──────────────────────────────────────── */
+.key--wide {
+  flex: 2;
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+}
+
+/* Mode switch and language toggle share one row above the board. */
+.wordle-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.wordle-top .lang-toggle {
+  align-self: center;
+  margin: 0;
+}

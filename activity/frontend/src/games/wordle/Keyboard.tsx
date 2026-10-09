@@ -1,9 +1,12 @@
 import type { Row, Tile } from "../../api";
+import type { Lang } from "../../i18n/lang";
+import { t } from "./i18n";
 
 interface KeyboardProps {
   rows: Row[];
   onKey: (key: string) => void;
   disabled: boolean;
+  lang: Lang;
 }
 
 // Spanish keyboard layout including Ñ. ENTER and ⌫ (backspace) are special.
@@ -30,7 +33,7 @@ function letterStates(rows: Row[]): Record<string, Tile> {
   return best;
 }
 
-export default function Keyboard({ rows, onKey, disabled }: KeyboardProps) {
+export default function Keyboard({ rows, onKey, disabled, lang }: KeyboardProps) {
   const states = letterStates(rows);
 
   return (
@@ -38,7 +41,9 @@ export default function Keyboard({ rows, onKey, disabled }: KeyboardProps) {
       {LAYOUT.map((keyRow, i) => (
         <div className="keyboard-row" key={i}>
           {keyRow.map((key) => {
-            const special = key === "ENTER" || key === "⌫";
+            const isEnter = key === "ENTER";
+            const isDelete = key === "⌫";
+            const special = isEnter || isDelete;
             const state = !special ? states[key] : undefined;
             const cls = [
               "key",
@@ -47,13 +52,19 @@ export default function Keyboard({ rows, onKey, disabled }: KeyboardProps) {
             ]
               .filter(Boolean)
               .join(" ");
+            const ariaLabel = isEnter
+              ? t(lang, "key.enter")
+              : isDelete
+              ? t(lang, "key.delete")
+              : key;
             return (
               <button
                 key={key}
                 className={cls}
                 disabled={disabled}
                 onClick={() => onKey(key)}
-                aria-label={key === "⌫" ? "Borrar" : key}
+                aria-label={ariaLabel}
+                style={{ touchAction: "manipulation" }}
               >
                 {key}
               </button>

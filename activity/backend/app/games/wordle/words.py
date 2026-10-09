@@ -1,7 +1,9 @@
 """Word-list loading for Spanish Wordle.
 
 Two lists (both normalized, 5 letters, ñ preserved):
-* **answers** — curated common words; the daily/free secret is drawn from here.
+* **answers** — curated common words; the daily secret is drawn from here.
+* **free_answers** — ANSWERS minus retired (obscure/low-utility) words;
+  freeplay draws from this subset so learners see useful vocabulary.
 * **guesses** — permissive superset accepted as a guess. Includes every answer.
 
 Loaded once at import into module-level immutables. The answer list order is
@@ -23,6 +25,11 @@ def _load(name: str) -> list[str]:
 ANSWERS: tuple[str, ...] = tuple(_load("wordle_answers.txt"))
 _GUESS_SET: frozenset[str] = frozenset(_load("wordle_guesses.txt"))
 
+# Words retired from freeplay because they are obscure or low-utility for
+# A1–B1 learners. The daily pool keeps ANSWERS unchanged (byte-stable).
+_RETIRED: frozenset[str] = frozenset(_load("wordle_answers_retired.txt"))
+FREE_ANSWERS: tuple[str, ...] = tuple(w for w in ANSWERS if w not in _RETIRED)
+
 
 def is_valid_guess(normalized: str) -> bool:
     """Whether a normalized word is an accepted guess."""
@@ -31,3 +38,7 @@ def is_valid_guess(normalized: str) -> bool:
 
 def answer_count() -> int:
     return len(ANSWERS)
+
+
+def free_answer_count() -> int:
+    return len(FREE_ANSWERS)

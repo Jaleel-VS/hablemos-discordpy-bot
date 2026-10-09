@@ -1,34 +1,39 @@
-"""The Spanish Wordle engine — implements the GameEngine protocol.
-
-State shape (JSON-serializable, echoed by the client, re-validated each guess):
-    {
-      "mode": "daily" | "free",
-      "answer": "<normalized secret>",   # server-only; never in client_view
-      "max_guesses": 6,
-      "puzzle_no": <int | null>,          # set for daily
-      "rows": [                            # one per submitted guess
-        {"guess": "<normalized>", "tiles": ["green", ...]}
-      ],
-      "status": "playing" | "won" | "lost",
-      "date": "YYYY-MM-DD"                 # UTC date the game was created
-    }
-
-Random freeplay secrets are chosen with ``secrets.choice`` (not the disallowed
-``random`` seeding paths) so no global RNG state is needed.
-"""
+"""Engine updates for W1–W5: learning card, FREE_ANSWERS, typed errors, freeplay hint."""
 from __future__ import annotations
 
+import json
 import secrets
 from datetime import UTC, date, datetime
+from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 from app.games.base import GameError, GuessOutcome, Mode
 from app.games.wordle import daily as daily_mod
 from app.games.wordle.normalize import WORD_LENGTH, is_valid_shape, normalize
 from app.games.wordle.scorer import Tile, emoji_row, score
-from app.games.wordle.words import ANSWERS, is_valid_guess
+from app.games.wordle.words import FREE_ANSWERS, is_valid_guess
 
 MAX_GUESSES = 6
+
+# Derived at view/result time — never stored in state.
+_LEXICON_PATH = Path(__file__).resolve().parent.parent / "data" / "wordle_lexicon.json"
+
+
+@lru_cache(maxsize=1)
+def _lexicon() -> dict[str, Any]:
+    """Load the lexicon once; returns {} if file not yet generated."""
+    if not _LEXICON_PATH.exists():
+        return {}
+    try:
+        return json.loads(_LEXICON_PATH.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def _learning_card(answer: str) -> dict[str, Any] | None:
+    """Return the lexicon entry for *answer*, or None if missing."""
+    return _lexicon().get(answer) or None
 
 
 def _today() -> date:
@@ -50,7 +55,7 @@ class WordleEngine:
         if mode == "daily":
             answer, puzzle_no = daily_mod.daily_answer(today)
         else:
-            answer = secrets.choice(ANSWERS)
+            answer = secrets.choice(FREE_ANSWERS)
             puzzle_no = None
 
         state: dict[str, Any] = {
@@ -72,10 +77,8 @@ class WordleEngine:
         self._validate_state(state)
         if state["status"] != "playing":
             raise GameError("Esta partida ya terminó.")
-        # A daily is only playable on its own date. Without this, a player could
-        # save an unfinished daily token, learn the answer later, and finish it
-        # days on — and compute_streak() (keyed on consecutive puzzle_no) would
-        # still credit the streak. Free-play carries no puzzle_no and is exempt.
+        # Daily only playable on its creation date. Prevents save-token-then-
+        # finish-later abuse and ensures compute_streak() sees consecutive dates.
         if state.get("mode") == "daily" and state.get("date") != _today().isoformat():
             raise GameError("El reto diario de hoy ya no está disponible.")
 
@@ -113,7 +116,7 @@ class WordleEngine:
             header = f"Wordle #{state['puzzle_no']}"
         summary = f"{header} {score_str}"
 
-        return {
+        payload: dict[str, Any] = {
             "won": won,
             "mode": state["mode"],
             "puzzle_no": state.get("puzzle_no"),
@@ -125,6 +128,13 @@ class WordleEngine:
             # The answer is safe to include only now that the game is over.
             "answer": state["answer"],
         }
+
+        # W1: learning card derived from lexicon, only on game over.
+        card = _learning_card(state["answer"])
+        if card is not None:
+            payload["learning_card"] = card
+
+        return payload
 
     # ── helpers ───────────────────────────────────────────────────────────
 
@@ -141,6 +151,12 @@ class WordleEngine:
         }
         if self.is_over(state):
             view["result"] = self.result_payload(state)
+        elif state.get("mode") == "free" and len(state["rows"]) >= 3:
+            # W4: after 3 non-winning guesses, freeplay gets a hint derived at
+            # view time from the lexicon. Never stored in state; never in daily.
+            card = _learning_card(state["answer"])
+            if card is not None:
+                view["hint"] = {"pos": card.get("pos", ""), "en": card.get("en", "")}
         return view
 
     @staticmethod

@@ -1,0 +1,23 @@
+# Words retired from free-play mode: obscure or low-utility for A1–B1 learners.
+# The daily ANSWERS list is unaffected — daily puzzle numbers remain stable.
+# Add words one per line (normalized, no accents, ñ preserved).
+ajeno
+azote
+duque
+ileso
+molar
+sutil
+osado
+ronco
+zarpa
+indio
+dorso
+sordo
+droga
+cofre
+balde
+balsa
+baron
+cauce
+aleta
+atlas
