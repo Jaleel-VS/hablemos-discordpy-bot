@@ -11,18 +11,17 @@
   width: 100%;
 }
 
+/* Scrolling screens are full width so the scrollbar sits at the screen edge
+ * (see .conj-setup); the reading column comes from the inline padding, not
+ * max-width. The round doesn't scroll, so it keeps a plain centred cap. */
 .phrasal-setup {
   justify-content: flex-start;
   gap: 16px;
-  padding: 18px 20px 24px;
+  padding: 18px max(20px, calc((100% - 460px) / 2)) 24px;
   overflow-y: auto;
-  max-width: 460px;
-  margin: 0 auto;
 }
 
-.phrasal-round,
-.phrasal-learn,
-.phrasal-summary {
+.phrasal-round {
   justify-content: flex-start;
   gap: 14px;
   padding: 16px 20px 22px;
@@ -30,11 +29,13 @@
   margin: 0 auto;
 }
 
-/* The parent (.phrasal) hides overflow; Learn and the recap can be long, so
- * they scroll themselves (and the summary's sticky action bar needs a
- * scrolling ancestor to pin to). */
 .phrasal-learn,
 .phrasal-summary {
+  justify-content: flex-start;
+  gap: 14px;
+  padding: 16px max(20px, calc((100% - 520px) / 2)) 22px;
+  /* The parent (.phrasal) hides overflow; Learn and the recap can be long,
+     and the summary's sticky action bar needs a scrolling ancestor. */
   overflow-y: auto;
 }
 
@@ -171,18 +172,6 @@
 }
 
 
-/* ── setup header with lang toggle ──────────────────────────────────────── */
-.setup-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  width: 100%;
-  gap: 12px;
-}
-
-.setup-header .setup-lede {
-  flex: 1;
-}
 
 /* cta-main / cta-sub: generic stacked label used by learn, daily, free ctás. */
 .cta .cta-main {

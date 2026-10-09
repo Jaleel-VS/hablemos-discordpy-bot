@@ -310,6 +310,10 @@ body {
   font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
+  /* Setup screens are column flex boxes that scroll; without this a short
+     window shrinks a two-line button below its label and the subtitle spills
+     out underneath ("Browse vocabulary…" drawn over the next section). */
+  flex-shrink: 0;
   transition: transform 0.1s var(--ease), filter 0.15s var(--ease);
 }
 
@@ -389,4 +393,19 @@ body {
 
 .summary-actions .cta {
   flex: 1;
+}
+
+/* ── scrolling screens ───────────────────────────────────────────────── */
+/* A screen that scrolls must never squash its children to fit: in a short
+ * window (Discord's popout, a landscape phone) column-flex shrinks headings,
+ * chip groups and buttons until their text overflows into the next block.
+ * Children keep their natural height; the screen scrolls instead. */
+.home > *,
+.conj-inner > *,
+.cloze-setup > *,
+.cloze-summary > *,
+.phrasal-setup > *,
+.phrasal-learn > *,
+.phrasal-summary > * {
+  flex-shrink: 0;
 }

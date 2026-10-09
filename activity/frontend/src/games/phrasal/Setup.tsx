@@ -44,12 +44,10 @@ export default function Setup({ onStart, onLearn, busy, error }: SetupProps) {
 
   return (
     <div className="phrasal phrasal-setup">
-      <div className="setup-header">
-        <div className="setup-lede">
-          <h1 className="setup-title">{t(lang, "setup.title")}</h1>
-          <p className="muted">{t(lang, "setup.tagline")}</p>
-        </div>
-        <LangToggle lang={lang} onChange={setLang} />
+      <LangToggle lang={lang} onChange={setLang} />
+      <div className="setup-lede">
+        <h1 className="setup-title">{t(lang, "setup.title")}</h1>
+        <p className="muted">{t(lang, "setup.tagline")}</p>
       </div>
 
       {/* 1. Aprender — entry point for beginners; kept prominent at top. */}

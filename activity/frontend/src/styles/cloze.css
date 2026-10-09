@@ -13,13 +13,13 @@
   width: 100%;
 }
 
+/* Full-width scroller (scrollbar at the screen edge, see .conj-setup); the
+ * 460px column comes from the inline padding instead of max-width. */
 .cloze-setup {
   justify-content: flex-start;
   gap: 16px;
-  padding: 18px 20px 24px;
+  padding: 18px max(20px, calc((100% - 460px) / 2)) 24px;
   overflow-y: auto;
-  max-width: 460px;
-  margin: 0 auto;
 }
 
 .cloze-round {
@@ -149,9 +149,7 @@
 .cloze-summary {
   justify-content: flex-start;
   gap: 18px;
-  padding: 20px;
-  max-width: 460px;
-  margin: 0 auto;
+  padding: 20px max(20px, calc((100% - 460px) / 2));
   /* The parent (.cloze) hides overflow; a long recap (up to 10 review rows on
      a small phone) would clip. Let the summary scroll instead. */
   overflow-y: auto;
@@ -368,4 +366,12 @@
 .cloze-miss .cta-continue {
   align-self: stretch;
   margin-top: 4px;
+}
+
+/* In the stacked column, `.setup-actions .cta { flex: 1 }` (meant for a row of
+ * side-by-side buttons) sets flex-basis 0 on the vertical axis and caps each
+ * button's height, so a wrapped daily title spilled out of its panel. Stacked
+ * buttons size to their content. */
+.setup-actions--stack .cta {
+  flex: none;
 }
