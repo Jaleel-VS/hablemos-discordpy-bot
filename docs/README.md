@@ -46,6 +46,7 @@ change. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules.
 - [Language Exchange (`langex_cog`)](./cogs/langex.md)
 - [Language League (`league_cog`)](./cogs/league.md)
 - [Practice (`practice_cog`)](./cogs/practice.md)
+- [Privacy (`privacy_cog`)](./cogs/privacy.md)
 - [Practice Test (`practice_test_cog`)](./cogs/practice_test.md)
 - [Purchasing Power (`ppp_cog`)](./cogs/ppp.md)
 - [Quote Generator (`quote_generator_cog`)](./cogs/quote_generator.md)

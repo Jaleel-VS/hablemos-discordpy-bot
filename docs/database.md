@@ -35,6 +35,7 @@ Adding a new domain:
 | `VocabMixin` (`vocab.py`) | Vocab / dictionary tracking |
 | `LeaderboardMixin` (`leaderboard.py`) | Language League users, activity, rounds, exclusions |
 | `QuotesMixin` (`quotes.py`) | Quote generator data |
+| `PrivacyMixin` (`privacy.py`) | `delete_user_data`: deletes or anonymizes one user's rows across every per-user table (see [`cogs/privacy.md`](./cogs/privacy.md)) |
 | `SpotifyMixin` (`spotify.py`) | `spotify_optins`: members who allow `$nowplaying` / `$np2` to show their Spotify activity |
 | `PracticeMixin` (`practice.py`) | FSRS-based practice cards |
 | `MetricsMixin` (`metrics.py`) | Command usage metrics (raw + daily rollup) |

@@ -188,6 +188,7 @@ See [`cogs/admin.md`](./cogs/admin.md), [`cogs/database.md`](./cogs/database.md)
 | `$stats growth [weeks]` | Render new-user growth and total tracked users over time. | Owner-only |
 | `$stats heatmap [days]` | Render hour-by-day activity heatmap in UTC. | Owner-only |
 | `$leave <guild_id>` | Leave a guild by ID. | Owner-only |
+| `$purgeuser <user_id>` | Delete everything stored about a user ID, after a confirmation button. See [`cogs/privacy.md`](./cogs/privacy.md). | Owner-only |
 | `$vcenrich <message_link>` | Parse a Rai voice-join log and render with avatars. | `manage_messages` |
 | **VC Enrich** (context menu) | Right-click a Rai voice log, select "VC Enrich" → posts to enrich channel. | `manage_messages` |
 | `$tickets` | Show open tickets across forum channels. | `manage_messages` |

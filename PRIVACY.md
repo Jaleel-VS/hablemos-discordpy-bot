@@ -29,7 +29,7 @@ policy explains what data the bot collects, why, and how to have it removed.
 - **Who replies to or mentions whom** (user IDs and channel only), used
   for staff interaction analysis. Deleted after 90 days.
 - **Your Spotify sharing setting** (whether you ran `$spotify on`).
-- **Text you give the bot on purpose**: notes you save with `$note` or
+- **Text you give the bot on purpose**: vocabulary notes you save with
   `/vocab`, and the answers you type during the dictation game.
 - **Command usage metrics** (which command, when, by which user ID). Raw
   entries are rolled up into daily totals after 30 days.
@@ -59,8 +59,14 @@ not sell or share data with anyone else.
 - Run `$spotify off` to stop the bot showing your Spotify activity.
 - Run `$quoteme off` to stop others from making quote images of your
   messages.
-- To delete everything stored about you, contact a moderator in the server
-  or open an issue at
+- **Delete everything stored about you** with `/deletemydata`. The bot
+  shows what will be removed and asks you to confirm. Deletion is
+  immediate and can't be undone.
+- `/deletemydata` keeps moderation records (bans, restrictions,
+  anti-spam cooldowns) and your quote opt-out, so deleting data can't
+  lift a ban or make you quotable again.
+- If you can't run the command (for example, you left the server),
+  contact a moderator in the server or open an issue at
   <https://github.com/Jaleel-VS/hablemos-discordpy-bot/issues>. The
   maintainer will delete your data within 30 days.
 

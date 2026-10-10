@@ -722,6 +722,16 @@ class LeagueCog(BaseCog):
     # Message Listener for Activity Tracking
 
     @commands.Cog.listener()
+    async def on_user_data_deleted(self, user_id: int) -> None:
+        """Stop tracking a member whose data was just deleted ($deletemydata).
+
+        Bans are kept by the deletion, so ``_banned_users`` stays as is.
+        """
+        self._opted_in_users.discard(user_id)
+        self._user_learning.pop(user_id, None)
+        self._daily_counts.pop(user_id, None)
+
+    @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         """Track messages for league"""
         try:

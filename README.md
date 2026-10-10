@@ -117,6 +117,12 @@ Categories: `general` (1), `phil` (2), `would` (3), `other` (4), `cursed` (5). N
 
 Aliases: `$spoti`, `$np`. Also available as a slash command. Sharing is off by default: these commands only work for members who ran `$spotify on`.
 
+### Privacy
+
+| Command | Description |
+|---------|-------------|
+| `/deletemydata` | Delete everything the bot stores about you (asks to confirm first) |
+
 ### Quote Generator
 
 | Command | Description |

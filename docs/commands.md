@@ -210,6 +210,14 @@ See [`cogs/practice_test.md`](./cogs/practice_test.md) for the full feature.
 |---------|-------------|
 | `$practice` | Prototype Components V2 practice flow (hardcoded sample cards, no persistence). |
 
+## Privacy
+
+See [`cogs/privacy.md`](./cogs/privacy.md) for the full feature.
+
+| Command | Description |
+|---------|-------------|
+| `/deletemydata` / `$deletemydata` | Delete everything the bot stores about you, after a confirmation button. Moderation records and your quote opt-out are kept. |
+
 ## Quote Generator
 
 See [`cogs/quote_generator.md`](./cogs/quote_generator.md) for the full feature.
