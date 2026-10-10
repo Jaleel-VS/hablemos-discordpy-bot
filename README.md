@@ -2,16 +2,18 @@
 
 A Spanish-English language learning Discord bot for the [Spanish-English Learning Server](https://discord.gg/spanish-english).
 
-Built with discord.py 2.x, PostgreSQL (asyncpg), and Google Gemini. Deployed on AWS Lightsail container services via Docker.
+Built with discord.py 2.x and PostgreSQL (asyncpg). Deployed on AWS Lightsail container services via Docker.
+
+> **AI features are disabled.** The Gemini-backed cogs (`ask`, `breakdown`, `conversation`, `practice`, `summary`) don't load in production while a replacement provider is chosen. Features marked *(disabled)* below are unavailable. See [`docs/deployment.md`](./docs/deployment.md) to re-enable.
 
 ## Features
 
-- **AI Conversations** — Practice with realistic dialogues powered by Google Gemini
-- **AI Ask** — Owner-only freeform Gemini Q&A with paginated, public/private responses
+- **AI Conversations** *(disabled)* — Practice with realistic dialogues powered by Google Gemini
+- **AI Ask** *(disabled)* — Owner-only freeform Gemini Q&A with paginated, public/private responses
 - **Language League** — Competitive leaderboard system with weekly rounds and consistency rewards
-- **Vocabulary Tools** — Personal vocab notes with search, export, and SRS practice
+- **Vocabulary Tools** — Personal vocab notes with search and export; SRS practice *(disabled)*
 - **Interactive Games** — Conjugation practice, Hangman, conversation starters
-- **Moderation Tools** — AI-powered conversation summaries, introduction tracking, ticket overview
+- **Moderation Tools** — AI-powered conversation summaries *(disabled)*, introduction tracking, ticket overview
 - **Bot Administration** — Cog toggle system, command metrics, data retention, interaction analysis
 - **Quote Generator** — Create shareable quote images from messages
 - **Spotify Integration** — See what users are listening to
@@ -30,7 +32,7 @@ Built with discord.py 2.x, PostgreSQL (asyncpg), and Google Gemini. Deployed on 
 | `$ping` | Check bot latency |
 | `$lst` | List conversation topic categories |
 
-### AI Conversations
+### AI Conversations *(disabled)*
 
 Generate realistic conversations for language practice.
 
@@ -42,7 +44,7 @@ Languages: `spanish`, `english` — Levels: `beginner`, `intermediate`, `advance
 
 Daily limit of 2 per user (unlimited for moderators). Conversations regenerate automatically when exhausted.
 
-### AI Ask
+### AI Ask *(disabled)*
 
 | Command | Description |
 |---------|-------------|
@@ -62,7 +64,7 @@ All responses are ephemeral (private to the user).
 | `/vocab delete <note_id>` | Delete a note |
 | `/vocab export` | Export all notes to CSV |
 
-### Vocabulary Practice (SRS)
+### Vocabulary Practice (SRS) *(disabled)*
 
 Clozemaster-style spaced repetition using your saved vocab notes.
 
@@ -126,7 +128,7 @@ Reply to a message, provide a link, or type custom text. 150-character limit, 10
 
 | Command | Description |
 |---------|-------------|
-| `$summarize <start_link> <end_link>` | AI-summarize a message range (Moderator) |
+| `$summarize <start_link> <end_link>` | AI-summarize a message range (Moderator) *(disabled)* |
 | `$tickets` | Show open mod tickets across forum channels (Moderator) |
 | `$introtracker [on\|off\|status]` | Toggle introduction tracking (Moderator) |
 | `$introstatus` | Introduction tracker statistics (Moderator) |
@@ -160,7 +162,7 @@ Data retention runs daily: rolls up command metrics older than 30 days, purges s
 ```bash
 BOT_TOKEN=           # Discord bot token (required)
 DATABASE_URL=        # PostgreSQL connection string (required)
-GEMINI_API_KEY=      # Google Gemini API key (required for AI features)
+GEMINI_API_KEY=      # Optional: Google Gemini key; enables the AI cogs (off in production)
 PREFIX=$             # Command prefix (default: $)
 WEBSITE_API_URL=     # Website API base URL (optional)
 CONVO_SPA_CHANNELS=  # Comma-delimited Spanish-first channel IDs (optional)
