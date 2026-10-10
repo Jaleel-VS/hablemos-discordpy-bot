@@ -26,7 +26,7 @@ Defaults come from `config.py` (`load_settings`) or from a cog's own
 | `ONLINE_CHANNEL_ID` | baked-in | Where the boot "I'm online" message goes. |
 | `LEAGUE_GUILD_ID` | baked-in | The guild where the Language League runs. |
 | `BOT_OWNER_ID` | baked-in | Owner ID for `@commands.is_owner()`. |
-| `GEMINI_API_KEY` | unset | Optional; enables Gemini-backed features (quote generator, summary, etc.). |
+| `GEMINI_API_KEY` | unset | Optional; enables the Gemini cogs (`ask`, `breakdown`, `conversation`, `practice`, `summary`). **Not set in production** since 2026-10-10: `deploy/bot.containers.json` no longer passes it, so those cogs skip loading. To re-enable, add `"GEMINI_API_KEY": "${GEMINI_API_KEY}"` back to that file; the GitHub secret and workflow wiring are kept. |
 | `GEMINI_DEFAULT_MODEL` | `gemini-3.5-flash` | Default Gemini model used by every `$bot.gemini.run(...)` call. Per-feature overrides (`GEMINI_ASK_MODEL`, etc.) take precedence. See [`./architecture.md`](./architecture.md#gemini-deep-module). |
 | `GEMINI_ASK_MODEL` | falls back to `GEMINI_DEFAULT_MODEL` | Per-feature override for `$ask`. Same `GEMINI_<FEATURE>_MODEL` pattern is reserved for `summary`, `practice`, and `conversation` as those cogs migrate. |
 | `ENVIRONMENT` | `production` | Purely informational, printed on boot. |

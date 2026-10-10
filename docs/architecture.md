@@ -77,6 +77,13 @@ See [`database.md`](./database.md) for the table / mixin map.
 
 ## Gemini deep module
 
+> **Disabled in production (2026-10-10).** `GEMINI_API_KEY` is not passed
+> to the bot container, so `bot.gemini` is `None` and every Gemini cog
+> skips loading. The code stays in place for a future provider swap (e.g.
+> Bedrock): reimplement this module behind the same `Prompt[I, O]` /
+> `run()` / error interface and the cogs need no changes. See
+> [`deployment.md`](./deployment.md) to re-enable.
+
 Gemini-using cogs go through one shared module: `cogs/utils/gemini/`.
 It owns the `genai.Client` instance, model resolution, rate limiting,
 retry-on-5xx, and HTTP-code-aware error mapping. Cogs never construct

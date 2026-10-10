@@ -50,7 +50,7 @@ Set these in the repo: Settings → Secrets and variables → Actions.
 | Secret |
 |---|
 | `BOT_TOKEN` |
-| `GEMINI_API_KEY` |
+| `GEMINI_API_KEY` | Kept but unused: `bot.containers.json` doesn't pass it while Gemini is disabled. |
 | `ACTIVITY_RESULTS_CHANNEL_ID` |
 | `TICKETSUB_MIN_ROLE_ID` |
 | `WCBET_AUTO_SETTLE` |
