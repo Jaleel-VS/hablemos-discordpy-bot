@@ -92,10 +92,13 @@ time. The error comes from the gateway login in `bot.run()`, after setup.
 Code changes don't cause this. The cause is on Discord's side:
 
 - Someone switched an intent toggle off in the developer portal.
-- The bot passed 100 servers or became verified. Verified bots can't
-  self-enable privileged intents. Discord must approve each one, and an
-  unapproved intent gets revoked. In this case the portal shows a
-  **Request Intents** form instead of toggles.
+- Discord removed access after a missed review. Since June 10, 2026,
+  apps visible to more than 10,000 unique users must apply for privileged
+  intents, and apps with access must reapply every year. Discord posts a
+  portal notification and allows 90 days. Missing that window removes
+  access. In this case the portal shows a **Request Intents** form
+  instead of toggles. See Discord's
+  [privileged intent review guide](https://docs.discord.com/developers/gateway/getting-started-with-privileged-intent-review).
 
 ### Fix
 
@@ -106,8 +109,11 @@ Code changes don't cause this. The cause is on Discord's side:
    Message Content, then save. The next automatic restart logs in, so you
    don't need to redeploy.
 4. **If you only see the Request Intents form**, submit it for each
-   intent and justify each one. Approval takes days. To get back online
-   sooner, remove the unapproved intents in `hablemos.py` and redeploy.
+   intent and justify each one. Request only intents you can show the
+   bot needs, because Discord rejects weak justifications. Discord says
+   apps keep working while in review, so restart the bot after submitting
+   (re-run the last deploy). If it still crash-loops, remove the
+   unapproved intents in `hablemos.py` and redeploy.
    Each intent breaks different features:
    - `presences`: only `spotify_cog` reads `member.activities`. This is
      the cheapest intent to drop.
