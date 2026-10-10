@@ -23,7 +23,7 @@ from PIL import Image
 
 from base_cog import BaseCog
 from cogs.spotify_cog.config import SPOTIFY_EMOJI
-from cogs.utils.embeds import red_embed
+from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -144,21 +144,42 @@ class NowPlayingView(ui.LayoutView):
 class SpotifyCog(BaseCog):
     """Share what you're listening to on Spotify."""
 
-    async def _send_now_playing(self, ctx: commands.Context, member: Member | None, use_art_color: bool) -> None:
-        """Shared logic for now-playing commands."""
+    async def _listening_target(
+        self, ctx: commands.Context, member: Member | None,
+    ) -> tuple[Member, Spotify] | None:
+        """Resolve who to show and their Spotify activity, or reply and return None.
+
+        Sharing is opt-in: a member's activity is only read after they run
+        ``$spotify on``.
+        """
         if ctx.guild is None:
             await ctx.send(embed=red_embed("This command can only be used in a server."))
-            return
+            return None
 
         target = ctx.guild.get_member((member or ctx.author).id)
         if target is None:
             await ctx.send(embed=red_embed("Could not find that user!"))
-            return
+            return None
+
+        is_self = target.id == ctx.author.id
+        if not await self.bot.db.is_spotify_opted_in(target.id):
+            if is_self:
+                await ctx.send(embed=yellow_embed(
+                    "Spotify sharing is **off** for you, so the bot can't show what "
+                    "you're listening to.\n\n"
+                    "To allow it, run `$spotify on`. You can turn it off again any "
+                    "time with `$spotify off`."
+                ))
+            else:
+                await ctx.send(embed=yellow_embed(
+                    f"{target.display_name} hasn't turned on Spotify sharing. "
+                    "They can allow it with `$spotify on`."
+                ))
+            return None
 
         spotify = next((a for a in target.activities if isinstance(a, Spotify)), None)
-
-        if not spotify:
-            name = "You're" if target.id == ctx.author.id else f"{target.display_name} is"
+        if spotify is None:
+            name = "You're" if is_self else f"{target.display_name} is"
             await ctx.send(embed=red_embed(
                 f"{name} not listening to Spotify right now!\n\n"
                 "Make sure you have:\n"
@@ -167,7 +188,16 @@ class SpotifyCog(BaseCog):
                 "• Spotify linked in **Settings → Connections** with "
                 "\"Display Spotify as your status\" on"
             ))
+            return None
+
+        return target, spotify
+
+    async def _send_now_playing(self, ctx: commands.Context, member: Member | None, use_art_color: bool) -> None:
+        """Shared logic for now-playing commands."""
+        resolved = await self._listening_target(ctx, member)
+        if resolved is None:
             return
+        target, spotify = resolved
 
         accent = DEFAULT_ACCENT
         if use_art_color and spotify.album_cover_url:
@@ -178,6 +208,49 @@ class SpotifyCog(BaseCog):
         except HTTPException:
             logger.exception("Failed to send Spotify view for %s", target)
             await ctx.send(embed=red_embed("Something went wrong sending the embed."))
+
+    @commands.command(name="spotify")
+    async def spotify_sharing(self, ctx: commands.Context, toggle: str | None = None):
+        """
+        Manage whether the bot may show your Spotify activity.
+
+        `$spotify on` — allow `$nowplaying` / `$np2` to show what you're playing
+        `$spotify off` — stop sharing (the default)
+        `$spotify` — show your current setting
+        """
+        db = self.bot.db
+
+        if toggle is None:
+            if await db.is_spotify_opted_in(ctx.author.id):
+                await ctx.send(embed=green_embed(
+                    "Spotify sharing is **on**. Use `$spotify off` to stop sharing."
+                ))
+            else:
+                await ctx.send(embed=yellow_embed(
+                    "Spotify sharing is **off**. Use `$spotify on` to let the bot "
+                    "show what you're listening to."
+                ))
+            return
+
+        toggle = toggle.lower()
+        if toggle == "on":
+            if await db.spotify_optin(ctx.author.id):
+                await ctx.send(embed=green_embed(
+                    "Spotify sharing is now **on**. `$nowplaying` and `$np2` can show "
+                    "what you're listening to. Turn it off any time with `$spotify off`."
+                ))
+            else:
+                await ctx.send(embed=yellow_embed("Spotify sharing was already on."))
+        elif toggle == "off":
+            if await db.spotify_optout(ctx.author.id):
+                await ctx.send(embed=green_embed(
+                    "Spotify sharing is now **off**. The bot won't show what you're "
+                    "listening to."
+                ))
+            else:
+                await ctx.send(embed=yellow_embed("Spotify sharing was already off."))
+        else:
+            await ctx.send(embed=red_embed("Usage: `$spotify [on|off]`"))
 
     @commands.hybrid_command(name="nowplaying", aliases=['spoti', 'np'])
     @commands.cooldown(1, 10, commands.BucketType.user)
@@ -190,27 +263,10 @@ class SpotifyCog(BaseCog):
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def nowplaying_v2(self, ctx: commands.Context, member: Optional[Member] = None):  # noqa: UP045 — discord.py needs Optional[]
         """Now playing with rendered Spotify-style card image."""
-        if ctx.guild is None:
-            await ctx.send(embed=red_embed("This command can only be used in a server."))
+        resolved = await self._listening_target(ctx, member)
+        if resolved is None:
             return
-
-        target = ctx.guild.get_member((member or ctx.author).id)
-        if target is None:
-            await ctx.send(embed=red_embed("Could not find that user!"))
-            return
-
-        spotify = next((a for a in target.activities if isinstance(a, Spotify)), None)
-        if not spotify:
-            name = "You're" if target.id == ctx.author.id else f"{target.display_name} is"
-            await ctx.send(embed=red_embed(
-                f"{name} not listening to Spotify right now!\n\n"
-                "Make sure you have:\n"
-                "• **Display current activity** enabled for this server "
-                "(Settings → Activity Privacy)\n"
-                "• Spotify linked in **Settings → Connections** with "
-                "\"Display Spotify as your status\" on"
-            ))
-            return
+        target, spotify = resolved
 
         # Extract dominant color from album art
         accent = (30, 215, 96)  # Spotify green default

@@ -49,6 +49,7 @@ from db.predictions import WCPredictionsMixin
 from db.quotes import QuotesMixin
 from db.schema import initialize_schema
 from db.settings import SettingsMixin
+from db.spotify import SpotifyMixin
 from db.stats import StatsMixin
 from db.tasks import TasksMixin
 from db.ticket_subs import TicketSubsMixin
@@ -79,6 +80,7 @@ class Database(
     StatsMixin,
     GameResultsMixin,
     AutomodWatchMixin,
+    SpotifyMixin,
 ):
     def __init__(self, database_url: str):
         self.pool: asyncpg.Pool | None = None

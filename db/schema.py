@@ -1044,4 +1044,14 @@ async def initialize_schema(pool):
             )
         ''')
 
+        # ── Spotify: now-playing opt-ins ──
+        # Sharing is off by default. A row means the member allows
+        # $nowplaying / $np2 to show their Spotify activity.
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS spotify_optins (
+                user_id      BIGINT PRIMARY KEY,
+                opted_in_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        ''')
+
         logger.info("Database schema initialized")

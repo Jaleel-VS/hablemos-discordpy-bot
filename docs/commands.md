@@ -229,7 +229,9 @@ See [`cogs/spotify.md`](./cogs/spotify.md) for the full feature.
 
 | Command | Description |
 |---------|-------------|
-| `/nowplaying [@user]` | Show what you (or another user) are listening to on Spotify. Displays track, artist, album, progress bar, and album art. |
+| `/nowplaying [@user]` | Show what you (or another user) are listening to on Spotify. Displays track, artist, album, progress bar, and album art. Only works for members who ran `$spotify on`. |
+| `$np2 [@user]` | Same, rendered as a Spotify-style card image. Same opt-in rule. |
+| `$spotify [on\|off]` | Allow or stop the bot showing your Spotify activity. Off by default. With no argument, shows your current setting. |
 
 ## Vocab
 

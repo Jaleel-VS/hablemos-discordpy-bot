@@ -35,6 +35,7 @@ Adding a new domain:
 | `VocabMixin` (`vocab.py`) | Vocab / dictionary tracking |
 | `LeaderboardMixin` (`leaderboard.py`) | Language League users, activity, rounds, exclusions |
 | `QuotesMixin` (`quotes.py`) | Quote generator data |
+| `SpotifyMixin` (`spotify.py`) | `spotify_optins`: members who allow `$nowplaying` / `$np2` to show their Spotify activity |
 | `PracticeMixin` (`practice.py`) | FSRS-based practice cards |
 | `MetricsMixin` (`metrics.py`) | Command usage metrics (raw + daily rollup) |
 | `InteractionsMixin` (`interactions.py`) | Per-user interaction tallies |
@@ -109,6 +110,10 @@ Adding a new domain:
   cooldown timestamps and stored post data.
 
 ### Other
+- `spotify_optins` (`user_id` PK, `opted_in_at`): one row per member
+  who ran `$spotify on`. No row means sharing is off, which is the
+  default. `$spotify off` deletes the row.
+
 > TODO: document tables owned by `conversations`, `vocab`, `quotes`,
 > `practice`, `interactions`, `tasks`, `dictation`, `notes`, `settings`
 > mixins.

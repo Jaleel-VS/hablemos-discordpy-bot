@@ -13,7 +13,21 @@ color (mimicking Spotify's design).
 
 | Command | Description | Permissions |
 |---------|-------------|-------------|
-| `/nowplaying [@user]` | Show what you (or another user) are listening to on Spotify. Displays track, artist, album, progress bar, and album art. | None |
+| `/nowplaying [@user]` | Show what you (or another user) are listening to on Spotify. Displays track, artist, album, progress bar, and album art. Requires the member to have opted in. | None |
+| `$np2 [@user]` | Same, rendered as a Spotify-style card image. Requires the member to have opted in. | None |
+| `$spotify [on\|off]` | Opt in to or out of Spotify sharing. Off by default. With no argument, shows your current setting. | None |
+
+## Opt-in
+
+Spotify sharing is **off by default**. `$nowplaying` and `$np2` check
+`spotify_optins` before reading a member's activity. Members who haven't
+opted in get a message telling them to run `$spotify on`. Anyone asking
+about them is told they haven't turned sharing on.
+
+The opt-in exists for Discord's privileged intent review. The Presence
+intent delivers every member's activity to the bot, so the bot only
+reads it for members who agreed. See
+[`../database.md`](../database.md#other) for the table.
 
 ## Configuration
 

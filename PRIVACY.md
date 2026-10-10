@@ -14,9 +14,9 @@ policy explains what data the bot collects, why, and how to have it removed.
 - **Member information.** The bot reads member IDs, display names and roles
   to show leaderboards, stats and quote images, and to alert staff about
   AutoMod flags.
-- **Spotify activity.** When someone runs `$spotify`, the bot reads that
-  member's current Spotify activity to render a "now playing" card. It does
-  not store this.
+- **Spotify activity.** Off by default. If you run `$spotify on`, the bot
+  reads your current Spotify activity when someone runs `$nowplaying` or
+  `$np2`, to render a "now playing" card. It does not store this.
 
 ## What the bot stores
 
@@ -28,6 +28,7 @@ policy explains what data the bot collects, why, and how to have it removed.
   The text of these messages is not stored.
 - **Who replies to or mentions whom** (user IDs and channel only), used
   for staff interaction analysis. Deleted after 90 days.
+- **Your Spotify sharing setting** (whether you ran `$spotify on`).
 - **Text you give the bot on purpose**: notes you save with `$note` or
   `/vocab`, and the answers you type during the dictation game.
 - **Command usage metrics** (which command, when, by which user ID). Raw
@@ -55,6 +56,7 @@ not sell or share data with anyone else.
 
 - Delete individual vocabulary notes with `/vocab delete <id>`.
 - Run `/league leave` to stop Language League activity tracking.
+- Run `$spotify off` to stop the bot showing your Spotify activity.
 - Run `$quoteme off` to stop others from making quote images of your
   messages.
 - To delete everything stored about you, contact a moderator in the server

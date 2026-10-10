@@ -112,8 +112,10 @@ Categories: `general` (1), `phil` (2), `would` (3), `other` (4), `cursed` (5). N
 | Command | Description |
 |---------|-------------|
 | `$nowplaying [@user]` | Show current Spotify activity |
+| `$np2 [@user]` | Show it as a Spotify-style card image |
+| `$spotify [on\|off]` | Allow or stop the bot showing your Spotify activity |
 
-Aliases: `$spoti`, `$np`. Also available as a slash command.
+Aliases: `$spoti`, `$np`. Also available as a slash command. Sharing is off by default: these commands only work for members who ran `$spotify on`.
 
 ### Quote Generator
 
