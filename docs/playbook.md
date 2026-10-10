@@ -67,6 +67,57 @@ show errors or no "I'm online" message.
      and `setup(bot)` is defined.
    - Try disabling the problematic cog via `$cog disable <name>` in a
      previous deploy, then redeploy with the fix.
+5. **Privileged intents rejected**: see the next section.
+
+## Bot crash-loops with `PrivilegedIntentsRequired`
+
+### Symptom
+
+The bot is offline, but the Lightsail service shows `RUNNING`. The logs
+show a full startup (DB pool, every `Loaded extension:` line), then a
+traceback ending in:
+
+```
+discord.errors.PrivilegedIntentsRequired: Shard ID None is requesting
+privileged intents that have not been explicitly enabled in the developer portal.
+```
+
+The container restarts about once a minute and fails the same way each
+time. The error comes from the gateway login in `bot.run()`, after setup.
+
+### Cause
+
+`hablemos.py` requests three privileged intents: `members`,
+`message_content` and `presences`. Discord rejected at least one of them.
+Code changes don't cause this. The cause is on Discord's side:
+
+- Someone switched an intent toggle off in the developer portal.
+- The bot passed 100 servers or became verified. Verified bots can't
+  self-enable privileged intents. Discord must approve each one, and an
+  unapproved intent gets revoked. In this case the portal shows a
+  **Request Intents** form instead of toggles.
+
+### Fix
+
+1. Confirm: `python scripts/lightsail_logs.py --filter PrivilegedIntents`.
+2. Open https://discord.com/developers/applications → the bot → **Bot** →
+   **Privileged Gateway Intents**.
+3. **If the toggles are there**, switch on Server Members, Presence and
+   Message Content, then save. The next automatic restart logs in, so you
+   don't need to redeploy.
+4. **If you only see the Request Intents form**, submit it for each
+   intent and justify each one. Approval takes days. To get back online
+   sooner, remove the unapproved intents in `hablemos.py` and redeploy.
+   Each intent breaks different features:
+   - `presences`: only `spotify_cog` reads `member.activities`. This is
+     the cheapest intent to drop.
+   - `members`: member listeners and `get_member` lookups used across
+     many cogs (league, stats, admin, automod watch, display names in
+     `cogs/utils/names.py`).
+   - `message_content`: every `$` prefix command and every `on_message`
+     tracker (league, vocab catch, summaries). Without it the bot only
+     reads messages that mention it, DMs, and slash commands. Don't
+     drop it unless the bot otherwise can't run at all.
 
 ## Cog is disabled
 
