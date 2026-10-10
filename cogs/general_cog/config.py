@@ -13,4 +13,5 @@ INVITE_LINK: Final[str] = get_str_env(
 )
 
 REPO: Final[str] = "https://github.com/Jaleel-VS/hablemos-discordpy-bot"
+PRIVACY_POLICY: Final[str] = f"{REPO}/blob/main/PRIVACY.md"
 DPY: Final[str] = "https://discordpy.readthedocs.io/en/latest/"

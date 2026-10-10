@@ -26,7 +26,7 @@ Built with discord.py 2.x, PostgreSQL (asyncpg), and Google Gemini. Deployed on 
 |---------|-------------|
 | `/help [category]` | Interactive help with categories |
 | `$help [command]` | Detailed usage for a specific command |
-| `$info` | Bot information and links |
+| `$info` | Bot information and links (repo, privacy policy) |
 | `$ping` | Check bot latency |
 | `$lst` | List conversation topic categories |
 

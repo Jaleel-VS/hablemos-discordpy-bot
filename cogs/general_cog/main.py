@@ -12,7 +12,13 @@ from discord.ext import commands
 from discord.ext.commands import command
 
 from base_cog import BaseCog
-from cogs.general_cog.config import BOT_AUTHOR_ID, DPY, INVITE_LINK, REPO
+from cogs.general_cog.config import (
+    BOT_AUTHOR_ID,
+    DPY,
+    INVITE_LINK,
+    PRIVACY_POLICY,
+    REPO,
+)
 from cogs.utils.embeds import green_embed
 
 if TYPE_CHECKING:
@@ -225,7 +231,8 @@ class General(BaseCog):
         text = (
             f"The bot was coded in Python using the [discord.py]({DPY}) framework.\n\n"
             f"To report an error or make a suggestion please message "
-            f"<@{BOT_AUTHOR_ID}>\n[Github Repository]({REPO})"
+            f"<@{BOT_AUTHOR_ID}>\n[Github Repository]({REPO}) · "
+            f"[Privacy Policy]({PRIVACY_POLICY})"
         )
         await ctx.send(embed=green_embed(text))
 
