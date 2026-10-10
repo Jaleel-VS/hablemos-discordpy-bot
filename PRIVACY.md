@@ -22,8 +22,14 @@ policy explains what data the bot collects, why, and how to have it removed.
 
 - **Discord IDs** (user, channel and server IDs) linked to activity counts,
   game results, league standings and command usage.
-- **Text you save on purpose**, such as vocabulary notes you create with
-  the bot's commands.
+- **Usernames and display names**, saved alongside notes, leaderboard
+  entries and game scores so they can be shown later.
+- **Message counts** per user, channel and hour, used for server stats.
+  The text of these messages is not stored.
+- **Who replies to or mentions whom** (user IDs and channel only), used
+  for staff interaction analysis. Deleted after 90 days.
+- **Text you give the bot on purpose**: notes you save with `$note` or
+  `/vocab`, and the answers you type during the dictation game.
 - **Command usage metrics** (which command, when, by which user ID). Raw
   entries are rolled up into daily totals after 30 days.
 
@@ -49,6 +55,8 @@ not sell or share data with anyone else.
 
 - Delete individual vocabulary notes with `/vocab delete <id>`.
 - Run `/league leave` to stop Language League activity tracking.
+- Run `$quoteme off` to stop others from making quote images of your
+  messages.
 - To delete everything stored about you, contact a moderator in the server
   or open an issue at
   <https://github.com/Jaleel-VS/hablemos-discordpy-bot/issues>. The
