@@ -14,9 +14,10 @@ policy explains what data the bot collects, why, and how to have it removed.
 - **Member information.** The bot reads member IDs, display names and roles
   to show leaderboards, stats and quote images, and to alert staff about
   AutoMod flags.
-- **Spotify activity.** Off by default. If you run `$spotify on`, the bot
-  reads your current Spotify activity when someone runs `$nowplaying` or
-  `$np2`, to render a "now playing" card. It does not store this.
+- **Spotify activity.** Off by default. If you press the opt-in button that
+  `$nowplaying` shows, or run `$spotify on`, the bot reads your current
+  Spotify activity when someone runs `$nowplaying` or `$np2`, to render a
+  "now playing" card. It does not store this.
 
 ## What the bot stores
 

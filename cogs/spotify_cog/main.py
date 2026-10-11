@@ -23,6 +23,7 @@ from PIL import Image
 
 from base_cog import BaseCog
 from cogs.spotify_cog.config import SPOTIFY_EMOJI
+from cogs.spotify_cog.views import OptInView, prompt_embed
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
 if TYPE_CHECKING:
@@ -149,8 +150,8 @@ class SpotifyCog(BaseCog):
     ) -> tuple[Member, Spotify] | None:
         """Resolve who to show and their Spotify activity, or reply and return None.
 
-        Sharing is opt-in: a member's activity is only read after they run
-        ``$spotify on``.
+        Sharing is opt-in: a member's activity is only read after they turn it
+        on, with the button this method sends or with ``$spotify on``.
         """
         if ctx.guild is None:
             await ctx.send(embed=red_embed("This command can only be used in a server."))
@@ -164,12 +165,8 @@ class SpotifyCog(BaseCog):
         is_self = target.id == ctx.author.id
         if not await self.bot.db.is_spotify_opted_in(target.id):
             if is_self:
-                await ctx.send(embed=yellow_embed(
-                    "Spotify sharing is **off** for you, so the bot can't show what "
-                    "you're listening to.\n\n"
-                    "To allow it, run `$spotify on`. You can turn it off again any "
-                    "time with `$spotify off`."
-                ))
+                view = OptInView(self.bot, ctx)
+                view.message = await ctx.send(embed=prompt_embed(), view=view)
             else:
                 await ctx.send(embed=yellow_embed(
                     f"{target.display_name} hasn't turned on Spotify sharing. "

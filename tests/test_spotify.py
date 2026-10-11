@@ -9,6 +9,7 @@ import discord
 import pytest
 
 from cogs.spotify_cog.main import SpotifyCog
+from cogs.spotify_cog.views import OptInView
 
 
 class _NoActivities:
@@ -37,15 +38,17 @@ def _ctx(author_id: int, target: Any) -> MagicMock:
 
 
 @pytest.mark.asyncio
-async def test_not_opted_in_self_is_told_how_to_enable() -> None:
+async def test_not_opted_in_self_gets_an_opt_in_button() -> None:
     target = _NoActivities(1)
     ctx = _ctx(author_id=1, target=target)
 
     result = await _cog(opted_in=False)._listening_target(ctx, None)
 
     assert result is None
-    embed = ctx.send.await_args.kwargs["embed"]
-    assert "$spotify on" in embed.description
+    kwargs = ctx.send.await_args.kwargs
+    assert isinstance(kwargs["view"], OptInView)
+    assert "anyone in the server" in kwargs["embed"].description
+    assert "$spotify off" in kwargs["embed"].description
 
 
 @pytest.mark.asyncio
@@ -56,8 +59,9 @@ async def test_not_opted_in_other_member_is_not_read() -> None:
     result = await _cog(opted_in=False)._listening_target(ctx, cast(Any, target))
 
     assert result is None
-    embed = ctx.send.await_args.kwargs["embed"]
-    assert "hasn't turned on Spotify sharing" in embed.description
+    kwargs = ctx.send.await_args.kwargs
+    assert "hasn't turned on Spotify sharing" in kwargs["embed"].description
+    assert "view" not in kwargs  # a member can't opt in someone else
 
 
 @pytest.mark.asyncio
@@ -70,3 +74,69 @@ async def test_opted_in_member_returns_activity() -> None:
 
     assert result == (target, spotify)
     ctx.send.assert_not_awaited()
+
+
+def _view(*, optin: AsyncMock | None = None) -> tuple[OptInView, MagicMock, AsyncMock]:
+    optin = optin or AsyncMock(return_value=True)
+    bot = SimpleNamespace(db=SimpleNamespace(spotify_optin=optin))
+    ctx = _ctx(author_id=1, target=None)
+    ctx.reinvoke = AsyncMock()
+    return OptInView(cast(Any, bot), ctx), ctx, optin
+
+
+def _interaction(user_id: int) -> MagicMock:
+    interaction = MagicMock()
+    interaction.user = SimpleNamespace(id=user_id)
+    interaction.response.edit_message = AsyncMock()
+    interaction.response.send_message = AsyncMock()
+    interaction.followup.send = AsyncMock()
+    return interaction
+
+
+@pytest.mark.asyncio
+async def test_button_opts_in_the_requester_and_reruns_the_command() -> None:
+    view, ctx, optin = _view()
+    interaction = _interaction(user_id=1)
+
+    await view.opt_in.callback(interaction)
+
+    optin.assert_awaited_once_with(1)
+    ctx.reinvoke.assert_awaited_once()
+    assert all(item.disabled for item in view.children)
+    assert "now **on**" in interaction.response.edit_message.await_args.kwargs["embed"].description
+
+
+@pytest.mark.asyncio
+async def test_button_is_refused_for_anyone_but_the_requester() -> None:
+    view, ctx, optin = _view()
+    interaction = _interaction(user_id=2)
+
+    assert await view.interaction_check(interaction) is False
+
+    interaction.response.send_message.assert_awaited_once()
+    optin.assert_not_awaited()
+    ctx.reinvoke.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_failed_opt_in_does_not_rerun_the_command() -> None:
+    view, ctx, _ = _view(optin=AsyncMock(side_effect=RuntimeError("db down")))
+    interaction = _interaction(user_id=1)
+
+    await view.opt_in.callback(interaction)
+
+    ctx.reinvoke.assert_not_awaited()
+    interaction.response.edit_message.assert_not_awaited()
+    assert interaction.response.send_message.await_args.kwargs["ephemeral"] is True
+
+
+@pytest.mark.asyncio
+async def test_card_failure_after_opt_in_is_reported_not_raised() -> None:
+    view, ctx, optin = _view()
+    ctx.reinvoke.side_effect = RuntimeError("render failed")
+    interaction = _interaction(user_id=1)
+
+    await view.opt_in.callback(interaction)
+
+    optin.assert_awaited_once_with(1)
+    assert "Sharing is on" in interaction.followup.send.await_args.kwargs["embed"].description
