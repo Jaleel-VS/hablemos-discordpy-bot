@@ -175,7 +175,7 @@ LANCZOS-downsample on save.
   user reply). It skips any error already marked `error_handled`.
 - Do not override `cog_command_error` to re-state cooldown or
   permission copy. Command-local `@command.error` is fine for
-  command-specific usage (see `nogif_cog`).
+  command-specific usage (see `interactions_cog`).
 - Interaction callbacks use a decorator (`handle_interaction_errors` in
   `league_cog/main.py` and similar) to wrap ephemeral failure embeds.
 - User-facing messages never leak raw exception strings; the traceback

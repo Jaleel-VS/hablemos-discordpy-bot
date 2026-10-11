@@ -42,7 +42,6 @@ from db.interactions import InteractionsMixin
 from db.introductions import IntroductionsMixin
 from db.leaderboard import LeaderboardMixin
 from db.metrics import MetricsMixin
-from db.nogif import NoGifMixin
 from db.notes import NotesMixin
 from db.practice import PracticeMixin
 from db.predictions import WCPredictionsMixin
@@ -55,7 +54,6 @@ from db.stats import StatsMixin
 from db.tasks import TasksMixin
 from db.ticket_subs import TicketSubsMixin
 from db.vocab import VocabMixin
-from db.vocab_catch import VocabCatchMixin
 
 
 class Database(
@@ -75,8 +73,6 @@ class Database(
     CrosswordMixin,
     WCPredictionsMixin,
     WCBetsMixin,
-    NoGifMixin,
-    VocabCatchMixin,
     TicketSubsMixin,
     StatsMixin,
     GameResultsMixin,

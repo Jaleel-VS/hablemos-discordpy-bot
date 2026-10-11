@@ -36,15 +36,17 @@ and the "Removing your data" section of [`PRIVACY.md`](../../PRIVACY.md).
 
 - **Deleted:** notes, vocab notes, practice progress, League standings and
   activity, round wins, command metrics, interaction records (both sides),
-  crossword and dictation scores, vocab-card catches, ticket subscriptions,
+  crossword and dictation scores, ticket subscriptions,
   message counts, activity first/last seen, clock and Spotify settings,
   World Cup predictions and bets, and the Activity service's game results,
-  stats, sessions and pets.
+  stats, sessions and pets. Tables of removed features (vocab-card
+  catches, no-GIF restrictions) are deleted too while they still exist
+  (`_LEGACY_DELETES`).
 - **Anonymized:** crossword word events (`solved_by` set to `NULL`). A
   League-banned member keeps their `leaderboard_users` row so the ban
   survives, with the username cleared and `opted_in` set to false.
 - **Kept** (`KEPT_TABLES`): the quote opt-out, moderation records (quote
-  bans, no-GIF restrictions, betting bans, intro exemptions, intro
+  bans, betting bans, intro exemptions, intro
   history), anti-spam cooldowns (exchange posts), champion-role
   bookkeeping, and the staff task board. Deleting data must not lift a ban
   or undo an opt-out.

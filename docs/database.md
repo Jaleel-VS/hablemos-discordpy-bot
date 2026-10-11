@@ -154,17 +154,14 @@ Adding a new domain:
   list at startup (`WCBet.cog_load`) and after each edit so knockout
   betting/settlement survive restarts. See [`cogs/wcbet.md`](./cogs/wcbet.md).
 
-### Vocab Catch
-- `vocab_card_pool` — curated, shared **bidirectional** word bank cards
-  spawn from (`card_id` SERIAL PK): `word_es`, `word_en`,
-  `part_of_speech`, `gender`, `example_es`, `example_en`, `rarity`
-  (1-5), `active`. Indexed on `(active, rarity)` for weighted spawns.
-  Distinct from the per-user `vocab_notes` table. The channel mode picks
-  which language is the prompt vs. the catch answer.
-  (`VocabCatchMixin` in `db/vocab_catch.py`.)
-- `vocab_card_catches` — per-user inventory, PK `(user_id, card_id)`:
-  `count` (increments on duplicate catches), `first_caught`/`last_caught`.
-  Indexed on `user_id`. See [`cogs/vocabcatch.md`](./cogs/vocabcatch.md).
+### Legacy tables
+- `vocab_card_pool`, `vocab_card_catches` (Vocab Catch) and
+  `nogif_restrictions` (NoGIF) belong to removed features. They are no
+  longer created, but databases created earlier still have them, and
+  `vocab_card_catches` and `nogif_restrictions` hold user IDs.
+  `/deletemydata` still deletes from them (`_LEGACY_DELETES` in
+  `db/privacy.py`). Drop them with a script in `scripts/` when the data
+  isn't needed. See the destructive-changes rule under Migrations.
 
 ### Tickets
 - `ticket_subscriptions` — mods opted in to new-ticket pings, PK

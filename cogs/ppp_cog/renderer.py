@@ -20,7 +20,7 @@ WIDTH = DISPLAY_WIDTH * S
 HEIGHT = DISPLAY_HEIGHT * S
 
 ROOT = Path(__file__).resolve().parents[2]
-FONT_PATH = ROOT / "cogs" / "vocabcatch_cog" / "fonts" / "Inter.ttf"
+FONT_PATH = ROOT / "cogs" / "utils" / "fonts" / "Inter.ttf"
 
 BG = "#070709"
 SURFACE = "#141417"

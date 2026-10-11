@@ -27,7 +27,6 @@ _DELETES: list[tuple[str, str]] = [
     ("crossword_scores", "DELETE FROM crossword_scores WHERE user_id = $1"),
     ("crossword_participants", "DELETE FROM crossword_participants WHERE user_id = $1"),
     ("dictation_scores", "DELETE FROM dictation_scores WHERE user_id = $1"),
-    ("vocab_card_catches", "DELETE FROM vocab_card_catches WHERE user_id = $1"),
     ("ticket_subscriptions", "DELETE FROM ticket_subscriptions WHERE user_id = $1"),
     ("user_message_counts", "DELETE FROM user_message_counts WHERE user_id = $1"),
     ("user_activity", "DELETE FROM user_activity WHERE user_id = $1"),
@@ -59,8 +58,19 @@ _ACTIVITY_DELETES: list[tuple[str, str]] = [
     ("activity_pets", "DELETE FROM activity_pets WHERE user_id = $1"),
 ]
 
+# Tables of removed features. Databases created before the removal still
+# hold member data in them, so deletion keeps covering them. A newer
+# database has no such table, hence the existence check below.
+_LEGACY_DELETES: list[tuple[str, str]] = [
+    ("vocab_card_catches", "DELETE FROM vocab_card_catches WHERE user_id = $1"),
+    ("nogif_restrictions", "DELETE FROM nogif_restrictions WHERE user_id = $1"),
+]
+
+# Run only when the table exists.
+_GUARDED_DELETES: list[tuple[str, str]] = _LEGACY_DELETES + _ACTIVITY_DELETES
+
 DELETED_TABLES: frozenset[str] = frozenset(
-    t for t, _ in _DELETES + _ANONYMIZE + _ACTIVITY_DELETES
+    t for t, _ in _DELETES + _ANONYMIZE + _GUARDED_DELETES
 )
 
 # Per-user tables deliberately kept, and why. Shown to users before they
@@ -68,7 +78,6 @@ DELETED_TABLES: frozenset[str] = frozenset(
 KEPT_TABLES: dict[str, str] = {
     "quote_optouts": "your choice not to be quoted",
     "quote_banned_users": "moderation record",
-    "nogif_restrictions": "moderation record",
     "wc_bet_bans": "moderation record",
     "intro_exempt_users": "moderation record",
     "introductions": "moderation record",
@@ -93,7 +102,7 @@ class PrivacyMixin(DatabaseMixin):
         async with self._pool().acquire() as conn, conn.transaction():
             for _table, sql in _DELETES + _ANONYMIZE:
                 total += _rowcount(await conn.execute(sql, user_id))
-            for table, sql in _ACTIVITY_DELETES:
+            for table, sql in _GUARDED_DELETES:
                 if await conn.fetchval("SELECT to_regclass($1)", f"public.{table}") is None:
                     continue
                 total += _rowcount(await conn.execute(sql, user_id))

@@ -21,8 +21,8 @@ from cogs.wcpredict_cog.fixtures import (
     is_placeholder_team,
 )
 
-# Fonts — reuse from vocabcatch
-FONT_DIR = Path(__file__).resolve().parent.parent / "vocabcatch_cog" / "fonts"
+# Fonts — shared OFL set in cogs/utils/fonts
+FONT_DIR = Path(__file__).resolve().parent.parent / "utils" / "fonts"
 
 # Render scale
 S = 2

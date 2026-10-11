@@ -126,7 +126,7 @@ Code changes don't cause this. The cause is on Discord's side:
      many cogs (league, stats, admin, automod watch, display names in
      `cogs/utils/names.py`).
    - `message_content`: every `$` prefix command and every `on_message`
-     tracker (league, vocab catch, summaries). Without it the bot only
+     tracker (league, summaries). Without it the bot only
      reads messages that mention it, DMs, and slash commands. Don't
      drop it unless the bot otherwise can't run at all.
 

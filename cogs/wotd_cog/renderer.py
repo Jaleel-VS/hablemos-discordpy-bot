@@ -13,8 +13,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-# Re-use fonts from vocabcatch_cog (same OFL-licensed font set)
-FONT_DIR = Path(__file__).resolve().parent.parent / "vocabcatch_cog" / "fonts"
+# Shared OFL-licensed fonts
+FONT_DIR = Path(__file__).resolve().parent.parent / "utils" / "fonts"
 
 # Super-sample multiplier
 S = 3

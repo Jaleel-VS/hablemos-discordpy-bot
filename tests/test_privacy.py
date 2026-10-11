@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import re
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, cast
@@ -10,7 +12,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from cogs.privacy_cog.views import ConfirmDeleteDataView
-from db.privacy import DELETED_TABLES, KEPT_TABLES, _rowcount
+from db.privacy import DELETED_TABLES, KEPT_TABLES, PrivacyMixin, _rowcount
 
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMAS = [ROOT / "db" / "schema.py", ROOT / "activity" / "backend" / "app" / "db.py"]
@@ -88,3 +90,70 @@ async def test_failed_deletion_does_not_notify_cogs() -> None:
 
     bot.dispatch.assert_not_called()
     assert "nothing was deleted" in interaction.response.edit_message.await_args.kwargs["embed"].description
+
+
+class _FakeTransaction:
+    async def __aenter__(self) -> None:
+        return None
+
+    async def __aexit__(self, *_exc: object) -> None:
+        return None
+
+
+class _FakeConn:
+    """Records executed SQL; only ``existing`` tables resolve in ``to_regclass``."""
+
+    def __init__(self, existing: set[str]) -> None:
+        self.existing = existing
+        self.executed: list[str] = []
+
+    def transaction(self) -> _FakeTransaction:
+        return _FakeTransaction()
+
+    async def fetchval(self, _sql: str, qualified_name: str) -> str | None:
+        table = qualified_name.removeprefix("public.")
+        return qualified_name if table in self.existing else None
+
+    async def execute(self, sql: str, *_args: object) -> str:
+        self.executed.append(sql)
+        return "DELETE 1"
+
+
+class _FakePool:
+    def __init__(self, conn: _FakeConn) -> None:
+        self.conn = conn
+
+    @asynccontextmanager
+    async def acquire(self) -> AsyncIterator[_FakeConn]:
+        yield self.conn
+
+
+def _db(existing: set[str]) -> tuple[PrivacyMixin, _FakeConn]:
+    conn = _FakeConn(existing)
+    db = PrivacyMixin()
+    db.pool = cast(Any, _FakePool(conn))
+    return db, conn
+
+
+@pytest.mark.asyncio
+async def test_tables_of_removed_features_are_skipped_when_absent() -> None:
+    db, conn = _db(existing=set())
+
+    await db.delete_user_data(42)
+
+    sql = "\n".join(conn.executed)
+    for table in ("vocab_card_catches", "nogif_restrictions", "game_results"):
+        assert table not in sql
+    assert "DELETE FROM notes" in sql
+
+
+@pytest.mark.asyncio
+async def test_tables_of_removed_features_are_deleted_while_they_exist() -> None:
+    db, conn = _db(existing={"vocab_card_catches", "nogif_restrictions"})
+
+    await db.delete_user_data(42)
+
+    sql = "\n".join(conn.executed)
+    assert "DELETE FROM vocab_card_catches" in sql
+    assert "DELETE FROM nogif_restrictions" in sql
+    assert "game_results" not in sql

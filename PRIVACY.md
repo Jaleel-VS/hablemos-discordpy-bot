@@ -62,7 +62,7 @@ not sell or share data with anyone else.
 - **Delete everything stored about you** with `/deletemydata`. The bot
   shows what will be removed and asks you to confirm. Deletion is
   immediate and can't be undone.
-- `/deletemydata` keeps moderation records (bans, restrictions,
+- `/deletemydata` keeps moderation records (bans, exemptions,
   anti-spam cooldowns) and your quote opt-out, so deleting data can't
   lift a ban or make you quotable again.
 - If you can't run the command (for example, you left the server),
