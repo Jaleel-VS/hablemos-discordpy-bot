@@ -3,7 +3,7 @@ from typing import Final
 
 from config import get_int_env, get_str_env
 
-BOT_CLIENT_ID: Final[int] = get_int_env("BOT_CLIENT_ID", 808377026330492941)
+BOT_CLIENT_ID: Final[int] = get_int_env("BOT_CLIENT_ID", 855852208129572914)
 BOT_AUTHOR_ID: Final[int] = get_int_env("BOT_AUTHOR_ID", 216848576549093376)
 
 INVITE_LINK: Final[str] = get_str_env(
