@@ -38,7 +38,7 @@ vague paragraph).
 The spec must be detailed enough that an implementer with **no other
 context** can execute it without coming back to ask questions — that
 is the single biggest lever on whether this workflow actually saves
-money (see `docs/` or ask the user if unsure about a project
+money (ask the user if unsure about a project
 convention; don't guess and leave it out of the spec).
 
 Include explicitly:
@@ -46,8 +46,8 @@ Include explicitly:
 - Edge cases and how to handle them
 - What "done" looks like (a concrete acceptance check, not "it works")
 - Any project conventions the implementer must follow (this repo:
-  AGENTS.md — ruff clean, tests updated, docs updated in the same
-  commit, `None`-handling rules, no hardcoded IDs)
+  AGENTS.md — ruff clean, tests updated,
+  `None`-handling rules, no hardcoded IDs)
 
 Do not proceed to Step 2 until the spec file exists and you've shown
 its path to the user for a quick look — a bad plan is not worth

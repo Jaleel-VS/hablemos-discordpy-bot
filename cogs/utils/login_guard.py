@@ -35,14 +35,14 @@ def run_with_login_guard(
     except discord.PrivilegedIntentsRequired:
         logger.error(
             "Discord rejected the privileged intents (members, presences, message content). "
-            "Enable them in the Developer Portal or request access; see docs/playbook.md. "
+            "Enable them in the Developer Portal or request access. "
             "Waiting %s minutes before exiting so the restart loop doesn't use up the login limit.",
             round(delay / 60),
         )
     except discord.LoginFailure:
         logger.error(
             "Discord rejected the bot token. Reset it in the Developer Portal and update the "
-            "BOT_TOKEN secret; see docs/playbook.md. "
+            "BOT_TOKEN secret. "
             "Waiting %s minutes before exiting so the restart loop doesn't use up the login limit.",
             round(delay / 60),
         )

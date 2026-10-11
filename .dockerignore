@@ -23,7 +23,6 @@ activity/
 
 # Dev-only / non-runtime files
 tests/
-docs/
 plans/
 scripts/
 deploy/

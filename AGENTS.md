@@ -99,22 +99,12 @@ origin, then pass non-optional values downstream. If a value is checked for
 - Constants: UPPER_SNAKE_CASE
 - Config values from env vars: use centralized helpers from `config.py` (`get_int_env`, `get_str_env`, `get_required_env`, `get_list_env`) — not raw `os.getenv()`
 
-### Documentation
-
-Any commit that changes a command, schema, flow, or env var must update
-the relevant file under `docs/` in the same commit. See
-[`docs/CONTRIBUTING.md`](./docs/CONTRIBUTING.md) for the full rule and
-when-to-update table.
-
 ### Diagnosing failures
 
 When something is broken in production (bot won't start, a feature is
-stuck, bets not paying out, etc.), start with the runbook
-[`docs/playbook.md`](./docs/playbook.md) — it has per-symptom diagnosis
-and recovery steps. To read production logs programmatically (grep for
-errors, tracebacks, a specific event), use `scripts/lightsail_logs.py`
-(see [`docs/deployment.md`](./docs/deployment.md#querying-lightsail-logs-programmatically)).
-When you resolve a new failure mode, add it to the playbook.
+stuck, bets not paying out, etc.), read the logs with
+`scripts/lightsail_logs.py` (`--discover` lists services; `--filter ERROR`,
+`--limit N` and `--json` narrow the output).
 
 ### Security
 - No hardcoded tokens, secrets, or database URLs — always use environment variables
@@ -132,7 +122,7 @@ When you resolve a new failure mode, add it to the playbook.
 - Real-time data tracking via `on_message` listeners with DB persistence (prefer over on-demand API scanning)
 - Deduplicate shared logic into module-level helper functions or shared utilities
 - Use `pathlib.Path` for file system operations — not `os.path` or `os.listdir`
-- Pillow renderers super-sample at `S` then LANCZOS-downsample; `get_font` already multiplies size by `S`, so scale every coordinate/offset by `S` too (see [`docs/architecture.md`](./docs/architecture.md#image-rendering-pillow))
+- Pillow renderers super-sample at `S` then LANCZOS-downsample; `get_font` already multiplies size by `S`, so scale every coordinate/offset by `S` too (reference implementation: `cogs/league_cog/league_helper/leaderboard_image_pillow.py`)
 - Slash command syncing is manual via `$sync` — never auto-sync in `on_ready`
 
 ### Patterns to Avoid

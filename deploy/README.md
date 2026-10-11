@@ -104,4 +104,4 @@ aws lightsail get-container-service-deployments --region us-east-1 \
 ## Slash command sync
 
 Global slash commands are not auto-synced. After a deploy that adds/changes
-global commands, run `$sync` as the bot owner (see `docs/deployment.md`).
+global commands, run `$sync` as the bot owner.

@@ -1,6 +1,6 @@
 """Word of the Day card renderer — Pillow-based image generation.
 
-House convention (docs/architecture.md#image-rendering-pillow): render at
+House convention: render at
 super-sample multiplier ``S``, then LANCZOS-downsample on export. Every
 coordinate/size/offset is multiplied by ``S``.
 """

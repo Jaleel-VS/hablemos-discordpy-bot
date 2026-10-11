@@ -887,7 +887,7 @@ async def initialize_schema(pool):
 
         # Removed features: nogif_restrictions, vocab_card_pool and vocab_card_catches
         # are no longer created. Databases created earlier still have them; see
-        # db/privacy.py (_LEGACY_DELETES) and docs/database.md.
+        # db/privacy.py (_LEGACY_DELETES). Drop them with a script when not needed.
 
         # Ticket-arrival subscriptions — mods who opt in to be pinged when a
         # new moderation ticket (forum thread) is opened.

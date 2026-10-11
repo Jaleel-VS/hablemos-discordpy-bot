@@ -15,9 +15,6 @@ service** from the gateway bot; the two share the same PostgreSQL database.
 The gateway bot (unchanged) polls a results table and posts finished-game
 cards to a configured channel.
 
-See [`../docs/activity.md`](../docs/activity.md) for the full setup guide
-(Discord Developer Portal config, local dev tunnel, Lightsail deploy).
-
 ## Layout
 
 ```

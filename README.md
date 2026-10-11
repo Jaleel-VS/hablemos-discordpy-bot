@@ -4,7 +4,7 @@ A Spanish-English language learning Discord bot for the [Spanish-English Learnin
 
 Built with discord.py 2.x and PostgreSQL (asyncpg). Deployed on AWS Lightsail container services via Docker.
 
-> **AI features are disabled.** The Gemini-backed cogs (`ask`, `breakdown`, `conversation`, `practice`, `summary`) don't load in production while a replacement provider is chosen. Features marked *(disabled)* below are unavailable. See [`docs/deployment.md`](./docs/deployment.md) to re-enable.
+> **AI features are disabled.** The Gemini-backed cogs (`ask`, `breakdown`, `conversation`, `practice`, `summary`) don't load in production while a replacement provider is chosen. Features marked *(disabled)* below are unavailable. To re-enable, pass `GEMINI_API_KEY` to the bot in `deploy/bot.containers.json`.
 
 ## Features
 

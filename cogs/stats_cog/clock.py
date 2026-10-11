@@ -9,8 +9,9 @@ classic activity clock.
 Rendering follows the repo's super-sample-then-LANCZOS convention: everything
 is drawn at ``S`` times the display size, then downsampled on save for crisp
 edges on HiDPI Discord clients. Fonts are loaded at literal ``* S`` sizes
-directly (not via a shared ``get_font`` helper) to avoid the double-scale
-pitfall documented in docs/architecture.md.
+directly (not via a shared ``get_font`` helper): the leaderboard renderer's
+``get_font`` already multiplies by ``S``, so reusing it on a canvas that is
+also scaled by ``S`` makes the text ``S`` times too large.
 
 CPU-bound; call via ``asyncio.to_thread``.
 """
@@ -22,7 +23,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-# ── Scale (see docs/architecture.md "Image rendering (Pillow)") ──
+# ── Scale ──
 SCALE = 3
 OUTPUT_SCALE = 2
 S = SCALE * OUTPUT_SCALE  # 6
