@@ -10,6 +10,7 @@ from discord.ext.commands import Bot
 
 from cogs.utils.discovery import discover_extensions
 from cogs.utils.gemini import Gemini
+from cogs.utils.login_guard import run_with_login_guard
 from config import load_settings
 from db import Database
 from logger import setup_logging
@@ -181,4 +182,4 @@ class Hablemos(Bot):
 
 # Initialize and run
 bot = Hablemos(settings.prefix, settings)
-bot.run(settings.bot_token)
+run_with_login_guard(lambda: bot.run(settings.bot_token))

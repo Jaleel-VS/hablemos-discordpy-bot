@@ -82,8 +82,12 @@ discord.errors.PrivilegedIntentsRequired: Shard ID None is requesting
 privileged intents that have not been explicitly enabled in the developer portal.
 ```
 
-The container restarts about once a minute and fails the same way each
-time. The error comes from the gateway login in `bot.run()`, after setup.
+The error comes from the gateway login in `bot.run()`, after setup.
+`cogs/utils/login_guard.py` catches it, logs `Discord rejected the
+privileged intents ...`, and waits 30 minutes before exiting, so the
+container retries about 48 times a day. Without the guard, the
+container restarted every minute or so, which can pass Discord's limit
+of 1000 logins a day and get the token reset (next section).
 
 ### Cause
 
@@ -106,8 +110,9 @@ Code changes don't cause this. The cause is on Discord's side:
 2. Open https://discord.com/developers/applications → the bot → **Bot** →
    **Privileged Gateway Intents**.
 3. **If the toggles are there**, switch on Server Members, Presence and
-   Message Content, then save. The next automatic restart logs in, so you
-   don't need to redeploy.
+   Message Content, then save. The next restart (within 30 minutes) logs
+   in, so you don't need to redeploy. To skip the wait, re-run the last
+   deploy.
 4. **If you only see the Request Intents form**, submit it for each
    intent and justify each one. Request only intents you can show the
    bot needs, because Discord rejects weak justifications. Discord says
@@ -124,6 +129,34 @@ Code changes don't cause this. The cause is on Discord's side:
      tracker (league, vocab catch, summaries). Without it the bot only
      reads messages that mention it, DMs, and slash commands. Don't
      drop it unless the bot otherwise can't run at all.
+
+## Bot logs `Discord rejected the bot token` (`LoginFailure`)
+
+### Symptom
+
+The bot is offline. The logs show `Environment: production`, no
+`Loaded extension:` lines, and `LoginFailure: Improper token has been
+passed` (the login guard also logs `Discord rejected the bot token`).
+
+### Cause
+
+`BOT_TOKEN` is wrong or was reset. Discord resets a bot's token by itself
+when the bot logs in more than 1000 times in a short period, which is
+usually a crash loop (see the previous section). It sends a DM from
+"Discord" to the app owner with a link to the bot page. Resetting the
+token by hand in the Developer Portal has the same effect.
+
+### Fix
+
+1. Fix whatever caused the crash loop first, or the token can reset again.
+   The login guard limits a rejected login to about 48 attempts a day.
+2. Open https://discord.com/developers/applications → the bot → **Bot** →
+   **Reset Token**, and copy the new token.
+3. Store it with `gh secret set BOT_TOKEN`. The command prompts for the
+   value, so the token stays out of shell history, chat and commits.
+4. Redeploy: `gh workflow run deploy-lightsail.yml -f deploy_activity=false
+   -f deploy_logforwarder=false`. A deploy reads the secret when its job
+   starts, so re-running an old run also works.
 
 ## Cog is disabled
 
