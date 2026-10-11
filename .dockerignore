@@ -24,6 +24,7 @@ activity/
 # Dev-only / non-runtime files
 tests/
 plans/
+runbooks/
 scripts/
 deploy/
 .github/

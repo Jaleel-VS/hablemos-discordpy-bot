@@ -99,12 +99,28 @@ origin, then pass non-optional values downstream. If a value is checked for
 - Constants: UPPER_SNAKE_CASE
 - Config values from env vars: use centralized helpers from `config.py` (`get_int_env`, `get_str_env`, `get_required_env`, `get_list_env`) — not raw `os.getenv()`
 
-### Diagnosing failures
+### Runbooks
 
-When something is broken in production (bot won't start, a feature is
-stuck, bets not paying out, etc.), read the logs with
-`scripts/lightsail_logs.py` (`--discover` lists services; `--filter ERROR`,
-`--limit N` and `--json` narrow the output).
+`runbooks/` holds step-by-step recipes. Read the matching one before you start. Each has a
+**When** line and a **Last verified** date.
+
+| Runbook | Use when |
+|---|---|
+| `runbooks/read-logs.md` | You need production logs |
+| `runbooks/deploy.md` | Deploy, re-run a failed deploy, roll back, `$sync` |
+| `runbooks/bot-wont-start.md` | The bot is offline; triage by log line |
+| `runbooks/intents-rejected.md` | `PrivilegedIntentsRequired` |
+| `runbooks/token-reset.md` | `LoginFailure` or a reset bot token |
+| `runbooks/new-discord-app.md` | Moving to a new Discord application |
+| `runbooks/activity-setup.md` | Activity portal setup, local dev, launch errors |
+| `runbooks/commands-missing.md` | A missing command, a disabled cog, `$sync` |
+| `runbooks/league-round-end.md` | League round end or leaderboard problems |
+| `runbooks/delete-user-data.md` | Deletion requests; adding a table with user data |
+
+Keep them current. When a task changes a recipe's steps, or you resolve a failure that has no
+runbook, update or add one in the same commit and refresh **Last verified**. Keep each runbook
+short, link to code or `deploy/README.md` instead of copying them, and add new files to this
+table. `tests/test_runbooks.py` fails on a missing table entry or a path that no longer exists.
 
 ### Security
 - No hardcoded tokens, secrets, or database URLs — always use environment variables
