@@ -1,0 +1,1802 @@
+[
+  {
+    "id": "mr-001",
+    "term": "macabre",
+    "meaning_en": "Disturbing and horrifying because it is concerned with death or injury.",
+    "meaning_es": "Perturbador y horripilante por estar relacionado con la muerte o el daño.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a macabre sense of humour",
+    "note": "Often used approvingly of dark humour or art that confronts mortality unflinchingly, not merely as a criticism.",
+    "examples": [
+      {
+        "en": "The museum's macabre collection of Victorian death masks drew curious visitors.",
+        "es": "La macabra colección de máscaras mortuorias victorianas del museo atraía a visitantes curiosos."
+      },
+      {
+        "en": "She had a macabre sense of humour that her colleagues either loved or found deeply uncomfortable.",
+        "es": "Tenía un sentido del humor macabro que a sus compañeros o les encantaba o les resultaba profundamente incómodo."
+      }
+    ]
+  },
+  {
+    "id": "mr-002",
+    "term": "magnanimous",
+    "meaning_en": "Generous or forgiving, especially toward a rival or someone less powerful.",
+    "meaning_es": "Generoso o comprensivo, especialmente con un rival o con alguien de menor poder.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a magnanimous gesture",
+    "note": "Implies moral greatness, not just kindness; typically used when someone chooses grace over advantage.",
+    "examples": [
+      {
+        "en": "He was magnanimous in defeat, congratulating his opponent warmly in front of the cameras.",
+        "es": "Fue magnánimo en la derrota y felicitó a su contrincante con calidez ante las cámaras."
+      },
+      {
+        "en": "The magnanimous offer to share the prize money surprised everyone who knew her.",
+        "es": "La magnánima oferta de compartir el premio sorprendió a todos los que la conocían."
+      }
+    ]
+  },
+  {
+    "id": "mr-003",
+    "term": "maladroit",
+    "meaning_en": "Ineffective or clumsy, particularly in social situations or handling problems.",
+    "meaning_es": "Torpe o poco hábil, especialmente en situaciones sociales o al resolver problemas.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a maladroit response",
+    "note": "Suggests a lack of social or practical skill; slightly more damning than 'clumsy' because it implies poor judgment.",
+    "examples": [
+      {
+        "en": "His maladroit attempt to defuse the argument only made things worse.",
+        "es": "Su torpe intento de calmar la discusión no hizo más que empeorar las cosas."
+      },
+      {
+        "en": "The minister's maladroit comments on live television triggered an immediate backlash.",
+        "es": "Los desafortunados comentarios del ministro en televisión en directo desencadenaron una reacción inmediata."
+      }
+    ]
+  },
+  {
+    "id": "mr-004",
+    "term": "malevolent",
+    "meaning_en": "Having or showing a desire to harm others; wishing ill on others.",
+    "meaning_es": "Que tiene o muestra deseo de hacer daño a los demás; que les desea el mal.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a malevolent stare",
+    "note": "Suggests a deep-seated ill will, often used of characters in fiction or when describing deliberate, targeted intent.",
+    "examples": [
+      {
+        "en": "The character's malevolent grin left the audience in no doubt about his intentions.",
+        "es": "La sonrisa malévola del personaje no dejó al público ninguna duda sobre sus intenciones."
+      },
+      {
+        "en": "She described the campaign as a malevolent attempt to destroy his reputation.",
+        "es": "Describió la campaña como un intento malintencionado de destruir su reputación."
+      }
+    ]
+  },
+  {
+    "id": "mr-005",
+    "term": "malleable",
+    "meaning_en": "Easily shaped, influenced, or persuaded; adaptable to new circumstances.",
+    "meaning_es": "Fácilmente moldeable, influenciable o persuadible; adaptable a nuevas circunstancias.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a malleable personality",
+    "note": "Can be neutral (adaptable) or mildly critical (easily manipulated) depending on context.",
+    "examples": [
+      {
+        "en": "Young voters tend to be more malleable in their political opinions than older generations.",
+        "es": "Los votantes jóvenes suelen tener opiniones políticas más maleables que las generaciones anteriores."
+      },
+      {
+        "en": "The new manager found the team malleable enough to adopt the revised workflow quickly.",
+        "es": "El nuevo gerente encontró al equipo lo suficientemente flexible como para adoptar el nuevo flujo de trabajo rápidamente."
+      }
+    ]
+  },
+  {
+    "id": "mr-006",
+    "term": "manifest",
+    "meaning_en": "Clear and obvious to the eye or mind; unmistakable.",
+    "meaning_es": "Evidente y obvio para los ojos o la mente; inequívoco.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "manifest incompetence",
+    "note": "Used where something is so evident it would be hard to dispute; carries a formal, legalistic weight beyond 'obvious'.",
+    "examples": [
+      {
+        "en": "The tribunal found manifest errors in the way the evidence had been assessed.",
+        "es": "El tribunal detectó errores manifiestos en la forma en que se había valorado la prueba."
+      },
+      {
+        "en": "Her relief at the verdict was manifest; she broke into tears before the judge had finished speaking.",
+        "es": "Su alivio ante el veredicto era manifiesto; rompió a llorar antes de que el juez terminara de hablar."
+      }
+    ]
+  },
+  {
+    "id": "mr-007",
+    "term": "mawkish",
+    "meaning_en": "Sentimental in an exaggerated or feeble way; sickeningly sweet.",
+    "meaning_es": "Sentimental de forma exagerada o empalagosa; dulzón hasta el exceso.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "mawkish sentimentality",
+    "note": "Used critically; implies the emotion is performed rather than genuinely felt, or so excessive it becomes off-putting.",
+    "examples": [
+      {
+        "en": "The film's mawkish ending undermined two hours of otherwise restrained storytelling.",
+        "es": "El empalagoso final de la película echó por tierra dos horas de narración por lo demás contenida."
+      },
+      {
+        "en": "He avoided the mawkish tributes and instead shared a funny anecdote about his mentor.",
+        "es": "Evitó los sentimentales homenajes y en su lugar compartió una anécdota graciosa sobre su mentor."
+      }
+    ]
+  },
+  {
+    "id": "mr-008",
+    "term": "melancholy",
+    "meaning_en": "A deep, pensive sadness; a prolonged feeling of low spirits.",
+    "meaning_es": "Una tristeza profunda y pensativa; un estado prolongado de ánimo decaído.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "a sense of melancholy",
+    "note": "Often carries a reflective or even pleasurable connotation in literary use, unlike depression, which is clinical.",
+    "examples": [
+      {
+        "en": "Autumn always brought with it a quiet melancholy she couldn't quite explain.",
+        "es": "El otoño siempre traía consigo una callada melancolía que ella no sabía bien cómo explicar."
+      },
+      {
+        "en": "The song was saturated with a melancholy that made it impossible to listen to without feeling something.",
+        "es": "La canción estaba impregnada de una melancolía que hacía imposible escucharla sin sentir algo."
+      }
+    ]
+  },
+  {
+    "id": "mr-009",
+    "term": "mendacious",
+    "meaning_en": "Not telling the truth; dishonest in what one says or writes.",
+    "meaning_es": "Que no dice la verdad; deshonesto en lo que dice o escribe.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a mendacious account",
+    "note": "A formal word for deliberate dishonesty; can describe a single misleading claim as readily as a pattern of behaviour.",
+    "examples": [
+      {
+        "en": "The report described the official's testimony as mendacious and self-serving.",
+        "es": "El informe calificó el testimonio del funcionario de mendaz e interesado."
+      },
+      {
+        "en": "She was tired of his mendacious excuses and stopped asking for explanations altogether.",
+        "es": "Estaba harta de sus mentirosas excusas y dejó de pedir explicaciones por completo."
+      }
+    ]
+  },
+  {
+    "id": "mr-010",
+    "term": "mercurial",
+    "meaning_en": "Subject to sudden, unpredictable changes of mood or mind.",
+    "meaning_es": "Sujeto a cambios de humor o de opinión repentinos e impredecibles.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a mercurial temperament",
+    "note": "Can be admiring (brilliant but unpredictable) or cautionary; the context usually clarifies which sense is intended.",
+    "examples": [
+      {
+        "en": "His mercurial nature made him an exciting collaborator but a difficult long-term partner.",
+        "es": "Su naturaleza mercurial lo convertía en un colaborador apasionante pero en un socio difícil a largo plazo."
+      },
+      {
+        "en": "The team never quite knew what to expect from their mercurial coach.",
+        "es": "El equipo nunca sabía muy bien qué esperar de su imprevisible entrenador."
+      }
+    ]
+  },
+  {
+    "id": "mr-011",
+    "term": "meticulous",
+    "meaning_en": "Showing great attention to detail; very careful and precise.",
+    "meaning_es": "Que presta gran atención al detalle; muy cuidadoso y preciso.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "meticulous attention to detail",
+    "note": "Generally positive; describes thorough, careful work. Can edge toward critical when implying excessive caution.",
+    "examples": [
+      {
+        "en": "The restorer's meticulous work brought the sixteenth-century painting back to life.",
+        "es": "El meticuloso trabajo del restaurador devolvió la vida al cuadro del siglo XVI."
+      },
+      {
+        "en": "She kept meticulous records of every transaction, which proved invaluable during the audit.",
+        "es": "Llevaba un registro meticuloso de cada transacción, lo que resultó de gran valor durante la auditoría."
+      }
+    ]
+  },
+  {
+    "id": "mr-012",
+    "term": "minatory",
+    "meaning_en": "Expressing or conveying a threat; menacing in tone or manner.",
+    "meaning_es": "Que expresa o transmite una amenaza; de tono o actitud amenazante.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a minatory tone",
+    "note": "Rarer than 'threatening' or 'menacing'; used to highlight a deliberate, often official or legal, air of intimidation.",
+    "examples": [
+      {
+        "en": "The letter's minatory tone left no room for doubt that legal action would follow.",
+        "es": "El tono amenazante de la carta no dejaba lugar a dudas de que se tomarían acciones legales."
+      },
+      {
+        "en": "He gave her a minatory look that silenced any further questions.",
+        "es": "Le lanzó una mirada amenazante que silenció cualquier pregunta adicional."
+      }
+    ]
+  },
+  {
+    "id": "mr-013",
+    "term": "mitigate",
+    "meaning_en": "Make less severe, serious, or painful; lessen the harmful effects of something.",
+    "meaning_es": "Hacer algo menos grave, serio o doloroso; reducir los efectos perjudiciales de algo.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "mitigate the risk",
+    "note": "Widely used in law, policy, and risk management. 'Mitigate against' is a common usage error; the verb takes a direct object.",
+    "examples": [
+      {
+        "en": "Better insulation can significantly mitigate heat loss in older buildings.",
+        "es": "Un mejor aislamiento puede reducir significativamente las pérdidas de calor en los edificios más antiguos."
+      },
+      {
+        "en": "The judge accepted that his cooperation had mitigated his role in the scheme.",
+        "es": "El juez aceptó que su cooperación había atenuado su papel en el plan."
+      }
+    ]
+  },
+  {
+    "id": "mr-014",
+    "term": "mollify",
+    "meaning_en": "Appease or placate someone who is angry or distressed; soften in feeling.",
+    "meaning_es": "Apaciguar o calmar a alguien que está enojado o angustiado; suavizar los ánimos.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "mollify an angry customer",
+    "note": "Implies active effort to calm; the word suggests the person doing the calming takes the grievance seriously.",
+    "examples": [
+      {
+        "en": "An apology and a refund did little to mollify the passengers whose flights had been cancelled.",
+        "es": "Una disculpa y un reembolso hicieron poco por calmar a los pasajeros cuyos vuelos habían sido cancelados."
+      },
+      {
+        "en": "She tried to mollify her colleague with coffee and a carefully worded explanation.",
+        "es": "Intentó apaciguar a su colega con un café y una explicación cuidadosamente formulada."
+      }
+    ]
+  },
+  {
+    "id": "mr-015",
+    "term": "mordant",
+    "meaning_en": "Sharply critical or sarcastic with a biting, often dark quality.",
+    "meaning_es": "Mordaz o sarcástico, con una agudeza hiriente y a menudo oscura.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "mordant wit",
+    "note": "Overlaps with 'acerbic'; mordant often has a darker, bleaker edge and tends to describe humour as much as criticism.",
+    "examples": [
+      {
+        "en": "His mordant commentary on corporate life made the column compulsive reading.",
+        "es": "Su mordaz comentario sobre la vida corporativa convertía la columna en una lectura obligada."
+      },
+      {
+        "en": "The playwright's mordant wit turned a domestic dispute into a comedy of genuine cruelty.",
+        "es": "El ingenio mordaz del dramaturgo convirtió una disputa doméstica en una comedia de auténtica crueldad."
+      }
+    ]
+  },
+  {
+    "id": "mr-016",
+    "term": "moribund",
+    "meaning_en": "In a dying state; lacking vitality and likely to come to an end soon.",
+    "meaning_es": "En estado de agonía; sin vitalidad y con pocas probabilidades de sobrevivir.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a moribund industry",
+    "note": "Used both literally and figuratively; in non-literal use, it implies not just decline but near-inevitable end.",
+    "examples": [
+      {
+        "en": "The once-thriving high street had become moribund, with more empty units than open shops.",
+        "es": "La otrora animada calle comercial se había quedado moribunda, con más locales vacíos que tiendas abiertas."
+      },
+      {
+        "en": "Critics wrote the genre off as moribund, but sales figures told a different story.",
+        "es": "Los críticos daban al género por muerto, pero las cifras de ventas decían otra cosa."
+      }
+    ]
+  },
+  {
+    "id": "mr-017",
+    "term": "morose",
+    "meaning_en": "Sullen, ill-tempered, and silent; unhappy without communicating why.",
+    "meaning_es": "Hosco, malhumorado y silencioso; abatido sin exteriorizar el motivo.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a morose silence",
+    "note": "Combines sadness with withdrawal and an unwillingness to engage; the sullenness itself is the defining quality.",
+    "examples": [
+      {
+        "en": "He sat morose and unresponsive at the end of the table throughout the entire dinner.",
+        "es": "Estuvo sentado durante toda la cena en el extremo de la mesa, hosco y sin abrir la boca."
+      },
+      {
+        "en": "A week of grey weather had left even the most cheerful staff members feeling morose.",
+        "es": "Una semana de cielo gris había dejado incluso al personal más animado sumido en un estado de mal humor."
+      }
+    ]
+  },
+  {
+    "id": "mr-018",
+    "term": "multifarious",
+    "meaning_en": "Having many varied parts, elements, or aspects; highly diverse.",
+    "meaning_es": "Que tiene muchas partes, elementos o aspectos variados; muy diverso.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "multifarious duties",
+    "note": "Often used to suggest productive variety rather than confusion; implies richness rather than disorder.",
+    "examples": [
+      {
+        "en": "The role demands a person capable of juggling multifarious responsibilities without losing focus.",
+        "es": "El puesto requiere a alguien capaz de gestionar múltiples y variadas responsabilidades sin perder el foco."
+      },
+      {
+        "en": "The festival celebrated the multifarious cultural traditions of the city's residents.",
+        "es": "El festival celebraba las múltiples y variadas tradiciones culturales de los habitantes de la ciudad."
+      }
+    ]
+  },
+  {
+    "id": "mr-019",
+    "term": "munificent",
+    "meaning_en": "More generous than is usual or expected; lavishly open-handed.",
+    "meaning_es": "Más generoso de lo habitual o esperado; espléndido y dadivoso.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a munificent donation",
+    "note": "Implies abundance in giving; the scale of the generosity is what distinguishes it from ordinary generosity.",
+    "examples": [
+      {
+        "en": "The family's munificent endowment funded the university's new arts centre.",
+        "es": "La munificente donación de la familia financió el nuevo centro de artes de la universidad."
+      },
+      {
+        "en": "She accepted the munificent offer with surprise, having expected a far smaller settlement.",
+        "es": "Aceptó la generosa oferta con sorpresa, pues había esperado un acuerdo mucho menor."
+      }
+    ]
+  },
+  {
+    "id": "mr-020",
+    "term": "mutable",
+    "meaning_en": "Liable or subject to change; not fixed or permanent.",
+    "meaning_es": "Sujeto o propenso al cambio; no fijo ni permanente.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a mutable situation",
+    "note": "More formal and neutral than 'changeable'; often used in philosophy, biology, or policy contexts.",
+    "examples": [
+      {
+        "en": "Public opinion on the issue proved surprisingly mutable over the course of the trial.",
+        "es": "La opinión pública sobre el asunto resultó ser sorprendentemente variable durante el transcurso del juicio."
+      },
+      {
+        "en": "The organisation's structure is mutable and designed to adapt as the project evolves.",
+        "es": "La estructura de la organización es mutable y está diseñada para adaptarse a medida que el proyecto evoluciona."
+      }
+    ]
+  },
+  {
+    "id": "mr-021",
+    "term": "nebulous",
+    "meaning_en": "Unclear, vague, or loosely defined; lacking a clear form or outline.",
+    "meaning_es": "Impreciso, vago o mal definido; sin una forma o contorno claro.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a nebulous concept",
+    "note": "Often implies the vagueness is a problem; more critical than 'abstract', suggesting the idea can't be pinned down usefully.",
+    "examples": [
+      {
+        "en": "The proposal was full of nebulous promises but short on specific commitments.",
+        "es": "La propuesta estaba llena de promesas vagas pero escasa de compromisos concretos."
+      },
+      {
+        "en": "Her career plan remained nebulous, more a feeling than an actual strategy.",
+        "es": "Su plan de carrera seguía siendo nebuloso, más una sensación que una estrategia real."
+      }
+    ]
+  },
+  {
+    "id": "mr-022",
+    "term": "nefarious",
+    "meaning_en": "Wicked, criminal, or deeply dishonest.",
+    "meaning_es": "Malvado, criminal o profundamente deshonesto.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "nefarious activities",
+    "note": "Carries a theatrical quality; often used with a hint of irony as well as genuine criticism of wrongdoing.",
+    "examples": [
+      {
+        "en": "The investigation uncovered the nefarious dealings of a network of shell companies.",
+        "es": "La investigación descubrió las turbias actividades de una red de empresas pantalla."
+      },
+      {
+        "en": "He joked that his weekend plans were entirely nefarious, raising more laughs than eyebrows.",
+        "es": "Bromeó diciendo que sus planes para el fin de semana eran absolutamente nefastos, arrancando más carcajadas que ceños fruncidos."
+      }
+    ]
+  },
+  {
+    "id": "mr-023",
+    "term": "negligent",
+    "meaning_en": "Failing to give proper care or attention; careless about one's duty.",
+    "meaning_es": "Que no presta la debida atención o cuidado; descuidado en el cumplimiento de sus obligaciones.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "negligent behaviour",
+    "note": "Has a legal sense (breach of duty of care) as well as a general one; context usually signals which is intended.",
+    "examples": [
+      {
+        "en": "The contractor was found negligent for failing to inspect the scaffolding before work began.",
+        "es": "El contratista fue declarado negligente por no inspeccionar el andamio antes de que comenzaran los trabajos."
+      },
+      {
+        "en": "It would be negligent not to mention the study's significant methodological limitations.",
+        "es": "Sería negligente no mencionar las importantes limitaciones metodológicas del estudio."
+      }
+    ]
+  },
+  {
+    "id": "mr-024",
+    "term": "nonchalant",
+    "meaning_en": "Appearing casually unconcerned; relaxed and indifferent in a studied or natural way.",
+    "meaning_es": "Aparentemente despreocupado; relajado e indiferente, ya sea de forma natural o estudiada.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a nonchalant shrug",
+    "note": "Can describe either genuine ease or a performance of ease; tone and context clarify whether it's authentic or affected.",
+    "examples": [
+      {
+        "en": "She gave a nonchalant wave and walked off as if nothing had happened.",
+        "es": "Hizo un gesto despreocupado con la mano y se marchó como si no hubiera pasado nada."
+      },
+      {
+        "en": "His nonchalant attitude during the interview suggested he was already confident he'd got the job.",
+        "es": "Su actitud despreocupada durante la entrevista sugería que ya estaba convencido de que había conseguido el trabajo."
+      }
+    ]
+  },
+  {
+    "id": "mr-025",
+    "term": "notoriety",
+    "meaning_en": "The state of being famous for something bad or scandalous.",
+    "meaning_es": "El estado de ser famoso por algo malo o escandaloso.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "gain notoriety",
+    "note": "The fame is for something undesirable; the word carries a negative charge that 'fame' does not. 'Notorious' is the adjective.",
+    "examples": [
+      {
+        "en": "The case brought the defendant unwanted notoriety that followed him for years.",
+        "es": "El caso le trajo al acusado una notoriedad no deseada que lo persiguió durante años."
+      },
+      {
+        "en": "The neighbourhood had gained notoriety as a flashpoint for late-night disturbances.",
+        "es": "El barrio se había ganado mala fama como punto conflictivo de altercados nocturnos."
+      }
+    ]
+  },
+  {
+    "id": "mr-026",
+    "term": "nuanced",
+    "meaning_en": "Characterised by subtle distinctions; not simple or clear-cut.",
+    "meaning_es": "Caracterizado por matices sutiles; no simple ni tajante.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a nuanced argument",
+    "note": "Often praise in intellectual contexts; can be used dismissively when 'nuanced' means the speaker won't take a clear position.",
+    "examples": [
+      {
+        "en": "The documentary offered a nuanced portrait of the conflict, resisting the urge to assign blame.",
+        "es": "El documental ofrecía un retrato matizado del conflicto y resistía la tentación de atribuir culpas."
+      },
+      {
+        "en": "Her nuanced reading of the policy revealed contradictions that a casual observer would have missed.",
+        "es": "Su lectura matizada de la política reveló contradicciones que un observador superficial habría pasado por alto."
+      }
+    ]
+  },
+  {
+    "id": "mr-027",
+    "term": "obdurate",
+    "meaning_en": "Stubbornly refusing to change one's opinion or course of action.",
+    "meaning_es": "Que se niega obstinadamente a cambiar de opinión o de actuación.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "obdurate resistance",
+    "note": "Implies a deliberate hardening of position, not just stubbornness; often used in political or negotiating contexts.",
+    "examples": [
+      {
+        "en": "The council remained obdurate in the face of protests, refusing to reconsider the planning decision.",
+        "es": "El ayuntamiento se mantuvo inflexible ante las protestas y se negó a reconsiderar la decisión urbanística."
+      },
+      {
+        "en": "Her obdurate refusal to compromise ultimately cost her the negotiation.",
+        "es": "Su obstinada negativa a ceder le costó finalmente la negociación."
+      }
+    ]
+  },
+  {
+    "id": "mr-028",
+    "term": "obsequious",
+    "meaning_en": "Excessively eager to serve or please; fawning to the point of insincerity.",
+    "meaning_es": "Excesivamente servicial o adulador; zalamero hasta la falta de sinceridad.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "obsequious flattery",
+    "note": "The eagerness to please is so excessive that it reads as insincere or cringing rather than genuine deference.",
+    "examples": [
+      {
+        "en": "The waiter's obsequious manner made the guests feel less like diners and more like targets.",
+        "es": "Los modales obsequiosos del camarero hacían que los comensales se sintieran más como objetivos que como clientes."
+      },
+      {
+        "en": "She had little patience for the obsequious tone that junior staff adopted around the new director.",
+        "es": "Le faltaba paciencia para el tono servil que el personal júnior adoptaba en presencia del nuevo director."
+      }
+    ]
+  },
+  {
+    "id": "mr-029",
+    "term": "obstreperous",
+    "meaning_en": "Noisy and hard to control; unruly in a loud and disruptive way.",
+    "meaning_es": "Ruidoso y difícil de controlar; alborotador de forma escandalosa y perturbadora.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "an obstreperous crowd",
+    "note": "The noise is central; it's not just defiant but loudly so. Often used with mild exasperation rather than serious condemnation.",
+    "examples": [
+      {
+        "en": "The obstreperous children at the next table made conversation almost impossible.",
+        "es": "Los ruidosos niños de la mesa de al lado hacían casi imposible mantener una conversación."
+      },
+      {
+        "en": "A handful of obstreperous protesters interrupted the press conference three times.",
+        "es": "Un puñado de manifestantes alborotadores interrumpió la rueda de prensa en tres ocasiones."
+      }
+    ]
+  },
+  {
+    "id": "mr-030",
+    "term": "obtuse",
+    "meaning_en": "Annoyingly slow to understand; stupidly unperceptive.",
+    "meaning_es": "Irritantemente torpe para comprender; que no capta las cosas.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "deliberately obtuse",
+    "note": "Can suggest genuine dimness or wilful refusal to understand; 'deliberately obtuse' implies the latter.",
+    "examples": [
+      {
+        "en": "She repeated the instruction slowly, wondering whether he was being obtuse or simply distracted.",
+        "es": "Repitió la instrucción despacio, preguntándose si él estaba siendo obtuso o simplemente estaba distraído."
+      },
+      {
+        "en": "The reviewer's deliberately obtuse questions seemed designed to embarrass rather than to inform.",
+        "es": "Las preguntas deliberadamente torpes del crítico parecían pensadas para avergonzar más que para informar."
+      }
+    ]
+  },
+  {
+    "id": "mr-031",
+    "term": "officious",
+    "meaning_en": "Asserting authority or offering unsolicited advice in an intrusive, domineering way.",
+    "meaning_es": "Que ejerce la autoridad o da consejos no solicitados de forma intrusiva y dominante.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "an officious bureaucrat",
+    "note": "Note the spelling: officious ≠ official. The word criticises petty overreach, not authority in itself.",
+    "examples": [
+      {
+        "en": "An officious security guard insisted on checking everyone's bag a second time.",
+        "es": "Un guardia de seguridad excesivamente celoso insistió en revisar el bolso de todos por segunda vez."
+      },
+      {
+        "en": "She found the officious tone of the letter unnecessary given how minor the issue was.",
+        "es": "El tono autoritario de la carta le pareció innecesario teniendo en cuenta lo insignificante del asunto."
+      }
+    ]
+  },
+  {
+    "id": "mr-032",
+    "term": "ominous",
+    "meaning_en": "Giving the impression that something bad or unpleasant is about to happen.",
+    "meaning_es": "Que da la impresión de que algo malo o desagradable está a punto de ocurrir.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "an ominous silence",
+    "note": "Used both literally of weather or atmosphere and figuratively of social or political signals; well-established in all registers.",
+    "examples": [
+      {
+        "en": "The ominous silence from headquarters suggested the announcement would not be good news.",
+        "es": "El ominoso silencio de la sede central sugería que el comunicado no sería buena noticia."
+      },
+      {
+        "en": "Dark clouds gathered overhead, casting an ominous shadow over the outdoor ceremony.",
+        "es": "Las nubes oscuras se fueron acumulando sobre sus cabezas, proyectando una sombra inquietante sobre la ceremonia al aire libre."
+      }
+    ]
+  },
+  {
+    "id": "mr-033",
+    "term": "onerous",
+    "meaning_en": "Involving great effort or difficulty; burdensome and hard to fulfil.",
+    "meaning_es": "Que implica un gran esfuerzo o dificultad; oneroso y difícil de cumplir.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "an onerous task",
+    "note": "Common in legal and contractual language to describe obligations whose cost or effort is excessive relative to the benefit.",
+    "examples": [
+      {
+        "en": "The new compliance rules placed onerous reporting demands on small businesses.",
+        "es": "Las nuevas normas de cumplimiento imponían a las pequeñas empresas exigencias de información muy gravosas."
+      },
+      {
+        "en": "He found the paperwork onerous but accepted it as part of the job.",
+        "es": "Encontraba el papeleo muy pesado pero lo aceptaba como parte del trabajo."
+      }
+    ]
+  },
+  {
+    "id": "mr-034",
+    "term": "opaque",
+    "meaning_en": "Not transparent; difficult to understand or interpret clearly.",
+    "meaning_es": "Que no es transparente; difícil de comprender o interpretar con claridad.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "opaque language",
+    "note": "Often a criticism of deliberate obscurity; in policy or finance, opaque systems hide accountability or risk.",
+    "examples": [
+      {
+        "en": "The contract's language was so opaque that even the lawyers struggled to parse it.",
+        "es": "El lenguaje del contrato era tan opaco que hasta los abogados tenían dificultades para interpretarlo."
+      },
+      {
+        "en": "The committee's decision-making process remained opaque despite calls for greater transparency.",
+        "es": "El proceso de toma de decisiones del comité siguió siendo opaco a pesar de los llamamientos a una mayor transparencia."
+      }
+    ]
+  },
+  {
+    "id": "mr-035",
+    "term": "ostensible",
+    "meaning_en": "Appearing to be true or real but possibly not; stated or seeming to be the case.",
+    "meaning_es": "Que parece verdadero o real pero que quizás no lo es; que se declara o aparenta ser así.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "the ostensible purpose",
+    "note": "The word signals scepticism; the speaker implies a hidden reality beneath the stated surface.",
+    "examples": [
+      {
+        "en": "The ostensible aim of the visit was goodwill; its real purpose was gathering intelligence.",
+        "es": "El objetivo aparente de la visita era promover la buena voluntad; su propósito real era recabar información."
+      },
+      {
+        "en": "He accepted the ostensible explanation while quietly doubting its accuracy.",
+        "es": "Aceptó la explicación aparente mientras dudaba en silencio de su veracidad."
+      }
+    ]
+  },
+  {
+    "id": "mr-036",
+    "term": "ostentatious",
+    "meaning_en": "Designed to impress or attract notice; showy in a way that suggests a lack of taste.",
+    "meaning_es": "Diseñado para impresionar o llamar la atención; llamativo de un modo que sugiere falta de gusto.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "ostentatious display of wealth",
+    "note": "Used critically; the issue is the intent to attract notice rather than any inherent quality of the thing.",
+    "examples": [
+      {
+        "en": "The house was lavishly furnished in a style that bordered on the ostentatious.",
+        "es": "La casa estaba lujosamente decorada con un estilo que rozaba la ostentación."
+      },
+      {
+        "en": "His ostentatious generosity at charity events seemed calculated to win attention.",
+        "es": "Su ostentosa generosidad en los actos benéficos parecía calculada para atraer la atención."
+      }
+    ]
+  },
+  {
+    "id": "mr-037",
+    "term": "overwrought",
+    "meaning_en": "In a state of excessive agitation or nervous tension; too distressed to think or act calmly.",
+    "meaning_es": "En un estado de agitación o tensión nerviosa excesiva; demasiado alterado para pensar o actuar con calma.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "leave someone overwrought",
+    "note": "Describes a state of heightened distress, usually following a stressful event or piece of news.",
+    "examples": [
+      {
+        "en": "By the time the results came in, she was so overwrought that she could barely speak.",
+        "es": "Para cuando llegaron los resultados, estaba tan alterada que apenas podía hablar."
+      },
+      {
+        "en": "She arrived overwrought, convinced something had gone wrong with the flight booking.",
+        "es": "Llegó muy alterada, convencida de que algo había salido mal con la reserva del vuelo."
+      }
+    ]
+  },
+  {
+    "id": "mr-038",
+    "term": "palpable",
+    "meaning_en": "So intense or obvious as to seem almost tangible; plain to see or feel.",
+    "meaning_es": "Tan intenso u obvio que parece casi tangible; claramente visible o perceptible.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a palpable sense of relief",
+    "note": "Often used to describe atmosphere or emotion; it adds vividness by suggesting the feeling can almost be physically touched.",
+    "examples": [
+      {
+        "en": "The tension in the room was palpable as the votes were counted.",
+        "es": "La tensión en la sala era palpable mientras se contaban los votos."
+      },
+      {
+        "en": "When the rescuers emerged safely, the crowd's relief was palpable.",
+        "es": "Cuando los rescatadores emergieron sanos y salvos, el alivio de la multitud era palpable."
+      }
+    ]
+  },
+  {
+    "id": "mr-039",
+    "term": "paltry",
+    "meaning_en": "Small or meagre in a way that is contemptibly inadequate.",
+    "meaning_es": "Escaso o insuficiente de manera despreciable.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a paltry sum",
+    "note": "The contempt is built-in; it expresses not just smallness but the speaker's low opinion of whether the amount is appropriate.",
+    "examples": [
+      {
+        "en": "After two years of work, the bonus she received felt like a paltry acknowledgement.",
+        "es": "Después de dos años de trabajo, el bono que recibió le pareció un reconocimiento ridículo."
+      },
+      {
+        "en": "The company donated a paltry amount compared with the profits it had made that quarter.",
+        "es": "La empresa donó una cantidad irrisoria comparada con los beneficios que había obtenido ese trimestre."
+      }
+    ]
+  },
+  {
+    "id": "mr-040",
+    "term": "parsimonious",
+    "meaning_en": "Extremely unwilling to spend money or use resources; excessively frugal.",
+    "meaning_es": "Extremadamente reacio a gastar dinero o recursos; excesivamente frugal.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a parsimonious employer",
+    "note": "More formal and critical than 'frugal'; the implication is that the restraint has passed the point of reasonable caution.",
+    "examples": [
+      {
+        "en": "The parsimonious budget allocated to training left staff demoralised and underprepared.",
+        "es": "El escaso presupuesto destinado a la formación dejó al personal desmoralizado e insuficientemente preparado."
+      },
+      {
+        "en": "She was parsimonious with praise, believing that giving it too freely would devalue it.",
+        "es": "Era tacaña con los elogios, convencida de que prodigarlos demasiado los devalúa."
+      }
+    ]
+  },
+  {
+    "id": "mr-041",
+    "term": "pedantic",
+    "meaning_en": "Excessively concerned with minor rules, details, or formalism; overly literal.",
+    "meaning_es": "Excesivamente preocupado por normas menores, detalles o formalismos; demasiado literal.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a pedantic correction",
+    "note": "Used critically; the person may be technically correct but is prioritising rules over what actually matters in context.",
+    "examples": [
+      {
+        "en": "It may seem pedantic, but the difference between 'less' and 'fewer' has a practical function.",
+        "es": "Puede parecer pedante, pero la diferencia entre 'less' y 'fewer' tiene una función práctica."
+      },
+      {
+        "en": "The pedantic debate over the heading format delayed the entire report by three days.",
+        "es": "El debate pedante sobre el formato del encabezado retrasó todo el informe tres días."
+      }
+    ]
+  },
+  {
+    "id": "mr-042",
+    "term": "pejorative",
+    "meaning_en": "Expressing contempt or disapproval; conveying a low or negative opinion.",
+    "meaning_es": "Que expresa desprecio o desaprobación; que transmite una opinión baja o negativa.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a pejorative term",
+    "note": "Most often used to describe words or language rather than general attitudes; it is descriptive, not itself an insult.",
+    "examples": [
+      {
+        "en": "He used the word in its pejorative sense, leaving no doubt that he meant it as a slight.",
+        "es": "Empleó la palabra en su acepción peyorativa, sin dejar ninguna duda de que pretendía ser un insulto."
+      },
+      {
+        "en": "The term has shifted over decades and is no longer primarily pejorative.",
+        "es": "El término ha evolucionado a lo largo de las décadas y ya no es principalmente peyorativo."
+      }
+    ]
+  },
+  {
+    "id": "mr-043",
+    "term": "pensive",
+    "meaning_en": "Engaged in deep or serious thought, often with a tinge of sadness.",
+    "meaning_es": "Absorto en pensamientos profundos o serios, a menudo con cierto matiz de tristeza.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "a pensive mood",
+    "note": "The sadness is implied rather than certain; it describes inward-focused thought rather than active deliberation.",
+    "examples": [
+      {
+        "en": "She stood at the window in a pensive silence, gazing out at the garden.",
+        "es": "Se quedó de pie junto a la ventana en un silencio pensativo, mirando el jardín."
+      },
+      {
+        "en": "The photograph caught him in a pensive moment, chin resting on his hand.",
+        "es": "La fotografía lo captó en un momento de ensimismamiento, con la barbilla apoyada en la mano."
+      }
+    ]
+  },
+  {
+    "id": "mr-044",
+    "term": "peremptory",
+    "meaning_en": "Insisting on immediate compliance; brusque and not allowing for discussion.",
+    "meaning_es": "Que exige obediencia inmediata; brusco y que no admite discusión.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a peremptory tone",
+    "note": "Carries authority plus impatience; implies the speaker sees no need to justify themselves or entertain objections.",
+    "examples": [
+      {
+        "en": "His peremptory dismissal of the proposal angered the team, who felt they hadn't been heard.",
+        "es": "Su brusco rechazo de la propuesta enfadó al equipo, que sintió que no había sido escuchado."
+      },
+      {
+        "en": "She received a peremptory message ordering her to report to the head office that afternoon.",
+        "es": "Recibió un mensaje perentorio ordenándole que se presentara en la sede central esa misma tarde."
+      }
+    ]
+  },
+  {
+    "id": "mr-045",
+    "term": "perfunctory",
+    "meaning_en": "Carried out with minimal effort or care; done as routine with little thought.",
+    "meaning_es": "Realizado con el mínimo esfuerzo o atención; hecho por rutina y sin mucha reflexión.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a perfunctory glance",
+    "note": "The problem is indifference, not incompetence; the task is completed but without engagement or care.",
+    "examples": [
+      {
+        "en": "He gave the safety checklist a perfunctory glance before signing it without reading it.",
+        "es": "Le echó un vistazo superficial a la lista de verificación de seguridad antes de firmarla sin leerla."
+      },
+      {
+        "en": "The apology was so perfunctory that it felt more like an insult than an attempt to repair things.",
+        "es": "La disculpa fue tan superficial que pareció más un insulto que un intento de reparar las cosas."
+      }
+    ]
+  },
+  {
+    "id": "mr-046",
+    "term": "pernicious",
+    "meaning_en": "Having a harmful effect, especially in a gradual or subtle way.",
+    "meaning_es": "Que tiene un efecto dañino, especialmente de forma gradual o sutil.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a pernicious influence",
+    "note": "Often used of influences, habits, or beliefs whose damage is cumulative and not immediately obvious.",
+    "examples": [
+      {
+        "en": "The pernicious myth that talent alone determines success discourages effort and perseverance.",
+        "es": "El pernicioso mito de que el talento por sí solo determina el éxito desalienta el esfuerzo y la perseverancia."
+      },
+      {
+        "en": "Doctors warned about the pernicious long-term effects of chronic sleep deprivation.",
+        "es": "Los médicos advirtieron de los perniciosos efectos a largo plazo de la privación crónica de sueño."
+      }
+    ]
+  },
+  {
+    "id": "mr-047",
+    "term": "perspicacious",
+    "meaning_en": "Having a ready insight into things; shrewd and perceptive.",
+    "meaning_es": "Que tiene una gran capacidad de intuición; sagaz y perspicaz.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a perspicacious observer",
+    "note": "Implies more than intelligence; it suggests a quality of noticing what others miss, often in human or social situations.",
+    "examples": [
+      {
+        "en": "A perspicacious reader will spot the clues scattered through the novel's opening chapter.",
+        "es": "Un lector perspicaz detectará las pistas diseminadas por el capítulo inicial de la novela."
+      },
+      {
+        "en": "Her perspicacious assessment of the market proved correct when the sector reversed six months later.",
+        "es": "Su perspicaz valoración del mercado resultó acertada cuando el sector dio un giro seis meses después."
+      }
+    ]
+  },
+  {
+    "id": "mr-048",
+    "term": "petulant",
+    "meaning_en": "Childishly sulky or ill-tempered; irritable in a way that seems immature.",
+    "meaning_es": "Malhumorado o susceptible de forma infantil; irritable de un modo que parece inmaduro.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a petulant outburst",
+    "note": "Describes a reaction that seems disproportionate or childishly irritable; makes no claim about whether the feeling is justified.",
+    "examples": [
+      {
+        "en": "He responded to the criticism with a petulant tweet that did little for his reputation.",
+        "es": "Respondió a la crítica con un tuit irritable que no hizo ningún bien a su reputación."
+      },
+      {
+        "en": "Her petulant refusal to discuss the matter made negotiations much harder than they needed to be.",
+        "es": "Su irritable negativa a discutir el asunto hizo las negociaciones mucho más difíciles de lo necesario."
+      }
+    ]
+  },
+  {
+    "id": "mr-049",
+    "term": "phlegmatic",
+    "meaning_en": "Calm and unemotional; not easily excited or disturbed.",
+    "meaning_es": "Tranquilo y sereno; que no se agita ni se altera con facilidad.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a phlegmatic disposition",
+    "note": "Now used neutrally or admiringly for steady composure under pressure; the historical humour-theory sense is not in play.",
+    "examples": [
+      {
+        "en": "He remained phlegmatic throughout the crisis, calmly issuing instructions as others panicked.",
+        "es": "Permaneció impasible durante toda la crisis, dando instrucciones con calma mientras los demás se desesperaban."
+      },
+      {
+        "en": "Her phlegmatic response to the news surprised those who had expected a more dramatic reaction.",
+        "es": "Su flemática reacción ante la noticia sorprendió a quienes habían esperado una reacción más dramática."
+      }
+    ]
+  },
+  {
+    "id": "mr-050",
+    "term": "plausible",
+    "meaning_en": "Seeming reasonable or probable; having an appearance of truth or credibility.",
+    "meaning_es": "Que parece razonable o probable; que tiene apariencia de verdad o credibilidad.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a plausible explanation",
+    "note": "Importantly, plausible does not mean true; it describes what seems credible, leaving open whether it actually is.",
+    "examples": [
+      {
+        "en": "She offered a plausible excuse for her absence, though no one entirely believed it.",
+        "es": "Ofreció una excusa plausible para su ausencia, aunque nadie la creyó del todo."
+      },
+      {
+        "en": "The theory sounds plausible on the surface, but the data do not support it.",
+        "es": "La teoría parece plausible en la superficie, pero los datos no la respaldan."
+      }
+    ]
+  },
+  {
+    "id": "mr-051",
+    "term": "pliant",
+    "meaning_en": "Easily influenced or persuaded; yielding readily without strong resistance.",
+    "meaning_es": "Fácilmente influenciable o persuadible; que cede con facilidad sin ofrecer gran resistencia.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a pliant workforce",
+    "note": "Mildly negative when applied to people; suggests a lack of independent judgement or will.",
+    "examples": [
+      {
+        "en": "The new regime sought a pliant media that would report without challenge.",
+        "es": "El nuevo régimen buscaba unos medios de comunicación dóciles que informaran sin cuestionar nada."
+      },
+      {
+        "en": "She was far less pliant than her predecessor, frequently pushing back on board decisions.",
+        "es": "Era mucho menos dócil que su predecesora y con frecuencia se oponía a las decisiones de la junta."
+      }
+    ]
+  },
+  {
+    "id": "mr-052",
+    "term": "poignant",
+    "meaning_en": "Evoking a keen sense of sadness or regret, often through something beautiful or tender.",
+    "meaning_es": "Que evoca un profundo sentido de tristeza o nostalgia, a menudo a través de algo bello o delicado.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a poignant moment",
+    "note": "Describes something that produces a sharp emotional response, typically sadness or nostalgia, often mixed with beauty or tenderness.",
+    "examples": [
+      {
+        "en": "The old photographs were poignant reminders of a friendship that illness had eventually severed.",
+        "es": "Las viejas fotografías eran conmovedores recordatorios de una amistad que la enfermedad había acabado truncando."
+      },
+      {
+        "en": "There was something poignant about watching the last train leave the station before it closed.",
+        "es": "Había algo conmovedor en ver salir el último tren de la estación antes de que cerrara."
+      }
+    ]
+  },
+  {
+    "id": "mr-053",
+    "term": "pompous",
+    "meaning_en": "Affectedly grand or self-important; speaking or behaving as if one is more important than one is.",
+    "meaning_es": "Afectadamente grandilocuente o engreído; que habla o actúa como si fuera más importante de lo que es.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a pompous speech",
+    "note": "Used critically; the pompous person is not merely formal but inflated with a self-importance that others find overblown.",
+    "examples": [
+      {
+        "en": "The pompous preamble to the memo stretched to three paragraphs before reaching its single point.",
+        "es": "El pomposo preámbulo del memorando se extendió durante tres párrafos antes de llegar a su único punto."
+      },
+      {
+        "en": "He could be charming in small groups but became pompous on stage, as if performing a character.",
+        "es": "Podía ser encantador en grupos pequeños, pero se volvía pomposo en el escenario, como si interpretara a un personaje."
+      }
+    ]
+  },
+  {
+    "id": "mr-054",
+    "term": "pragmatic",
+    "meaning_en": "Dealing with things in a practical way rather than according to fixed theories or principles.",
+    "meaning_es": "Que aborda las cosas de manera práctica en lugar de seguir teorías o principios fijos.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a pragmatic approach",
+    "note": "Generally positive in everyday use; implies getting things done over abstract debates. Can be used critically when it signals opportunism.",
+    "examples": [
+      {
+        "en": "The pragmatic decision to accept a smaller deal was criticised by those who wanted to hold out.",
+        "es": "La pragmática decisión de aceptar un acuerdo menor fue criticada por quienes querían esperar a algo mejor."
+      },
+      {
+        "en": "She took a pragmatic view of the situation, focusing on what could actually be changed.",
+        "es": "Adoptó una visión pragmática de la situación, centrándose en lo que realmente podía cambiarse."
+      }
+    ]
+  },
+  {
+    "id": "mr-055",
+    "term": "precipitate",
+    "meaning_en": "Done or acting with undue haste; rash and without careful consideration.",
+    "meaning_es": "Hecho o actuado con precipitación excesiva; impulsivo y sin la debida reflexión.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a precipitate decision",
+    "note": "As an adjective, means hasty and reckless; as a verb, means to cause something to happen suddenly.",
+    "examples": [
+      {
+        "en": "The precipitate withdrawal of funding caused the project to collapse before completion.",
+        "es": "La precipitada retirada de la financiación provocó el colapso del proyecto antes de su finalización."
+      },
+      {
+        "en": "He later admitted that the sale had been precipitate and he had accepted far too low a price.",
+        "es": "Más tarde admitió que la venta había sido precipitada y que había aceptado un precio demasiado bajo."
+      }
+    ]
+  },
+  {
+    "id": "mr-056",
+    "term": "predilection",
+    "meaning_en": "A strong preference or liking for something; a particular fondness.",
+    "meaning_es": "Una preferencia o gusto marcado por algo; una afición especial.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a predilection for",
+    "note": "Neutral in tone; does not imply the preference is excessive, merely that it is pronounced and consistent.",
+    "examples": [
+      {
+        "en": "His predilection for understatement made his rare moments of emphasis all the more powerful.",
+        "es": "Su predilección por la sobriedad hacía que sus escasos momentos de énfasis resultaran aún más poderosos."
+      },
+      {
+        "en": "The director has a well-known predilection for long, uninterrupted takes.",
+        "es": "El director tiene una conocida predilección por los planos largos e ininterrumpidos."
+      }
+    ]
+  },
+  {
+    "id": "mr-057",
+    "term": "prescient",
+    "meaning_en": "Having knowledge of events before they happen; showing accurate foresight.",
+    "meaning_es": "Que conoce los hechos antes de que ocurran; que muestra una previsión certera.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a prescient warning",
+    "note": "Typically used retrospectively, once events have confirmed the person's foresight to be accurate.",
+    "examples": [
+      {
+        "en": "The economist's prescient warnings about systemic risk went largely unheeded before the crash.",
+        "es": "Las proféticas advertencias de la economista sobre el riesgo sistémico fueron ignoradas en gran medida antes de la crisis."
+      },
+      {
+        "en": "Looking back, the novel seems prescient in its depiction of a surveillance society.",
+        "es": "En retrospectiva, la novela parece premonitoria en su descripción de una sociedad de vigilancia."
+      }
+    ]
+  },
+  {
+    "id": "mr-058",
+    "term": "pretentious",
+    "meaning_en": "Claiming greater importance, merit, or distinction than is justified.",
+    "meaning_es": "Que pretende una importancia, mérito o distinción mayor de la que está justificada.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "pretentious nonsense",
+    "note": "Used critically; the person or thing claims a status it cannot back up, and the gap is what strikes observers.",
+    "examples": [
+      {
+        "en": "The menu's pretentious descriptions made simple dishes sound like feats of culinary philosophy.",
+        "es": "Las pretenciosas descripciones del menú hacían que los platos sencillos sonaran como hazañas de filosofía culinaria."
+      },
+      {
+        "en": "He found the gallery's artist statements pretentious, full of jargon and empty of meaning.",
+        "es": "Encontraba las notas de los artistas de la galería pretenciosas, llenas de jerga y vacías de significado."
+      }
+    ]
+  },
+  {
+    "id": "mr-059",
+    "term": "prevaricate",
+    "meaning_en": "To avoid stating the truth directly; to speak or act evasively.",
+    "meaning_es": "Evitar decir la verdad directamente; hablar o actuar de manera evasiva.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "prevaricate over the details",
+    "note": "Describes deliberate evasion or obfuscation; the speaker avoids giving a direct answer through vagueness or misdirection.",
+    "examples": [
+      {
+        "en": "He prevaricated for several minutes before the interviewer pressed him to give a direct answer.",
+        "es": "Estuvo dando rodeos durante varios minutos hasta que el entrevistador lo presionó para que respondiera directamente."
+      },
+      {
+        "en": "Stop prevaricating and tell me whether you intend to sign the contract or not.",
+        "es": "Deja de andarte con rodeos y dime si tienes intención de firmar el contrato o no."
+      }
+    ]
+  },
+  {
+    "id": "mr-060",
+    "term": "prodigious",
+    "meaning_en": "Remarkably great in extent, size, or degree; impressively large or extensive.",
+    "meaning_es": "Extraordinariamente grande en magnitud, tamaño o grado; impresionantemente vasto.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "prodigious talent",
+    "note": "Generally positive; the scale is so great it provokes admiration. Can carry mild irony when used of appetite or excess.",
+    "examples": [
+      {
+        "en": "She had a prodigious memory, able to recall conversations verbatim years after they had taken place.",
+        "es": "Tenía una memoria prodigiosa y era capaz de recordar conversaciones al pie de la letra años después de haberlas tenido."
+      },
+      {
+        "en": "The team put in a prodigious amount of work to meet the deadline.",
+        "es": "El equipo realizó una cantidad prodigiosa de trabajo para cumplir el plazo."
+      }
+    ]
+  },
+  {
+    "id": "mr-061",
+    "term": "profligate",
+    "meaning_en": "Recklessly extravagant or wasteful, especially with money or resources.",
+    "meaning_es": "Despilfarro o derrochador de forma irresponsable, especialmente con el dinero o los recursos.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "profligate spending",
+    "note": "Emphasises reckless excess; the word focuses on the scale of the waste rather than the person's attitude toward it.",
+    "examples": [
+      {
+        "en": "Critics accused the administration of profligate spending that had ballooned the national debt.",
+        "es": "Los críticos acusaron a la administración de un gasto pródigo que había disparado la deuda nacional."
+      },
+      {
+        "en": "His profligate lifestyle in his twenties left him in serious financial difficulty by thirty-five.",
+        "es": "Su vida derrochadora a los veinte años lo dejó en graves dificultades económicas a los treinta y cinco."
+      }
+    ]
+  },
+  {
+    "id": "mr-062",
+    "term": "prolific",
+    "meaning_en": "Producing a large quantity of work, offspring, or results.",
+    "meaning_es": "Que produce gran cantidad de obras, descendencia o resultados.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a prolific author",
+    "note": "Describes volume, not quality; a prolific writer may or may not be a good one. Usually admiring but neutral in meaning.",
+    "examples": [
+      {
+        "en": "She was a prolific letter writer, sending detailed correspondence to dozens of friends each week.",
+        "es": "Era una escritora de cartas prolífica y enviaba correspondencia detallada a docenas de amigos cada semana."
+      },
+      {
+        "en": "The striker was the most prolific scorer in the league's history, with 312 career goals.",
+        "es": "El delantero fue el máximo goleador de la historia de la liga, con 312 goles en su carrera."
+      }
+    ]
+  },
+  {
+    "id": "mr-063",
+    "term": "prolix",
+    "meaning_en": "Using too many words; tediously lengthy or wordy.",
+    "meaning_es": "Que utiliza demasiadas palabras; prolijo y tediosamente extenso.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a prolix report",
+    "note": "A criticism of writing or speech; implies the wordiness dilutes rather than develops the message.",
+    "examples": [
+      {
+        "en": "The professor's prolix lecture notes tested the patience of even the most dedicated students.",
+        "es": "Los prolijos apuntes del profesor pusieron a prueba la paciencia incluso de los estudiantes más dedicados."
+      },
+      {
+        "en": "The contract was so prolix that key clauses were buried in pages of irrelevant padding.",
+        "es": "El contrato era tan prolijo que las cláusulas clave estaban enterradas en páginas de relleno irrelevante."
+      }
+    ]
+  },
+  {
+    "id": "mr-064",
+    "term": "propitious",
+    "meaning_en": "Giving or indicating a good chance of success; favourably disposed.",
+    "meaning_es": "Que augura o indica buenas perspectivas de éxito; favorablemente dispuesto.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a propitious moment",
+    "note": "More formal than 'favourable'; often describes timing or circumstance rather than a person's intentions.",
+    "examples": [
+      {
+        "en": "The economic climate was not propitious for launching an expensive product.",
+        "es": "El clima económico no era propicio para lanzar un producto caro."
+      },
+      {
+        "en": "She waited for a more propitious moment to raise the issue with her manager.",
+        "es": "Esperó un momento más propicio para plantearle el asunto a su jefa."
+      }
+    ]
+  },
+  {
+    "id": "mr-065",
+    "term": "prosaic",
+    "meaning_en": "Lacking imagination or originality; dull and ordinary.",
+    "meaning_es": "Sin imaginación ni originalidad; aburrido y ordinario.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a prosaic explanation",
+    "note": "Implies something that could have been interesting or elevated is flat and unimaginative instead.",
+    "examples": [
+      {
+        "en": "The truth, as it turned out, was far more prosaic than the rumours had suggested.",
+        "es": "La verdad, según resultó, era mucho más prosaica de lo que los rumores habían dado a entender."
+      },
+      {
+        "en": "She gave a prosaic account of the accident, listing facts without any narrative shape.",
+        "es": "Dio un relato prosaico del accidente, enumerando hechos sin darle ninguna forma narrativa."
+      }
+    ]
+  },
+  {
+    "id": "mr-066",
+    "term": "provincial",
+    "meaning_en": "Having a narrow, unsophisticated outlook associated with life away from major centres.",
+    "meaning_es": "Con una visión estrecha y poco sofisticada asociada a la vida alejada de los grandes centros urbanos.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a provincial attitude",
+    "note": "Can describe geography or mentality; applied to people, it is a criticism of limited perspective and resistance to new ideas.",
+    "examples": [
+      {
+        "en": "Her provincial assumptions about city life turned out to be comically inaccurate.",
+        "es": "Sus prejuicios provincianos sobre la vida en la ciudad resultaron ser cómicamente erróneos."
+      },
+      {
+        "en": "The committee's provincial outlook made it slow to respond to changes in the wider industry.",
+        "es": "La mentalidad provinciana del comité lo hacía lento para responder a los cambios en el sector en general."
+      }
+    ]
+  },
+  {
+    "id": "mr-067",
+    "term": "prudent",
+    "meaning_en": "Acting with care and thought for the future; sensible and avoiding unnecessary risk.",
+    "meaning_es": "Que actúa con cuidado y pensando en el futuro; sensato y que evita riesgos innecesarios.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a prudent investment",
+    "note": "Positive in most contexts; suggests mature, forward-thinking restraint rather than timidity.",
+    "examples": [
+      {
+        "en": "It was prudent to get a second opinion before committing to the surgery.",
+        "es": "Era prudente pedir una segunda opinión antes de comprometerse con la cirugía."
+      },
+      {
+        "en": "The prudent investor had diversified her portfolio years before the market turned.",
+        "es": "La prudente inversora había diversificado su cartera años antes de que el mercado cambiara."
+      }
+    ]
+  },
+  {
+    "id": "mr-068",
+    "term": "pugnacious",
+    "meaning_en": "Eager or quick to argue, quarrel, or fight; combative in manner.",
+    "meaning_es": "Dispuesto o propenso a discutir, pelear o confrontar; de carácter pendenciero.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a pugnacious debater",
+    "note": "Can be mildly admiring of someone who fights their corner effectively, or critical of someone who picks fights needlessly.",
+    "examples": [
+      {
+        "en": "His pugnacious cross-examination style unsettled the witness more than the questions themselves did.",
+        "es": "Su estilo combativo en el contrainterrogatorio desestabilizó al testigo más que las propias preguntas."
+      },
+      {
+        "en": "She was pugnacious by nature, never willing to let a slight pass without responding.",
+        "es": "Era combativa por naturaleza y nunca dejaba pasar un agravio sin responder."
+      }
+    ]
+  },
+  {
+    "id": "mr-069",
+    "term": "querulous",
+    "meaning_en": "Complaining in a petulant, irritable, or whining manner.",
+    "meaning_es": "Que se queja de forma quejumbrosa, irritable o lastimera.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a querulous voice",
+    "note": "Describes a complaining or whining tone; can colour a single question or remark as much as a sustained disposition.",
+    "examples": [
+      {
+        "en": "Her querulous tone throughout the meeting made it difficult to take her concerns seriously.",
+        "es": "Su tono quejumbroso durante toda la reunión dificultó que sus preocupaciones fueran tomadas en serio."
+      },
+      {
+        "en": "He grew querulous in old age, complaining about everything from the weather to the neighbours.",
+        "es": "Con la vejez se volvió quejumbroso y se lamentaba de todo, desde el tiempo hasta los vecinos."
+      }
+    ]
+  },
+  {
+    "id": "mr-070",
+    "term": "quixotic",
+    "meaning_en": "Exceedingly idealistic and unrealistic; pursuing noble but impractical goals.",
+    "meaning_es": "Excesivamente idealista e irrealista; que persigue objetivos nobles pero poco prácticos.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a quixotic quest",
+    "note": "From Don Quixote; implies admirable but futile idealism. Often used with a mix of affection and mild exasperation.",
+    "examples": [
+      {
+        "en": "His quixotic plan to reform the tax code single-handedly earned him respect but no results.",
+        "es": "Su quijotesco plan para reformar el código fiscal en solitario le granjeó respeto pero ningún resultado."
+      },
+      {
+        "en": "It was a quixotic undertaking, and everyone knew it, but she pursued it regardless.",
+        "es": "Era una empresa quijotesca y todo el mundo lo sabía, pero ella la emprendió de todas formas."
+      }
+    ]
+  },
+  {
+    "id": "mr-071",
+    "term": "quotidian",
+    "meaning_en": "Of or occurring every day; belonging to ordinary, everyday experience.",
+    "meaning_es": "Que ocurre o se da cada día; propio de la experiencia cotidiana y ordinaria.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "the quotidian routine",
+    "note": "Often used to elevate the mundane or to highlight its contrast with something exceptional.",
+    "examples": [
+      {
+        "en": "The novel finds beauty in the quotidian rituals of a family's morning routine.",
+        "es": "La novela encuentra belleza en los rituales cotidianos de la rutina matutina de una familia."
+      },
+      {
+        "en": "Her job involved the quotidian drudgery of data entry, relieved only by the occasional interesting project.",
+        "es": "Su trabajo implicaba la tediosa rutina cotidiana de la introducción de datos, aliviada solo por algún proyecto interesante ocasional."
+      }
+    ]
+  },
+  {
+    "id": "mr-072",
+    "term": "rancour",
+    "meaning_en": "Bitter, long-lasting resentment or ill feeling toward someone.",
+    "meaning_es": "Rencor amargo y duradero hacia alguien.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "harbour rancour",
+    "note": "British spelling; US English uses 'rancor'. The feeling is persistent and deep-seated, not a momentary reaction.",
+    "examples": [
+      {
+        "en": "Years after the dispute, he still spoke of his former partner with unconcealed rancour.",
+        "es": "Años después de la disputa, seguía hablando de su exsocio con un rencor no disimulado."
+      },
+      {
+        "en": "She managed to end the relationship without rancour, which impressed everyone who had witnessed the fallout.",
+        "es": "Logró poner fin a la relación sin rencor, lo que impresionó a todos los que habían presenciado la ruptura."
+      }
+    ]
+  },
+  {
+    "id": "mr-073",
+    "term": "rankle",
+    "meaning_en": "To cause continuing annoyance, irritation, or resentment.",
+    "meaning_es": "Causar una irritación, molestia o rencor persistentes.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "it still rankles",
+    "note": "Describes a grievance that persists quietly over time; the irritation is slow-burning rather than explosive.",
+    "examples": [
+      {
+        "en": "The decision to pass him over for promotion still rankled years later.",
+        "es": "La decisión de no ascenderle seguía escociéndole años después."
+      },
+      {
+        "en": "What rankled most was not the decision itself but the way it had been communicated.",
+        "es": "Lo que más le molestaba no era la decisión en sí, sino la manera en que había sido comunicada."
+      }
+    ]
+  },
+  {
+    "id": "mr-074",
+    "term": "rapacious",
+    "meaning_en": "Aggressively greedy; pursuing money or material gain at the expense of others.",
+    "meaning_es": "Vorazmente codicioso; que busca dinero o beneficio material a expensas de los demás.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "rapacious greed",
+    "note": "Implies predatory or exploitative behaviour; the greed is aggressive, not merely excessive.",
+    "examples": [
+      {
+        "en": "The rapacious landlord raised rents every six months, forcing out long-term residents.",
+        "es": "El rapaz casero subía los alquileres cada seis meses, expulsando a los inquilinos de larga data."
+      },
+      {
+        "en": "Critics condemned the rapacious acquisition strategy that swallowed up smaller competitors.",
+        "es": "Los críticos condenaron la rapaz estrategia de adquisición que engullía a los competidores más pequeños."
+      }
+    ]
+  },
+  {
+    "id": "mr-075",
+    "term": "raucous",
+    "meaning_en": "Making or characterised by a harsh, loud noise; boisterously rowdy.",
+    "meaning_es": "Que produce o se caracteriza por un ruido fuerte y estridente; ruidosamente alborotador.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a raucous crowd",
+    "note": "Can be used without disapproval of lively, boisterous scenes; the noise is central to the word's meaning.",
+    "examples": [
+      {
+        "en": "Raucous laughter from the adjoining room made it impossible to focus on the call.",
+        "es": "Las ruidosas carcajadas de la habitación de al lado hacían imposible concentrarse en la llamada."
+      },
+      {
+        "en": "The pub was raucous with football supporters celebrating the win.",
+        "es": "El pub resonaba con el bullicio de los aficionados al fútbol que celebraban la victoria."
+      }
+    ]
+  },
+  {
+    "id": "mr-076",
+    "term": "recalcitrant",
+    "meaning_en": "Stubbornly uncooperative; resistant to authority or discipline.",
+    "meaning_es": "Obstinadamente reacio a cooperar; resistente a la autoridad o la disciplina.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a recalcitrant employee",
+    "note": "Describes stubborn resistance to control or compliance; used of people, institutions, or situations that refuse to cooperate.",
+    "examples": [
+      {
+        "en": "The recalcitrant debtor refused to engage with the court's payment plan for over a year.",
+        "es": "El recalcitrante deudor se negó a acogerse al plan de pago del tribunal durante más de un año."
+      },
+      {
+        "en": "Dealing with the recalcitrant supplier held up the entire production schedule.",
+        "es": "Tratar con el proveedor reticente retrasó todo el calendario de producción."
+      }
+    ]
+  },
+  {
+    "id": "mr-077",
+    "term": "reproach",
+    "meaning_en": "Express disapproval or disappointment to someone because of their behaviour; find fault with.",
+    "meaning_es": "Expresar desaprobación o decepción a alguien por su comportamiento; censurar.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "reproach someone for",
+    "note": "Common in the pattern 'reproach someone for something'. As a noun, 'above/beyond reproach' means impossible to criticise.",
+    "examples": [
+      {
+        "en": "She reproached herself for not calling him sooner, once she heard how bad things had become.",
+        "es": "Se reprochó a sí misma no haberle llamado antes, cuando se enteró de lo mal que habían llegado a estar las cosas."
+      },
+      {
+        "en": "His conduct throughout the crisis was beyond reproach, earning respect across party lines.",
+        "es": "Su conducta durante la crisis fue intachable y le granjeó respeto más allá de las fronteras partidistas."
+      }
+    ]
+  },
+  {
+    "id": "mr-078",
+    "term": "reticent",
+    "meaning_en": "Not revealing one's thoughts or feelings readily; inclined to say little.",
+    "meaning_es": "Que no expresa con facilidad sus pensamientos o sentimientos; poco dado a hablar.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "reticent about the details",
+    "note": "About communication, not personality; a reticent person may be warm but simply does not share readily.",
+    "examples": [
+      {
+        "en": "She was reticent about her past, rarely volunteering personal details even to close friends.",
+        "es": "Era reservada sobre su pasado y rara vez compartía detalles personales incluso con sus amigos íntimos."
+      },
+      {
+        "en": "Both sides remained reticent after the meeting, neither confirming nor denying that talks had broken down.",
+        "es": "Ambas partes se mantuvieron reservadas tras la reunión, sin confirmar ni desmentir que las conversaciones habían fracasado."
+      }
+    ]
+  },
+  {
+    "id": "mr-079",
+    "term": "ribald",
+    "meaning_en": "Referring to sexual or bodily matters in a comically direct or irreverent way.",
+    "meaning_es": "Que alude a asuntos sexuales o corporales de manera cómicamente directa o irreverente.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "ribald humour",
+    "note": "Describes earthy or bawdy humour; the tone is comic rather than malicious, though some audiences may still find it offensive.",
+    "examples": [
+      {
+        "en": "The play was a ribald comedy that had the audience roaring from start to finish.",
+        "es": "La obra era una comedia procaz que mantuvo al público riéndose de principio a fin."
+      },
+      {
+        "en": "His ribald anecdotes were a highlight of every gathering, despite the occasional blush they provoked.",
+        "es": "Sus anécdotas subidas de tono eran el punto álgido de cada reunión, pese a los ocasionales sonrojos que provocaban."
+      }
+    ]
+  },
+  {
+    "id": "mr-080",
+    "term": "rueful",
+    "meaning_en": "Expressing regret or sorrow, often with a wry or resigned humour.",
+    "meaning_es": "Que expresa pesar o arrepentimiento, a menudo con un humor socarrón o resignado.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a rueful smile",
+    "note": "Regret mixed with wry self-awareness; the tone is resigned rather than bitter, which sets it apart from simply sorrowful.",
+    "examples": [
+      {
+        "en": "She gave a rueful smile and admitted she should have taken his advice after all.",
+        "es": "Esbozó una sonrisa resignada y reconoció que al fin y al cabo debería haber seguido su consejo."
+      },
+      {
+        "en": "Looking back on the episode, he could only shake his head in rueful disbelief.",
+        "es": "Mirando atrás, solo podía sacudir la cabeza con una incredulidad entre arrepentida y resignada."
+      }
+    ]
+  },
+  {
+    "id": "mr-081",
+    "term": "ruminative",
+    "meaning_en": "Tending to meditate or dwell on thoughts at length; deeply contemplative.",
+    "meaning_es": "Propenso a meditar o a darle vueltas a los pensamientos durante mucho tiempo; profundamente contemplativo.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a ruminative pause",
+    "note": "Implies sustained, inward-turned thinking; often associated with slow, deliberate thinkers or introspective writing.",
+    "examples": [
+      {
+        "en": "He fell into a ruminative silence that lasted the entire drive home.",
+        "es": "Cayó en un silencio meditabundo que duró todo el trayecto de vuelta a casa."
+      },
+      {
+        "en": "The ruminative quality of her essays makes them slow reading but deeply rewarding.",
+        "es": "El carácter meditativo de sus ensayos los hace de lectura lenta pero muy gratificante."
+      }
+    ]
+  },
+  {
+    "id": "mr-082",
+    "term": "mired",
+    "meaning_en": "Entangled in or bogged down by a difficult or troublesome situation.",
+    "meaning_es": "Enredado o atascado en una situación difícil o problemática.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "mired in controversy",
+    "note": "Used figuratively to suggest entrapment in a situation; movement is difficult, not just unpleasant.",
+    "examples": [
+      {
+        "en": "The project became mired in regulatory delays and was eventually abandoned.",
+        "es": "El proyecto quedó atrapado en retrasos normativos y acabó siendo abandonado."
+      },
+      {
+        "en": "The administration found itself mired in a scandal it could neither contain nor explain away.",
+        "es": "El gobierno se vio empantanado en un escándalo que no podía contener ni justificar."
+      }
+    ]
+  },
+  {
+    "id": "mr-083",
+    "term": "mordacious",
+    "meaning_en": "Biting or caustic in speech; apt to criticise sharply.",
+    "meaning_es": "Mordaz o cáustico en el discurso; propenso a criticar con dureza.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "mordacious criticism",
+    "note": "Rarer than 'mordant'; emphasises the biting quality of criticism rather than its dark or ironic wit.",
+    "examples": [
+      {
+        "en": "His mordacious reviews made him influential but few subjects agreed to a second interview.",
+        "es": "Sus mordaces reseñas lo hicieron influyente, pero pocos entrevistados aceptaban una segunda conversación."
+      },
+      {
+        "en": "The mordacious wit of the satirical magazine earned it both admirers and legal threats.",
+        "es": "El mordaz ingenio de la revista satírica le ganó tanto admiradores como amenazas legales."
+      }
+    ]
+  },
+  {
+    "id": "mr-084",
+    "term": "morbid",
+    "meaning_en": "Having an excessive interest in death, disease, or disturbing subjects.",
+    "meaning_es": "Con un interés excesivo por la muerte, la enfermedad o los temas perturbadores.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a morbid fascination",
+    "note": "Also a medical term (diseased), but in everyday use it describes someone's preoccupation with gloomy or dark subjects.",
+    "examples": [
+      {
+        "en": "She had a morbid fascination with true-crime podcasts that she could never quite explain.",
+        "es": "Sentía una morbosa fascinación por los podcasts de crímenes reales que nunca supo bien cómo explicar."
+      },
+      {
+        "en": "He found it morbid that his colleagues had started placing bets on when the company would fold.",
+        "es": "Le parecía morboso que sus compañeros hubieran empezado a apostar sobre cuándo cerraría la empresa."
+      }
+    ]
+  },
+  {
+    "id": "mr-085",
+    "term": "probity",
+    "meaning_en": "The quality of having strong moral principles; complete honesty and integrity.",
+    "meaning_es": "La cualidad de tener principios morales sólidos; honradez e integridad completas.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a person of probity",
+    "note": "High-register praise; used in formal, legal, or political contexts to describe impeccable ethical character.",
+    "examples": [
+      {
+        "en": "His reputation for probity made him the natural choice to lead the independent inquiry.",
+        "es": "Su reputación de probidad lo convirtió en la elección natural para presidir la investigación independiente."
+      },
+      {
+        "en": "The profession demanded absolute probity, with any financial impropriety treated as grounds for dismissal.",
+        "es": "La profesión exigía una probidad absoluta, y cualquier irregularidad económica era motivo de despido."
+      }
+    ]
+  },
+  {
+    "id": "mr-086",
+    "term": "palliate",
+    "meaning_en": "Lessen the severity of a disease or its symptoms without curing the underlying cause.",
+    "meaning_es": "Aliviar la gravedad de una enfermedad o sus síntomas sin curar la causa subyacente.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "palliate the symptoms",
+    "note": "In medicine, describes treatment that reduces suffering rather than targeting the root cause; also used figuratively.",
+    "examples": [
+      {
+        "en": "The treatment could only palliate the pain rather than address its underlying cause.",
+        "es": "El tratamiento solo podía paliar el dolor en lugar de abordar su causa subyacente."
+      },
+      {
+        "en": "The drug palliates the worst symptoms but does not halt the progression of the disease.",
+        "es": "El fármaco alivia los peores síntomas, pero no detiene la progresión de la enfermedad."
+      }
+    ]
+  },
+  {
+    "id": "mr-087",
+    "term": "pervasive",
+    "meaning_en": "Spreading widely throughout an area, group, or field of activity.",
+    "meaning_es": "Que se extiende ampliamente por un área, grupo o campo de actividad.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a pervasive influence",
+    "note": "Describes reach, not necessarily force; something pervasive is everywhere, whether noticed or not.",
+    "examples": [
+      {
+        "en": "The pervasive smell of damp made the building unpleasant regardless of how clean it was kept.",
+        "es": "El omnipresente olor a humedad hacía que el edificio fuera desagradable independientemente de lo limpio que se mantuviera."
+      },
+      {
+        "en": "A pervasive sense of uncertainty had settled over the market in the weeks before the announcement.",
+        "es": "Una generalizada sensación de incertidumbre se había apoderado del mercado en las semanas previas al anuncio."
+      }
+    ]
+  },
+  {
+    "id": "mr-088",
+    "term": "rebuke",
+    "meaning_en": "Express sharp, formal disapproval of someone because of their behaviour.",
+    "meaning_es": "Expresar una desaprobación formal y enérgica de alguien por su comportamiento.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "rebuke someone for",
+    "note": "Common in the pattern 'rebuke someone for something'; carries more force than a casual criticism and is direct rather than prolonged.",
+    "examples": [
+      {
+        "en": "The judge rebuked the barrister for interrupting the witness a second time.",
+        "es": "El juez reprendió al abogado por interrumpir al testigo por segunda vez."
+      },
+      {
+        "en": "The leaked memo was a blunt rebuke of the department's handling of the complaints process.",
+        "es": "El memorando filtrado era una dura reprimenda por la manera en que el departamento había gestionado el proceso de reclamaciones."
+      }
+    ]
+  },
+  {
+    "id": "mr-089",
+    "term": "refractory",
+    "meaning_en": "Stubbornly resisting control or treatment; difficult to manage.",
+    "meaning_es": "Que se resiste obstinadamente al control o al tratamiento; difícil de manejar.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "a refractory patient",
+    "note": "Used in medical contexts (a condition that doesn't respond to treatment) as well as general use (a person who won't comply).",
+    "examples": [
+      {
+        "en": "The condition proved refractory to standard therapy, forcing the team to try an experimental approach.",
+        "es": "La enfermedad resultó refractaria a la terapia estándar, lo que obligó al equipo a probar un enfoque experimental."
+      },
+      {
+        "en": "The refractory teenager refused all support and had to be allowed to make his own mistakes.",
+        "es": "El rebelde adolescente rechazó toda ayuda y hubo que permitirle cometer sus propios errores."
+      }
+    ]
+  },
+  {
+    "id": "mr-090",
+    "term": "remonstrate",
+    "meaning_en": "Make a protest or objection about something; argue earnestly against an action.",
+    "meaning_es": "Formular una protesta u objeción sobre algo; argumentar enérgicamente en contra de una acción.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "remonstrate with someone",
+    "note": "Implies a formal or earnest protest rather than a casual complaint; it suggests the speaker believes they have a strong case.",
+    "examples": [
+      {
+        "en": "She remonstrated with the committee about the decision, citing three procedural irregularities.",
+        "es": "Protestó ante el comité por la decisión, alegando tres irregularidades de procedimiento."
+      },
+      {
+        "en": "He remonstrated loudly but was outvoted and had no choice but to comply.",
+        "es": "Protestó con vehemencia, pero fue superado en votos y no tuvo más remedio que acatar la decisión."
+      }
+    ]
+  }
+]

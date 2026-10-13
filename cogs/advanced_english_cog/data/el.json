@@ -1,0 +1,330 @@
+[
+  {
+    "id": "el-001", "term": "ebullient", "meaning_en": "Full of lively enthusiasm and cheerful energy.", "meaning_es": "Lleno de entusiasmo, alegría y energía contagiosa.", "register": "formal", "region": "general", "collocation": "an ebullient mood", "note": "Often describes a person's mood, personality, or enthusiastic response.",
+    "examples": [{"en": "She was ebullient after receiving her first book contract.", "es": "Estaba exultante tras conseguir su primer contrato editorial."}, {"en": "His ebullient welcome made even the nervous newcomers feel at ease.", "es": "Su entusiasta bienvenida hizo que incluso los recién llegados más nerviosos se sintieran a gusto."}]
+  },
+  {
+    "id": "el-002", "term": "eclectic", "meaning_en": "Drawing on a wide variety of different styles, ideas, or sources.", "meaning_es": "Que combina estilos, ideas o fuentes de procedencias muy diversas.", "register": "neutro", "region": "general", "collocation": "eclectic tastes", "note": "Useful for collections, influences, or tastes that do not fit a single tradition.",
+    "examples": [{"en": "Her eclectic playlist moves from opera to electronic music.", "es": "Su ecléctica lista de reproducción pasa de la ópera a la música electrónica."}, {"en": "The restaurant serves an eclectic mix of dishes from several continents.", "es": "El restaurante sirve una mezcla ecléctica de platos de varios continentes."}]
+  },
+  {
+    "id": "el-003", "term": "efficacious", "meaning_en": "Effective in producing the intended result.", "meaning_es": "Eficaz para producir el resultado que se pretende obtener.", "register": "formal", "region": "general", "collocation": "an efficacious treatment", "note": "Common in scientific discussion of whether an intervention achieves its intended effect.",
+    "examples": [{"en": "The trial will establish whether the treatment is efficacious.", "es": "El ensayo determinará si el tratamiento es eficaz."}, {"en": "A simple reminder proved more efficacious than a lengthy warning.", "es": "Un recordatorio sencillo resultó más eficaz que una advertencia extensa."}]
+  },
+  {
+    "id": "el-004", "term": "effusive", "meaning_en": "Expressing approval, gratitude, or affection with abundant enthusiasm.", "meaning_es": "Que expresa aprobación, gratitud o afecto con gran entusiasmo.", "register": "neutro", "region": "general", "collocation": "effusive praise", "note": "The enthusiasm may seem warm or excessive, depending on the situation.",
+    "examples": [{"en": "He sent an effusive message thanking everyone who had helped.", "es": "Envió un mensaje efusivo para agradecer la ayuda de todos."}, {"en": "The usually reserved critic was surprisingly effusive about the performance.", "es": "El crítico, normalmente reservado, se mostró sorprendentemente efusivo al comentar la actuación."}]
+  },
+  {
+    "id": "el-005", "term": "egregious", "meaning_en": "Exceptionally bad and strikingly obvious.", "meaning_es": "Extraordinariamente malo y especialmente evidente.", "register": "formal", "region": "general", "collocation": "an egregious error", "note": "Often modifies errors, misconduct, or breaches of rules to emphasise their seriousness.",
+    "examples": [{"en": "Publishing the confidential addresses was an egregious breach of trust.", "es": "Publicar las direcciones confidenciales fue una gravísima traición a la confianza depositada."}, {"en": "Even the revised report contained several egregious errors.", "es": "Incluso el informe revisado contenía varios errores garrafales."}]
+  },
+  {
+    "id": "el-006", "term": "elicit", "meaning_en": "To draw out a response, information, or feeling from someone.", "meaning_es": "Provocar una respuesta o conseguir que alguien aporte información o exprese un sentimiento.", "register": "formal", "region": "general", "collocation": "elicit a response", "note": "A question, action, or stimulus elicits something from someone. Do not confuse the spelling with 'illicit'.",
+    "examples": [{"en": "Her open-ended questions elicited more detailed answers.", "es": "Sus preguntas abiertas permitieron obtener respuestas más detalladas."}, {"en": "The unexpected announcement elicited a collective gasp.", "es": "El anuncio inesperado provocó una exclamación colectiva de sorpresa."}]
+  },
+  {
+    "id": "el-007", "term": "eloquent", "meaning_en": "Expressing ideas or feelings fluently and persuasively.", "meaning_es": "Que expresa ideas o sentimientos con fluidez y capacidad de persuasión.", "register": "neutro", "region": "general", "collocation": "an eloquent defence", "note": "Can describe a speaker or a particular speech, appeal, or piece of writing.",
+    "examples": [{"en": "She delivered an eloquent defence of public libraries.", "es": "Pronunció una elocuente defensa de las bibliotecas públicas."}, {"en": "His letter was eloquent without sounding rehearsed.", "es": "Su carta era elocuente sin parecer preparada de antemano."}]
+  },
+  {
+    "id": "el-008", "term": "elucidate", "meaning_en": "To make something difficult or unclear easier to understand.", "meaning_es": "Aclarar algo difícil o confuso para facilitar su comprensión.", "register": "formal", "region": "general", "collocation": "elucidate a distinction", "note": "Used for explanations that clarify a process, argument, or difficult concept.",
+    "examples": [{"en": "A diagram helped elucidate the relationship between the two systems.", "es": "Un diagrama ayudó a aclarar la relación entre los dos sistemas."}, {"en": "The lecturer used everyday examples to elucidate the theory.", "es": "La profesora utilizó ejemplos cotidianos para esclarecer la teoría."}]
+  },
+  {
+    "id": "el-009", "term": "elusive", "meaning_en": "Difficult to find, achieve, or grasp despite attempts to do so.", "meaning_es": "Difícil de encontrar, alcanzar o comprender pese a los intentos realizados.", "register": "neutro", "region": "general", "collocation": "an elusive solution", "note": "Often describes a solution, goal, or explanation that remains frustratingly out of reach.",
+    "examples": [{"en": "A lasting agreement has proved elusive despite months of talks.", "es": "Pese a meses de conversaciones, no se ha logrado alcanzar un acuerdo duradero."}, {"en": "She finally found the elusive detail that explained the discrepancy.", "es": "Por fin encontró el detalle que tanto le había costado localizar y que explicaba la discrepancia."}]
+  },
+  {
+    "id": "el-010", "term": "embolden", "meaning_en": "To give someone greater confidence or courage to act.", "meaning_es": "Dar a alguien más confianza o valor para actuar.", "register": "neutro", "region": "general", "collocation": "emboldened by success", "note": "Often followed by a person and 'to' plus an infinitive, or used as 'emboldened by'.",
+    "examples": [{"en": "The first small victory emboldened them to demand further changes.", "es": "La primera pequeña victoria les dio valor para exigir más cambios."}, {"en": "Her support emboldened me to speak honestly about the problem.", "es": "Su apoyo me dio confianza para hablar con sinceridad del problema."}]
+  },
+  {
+    "id": "el-011", "term": "emollient", "meaning_en": "Soothing or conciliatory in manner, intended to reduce tension.", "meaning_es": "De tono conciliador o tranquilizador, que busca reducir la tensión.", "register": "formal", "region": "general", "collocation": "an emollient tone", "note": "This figurative sense describes diplomatic language or behaviour that softens conflict.",
+    "examples": [{"en": "Her emollient tone helped the two sides resume negotiations.", "es": "Su tono conciliador ayudó a ambas partes a retomar las negociaciones."}, {"en": "The minister offered emollient words but no concrete concessions.", "es": "El ministro ofreció palabras conciliadoras, pero ninguna concesión concreta."}]
+  },
+  {
+    "id": "el-012", "term": "empirical", "meaning_en": "Based on observation or experience rather than theory alone.", "meaning_es": "Basado en la observación o la experiencia y no únicamente en la teoría.", "register": "formal", "region": "general", "collocation": "empirical evidence", "note": "Empirical evidence can support or challenge a theory; the adjective does not mean that the evidence is infallible.",
+    "examples": [{"en": "The explanation is elegant, but it needs empirical support.", "es": "La explicación es elegante, pero necesita respaldo empírico."}, {"en": "Their empirical study examined how people actually used the service.", "es": "Su estudio empírico examinó cómo utilizaban realmente el servicio las personas."}]
+  },
+  {
+    "id": "el-013", "term": "emulate", "meaning_en": "To try to match someone's achievements or qualities by following their example.", "meaning_es": "Intentar igualar los logros o cualidades de alguien siguiendo su ejemplo.", "register": "neutro", "region": "general", "collocation": "emulate someone's success", "note": "Often suggests admiration and an effort to achieve a similar standard, rather than copying surface details.",
+    "examples": [{"en": "Many younger musicians tried to emulate her expressive style.", "es": "Muchos músicos más jóvenes intentaron emular su estilo expresivo."}, {"en": "Other cities hope to emulate the success of the cycling scheme.", "es": "Otras ciudades esperan igualar el éxito del programa de fomento del uso de la bicicleta."}]
+  },
+  {
+    "id": "el-014", "term": "encumber", "meaning_en": "To burden someone or something in a way that restricts movement or progress.", "meaning_es": "Cargar o dificultar a alguien o algo de manera que se limite su movimiento o avance.", "register": "formal", "region": "general", "collocation": "encumbered by bureaucracy", "note": "Commonly appears as 'encumbered by' or 'encumbered with', introducing the burden or restriction.",
+    "examples": [{"en": "The small team was encumbered by layers of unnecessary approval.", "es": "El pequeño equipo se veía lastrado por múltiples niveles de aprobación innecesarios."}, {"en": "Encumbered with heavy bags, they struggled up the narrow staircase.", "es": "Cargados con bolsas pesadas, subieron con dificultad por la estrecha escalera."}]
+  },
+  {
+    "id": "el-015", "term": "endemic", "meaning_en": "Persistently and characteristically present within a particular place or group.", "meaning_es": "Presente de forma persistente y característica en un lugar o grupo determinado.", "register": "formal", "region": "general", "collocation": "an endemic problem", "note": "This general sense often describes entrenched problems. 'Endemic' has more specialised meanings in biology and epidemiology.",
+    "examples": [{"en": "Short-term thinking had become endemic within the organisation.", "es": "La mentalidad cortoplacista se había vuelto endémica dentro de la organización."}, {"en": "The investigation found that underpayment was endemic in the sector.", "es": "La investigación constató que los pagos inferiores a lo debido eran un problema endémico del sector."}]
+  },
+  {
+    "id": "el-016", "term": "enervate", "meaning_en": "To drain someone of energy, strength, or vitality.", "meaning_es": "Debilitar a alguien o privarlo de energía y vitalidad.", "register": "formal", "region": "general", "collocation": "enervated by the heat", "note": "Despite its resemblance to 'energise', it means to weaken or exhaust.",
+    "examples": [{"en": "The relentless heat enervated even the most enthusiastic volunteers.", "es": "El calor implacable agotó incluso a los voluntarios más entusiastas."}, {"en": "Months of uncertainty had enervated the entire team.", "es": "Meses de incertidumbre habían dejado sin energía a todo el equipo."}]
+  },
+  {
+    "id": "el-017", "term": "enigmatic", "meaning_en": "Mysterious and difficult to understand or interpret.", "meaning_es": "Misterioso y difícil de comprender o interpretar.", "register": "neutro", "region": "general", "collocation": "an enigmatic smile", "note": "Can describe a person, an expression, or a statement whose meaning is hard to read.",
+    "examples": [{"en": "He answered the question with an enigmatic smile.", "es": "Respondió a la pregunta con una sonrisa enigmática."}, {"en": "The novel ends with an enigmatic message that readers still debate.", "es": "La novela termina con un mensaje enigmático que los lectores siguen debatiendo."}]
+  },
+  {
+    "id": "el-018", "term": "engender", "meaning_en": "To cause a feeling, condition, or situation to develop.", "meaning_es": "Hacer que surja un sentimiento, una condición o una situación.", "register": "formal", "region": "general", "collocation": "engender trust", "note": "The result can be positive or negative: policies may engender confidence, resentment, or confusion.",
+    "examples": [{"en": "Consistent explanations can engender trust between staff and management.", "es": "Las explicaciones coherentes pueden generar confianza entre la plantilla y la dirección."}, {"en": "The secretive process engendered considerable resentment.", "es": "El proceso, llevado con secretismo, generó un resentimiento considerable."}]
+  },
+  {
+    "id": "el-019", "term": "ennui", "meaning_en": "A feeling of weary boredom and dissatisfaction with life or one's surroundings.", "meaning_es": "Sensación de tedio y cansancio acompañada de insatisfacción con la vida o el entorno.", "register": "literario", "region": "general", "collocation": "a sense of ennui", "note": "Often describes a diffuse, lingering boredom rather than irritation at a single dull task.",
+    "examples": [{"en": "An aimless summer gradually gave way to a heavy sense of ennui.", "es": "Un verano sin rumbo fue dando paso a una intensa sensación de hastío."}, {"en": "The film captures the ennui behind the family's comfortable routine.", "es": "La película capta el tedio que se esconde tras la cómoda rutina familiar."}]
+  },
+  {
+    "id": "el-020", "term": "ephemeral", "meaning_en": "Lasting for only a short time; fleeting.", "meaning_es": "Que dura poco tiempo; pasajero o fugaz.", "register": "formal", "region": "general", "collocation": "ephemeral fame", "note": "Often used of trends, attention, beauty, or experiences whose short duration is significant.",
+    "examples": [{"en": "Online fame can be remarkably ephemeral.", "es": "La fama en internet puede ser extraordinariamente efímera."}, {"en": "She photographs the ephemeral patterns that frost leaves on windows.", "es": "Fotografía los efímeros dibujos que deja la escarcha en las ventanas."}]
+  },
+  {
+    "id": "el-021", "term": "equanimity", "meaning_en": "Mental calmness and emotional steadiness, especially under pressure.", "meaning_es": "Calma mental y estabilidad emocional, especialmente ante situaciones difíciles.", "register": "formal", "region": "general", "collocation": "accept something with equanimity", "note": "Describes composure, not necessarily indifference to what is happening.",
+    "examples": [{"en": "She accepted the unexpected setback with surprising equanimity.", "es": "Aceptó el contratiempo inesperado con una serenidad sorprendente."}, {"en": "It was difficult to maintain any equanimity while the accusations continued.", "es": "Resultaba difícil mantener la serenidad mientras continuaban las acusaciones."}]
+  },
+  {
+    "id": "el-022", "term": "equivocal", "meaning_en": "Ambiguous or unclear, leaving room for different interpretations.", "meaning_es": "Ambiguo o poco claro, de modo que admite distintas interpretaciones.", "register": "formal", "region": "general", "collocation": "an equivocal response", "note": "Can describe evidence as well as a person's answer; ambiguity need not be intentional.",
+    "examples": [{"en": "The results were equivocal, so the researchers repeated the experiment.", "es": "Los resultados eran ambiguos, así que los investigadores repitieron el experimento."}, {"en": "His equivocal response left us unsure whether he supported the proposal.", "es": "Su respuesta ambigua nos dejó sin saber si apoyaba la propuesta."}]
+  },
+  {
+    "id": "el-023", "term": "eradicate", "meaning_en": "To remove or destroy something completely.", "meaning_es": "Eliminar o destruir algo por completo.", "register": "neutro", "region": "general", "collocation": "eradicate a disease", "note": "Expresses complete removal as the goal or result, rather than a partial reduction.",
+    "examples": [{"en": "The campaign aims to eradicate the disease, not merely reduce infections.", "es": "La campaña busca erradicar la enfermedad, no solo reducir los contagios."}, {"en": "A new rule alone will not eradicate discrimination.", "es": "Una norma nueva, por sí sola, no erradicará la discriminación."}]
+  },
+  {
+    "id": "el-024", "term": "erudite", "meaning_en": "Having or displaying extensive knowledge acquired through study.", "meaning_es": "Que posee o demuestra amplios conocimientos adquiridos mediante el estudio.", "register": "formal", "region": "general", "collocation": "an erudite discussion", "note": "Can describe a knowledgeable person or work that displays substantial learning.",
+    "examples": [{"en": "Her erudite introduction makes a difficult period of history accessible.", "es": "Su erudita introducción hace accesible un período histórico difícil de comprender."}, {"en": "He was erudite without making less experienced readers feel excluded.", "es": "Era erudito sin hacer que los lectores menos experimentados se sintieran excluidos."}]
+  },
+  {
+    "id": "el-025", "term": "eschew", "meaning_en": "To deliberately avoid or refrain from something.", "meaning_es": "Evitar algo o abstenerse de ello de manera deliberada.", "register": "formal", "region": "general", "collocation": "eschew jargon", "note": "Takes a direct object: 'eschew jargon', 'eschew publicity', or 'eschew conventional methods'.",
+    "examples": [{"en": "The guide eschews jargon in favour of clear, practical explanations.", "es": "La guía evita la jerga y opta por explicaciones claras y prácticas."}, {"en": "She has long eschewed publicity despite her considerable success.", "es": "Desde hace tiempo rehúye la publicidad pese a su considerable éxito."}]
+  },
+  {
+    "id": "el-026", "term": "esoteric", "meaning_en": "Understood or appreciated by only a small group with specialist knowledge.", "meaning_es": "Comprensible o apreciado por un grupo reducido que posee conocimientos especializados.", "register": "formal", "region": "general", "collocation": "an esoteric subject", "note": "Need not refer to mysticism; it can describe highly specialised academic or technical interests.",
+    "examples": [{"en": "Their conversation soon turned to esoteric questions of medieval law.", "es": "La conversación pronto derivó hacia cuestiones muy especializadas de derecho medieval."}, {"en": "The software includes features that meet rather esoteric needs.", "es": "El programa incluye funciones destinadas a necesidades bastante especializadas."}]
+  },
+  {
+    "id": "el-027", "term": "estranged", "meaning_en": "No longer close or affectionate toward someone after a relationship has deteriorated.", "meaning_es": "Distanciado afectivamente de alguien tras el deterioro de una relación.", "register": "neutro", "region": "general", "collocation": "estranged from a sibling", "note": "Often used with 'from'. The estrangement is relational, not simply geographical distance.",
+    "examples": [{"en": "He remained estranged from his brother for several years.", "es": "Permaneció distanciado de su hermano durante varios años."}, {"en": "The letter was her first attempt to contact her estranged daughter.", "es": "La carta fue su primer intento de contactar con su hija, de la que estaba distanciada."}]
+  },
+  {
+    "id": "el-028", "term": "euphemism", "meaning_en": "A mild or indirect expression used instead of one considered harsh or uncomfortable.", "meaning_es": "Expresión suave o indirecta que sustituye a otra considerada dura o incómoda.", "register": "neutro", "region": "general", "collocation": "a euphemism for dismissal", "note": "May soften a sensitive subject or obscure an unpleasant reality; context determines the effect.",
+    "examples": [{"en": "The phrase 'letting people go' is a euphemism for dismissing them.", "es": "La expresión inglesa 'letting people go' es un eufemismo para referirse a despedir trabajadores."}, {"en": "She asked them to explain the situation without euphemisms.", "es": "Les pidió que explicaran la situación sin eufemismos."}]
+  },
+  {
+    "id": "el-029", "term": "evanescent", "meaning_en": "Quickly fading or disappearing; barely lasting.", "meaning_es": "Que se desvanece o desaparece rápidamente; de duración muy breve.", "register": "literario", "region": "general", "collocation": "an evanescent glow", "note": "Often lends a literary quality to descriptions of light, sensations, or memories.",
+    "examples": [{"en": "An evanescent glow touched the clouds before the sky turned grey.", "es": "Un resplandor fugaz tiñó las nubes antes de que el cielo se volviera gris."}, {"en": "She tried to capture the evanescent feeling of waking from a happy dream.", "es": "Intentó plasmar la sensación fugaz de despertar de un sueño feliz."}]
+  },
+  {
+    "id": "el-030", "term": "exacerbate", "meaning_en": "To make an existing problem or unpleasant condition worse.", "meaning_es": "Empeorar un problema o una situación desagradable que ya existe.", "register": "formal", "region": "general", "collocation": "exacerbate tensions", "note": "Common with problems, symptoms, inequalities, and tensions. It describes worsening, not the original cause.",
+    "examples": [{"en": "The confusing announcement only exacerbated tensions within the team.", "es": "El confuso anuncio no hizo más que agravar las tensiones dentro del equipo."}, {"en": "Poor sleep can exacerbate an already difficult situation.", "es": "Dormir mal puede agravar una situación que ya es difícil."}]
+  },
+  {
+    "id": "el-031", "term": "exacting", "meaning_en": "Demanding a great deal of care, effort, or precision.", "meaning_es": "Que exige mucho cuidado, esfuerzo o precisión.", "register": "neutro", "region": "general", "collocation": "exacting standards", "note": "Can describe a demanding person, a difficult task, or a high standard of work.",
+    "examples": [{"en": "The restoration required exacting work on hundreds of tiny fragments.", "es": "La restauración exigió un trabajo minucioso con cientos de fragmentos diminutos."}, {"en": "She is an exacting editor who notices every inconsistency.", "es": "Es una editora exigente que detecta todas las incoherencias."}]
+  },
+  {
+    "id": "el-032", "term": "exasperate", "meaning_en": "To irritate or frustrate someone intensely.", "meaning_es": "Irritar o frustrar intensamente a alguien.", "register": "neutro", "region": "general", "collocation": "an exasperated sigh", "note": "Often appears as 'exasperated' for the person and 'exasperating' for what causes the frustration.",
+    "examples": [{"en": "His refusal to answer a simple question exasperated everyone.", "es": "Su negativa a responder a una pregunta sencilla exasperó a todos."}, {"en": "She gave an exasperated sigh when the printer stopped again.", "es": "Soltó un suspiro de exasperación cuando la impresora volvió a pararse."}]
+  },
+  {
+    "id": "el-033", "term": "exonerate", "meaning_en": "To clear someone of blame or responsibility for wrongdoing.", "meaning_es": "Eximir a alguien de culpa o responsabilidad por una conducta indebida.", "register": "formal", "region": "general", "collocation": "exonerate someone of blame", "note": "Often used when evidence or an investigation establishes that someone was not responsible.",
+    "examples": [{"en": "The new evidence exonerated the employee who had been accused.", "es": "Las nuevas pruebas exoneraron al empleado que había sido acusado."}, {"en": "The inquiry exonerated her of any involvement in the deception.", "es": "La investigación la exoneró de toda participación en el engaño."}]
+  },
+  {
+    "id": "el-034", "term": "expedient", "meaning_en": "Convenient for achieving an immediate aim, even if not the most principled choice.", "meaning_es": "Conveniente para conseguir un objetivo inmediato, aunque no sea la opción más ética.", "register": "formal", "region": "general", "collocation": "politically expedient", "note": "Often contrasts short-term advantage with principle or long-term consequences.",
+    "examples": [{"en": "Remaining silent was politically expedient but difficult to defend.", "es": "Guardar silencio resultaba conveniente desde el punto de vista político, pero era difícil de defender."}, {"en": "They chose the most expedient solution rather than addressing the underlying problem.", "es": "Eligieron la solución más conveniente a corto plazo en lugar de abordar el problema de fondo."}]
+  },
+  {
+    "id": "el-035", "term": "extol", "meaning_en": "To praise someone or something enthusiastically.", "meaning_es": "Elogiar a alguien o algo con entusiasmo.", "register": "formal", "region": "general", "collocation": "extol the virtues of something", "note": "The phrase 'extol the virtues of' is useful when discussing enthusiastic recommendations.",
+    "examples": [{"en": "He spent the entire journey extolling the virtues of travelling by train.", "es": "Pasó todo el viaje ensalzando las ventajas de viajar en tren."}, {"en": "Reviewers extolled her ability to make complex ideas accessible.", "es": "Los críticos elogiaron su capacidad para hacer accesibles ideas complejas."}]
+  },
+  {
+    "id": "el-036", "term": "extraneous", "meaning_en": "Not relevant or essential to the matter being considered.", "meaning_es": "Que no es pertinente ni esencial para el asunto que se está tratando.", "register": "formal", "region": "general", "collocation": "extraneous detail", "note": "Often describes material that can be removed without losing the central point.",
+    "examples": [{"en": "Remove the extraneous details so the main argument is easier to follow.", "es": "Elimina los detalles superfluos para que resulte más fácil seguir el argumento principal."}, {"en": "The chair refused to let extraneous issues dominate the discussion.", "es": "La presidenta no permitió que asuntos ajenos al tema dominaran la discusión."}]
+  },
+  {
+    "id": "el-037", "term": "extrapolate", "meaning_en": "To estimate beyond the available information by extending an observed pattern.", "meaning_es": "Estimar algo más allá de la información disponible mediante la prolongación de un patrón observado.", "register": "formal", "region": "general", "collocation": "extrapolate from limited data", "note": "An extrapolation extends beyond what was directly observed, so its assumptions matter.",
+    "examples": [{"en": "We should not extrapolate a national trend from such a small sample.", "es": "No deberíamos extrapolar una tendencia nacional a partir de una muestra tan pequeña."}, {"en": "The forecast extrapolates from the growth recorded over the past five years.", "es": "La previsión se obtiene extrapolando el crecimiento registrado durante los últimos cinco años."}]
+  },
+  {
+    "id": "el-038", "term": "exuberant", "meaning_en": "Full of lively energy, excitement, or enthusiasm.", "meaning_es": "Lleno de energía, alegría o entusiasmo desbordantes.", "register": "neutro", "region": "general", "collocation": "an exuberant celebration", "note": "Often describes an outward, energetic expression of happiness rather than quiet satisfaction.",
+    "examples": [{"en": "The final whistle sparked an exuberant celebration in the stands.", "es": "El pitido final desató una celebración desbordante de alegría en las gradas."}, {"en": "Her exuberant personality brought life to an otherwise quiet gathering.", "es": "Su personalidad llena de energía animó una reunión que, por lo demás, era tranquila."}]
+  },
+  {
+    "id": "el-039", "term": "facetious", "meaning_en": "Treating a serious matter with deliberately inappropriate humour.", "meaning_es": "Que trata un asunto serio con un humor deliberadamente inoportuno.", "register": "neutro", "region": "general", "collocation": "a facetious remark", "note": "May be playful or irritating. 'I was being facetious' explains that a remark was not meant seriously.",
+    "examples": [{"en": "His facetious remark did little to ease the tension at the meeting.", "es": "Su comentario burlón e inoportuno no contribuyó a aliviar la tensión de la reunión."}, {"en": "I was being facetious; I do not actually think we should cancel every meeting.", "es": "Lo decía en broma; no creo realmente que debamos cancelar todas las reuniones."}]
+  },
+  {
+    "id": "el-040", "term": "fallacious", "meaning_en": "Based on faulty reasoning or a mistaken belief.", "meaning_es": "Basado en un razonamiento defectuoso o una creencia equivocada.", "register": "formal", "region": "general", "collocation": "a fallacious argument", "note": "Challenges the reasoning or assumption, without necessarily claiming that the speaker intends to deceive.",
+    "examples": [{"en": "The argument rests on the fallacious assumption that popularity guarantees accuracy.", "es": "El argumento se basa en la suposición falaz de que la popularidad garantiza la exactitud."}, {"en": "She explained why the comparison was fallacious.", "es": "Explicó por qué la comparación se basaba en un razonamiento erróneo."}]
+  },
+  {
+    "id": "el-041", "term": "fastidious", "meaning_en": "Very attentive to detail and difficult to satisfy because of high standards.", "meaning_es": "Muy atento a los detalles y difícil de satisfacer debido a sus elevadas exigencias.", "register": "neutro", "region": "general", "collocation": "fastidious about presentation", "note": "Can praise careful standards or criticise excessive fussiness; it does not simply mean annoying, like Spanish 'fastidioso'.",
+    "examples": [{"en": "He is fastidious about the way quotations are presented.", "es": "Es muy escrupuloso con la forma en que se presentan las citas."}, {"en": "Even the most fastidious guest found nothing to complain about.", "es": "Ni siquiera el huésped más exigente encontró nada de lo que quejarse."}]
+  },
+  {
+    "id": "el-042", "term": "fatuous", "meaning_en": "Silly or foolish, especially in a self-satisfied way.", "meaning_es": "Necio o insensato, a menudo con un aire de suficiencia.", "register": "formal", "region": "general", "collocation": "a fatuous remark", "note": "A dismissive criticism of remarks, ideas, or behaviour considered foolish or empty.",
+    "examples": [{"en": "His fatuous suggestion ignored every practical difficulty we had discussed.", "es": "Su necia sugerencia ignoraba todas las dificultades prácticas que habíamos comentado."}, {"en": "She grew tired of the fatuous slogans offered instead of answers.", "es": "Se cansó de los lemas vacíos e insensatos que le ofrecían en lugar de respuestas."}]
+  },
+  {
+    "id": "el-043", "term": "feasible", "meaning_en": "Possible and practical to carry out successfully.", "meaning_es": "Posible y viable de llevar a cabo con éxito.", "register": "neutro", "region": "general", "collocation": "a feasible alternative", "note": "Focuses on whether a plan can realistically be carried out, not whether it is desirable.",
+    "examples": [{"en": "The proposal is attractive, but we need to establish whether it is financially feasible.", "es": "La propuesta es atractiva, pero debemos determinar si es económicamente viable."}, {"en": "Working from home was not a feasible option for everyone.", "es": "Trabajar desde casa no era una opción viable para todo el mundo."}]
+  },
+  {
+    "id": "el-044", "term": "feckless", "meaning_en": "Lacking effectiveness or responsibility; careless and unreliable.", "meaning_es": "Ineficaz o irresponsable; descuidado y poco fiable.", "register": "formal", "region": "general", "collocation": "feckless leadership", "note": "A critical word, often used of people who fail to take effective or responsible action.",
+    "examples": [{"en": "Residents blamed feckless leadership for years of avoidable delays.", "es": "Los vecinos culparon a una dirección ineficaz e irresponsable de años de retrasos evitables."}, {"en": "The novel refuses to dismiss him as merely a feckless dreamer.", "es": "La novela se niega a reducirlo a un simple soñador irresponsable."}]
+  },
+  {
+    "id": "el-045", "term": "felicitous", "meaning_en": "Especially well chosen, appropriate, or pleasing in the circumstances.", "meaning_es": "Especialmente acertado, apropiado o agradable dadas las circunstancias.", "register": "formal", "region": "general", "collocation": "a felicitous choice of words", "note": "Often praises an expression, comparison, or choice that fits its purpose particularly well.",
+    "examples": [{"en": "It was a felicitous choice of words for such a delicate occasion.", "es": "Fue una elección de palabras especialmente acertada para una ocasión tan delicada."}, {"en": "Her translation found a felicitous balance between accuracy and naturalness.", "es": "Su traducción logró un equilibrio muy acertado entre precisión y naturalidad."}]
+  },
+  {
+    "id": "el-046", "term": "fervent", "meaning_en": "Showing intense and passionate feeling or belief.", "meaning_es": "Que muestra un sentimiento o una convicción intensos y apasionados.", "register": "neutro", "region": "general", "collocation": "a fervent supporter", "note": "Can describe support, belief, hope, or an appeal; it is not restricted to religious devotion.",
+    "examples": [{"en": "She remained a fervent supporter of the project despite the setbacks.", "es": "Siguió siendo una ferviente defensora del proyecto pese a los contratiempos."}, {"en": "He expressed a fervent hope that the negotiations would succeed.", "es": "Expresó su ferviente deseo de que las negociaciones llegaran a buen puerto."}]
+  },
+  {
+    "id": "el-047", "term": "fickle", "meaning_en": "Changing one's loyalties, interests, or feelings frequently and unpredictably.", "meaning_es": "Que cambia sus lealtades, intereses o sentimientos de forma frecuente e imprevisible.", "register": "neutro", "region": "general", "collocation": "fickle public opinion", "note": "Often criticises unreliable loyalty or taste. It can describe a public mood as well as an individual.",
+    "examples": [{"en": "The industry depends on the approval of a notoriously fickle audience.", "es": "La industria depende de la aprobación de un público conocido por sus gustos cambiantes."}, {"en": "He found her affection too fickle to rely on.", "es": "El afecto de ella le parecía demasiado inconstante como para confiar en él."}]
+  },
+  {
+    "id": "el-048", "term": "flippant", "meaning_en": "Not showing a serious or respectful attitude where one is expected.", "meaning_es": "Que no muestra la seriedad o el respeto que se espera en una situación.", "register": "neutro", "region": "general", "collocation": "a flippant answer", "note": "Often describes a casual joke or answer that seems inappropriate to the seriousness of the subject.",
+    "examples": [{"en": "Her flippant answer upset people who had raised genuine concerns.", "es": "Su respuesta frívola molestó a quienes habían planteado preocupaciones reales."}, {"en": "I did not mean to sound flippant about something so important.", "es": "No pretendía sonar frívolo al hablar de algo tan importante."}]
+  },
+  {
+    "id": "el-049", "term": "florid", "meaning_en": "Excessively elaborate or ornate in style.", "meaning_es": "Excesivamente elaborado o adornado en su estilo.", "register": "formal", "region": "general", "collocation": "florid prose", "note": "This stylistic sense is often critical of excessive decoration in writing, speech, or design.",
+    "examples": [{"en": "The editor replaced his florid opening with a straightforward introduction.", "es": "La editora sustituyó su comienzo recargado por una introducción directa."}, {"en": "Her early poems were florid, but her later work became spare and precise.", "es": "Sus primeros poemas eran recargados, pero su obra posterior se volvió sobria y precisa."}]
+  },
+  {
+    "id": "el-050", "term": "flout", "meaning_en": "To openly disregard a rule, law, or convention.", "meaning_es": "Desobedecer abiertamente una norma, ley o convención.", "register": "formal", "region": "general", "collocation": "flout the rules", "note": "Distinguish it from 'flaunt', which means to display something conspicuously.",
+    "examples": [{"en": "The company continued to flout safety regulations despite repeated warnings.", "es": "La empresa siguió incumpliendo abiertamente las normas de seguridad pese a las reiteradas advertencias."}, {"en": "The exhibition deliberately flouts the usual conventions of portraiture.", "es": "La exposición desafía deliberadamente las convenciones habituales del retrato."}]
+  },
+  {
+    "id": "el-051", "term": "formidable", "meaning_en": "Inspiring respect or apprehension because of strength, ability, or difficulty.", "meaning_es": "Que inspira respeto o temor por su fuerza, capacidad o dificultad.", "register": "neutro", "region": "general", "collocation": "a formidable opponent", "note": "Can praise someone's ability or emphasise the difficulty of a challenge; it need not mean frightening in a literal sense.",
+    "examples": [{"en": "Her knowledge of the subject made her a formidable opponent in debate.", "es": "Su dominio del tema la convertía en una rival formidable en los debates."}, {"en": "Restoring the building on that budget would be a formidable task.", "es": "Restaurar el edificio con ese presupuesto sería una tarea de enorme dificultad."}]
+  },
+  {
+    "id": "el-052", "term": "fortuitous", "meaning_en": "Happening by chance rather than by design.", "meaning_es": "Que ocurre por casualidad y no de forma planeada.", "register": "formal", "region": "general", "collocation": "a fortuitous encounter", "note": "Chance is central to this sense. The word is also used for lucky coincidences, but an event need not be beneficial.",
+    "examples": [{"en": "A fortuitous meeting at the station led to their first collaboration.", "es": "Un encuentro fortuito en la estación dio lugar a su primera colaboración."}, {"en": "The apparent pattern may be no more than a fortuitous coincidence.", "es": "El aparente patrón puede no ser más que una coincidencia fortuita."}]
+  },
+  {
+    "id": "el-053", "term": "fractious", "meaning_en": "Irritable, quarrelsome, and difficult to manage.", "meaning_es": "Irritable, propenso a discutir y difícil de manejar.", "register": "formal", "region": "general", "collocation": "a fractious meeting", "note": "Can describe a difficult group dynamic as well as a person who is irritable or argumentative.",
+    "examples": [{"en": "The chair struggled to keep the fractious committee focused on the agenda.", "es": "La presidenta tuvo dificultades para que el conflictivo comité se centrara en el orden del día."}, {"en": "After hours of waiting, the children grew tired and fractious.", "es": "Tras horas de espera, los niños estaban cansados e irritables."}]
+  },
+  {
+    "id": "el-054", "term": "frugal", "meaning_en": "Careful not to waste money or resources; economical.", "meaning_es": "Cuidadoso para no malgastar dinero o recursos; ahorrativo.", "register": "neutro", "region": "general", "collocation": "a frugal lifestyle", "note": "Often describes sensible economy, though context may suggest that someone is excessively restrictive.",
+    "examples": [{"en": "Their frugal habits allowed them to save for a year abroad.", "es": "Sus hábitos ahorrativos les permitieron reunir dinero para pasar un año en el extranjero."}, {"en": "The project made frugal use of materials without compromising safety.", "es": "El proyecto aprovechó los materiales de forma económica sin comprometer la seguridad."}]
+  },
+  {
+    "id": "el-055", "term": "furtive", "meaning_en": "Secretive in manner, as if trying to avoid being noticed.", "meaning_es": "De comportamiento disimulado, como si intentara pasar inadvertido.", "register": "neutro", "region": "general", "collocation": "a furtive glance", "note": "Describes the secretive appearance of an action or manner; it does not establish actual wrongdoing.",
+    "examples": [{"en": "He cast a furtive glance at his phone during the ceremony.", "es": "Lanzó una mirada furtiva al teléfono durante la ceremonia."}, {"en": "Their furtive conversation stopped as soon as the door opened.", "es": "Su conversación a escondidas cesó en cuanto se abrió la puerta."}]
+  },
+  {
+    "id": "el-056", "term": "futile", "meaning_en": "Incapable of producing a useful result; pointless.", "meaning_es": "Incapaz de producir un resultado útil; inútil o vano.", "register": "neutro", "region": "general", "collocation": "a futile attempt", "note": "Focuses on the lack of an achievable result, not simply on how difficult the effort is.",
+    "examples": [{"en": "It was futile to argue once the decision had already been made.", "es": "Era inútil discutir una vez que la decisión ya estaba tomada."}, {"en": "They made several futile attempts to contact the abandoned office.", "es": "Hicieron varios intentos inútiles de contactar con la oficina abandonada."}]
+  },
+  {
+    "id": "el-057", "term": "garrulous", "meaning_en": "Excessively talkative, particularly about trivial matters.", "meaning_es": "Excesivamente hablador, especialmente sobre asuntos triviales.", "register": "formal", "region": "general", "collocation": "a garrulous passenger", "note": "Often conveys mild irritation at how much someone talks or how little they leave unsaid.",
+    "examples": [{"en": "A garrulous passenger told me his entire life story before the first stop.", "es": "Un pasajero parlanchín me contó toda su vida antes de la primera parada."}, {"en": "The interview became a struggle to redirect the garrulous guest.", "es": "La entrevista se convirtió en una lucha por reconducir al invitado, que hablaba sin parar."}]
+  },
+  {
+    "id": "el-058", "term": "glib", "meaning_en": "Fluent and confident in a way that seems superficial or insufficiently considered.", "meaning_es": "Fluido y seguro, pero de una forma que parece superficial o poco meditada.", "register": "neutro", "region": "general", "collocation": "a glib answer", "note": "Often criticises an answer that makes a difficult problem sound deceptively simple.",
+    "examples": [{"en": "His glib assurances did not address any of our concerns.", "es": "Sus garantías superficiales, formuladas con soltura, no respondían a ninguna de nuestras preocupaciones."}, {"en": "There is no glib explanation for such a complicated failure.", "es": "No hay una explicación fácil y superficial para un fracaso tan complejo."}]
+  },
+  {
+    "id": "el-059", "term": "gregarious", "meaning_en": "Sociable and enjoying the company of other people.", "meaning_es": "Sociable y aficionado a estar en compañía de otras personas.", "register": "neutro", "region": "general", "collocation": "a gregarious personality", "note": "This sense concerns enjoyment of company, rather than conformity to a group.",
+    "examples": [{"en": "Her gregarious nature helped her settle quickly into the new neighbourhood.", "es": "Su carácter sociable la ayudó a integrarse rápidamente en el nuevo barrio."}, {"en": "Although gregarious at work, he treasured quiet weekends alone.", "es": "Aunque era sociable en el trabajo, apreciaba mucho los fines de semana tranquilos a solas."}]
+  },
+  {
+    "id": "el-060", "term": "guile", "meaning_en": "Cunning used to deceive or gain an advantage.", "meaning_es": "Astucia empleada para engañar u obtener una ventaja.", "register": "formal", "region": "general", "collocation": "a mixture of charm and guile", "note": "Suggests strategic cunning; it may be criticised as deceit or admired in a competitive setting.",
+    "examples": [{"en": "She negotiated with a mixture of patience, charm, and guile.", "es": "Negoció con una mezcla de paciencia, encanto y astucia."}, {"en": "His apparently innocent questions concealed considerable guile.", "es": "Sus preguntas aparentemente inocentes ocultaban una considerable astucia."}]
+  },
+  {
+    "id": "el-061", "term": "hackneyed", "meaning_en": "Overused to the point of being stale or unoriginal.", "meaning_es": "Tan repetido que ha perdido su frescura u originalidad.", "register": "neutro", "region": "general", "collocation": "a hackneyed phrase", "note": "A critical description of expressions, plots, or ideas that have become too familiar through repetition.",
+    "examples": [{"en": "The speech relied on hackneyed phrases instead of concrete proposals.", "es": "El discurso recurrió a frases manidas en lugar de presentar propuestas concretas."}, {"en": "She found a fresh approach to an otherwise hackneyed plot.", "es": "Encontró una perspectiva original para una trama que, por lo demás, estaba muy trillada."}]
+  },
+  {
+    "id": "el-062", "term": "haphazard", "meaning_en": "Lacking a clear plan or orderly arrangement.", "meaning_es": "Que carece de una planificación clara o una organización ordenada.", "register": "neutro", "region": "general", "collocation": "a haphazard approach", "note": "Often criticises an unstructured method, rather than claiming that events were random in a statistical sense.",
+    "examples": [{"en": "The records had been stored in a haphazard collection of boxes.", "es": "Los documentos se habían guardado en una colección de cajas sin orden alguno."}, {"en": "A haphazard approach to training left several important gaps.", "es": "Una formación organizada sin un plan claro dejó varias lagunas importantes."}]
+  },
+  {
+    "id": "el-063", "term": "harangue", "meaning_en": "A lengthy, forceful speech, especially one that criticises or lectures someone.", "meaning_es": "Discurso largo y vehemente, especialmente si critica o sermonea a alguien.", "register": "neutro", "region": "general", "collocation": "a lengthy harangue", "note": "As a noun here, it often suggests that the listener finds the speech aggressive or tiresome.",
+    "examples": [{"en": "What began as a welcome quickly became a harangue about discipline.", "es": "Lo que comenzó como una bienvenida pronto se convirtió en un sermón sobre disciplina."}, {"en": "Nobody interrupted his lengthy harangue against the new policy.", "es": "Nadie interrumpió su larga diatriba contra la nueva política."}]
+  },
+  {
+    "id": "el-064", "term": "hubris", "meaning_en": "Excessive pride or confidence that leads someone to overestimate their abilities.", "meaning_es": "Orgullo o confianza excesivos que llevan a alguien a sobrestimar sus capacidades.", "register": "formal", "region": "general", "collocation": "an act of hubris", "note": "Often used when discussing overconfidence and the risks or failures associated with it.",
+    "examples": [{"en": "Ignoring every warning was an act of extraordinary hubris.", "es": "Ignorar todas las advertencias fue un acto de extraordinaria arrogancia."}, {"en": "The book examines the hubris behind the company's rapid expansion.", "es": "El libro examina la soberbia que impulsó la rápida expansión de la empresa."}]
+  },
+  {
+    "id": "el-065", "term": "hyperbole", "meaning_en": "Deliberate exaggeration used for emphasis or expressive effect.", "meaning_es": "Exageración deliberada empleada para enfatizar algo o producir un efecto expresivo.", "register": "neutro", "region": "general", "collocation": "rhetorical hyperbole", "note": "Not necessarily a lie: the audience may be expected to recognise the exaggeration.",
+    "examples": [{"en": "Calling it the worst meal in history was clearly hyperbole.", "es": "Decir que había sido la peor comida de la historia era claramente una hipérbole."}, {"en": "She made her point without resorting to hyperbole.", "es": "Expuso su argumento sin recurrir a la hipérbole."}]
+  },
+  {
+    "id": "el-066", "term": "ignominious", "meaning_en": "Involving public shame or humiliation.", "meaning_es": "Que implica vergüenza o humillación públicas.", "register": "formal", "region": "general", "collocation": "an ignominious defeat", "note": "Often describes a defeat, departure, or ending considered humiliating rather than merely unsuccessful.",
+    "examples": [{"en": "The defending champions suffered an ignominious defeat in the first round.", "es": "Los campeones defensores sufrieron una derrota humillante en la primera ronda."}, {"en": "The scandal brought an ignominious end to his political career.", "es": "El escándalo puso un final ignominioso a su carrera política."}]
+  },
+  {
+    "id": "el-067", "term": "implacable", "meaning_en": "Impossible to appease or persuade to change a hostile or determined position.", "meaning_es": "Imposible de apaciguar o persuadir para que abandone una postura hostil o firme.", "register": "formal", "region": "general", "collocation": "implacable opposition", "note": "Often emphasises the firmness of opposition or hostility, rather than the volume with which it is expressed.",
+    "examples": [{"en": "The proposal faced implacable opposition from several influential members.", "es": "La propuesta se enfrentó a una oposición implacable de varios miembros influyentes."}, {"en": "Even an apology failed to soften her implacable hostility.", "es": "Ni siquiera una disculpa logró suavizar su hostilidad implacable."}]
+  },
+  {
+    "id": "el-068", "term": "incisive", "meaning_en": "Clear, sharp, and able to identify the central issue accurately.", "meaning_es": "Claro, penetrante y capaz de identificar con precisión el asunto central.", "register": "neutro", "region": "general", "collocation": "an incisive analysis", "note": "Often praises questions, analysis, or observations that get directly to the heart of a matter.",
+    "examples": [{"en": "Her incisive questions exposed weaknesses that earlier reviewers had missed.", "es": "Sus preguntas incisivas revelaron debilidades que los revisores anteriores no habían detectado."}, {"en": "The essay offers an incisive analysis of how public trust is lost.", "es": "El ensayo ofrece un análisis penetrante de cómo se pierde la confianza pública."}]
+  },
+  {
+    "id": "el-069", "term": "ineffable", "meaning_en": "Too great, intense, or unusual to be adequately expressed in words.", "meaning_es": "Tan intenso, extraordinario o singular que no puede expresarse adecuadamente con palabras.", "register": "literario", "region": "general", "collocation": "ineffable joy", "note": "Often used for powerful emotions or experiences that seem to exceed ordinary description.",
+    "examples": [{"en": "Holding her daughter for the first time filled her with ineffable joy.", "es": "Sostener a su hija por primera vez la llenó de una alegría inefable."}, {"en": "The music gave shape to something he had always considered ineffable.", "es": "La música dio forma a algo que siempre había considerado inexpresable."}]
+  },
+  {
+    "id": "el-070", "term": "inexorable", "meaning_en": "Impossible to stop, prevent, or persuade to change course.", "meaning_es": "Imposible de detener, evitar o convencer para que cambie de rumbo.", "register": "formal", "region": "general", "collocation": "an inexorable decline", "note": "Frequently describes a process presented as relentless or unstoppable.",
+    "examples": [{"en": "The town faced an apparently inexorable decline in population.", "es": "El pueblo afrontaba un descenso de población aparentemente inexorable."}, {"en": "The novel follows the inexorable approach of a catastrophe.", "es": "La novela sigue la aproximación inexorable de una catástrofe."}]
+  },
+  {
+    "id": "el-071", "term": "insipid", "meaning_en": "Lacking interest, vigour, or distinctive character; bland.", "meaning_es": "Carente de interés, fuerza o personalidad; anodino.", "register": "neutro", "region": "general", "collocation": "an insipid performance", "note": "This figurative sense criticises dullness in writing, performance, conversation, or personality.",
+    "examples": [{"en": "The adaptation turned a lively novel into an insipid drama.", "es": "La adaptación convirtió una novela llena de vida en un drama anodino."}, {"en": "She was tired of the insipid conversation and endless polite smiles.", "es": "Estaba cansada de la conversación insulsa y de las interminables sonrisas de cortesía."}]
+  },
+  {
+    "id": "el-072", "term": "intransigent", "meaning_en": "Unwilling to change one's position or make compromises.", "meaning_es": "Que no está dispuesto a cambiar de postura ni a hacer concesiones.", "register": "formal", "region": "general", "collocation": "an intransigent position", "note": "Often describes negotiations where one side refuses to compromise; it does not establish which side is right.",
+    "examples": [{"en": "An intransigent minority prevented the committee from reaching an agreement.", "es": "Una minoría intransigente impidió que el comité llegara a un acuerdo."}, {"en": "She remained intransigent on the question of equal access.", "es": "Se mantuvo intransigente en la cuestión de la igualdad de acceso."}]
+  },
+  {
+    "id": "el-073", "term": "inveterate", "meaning_en": "Long-established and unlikely to change, especially as a habit or tendency.", "meaning_es": "Muy arraigado y difícil de cambiar, especialmente como hábito o tendencia.", "register": "formal", "region": "general", "collocation": "an inveterate traveller", "note": "Often placed before a noun describing someone with an entrenched habit: an inveterate gossip, reader, or optimist.",
+    "examples": [{"en": "An inveterate traveller, she found it difficult to stay in one place.", "es": "Viajera empedernida, le costaba permanecer en un mismo lugar."}, {"en": "His inveterate optimism survived even the most disappointing results.", "es": "Su optimismo inveterado resistió incluso los resultados más decepcionantes."}]
+  },
+  {
+    "id": "el-074", "term": "irascible", "meaning_en": "Easily angered; prone to irritation or outbursts of temper.", "meaning_es": "Que se enfada con facilidad; propenso a irritarse o tener arrebatos de mal genio.", "register": "formal", "region": "general", "collocation": "an irascible colleague", "note": "Describes a tendency to become angry, not a claim that the person is angry at every moment.",
+    "examples": [{"en": "His irascible manner made junior staff reluctant to ask questions.", "es": "Su carácter irascible hacía que el personal menos experimentado no se atreviera a preguntar."}, {"en": "The film portrays an irascible teacher with an unexpected capacity for kindness.", "es": "La película retrata a un profesor irascible con una inesperada capacidad para la bondad."}]
+  },
+  {
+    "id": "el-075", "term": "irreverent", "meaning_en": "Showing a lack of conventional respect for things usually treated seriously.", "meaning_es": "Que muestra falta de respeto convencional hacia asuntos que suelen tratarse con seriedad.", "register": "neutro", "region": "general", "collocation": "irreverent humour", "note": "May be admired as playful or challenging, or criticised as disrespectful, depending on context.",
+    "examples": [{"en": "Her irreverent humour challenged the ceremony's usual solemnity.", "es": "Su humor irreverente desafió la solemnidad habitual de la ceremonia."}, {"en": "The magazine became known for its irreverent treatment of powerful institutions.", "es": "La revista se hizo conocida por su tratamiento irreverente de las instituciones poderosas."}]
+  },
+  {
+    "id": "el-076", "term": "judicious", "meaning_en": "Showing careful thought and sound judgement.", "meaning_es": "Que demuestra reflexión cuidadosa y buen criterio.", "register": "formal", "region": "general", "collocation": "judicious use of resources", "note": "Often praises a choice or use of something as sensible and appropriately restrained.",
+    "examples": [{"en": "Judicious use of examples made the abstract argument easier to understand.", "es": "Un uso acertado de los ejemplos facilitó la comprensión del argumento abstracto."}, {"en": "She made a judicious decision to wait until the facts were clearer.", "es": "Tomó la sensata decisión de esperar hasta que los hechos estuvieran más claros."}]
+  },
+  {
+    "id": "el-077", "term": "laconic", "meaning_en": "Using very few words; brief in expression.", "meaning_es": "Que emplea muy pocas palabras; breve en su forma de expresarse.", "register": "formal", "region": "general", "collocation": "a laconic reply", "note": "Can suggest efficient brevity or emotional reserve. Context determines whether it sounds admirable or cold.",
+    "examples": [{"en": "Asked whether he would return, he gave a laconic 'Perhaps'.", "es": "Al preguntarle si volvería, respondió con un lacónico 'Quizá'."}, {"en": "Her laconic style leaves readers to infer much of the emotion.", "es": "Su estilo lacónico deja que los lectores deduzcan buena parte de la emoción."}]
+  },
+  {
+    "id": "el-078", "term": "languid", "meaning_en": "Moving or behaving slowly and with little energy, often in a relaxed way.", "meaning_es": "Que se mueve o actúa lentamente y con poca energía, a menudo de manera relajada.", "register": "literario", "region": "general", "collocation": "a languid gesture", "note": "Can convey pleasant relaxation or lack of energy; the surrounding description supplies the tone.",
+    "examples": [{"en": "She waved a languid hand from the shade of the terrace.", "es": "Agitó la mano con un gesto lánguido desde la sombra de la terraza."}, {"en": "The music matched the languid pace of the summer afternoon.", "es": "La música acompañaba el ritmo pausado de la tarde de verano."}]
+  },
+  {
+    "id": "el-079", "term": "laudable", "meaning_en": "Deserving praise or approval.", "meaning_es": "Digno de elogio o aprobación.", "register": "formal", "region": "general", "collocation": "a laudable aim", "note": "A goal may be laudable even when the proposed means of achieving it are impractical.",
+    "examples": [{"en": "The ambition is laudable, but the timetable is unrealistic.", "es": "La aspiración es loable, pero el calendario no es realista."}, {"en": "Her laudable efforts brought attention to a long-neglected problem.", "es": "Sus loables esfuerzos atrajeron la atención hacia un problema olvidado durante mucho tiempo."}]
+  },
+  {
+    "id": "el-080", "term": "loquacious", "meaning_en": "Very talkative; inclined to speak at length.", "meaning_es": "Muy hablador; que tiende a hablar extensamente.", "register": "formal", "region": "general", "collocation": "a loquacious host", "note": "Describes how much someone talks; context may make it affectionate, neutral, or mildly critical.",
+    "examples": [{"en": "Our loquacious host entertained us with stories until midnight.", "es": "Nuestro locuaz anfitrión nos entretuvo con historias hasta medianoche."}, {"en": "Usually loquacious, he became unusually quiet when the subject changed.", "es": "Normalmente locuaz, se quedó insólitamente callado cuando cambió el tema."}]
+  },
+  {
+    "id": "el-081", "term": "lucid", "meaning_en": "Clearly expressed and easy to understand.", "meaning_es": "Expresado con claridad y fácil de comprender.", "register": "neutro", "region": "general", "collocation": "a lucid explanation", "note": "This sense describes the clarity of an explanation, argument, or piece of writing.",
+    "examples": [{"en": "Her lucid explanation made the unfamiliar procedure seem manageable.", "es": "Su clara explicación hizo que aquel procedimiento desconocido pareciera manejable."}, {"en": "The book provides a lucid account of a complicated legal dispute.", "es": "El libro ofrece una exposición clara de una compleja disputa jurídica."}]
+  },
+  {
+    "id": "el-082", "term": "ludicrous", "meaning_en": "So absurd or unreasonable as to seem ridiculous.", "meaning_es": "Tan absurdo o poco razonable que resulta ridículo.", "register": "neutro", "region": "general", "collocation": "a ludicrous suggestion", "note": "Expresses strong disbelief or dismissal; it need not mean the speaker finds the situation genuinely amusing.",
+    "examples": [{"en": "The suggestion that one person could finish it overnight was ludicrous.", "es": "La sugerencia de que una sola persona pudiera terminarlo en una noche era ridícula."}, {"en": "They charged a ludicrous amount for a room with no running water.", "es": "Cobraron una cantidad absurda por una habitación sin agua corriente."}]
+  }
+]

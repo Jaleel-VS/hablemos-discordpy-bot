@@ -7,19 +7,21 @@ import discord
 import pytest
 from discord.ext import commands
 
-from cogs.advanced_spanish_cog.catalog import (
+from cogs.advanced_english_cog.main import AdvancedEnglish
+from cogs.advanced_spanish_cog.main import DATA_DIR, AdvancedSpanish
+from cogs.general_cog.main import _collect_cog_entries
+from cogs.utils.vocabulary import (
     VocabularyEntry,
+    VocabularyView,
     find_entries,
     load_catalog,
 )
-from cogs.advanced_spanish_cog.main import AdvancedSpanish, VocabularyView
-from cogs.general_cog.main import _collect_cog_entries
 
 
 @pytest.fixture(scope="module")
 def catalog() -> tuple[VocabularyEntry, ...]:
     """Load the same catalog used by the production command."""
-    return load_catalog()
+    return load_catalog(DATA_DIR)
 
 
 def _interaction(user_id: int = 1) -> SimpleNamespace:
@@ -54,7 +56,7 @@ def test_search_accents_case_fragments_and_no_match(catalog: tuple[VocabularyEnt
 async def test_cards_fit_discord_limits(catalog: tuple[VocabularyEntry, ...]) -> None:
     """Every complete bilingual card must fit Discord's V2 content budget."""
     for entry in catalog:
-        view = VocabularyView((entry,), 1)
+        view = VocabularyView((entry,), 1, language="es")
         assert len(_text(view)) <= 4000, entry.term
         assert view.has_components_v2()
         view.stop()
@@ -62,16 +64,16 @@ async def test_cards_fit_discord_limits(catalog: tuple[VocabularyEntry, ...]) ->
 
 async def test_browsing_preserves_order_and_english_toggle(catalog: tuple[VocabularyEntry, ...]) -> None:
     deck = find_entries(catalog, "explayarse") + find_entries(catalog, "resquemor")
-    view = VocabularyView(deck, 1)
+    view = VocabularyView(deck, 1, language="es")
     try:
         first = deck[0]
         assert first.meaning_en in _text(view)
-        await view._toggle_english(_interaction())
+        await view._toggle_translation(_interaction())
         assert first.meaning_es in _text(view)
         assert first.meaning_en not in _text(view)
         assert all(example.en not in _text(view) for example in first.examples)
         await view._next(_interaction())
-        assert view.index == 1 and not view.show_english
+        assert view.index == 1 and not view.show_translation
         assert deck[1].meaning_es in _text(view)
         await view._next(_interaction())
         assert view.index == 1
@@ -79,14 +81,14 @@ async def test_browsing_preserves_order_and_english_toggle(catalog: tuple[Vocabu
         assert view.index == 0 and first.meaning_es in _text(view)
         await view._previous(_interaction())
         assert view.index == 0
-        await view._toggle_english(_interaction())
+        await view._toggle_translation(_interaction())
         assert first.meaning_en in _text(view)
     finally:
         view.stop()
 
 
 async def test_only_invoker_controls_browser(catalog: tuple[VocabularyEntry, ...]) -> None:
-    view = VocabularyView(catalog[:2], 1)
+    view = VocabularyView(catalog[:2], 1, language="es")
     try:
         other = _interaction(2)
         assert not await view.interaction_check(other)
@@ -97,7 +99,7 @@ async def test_only_invoker_controls_browser(catalog: tuple[VocabularyEntry, ...
 
 
 async def test_failed_edit_does_not_advance_browser(catalog: tuple[VocabularyEntry, ...]) -> None:
-    view = VocabularyView(catalog[:2], 1)
+    view = VocabularyView(catalog[:2], 1, language="es")
     interaction = _interaction()
     interaction.edit_original_response.side_effect = discord.HTTPException(
         SimpleNamespace(status=500, reason="Server error"), "Unavailable",
@@ -113,7 +115,7 @@ async def test_failed_edit_does_not_advance_browser(catalog: tuple[VocabularyEnt
 
 
 async def test_timeout_keeps_card_readable_and_freezes_controls(catalog: tuple[VocabularyEntry, ...]) -> None:
-    view = VocabularyView(catalog[:2], 1)
+    view = VocabularyView(catalog[:2], 1, language="es")
     view.message = SimpleNamespace(edit=AsyncMock())
     try:
         await view.on_timeout()
@@ -135,8 +137,10 @@ async def test_hidden_vocabulary_is_callable_but_absent_from_public_help() -> No
 
     async with commands.Bot(command_prefix="$", intents=discord.Intents.none(), help_command=None) as bot:
         await bot.add_cog(AdvancedSpanish(bot))
+        await bot.add_cog(AdvancedEnglish(bot))
         await bot.add_cog(VisibleCog())
-        command = bot.get_command("c")
-        assert command is not None and command.hidden
+        for name in ("c", "e"):
+            command = bot.get_command(name)
+            assert command is not None and command.hidden
         entries = _collect_cog_entries(bot)
         assert [entry[0] for entry in entries] == ["VisibleCog"]

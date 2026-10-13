@@ -226,13 +226,13 @@ To add or bump a dependency, use `uv add <pkg>` (or `uv add --dev <pkg>`) and co
 ./scripts/check_deadcode.sh
 ```
 
-### Unlisted Vocabulary Preview
+### Unlisted Vocabulary Previews
 
-`$c` opens a shuffled advanced-Spanish study deck; `$c explayarse` finds a term. Searches ignore case and accents (`$c ahinco`) and accept headword fragments. The command is deliberately absent from `/help`, help autocomplete, `$help c`, and unknown-command suggestions. It is unlisted, **not owner-restricted**: anyone who knows its name can use it.
+`$c` opens a shuffled advanced-Spanish study deck; `$c explayarse` finds a Spanish term. `$e` opens the advanced-English deck; `$e acerbic` finds an English term. Searches ignore case and accents (`$c ahinco`, `$e ACERBIC`) and accept headword fragments. Both commands are deliberately absent from `/help`, help autocomplete, direct `$help` lookups, and unknown-command suggestions. They are unlisted, **not owner-restricted**: anyone who knows their names can use them.
 
-The bundled catalog contains **419 entries and 838 original bilingual examples**. Components V2 cards show Spanish/English meanings, register and regional guidance, a natural collocation, and a Spanish usage note. The invoker can move backward/forward and hide/show English. A deck does not repeat entries; opening another deck reshuffles independently. Controls expire after ten minutes of inactivity while the last card remains readable. The per-user command cooldown is five seconds.
+The Spanish catalog contains **419 entries and 838 original bilingual examples**; the English catalog contains **425 entries and 850 original bilingual examples**. Components V2 cards put the studied language first, with translated meanings and examples, register and regional guidance, a natural collocation, and a native-language usage note. The invoker can move backward/forward and hide/show the other language. A deck does not repeat entries; opening another deck reshuffles independently. Controls expire after ten minutes of inactivity while the last card remains readable. Each command has a five-second per-user cooldown.
 
-Data live in `cogs/advanced_spanish_cog/data/*.json` and are validated on cog load. No runtime AI, API, or database calls are needed, and browsing progress is not persisted. The Cervantes inventory link is further reading, not a claim that every original card has an official C1/C2 classification. The cog is auto-discovered; no `$sync` is required.
+Data live in `cogs/advanced_spanish_cog/data/*.json` and `cogs/advanced_english_cog/data/*.json`. Both cogs use `cogs/utils/vocabulary.py` for catalog validation, search, and the study browser. The catalogs need no runtime AI, external content API, or database access, and browsing progress is not persisted. The Cervantes and Oxford Learner's links are further reading, not claims that the original cards reproduce dictionary content or have official C1/C2 classifications. Both cogs are auto-discovered; no `$sync` is required.
 
 ### Docker
 

@@ -1,0 +1,1802 @@
+[
+  {
+    "id": "id-001",
+    "term": "split hairs",
+    "meaning_en": "To focus on trivially fine distinctions, especially in an argument where the difference is negligible.",
+    "meaning_es": "Hilar demasiado fino; insistir en distinciones mínimas en una discusión donde la diferencia es irrelevante.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "splitting hairs over the wording",
+    "note": "Usually critical, implying needless pedantry. The gerund 'splitting hairs' is more common than the bare infinitive.",
+    "examples": [
+      {
+        "en": "We spent an hour splitting hairs over whether to call it a policy or a guideline.",
+        "es": "Pasamos una hora hilando fino sobre si llamarlo política o directriz."
+      },
+      {
+        "en": "I know it sounds like I'm splitting hairs, but the distinction matters in a legal context.",
+        "es": "Sé que parece que estoy buscando tres pies al gato, pero la distinción importa en el ámbito legal."
+      }
+    ]
+  },
+  {
+    "id": "id-002",
+    "term": "hedge your bets",
+    "meaning_en": "To reduce risk by supporting more than one option so you are protected whichever way things turn out.",
+    "meaning_es": "Cubrirse las espaldas apostando por varias opciones a la vez para no perderlo todo si una de ellas falla.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "hedge your bets by applying to several places",
+    "note": "Can be used approvingly (pragmatic caution) or critically (lack of commitment), depending on context.",
+    "examples": [
+      {
+        "en": "She hedged her bets by accepting the job offer while still pursuing the other interview.",
+        "es": "Se cubrió las espaldas aceptando la oferta de trabajo mientras seguía con la otra entrevista."
+      },
+      {
+        "en": "The report hedges its bets, refusing to commit to a single economic forecast.",
+        "es": "El informe no se moja y se niega a comprometerse con una sola previsión económica."
+      }
+    ]
+  },
+  {
+    "id": "id-003",
+    "term": "take umbrage",
+    "meaning_en": "To feel offended or resentful, often over something others consider minor or unintentional.",
+    "meaning_es": "Ofenderse o sentirse agraviado, con frecuencia por algo que los demás consideran menor o sin mala intención.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "take umbrage at a remark",
+    "note": "Slightly formal or wry; often implies the speaker considers the offence disproportionate to what was said.",
+    "examples": [
+      {
+        "en": "He took umbrage at the suggestion that his work needed further review.",
+        "es": "Se ofendió ante la insinuación de que su trabajo necesitaba una revisión adicional."
+      },
+      {
+        "en": "She was quick to take umbrage at any criticism, however gently it was phrased.",
+        "es": "Se molestaba con cualquier crítica enseguida, por mucho que se formulara con delicadeza."
+      }
+    ]
+  },
+  {
+    "id": "id-004",
+    "term": "a moot point",
+    "meaning_en": "A question that has lost practical relevance because circumstances have changed, making it pointless to argue either way.",
+    "meaning_es": "Una cuestión que ha perdido relevancia práctica porque las circunstancias han cambiado, por lo que discutirla carece de sentido.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "that's a moot point now",
+    "note": "The debatable-topic sense also exists; context usually signals which is intended. 'That's a moot point now' signals the irrelevance sense.",
+    "examples": [
+      {
+        "en": "Whether the merger would have succeeded is a moot point; the deal fell through.",
+        "es": "Si la fusión habría tenido éxito es algo irrelevante a estas alturas; el acuerdo se fue al traste."
+      },
+      {
+        "en": "The question of additional funding is moot until the project gets final approval.",
+        "es": "La cuestión de la financiación adicional no tiene sentido plantearla hasta que el proyecto reciba aprobación definitiva."
+      }
+    ]
+  },
+  {
+    "id": "id-005",
+    "term": "go against the grain",
+    "meaning_en": "To act contrary to what is natural, expected, or conventional; to resist the prevailing tendency.",
+    "meaning_es": "Actuar en contra de lo que es natural, esperado o convencional; resistir la tendencia dominante.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "goes against the grain of received wisdom",
+    "note": "Often describes resistance to social, professional, or moral norms, not just preference. Can be used approvingly or with mild frustration.",
+    "examples": [
+      {
+        "en": "Voting against the bill went against the grain for a senator who prided himself on party loyalty.",
+        "es": "Votar en contra del proyecto de ley iba en contra de la naturaleza de un senador que se enorgullecía de su lealtad al partido."
+      },
+      {
+        "en": "It goes against the grain to admit defeat after investing so much in the project.",
+        "es": "Reconocer la derrota va contra la corriente cuando se ha invertido tanto en el proyecto."
+      }
+    ]
+  },
+  {
+    "id": "id-006",
+    "term": "read between the lines",
+    "meaning_en": "To understand a hidden or implied meaning that is not explicitly stated in what someone says or writes.",
+    "meaning_es": "Entender un significado implícito u oculto que no se expresa explícitamente en lo que alguien dice o escribe.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "read between the lines of a statement",
+    "note": "Suggests active inference from what is unstated. The implied meaning may be deliberate or simply something the speaker failed to articulate directly.",
+    "examples": [
+      {
+        "en": "Reading between the lines of her email, it was clear she was frustrated with the delay.",
+        "es": "Leyendo entre líneas su correo, quedaba claro que estaba frustrada por el retraso."
+      },
+      {
+        "en": "The press release was upbeat, but anyone reading between the lines could tell the launch had problems.",
+        "es": "El comunicado de prensa era optimista, pero quien supiera leer entre líneas podía ver que el lanzamiento había tenido problemas."
+      }
+    ]
+  },
+  {
+    "id": "id-007",
+    "term": "fly in the face of",
+    "meaning_en": "To act in direct and obvious contradiction to something, such as evidence, logic, convention, or authority.",
+    "meaning_es": "Ir en abierta contradicción con algo: la evidencia, la lógica, la convención o la autoridad.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "fly in the face of the evidence",
+    "note": "Implies a stark, often bold contradiction rather than a quiet inconsistency. Common in formal argument, journalism, and scientific writing.",
+    "examples": [
+      {
+        "en": "The claim flies in the face of decades of peer-reviewed research.",
+        "es": "La afirmación contradice abiertamente décadas de investigación revisada por pares."
+      },
+      {
+        "en": "Her decision to expand the business flew in the face of every financial forecast.",
+        "es": "Su decisión de expandir el negocio iba en contra de todas las previsiones financieras."
+      }
+    ]
+  },
+  {
+    "id": "id-008",
+    "term": "a double-edged sword",
+    "meaning_en": "Something that has both a significant advantage and a significant disadvantage; a benefit that comes with a real cost.",
+    "meaning_es": "Algo que tiene tanto una ventaja importante como un inconveniente importante; un beneficio que conlleva un coste real.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "prove to be a double-edged sword",
+    "note": "Always implies genuine trade-off, not mere inconvenience. The two edges must both be worth naming.",
+    "examples": [
+      {
+        "en": "Social media is a double-edged sword: it connects communities but also amplifies misinformation.",
+        "es": "Las redes sociales son un arma de doble filo: conectan comunidades pero también amplifican la desinformación."
+      },
+      {
+        "en": "Her frankness was a double-edged sword; clients trusted her but colleagues found her blunt.",
+        "es": "Su franqueza era un arma de doble filo: los clientes confiaban en ella, pero los compañeros la encontraban brusca."
+      }
+    ]
+  },
+  {
+    "id": "id-009",
+    "term": "move the goalposts",
+    "meaning_en": "To change the rules, criteria, or expectations after an effort is already underway, making success harder or impossible.",
+    "meaning_es": "Cambiar las reglas, los criterios o las expectativas cuando el esfuerzo ya está en marcha, dificultando o impidiendo el éxito.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "moving the goalposts on the deadline",
+    "note": "Always implies bad faith or frustration; the change is perceived as unfair. Common in workplace and political contexts.",
+    "examples": [
+      {
+        "en": "Every time we met their requirements, the client moved the goalposts.",
+        "es": "Cada vez que cumplíamos sus requisitos, el cliente cambiaba las reglas del juego."
+      },
+      {
+        "en": "Employees became demoralised when management kept moving the goalposts on the performance targets.",
+        "es": "Los empleados se desmoralizaron cuando la dirección seguía cambiando los criterios de rendimiento."
+      }
+    ]
+  },
+  {
+    "id": "id-010",
+    "term": "cut someone some slack",
+    "meaning_en": "To be less harsh in judging or treating someone, especially when they are under pressure or have made a minor mistake.",
+    "meaning_es": "Ser menos severo al juzgar o tratar a alguien, especialmente cuando está bajo presión o ha cometido un error menor.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "cut him some slack; it's his first week",
+    "note": "Usually a request or mild criticism of others' harshness. Also used reflexively: 'I need to cut myself some slack.'",
+    "examples": [
+      {
+        "en": "Cut her some slack; she's only been in the role for two weeks.",
+        "es": "No seas tan duro con ella; solo lleva dos semanas en el puesto."
+      },
+      {
+        "en": "The press didn't cut him any slack despite his public apology.",
+        "es": "La prensa no le perdonó nada a pesar de su disculpa pública."
+      }
+    ]
+  },
+  {
+    "id": "id-011",
+    "term": "leave no stone unturned",
+    "meaning_en": "To try every possible course of action in order to achieve something; to make every possible effort.",
+    "meaning_es": "Intentar todas las opciones posibles para lograr algo; no escatimar esfuerzos en ningún sentido.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "leave no stone unturned in the search",
+    "note": "Positive in tone; stresses thoroughness and determination. Common in professional, legal, and investigative contexts.",
+    "examples": [
+      {
+        "en": "The detective left no stone unturned in his search for the missing witness.",
+        "es": "El detective no dejó ningún cabo suelto en su búsqueda del testigo desaparecido."
+      },
+      {
+        "en": "We will leave no stone unturned to ensure the project is delivered on time.",
+        "es": "No escatimaremos ningún esfuerzo para garantizar que el proyecto se entregue a tiempo."
+      }
+    ]
+  },
+  {
+    "id": "id-012",
+    "term": "on tenterhooks",
+    "meaning_en": "In a state of nervous suspense or anxious uncertainty, waiting for something to be resolved.",
+    "meaning_es": "En un estado de nerviosismo o incertidumbre ansiosa, esperando que algo se resuelva.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "kept on tenterhooks for days",
+    "note": "Used exclusively for anxious suspense while waiting for an outcome. 'Kept on tenterhooks' and 'left on tenterhooks' are common verb collocations.",
+    "examples": [
+      {
+        "en": "The jury's long deliberation left everyone on tenterhooks.",
+        "es": "La larga deliberación del jurado mantuvo a todos en vilo."
+      },
+      {
+        "en": "She sat on tenterhooks all morning, waiting for the audition results.",
+        "es": "Estuvo toda la mañana en ascuas, esperando los resultados de la audición."
+      }
+    ]
+  },
+  {
+    "id": "id-013",
+    "term": "the writing on the wall",
+    "meaning_en": "Clear signs that something bad, especially a failure or ending, is about to happen; an unmistakable warning.",
+    "meaning_es": "Señales evidentes de que algo malo, un fracaso o un final, está a punto de ocurrir; una advertencia inequívoca.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "see the writing on the wall",
+    "note": "'See the writing on the wall' and 'read the writing on the wall' are the most common verb forms; 'ignore' it is also frequent.",
+    "examples": [
+      {
+        "en": "When three major clients left in a month, the writing was on the wall for the agency.",
+        "es": "Cuando tres grandes clientes se marcharon en un mes, la agencia ya tenía los días contados."
+      },
+      {
+        "en": "She read the writing on the wall and resigned before she could be dismissed.",
+        "es": "Vio lo que se avecinaba y dimitió antes de que pudieran despedirla."
+      }
+    ]
+  },
+  {
+    "id": "id-014",
+    "term": "a far cry from",
+    "meaning_en": "Very different from something; notably worse, better, or simply distinct compared to a reference point.",
+    "meaning_es": "Muy diferente de algo; notablemente peor, mejor o simplemente distinto en comparación con un referente.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "a far cry from the original plan",
+    "note": "Does not imply exclusively negative comparison; context determines whether the difference is good, bad, or neutral.",
+    "examples": [
+      {
+        "en": "The finished product was a far cry from the elegant prototype shown at the conference.",
+        "es": "El producto final era muy diferente del elegante prototipo presentado en el congreso."
+      },
+      {
+        "en": "Growing up in rural Montana was a far cry from the city life she'd always imagined for herself.",
+        "es": "Crecer en la Montana rural era algo muy distinto de la vida urbana que siempre se había imaginado."
+      }
+    ]
+  },
+  {
+    "id": "id-015",
+    "term": "by the skin of your teeth",
+    "meaning_en": "Only just managing to do or avoid something; succeeding or escaping with the smallest possible margin.",
+    "meaning_es": "Lograrlo o escapar por los pelos; conseguir algo o evitar algo con el margen más estrecho posible.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "escape by the skin of your teeth",
+    "note": "Conveys an extremely narrow margin; the near-miss is the point. Equally natural in sport, examinations, or any high-stakes escape.",
+    "examples": [
+      {
+        "en": "She passed the bar exam by the skin of her teeth, scoring just one point above the minimum.",
+        "es": "Aprobó el examen del colegio de abogados por los pelos, con solo un punto por encima del mínimo."
+      },
+      {
+        "en": "The team won the championship by the skin of their teeth after a dramatic final minute.",
+        "es": "El equipo ganó el campeonato por los pelos tras un dramático último minuto."
+      }
+    ]
+  },
+  {
+    "id": "id-016",
+    "term": "bite the bullet",
+    "meaning_en": "To endure a painful or difficult situation with courage; to force yourself to do something unpleasant.",
+    "meaning_es": "Aguantar una situación dolorosa o difícil con entereza; obligarse a hacer algo desagradable.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "bite the bullet and make the call",
+    "note": "Often used when the speaker has been procrastinating. Implies the action is unpleasant but unavoidable.",
+    "examples": [
+      {
+        "en": "She bit the bullet and told her manager she wouldn't be meeting the deadline.",
+        "es": "Se armó de valor y le dijo a su jefe que no iba a cumplir el plazo."
+      },
+      {
+        "en": "At some point you have to bite the bullet and get the dentist appointment booked.",
+        "es": "En algún momento tienes que hacer de tripas corazón y pedir cita con el dentista."
+      }
+    ]
+  },
+  {
+    "id": "id-017",
+    "term": "burn your bridges",
+    "meaning_en": "To permanently damage a relationship or close off a future option through your own reckless or hostile actions.",
+    "meaning_es": "Dañar definitivamente una relación o cerrar una opción futura con tus propios actos imprudentes u hostiles.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "burn your bridges with a former employer",
+    "note": "A warning against making permanently hostile exits. 'Don't burn your bridges' is the most common form.",
+    "examples": [
+      {
+        "en": "He burned his bridges at the firm by sending that angry email to the entire partners' group.",
+        "es": "Cortó todos los puentes con el bufete al enviar ese correo furioso a todo el grupo de socios."
+      },
+      {
+        "en": "Before resigning, she made sure not to burn any bridges; you never know when paths cross again.",
+        "es": "Antes de dimitir, se aseguró de no cortar ningún puente; nunca se sabe cuándo los caminos vuelven a cruzarse."
+      }
+    ]
+  },
+  {
+    "id": "id-018",
+    "term": "call someone's bluff",
+    "meaning_en": "To challenge someone to prove a claim or carry out a threat, suspecting they are bluffing and will back down.",
+    "meaning_es": "Desafiar a alguien a demostrar lo que afirma o a cumplir una amenaza, sospechando que está farolando.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "call the government's bluff",
+    "note": "Implies a calculated risk; the person calling the bluff may be wrong if the other party follows through. Common in negotiations and political standoffs.",
+    "examples": [
+      {
+        "en": "When he threatened to quit, his manager called his bluff and said the resignation letter was on her desk.",
+        "es": "Cuando amenazó con dimitir, su jefa le llamó el farol y dijo que la carta de renuncia estaba sobre su mesa."
+      },
+      {
+        "en": "The union called the board's bluff by refusing to negotiate until the pay offer improved.",
+        "es": "El sindicato le tomó la palabra a la junta y se negó a negociar hasta que mejorara la oferta salarial."
+      }
+    ]
+  },
+  {
+    "id": "id-019",
+    "term": "come to a head",
+    "meaning_en": "To reach a crisis point after building gradually; to culminate in a decisive or explosive moment.",
+    "meaning_es": "Llegar a un punto de crisis tras acumularse gradualmente; culminar en un momento decisivo o explosivo.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "tensions came to a head",
+    "note": "Implies prior build-up; the 'head' suggests a pressurised situation finally bursting. Used for conflicts and disputes.",
+    "examples": [
+      {
+        "en": "Months of grievances came to a head at the annual town hall meeting.",
+        "es": "Meses de quejas llegaron a su punto crítico en la reunión anual con todos los empleados."
+      },
+      {
+        "en": "The dispute over territory had been simmering for years before it finally came to a head.",
+        "es": "La disputa territorial llevaba años fraguándose antes de estallar finalmente."
+      }
+    ]
+  },
+  {
+    "id": "id-020",
+    "term": "draw a blank",
+    "meaning_en": "To fail to recall or find something; to get no useful result after an attempt to remember or investigate.",
+    "meaning_es": "No recordar o encontrar algo; no obtener ningún resultado útil tras intentar recordar o investigar.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "draw a blank on someone's name",
+    "note": "Often used for momentary memory failure. 'I drew a blank' signals the search was sincere but unsuccessful.",
+    "examples": [
+      {
+        "en": "She knew she'd met him before, but drew a complete blank on his name.",
+        "es": "Sabía que ya lo había conocido, pero no conseguía recordar en absoluto su nombre."
+      },
+      {
+        "en": "Investigators drew a blank; the hard drive had been wiped clean.",
+        "es": "Los investigadores no encontraron nada; el disco duro había sido borrado por completo."
+      }
+    ]
+  },
+  {
+    "id": "id-021",
+    "term": "give someone the benefit of the doubt",
+    "meaning_en": "To decide to trust or believe someone when the situation is ambiguous, choosing the more charitable interpretation.",
+    "meaning_es": "Decidir confiar en alguien cuando la situación es ambigua, optando por la interpretación más favorable.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "give her the benefit of the doubt this time",
+    "note": "Implies a conscious choice to trust in the absence of proof. Common in legal, professional, and interpersonal contexts.",
+    "examples": [
+      {
+        "en": "He'd never missed a deadline before, so she gave him the benefit of the doubt.",
+        "es": "Nunca había incumplido un plazo antes, así que ella decidió confiar en él."
+      },
+      {
+        "en": "The reviewer gave the debut novelist the benefit of the doubt on the pacing issues.",
+        "es": "El crítico concedió el beneficio de la duda a la novelista debutante respecto a los problemas de ritmo."
+      }
+    ]
+  },
+  {
+    "id": "id-022",
+    "term": "have egg on your face",
+    "meaning_en": "To be left looking foolish or embarrassed, especially after a public mistake or overconfident claim.",
+    "meaning_es": "Quedar en ridículo o avergonzado, especialmente tras un error público o una afirmación demasiado confiada.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "end up with egg on your face",
+    "note": "Usually refers to public embarrassment caused by one's own overconfidence rather than a simple accident.",
+    "examples": [
+      {
+        "en": "The network had egg on its face after calling the election result hours too early.",
+        "es": "La cadena quedó en evidencia tras dar el resultado electoral horas antes de tiempo."
+      },
+      {
+        "en": "He boasted it would be the best product launch in company history and ended up with egg on his face.",
+        "es": "Se jactó de que sería el mejor lanzamiento de producto de la historia de la empresa y acabó con el ridículo encima."
+      }
+    ]
+  },
+  {
+    "id": "id-023",
+    "term": "jump the gun",
+    "meaning_en": "To act too soon, before the right moment or before sufficient information is available; to be premature.",
+    "meaning_es": "Actuar demasiado pronto, antes del momento adecuado o antes de tener suficiente información; ser prematuro.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "jump the gun on an announcement",
+    "note": "Implies eagerness or impatience that proves counterproductive. Common when someone announces, decides, or acts before having all the facts.",
+    "examples": [
+      {
+        "en": "The marketing team jumped the gun by announcing the product before legal clearance was obtained.",
+        "es": "El equipo de marketing se adelantó al anunciar el producto antes de obtener la aprobación legal."
+      },
+      {
+        "en": "Let's not jump the gun; we need the full audit results before making any decisions.",
+        "es": "No nos precipitemos; necesitamos los resultados completos de la auditoría antes de tomar ninguna decisión."
+      }
+    ]
+  },
+  {
+    "id": "id-024",
+    "term": "keep a stiff upper lip",
+    "meaning_en": "To remain stoic and composed in the face of hardship or distress; to show no outward sign of weakness.",
+    "meaning_es": "Mantenerse estoico y sereno ante la adversidad; no mostrar ningún signo externo de debilidad.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "keep a stiff upper lip under pressure",
+    "note": "Associated with a stereotypical British reserve, but used broadly. Can be admiring or gently mocking depending on context.",
+    "examples": [
+      {
+        "en": "She kept a stiff upper lip throughout the proceedings, despite the gravity of the verdict.",
+        "es": "Se mantuvo impasible durante todo el proceso, a pesar de la gravedad del veredicto."
+      },
+      {
+        "en": "His friends urged him to talk about his grief rather than keeping a stiff upper lip.",
+        "es": "Sus amigos le instaron a hablar de su duelo en lugar de guardar la compostura con tanto estoicismo."
+      }
+    ]
+  },
+  {
+    "id": "id-025",
+    "term": "let the cat out of the bag",
+    "meaning_en": "To reveal a secret or surprise that was meant to be kept hidden.",
+    "meaning_es": "Revelar un secreto o una sorpresa que se suponía que debía mantenerse oculta.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "let the cat out of the bag about the engagement",
+    "note": "Often accidental, but can describe any premature or unwanted disclosure. Once revealed, the secret cannot easily be taken back.",
+    "examples": [
+      {
+        "en": "Her brother let the cat out of the bag about the surprise party before she'd even arrived.",
+        "es": "Su hermano fue de la lengua sobre la fiesta sorpresa antes de que ella hubiera llegado siquiera."
+      },
+      {
+        "en": "The memo leaked to the press and the cat was well and truly out of the bag.",
+        "es": "El memorándum se filtró a la prensa y el secreto quedó completamente al descubierto."
+      }
+    ]
+  },
+  {
+    "id": "id-026",
+    "term": "make a mountain out of a molehill",
+    "meaning_en": "To exaggerate the importance or severity of a minor problem; to treat a small matter as if it were a crisis.",
+    "meaning_es": "Exagerar la importancia o la gravedad de un problema menor; tratar un asunto pequeño como si fuera una crisis.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "making a mountain out of a molehill",
+    "note": "Usually critical of the person who is overreacting. The underlying problem is real but being treated as far more serious than it is.",
+    "examples": [
+      {
+        "en": "He's making a mountain out of a molehill; the error was corrected before anyone noticed.",
+        "es": "Está haciendo una montaña de un grano de arena; el error se corrigió antes de que nadie se diera cuenta."
+      },
+      {
+        "en": "Don't make a mountain out of a molehill just because the venue changed.",
+        "es": "No te montes una película solo porque haya cambiado el lugar del evento."
+      }
+    ]
+  },
+  {
+    "id": "id-027",
+    "term": "miss the boat",
+    "meaning_en": "To fail to take advantage of an opportunity because you acted too slowly or left it too late.",
+    "meaning_es": "No aprovechar una oportunidad por haber actuado demasiado despacio o haber llegado demasiado tarde.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "miss the boat on the early-stage investment",
+    "note": "Implies regret about timing; the window has closed. Often used to warn against delay: 'don't miss the boat on this.'",
+    "examples": [
+      {
+        "en": "They missed the boat on streaming and spent years playing catch-up with their competitors.",
+        "es": "Perdieron el tren del streaming y pasaron años intentando ponerse al día con sus competidores."
+      },
+      {
+        "en": "Apply today; there's still time, but don't miss the boat.",
+        "es": "Solicítalo hoy; todavía hay tiempo, pero no dejes que se te escape el tren."
+      }
+    ]
+  },
+  {
+    "id": "id-028",
+    "term": "open a can of worms",
+    "meaning_en": "To raise a topic or take an action that leads to many complicated and unexpected problems.",
+    "meaning_es": "Plantear un tema o tomar una medida que desencadena muchos problemas complicados e inesperados.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "open a whole new can of worms",
+    "note": "Usually a warning; the person considering the action may not realise how messy the consequences will be.",
+    "examples": [
+      {
+        "en": "Asking employees to log their hours opened a can of worms about overtime pay.",
+        "es": "Pedir a los empleados que registraran sus horas destapó la caja de Pandora de las horas extra."
+      },
+      {
+        "en": "Bringing up the inheritance in front of the whole family really opened a can of worms.",
+        "es": "Sacar el tema de la herencia delante de toda la familia abrió una caja de Pandora de verdad."
+      }
+    ]
+  },
+  {
+    "id": "id-029",
+    "term": "paint yourself into a corner",
+    "meaning_en": "To put yourself in a situation where you have no good options left because of earlier decisions or commitments.",
+    "meaning_es": "Meterse en una situación sin salida por decisiones o compromisos anteriores; quedarse sin opciones.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "painted himself into a corner with his promises",
+    "note": "Emphasises self-inflicted constraint through poor planning. The escape routes closed off by one's own actions.",
+    "examples": [
+      {
+        "en": "By promising opposite things to different factions, the politician had painted herself into a corner.",
+        "es": "Al prometer cosas opuestas a distintas facciones, la política había terminado sin salida."
+      },
+      {
+        "en": "Don't agree to a fixed price before you know the scope; you'll paint yourself into a corner.",
+        "es": "No acuerdes un precio fijo antes de conocer el alcance; te quedará sin margen de maniobra."
+      }
+    ]
+  },
+  {
+    "id": "id-030",
+    "term": "put your foot in your mouth",
+    "meaning_en": "To say something tactless, embarrassing, or offensive by mistake, especially in a social situation.",
+    "meaning_es": "Decir algo inapropiado, embarazoso u ofensivo por error, especialmente en una situación social.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "really put his foot in his mouth at the dinner",
+    "note": "Implies clumsiness or thoughtlessness rather than malice. The speaker usually regrets it immediately.",
+    "examples": [
+      {
+        "en": "He put his foot in his mouth by asking when the baby was due; she wasn't pregnant.",
+        "es": "Metió la pata al preguntar cuándo salía de cuentas; ella no estaba embarazada."
+      },
+      {
+        "en": "The spokesperson put her foot in her mouth with a joke that landed very badly on social media.",
+        "es": "La portavoz metió la pata con un chiste que sentó muy mal en las redes sociales."
+      }
+    ]
+  },
+  {
+    "id": "id-031",
+    "term": "rain on someone's parade",
+    "meaning_en": "To spoil someone's plans or dampen their excitement by introducing a problem, criticism, or unwelcome news.",
+    "meaning_es": "Aguarle la fiesta a alguien introduciendo un problema, una crítica o una mala noticia inoportuna.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "hate to rain on your parade, but",
+    "note": "Often introduced with 'I hate to rain on your parade, but…' to soften the deflating effect.",
+    "examples": [
+      {
+        "en": "I hate to rain on your parade, but the venue you booked is fully occupied that weekend.",
+        "es": "Siento aguarte la fiesta, pero el local que reservaste está completamente ocupado ese fin de semana."
+      },
+      {
+        "en": "She finally got good news, and nothing was going to rain on her parade.",
+        "es": "Por fin tenía buenas noticias y nadie iba a arruinarle el momento."
+      }
+    ]
+  },
+  {
+    "id": "id-032",
+    "term": "see eye to eye",
+    "meaning_en": "To agree fully with someone; to share the same opinion or point of view on a matter.",
+    "meaning_es": "Estar completamente de acuerdo con alguien; compartir la misma opinión o punto de vista sobre algo.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "we don't see eye to eye on this",
+    "note": "Most commonly used in negative form: 'they don't see eye to eye.' The disagreement tends to be ongoing rather than a single isolated dispute.",
+    "examples": [
+      {
+        "en": "The two co-founders rarely saw eye to eye on strategy, which eventually led to a split.",
+        "es": "Los dos cofundadores raramente se ponían de acuerdo en la estrategia, lo que acabó llevando a una ruptura."
+      },
+      {
+        "en": "They see eye to eye on most policy issues, which makes collaboration straightforward.",
+        "es": "Coinciden en la mayoría de los temas de política, lo que facilita la colaboración."
+      }
+    ]
+  },
+  {
+    "id": "id-033",
+    "term": "shoot yourself in the foot",
+    "meaning_en": "To accidentally harm your own interests or cause yourself problems through your own actions or words.",
+    "meaning_es": "Perjudicar tus propios intereses o crearte problemas accidentalmente con tus propias acciones o palabras.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "shot themselves in the foot with that decision",
+    "note": "Implies clumsy self-sabotage. The damage is real and self-inflicted, though not necessarily intentional.",
+    "examples": [
+      {
+        "en": "The company shot itself in the foot by announcing the product recall so late.",
+        "es": "La empresa se tiró piedras sobre su propio tejado al anunciar la retirada del producto tan tarde."
+      },
+      {
+        "en": "He shot himself in the foot during the negotiation by revealing his bottom line too early.",
+        "es": "Se disparó en el pie durante la negociación al revelar su límite mínimo demasiado pronto."
+      }
+    ]
+  },
+  {
+    "id": "id-034",
+    "term": "steal someone's thunder",
+    "meaning_en": "To take attention or credit away from someone, especially by upstaging an announcement or achievement.",
+    "meaning_es": "Quitarle protagonismo o mérito a alguien, sobre todo eclipsando un anuncio o un logro.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "steal the bride's thunder",
+    "note": "Often unintentional; the context need not be competitive. The person whose thunder is stolen usually feels upstaged.",
+    "examples": [
+      {
+        "en": "The rival company stole their thunder by launching an almost identical product one week earlier.",
+        "es": "La empresa rival les robó el protagonismo lanzando un producto casi idéntico una semana antes."
+      },
+      {
+        "en": "Her promotion announcement was rather stolen by the CEO's resignation, which broke the same day.",
+        "es": "Su anuncio de ascenso quedó eclipsado por la dimisión del director general, que se conoció el mismo día."
+      }
+    ]
+  },
+  {
+    "id": "id-035",
+    "term": "the elephant in the room",
+    "meaning_en": "An obvious problem or uncomfortable truth that everyone is aware of but no one wants to address or mention.",
+    "meaning_es": "Un problema obvio o una verdad incómoda que todos conocen pero nadie quiere abordar ni mencionar.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "address the elephant in the room",
+    "note": "Emphasises collective avoidance. Usually introduced to break the silence, as in 'Let's address the elephant in the room.'",
+    "examples": [
+      {
+        "en": "No one mentioned the budget shortfall; the elephant in the room sat there for the entire meeting.",
+        "es": "Nadie mencionó el déficit presupuestario; el elefante en la habitación estuvo ahí durante toda la reunión."
+      },
+      {
+        "en": "I'll address the elephant in the room: the two of them haven't spoken in months.",
+        "es": "Diré lo que nadie quiere decir: los dos llevan meses sin hablarse."
+      }
+    ]
+  },
+  {
+    "id": "id-036",
+    "term": "the tip of the iceberg",
+    "meaning_en": "A small visible part of a much larger problem or situation that mostly remains hidden from view.",
+    "meaning_es": "Una pequeña parte visible de un problema o situación mucho mayor que permanece en gran medida oculto.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "just the tip of the iceberg",
+    "note": "Almost always negative; implies the hidden part is the dangerous or significant portion.",
+    "examples": [
+      {
+        "en": "The five complaints they received were just the tip of the iceberg.",
+        "es": "Las cinco quejas que recibieron eran solo la punta del iceberg."
+      },
+      {
+        "en": "The security breach turned out to be the tip of the iceberg; the entire network was compromised.",
+        "es": "La brecha de seguridad resultó ser la punta del iceberg; toda la red estaba comprometida."
+      }
+    ]
+  },
+  {
+    "id": "id-037",
+    "term": "throw someone under the bus",
+    "meaning_en": "To sacrifice or betray someone to protect yourself, especially by blaming them unfairly for a shared failure.",
+    "meaning_es": "Sacrificar o traicionar a alguien para protegerte, sobre todo culpándole injustamente de un fracaso compartido.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "throw a colleague under the bus",
+    "note": "Strongly negative; implies disloyalty and self-interest. Common in corporate and political contexts.",
+    "examples": [
+      {
+        "en": "When the project failed, the director threw his deputy under the bus in front of the board.",
+        "es": "Cuando el proyecto fracasó, el director culpó a su subdirector delante del consejo de administración."
+      },
+      {
+        "en": "She refused to throw her team under the bus and accepted full responsibility for the error.",
+        "es": "Se negó a cargar las culpas a su equipo y asumió plena responsabilidad por el error."
+      }
+    ]
+  },
+  {
+    "id": "id-038",
+    "term": "upset the apple cart",
+    "meaning_en": "To disrupt a settled arrangement or situation, often unexpectedly, causing disorder or inconvenience.",
+    "meaning_es": "Perturbar un plan o situación establecidos, a menudo inesperadamente, causando desorden o inconvenientes.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "upset the apple cart with a last-minute change",
+    "note": "The upset may be accidental or deliberate. Not always fully negative; sometimes the disruption is welcome.",
+    "examples": [
+      {
+        "en": "A late amendment to the bill upset the apple cart just hours before the scheduled vote.",
+        "es": "Una enmienda de última hora desbarató los planes justo horas antes de la votación prevista."
+      },
+      {
+        "en": "He wasn't afraid to upset the apple cart if he thought the process was flawed.",
+        "es": "No le asustaba agitar las aguas si creía que el proceso era defectuoso."
+      }
+    ]
+  },
+  {
+    "id": "id-039",
+    "term": "a blessing in disguise",
+    "meaning_en": "Something that seems bad or unfortunate at first but turns out to have an unexpected positive outcome.",
+    "meaning_es": "Algo que parece malo o desafortunado en un primer momento pero que resulta tener un resultado positivo inesperado.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "the redundancy turned out to be a blessing in disguise",
+    "note": "Typically used in retrospect, once the benefit is clear. Forward-looking use ('this could be a blessing in disguise') is hopeful but speculative.",
+    "examples": [
+      {
+        "en": "Losing that contract was a blessing in disguise; it freed them to pursue a better opportunity.",
+        "es": "Perder ese contrato fue una bendición disfrazada; les liberó para perseguir una oportunidad mejor."
+      },
+      {
+        "en": "Being stuck at home turned out to be a blessing in disguise; she finally finished the novel.",
+        "es": "Estar en casa resultó ser un bien disfrazado de mal; por fin terminó la novela."
+      }
+    ]
+  },
+  {
+    "id": "id-040",
+    "term": "add fuel to the fire",
+    "meaning_en": "To make an already tense or heated situation worse by saying or doing something that inflames it further.",
+    "meaning_es": "Empeorar una situación ya tensa o encendida diciendo o haciendo algo que la aviva aún más.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "add fuel to the fire with an ill-timed comment",
+    "note": "Also 'add fuel to the flames'. The action can be deliberate or careless; the effect is a further intensification of the tension or conflict.",
+    "examples": [
+      {
+        "en": "His sarcastic reply only added fuel to the fire during an already tense negotiation.",
+        "es": "Su respuesta sarcástica no hizo sino echar más leña al fuego durante una negociación ya de por sí tensa."
+      },
+      {
+        "en": "The leaked emails added fuel to the fire just as the scandal seemed to be dying down.",
+        "es": "Los correos filtrados echaron más leña al fuego justo cuando el escándalo parecía estar apagándose."
+      }
+    ]
+  },
+  {
+    "id": "id-041",
+    "term": "at the drop of a hat",
+    "meaning_en": "Immediately and without hesitation; ready to act at any moment without needing advance notice.",
+    "meaning_es": "De inmediato y sin vacilar; dispuesto a actuar en cualquier momento sin necesidad de aviso previo.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "willing to travel at the drop of a hat",
+    "note": "Usually positive or neutral; conveys eagerness or flexibility. Can also imply volatility in emotional contexts.",
+    "examples": [
+      {
+        "en": "She'd pack up and move to a new city at the drop of a hat if the right job came along.",
+        "es": "Haría las maletas y se mudaría a una ciudad nueva en un abrir y cerrar de ojos si apareciese el trabajo adecuado."
+      },
+      {
+        "en": "As a freelancer, he learned to be available at the drop of a hat.",
+        "es": "Como autónomo, aprendió a estar disponible en cualquier momento."
+      }
+    ]
+  },
+  {
+    "id": "id-042",
+    "term": "back to square one",
+    "meaning_en": "Having to start a process all over again because an attempt has failed or progress has been lost.",
+    "meaning_es": "Tener que empezar un proceso de nuevo porque un intento ha fallado o se ha perdido el progreso.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "back to square one after the deal collapsed",
+    "note": "Implies wasted effort and some frustration. Often used to signal a reset in planning or problem-solving.",
+    "examples": [
+      {
+        "en": "The prototype failed the safety test, sending the engineering team back to square one.",
+        "es": "El prototipo no superó la prueba de seguridad y el equipo de ingeniería tuvo que volver a empezar desde cero."
+      },
+      {
+        "en": "After the funding fell through, it was back to square one for the whole project.",
+        "es": "Cuando la financiación se vino abajo, todo el proyecto tuvo que comenzar desde cero de nuevo."
+      }
+    ]
+  },
+  {
+    "id": "id-043",
+    "term": "beat around the bush",
+    "meaning_en": "To avoid addressing the main point directly; to talk around a subject without saying what you actually mean.",
+    "meaning_es": "Evitar abordar el punto principal directamente; hablar por las ramas sin decir lo que realmente se quiere decir.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "stop beating around the bush",
+    "note": "'Stop beating around the bush and tell me' is the most common construction. Implies impatience with indirect speech.",
+    "examples": [
+      {
+        "en": "Stop beating around the bush; if you want a pay rise, ask for one.",
+        "es": "Deja de andarte por las ramas; si quieres un aumento, pídeselo directamente."
+      },
+      {
+        "en": "He beat around the bush for ten minutes before admitting he'd missed the deadline.",
+        "es": "Estuvo dando rodeos durante diez minutos antes de admitir que había incumplido el plazo."
+      }
+    ]
+  },
+  {
+    "id": "id-044",
+    "term": "bite off more than you can chew",
+    "meaning_en": "To take on more than you are capable of handling; to overcommit and then struggle to deliver.",
+    "meaning_es": "Abarcar más de lo que se puede manejar; comprometerse en exceso y luego tener dificultades para cumplir.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "bitten off more than they can chew",
+    "note": "Usually observed by others rather than admitted by the person. The warning is often given before the commitment.",
+    "examples": [
+      {
+        "en": "She took on three major projects at once and quickly realised she'd bitten off more than she could chew.",
+        "es": "Asumió tres proyectos importantes a la vez y pronto se dio cuenta de que había abarcado demasiado."
+      },
+      {
+        "en": "The small firm bid for the contract without realising it had bitten off more than it could chew.",
+        "es": "La pequeña empresa pujó por el contrato sin darse cuenta de que había apostado por más de lo que podía asumir."
+      }
+    ]
+  },
+  {
+    "id": "id-045",
+    "term": "blow hot and cold",
+    "meaning_en": "To alternate between enthusiasm and indifference; to be inconsistent or unpredictable in your attitude toward something.",
+    "meaning_es": "Alternar entre entusiasmo e indiferencia; ser inconsistente o imprevisible en la actitud hacia algo.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "blowing hot and cold about the deal",
+    "note": "Often used in relationships or negotiations to describe unreliable or mixed signals over an extended period.",
+    "examples": [
+      {
+        "en": "The client blew hot and cold for weeks before finally signing the contract.",
+        "es": "El cliente estuvo dando señales contradictorias durante semanas antes de firmar el contrato finalmente."
+      },
+      {
+        "en": "She grew tired of his blowing hot and cold and ended the relationship.",
+        "es": "Se hartó de sus cambios de humor y de sus vaivenes, y terminó la relación."
+      }
+    ]
+  },
+  {
+    "id": "id-046",
+    "term": "bury the hatchet",
+    "meaning_en": "To end a disagreement or feud and make peace with someone; to agree to forget past hostilities.",
+    "meaning_es": "Poner fin a una disputa o enemistad y hacer las paces con alguien; acordar olvidar las hostilidades pasadas.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "bury the hatchet after years of conflict",
+    "note": "Implies mutual agreement to move on; one side alone rarely succeeds. Often used after prolonged rivalry or a specific public dispute.",
+    "examples": [
+      {
+        "en": "The two rival departments finally buried the hatchet after a mediated meeting.",
+        "es": "Los dos departamentos rivales enterraron el hacha de guerra tras una reunión de mediación."
+      },
+      {
+        "en": "It was time to bury the hatchet; the argument had gone on far too long.",
+        "es": "Era hora de enterrar el hacha de guerra; la discusión había durado demasiado tiempo."
+      }
+    ]
+  },
+  {
+    "id": "id-047",
+    "term": "caught red-handed",
+    "meaning_en": "Caught in the act of doing something wrong, with no possibility of denial because the evidence is undeniable.",
+    "meaning_es": "Pillado en el acto de hacer algo indebido, sin posibilidad de negarlo porque la evidencia es irrefutable.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "caught red-handed stealing from the till",
+    "note": "Used for any wrongdoing discovered in progress. The key element is undeniable evidence at the moment of discovery.",
+    "examples": [
+      {
+        "en": "The audit caught the manager red-handed, falsifying expense reports.",
+        "es": "La auditoría pilló al directivo con las manos en la masa falsificando informes de gastos."
+      },
+      {
+        "en": "She was caught red-handed copying a competitor's design and had to settle out of court.",
+        "es": "La pillaron con las manos en la masa copiando el diseño de un competidor y tuvo que llegar a un acuerdo extrajudicial."
+      }
+    ]
+  },
+  {
+    "id": "id-048",
+    "term": "cut to the chase",
+    "meaning_en": "To get directly to the important point without spending time on less important details or preamble.",
+    "meaning_es": "Ir directamente al punto importante sin dedicar tiempo a detalles menores o preámbulos.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "let me cut to the chase",
+    "note": "A polite but direct way to skip preamble. 'Let me cut to the chase' signals the speaker is about to say something consequential.",
+    "examples": [
+      {
+        "en": "Let me cut to the chase: we like your proposal, but the budget doesn't work.",
+        "es": "Voy al grano: nos gusta tu propuesta, pero el presupuesto no cuadra."
+      },
+      {
+        "en": "After the long preamble, she cut to the chase and told them the contract had been cancelled.",
+        "es": "Tras el largo preámbulo, fue al grano y les dijo que el contrato había sido cancelado."
+      }
+    ]
+  },
+  {
+    "id": "id-049",
+    "term": "dead in the water",
+    "meaning_en": "Unable to make progress or move forward; stalled under current conditions with no clear path to recovery.",
+    "meaning_es": "Incapaz de avanzar o progresar; paralizado en las condiciones actuales sin una vía clara de recuperación.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "the bill is dead in the water",
+    "note": "Suggests a situation is stuck rather than necessarily finished for good. Common in political, business, and legal contexts.",
+    "examples": [
+      {
+        "en": "Without cross-party support, the reform bill was dead in the water before the vote.",
+        "es": "Sin apoyo de otros partidos, el proyecto de reforma estaba muerto antes de la votación."
+      },
+      {
+        "en": "The startup was dead in the water once its lead investor pulled out.",
+        "es": "La startup estaba acabada en cuanto su inversor principal se retiró."
+      }
+    ]
+  },
+  {
+    "id": "id-050",
+    "term": "drag your feet",
+    "meaning_en": "To act slowly or reluctantly, especially to delay or avoid doing something you do not want to do.",
+    "meaning_es": "Actuar con lentitud o de mala gana, sobre todo para demorar o evitar hacer algo que no se desea hacer.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "dragging its feet on the investigation",
+    "note": "Implies deliberate slowness rather than mere incompetence. Often used to suggest bad faith in official contexts.",
+    "examples": [
+      {
+        "en": "Critics accused the regulator of dragging its feet on the investigation.",
+        "es": "Los críticos acusaron al regulador de no avanzar en la investigación intencionadamente."
+      },
+      {
+        "en": "She'd been dragging her feet on the apology for weeks, which made matters worse.",
+        "es": "Llevaba semanas demorando la disculpa, lo que empeoraba las cosas."
+      }
+    ]
+  },
+  {
+    "id": "id-051",
+    "term": "fall through the cracks",
+    "meaning_en": "To be missed or overlooked by a system, process, or institution that should have caught or addressed the issue.",
+    "meaning_es": "Pasar desapercibido o ser ignorado por un sistema, proceso o institución que debería haberlo detectado.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "fall through the cracks of the system",
+    "note": "Usually describes systemic failure rather than individual negligence. The subject is a victim of the gap, not a cause.",
+    "examples": [
+      {
+        "en": "Too many vulnerable young people are falling through the cracks of the social care system.",
+        "es": "Demasiados jóvenes en situación vulnerable caen por las grietas del sistema de servicios sociales."
+      },
+      {
+        "en": "The invoice fell through the cracks during the finance team's restructuring.",
+        "es": "La factura se perdió entre los flecos durante la reestructuración del equipo financiero."
+      }
+    ]
+  },
+  {
+    "id": "id-052",
+    "term": "get a taste of your own medicine",
+    "meaning_en": "To experience the same unpleasant treatment you have been giving to others; to suffer what you have caused others to suffer.",
+    "meaning_es": "Recibir el mismo trato desagradable que uno ha dado a los demás; sufrir lo que uno ha causado que otros sufran.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "got a taste of his own medicine",
+    "note": "Usually described with satisfaction by an observer. Implies the experience is instructive or deserved.",
+    "examples": [
+      {
+        "en": "He always interrupted others in meetings; it was refreshing when he got a taste of his own medicine.",
+        "es": "Siempre interrumpía a los demás en las reuniones; fue reconfortante verle recibir su propia medicina."
+      },
+      {
+        "en": "When the bully became the new student at a different school, she got a taste of her own medicine.",
+        "es": "Cuando la acosadora se convirtió en la chica nueva en otro colegio, le dieron con su propia medicina."
+      }
+    ]
+  },
+  {
+    "id": "id-053",
+    "term": "go out on a limb",
+    "meaning_en": "To take a risk by stating an opinion, making a prediction, or taking action that exposes you to criticism or failure.",
+    "meaning_es": "Arriesgarse expresando una opinión, haciendo una predicción o actuando de un modo que te expone a la crítica o al fracaso.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "go out on a limb and say",
+    "note": "The speaker voluntarily accepts vulnerability. 'I'll go out on a limb and say…' signals a bold or contrarian view.",
+    "examples": [
+      {
+        "en": "I'll go out on a limb and predict that the incumbent loses by a double-digit margin.",
+        "es": "Me arriesgo a predecir que el incumbente pierde por un margen de dos dígitos."
+      },
+      {
+        "en": "She went out on a limb defending the plan when everyone else in the room was against it.",
+        "es": "Arriesgó el tipo defendiendo el plan cuando todos los demás en la sala estaban en contra."
+      }
+    ]
+  },
+  {
+    "id": "id-054",
+    "term": "hold your horses",
+    "meaning_en": "To slow down or wait before acting; used to tell someone to be more patient or less impulsive.",
+    "meaning_es": "Detenerse o esperar antes de actuar; se usa para pedir a alguien que sea más paciente o menos impulsivo.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "hold your horses before signing anything",
+    "note": "Informal and often urgent in tone. Used to interrupt rash action rather than to counsel long-term patience.",
+    "examples": [
+      {
+        "en": "Hold your horses; we haven't seen the final terms of the agreement yet.",
+        "es": "Para el carro; aún no hemos visto los términos definitivos del acuerdo."
+      },
+      {
+        "en": "She told him to hold his horses before he booked flights for a trip that wasn't confirmed.",
+        "es": "Le dijo que frenara antes de reservar los vuelos para un viaje que no estaba confirmado."
+      }
+    ]
+  },
+  {
+    "id": "id-055",
+    "term": "in hot water",
+    "meaning_en": "In a situation of serious trouble or facing criticism, typically because of something that has gone wrong.",
+    "meaning_es": "En una situación de serios problemas o bajo críticas, generalmente por algo que ha salido mal.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "in hot water over the comments",
+    "note": "Implies external judgment or consequences. The trouble may be self-inflicted or the result of circumstances outside one's control.",
+    "examples": [
+      {
+        "en": "The executive found himself in hot water after the off-the-record remarks were published.",
+        "es": "El directivo se metió en un buen lío cuando sus comentarios extraoficiales fueron publicados."
+      },
+      {
+        "en": "The charity got into hot water for spending a large proportion of donations on administration.",
+        "es": "La organización benéfica se ganó las críticas por gastar una gran parte de los donativos en administración."
+      }
+    ]
+  },
+  {
+    "id": "id-056",
+    "term": "jump through hoops",
+    "meaning_en": "To comply with many difficult or bureaucratic requirements in order to achieve something; to go to great lengths.",
+    "meaning_es": "Cumplir múltiples requisitos difíciles o burocráticos para conseguir algo; hacer grandes esfuerzos.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "jump through hoops to get approval",
+    "note": "Implies the process is unreasonably demanding. The frustration is directed at the system, not the person complying.",
+    "examples": [
+      {
+        "en": "They had to jump through hoops to get the planning permission approved.",
+        "es": "Tuvieron que sortear un sinfín de obstáculos burocráticos para conseguir que aprobaran el permiso urbanístico."
+      },
+      {
+        "en": "Small businesses shouldn't have to jump through hoops just to access basic government support.",
+        "es": "Las pequeñas empresas no deberían tener que superar tantos obstáculos para acceder a ayudas públicas básicas."
+      }
+    ]
+  },
+  {
+    "id": "id-057",
+    "term": "keep your cards close to your chest",
+    "meaning_en": "To conceal your intentions, plans, or information; to avoid revealing anything that others could use against you.",
+    "meaning_es": "Guardar tus intenciones, planes o información; evitar revelar algo que otros puedan usar en tu contra.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "keeps her cards close to her chest in negotiations",
+    "note": "Neutral or positive in tone; implies strategic caution. Often admired in negotiation and business contexts.",
+    "examples": [
+      {
+        "en": "She kept her cards close to her chest throughout the merger talks.",
+        "es": "Guardó bien sus cartas durante todas las conversaciones sobre la fusión."
+      },
+      {
+        "en": "He never confirmed or denied the rumours, preferring to keep his cards close to his chest.",
+        "es": "Nunca confirmó ni desmintió los rumores, prefiriendo no mostrar sus cartas."
+      }
+    ]
+  },
+  {
+    "id": "id-058",
+    "term": "kick the can down the road",
+    "meaning_en": "To delay dealing with a problem by putting it off to a later date, without actually resolving it.",
+    "meaning_es": "Retrasar la resolución de un problema aplazándolo a una fecha posterior sin resolverlo realmente.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "kick the budget crisis down the road",
+    "note": "Common in political and financial journalism. Implies the delay makes the eventual problem worse, not better.",
+    "examples": [
+      {
+        "en": "The government's solution was to kick the pension reform down the road until after the election.",
+        "es": "La solución del gobierno fue aplazar la reforma de las pensiones hasta después de las elecciones."
+      },
+      {
+        "en": "We can't keep kicking this staffing issue down the road; it needs to be resolved now.",
+        "es": "No podemos seguir dando largas a este problema de personal; tiene que resolverse ahora."
+      }
+    ]
+  },
+  {
+    "id": "id-059",
+    "term": "let sleeping dogs lie",
+    "meaning_en": "To avoid raising an old or sensitive issue that could cause unnecessary trouble if brought up again.",
+    "meaning_es": "Evitar resucitar un asunto antiguo o delicado que podría causar problemas innecesarios si se vuelve a plantear.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "better to let sleeping dogs lie",
+    "note": "Advice-giving form is common: 'better to let sleeping dogs lie.' The issue is resolved enough to leave alone.",
+    "examples": [
+      {
+        "en": "They'd settled the dispute years ago; better to let sleeping dogs lie.",
+        "es": "Habían resuelto la disputa años atrás; mejor no revolver lo pasado."
+      },
+      {
+        "en": "She decided to let sleeping dogs lie rather than reopen the investigation.",
+        "es": "Decidió no remover el pasado en lugar de reabrir la investigación."
+      }
+    ]
+  },
+  {
+    "id": "id-060",
+    "term": "lose the plot",
+    "meaning_en": "To lose one's ability to think or behave rationally; to become confused, overwhelmed, or erratic.",
+    "meaning_es": "Perder la capacidad de pensar o comportarse con sensatez; volverse confuso, desbordado o errático.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "completely lost the plot",
+    "note": "British English in origin but widely understood. Can describe a person, an organisation, or a creative work.",
+    "examples": [
+      {
+        "en": "The CEO seemed to have lost the plot during the earnings call, rambling for twenty minutes.",
+        "es": "El director general parecía haber perdido el hilo durante la conferencia de resultados, divagando durante veinte minutos."
+      },
+      {
+        "en": "The show lost the plot in its fourth season and never recovered its original charm.",
+        "es": "La serie se fue por los cerros de Úbeda en su cuarta temporada y nunca recuperó su encanto original."
+      }
+    ]
+  },
+  {
+    "id": "id-061",
+    "term": "make ends meet",
+    "meaning_en": "To have just enough money to cover your basic expenses; to manage financially with limited resources.",
+    "meaning_es": "Tener justo lo suficiente para cubrir los gastos básicos; apañárselas económicamente con recursos limitados.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "struggling to make ends meet",
+    "note": "'Struggling to make ends meet' is the most common collocational form. Implies financial pressure without dramatising it.",
+    "examples": [
+      {
+        "en": "With rent rising every year, many families are struggling to make ends meet.",
+        "es": "Con el alquiler subiendo cada año, muchas familias tienen dificultades para llegar a fin de mes."
+      },
+      {
+        "en": "She took on a second job just to make ends meet after the pay cut.",
+        "es": "Buscó un segundo trabajo solo para llegar a fin de mes tras el recorte salarial."
+      }
+    ]
+  },
+  {
+    "id": "id-062",
+    "term": "nail your colours to the mast",
+    "meaning_en": "To make your position or beliefs clearly and publicly known, with no intention of retreating from them.",
+    "meaning_es": "Hacer públicamente clara tu postura o tus convicciones, sin intención de retroceder.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "nail your colours to the mast on the issue",
+    "note": "Implies a public, hard-to-reverse commitment. Favoured in political and journalistic contexts when someone declares a firm position.",
+    "examples": [
+      {
+        "en": "The senator nailed her colours to the mast early, becoming the first to publicly back the challenger.",
+        "es": "La senadora dejó clara su postura desde el principio, siendo la primera en apoyar públicamente al rival."
+      },
+      {
+        "en": "It's time to nail your colours to the mast; the committee needs to know where you stand.",
+        "es": "Es hora de dejar clara tu postura; el comité necesita saber en qué posición estás."
+      }
+    ]
+  },
+  {
+    "id": "id-063",
+    "term": "not hold water",
+    "meaning_en": "To be unable to withstand scrutiny; used of arguments, claims, or theories that fail under examination.",
+    "meaning_es": "No resistir el escrutinio; se usa para argumentos, afirmaciones o teorías que no se sostienen cuando se examinan.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "argument simply doesn't hold water",
+    "note": "The weakness may be logical, factual, or evidential. Applied to arguments and claims, not to people. Common in legal and journalistic contexts.",
+    "examples": [
+      {
+        "en": "The defence's central argument doesn't hold water when you look at the forensic evidence.",
+        "es": "El argumento central de la defensa no se sostiene cuando se examina la evidencia forense."
+      },
+      {
+        "en": "His theory about the market collapse doesn't hold water; the data tell a different story.",
+        "es": "Su teoría sobre el colapso del mercado no se sostiene; los datos cuentan una historia diferente."
+      }
+    ]
+  },
+  {
+    "id": "id-064",
+    "term": "once in a blue moon",
+    "meaning_en": "Very rarely; on occasions so infrequent as to be almost exceptional.",
+    "meaning_es": "Muy de vez en cuando; en ocasiones tan poco frecuentes que resultan casi excepcionales.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "happens once in a blue moon",
+    "note": "Conveys genuine rarity, not mere infrequency. Often used with emphasis: 'once in a very blue moon' for even rarer events.",
+    "examples": [
+      {
+        "en": "She only visited her hometown once in a blue moon after moving abroad.",
+        "es": "Solo visitaba su ciudad natal de pascuas a ramos desde que se mudó al extranjero."
+      },
+      {
+        "en": "Once in a blue moon you get a case that genuinely redefines the law.",
+        "es": "De vez en cuando surge un caso que redefine genuinamente la ley."
+      }
+    ]
+  },
+  {
+    "id": "id-065",
+    "term": "over a barrel",
+    "meaning_en": "In a position where you have no choice but to comply with what someone else demands; powerless to resist.",
+    "meaning_es": "En una posición en la que no tienes más remedio que ceder a las exigencias de otro; sin poder resistirte.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "have someone over a barrel",
+    "note": "The vulnerability is situational, not personal. Usually someone else has engineered the position deliberately.",
+    "examples": [
+      {
+        "en": "With only one supplier for the key component, the manufacturer was over a barrel.",
+        "es": "Con un solo proveedor para el componente clave, el fabricante estaba a merced de los demás."
+      },
+      {
+        "en": "They knew we needed the deal done by Friday and had us over a barrel on pricing.",
+        "es": "Sabían que necesitábamos cerrar el trato antes del viernes y nos tenían a su merced en cuanto al precio."
+      }
+    ]
+  },
+  {
+    "id": "id-066",
+    "term": "par for the course",
+    "meaning_en": "What is normal or expected; no better or worse than the standard outcome in a given situation.",
+    "meaning_es": "Lo que es normal o esperado; ni mejor ni peor que el resultado habitual en una situación determinada.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "delays are par for the course",
+    "note": "Neutral and unsurprised in tone; describes standard, expected outcomes. Can apply to delays, mistakes, or any recurring pattern.",
+    "examples": [
+      {
+        "en": "A six-month delay is par for the course in major infrastructure projects.",
+        "es": "Un retraso de seis meses es lo habitual en grandes proyectos de infraestructura."
+      },
+      {
+        "en": "Miscommunication between departments is par for the course during a merger.",
+        "es": "La falta de comunicación entre departamentos es algo de esperar durante una fusión."
+      }
+    ]
+  },
+  {
+    "id": "id-067",
+    "term": "pass the buck",
+    "meaning_en": "To shift responsibility onto someone else; to avoid accountability by redirecting blame or duty to another person.",
+    "meaning_es": "Trasladar la responsabilidad a otra persona; eludir la rendición de cuentas redirigiendo la culpa o la obligación.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "pass the buck to the next department",
+    "note": "Implies deliberate avoidance rather than genuine confusion about roles. Often describes institutional or organisational behaviour.",
+    "examples": [
+      {
+        "en": "Instead of addressing the problem, the manager passed the buck to the legal team.",
+        "es": "En lugar de afrontar el problema, el directivo le pasó la pelota al equipo jurídico."
+      },
+      {
+        "en": "There was too much buck-passing; nobody wanted to be the person who made the final call.",
+        "es": "Había demasiado escaqueo; nadie quería ser quien tomara la decisión final."
+      }
+    ]
+  },
+  {
+    "id": "id-068",
+    "term": "pull out all the stops",
+    "meaning_en": "To make every possible effort and use every available resource in order to achieve something.",
+    "meaning_es": "Hacer todos los esfuerzos posibles y utilizar todos los recursos disponibles para lograr algo.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "pull out all the stops for the launch",
+    "note": "Usually positive; implies an all-out commitment of effort and resources. Common in event planning, legal, and competitive contexts.",
+    "examples": [
+      {
+        "en": "The organisers pulled out all the stops to make the anniversary gala memorable.",
+        "es": "Los organizadores no escatimaron en recursos para que la gala del aniversario fuera memorable."
+      },
+      {
+        "en": "The defence team pulled out all the stops, calling expert witnesses from three countries.",
+        "es": "El equipo de defensa echó el resto, llamando a testigos expertos de tres países."
+      }
+    ]
+  },
+  {
+    "id": "id-069",
+    "term": "put the cart before the horse",
+    "meaning_en": "To do things in the wrong order; to treat a secondary matter as if it should come before the primary one.",
+    "meaning_es": "Hacer las cosas en el orden equivocado; tratar un asunto secundario como si debiera ir antes que el principal.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "putting the cart before the horse on branding",
+    "note": "The error is one of sequence rather than substance. Often used to slow down premature planning.",
+    "examples": [
+      {
+        "en": "Hiring a marketing director before you have a product is putting the cart before the horse.",
+        "es": "Contratar a un director de marketing antes de tener un producto es poner el carro delante del caballo."
+      },
+      {
+        "en": "Let's not put the cart before the horse; we need board approval before approaching investors.",
+        "es": "No pongamos el carro delante del caballo; necesitamos la aprobación del consejo antes de hablar con inversores."
+      }
+    ]
+  },
+  {
+    "id": "id-070",
+    "term": "put the cat among the pigeons",
+    "meaning_en": "To say or do something that causes alarm, controversy, or disorder in a previously settled situation.",
+    "meaning_es": "Decir o hacer algo que provoca alarma, controversia o desorden en una situación previamente estable.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "really put the cat among the pigeons",
+    "note": "Chiefly British. Implies a sudden, dramatic disruption; the 'cat' may be a person, an announcement, or a revelation.",
+    "examples": [
+      {
+        "en": "His resignation letter put the cat among the pigeons in what had been a quiet summer recess.",
+        "es": "Su carta de dimisión sembró la confusión en lo que había sido un tranquilo receso veraniego."
+      },
+      {
+        "en": "The leaked memo put the cat among the pigeons just before the annual conference.",
+        "es": "El memorándum filtrado puso todo patas arriba justo antes del congreso anual."
+      }
+    ]
+  },
+  {
+    "id": "id-071",
+    "term": "a red herring",
+    "meaning_en": "A misleading clue, argument, or piece of information that distracts attention from the real issue.",
+    "meaning_es": "Una pista, argumento o información engañosa que distrae la atención del verdadero asunto.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "the alibi was a red herring",
+    "note": "The misleading element is introduced to divert attention, whether deliberately or by accident. Common in mystery, legal, and political contexts.",
+    "examples": [
+      {
+        "en": "The suspect's alibi turned out to be a red herring; he had been at the scene all along.",
+        "es": "La coartada del sospechoso resultó ser una pista falsa; había estado en el lugar de los hechos todo el tiempo."
+      },
+      {
+        "en": "The debate about the logo was a red herring; the real issue was the product itself.",
+        "es": "El debate sobre el logotipo era una distracción; el verdadero problema era el propio producto."
+      }
+    ]
+  },
+  {
+    "id": "id-072",
+    "term": "rub salt in the wound",
+    "meaning_en": "To make a bad situation worse by saying or doing something that adds to someone's distress or humiliation.",
+    "meaning_es": "Empeorar una situación ya mala diciendo o haciendo algo que agrava el malestar o la humillación de alguien.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "rubbing salt in the wound by mentioning it",
+    "note": "Can be deliberate or unintentional. The wound already exists; the salt is an additional, avoidable hurt.",
+    "examples": [
+      {
+        "en": "Announcing the bonus scheme the day after layoffs was rubbing salt in the wound.",
+        "es": "Anunciar el plan de bonificaciones el día después de los despidos fue como echar sal en la herida."
+      },
+      {
+        "en": "To rub salt in the wound, his replacement was offered a higher salary.",
+        "es": "Para colmo de males, a quien le sustituyó le ofrecieron un salario más alto."
+      }
+    ]
+  },
+  {
+    "id": "id-073",
+    "term": "stand your ground",
+    "meaning_en": "To maintain your position or opinion firmly under pressure, without backing down or compromising.",
+    "meaning_es": "Mantener tu postura u opinión con firmeza bajo presión, sin ceder ni comprometerse.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "stand your ground in the face of criticism",
+    "note": "Can be admirable or obstinate depending on context; the expression itself is neutral on whether the position is correct.",
+    "examples": [
+      {
+        "en": "She stood her ground in the negotiation and eventually got the terms she'd asked for.",
+        "es": "Mantuvo su postura en la negociación y al final consiguió las condiciones que había pedido."
+      },
+      {
+        "en": "It takes courage to stand your ground when the entire room disagrees with you.",
+        "es": "Hace falta valentía para mantener tu postura cuando toda la sala no está de acuerdo contigo."
+      }
+    ]
+  },
+  {
+    "id": "id-074",
+    "term": "take the bull by the horns",
+    "meaning_en": "To confront a difficult situation directly and with determination, rather than avoiding or delaying it.",
+    "meaning_es": "Enfrentarse a una situación difícil directamente y con determinación, en lugar de evitarla o posponerla.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "take the bull by the horns and have the conversation",
+    "note": "Active and positive; the speaker is the agent of change, not a bystander. Implies the difficulty is worth tackling head-on.",
+    "examples": [
+      {
+        "en": "He took the bull by the horns and arranged a meeting between the two feuding teams.",
+        "es": "Cogió el toro por los cuernos y organizó una reunión entre los dos equipos enfrentados."
+      },
+      {
+        "en": "If you take the bull by the horns now, the problem won't escalate into a crisis.",
+        "es": "Si agarras el toro por los cuernos ahora, el problema no se convertirá en una crisis."
+      }
+    ]
+  },
+  {
+    "id": "id-075",
+    "term": "the last straw",
+    "meaning_en": "The final problem or incident that, after a series of others, causes someone to lose patience or reach a breaking point.",
+    "meaning_es": "El último problema o incidente que, tras una serie de ellos, hace que alguien pierda la paciencia o llegue a su límite.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "that was the last straw",
+    "note": "The triggering incident is often minor in itself; the significance lies in cumulative build-up. 'That was the last straw' is the most common form.",
+    "examples": [
+      {
+        "en": "The missed third deadline was the last straw; she handed in her resignation that afternoon.",
+        "es": "El tercer plazo incumplido fue la gota que colmó el vaso; presentó su dimisión esa misma tarde."
+      },
+      {
+        "en": "Being asked to work through the bank holiday was the last straw for most of the team.",
+        "es": "Tener que trabajar el día festivo fue la gota que colmó el vaso para la mayor parte del equipo."
+      }
+    ]
+  },
+  {
+    "id": "id-076",
+    "term": "throw in the towel",
+    "meaning_en": "To admit defeat or give up on something after realising it cannot be won or is not worth continuing.",
+    "meaning_es": "Admitir la derrota o rendirse en algo al darse cuenta de que no se puede ganar o no vale la pena continuar.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "throw in the towel on the lawsuit",
+    "note": "Signals a final, deliberate decision to stop trying. Often used when continuing would waste further resources.",
+    "examples": [
+      {
+        "en": "After three years in litigation, they threw in the towel and settled out of court.",
+        "es": "Tras tres años de litigios, tiraron la toalla y llegaron a un acuerdo extrajudicial."
+      },
+      {
+        "en": "He wasn't ready to throw in the towel just because the first investor said no.",
+        "es": "No estaba dispuesto a rendirse solo porque el primer inversor dijera que no."
+      }
+    ]
+  },
+  {
+    "id": "id-077",
+    "term": "a grey area",
+    "meaning_en": "A situation or topic that is ambiguous, unclear, or not covered by existing rules; one that is difficult to classify.",
+    "meaning_es": "Una situación o tema que es ambiguo, poco claro o no está cubierto por las normas existentes; difícil de clasificar.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "falls into a legal grey area",
+    "note": "Also spelled 'gray area' in American English. Often used in legal, ethical, and policy discussions.",
+    "examples": [
+      {
+        "en": "Whether the contractor's action constitutes copyright infringement is a legal grey area.",
+        "es": "Si la acción del contratista constituye una infracción de derechos de autor es una zona gris legal."
+      },
+      {
+        "en": "The policy doesn't cover this scenario; we're in grey area territory here.",
+        "es": "La política no cubre este escenario; aquí estamos en territorio de zona gris."
+      }
+    ]
+  },
+  {
+    "id": "id-078",
+    "term": "at a crossroads",
+    "meaning_en": "At a critical point where a major decision must be made that will determine a very different future direction.",
+    "meaning_es": "En un momento crítico en el que hay que tomar una decisión importante que determinará un rumbo futuro muy diferente.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "at a crossroads in her career",
+    "note": "Implies real alternatives with meaningful consequences. The decision ahead is genuinely consequential, not routine.",
+    "examples": [
+      {
+        "en": "At forty, he found himself at a crossroads: stay in academia or take the industry role.",
+        "es": "A los cuarenta, se encontró en una encrucijada: seguir en la academia o aceptar el puesto en la industria."
+      },
+      {
+        "en": "The organisation is at a crossroads; the choices made this year will define the next decade.",
+        "es": "La organización está en una encrucijada; las decisiones tomadas este año definirán la próxima década."
+      }
+    ]
+  },
+  {
+    "id": "id-079",
+    "term": "give someone short shrift",
+    "meaning_en": "To deal with someone or something quickly and dismissively, without giving the attention or consideration they deserve.",
+    "meaning_es": "Despachar a alguien o algo rápidamente y con desdén, sin darle la atención o consideración que merece.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "gave the proposal short shrift",
+    "note": "Dismissal can be swift and uninterested rather than openly hostile. Common when powerful parties ignore inconvenient objections.",
+    "examples": [
+      {
+        "en": "The committee gave the environmental concerns short shrift, approving the development in minutes.",
+        "es": "El comité despachó las preocupaciones medioambientales con un manotazo, aprobando el proyecto en minutos."
+      },
+      {
+        "en": "His second application got even shorter shrift than the first.",
+        "es": "Su segunda solicitud fue despachada con aún menos consideración que la primera."
+      }
+    ]
+  },
+  {
+    "id": "id-080",
+    "term": "go to bat for someone",
+    "meaning_en": "To actively support or defend someone, especially when they are under criticism or in a difficult situation.",
+    "meaning_es": "Apoyar o defender activamente a alguien, especialmente cuando está siendo criticado o en una situación difícil.",
+    "register": "coloquial",
+    "region": "North American",
+    "collocation": "go to bat for a colleague",
+    "note": "Mainly North American. Signals active, visible support rather than quiet sympathy. Often used in professional and institutional contexts.",
+    "examples": [
+      {
+        "en": "Her supervisor went to bat for her when the disciplinary panel questioned her conduct.",
+        "es": "Su supervisor salió en su defensa cuando el comité disciplinario cuestionó su conducta."
+      },
+      {
+        "en": "I'm willing to go to bat for this proposal if you're confident in the numbers.",
+        "es": "Estoy dispuesto a defender esta propuesta si tienes confianza en las cifras."
+      }
+    ]
+  },
+  {
+    "id": "id-081",
+    "term": "have a lot on your plate",
+    "meaning_en": "To have many responsibilities, tasks, or problems to deal with at the same time; to be very busy or overwhelmed.",
+    "meaning_es": "Tener muchas responsabilidades, tareas o problemas que gestionar al mismo tiempo; estar muy ocupado o desbordado.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "has a lot on her plate right now",
+    "note": "Sympathetic in tone; often used to explain or excuse someone's limited capacity. Can be self-deprecating too.",
+    "examples": [
+      {
+        "en": "Don't take it personally; she has a lot on her plate with the merger and the audit running at the same time.",
+        "es": "No te lo tomes a título personal; tiene demasiado entre manos con la fusión y la auditoría al mismo tiempo."
+      },
+      {
+        "en": "He admitted he had too much on his plate and asked to defer one of the projects.",
+        "es": "Reconoció que tenía demasiado en su plato y pidió aplazar uno de los proyectos."
+      }
+    ]
+  },
+  {
+    "id": "id-082",
+    "term": "hit the nail on the head",
+    "meaning_en": "To identify or describe something exactly and accurately; to say precisely what is correct or true.",
+    "meaning_es": "Identificar o describir algo exacta y acertadamente; decir precisamente lo que es correcto o verdadero.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "hit the nail on the head with that analysis",
+    "note": "Used to validate someone's statement or observation. A direct and common expression of complete agreement or accuracy.",
+    "examples": [
+      {
+        "en": "You've hit the nail on the head; the real bottleneck is the approval process, not the development.",
+        "es": "Has dado en el clavo; el verdadero cuello de botella es el proceso de aprobación, no el desarrollo."
+      },
+      {
+        "en": "Her opening paragraph hit the nail on the head and set the tone for the whole report.",
+        "es": "Su párrafo inicial fue directo al grano y marcó el tono de todo el informe."
+      }
+    ]
+  },
+  {
+    "id": "id-083",
+    "term": "let the dust settle",
+    "meaning_en": "To wait for a period of confusion, conflict, or upheaval to calm down before taking further action.",
+    "meaning_es": "Esperar a que un período de confusión, conflicto o agitación se calme antes de tomar nuevas medidas.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "let the dust settle before deciding",
+    "note": "Advice to wait rather than act; implies that the current state is too turbulent for good decisions.",
+    "examples": [
+      {
+        "en": "Let the dust settle after the acquisition before restructuring the teams.",
+        "es": "Deja que se asiente el polvo tras la adquisición antes de reestructurar los equipos."
+      },
+      {
+        "en": "She chose to let the dust settle rather than respond to the criticism immediately.",
+        "es": "Optó por esperar a que las aguas se calmaran en lugar de responder a las críticas de inmediato."
+      }
+    ]
+  },
+  {
+    "id": "id-084",
+    "term": "on thin ice",
+    "meaning_en": "In a risky or precarious situation where a wrong move could have serious consequences.",
+    "meaning_es": "En una situación arriesgada o precaria en la que un paso en falso podría tener consecuencias graves.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "skating on thin ice",
+    "note": "'Skating on thin ice' is a common variant. The risk is real and close; the consequences could be immediate.",
+    "examples": [
+      {
+        "en": "With three warnings already on his record, he was on very thin ice.",
+        "es": "Con tres advertencias ya en su expediente, estaba pisando terreno muy resbaladizo."
+      },
+      {
+        "en": "The company is skating on thin ice financially; one bad quarter could be fatal.",
+        "es": "La empresa está pisando hielo muy fino desde el punto de vista financiero; un mal trimestre podría ser fatal."
+      }
+    ]
+  },
+  {
+    "id": "id-085",
+    "term": "play devil's advocate",
+    "meaning_en": "To argue the opposite side of a position for the sake of discussion, not necessarily because you believe it.",
+    "meaning_es": "Defender la postura contraria a título de discusión, no necesariamente porque se crea en ella.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "play devil's advocate and ask",
+    "note": "Signals the speaker is testing reasoning rather than expressing their own view. Often used as a preface: 'let me play devil's advocate here.'",
+    "examples": [
+      {
+        "en": "Let me play devil's advocate: what if the strategy fails and we've committed all our resources?",
+        "es": "Déjame hacer de abogado del diablo: ¿qué pasa si la estrategia falla y hemos comprometido todos nuestros recursos?"
+      },
+      {
+        "en": "She played devil's advocate to stress-test the team's assumptions before the board presentation.",
+        "es": "Hizo de abogada del diablo para poner a prueba las suposiciones del equipo antes de la presentación al consejo."
+      }
+    ]
+  },
+  {
+    "id": "id-086",
+    "term": "turn a blind eye",
+    "meaning_en": "To deliberately ignore something wrong or problematic; to pretend not to notice what you have actually seen.",
+    "meaning_es": "Ignorar deliberadamente algo incorrecto o problemático; fingir no ver lo que en realidad sí se ha visto.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "turn a blind eye to misconduct",
+    "note": "The action is deliberate, not accidental. Often implies moral failure or complicity by those who should have acted.",
+    "examples": [
+      {
+        "en": "Management had turned a blind eye to the safety violations for years before the accident.",
+        "es": "La dirección había hecho la vista gorda ante las infracciones de seguridad durante años antes del accidente."
+      },
+      {
+        "en": "You can't keep turning a blind eye to this; it's your responsibility to act.",
+        "es": "No puedes seguir mirando para otro lado; tienes la responsabilidad de actuar."
+      }
+    ]
+  },
+  {
+    "id": "id-087",
+    "term": "up in the air",
+    "meaning_en": "Uncertain, undecided, or unresolved; not yet determined or settled.",
+    "meaning_es": "Incierto, sin decidir o sin resolver; aún no determinado ni establecido.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "still up in the air",
+    "note": "Neutral in tone; implies a genuine lack of resolution rather than deliberate avoidance or evasion.",
+    "examples": [
+      {
+        "en": "The venue for next year's conference is still up in the air.",
+        "es": "El lugar del congreso del año que viene sigue sin estar decidido."
+      },
+      {
+        "en": "With funding negotiations ongoing, everything about the project's timeline is up in the air.",
+        "es": "Con las negociaciones de financiación en curso, todo lo relacionado con el calendario del proyecto está en el aire."
+      }
+    ]
+  },
+  {
+    "id": "id-088",
+    "term": "weather the storm",
+    "meaning_en": "To survive or endure a period of difficulty, hardship, or criticism without giving up.",
+    "meaning_es": "Sobrevivir o soportar un período de dificultad, adversidad o crítica sin rendirse.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "weather the storm of negative press",
+    "note": "Implies endurance followed by eventual recovery. Common in business, political, and personal contexts for surviving extended criticism.",
+    "examples": [
+      {
+        "en": "The brand weathered the storm of the recall and regained consumer confidence within a year.",
+        "es": "La marca sobrevivió a la crisis de la retirada del producto y recuperó la confianza del consumidor en un año."
+      },
+      {
+        "en": "She weathered the storm of hostile press coverage by staying focused on the work.",
+        "es": "Soportó la cobertura mediática hostil manteniéndose centrada en el trabajo."
+      }
+    ]
+  },
+  {
+    "id": "id-089",
+    "term": "take with a grain of salt",
+    "meaning_en": "To be sceptical about something; to not accept a claim completely at face value because it may be exaggerated.",
+    "meaning_es": "Ser escéptico ante algo; no aceptar una afirmación completamente por su valor nominal porque puede estar exagerada.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "take his estimates with a grain of salt",
+    "note": "Also 'with a pinch of salt' in British English. The scepticism is mild, not total disbelief.",
+    "examples": [
+      {
+        "en": "Take their projections with a grain of salt; they've been consistently optimistic in the past.",
+        "es": "Tómate sus proyecciones con pinzas; han sido sistemáticamente optimistas en el pasado."
+      },
+      {
+        "en": "Any review posted by the company itself should be taken with a grain of salt.",
+        "es": "Cualquier reseña publicada por la propia empresa debe tomarse con cautela."
+      }
+    ]
+  },
+  {
+    "id": "id-090",
+    "term": "bark up the wrong tree",
+    "meaning_en": "To pursue a mistaken or misguided course of action, based on a false assumption about where the truth lies.",
+    "meaning_es": "Seguir un curso de acción equivocado o erróneo, basado en una suposición falsa sobre dónde está la verdad.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "barking up the wrong tree entirely",
+    "note": "Implies wasted effort caused by a fundamental misidentification. Often used to redirect an investigation or argument that has gone astray.",
+    "examples": [
+      {
+        "en": "If you think I leaked the story, you're barking up entirely the wrong tree.",
+        "es": "Si crees que yo filtré la historia, estás completamente equivocado de arriba abajo."
+      },
+      {
+        "en": "The investigators spent months barking up the wrong tree before the real culprit came forward.",
+        "es": "Los investigadores pasaron meses siguiendo una pista equivocada antes de que el verdadero culpable se entregara."
+      }
+    ]
+  }
+]
