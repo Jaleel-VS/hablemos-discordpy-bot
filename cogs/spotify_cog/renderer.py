@@ -6,6 +6,8 @@ from pathlib import Path
 import aiohttp
 from PIL import Image, ImageDraw, ImageFont
 
+from cogs.spotify_cog.config import CARD_FALLBACK_RGB
+
 FONT_DIR = Path(__file__).resolve().parent
 ROBOTO_FONT = FONT_DIR / "fonts" / "Roboto.ttf"
 # Roboto has no CJK glyphs and Pillow does not fall back across fonts for
@@ -224,11 +226,12 @@ async def render_nowplaying(
     artist: str,
     album: str,
     album_art_url: str | None,
-    accent: tuple[int, int, int] = (30, 215, 96),
+    accent: tuple[int, int, int] = CARD_FALLBACK_RGB,
     listener: str = "Someone",
 ) -> BytesIO:
     """Render a Spotify-style now-playing card. Returns PNG BytesIO."""
-    r, g, b = _ensure_contrast(*accent)
+    # Charcoal is a deliberate fallback, not a dark artwork swatch to brighten.
+    r, g, b = accent if accent == CARD_FALLBACK_RGB else _ensure_contrast(*accent)
 
     # Create card at 2x resolution for crisp text
     card = Image.new("RGBA", (WIDTH, HEIGHT), (r, g, b, 255))

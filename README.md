@@ -144,6 +144,8 @@ The longer window retains stories collected from the feeds going forward and acc
 
 Aliases: `$spoti`, `$np`. Also available as a slash command. Sharing is off by default: these commands only work for members who ran `$spotify on`.
 
+`$np2` uses dark charcoal (`#24262B`) when artwork has no usable colourful swatch, is missing, or cannot be fetched or decoded. The fallback bypasses saturation and brightness boosts; successful artwork colours keep their existing treatment. Ordinary `$np` / `$nowplaying` retains its green accent.
+
 ### Privacy
 
 | Command | Description |

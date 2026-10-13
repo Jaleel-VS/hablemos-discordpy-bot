@@ -22,7 +22,7 @@ from discord.ext import commands
 from PIL import Image
 
 from base_cog import BaseCog
-from cogs.spotify_cog.config import SPOTIFY_EMOJI
+from cogs.spotify_cog.config import CARD_FALLBACK_RGB, SPOTIFY_EMOJI
 from cogs.spotify_cog.views import OptInView, prompt_embed
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
 
@@ -32,6 +32,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 DEFAULT_ACCENT = Color.green()
+ART_FALLBACK_ACCENT = Color.from_rgb(*CARD_FALLBACK_RGB)
 
 
 async def _dominant_color(url: str) -> Color:
@@ -43,7 +44,7 @@ async def _dominant_color(url: str) -> Color:
     try:
         async with aiohttp.ClientSession() as session, session.get(url) as resp:
             if resp.status != 200:
-                return DEFAULT_ACCENT
+                return ART_FALLBACK_ACCENT
             data = await resp.read()
         img = Image.open(BytesIO(data)).convert("RGB").resize((100, 100))
 
@@ -51,15 +52,15 @@ async def _dominant_color(url: str) -> Color:
         quantized = img.quantize(colors=16, method=Image.Quantize.MEDIANCUT)
         raw_palette = quantized.getpalette()
         if raw_palette is None:
-            return DEFAULT_ACCENT
+            return ART_FALLBACK_ACCENT
         palette = raw_palette[:48]  # 16 colors × 3 channels
         hist = quantized.histogram()[:16]
         total_pixels = sum(hist)
 
         best_score = -1
-        best_color = (30, 215, 96)
+        best_color = CARD_FALLBACK_RGB
 
-        for i in range(16):
+        for i in range(len(palette) // 3):
             r, g, b = palette[i * 3], palette[i * 3 + 1], palette[i * 3 + 2]
             rf, gf, bf = r / 255, g / 255, b / 255
 
@@ -86,6 +87,9 @@ async def _dominant_color(url: str) -> Color:
                 best_score = score
                 best_color = (r, g, b)
 
+        if best_score < 0:
+            return ART_FALLBACK_ACCENT
+
         # Boost saturation in HSV space
         rf, gf, bf = [c / 255 for c in best_color]
         h, s, v = colorsys.rgb_to_hsv(rf, gf, bf)
@@ -97,7 +101,7 @@ async def _dominant_color(url: str) -> Color:
         return Color.from_rgb(*best_color)
     except Exception:
         logger.debug("Failed to extract dominant color from %s", url)
-        return DEFAULT_ACCENT
+        return ART_FALLBACK_ACCENT
 
 
 class NowPlayingView(ui.LayoutView):
@@ -266,7 +270,7 @@ class SpotifyCog(BaseCog):
         target, spotify = resolved
 
         # Extract dominant color from album art
-        accent = (30, 215, 96)  # Spotify green default
+        accent = CARD_FALLBACK_RGB
         if spotify.album_cover_url:
             color = await _dominant_color(spotify.album_cover_url)
             accent = (color.r, color.g, color.b)
