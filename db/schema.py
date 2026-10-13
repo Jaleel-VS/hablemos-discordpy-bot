@@ -1023,4 +1023,32 @@ async def initialize_schema(pool):
             )
         ''')
 
+        # RSS teasers and channel-level reading progress; no reader user IDs.
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS good_news_articles (
+                url TEXT PRIMARY KEY,
+                language TEXT NOT NULL,
+                source_name TEXT NOT NULL,
+                title TEXT NOT NULL,
+                excerpt TEXT NOT NULL,
+                published_at TIMESTAMPTZ NOT NULL
+            )
+        ''')
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_good_news_recent
+            ON good_news_articles(language, published_at DESC)
+        ''')
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS good_news_channels (
+                channel_id BIGINT PRIMARY KEY
+            )
+        ''')
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS good_news_seen (
+                channel_id BIGINT NOT NULL REFERENCES good_news_channels(channel_id) ON DELETE CASCADE,
+                url TEXT NOT NULL REFERENCES good_news_articles(url) ON DELETE CASCADE,
+                PRIMARY KEY (channel_id, url)
+            )
+        ''')
+
         logger.info("Database schema initialized")

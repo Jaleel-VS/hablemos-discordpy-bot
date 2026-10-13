@@ -43,6 +43,7 @@ from db.interactions import InteractionsMixin
 from db.introductions import IntroductionsMixin
 from db.leaderboard import LeaderboardMixin
 from db.metrics import MetricsMixin
+from db.news import NewsMixin
 from db.notes import NotesMixin
 from db.practice import PracticeMixin
 from db.predictions import WCPredictionsMixin
@@ -81,6 +82,7 @@ class Database(
     SpotifyMixin,
     PrivacyMixin,
     FactsMixin,
+    NewsMixin,
 ):
     def __init__(self, database_url: str):
         self.pool: asyncpg.Pool | None = None

@@ -120,6 +120,18 @@ Each channel (including DMs) gets its own random cycle: all facts are drawn once
 
 The cog automatically upserts `cogs/dyi_cog/data/*.json` into PostgreSQL's `fun_facts` table on load, without resetting `fact_cycles` or `fact_seen`. Keep IDs stable when correcting facts; use a new ID for a new fact. The normal bot deployment includes the data and creates the tables; no `$sync` or manual import is required.
 
+### Good News
+
+| Command | Description |
+|---------|-------------|
+| `$goodnews [en\|es]` | Read a recent optimistic story in English (default) or Spanish |
+
+Uses the public RSS feeds from [Positive News](https://www.positive.news/feed/) (English) and [Noticias Positivas](https://noticiaspositivas.es/feed/) (Spanish). The Components V2 card shows the publisher's headline, a short RSS teaser (up to 350 characters), publication date, source, and a link to read the original. These are native-language stories, not translations of the same article. No API key, AI, full-article scraping, or image copying is involved.
+
+Feeds refresh on startup after the bot is ready and every 30 minutes. Only stories published in the last 14 days are eligible; tagged opinion, sponsored, promoted, and advertorial entries are excluded. The newest unread story is reserved per channel, including DMs. Reading progress survives restarts; exhaustion reports no unread recent stories rather than recycling old news. A reserved story counts as read even if Discord delivery fails. Cooldown: five seconds per user.
+
+`good_news_articles` holds the short-lived feed cache; expired articles and their `good_news_seen` records are pruned at refresh. `good_news_channels` coordinates concurrent requests. Feed failures retain still-recent cached stories and are logged; the next scheduled refresh tries again. These feeds are used as a limited RSS reader, not as a license to republish full articles. Source definitions live in `cogs/goodnews_cog/feeds.py`; no `$sync` is needed.
+
 ### Spotify
 
 | Command | Description |

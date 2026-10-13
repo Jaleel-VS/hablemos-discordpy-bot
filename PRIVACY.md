@@ -36,6 +36,10 @@ policy explains what data the bot collects, why, and how to have it removed.
   entries are rolled up into daily totals after 30 days.
 - **Fun-fact cycle progress**: channel IDs and fact IDs, so `$dyi` avoids
   repeats across restarts. This progress does not record who requested a fact.
+- **News reading progress**: channel IDs and article URLs, so `$goodnews`
+  does not repeat stories. Expired articles and their reading records are
+  removed during feed refreshes after 14 days; channel bookkeeping IDs remain.
+  This progress does not record who requested a story.
 
 The bot does not store your email, IP address, or private messages beyond
 the commands you send it.
