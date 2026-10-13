@@ -1,0 +1,1882 @@
+[
+  {
+    "id": "ac-001",
+    "term": "acuciante",
+    "meaning_es": "Que urge o apremia con gran intensidad; que no admite demora.",
+    "meaning_en": "Pressing, urgent; describes a need or problem that demands immediate attention.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "necesidad acuciante, problema acuciante",
+    "note": "Adjetivo que suele ir pospuesto al sustantivo. Se emplea especialmente en contextos políticos y periodísticos para subrayar la gravedad de una situación.",
+    "examples": [
+      {
+        "es": "La falta de vivienda asequible es la necesidad acuciante de esta generación.",
+        "en": "The lack of affordable housing is the most pressing need of this generation."
+      },
+      {
+        "es": "Ante la crisis acuciante, el gobierno convocó una sesión de emergencia.",
+        "en": "Faced with the pressing crisis, the government called an emergency session."
+      }
+    ]
+  },
+  {
+    "id": "ac-002",
+    "term": "aducir",
+    "meaning_es": "Presentar o alegar razones, pruebas o argumentos para apoyar una afirmación.",
+    "meaning_en": "To adduce, to put forward; to cite reasons or evidence in support of a claim.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "aducir argumentos, aducir pruebas, aducir razones",
+    "note": "Verbo irregular que se conjuga como 'conducir' (aduzco, aduces…). Habitual en contextos jurídicos y académicos.",
+    "examples": [
+      {
+        "es": "La defensa adujo nuevas pruebas que contradecían el testimonio principal.",
+        "en": "The defense adduced new evidence that contradicted the main testimony."
+      },
+      {
+        "es": "No pudo aducir ningún argumento convincente para justificar el retraso.",
+        "en": "He could not put forward any convincing argument to justify the delay."
+      }
+    ]
+  },
+  {
+    "id": "ac-003",
+    "term": "ahínco",
+    "meaning_es": "Empeño, dedicación intensa y constante puesta en la realización de algo.",
+    "meaning_en": "Zeal, diligence; intense and persistent dedication to a task or goal.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "con ahínco, trabajar con ahínco, estudiar con ahínco",
+    "note": "Sustantivo masculino. Se emplea con gran frecuencia en la construcción 'con ahínco', que funciona como locución adverbial.",
+    "examples": [
+      {
+        "es": "Estudió con tanto ahínco que terminó la carrera en tres años.",
+        "en": "She studied with such zeal that she finished her degree in three years."
+      },
+      {
+        "es": "El equipo trabajó con ahínco durante meses para sacar adelante el proyecto.",
+        "en": "The team worked diligently for months to see the project through."
+      }
+    ]
+  },
+  {
+    "id": "ac-004",
+    "term": "ahondar en",
+    "meaning_es": "Profundizar, examinar o tratar un asunto con mayor detalle y detenimiento.",
+    "meaning_en": "To delve into, to go deeper into; to examine a topic in greater depth.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "ahondar en un tema, ahondar en las causas",
+    "note": "En este sentido se usa habitualmente 'ahondar en un tema' o 'ahondar en sus causas'. En sentido físico también admite complemento directo: 'ahondar un pozo'.",
+    "examples": [
+      {
+        "es": "El ensayo ahonda en las contradicciones del liberalismo contemporáneo.",
+        "en": "The essay delves into the contradictions of contemporary liberalism."
+      },
+      {
+        "es": "No quiero ahondar en los detalles ahora, pero hay mucho que explicar.",
+        "en": "I don't want to go deeper into the details right now, but there is much to explain."
+      }
+    ]
+  },
+  {
+    "id": "ac-005",
+    "term": "aplomo",
+    "meaning_es": "Serenidad, seguridad en uno mismo y compostura al enfrentar situaciones difíciles.",
+    "meaning_en": "Composure, self-assurance; calm confidence when facing difficulty or pressure.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "con aplomo, mantener el aplomo, responder con aplomo",
+    "note": "Sustantivo masculino. Suele aparecer tras la preposición 'con'. Describe una actitud de calma y control, no de presunción.",
+    "examples": [
+      {
+        "es": "Respondió a las críticas con un aplomo que dejó sin palabras a sus detractores.",
+        "en": "She responded to the criticism with a composure that left her detractors speechless."
+      },
+      {
+        "es": "A pesar del caos, el cirujano operó con total aplomo.",
+        "en": "Despite the chaos, the surgeon operated with complete composure."
+      }
+    ]
+  },
+  {
+    "id": "ac-006",
+    "term": "argüir",
+    "meaning_es": "Razonar o argumentar en pro o en contra de algo; demostrar mediante argumentos.",
+    "meaning_en": "To argue, to contend; to reason or present arguments for or against a proposition.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "argüir que, argüir en contra de, argüir a favor de",
+    "note": "Se conjuga como construir: arguyo, arguyes, arguye. Conserva la diéresis ante e o i en formas como argüimos, argüía y argüido.",
+    "examples": [
+      {
+        "es": "El filósofo argüía que la libertad absoluta es incompatible con la vida en sociedad.",
+        "en": "The philosopher argued that absolute freedom is incompatible with life in society."
+      },
+      {
+        "es": "Podría argüirse que la reforma llegó demasiado tarde para marcar diferencia.",
+        "en": "It could be argued that the reform came too late to make a difference."
+      }
+    ]
+  },
+  {
+    "id": "ac-007",
+    "term": "barajar",
+    "meaning_es": "Considerar o examinar varias opciones o posibilidades antes de tomar una decisión.",
+    "meaning_en": "To consider, to weigh up; to entertain or examine multiple options simultaneously.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "barajar opciones, barajar hipótesis, barajar candidatos",
+    "note": "El significado literal es mezclar naipes; el sentido figurado de manejar varias posibilidades es muy frecuente en el lenguaje periodístico y coloquial.",
+    "examples": [
+      {
+        "es": "El gobierno baraja varias opciones para reducir el déficit sin subir impuestos.",
+        "en": "The government is weighing several options to reduce the deficit without raising taxes."
+      },
+      {
+        "es": "Baraja la posibilidad de mudarse al extranjero después de terminar la tesis.",
+        "en": "She is considering the possibility of moving abroad after finishing her thesis."
+      }
+    ]
+  },
+  {
+    "id": "ac-008",
+    "term": "cerciorarse de",
+    "meaning_es": "Asegurarse de que algo es cierto o de que se ha cumplido correctamente.",
+    "meaning_en": "To make sure, to ascertain; to verify that something is true or has been done.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "cerciorarse de que, cerciorarse de la veracidad",
+    "note": "Verbo pronominal; requiere la preposición 'de'. Implica una comprobación activa y deliberada.",
+    "examples": [
+      {
+        "es": "Antes de firmar el contrato, cerciórate de que todas las cláusulas son correctas.",
+        "en": "Before signing the contract, make sure all the clauses are correct."
+      },
+      {
+        "es": "El inspector se cercioró de que las instalaciones cumplían la normativa vigente.",
+        "en": "The inspector made sure the facilities complied with current regulations."
+      }
+    ]
+  },
+  {
+    "id": "ac-009",
+    "term": "claudicar",
+    "meaning_es": "Ceder, rendirse o abandonar una postura, principio o resistencia ante presión.",
+    "meaning_en": "To capitulate, to yield; to give up a position or principle under pressure.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "claudicar ante la presión, claudicar en sus principios",
+    "note": "Suele connotar debilidad moral o traición a los propios valores. Va seguido con frecuencia de 'ante'.",
+    "examples": [
+      {
+        "es": "El sindicato se negó a claudicar ante las exigencias de la patronal.",
+        "en": "The union refused to capitulate to the employers' demands."
+      },
+      {
+        "es": "Claudicó en sus ideales cuando la ambición pudo más que la integridad.",
+        "en": "He abandoned his ideals when ambition overcame integrity."
+      }
+    ]
+  },
+  {
+    "id": "ac-010",
+    "term": "corroborar",
+    "meaning_es": "Confirmar o dar mayor firmeza a una afirmación con nuevas pruebas o datos.",
+    "meaning_en": "To corroborate, to substantiate; to confirm a claim with additional evidence.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "corroborar una hipótesis, corroborar el testimonio",
+    "note": "Implica aportar evidencia independiente, no una mera repetición. Habitual en contextos académicos, judiciales y periodísticos.",
+    "examples": [
+      {
+        "es": "Los análisis de laboratorio corroboraron la hipótesis del equipo investigador.",
+        "en": "The laboratory analyses corroborated the research team's hypothesis."
+      },
+      {
+        "es": "Ningún testigo pudo corroborar la versión del acusado.",
+        "en": "No witness was able to corroborate the defendant's account."
+      }
+    ]
+  },
+  {
+    "id": "ac-011",
+    "term": "acervo",
+    "meaning_es": "Conjunto de bienes, conocimientos o tradiciones acumulados por una comunidad o persona.",
+    "meaning_en": "Heritage, body of knowledge; a collective store of culture, wisdom, or tradition.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "acervo cultural, acervo lingüístico, acervo común",
+    "note": "Sustantivo masculino. Las colocaciones 'acervo cultural' y 'acervo lingüístico' son fórmulas fijas habituales en textos académicos y culturales.",
+    "examples": [
+      {
+        "es": "El flamenco forma parte del acervo cultural de la humanidad, según la UNESCO.",
+        "en": "Flamenco is part of humanity's cultural heritage, according to UNESCO."
+      },
+      {
+        "es": "Estas palabras ya pertenecen al acervo lingüístico de las generaciones jóvenes.",
+        "en": "These words already belong to the linguistic heritage of younger generations."
+      }
+    ]
+  },
+  {
+    "id": "ac-012",
+    "term": "acometer",
+    "meaning_es": "Emprender o iniciar una tarea, obra o acción con decisión y energía.",
+    "meaning_en": "To undertake, to tackle; to set about a task or challenge with determination.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "acometer una reforma, acometer un proyecto, acometer el desafío",
+    "note": "Tiene también el sentido de 'atacar', pero el uso figurado de emprender algo con decisión es el predominante en la prensa y el ensayo actuales.",
+    "examples": [
+      {
+        "es": "El nuevo gobierno prometió acometer una profunda reforma del sistema educativo.",
+        "en": "The new government promised to undertake a thorough reform of the education system."
+      },
+      {
+        "es": "Acometió la escritura de su primera novela con una energía que sorprendió a todos.",
+        "en": "She tackled the writing of her first novel with an energy that surprised everyone."
+      }
+    ]
+  },
+  {
+    "id": "ac-013",
+    "term": "acuciar",
+    "meaning_es": "Urgir, estimular o presionar a alguien para que actúe o resuelva algo con rapidez.",
+    "meaning_en": "To press, to urge; to push someone to act or to be spurred by an urgent need.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "acuciado por la necesidad, acuciado por las deudas",
+    "note": "Se emplea con frecuencia en participio: 'acuciado por'. Describe una presión externa o interna que obliga a actuar.",
+    "examples": [
+      {
+        "es": "Acuciado por las deudas, tuvo que vender la empresa familiar.",
+        "en": "Pressed by debts, he had to sell the family business."
+      },
+      {
+        "es": "La curiosidad la acuciaba hasta el punto de no poder dormir.",
+        "en": "Curiosity drove her so relentlessly that she couldn't sleep."
+      }
+    ]
+  },
+  {
+    "id": "ac-014",
+    "term": "adolecer de",
+    "meaning_es": "Tener o padecer un defecto, carencia o problema de forma inherente.",
+    "meaning_en": "To suffer from, to be afflicted by; to have an inherent flaw or deficiency.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "adolecer de falta de, adolecer de un defecto",
+    "note": "La construcción habitual es 'adolecer de' + un defecto: 'adolecer de imprecisión'. No equivale simplemente a carecer de cualquier cosa.",
+    "examples": [
+      {
+        "es": "El informe adolece de una falta grave de rigor metodológico.",
+        "en": "The report suffers from a serious lack of methodological rigour."
+      },
+      {
+        "es": "Su argumentación adolece de los mismos defectos que la anterior.",
+        "en": "His argumentation is afflicted by the same flaws as the previous one."
+      }
+    ]
+  },
+  {
+    "id": "ac-015",
+    "term": "afanarse",
+    "meaning_es": "Esforzarse con empeño e insistencia en la consecución de algo.",
+    "meaning_en": "To strive, to toil; to work hard and persistently toward a goal.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "afanarse por, afanarse en conseguir",
+    "note": "Verbo pronominal. La construcción habitual es 'afanarse por' seguido de infinitivo. El sustantivo 'afán' comparte la misma raíz y resulta igualmente útil.",
+    "examples": [
+      {
+        "es": "Se afanaba por terminar el cuadro antes de que llegara la exposición.",
+        "en": "She strove to finish the painting before the exhibition arrived."
+      },
+      {
+        "es": "Por más que se afanara, los resultados nunca llegaban a ser perfectos.",
+        "en": "No matter how hard he toiled, the results never quite reached perfection."
+      }
+    ]
+  },
+  {
+    "id": "ac-016",
+    "term": "afianzar",
+    "meaning_es": "Hacer más firme, seguro o sólido algo; consolidar una posición o relación.",
+    "meaning_en": "To consolidate, to strengthen; to make something more secure or firmly established.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "afianzar la posición, afianzar los conocimientos, afianzarse en el cargo",
+    "note": "Se usa tanto en forma transitiva ('afianzar algo') como pronominal ('afianzarse como líder'). Muy habitual en el periodismo político y empresarial.",
+    "examples": [
+      {
+        "es": "La victoria electoral le permitió afianzar su posición dentro del partido.",
+        "en": "The electoral victory allowed her to consolidate her position within the party."
+      },
+      {
+        "es": "Los primeros meses del máster sirvieron para afianzar los conocimientos previos.",
+        "en": "The first months of the master's programme served to strengthen prior knowledge."
+      }
+    ]
+  },
+  {
+    "id": "ac-017",
+    "term": "agudizar",
+    "meaning_es": "Intensificar o hacer más grave una situación, problema o sensación.",
+    "meaning_en": "To sharpen, to exacerbate; to make a problem or sensation more acute or intense.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "agudizar la crisis, agudizarse el conflicto, agudizar la percepción",
+    "note": "Se usa con frecuencia en forma pronominal: 'la crisis se agudizó'. Sirve tanto para deterioros negativos como para la mejora de facultades perceptivas.",
+    "examples": [
+      {
+        "es": "La pandemia agudizó las desigualdades sociales que ya existían.",
+        "en": "The pandemic exacerbated the social inequalities that already existed."
+      },
+      {
+        "es": "Con los años, su capacidad de observación se fue agudizando.",
+        "en": "Over the years, her powers of observation gradually sharpened."
+      }
+    ]
+  },
+  {
+    "id": "ac-018",
+    "term": "aislar",
+    "meaning_es": "Dejar a alguien o algo separado, incomunicado o sin contacto con el entorno.",
+    "meaning_en": "To isolate; to separate or cut off someone or something from their surroundings.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "aislarse del mundo, aislar una variable, aislar el problema",
+    "note": "Se emplea en contextos científicos (aislar un compuesto) y sociales (aislarse del entorno). El sustantivo correspondiente es 'aislamiento'.",
+    "examples": [
+      {
+        "es": "El investigador logró aislar el compuesto responsable de la reacción.",
+        "en": "The researcher managed to isolate the compound responsible for the reaction."
+      },
+      {
+        "es": "Tras el fracaso, tendía a aislarse y rechazaba cualquier forma de compañía.",
+        "en": "After the failure, he tended to isolate himself and rejected any form of company."
+      }
+    ]
+  },
+  {
+    "id": "ac-019",
+    "term": "alentar",
+    "meaning_es": "Animar, estimular o dar aliento a alguien para que persevere en algo.",
+    "meaning_en": "To encourage, to foster; to give someone the drive or support to persist.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "alentar la esperanza, alentar a alguien a, alentar la iniciativa",
+    "note": "Verbo irregular con diptongación en sílabas tónicas: aliento, alientas… Se construye con 'a' + infinitivo cuando lleva complemento de persona.",
+    "examples": [
+      {
+        "es": "Su profesora la alentó a presentarse al concurso nacional de matemáticas.",
+        "en": "Her teacher encouraged her to enter the national mathematics competition."
+      },
+      {
+        "es": "Las primeras ventas alentaron al equipo a seguir apostando por el producto.",
+        "en": "The first sales encouraged the team to keep betting on the product."
+      }
+    ]
+  },
+  {
+    "id": "ac-020",
+    "term": "allanarse a",
+    "meaning_es": "Aceptar o someterse sin resistencia a algo, especialmente a una condición impuesta.",
+    "meaning_en": "To acquiesce to, to go along with; to accept a condition or demand without resistance.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "allanarse a las condiciones, allanarse a un acuerdo",
+    "note": "Verbo pronominal seguido de 'a'. Distinto del 'allanar' no reflexivo (nivelar, registrar un domicilio). Implica aceptación voluntaria, a veces de mala gana.",
+    "examples": [
+      {
+        "es": "Finalmente se allanó a las condiciones del contrato sin pedir más cambios.",
+        "en": "He finally acquiesced to the contract terms without requesting further changes."
+      },
+      {
+        "es": "El partido se allanó a negociar, aunque desde una posición de clara desventaja.",
+        "en": "The party agreed to negotiate, albeit from a position of clear disadvantage."
+      }
+    ]
+  },
+  {
+    "id": "ac-021",
+    "term": "ambigüedad",
+    "meaning_es": "Cualidad de lo que puede interpretarse de dos o más formas distintas; falta de claridad.",
+    "meaning_en": "Ambiguity; the quality of being open to more than one interpretation.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "sembrar ambigüedad, resolver la ambigüedad, vivir en la ambigüedad",
+    "note": "Sustantivo femenino. Se escribe con diéresis en la 'ü'. La expresión 'ambigüedad deliberada' sirve para referirse a la vaguedad intencionada.",
+    "examples": [
+      {
+        "es": "La ambigüedad del contrato dio lugar a un largo litigio entre las partes.",
+        "en": "The ambiguity of the contract gave rise to a lengthy dispute between the parties."
+      },
+      {
+        "es": "Prefería vivir en la ambigüedad antes que comprometerse con una respuesta.",
+        "en": "She preferred to live in ambiguity rather than commit to an answer."
+      }
+    ]
+  },
+  {
+    "id": "ac-022",
+    "term": "ameritar",
+    "meaning_es": "Merecer o ser digno de algo; hacer que algo sea necesario o justificado.",
+    "meaning_en": "To warrant, to merit; to deserve or make something necessary.",
+    "register": "neutro",
+    "region": "Latinoamérica",
+    "collocation": "ameritar una respuesta, ameritar atención",
+    "note": "De uso extendido en Latinoamérica como sinónimo de 'merecer' o 'justificar'. En España se prefiere 'merecer' o 'justificar' en el mismo contexto.",
+    "examples": [
+      {
+        "es": "La situación amerita una respuesta urgente por parte de las autoridades.",
+        "en": "The situation warrants an urgent response from the authorities."
+      },
+      {
+        "es": "No creo que el incidente amerite tanta cobertura mediática.",
+        "en": "I don't think the incident merits so much media coverage."
+      }
+    ]
+  },
+  {
+    "id": "ac-023",
+    "term": "anidar",
+    "meaning_es": "Instalarse o establecerse algo en un lugar, especialmente sentimientos o ideas en la mente.",
+    "meaning_en": "To nest, to take root; to become lodged or settled (of feelings, ideas, or habits).",
+    "register": "literario",
+    "region": "general",
+    "collocation": "anidar en el corazón, anidar un sentimiento, anidar la desconfianza",
+    "note": "El significado literal es 'hacer nido las aves'. En sentido figurado describe sentimientos, rencores o ideas que se instalan de forma duradera en alguien.",
+    "examples": [
+      {
+        "es": "Una profunda tristeza anidó en él tras la partida de su hijo.",
+        "en": "A deep sadness took root in him after his son's departure."
+      },
+      {
+        "es": "La desconfianza había anidado entre los socios desde la primera reunión.",
+        "en": "Distrust had nested among the partners since the very first meeting."
+      }
+    ]
+  },
+  {
+    "id": "ac-024",
+    "term": "anteponer",
+    "meaning_es": "Poner o considerar algo antes o por encima de otra cosa en orden de prioridad.",
+    "meaning_en": "To put before, to prioritize; to place one thing ahead of another in importance.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "anteponer los intereses propios, anteponer el deber al placer",
+    "note": "Verbo irregular (antepongo, antepones…). Se construye con 'a': 'anteponer X a Y'. Expresa una jerarquía deliberada de valores o prioridades.",
+    "examples": [
+      {
+        "es": "Siempre anteponía el bienestar de sus pacientes a cualquier consideración personal.",
+        "en": "She always put the well-being of her patients before any personal consideration."
+      },
+      {
+        "es": "La empresa antepuso las ganancias a corto plazo a la sostenibilidad del negocio.",
+        "en": "The company prioritized short-term profits over the sustainability of the business."
+      }
+    ]
+  },
+  {
+    "id": "ac-025",
+    "term": "arremeter contra",
+    "meaning_es": "Atacar o criticar a alguien con violencia o con argumentos enérgicos y directos.",
+    "meaning_en": "To lash out at, to attack; to come at someone with force or harsh criticism.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "arremeter contra el gobierno, arremeter contra la prensa",
+    "note": "Requiere la preposición 'contra'. Puede referirse a un ataque físico o verbal; en el uso contemporáneo predomina el sentido de crítica pública enérgica.",
+    "examples": [
+      {
+        "es": "La candidata arremetió contra sus rivales durante el debate televisado.",
+        "en": "The candidate lashed out at her rivals during the televised debate."
+      },
+      {
+        "es": "El columnista arremetió contra la política cultural del ayuntamiento.",
+        "en": "The columnist attacked the city council's cultural policy."
+      }
+    ]
+  },
+  {
+    "id": "ac-026",
+    "term": "articular",
+    "meaning_es": "Expresar ideas de forma organizada y coherente; estructurar y dar forma a un discurso o sistema.",
+    "meaning_en": "To articulate; to express ideas clearly and coherently, or to organize a structure.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "articular un discurso, articular una propuesta, articular el pensamiento",
+    "note": "Tiene dos usos frecuentes: expresar ideas con claridad y organizar un sistema o política pública. El contexto determina cuál predomina.",
+    "examples": [
+      {
+        "es": "Logró articular una respuesta coherente a pesar de la presión del periodista.",
+        "en": "He managed to articulate a coherent response despite the journalist's pressure."
+      },
+      {
+        "es": "El programa articula una serie de medidas para combatir la exclusión social.",
+        "en": "The programme organizes a set of measures to combat social exclusion."
+      }
+    ]
+  },
+  {
+    "id": "ac-027",
+    "term": "aseverar",
+    "meaning_es": "Afirmar algo de manera contundente y con plena seguridad.",
+    "meaning_en": "To assert, to aver; to state something with firmness and certainty.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "aseverar que, aseverar con rotundidad",
+    "note": "El hablante presenta lo dicho como un hecho sin lugar a dudas. Frecuente en el lenguaje periodístico y jurídico.",
+    "examples": [
+      {
+        "es": "La portavoz aseveró que la empresa no había cometido ninguna irregularidad.",
+        "en": "The spokesperson asserted that the company had not committed any irregularity."
+      },
+      {
+        "es": "No me atrevo a aseverar que esa sea la única interpretación posible.",
+        "en": "I dare not assert that that is the only possible interpretation."
+      }
+    ]
+  },
+  {
+    "id": "ac-028",
+    "term": "atenerse a",
+    "meaning_es": "Ajustarse o limitarse a lo establecido, prometido o convenido.",
+    "meaning_en": "To abide by, to stick to; to conform to what has been agreed, established, or given.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "atenerse a las reglas, atenerse a los hechos, atenerse a las consecuencias",
+    "note": "Verbo pronominal + 'a'. La locución 'atenerse a las consecuencias' (aceptar lo que pueda sobrevenir) es una expresión muy frecuente en el uso cotidiano.",
+    "examples": [
+      {
+        "es": "En el debate, el moderador pidió a los participantes que se atuvieran a los hechos.",
+        "en": "In the debate, the moderator asked participants to stick to the facts."
+      },
+      {
+        "es": "Si no cumples el plazo, tendrás que atenerte a las consecuencias.",
+        "en": "If you miss the deadline, you'll have to accept the consequences."
+      }
+    ]
+  },
+  {
+    "id": "ac-029",
+    "term": "atisbar",
+    "meaning_es": "Ver o percibir algo de manera imprecisa o incompleta; entrever una posibilidad.",
+    "meaning_en": "To glimpse, to discern faintly; to make out something dimly or perceive a possibility.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "atisbar una solución, atisbar la verdad, atisbar en la oscuridad",
+    "note": "Sugiere una percepción parcial e incierta, ya sea visual o intelectual. Habitual en la prosa literaria y en el ensayo.",
+    "examples": [
+      {
+        "es": "Desde la ventana apenas se podía atisbar la silueta del castillo entre la niebla.",
+        "en": "From the window, one could barely make out the silhouette of the castle through the mist."
+      },
+      {
+        "es": "Por primera vez, atisbé la posibilidad de que tuviéramos razón.",
+        "en": "For the first time, I glimpsed the possibility that we might be right."
+      }
+    ]
+  },
+  {
+    "id": "ac-030",
+    "term": "atropellar",
+    "meaning_es": "Actuar sin respeto ni consideración, pasando por encima de los derechos o normas.",
+    "meaning_en": "To trample over, to ride roughshod over; to disregard rights or norms in a rush.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "atropellar los derechos, atropellar las leyes",
+    "note": "El significado literal es 'arrollar con un vehículo'. En sentido figurado describe la vulneración de derechos o procedimientos. El sustantivo correspondiente es 'atropello'.",
+    "examples": [
+      {
+        "es": "La nueva ley fue aprobada a toda prisa, atropellando el proceso de consulta.",
+        "en": "The new law was passed in a rush, riding roughshod over the consultation process."
+      },
+      {
+        "es": "No podemos permitir que se atropellen los derechos de los trabajadores.",
+        "en": "We cannot allow workers' rights to be trampled over."
+      }
+    ]
+  },
+  {
+    "id": "ac-031",
+    "term": "augurar",
+    "meaning_es": "Pronosticar o presagiar algo futuro, generalmente basándose en señales o indicios.",
+    "meaning_en": "To augur, to presage; to predict or foreshadow something based on signs.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "augurar un buen comienzo, augurar lo peor, los datos auguran",
+    "note": "Puede tener como sujeto un hecho o un indicio: 'estos datos no auguran nada bueno'. Se emplea para anticipar resultados a partir de señales.",
+    "examples": [
+      {
+        "es": "Los primeros resultados auguran un trimestre complicado para la empresa.",
+        "en": "The early results augur a difficult quarter for the company."
+      },
+      {
+        "es": "Nada auguraba que aquella conversación cambiaría el rumbo de su vida.",
+        "en": "Nothing presaged that that conversation would change the course of his life."
+      }
+    ]
+  },
+  {
+    "id": "ac-032",
+    "term": "auscultar",
+    "meaning_es": "Explorar o examinar atentamente una situación, organización o sentimiento para comprenderlo.",
+    "meaning_en": "To probe, to sound out; to carefully examine an opinion, situation, or mood.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "auscultar la opinión pública, auscultar el mercado",
+    "note": "El uso literal pertenece a la medicina (escuchar con estetoscopio). El sentido figurado de sondear la opinión o el estado de ánimo es muy gráfico y preciso.",
+    "examples": [
+      {
+        "es": "El partido envió delegados para auscultar el estado de ánimo entre los votantes.",
+        "en": "The party sent delegates to probe the mood among voters."
+      },
+      {
+        "es": "Antes de lanzar el producto, la empresa auscultó el mercado latinoamericano.",
+        "en": "Before launching the product, the company sounded out the Latin American market."
+      }
+    ]
+  },
+  {
+    "id": "ac-033",
+    "term": "avalar",
+    "meaning_es": "Respaldar, garantizar o apoyar algo o a alguien, prestándoles credibilidad o seguridad.",
+    "meaning_en": "To back, to endorse; to guarantee or vouch for someone or something.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "avalar una candidatura, avalar un préstamo, avalar la decisión",
+    "note": "Tiene un uso financiero (garantizar un préstamo) y un uso figurado (prestar credibilidad). El sustantivo correspondiente es 'aval'.",
+    "examples": [
+      {
+        "es": "Su trayectoria profesional avala su candidatura para el puesto directivo.",
+        "en": "Her professional track record backs her candidacy for the management position."
+      },
+      {
+        "es": "Ningún experto independiente quiso avalar los resultados del estudio.",
+        "en": "No independent expert was willing to endorse the study's results."
+      }
+    ]
+  },
+  {
+    "id": "ac-034",
+    "term": "azuzar",
+    "meaning_es": "Incitar, provocar o estimular a alguien para que actúe de forma agresiva o con más fuerza.",
+    "meaning_en": "To egg on, to incite; to goad or provoke someone into more aggressive or forceful action.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "azuzar al público, azuzar los ánimos, azuzar a alguien contra otro",
+    "note": "El uso original se refiere a incitar a los perros. En sentido figurado describe la provocación de una multitud o la agitación de conflictos.",
+    "examples": [
+      {
+        "es": "El discurso del líder azuzó a la multitud hasta que la situación se descontroló.",
+        "en": "The leader's speech incited the crowd until the situation spiralled out of control."
+      },
+      {
+        "es": "Sus comentarios solo consiguen azuzar los ánimos en un momento muy delicado.",
+        "en": "His comments only succeed in stirring up tensions at a very delicate moment."
+      }
+    ]
+  },
+  {
+    "id": "ac-035",
+    "term": "balbucear",
+    "meaning_es": "Hablar de forma entrecortada, vacilante o confusa, sin articular bien las palabras.",
+    "meaning_en": "To stammer, to babble; to speak haltingly or incoherently.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "balbucear una respuesta, balbucear de nervios",
+    "note": "También se usa la variante 'balbucir'. Evoca vergüenza, shock o el habla infantil. El sustantivo correspondiente es 'balbuceo'.",
+    "examples": [
+      {
+        "es": "Sorprendido, solo pudo balbucear unas palabras ininteligibles.",
+        "en": "Surprised, he could only stammer a few unintelligible words."
+      },
+      {
+        "es": "La niña balbuceaba sus primeras sílabas con una sonrisa enorme.",
+        "en": "The little girl babbled her first syllables with a huge smile."
+      }
+    ]
+  },
+  {
+    "id": "ac-036",
+    "term": "baldío",
+    "meaning_es": "Que no produce resultado alguno; inútil, vano, sin fruto.",
+    "meaning_en": "Futile, fruitless; yielding no result or benefit.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "esfuerzo baldío, intento baldío, tierra baldía",
+    "note": "El significado literal es 'terreno sin cultivar'. El sentido figurado de esfuerzo o intento que no da fruto es igualmente corriente.",
+    "examples": [
+      {
+        "es": "Los intentos de mediación resultaron baldíos; ninguna parte cedió.",
+        "en": "The mediation attempts proved fruitless; neither side gave ground."
+      },
+      {
+        "es": "No quería que todo ese esfuerzo quedara baldío por falta de financiación.",
+        "en": "She didn't want all that effort to come to nothing for lack of funding."
+      }
+    ]
+  },
+  {
+    "id": "ac-037",
+    "term": "banalizar",
+    "meaning_es": "Reducir algo serio o importante a una categoría trivial; quitarle gravedad o profundidad.",
+    "meaning_en": "To trivialize, to banalize; to strip something serious of its weight or significance.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "banalizar el sufrimiento, banalizar la violencia, banalizar un debate",
+    "note": "Muy presente en debates éticos y mediáticos. El sustantivo 'banalización' es igualmente útil: 'la banalización del mal'.",
+    "examples": [
+      {
+        "es": "Algunos medios tienden a banalizar la violencia de género con un tratamiento superficial.",
+        "en": "Some media outlets tend to trivialize gender-based violence through superficial coverage."
+      },
+      {
+        "es": "No pretendo banalizar el problema, pero tampoco conviene caer en el dramatismo.",
+        "en": "I'm not trying to trivialize the problem, but we should also avoid overdramatizing it."
+      }
+    ]
+  },
+  {
+    "id": "ac-038",
+    "term": "beneplácito",
+    "meaning_es": "Aprobación, consentimiento o autorización expresa dada por alguien con autoridad.",
+    "meaning_en": "Approval, blessing, go-ahead; formal consent or authorization from someone in authority.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "contar con el beneplácito de, dar su beneplácito, obtener el beneplácito",
+    "note": "Sustantivo masculino de registro formal o ceremonioso. Implica una autorización proveniente de una instancia superior, a menudo institucional o diplomática.",
+    "examples": [
+      {
+        "es": "El proyecto se puso en marcha con el beneplácito de la junta directiva.",
+        "en": "The project got under way with the blessing of the board of directors."
+      },
+      {
+        "es": "No se atrevió a actuar sin el beneplácito de sus superiores.",
+        "en": "He did not dare act without the go-ahead from his superiors."
+      }
+    ]
+  },
+  {
+    "id": "ac-039",
+    "term": "bifurcarse",
+    "meaning_es": "Dividirse un camino, argumento o proceso en dos ramas o direcciones distintas.",
+    "meaning_en": "To fork, to bifurcate; to split into two branches or directions.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "el camino se bifurca, bifurcarse en dos líneas, bifurcarse la discusión",
+    "note": "En uso figurado es reflexivo. Útil para describir argumentos, narrativas, caminos o procesos que se dividen en dos direcciones claramente diferenciadas.",
+    "examples": [
+      {
+        "es": "Al llegar al río, el sendero se bifurca: a la derecha está el pueblo, a la izquierda el bosque.",
+        "en": "On reaching the river, the path forks: the village is to the right, the forest to the left."
+      },
+      {
+        "es": "El debate se bifurcó entre quienes defendían la reforma y quienes la rechazaban.",
+        "en": "The debate split between those who supported the reform and those who rejected it."
+      }
+    ]
+  },
+  {
+    "id": "ac-040",
+    "term": "calar",
+    "meaning_es": "Penetrar profundamente en alguien o en un colectivo; llegar a afectar de forma significativa.",
+    "meaning_en": "To sink in, to resonate; to penetrate deeply and have a lasting effect on someone or a group.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "calar hondo, calar en la sociedad, calar entre el público",
+    "note": "El uso literal es 'empapar' (como la lluvia). La expresión 'calar hondo' tiene un sentido figurado de impacto profundo y duradero muy frecuente en el español actual.",
+    "examples": [
+      {
+        "es": "Su mensaje caló hondo en una generación hastiada de la política tradicional.",
+        "en": "His message resonated deeply with a generation weary of traditional politics."
+      },
+      {
+        "es": "La campaña publicitaria caló entre los jóvenes de una manera que nadie esperaba.",
+        "en": "The advertising campaign sank in among young people in a way nobody had anticipated."
+      }
+    ]
+  },
+  {
+    "id": "ac-041",
+    "term": "canalizar",
+    "meaning_es": "Dirigir o encauzar energías, recursos o demandas por vías organizadas y eficaces.",
+    "meaning_en": "To channel; to direct energy, resources, or demands through organized means.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "canalizar el descontento, canalizar recursos, canalizar la demanda",
+    "note": "El sentido figurado de encauzar energías, quejas o fondos hacia un destino concreto es dominante en el discurso político y empresarial.",
+    "examples": [
+      {
+        "es": "El movimiento logró canalizar el descontento ciudadano en propuestas concretas.",
+        "en": "The movement managed to channel public discontent into concrete proposals."
+      },
+      {
+        "es": "Hay que canalizar los fondos europeos hacia los sectores más afectados por la crisis.",
+        "en": "European funds need to be channeled toward the sectors hardest hit by the crisis."
+      }
+    ]
+  },
+  {
+    "id": "ac-042",
+    "term": "catalizador",
+    "meaning_es": "Elemento o factor que acelera o desencadena un proceso de cambio.",
+    "meaning_en": "Catalyst; a factor that triggers or accelerates a process of change.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "actuar como catalizador, ser el catalizador de, un catalizador del cambio",
+    "note": "Tomado del lenguaje científico. Muy empleado en textos políticos, sociales y empresariales. La variante femenina 'catalizadora' concuerda con sustantivos femeninos.",
+    "examples": [
+      {
+        "es": "La crisis actuó como catalizador de reformas que llevaban décadas pendientes.",
+        "en": "The crisis acted as a catalyst for reforms that had been pending for decades."
+      },
+      {
+        "es": "La inversión en tecnología puede ser el catalizador del desarrollo regional.",
+        "en": "Investment in technology can be the catalyst for regional development."
+      }
+    ]
+  },
+  {
+    "id": "ac-043",
+    "term": "ceder",
+    "meaning_es": "Renunciar a una posición, derecho o exigencia ante la presión de otra parte.",
+    "meaning_en": "To yield, to give way; to relinquish a position or demand under pressure.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "ceder el paso, ceder ante la presión, ceder terreno",
+    "note": "Verbo de gran versatilidad: 'ceder el paso' (tráfico), 'ceder en negociaciones' (hacer concesiones), 'ceder terreno' (perder posiciones). El contexto determina el matiz exacto.",
+    "examples": [
+      {
+        "es": "Ninguno de los dos países quiso ceder en los puntos más polémicos del tratado.",
+        "en": "Neither country was willing to yield on the most controversial points of the treaty."
+      },
+      {
+        "es": "La viga cedió bajo el peso y el andamio se derrumbó.",
+        "en": "The beam gave way under the weight and the scaffolding collapsed."
+      }
+    ]
+  },
+  {
+    "id": "ac-044",
+    "term": "ceñirse a",
+    "meaning_es": "Limitarse estrictamente a lo establecido, indicado o pertinente, sin desviarse.",
+    "meaning_en": "To keep to, to confine oneself to; to stay strictly within defined limits.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "ceñirse al tema, ceñirse a los hechos, ceñirse al presupuesto",
+    "note": "Verbo pronominal + 'a'. Muy frecuente en la escritura académica y en debates para pedir que el interlocutor no se desvíe del asunto central.",
+    "examples": [
+      {
+        "es": "Te pido que te ciñas al tema y no desvíes la conversación.",
+        "en": "I ask you to keep to the topic and not steer the conversation elsewhere."
+      },
+      {
+        "es": "El informe se ciñe estrictamente a los datos disponibles, sin especulaciones.",
+        "en": "The report confines itself strictly to the available data, without speculation."
+      }
+    ]
+  },
+  {
+    "id": "ac-045",
+    "term": "cimentar",
+    "meaning_es": "Establecer las bases sólidas de algo; fundar o consolidar un proyecto, relación o idea.",
+    "meaning_en": "To lay the foundations for; to build or consolidate something on a firm base.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "cimentar una relación, cimentar el éxito, cimentar la reputación",
+    "note": "Procede del sustantivo 'cimiento' (base de un edificio). En sentido figurado connota una construcción lenta y sólida a lo largo del tiempo.",
+    "examples": [
+      {
+        "es": "Años de trabajo honesto cimentaron su reputación en la industria.",
+        "en": "Years of honest work laid the foundations of his reputation in the industry."
+      },
+      {
+        "es": "El acuerdo cimentó una alianza estratégica entre las dos empresas.",
+        "en": "The agreement laid the groundwork for a strategic alliance between the two companies."
+      }
+    ]
+  },
+  {
+    "id": "ac-046",
+    "term": "circunscribirse a",
+    "meaning_es": "Limitarse o reducirse a un ámbito, territorio o tema determinado.",
+    "meaning_en": "To be confined to, to restrict oneself to; to limit scope to a defined area or topic.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "circunscribirse al ámbito de, circunscribirse a los datos",
+    "note": "Verbo pronominal de uso frecuente en la escritura académica y jurídica para delimitar con precisión el alcance de un argumento, estudio o jurisdicción.",
+    "examples": [
+      {
+        "es": "El estudio se circunscribe al ámbito de la psicología cognitiva en adultos mayores.",
+        "en": "The study is confined to the field of cognitive psychology in older adults."
+      },
+      {
+        "es": "El problema no se circunscribe a España; es de alcance europeo.",
+        "en": "The problem is not confined to Spain; it is European in scope."
+      }
+    ]
+  },
+  {
+    "id": "ac-047",
+    "term": "coadyuvar a",
+    "meaning_es": "Contribuir o colaborar junto a otros en la consecución de un fin común.",
+    "meaning_en": "To contribute to, to assist; to work alongside others toward a shared goal.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "coadyuvar al éxito, coadyuvar a la resolución",
+    "note": "Requiere la preposición 'a'. De registro formal, con sabor burocrático o institucional. Señala un esfuerzo colectivo y coordinado.",
+    "examples": [
+      {
+        "es": "Todas las instituciones deben coadyuvar a la integración de los recién llegados.",
+        "en": "All institutions must contribute to the integration of new arrivals."
+      },
+      {
+        "es": "Su participación coadyuvó decisivamente a la resolución del conflicto.",
+        "en": "Her participation contributed decisively to the resolution of the conflict."
+      }
+    ]
+  },
+  {
+    "id": "ac-048",
+    "term": "coartar",
+    "meaning_es": "Limitar, restringir o impedir el ejercicio de una libertad, derecho o capacidad.",
+    "meaning_en": "To restrict, to curtail; to limit or inhibit someone's freedom or rights.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "coartar la libertad, coartar la iniciativa, coartar la creatividad",
+    "note": "Implica una restricción impuesta desde fuera, a menudo contra la voluntad del afectado. Frecuente en debates sobre libertades civiles y creatividad.",
+    "examples": [
+      {
+        "es": "Ninguna ley puede coartar la libertad de expresión en una democracia real.",
+        "en": "No law can curtail freedom of expression in a genuine democracy."
+      },
+      {
+        "es": "El ambiente competitivo coartaba la iniciativa de los empleados más jóvenes.",
+        "en": "The competitive atmosphere was curtailing the initiative of the younger employees."
+      }
+    ]
+  },
+  {
+    "id": "ac-049",
+    "term": "columbrar",
+    "meaning_es": "Percibir algo de manera vaga e imprecisa; entrever o adivinar algo que todavía no es claro.",
+    "meaning_en": "To dimly perceive, to make out from afar; to glimpse or faintly discern.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "columbrar la verdad, columbrar una solución, columbrar en lontananza",
+    "note": "Verbo de registro literario con un matiz evocador de incertidumbre y lejanía. Señala que la certeza todavía está lejos.",
+    "examples": [
+      {
+        "es": "Desde la cumbre se podía columbrar, a lo lejos, el brillo del océano.",
+        "en": "From the summit one could dimly make out, in the distance, the glimmer of the ocean."
+      },
+      {
+        "es": "Apenas columbraba la salida de ese laberinto burocrático.",
+        "en": "She could barely make out the way out of that bureaucratic labyrinth."
+      }
+    ]
+  },
+  {
+    "id": "ac-050",
+    "term": "conciliar",
+    "meaning_es": "Hacer compatibles o armonizar dos cosas en apariencia opuestas o incompatibles.",
+    "meaning_en": "To reconcile, to balance; to make two apparently opposing things compatible.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "conciliar el trabajo y la vida personal, conciliar posturas",
+    "note": "'Conciliación laboral' (equilibrio entre trabajo y vida personal) es una expresión clave en el debate social actual. También se usa para armonizar posturas enfrentadas.",
+    "examples": [
+      {
+        "es": "Es difícil conciliar una carrera exigente con la crianza de los hijos sin apoyo institucional.",
+        "en": "It is hard to balance a demanding career with raising children without institutional support."
+      },
+      {
+        "es": "El mediador logró conciliar las posturas enfrentadas de ambas partes.",
+        "en": "The mediator managed to reconcile the opposing positions of both parties."
+      }
+    ]
+  },
+  {
+    "id": "ac-051",
+    "term": "conllevar",
+    "meaning_es": "Implicar, suponer o acarrear necesariamente algo como consecuencia o parte inherente.",
+    "meaning_en": "To entail, to involve; to necessarily bring along as an inherent consequence.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "conllevar riesgos, conllevar dificultades, conllevar un coste",
+    "note": "Error frecuente: añadir 'consigo' (*conlleva consigo), que es redundante. La consecuencia ya está incorporada en el significado del verbo.",
+    "examples": [
+      {
+        "es": "Todo cambio organizativo conlleva un período de adaptación e incertidumbre.",
+        "en": "Every organizational change entails a period of adaptation and uncertainty."
+      },
+      {
+        "es": "La decisión conlleva riesgos que no deben subestimarse.",
+        "en": "The decision involves risks that must not be underestimated."
+      }
+    ]
+  },
+  {
+    "id": "ac-052",
+    "term": "consabido",
+    "meaning_es": "Que ya es conocido, sabido por todos o que se menciona con demasiada frecuencia.",
+    "meaning_en": "The usual, the well-known, the inevitable; something everyone already knows about.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "el consabido problema, la consabida excusa, el consabido retraso",
+    "note": "Lleva implícita una leve ironía: lo que se describe es predeciblemente familiar, a menudo de forma tediosa. Se coloca casi siempre antes del sustantivo.",
+    "examples": [
+      {
+        "es": "El informe llegó con el consabido retraso de dos semanas.",
+        "en": "The report arrived with the inevitable two-week delay."
+      },
+      {
+        "es": "Echó mano de la consabida excusa del tráfico para justificar su tardanza.",
+        "en": "He fell back on the usual traffic excuse to explain his lateness."
+      }
+    ]
+  },
+  {
+    "id": "ac-053",
+    "term": "contravenir",
+    "meaning_es": "Actuar en contra de una ley, norma o disposición; violarla o incumplirla.",
+    "meaning_en": "To contravene, to violate; to act against a rule, law, or established norm.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "contravenir la ley, contravenir el reglamento, contravenir lo acordado",
+    "note": "Verbo irregular (contravengo, contraviene…). De uso habitual en el lenguaje jurídico y normativo para señalar el incumplimiento de un marco legal específico.",
+    "examples": [
+      {
+        "es": "La empresa fue sancionada por contravenir la normativa medioambiental vigente.",
+        "en": "The company was fined for contravening current environmental regulations."
+      },
+      {
+        "es": "Su decisión contraviene abiertamente lo acordado en el protocolo firmado.",
+        "en": "His decision openly contravenes what was agreed in the signed protocol."
+      }
+    ]
+  },
+  {
+    "id": "ac-054",
+    "term": "cotizar",
+    "meaning_es": "Tener cierto precio o valoración en un mercado; ser estimado o valorado socialmente.",
+    "meaning_en": "To be valued at, to trade at; to have a certain worth in a market or social context.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "cotizar en bolsa, cotizar al alza, cotizar muy alto",
+    "note": "Tiene varios usos: cotizar en bolsa (operar en el mercado de valores), cotizar a la Seguridad Social (pagar cotizaciones) y el uso figurado de ser muy valorado en algún ámbito.",
+    "examples": [
+      {
+        "es": "La empresa salió a cotizar en bolsa con una valoración de 500 millones.",
+        "en": "The company went public with a valuation of 500 million."
+      },
+      {
+        "es": "Los programadores con experiencia en IA cotizan muy alto en el mercado laboral actual.",
+        "en": "Programmers with AI experience are highly valued in today's job market."
+      }
+    ]
+  },
+  {
+    "id": "ac-055",
+    "term": "acendrado",
+    "meaning_es": "Puro, limpio de defectos e impurezas; muy arraigado y profundo en su esencia.",
+    "meaning_en": "Deeply ingrained, refined; pure and unalloyed in quality or feeling.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "patriotismo acendrado, fe acendrada, amor acendrado",
+    "note": "Adjetivo de registro formal o literario que describe convicciones o sentimientos de gran pureza y arraigo. Se combina habitualmente con sustantivos abstractos de valor positivo.",
+    "examples": [
+      {
+        "es": "Sentía por su tierra natal un amor acendrado que nunca llegó a desaparecer.",
+        "en": "She felt a deeply ingrained love for her homeland that never faded."
+      },
+      {
+        "es": "Su acendrado compromiso con la justicia le costó el cargo pero le ganó el respeto de todos.",
+        "en": "His unalloyed commitment to justice cost him his post but earned him everyone's respect."
+      }
+    ]
+  },
+  {
+    "id": "ac-056",
+    "term": "acaparar",
+    "meaning_es": "Concentrar para sí, en exceso, la atención, recursos u objetos disponibles.",
+    "meaning_en": "To monopolize, to hoard; to corner or absorb a disproportionate share of something.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "acaparar la atención, acaparar el mercado, acaparar recursos",
+    "note": "Connota exceso o abuso. Las expresiones 'acaparar la atención' y 'acaparar el mercado' son colocaciones fijas de uso muy frecuente.",
+    "examples": [
+      {
+        "es": "Desde que llegó, acapara toda la atención en cualquier reunión.",
+        "en": "Ever since she arrived, she monopolizes all the attention in any meeting."
+      },
+      {
+        "es": "Unas pocas multinacionales acaparan el mercado global de semillas.",
+        "en": "A handful of multinationals have cornered the global seed market."
+      }
+    ]
+  },
+  {
+    "id": "ac-057",
+    "term": "acotación",
+    "meaning_es": "Nota aclaratoria o limitación que se añade a un texto para precisar su alcance.",
+    "meaning_en": "Annotation, stage direction, footnote clarification; a limiting remark added to a text.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "hacer una acotación, acotaciones del autor, acotaciones al margen",
+    "note": "En teatro designa las instrucciones escénicas del dramaturgo. En un debate o texto escrito es un apunte aclaratorio que precisa o delimita lo que se dice.",
+    "examples": [
+      {
+        "es": "Las acotaciones del autor revelan tanto como el diálogo en sí.",
+        "en": "The author's stage directions reveal as much as the dialogue itself."
+      },
+      {
+        "es": "Permíteme hacer una acotación antes de responder a la pregunta principal.",
+        "en": "Allow me to make a clarifying remark before answering the main question."
+      }
+    ]
+  },
+  {
+    "id": "ac-058",
+    "term": "acrecentar",
+    "meaning_es": "Aumentar o hacer crecer algo de manera progresiva; incrementar.",
+    "meaning_en": "To increase, to augment; to cause something to grow progressively.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "acrecentar la brecha, acrecentar el patrimonio, acrecentarse la tensión",
+    "note": "Verbo irregular con diptongación en sílabas tónicas (acreciento). Se emplea con preferencia para aumentos de riqueza, desigualdades o tensiones a lo largo del tiempo.",
+    "examples": [
+      {
+        "es": "La crisis acrecentó la brecha entre ricos y pobres en todos los países afectados.",
+        "en": "The crisis widened the gap between rich and poor in all affected countries."
+      },
+      {
+        "es": "Con cada nuevo episodio, su fama se acrecentaba más allá de las fronteras nacionales.",
+        "en": "With each new episode, his fame grew beyond national borders."
+      }
+    ]
+  },
+  {
+    "id": "ac-059",
+    "term": "acrimonia",
+    "meaning_es": "Aspereza, amargura o mordacidad con que alguien se expresa o actúa.",
+    "meaning_en": "Acrimony, sharpness; bitterness or harshness in speech or behaviour.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "con acrimonia, responder con acrimonia, la acrimonia del debate",
+    "note": "Sustantivo femenino. Describe la dureza o amargura en el trato personal, en los debates o en las palabras; señala una hostilidad apenas contenida.",
+    "examples": [
+      {
+        "es": "El debate terminó con notable acrimonia cuando uno de los ponentes se levantó y se marchó.",
+        "en": "The debate ended with remarkable acrimony when one of the speakers got up and left."
+      },
+      {
+        "es": "Le respondió con una acrimonia que dejó patente cuánto le había dolido la crítica.",
+        "en": "She replied with an acrimony that made clear how much the criticism had stung."
+      }
+    ]
+  },
+  {
+    "id": "ac-060",
+    "term": "acucioso",
+    "meaning_es": "Diligente, solícito y muy cuidadoso en el cumplimiento de sus obligaciones.",
+    "meaning_en": "Diligent, zealous; thorough and careful in fulfilling obligations.",
+    "register": "formal",
+    "region": "Latinoamérica",
+    "collocation": "un periodista acucioso, una investigadora acuciosa",
+    "note": "De uso extendido en el español de Latinoamérica para describir a alguien minucioso y concienzudo. En España son más habituales 'diligente' o 'concienzudo'.",
+    "examples": [
+      {
+        "es": "El periodista acucioso rastreó cada fuente hasta encontrar la prueba definitiva.",
+        "en": "The diligent journalist tracked down every source until he found the definitive proof."
+      },
+      {
+        "es": "Su revisión acuciosa del manuscrito descubrió errores que todos habían pasado por alto.",
+        "en": "Her thorough review of the manuscript uncovered errors that everyone had overlooked."
+      }
+    ]
+  },
+  {
+    "id": "ac-061",
+    "term": "aciago",
+    "meaning_es": "Funesto, de mal agüero; que trae desgracia o desventura.",
+    "meaning_en": "Ill-fated, ominous; bringing misfortune or associated with disaster.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "día aciago, momento aciago, presagio aciago",
+    "note": "Adjetivo de registro literario, aunque también frecuente en periodismo para dar solemnidad. La fórmula 'aquel día aciago' aparece con asiduidad en crónicas y memorias.",
+    "examples": [
+      {
+        "es": "Aquella noche aciaga marcó el inicio de una crisis sin precedentes.",
+        "en": "That ill-fated night marked the beginning of an unprecedented crisis."
+      },
+      {
+        "es": "El poeta recordaba con amargura el aciago momento en que perdió el manuscrito.",
+        "en": "The poet recalled with bitterness the ill-fated moment when he lost the manuscript."
+      }
+    ]
+  },
+  {
+    "id": "ac-062",
+    "term": "abulia",
+    "meaning_es": "Falta de voluntad, energía o iniciativa para actuar o tomar decisiones.",
+    "meaning_en": "Abulia, apathy; a pathological lack of will or motivation to act.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "caer en la abulia, una abulia colectiva, superar la abulia",
+    "note": "Término clínico en psiquiatría para una pérdida grave de la voluntad. En el uso general describe apatía social o política sin el peso clínico estricto.",
+    "examples": [
+      {
+        "es": "La abulia política de los ciudadanos beneficia a quienes buscan perpetuarse en el poder.",
+        "en": "Citizens' political apathy benefits those who seek to perpetuate themselves in power."
+      },
+      {
+        "es": "Tras meses de abulia creativa, retomó el proyecto con renovadas energías.",
+        "en": "After months of creative apathy, she took up the project again with renewed energy."
+      }
+    ]
+  },
+  {
+    "id": "ac-063",
+    "term": "abismarse",
+    "meaning_es": "Sumirse profundamente en una reflexión, sorpresa o pena; quedar absorto.",
+    "meaning_en": "To plunge into, to become lost in; to immerse oneself deeply in thought, sorrow, or contemplation.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "abismarse en la contemplación, abismarse en el dolor",
+    "note": "Verbo pronominal relacionado con 'abismo'. Señala una absorción total en un estado emocional o intelectual; frecuente en prosa narrativa y ensayo.",
+    "examples": [
+      {
+        "es": "Se abismó en la contemplación del cuadro durante casi una hora sin moverse.",
+        "en": "He was lost in contemplation of the painting for nearly an hour without moving."
+      },
+      {
+        "es": "La noticia la abismó en una tristeza de la que tardó semanas en salir.",
+        "en": "The news plunged her into a sadness from which it took her weeks to emerge."
+      }
+    ]
+  },
+  {
+    "id": "ac-064",
+    "term": "abrogar",
+    "meaning_es": "Anular o derogar oficialmente una ley, norma o disposición legal.",
+    "meaning_en": "To abrogate, to repeal; to formally annul or revoke a law or regulation.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "abrogar una ley, abrogar el decreto, abrogar el tratado",
+    "note": "Término jurídico y legislativo. Implica la anulación total de una norma. El sustantivo correspondiente es 'abrogación'.",
+    "examples": [
+      {
+        "es": "El nuevo ejecutivo se comprometió a abrogar las leyes aprobadas en el período anterior.",
+        "en": "The new executive committed to repealing the laws passed during the previous term."
+      },
+      {
+        "es": "El tratado quedó abrogado de facto cuando ambas naciones lo denunciaron.",
+        "en": "The treaty was effectively abrogated when both nations renounced it."
+      }
+    ]
+  },
+  {
+    "id": "ac-065",
+    "term": "abstraerse",
+    "meaning_es": "Aislarse mentalmente de los estímulos externos para concentrarse en el pensamiento.",
+    "meaning_en": "To abstract oneself, to lose oneself in thought; to mentally detach from surroundings.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "abstraerse del ruido, abstraerse en sus pensamientos",
+    "note": "Verbo pronominal. El participio 'abstraído' funciona como adjetivo: 'estaba completamente abstraída'. Puede indicar un proceso voluntario o involuntario.",
+    "examples": [
+      {
+        "es": "Tenía la capacidad de abstraerse del caos del open space y concentrarse por completo.",
+        "en": "She had the ability to mentally detach herself from the open-plan chaos and concentrate fully."
+      },
+      {
+        "es": "Caminaba abstraído en sus pensamientos y no oyó cuando le llamaron.",
+        "en": "He was walking lost in his thoughts and didn't hear when they called him."
+      }
+    ]
+  },
+  {
+    "id": "ac-066",
+    "term": "acalorarse",
+    "meaning_es": "Ponerse agitado o excitado durante una discusión; perder la calma al debatir.",
+    "meaning_en": "To get heated, to get worked up; to become agitated or passionate during an argument.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "acalorarse en el debate, acalorarse por nada, un debate acalorado",
+    "note": "Verbo pronominal. El adjetivo 'acalorado' es igualmente habitual: 'debate acalorado'. Describe el exceso de emoción sobre la razón en una discusión.",
+    "examples": [
+      {
+        "es": "Los dos vecinos se acaloraron tanto que tuvieron que separarlos.",
+        "en": "The two neighbours got so heated that they had to be separated."
+      },
+      {
+        "es": "No te acalores; podemos discutirlo con calma en otro momento.",
+        "en": "Don't get worked up; we can discuss it calmly another time."
+      }
+    ]
+  },
+  {
+    "id": "ac-067",
+    "term": "acicalar",
+    "meaning_es": "Arreglar y adornar con esmero la apariencia personal; mejorar el aspecto de algo.",
+    "meaning_en": "To primp, to smarten up; to carefully groom or adorn one's appearance.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "acicalarse antes de salir, bien acicalado",
+    "note": "Se usa de forma transitiva o pronominal: 'acicalar al perro', 'acicalarse antes de salir'. 'Bien acicalado' describe un aspecto arreglado con esmero.",
+    "examples": [
+      {
+        "es": "Se acicaló durante horas antes de la entrevista, aunque al final llegó tarde.",
+        "en": "She primped for hours before the interview, though she ended up arriving late."
+      },
+      {
+        "es": "Apareció en la gala bien acicalado, con traje oscuro y pañuelo de seda.",
+        "en": "He appeared at the gala smartly turned out, in a dark suit and silk pocket square."
+      }
+    ]
+  },
+  {
+    "id": "ac-068",
+    "term": "acosar",
+    "meaning_es": "Perseguir, presionar u hostigar de manera insistente e indeseable a alguien.",
+    "meaning_en": "To harass, to hound; to relentlessly pursue or pressure someone in an unwanted way.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "acosar a alguien, acoso laboral, acoso escolar",
+    "note": "Las expresiones 'acoso laboral', 'acoso escolar' y 'acoso sexual' son términos compuestos de uso normativo y periodístico habitual. El sustantivo 'acoso' resulta imprescindible.",
+    "examples": [
+      {
+        "es": "Denunció a la empresa por acoso laboral después de meses de presión sistemática.",
+        "en": "She filed a complaint against the company for workplace harassment after months of systematic pressure."
+      },
+      {
+        "es": "Los periodistas acosaban al ministro a la salida del ministerio.",
+        "en": "Journalists hounded the minister as he left the ministry."
+      }
+    ]
+  },
+  {
+    "id": "ac-069",
+    "term": "acotar",
+    "meaning_es": "Delimitar, fijar o precisar los límites de un espacio, tema o concepto.",
+    "meaning_en": "To delimit, to define; to fix the boundaries of a topic, concept, or physical space.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "acotar el tema, acotar el terreno, acotar el análisis",
+    "note": "En debates y textos académicos, 'acotemos el tema' propone precisar su alcance. También se puede acotar un terreno o añadir acotaciones a un texto.",
+    "examples": [
+      {
+        "es": "Antes de continuar, es necesario acotar bien el objeto de estudio.",
+        "en": "Before continuing, it is necessary to clearly define the scope of the study."
+      },
+      {
+        "es": "El entrevistador acotó el debate para evitar que se dispersara.",
+        "en": "The interviewer delimited the debate to keep it from meandering."
+      }
+    ]
+  },
+  {
+    "id": "ac-070",
+    "term": "acritud",
+    "meaning_es": "Aspereza o dureza en el trato, el tono o las palabras; irritación expresada con agresividad.",
+    "meaning_en": "Acidity, sharpness; harshness or irritability in tone, manner, or words.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "responder con acritud, la acritud del tono, hablar con acritud",
+    "note": "Sustantivo femenino. En sentido figurado describe la hostilidad apenas velada en el tono o las palabras de alguien. También tiene un significado literal de sabor o olor ácido.",
+    "examples": [
+      {
+        "es": "Respondió con una acritud que sorprendió incluso a sus propios aliados.",
+        "en": "He responded with a sharpness that surprised even his own allies."
+      },
+      {
+        "es": "La acritud de las negociaciones hacía prever un acuerdo difícil.",
+        "en": "The bitterness of the negotiations foreshadowed a difficult agreement."
+      }
+    ]
+  },
+  {
+    "id": "ac-071",
+    "term": "aquilatar",
+    "meaning_es": "Evaluar con precisión el valor, la calidad o las cualidades de algo o alguien.",
+    "meaning_en": "To assess precisely, to appraise; to weigh up the true value or quality of something.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "aquilatar el valor, aquilatar los méritos, aquilatar la situación",
+    "note": "Proviene del ámbito de la orfebrería (comprobar la pureza del oro). En sentido figurado expresa una evaluación cuidadosa y discriminatoria.",
+    "examples": [
+      {
+        "es": "Hay que aquilatar bien los riesgos antes de tomar una decisión de esta magnitud.",
+        "en": "The risks must be carefully appraised before making a decision of this magnitude."
+      },
+      {
+        "es": "La crítica tardó años en aquilatar el verdadero valor de esa novela.",
+        "en": "Critics took years to accurately assess the true value of that novel."
+      }
+    ]
+  },
+  {
+    "id": "ac-072",
+    "term": "arraigado",
+    "meaning_es": "Profundamente establecido o asimilado en las costumbres, la cultura o la mente.",
+    "meaning_en": "Deep-rooted, entrenched; firmly established in custom, culture, or belief.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "creencia arraigada, costumbre arraigada, profundamente arraigado",
+    "note": "Participio de 'arraigar' usado como adjetivo. La preposición 'en' especifica el ámbito de arraigo: 'arraigado en la cultura popular'. Connota una larga implantación histórica.",
+    "examples": [
+      {
+        "es": "Los prejuicios más arraigados son los más difíciles de combatir.",
+        "en": "The most deep-rooted prejudices are the hardest to combat."
+      },
+      {
+        "es": "La costumbre del café de las tres está muy arraigada en la cultura española.",
+        "en": "The custom of the three-o'clock coffee is deeply entrenched in Spanish culture."
+      }
+    ]
+  },
+  {
+    "id": "ac-073",
+    "term": "arrostrar",
+    "meaning_es": "Afrontar con valentía y sin retroceder ante peligros, dificultades o consecuencias.",
+    "meaning_en": "To face, to brave; to confront dangers or difficulties with courage and without retreating.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "arrostrar las consecuencias, arrostrar el peligro, arrostrar las críticas",
+    "note": "Verbo no pronominal de registro formal o literario. Connota enfrentamiento frontal y valiente a algo hostil, sin ceder ni esquivar.",
+    "examples": [
+      {
+        "es": "Decidió arrostrar las consecuencias de su decisión con la frente en alto.",
+        "en": "He decided to face the consequences of his decision with his head held high."
+      },
+      {
+        "es": "Los primeros colonos tuvieron que arrostrar condiciones de vida extremas.",
+        "en": "The first settlers had to brave extreme living conditions."
+      }
+    ]
+  },
+  {
+    "id": "ac-074",
+    "term": "asidero",
+    "meaning_es": "Fundamento, apoyo o punto de sujeción al que alguien se aferra para sostenerse.",
+    "meaning_en": "Handhold, foothold; something to hold on to or a basis for support.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un asidero legal, buscar un asidero, sin ningún asidero",
+    "note": "Sustantivo masculino. En sentido literal es un agarradero; en sentido figurado puede ser una base jurídica ('sin ningún asidero legal') o un apoyo emocional.",
+    "examples": [
+      {
+        "es": "La acusación carece de cualquier asidero jurídico y será desestimada.",
+        "en": "The accusation has no legal basis whatsoever and will be dismissed."
+      },
+      {
+        "es": "En aquel período oscuro, la música era su único asidero emocional.",
+        "en": "During that dark period, music was his only emotional foothold."
+      }
+    ]
+  },
+  {
+    "id": "ac-075",
+    "term": "atenazar",
+    "meaning_es": "Inmovilizar o paralizar a alguien por efecto de un miedo, dolor o angustia intensos.",
+    "meaning_en": "To grip, to seize; to immobilize through intense fear, pain, or anguish.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "atenazado por el miedo, atenazar los nervios, la duda le atenazaba",
+    "note": "Evoca la imagen de unas tenazas que aprietan sin soltar. Se usa con estados emocionales: 'atenazado por la angustia', 'atenazado por los nervios'.",
+    "examples": [
+      {
+        "es": "El miedo le atenazaba la garganta y no pudo pronunciar ni una palabra.",
+        "en": "Fear gripped his throat and he couldn't utter a single word."
+      },
+      {
+        "es": "Atenazada por la indecisión, dejó pasar la única oportunidad que tenía.",
+        "en": "Seized by indecision, she let slip the only opportunity she had."
+      }
+    ]
+  },
+  {
+    "id": "ac-076",
+    "term": "atribular",
+    "meaning_es": "Causar tribulación, angustia o aflicción profunda a alguien.",
+    "meaning_en": "To distress, to afflict; to cause someone deep anguish or tribulation.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "atribulado por las dudas, sentirse atribulado, un semblante atribulado",
+    "note": "Con frecuencia se usa el participio como adjetivo: 'atribulado' (angustiado, apesadumbrado). El sustantivo 'tribulación' comparte la misma raíz.",
+    "examples": [
+      {
+        "es": "Llegó al despacho con semblante atribulado y pidió hablar en privado.",
+        "en": "He arrived at the office with a distressed look and asked to speak in private."
+      },
+      {
+        "es": "Las malas noticias la atribularon de tal forma que no pudo dormir en días.",
+        "en": "The bad news distressed her so deeply that she could not sleep for days."
+      }
+    ]
+  },
+  {
+    "id": "ac-077",
+    "term": "auspiciar",
+    "meaning_es": "Patrocinar, promover o favorecer la realización de algo bajo su protección.",
+    "meaning_en": "To sponsor, to back, to foster; to support or promote something under one's protection.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "auspiciar un encuentro, auspiciado por, bajo los auspicios de",
+    "note": "La locución preposicional 'bajo los auspicios de' es una fórmula muy empleada para señalar el patrocinio institucional de alto nivel.",
+    "examples": [
+      {
+        "es": "La cumbre fue auspiciada por las Naciones Unidas con el apoyo de 40 países.",
+        "en": "The summit was sponsored by the United Nations with the support of 40 countries."
+      },
+      {
+        "es": "El proyecto se lanzó bajo los auspicios del Ministerio de Cultura.",
+        "en": "The project was launched under the auspices of the Ministry of Culture."
+      }
+    ]
+  },
+  {
+    "id": "ac-078",
+    "term": "condescendencia",
+    "meaning_es": "Actitud de quien se rebaja a tratar a otros como inferiores disfrazando esa superioridad de amabilidad.",
+    "meaning_en": "Condescension; an attitude of treating others as inferior while disguising it as kindness.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "con condescendencia, un tono de condescendencia, tratar con condescendencia",
+    "note": "Sustantivo femenino. El adjetivo correspondiente es 'condescendiente'. Describe un trato que proyecta superioridad, aunque a veces quien lo ejerce no es consciente de ello.",
+    "examples": [
+      {
+        "es": "Le explicó las normas con una condescendencia que ella encontró insultante.",
+        "en": "He explained the rules to her with a condescension she found insulting."
+      },
+      {
+        "es": "Hablar con condescendencia a tus colegas no es liderazgo; es arrogancia.",
+        "en": "Speaking condescendingly to your colleagues is not leadership; it is arrogance."
+      }
+    ]
+  },
+  {
+    "id": "ac-079",
+    "term": "contumaz",
+    "meaning_es": "Obstinado, tenaz en mantener una actitud o error a pesar de las razones en contra.",
+    "meaning_en": "Stubborn, obstinate; persistently maintaining an attitude or error despite counter-arguments.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "un opositor contumaz, un error contumaz, contumaz en su postura",
+    "note": "El término tiene origen jurídico ('contumacia': rebeldía procesal). En uso figurado describe una obstinación que desafía la evidencia o la autoridad.",
+    "examples": [
+      {
+        "es": "El comité era contumaz en rechazar cualquier propuesta que no saliera de sus filas.",
+        "en": "The committee was obstinate in rejecting any proposal that did not come from within its own ranks."
+      },
+      {
+        "es": "A pesar de las evidencias, siguió siendo contumaz en su negativa a reconocer el error.",
+        "en": "Despite the evidence, she remained stubbornly unwilling to acknowledge the mistake."
+      }
+    ]
+  },
+  {
+    "id": "ac-080",
+    "term": "crispar",
+    "meaning_es": "Provocar irritación, tensión o crispación en alguien o en un ambiente colectivo.",
+    "meaning_en": "To aggravate, to fray; to irritate or create tension in a person or collective atmosphere.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "crispar los nervios, crispar el ambiente, crispación social",
+    "note": "Se usa tanto de forma transitiva ('me crispa') como pronominal ('el ambiente se crispó'). El sustantivo 'crispación' es clave para describir la tensión colectiva.",
+    "examples": [
+      {
+        "es": "Sus constantes interrupciones me crispaban los nervios.",
+        "en": "His constant interruptions were fraying my nerves."
+      },
+      {
+        "es": "La crispación social aumentó tras la filtración de los documentos.",
+        "en": "Social tension increased after the documents were leaked."
+      }
+    ]
+  },
+  {
+    "id": "ac-081",
+    "term": "cuantioso",
+    "meaning_es": "Grande en cantidad o número; abundante, muy considerable.",
+    "meaning_en": "Substantial, considerable; great in quantity, amount, or number.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "una cuantiosa suma, daños cuantiosos, pérdidas cuantiosas",
+    "note": "Adjetivo que concuerda en género y número. Se combina de forma natural con sustantivos que indican cantidades de dinero, daños o recursos.",
+    "examples": [
+      {
+        "es": "El incendio causó cuantiosos daños materiales en el almacén principal.",
+        "en": "The fire caused substantial material damage to the main warehouse."
+      },
+      {
+        "es": "Invirtió una cuantiosa suma en renovar las instalaciones del centro cultural.",
+        "en": "She invested a considerable sum in renovating the cultural centre's facilities."
+      }
+    ]
+  },
+  {
+    "id": "ac-082",
+    "term": "conminar",
+    "meaning_es": "Amenazar o intimar a alguien con una sanción si no cumple una orden o exigencia.",
+    "meaning_en": "To warn under penalty, to order with a threat; to formally demand compliance on pain of sanction.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "conminar a alguien a, conminar bajo pena de, conminar al cumplimiento",
+    "note": "Se construye 'conminar a alguien a' + infinitivo. Es habitual en contextos jurídicos, aunque quien exige o amenaza no tiene que ser una autoridad oficial.",
+    "examples": [
+      {
+        "es": "El juez conminó a la empresa a presentar la documentación en el plazo de 48 horas.",
+        "en": "The judge ordered the company to submit the documentation within 48 hours, under penalty."
+      },
+      {
+        "es": "Fue conminado a abandonar el país en un plazo de 72 horas.",
+        "en": "He was formally ordered to leave the country within 72 hours."
+      }
+    ]
+  },
+  {
+    "id": "ac-084",
+    "term": "contemporizar",
+    "meaning_es": "Ceder o adaptarse temporalmente a las exigencias de una situación o persona para evitar conflictos.",
+    "meaning_en": "To temporize, to go along with; to adapt or concede temporarily to avoid conflict.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "contemporizar con, estar dispuesto a contemporizar",
+    "note": "No debe confundirse con 'contemporáneo'. Describe una acomodación estratégica que no supone un acuerdo genuino y puede tener un matiz levemente negativo.",
+    "examples": [
+      {
+        "es": "En lugar de confrontar al cliente, prefirió contemporizar hasta que pasara el momento crítico.",
+        "en": "Rather than confront the client, she chose to temporize until the critical moment had passed."
+      },
+      {
+        "es": "No es posible contemporizar indefinidamente con quienes actúan de mala fe.",
+        "en": "It is not possible to keep going along indefinitely with those acting in bad faith."
+      }
+    ]
+  },
+  {
+    "id": "ac-085",
+    "term": "corolario",
+    "meaning_es": "Consecuencia o conclusión que se deduce de manera natural de algo ya establecido.",
+    "meaning_en": "Corollary; a conclusion or natural consequence that follows from something already established.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "como corolario, el corolario lógico, un corolario inevitable",
+    "note": "Término de origen matemático; hoy habitual en filosofía, política y retórica. Señala que la conclusión se sigue lógicamente de premisas ya aceptadas.",
+    "examples": [
+      {
+        "es": "Como corolario de ese razonamiento, debería aceptarse que la ley es inconstitucional.",
+        "en": "As a corollary of that reasoning, it should be accepted that the law is unconstitutional."
+      },
+      {
+        "es": "La desconfianza fue el corolario inevitable de tantos años de engaños repetidos.",
+        "en": "Distrust was the inevitable corollary of so many years of repeated deception."
+      }
+    ]
+  },
+  {
+    "id": "ac-086",
+    "term": "cumplimiento",
+    "meaning_es": "Acción de llevar a cabo o satisfacer una obligación, promesa, ley o requisito.",
+    "meaning_en": "Compliance, fulfilment; the act of carrying out an obligation, promise, or requirement.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "en cumplimiento de, velar por el cumplimiento, falta de cumplimiento",
+    "note": "Se combina con obligaciones, plazos, promesas y normas: 'dar cumplimiento a un acuerdo', 'en cumplimiento de la ley'.",
+    "examples": [
+      {
+        "es": "En cumplimiento de la normativa vigente, la empresa publicó sus cuentas anuales.",
+        "en": "In compliance with current regulations, the company published its annual accounts."
+      },
+      {
+        "es": "El departamento de auditoría vela por el cumplimiento de los procedimientos internos.",
+        "en": "The audit department oversees compliance with internal procedures."
+      }
+    ]
+  },
+  {
+    "id": "ac-087",
+    "term": "condicionante",
+    "meaning_es": "Factor que determina, limita o influye en el resultado o el curso de algo.",
+    "meaning_en": "Determining factor, constraint; something that shapes or limits an outcome or process.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un condicionante clave, los condicionantes del mercado, condicionantes históricos",
+    "note": "Funciona como sustantivo y como adjetivo. Como sustantivo plural ('los condicionantes económicos') es muy frecuente en análisis de política y empresa.",
+    "examples": [
+      {
+        "es": "El contexto histórico es un condicionante fundamental para entender esa decisión.",
+        "en": "The historical context is a fundamental determining factor in understanding that decision."
+      },
+      {
+        "es": "Los condicionantes presupuestarios impiden acometer todas las reformas a la vez.",
+        "en": "Budget constraints prevent all the reforms from being tackled simultaneously."
+      }
+    ]
+  },
+  {
+    "id": "ac-088",
+    "term": "contienda",
+    "meaning_es": "Disputa, enfrentamiento o lucha entre personas, grupos o ideas.",
+    "meaning_en": "Contest, struggle, dispute; a fight or conflict between people, groups, or ideas.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "una contienda electoral, entrar en la contienda, ganar la contienda",
+    "note": "Sustantivo femenino de registro elevado. La expresión 'contienda electoral' es frecuente en el periodismo político para referirse a una campaña muy disputada.",
+    "examples": [
+      {
+        "es": "La contienda electoral prometía ser la más reñida de los últimos veinte años.",
+        "en": "The electoral contest promised to be the most closely fought in the last twenty years."
+      },
+      {
+        "es": "Dos concepciones del estado entran en contienda en ese debate filosófico.",
+        "en": "Two conceptions of the state clash in that philosophical debate."
+      }
+    ]
+  },
+  {
+    "id": "ac-089",
+    "term": "comulgar con",
+    "meaning_es": "Compartir o estar de acuerdo con unas ideas, valores o principios de otros.",
+    "meaning_en": "To subscribe to, to be in agreement with; to share someone's ideas or values.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "comulgar con sus ideas, no comulgar con esa visión",
+    "note": "En este sentido se construye con 'con'. Es frecuente en negativo: 'no comulgo con esa postura' expresa desacuerdo con unas ideas.",
+    "examples": [
+      {
+        "es": "No comulgo con la idea de que el fin justifica los medios.",
+        "en": "I don't subscribe to the idea that the end justifies the means."
+      },
+      {
+        "es": "Apoyó al candidato, aunque no comulgaba con todas sus propuestas.",
+        "en": "She backed the candidate, though she didn't share all of his proposals."
+      }
+    ]
+  },
+  {
+    "id": "ac-090",
+    "term": "convulso",
+    "meaning_es": "Agitado, sacudido por profundas perturbaciones sociales, políticas o emocionales.",
+    "meaning_en": "Convulsed, in turmoil; shaken by deep social, political, or emotional upheaval.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "un período convulso, una sociedad convulsa, tiempos convulsos",
+    "note": "Adjetivo de registro elevado. La expresión 'tiempos convulsos' es frecuente en el periodismo y el ensayo para describir períodos de gran inestabilidad.",
+    "examples": [
+      {
+        "es": "El libro narra la vida cotidiana en un período convulso de la historia europea.",
+        "en": "The book narrates everyday life in a turbulent period of European history."
+      },
+      {
+        "es": "La sociedad convulsa de los años treinta aparece reflejada en cada página de la novela.",
+        "en": "The convulsed society of the 1930s is reflected on every page of the novel."
+      }
+    ]
+  },
+  {
+    "id": "ac-091",
+    "term": "cotidianidad",
+    "meaning_es": "Carácter o cualidad de lo que forma parte de la vida diaria; lo ordinario y habitual.",
+    "meaning_en": "Everydayness, dailiness; the quality or texture of ordinary daily life.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "la cotidianidad de la vida, escapar de la cotidianidad, sumido en la cotidianidad",
+    "note": "Sustantivo femenino. Evoca la textura vivida de la vida ordinaria. Se emplea en literatura y sociología para designar el conjunto de prácticas y rutinas diarias.",
+    "examples": [
+      {
+        "es": "La cotidianidad de la vida en el barrio se refleja con exactitud en sus poemas.",
+        "en": "The everyday texture of neighbourhood life is reflected with precision in his poems."
+      },
+      {
+        "es": "Viajaba para escapar de la cotidianidad y recuperar la perspectiva.",
+        "en": "She travelled to escape the routine of daily life and regain perspective."
+      }
+    ]
+  },
+  {
+    "id": "ac-092",
+    "term": "compeler",
+    "meaning_es": "Obligar a alguien, mediante coacción o autoridad, a hacer algo.",
+    "meaning_en": "To compel; to force someone to act through authority or coercion.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "compeler a cumplir, compeler a declarar, sentirse compelido a",
+    "note": "La construcción 'compelido a' + infinitivo es habitual en el lenguaje jurídico y formal para indicar la obligación impuesta por una instancia de autoridad.",
+    "examples": [
+      {
+        "es": "El tribunal compelió a la empresa a revelar sus registros financieros internos.",
+        "en": "The court compelled the company to disclose its internal financial records."
+      },
+      {
+        "es": "Se sentía compelida a hablar aunque sabía que podría costarle el empleo.",
+        "en": "She felt compelled to speak even though she knew it could cost her her job."
+      }
+    ]
+  },
+  {
+    "id": "ac-093",
+    "term": "cuestionable",
+    "meaning_es": "Que puede o merece ser puesto en duda; de legitimidad o calidad discutible.",
+    "meaning_en": "Questionable, debatable; open to doubt or of contested legitimacy or quality.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "de dudosa y cuestionable legalidad, una táctica cuestionable, resultados cuestionables",
+    "note": "Expresa una valoración crítica: se considera que algo admite dudas u objeciones. No equivale a afirmar que su falsedad ya está demostrada.",
+    "examples": [
+      {
+        "es": "El método empleado para seleccionar a los candidatos es, cuando menos, cuestionable.",
+        "en": "The method used to select the candidates is, to say the least, questionable."
+      },
+      {
+        "es": "Ganó la partida gracias a unas tácticas cuestionables que nadie se atrevió a impugnar.",
+        "en": "He won the match thanks to questionable tactics that no one dared to challenge."
+      }
+    ]
+  },
+  {
+    "id": "ac-094",
+    "term": "abrochar",
+    "meaning_es": "Culminar o cerrar algo de forma definitiva, especialmente una victoria, un trato o una actuación.",
+    "meaning_en": "To clinch, to seal; to wrap something up decisively, especially a victory, deal, or performance.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "abrochar el partido, abrochar el contrato, abrochar el título",
+    "note": "Uso figurado periodístico, frecuente en crónicas deportivas y de negocios. 'Abrochar un acuerdo' significa dejarlo cerrado o concretado.",
+    "examples": [
+      {
+        "es": "El delantero abrochó el partido con un gol en el último minuto de la prórroga.",
+        "en": "The striker sealed the match with a goal in the last minute of extra time."
+      },
+      {
+        "es": "Con esa firma abrocharon el mayor contrato de la historia de la empresa.",
+        "en": "With that signature they clinched the largest contract in the company's history."
+      }
+    ]
+  },
+  {
+    "id": "ac-095",
+    "term": "ambivalente",
+    "meaning_es": "Que presenta o experimenta dos actitudes, valoraciones o sentimientos opuestos simultáneamente.",
+    "meaning_en": "Ambivalent; simultaneously holding two conflicting feelings, attitudes, or values.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "sentirse ambivalente, una relación ambivalente, una actitud ambivalente",
+    "note": "El sustantivo 'ambivalencia' es igualmente útil. Se usa en psicología, política y conversación cotidiana para describir posturas o emociones contradictorias.",
+    "examples": [
+      {
+        "es": "Tenía sentimientos ambivalentes ante la oferta: era una gran oportunidad, pero implicaba mudarse.",
+        "en": "He had ambivalent feelings about the offer: it was a great opportunity, but it meant moving."
+      },
+      {
+        "es": "La sociedad muestra una actitud ambivalente frente a la tecnología: la necesita y la teme.",
+        "en": "Society shows an ambivalent attitude toward technology: it needs it and fears it."
+      }
+    ]
+  }
+]

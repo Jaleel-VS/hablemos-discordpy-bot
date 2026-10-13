@@ -1,0 +1,1582 @@
+[
+  {
+    "id": "idioms-001",
+    "term": "no dar abasto",
+    "meaning_es": "No poder atender o satisfacer la demanda de algo por ser excesiva; ser insuficiente para cubrir lo que se necesita.",
+    "meaning_en": "To be unable to cope with demand; to not have enough capacity, time, or resources to handle what is required.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "no dar abasto con los pedidos",
+    "note": "Es habitual 'no dar abasto con los pedidos' o 'no dar abasto para atender a todos'. Expresa desbordamiento de la capacidad, no solo estar ocupado.",
+    "examples": [
+      {
+        "es": "El servicio de urgencias no daba abasto con la afluencia de pacientes durante el pico de la gripe.",
+        "en": "The emergency department couldn't cope with the influx of patients during the flu peak."
+      },
+      {
+        "es": "La panadería no daba abasto a preparar todos los pedidos de Navidad a tiempo.",
+        "en": "The bakery couldn't keep up with preparing all the Christmas orders in time."
+      }
+    ]
+  },
+  {
+    "id": "idioms-002",
+    "term": "estar en vilo",
+    "meaning_es": "Encontrarse en un estado de incertidumbre, tensión o suspense, sin saber cómo va a resolverse algo.",
+    "meaning_en": "To be in suspense or on tenterhooks; to be in a state of anxious uncertainty about an outcome.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "tener a alguien en vilo",
+    "note": "Se usa como estado personal ('estar en vilo') o como acción transitiva ('tener a alguien en vilo'). El vocablo 'vilo' solo existe en esta expresión fija.",
+    "examples": [
+      {
+        "es": "El jurado tuvo a los concursantes en vilo durante varios minutos antes de anunciar al ganador.",
+        "en": "The jury kept the contestants on tenterhooks for several minutes before announcing the winner."
+      },
+      {
+        "es": "Estuvimos en vilo toda la tarde esperando los resultados de la biopsia.",
+        "en": "We were on tenterhooks all afternoon waiting for the biopsy results."
+      }
+    ]
+  },
+  {
+    "id": "idioms-003",
+    "term": "hacer de tripas corazón",
+    "meaning_es": "Esforzarse por dominar el miedo, el asco o el desánimo para afrontar algo difícil o desagradable.",
+    "meaning_en": "To summon one's courage despite fear, disgust, or low spirits; to steel oneself to face something unpleasant.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "hacer de tripas corazón y afrontar algo",
+    "note": "Indica un esfuerzo emocional considerable para actuar a pesar de la resistencia interna. No lleva pronombre reflexivo pero siempre describe una acción voluntaria del sujeto.",
+    "examples": [
+      {
+        "es": "Hizo de tripas corazón y subió al escenario a pesar del pánico escénico que lo paralizaba.",
+        "en": "He steeled himself and walked onto the stage despite the stage fright that had been paralyzing him."
+      },
+      {
+        "es": "Tuve que hacer de tripas corazón para decirle la verdad, sabiendo que le iba a doler.",
+        "en": "I had to summon all my courage to tell her the truth, knowing it was going to hurt her."
+      }
+    ]
+  },
+  {
+    "id": "idioms-004",
+    "term": "andarse con rodeos",
+    "meaning_es": "Hablar o actuar evitando ir directamente al asunto, dando vueltas innecesarias antes de llegar al punto.",
+    "meaning_en": "To beat around the bush; to avoid getting to the point by talking in a roundabout way.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "andarse con rodeos en lugar de ir al grano",
+    "note": "Frecuente en imperativo negativo: 'no te andes con rodeos'. Contrasta con 'ir al grano'. Implica cierta impaciencia por parte del interlocutor.",
+    "examples": [
+      {
+        "es": "Déjate de rodeos y cuéntame qué fue lo que pasó realmente en esa reunión.",
+        "en": "Stop beating around the bush and tell me what really happened in that meeting."
+      },
+      {
+        "es": "El director no se anduvo con rodeos: comunicó los despidos sin preámbulos ni eufemismos.",
+        "en": "The director didn't beat around the bush: he announced the layoffs without preamble or euphemism."
+      }
+    ]
+  },
+  {
+    "id": "idioms-005",
+    "term": "pasar por alto",
+    "meaning_es": "Omitir, ignorar u olvidar algo, ya sea de forma deliberada o involuntaria; no prestar la debida atención.",
+    "meaning_en": "To overlook or skip over something; to deliberately or inadvertently ignore or fail to notice a detail.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "pasar por alto un error",
+    "note": "Puede indicar descuido involuntario o indulgencia deliberada; el contexto lo aclara. Lleva complemento directo nominal o de infinitivo.",
+    "examples": [
+      {
+        "es": "El corrector de estilo pasó por alto varios errores tipográficos en el capítulo final del manuscrito.",
+        "en": "The copy editor overlooked several typographical errors in the final chapter of the manuscript."
+      },
+      {
+        "es": "Esta vez pasaré por alto tu impuntualidad, pero no esperes que lo haga de nuevo.",
+        "en": "I will overlook your lateness this time, but don't expect me to do so again."
+      }
+    ]
+  },
+  {
+    "id": "idioms-006",
+    "term": "traer a colación",
+    "meaning_es": "Mencionar algo en una conversación, a veces de forma inoportuna o inesperada, relacionándolo con el tema tratado.",
+    "meaning_en": "To bring something up in conversation; to introduce a topic or reference, sometimes unexpectedly or tangentially.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "traer a colación un dato relevante",
+    "note": "Con frecuencia la mención tiene un propósito retórico o resulta inoportuna según el contexto. Más formal que 'sacar a relucir', aunque ambas son intercambiables.",
+    "examples": [
+      {
+        "es": "No sé a qué venía traer a colación sus fracasos pasados justo cuando empezaba a recuperarse.",
+        "en": "I don't see why bringing up his past failures was necessary right when he was starting to recover."
+      },
+      {
+        "es": "La fiscal trajo a colación un precedente del Tribunal Supremo que resultó decisivo para el fallo.",
+        "en": "The prosecutor brought up a Supreme Court precedent that proved decisive in the ruling."
+      }
+    ]
+  },
+  {
+    "id": "idioms-007",
+    "term": "irse al traste",
+    "meaning_es": "Fracasar, malograrse o echarse a perder un plan, proyecto o expectativa; quedar completamente arruinado.",
+    "meaning_en": "To fall through; to be ruined or come to nothing, said of plans, projects, or hopes.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "irse al traste los planes",
+    "note": "El sujeto suele ser un sustantivo abstracto: plan, proyecto, negocio, ilusión. Es muy frecuente en la lengua oral y periodística.",
+    "examples": [
+      {
+        "es": "El viaje se fue al traste cuando la aerolínea canceló todos los vuelos por la tormenta de nieve.",
+        "en": "The trip fell through when the airline cancelled all flights because of the snowstorm."
+      },
+      {
+        "es": "Años de negociaciones se fueron al traste en cuestión de horas por una filtración a la prensa.",
+        "en": "Years of negotiations came to nothing in a matter of hours because of a press leak."
+      }
+    ]
+  },
+  {
+    "id": "idioms-008",
+    "term": "quedar en agua de borrajas",
+    "meaning_es": "No llegar a nada sustancial; terminar siendo algo sin importancia o sin el resultado esperado.",
+    "meaning_en": "To come to nothing; to fizzle out or amount to nothing after raising expectations.",
+    "register": "neutro",
+    "region": "España principalmente",
+    "collocation": "quedar en agua de borrajas la promesa",
+    "note": "Subraya el carácter decepcionante y anticlimático del resultado. Se aplica a promesas, proyectos o expectativas que generaron expectación pero no se materializaron.",
+    "examples": [
+      {
+        "es": "Las grandes promesas de reforma electoral quedaron en agua de borrajas tras las primeras votaciones.",
+        "en": "The grand promises of electoral reform came to nothing after the first votes."
+      },
+      {
+        "es": "Lo que parecía una oportunidad de negocio increíble quedó en agua de borrajas al revisar los números.",
+        "en": "What seemed like an incredible business opportunity fizzled out once the numbers were examined."
+      }
+    ]
+  },
+  {
+    "id": "idioms-009",
+    "term": "a regañadientes",
+    "meaning_es": "Con desgana, sin querer hacerlo o mostrando resistencia manifiesta; de mala gana.",
+    "meaning_en": "Reluctantly; grudgingly; doing something while openly showing unwillingness or resistance.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "aceptar algo a regañadientes",
+    "note": "Más intenso que 'de mala gana'; implica disgusto visible o audible, no solo indiferencia. Modifica al verbo y va habitualmente en posición final de frase.",
+    "examples": [
+      {
+        "es": "El sindicato aceptó a regañadientes las nuevas condiciones laborales tras meses de huelga.",
+        "en": "The union grudgingly accepted the new working conditions after months of strikes."
+      },
+      {
+        "es": "Fue a la boda de su ex a regañadientes, más por compromiso familiar que por genuino deseo.",
+        "en": "He went to his ex's wedding reluctantly, more out of family obligation than genuine desire."
+      }
+    ]
+  },
+  {
+    "id": "idioms-010",
+    "term": "con creces",
+    "meaning_es": "Con exceso, ampliamente, superando con mucho lo esperado o lo necesario.",
+    "meaning_en": "Amply; with more than enough; exceeding what was expected or required by a wide margin.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "superar con creces las expectativas",
+    "note": "Se combina bien con verbos como compensar, superar, demostrar, pagar. La forma es invariable y siempre en plural.",
+    "examples": [
+      {
+        "es": "El equipo superó con creces los objetivos de ventas fijados para el primer trimestre del año.",
+        "en": "The team exceeded the sales targets set for the first quarter of the year by a wide margin."
+      },
+      {
+        "es": "El esfuerzo que pusiste en el proyecto quedó compensado con creces por el reconocimiento que recibiste.",
+        "en": "The effort you put into the project was more than compensated by the recognition you received."
+      }
+    ]
+  },
+  {
+    "id": "idioms-011",
+    "term": "a rajatabla",
+    "meaning_es": "Con total rigidez y sin admitir excepciones; siguiendo algo al pie de la letra y de forma estricta.",
+    "meaning_en": "To the letter; strictly and without exception, following rules or instructions with complete rigor.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "cumplir a rajatabla las normas",
+    "note": "Funciona como adverbio. Se combina especialmente con cumplir, seguir, aplicar, respetar. Denota que no hay margen para la interpretación ni la excepción.",
+    "examples": [
+      {
+        "es": "El reglamento de la competición se aplicó a rajatabla, sin conceder ni un segundo de prórroga.",
+        "en": "The competition rules were applied to the letter, without granting even a second of extra time."
+      },
+      {
+        "es": "Sigue el protocolo a rajatabla; en cirugía no hay margen para la improvisación.",
+        "en": "Follow the protocol strictly; in surgery there is no room for improvisation."
+      }
+    ]
+  },
+  {
+    "id": "idioms-012",
+    "term": "a trancas y barrancas",
+    "meaning_es": "Con gran dificultad y sorteando muchos obstáculos; avanzar penosamente hacia un objetivo.",
+    "meaning_en": "With great difficulty; managing to get through despite many obstacles, often barely and with much effort.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "salir adelante a trancas y barrancas",
+    "note": "Destaca las dificultades que acompañan un proceso. Se combina con 'salir adelante', 'terminar' y 'avanzar'.",
+    "examples": [
+      {
+        "es": "A trancas y barrancas, el pequeño negocio familiar sobrevivió a la pandemia y hasta contrató personal.",
+        "en": "With great difficulty, the small family business survived the pandemic and even hired new staff."
+      },
+      {
+        "es": "Terminé la tesis a trancas y barrancas, entre mudanzas, trabajo y una beca que casi no renovaron.",
+        "en": "I finished my thesis with enormous difficulty, juggling moves, work, and a scholarship that almost wasn't renewed."
+      }
+    ]
+  },
+  {
+    "id": "idioms-013",
+    "term": "dar en el clavo",
+    "meaning_es": "Acertar plenamente; decir o hacer exactamente lo que corresponde o lo que se necesitaba.",
+    "meaning_en": "To hit the nail on the head; to be exactly right or to do precisely the right thing.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "dar en el clavo con el diagnóstico",
+    "note": "Funciona tanto para ideas y diagnósticos como para acciones. Con frecuencia se usa en pasado como cumplido: 'diste en el clavo'.",
+    "examples": [
+      {
+        "es": "La consultora dio en el clavo al identificar que el problema no era técnico sino de comunicación interna.",
+        "en": "The consultant hit the nail on the head by identifying that the problem was not technical but one of internal communication."
+      },
+      {
+        "es": "Con esa pregunta diste en el clavo; es justo lo que el equipo necesitaba plantearse.",
+        "en": "With that question you hit the nail on the head; that's exactly what the team needed to ask itself."
+      }
+    ]
+  },
+  {
+    "id": "idioms-014",
+    "term": "meter la pata",
+    "meaning_es": "Cometer un error, decir o hacer algo inoportuno o incorrecto que genera un problema o mal ambiente.",
+    "meaning_en": "To put one's foot in it; to make a blunder or say something inappropriate that causes embarrassment or trouble.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "meter la pata hasta el fondo",
+    "note": "Se intensifica con 'meter la pata hasta el fondo'. A menudo implica torpeza social. Se usa también con el verbo elidido: 'la metiste', 'la metí bien'.",
+    "examples": [
+      {
+        "es": "Metí la pata al preguntarle cuándo nacería el bebé, sin saber que había perdido el embarazo.",
+        "en": "I put my foot in it by asking her when the baby was due, not knowing she had lost the pregnancy."
+      },
+      {
+        "es": "El portavoz metió la pata en la rueda de prensa y sus palabras generaron una crisis de imagen.",
+        "en": "The spokesperson put his foot in it at the press conference and his words triggered a reputational crisis."
+      }
+    ]
+  },
+  {
+    "id": "idioms-015",
+    "term": "no tener pelos en la lengua",
+    "meaning_es": "Hablar con total franqueza sin importar las consecuencias; decir lo que se piensa sin filtros ni tacto.",
+    "meaning_en": "To not mince one's words; to speak bluntly and without diplomatic restraint.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "no tener pelos en la lengua para criticar",
+    "note": "Describe más un rasgo de carácter que un acto puntual. Puede usarse con admiración o con crítica según el contexto. Se refiere siempre a la forma de hablar, no de actuar.",
+    "examples": [
+      {
+        "es": "La crítica literaria no tiene pelos en la lengua: desmontó el nuevo libro del premiado autor en tres párrafos.",
+        "en": "The literary critic doesn't mince her words: she dismantled the prize-winning author's new book in three paragraphs."
+      },
+      {
+        "es": "Mi abuela no tenía pelos en la lengua; si algo no le gustaba, lo decía a la cara sin rodeos.",
+        "en": "My grandmother never minced her words; if something displeased her, she said it to your face without hedging."
+      }
+    ]
+  },
+  {
+    "id": "idioms-016",
+    "term": "tomar el pelo",
+    "meaning_es": "Burlarse de alguien o engañarlo de forma jocosa; hacerle creer algo falso con intención de reírse.",
+    "meaning_en": "To pull someone's leg; to tease or mock someone, making them believe something untrue for a laugh.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "tomar el pelo a alguien con descaro",
+    "note": "Generalmente tiene tono jocoso, aunque puede connotar desprecio o incluso describir un engaño serio. Requiere un complemento directo o indirecto explícito o implícito.",
+    "examples": [
+      {
+        "es": "¿Me estás tomando el pelo? No puede ser que hayas terminado el maratón en menos de tres horas.",
+        "en": "Are you pulling my leg? There's no way you finished the marathon in under three hours."
+      },
+      {
+        "es": "Le tomaron el pelo toda la reunión diciéndole que el informe era para el director general.",
+        "en": "They pulled his leg throughout the entire meeting telling him the report was for the CEO."
+      }
+    ]
+  },
+  {
+    "id": "idioms-017",
+    "term": "hacer la vista gorda",
+    "meaning_es": "Fingir que no se ve algo irregular o incómodo; ignorar deliberadamente algo que se debería corregir.",
+    "meaning_en": "To turn a blind eye; to deliberately pretend not to notice something irregular or inconvenient.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "hacer la vista gorda ante las irregularidades",
+    "note": "Implica cierta complicidad o debilidad moral. Puede usarse de forma benévola cuando se pasan por alto faltas menores. El sujeto puede ser una persona o una institución.",
+    "examples": [
+      {
+        "es": "El inspector hizo la vista gorda ante las faltas menores para centrarse en las infracciones graves.",
+        "en": "The inspector turned a blind eye to minor violations in order to focus on serious infractions."
+      },
+      {
+        "es": "No podemos seguir haciendo la vista gorda mientras el acoso en el trabajo destruye a compañeros.",
+        "en": "We cannot keep turning a blind eye while workplace harassment destroys our colleagues."
+      }
+    ]
+  },
+  {
+    "id": "idioms-018",
+    "term": "irse por las ramas",
+    "meaning_es": "Apartarse del tema principal y detenerse en detalles irrelevantes o asuntos secundarios.",
+    "meaning_en": "To go off on a tangent; to stray from the main point and dwell on irrelevant or secondary details.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "irse por las ramas en la explicación",
+    "note": "Se usa como crítica o como autocorrección: 'me estoy yendo por las ramas'. Puede indicar falta de foco o evasión deliberada del tema; el contexto lo aclara.",
+    "examples": [
+      {
+        "es": "El ponente se fue por las ramas con anécdotas personales y no llegó a desarrollar la tesis central.",
+        "en": "The speaker went off on tangents with personal anecdotes and never got around to developing the central argument."
+      },
+      {
+        "es": "Perdona, me he ido por las ramas. Lo que quería decir es que el contrato tiene cláusulas problemáticas.",
+        "en": "Sorry, I went off track. What I meant to say is that the contract has problematic clauses."
+      }
+    ]
+  },
+  {
+    "id": "idioms-019",
+    "term": "llevar la batuta",
+    "meaning_es": "Dirigir o controlar algo; ser quien toma las decisiones y marca el ritmo en un grupo o situación.",
+    "meaning_en": "To call the shots; to be in charge and set the direction or pace in a group or situation.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "llevar la batuta en las negociaciones",
+    "note": "Implica liderazgo activo y ejercido, no un título meramente formal. Puede tener matiz positivo o ligeramente crítico según el tono.",
+    "examples": [
+      {
+        "es": "En esa familia es la abuela quien lleva la batuta; ninguna decisión importante se toma sin consultarla.",
+        "en": "In that family it is the grandmother who calls the shots; no important decision is made without consulting her."
+      },
+      {
+        "es": "Desde su incorporación, la nueva directora lleva la batuta con una visión estratégica clara y firme.",
+        "en": "Since joining, the new director has been calling the shots with a clear and firm strategic vision."
+      }
+    ]
+  },
+  {
+    "id": "idioms-020",
+    "term": "no pegar ojo",
+    "meaning_es": "No poder dormir en absoluto durante la noche; pasar la noche completamente en vela.",
+    "meaning_en": "Not to sleep a wink; to be completely unable to sleep through the night.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "no pegar ojo en toda la noche",
+    "note": "Se refiere habitualmente a una noche entera sin conciliar el sueño. Admite complemento temporal: 'no pegué ojo en toda la noche'. Muy frecuente en la lengua oral.",
+    "examples": [
+      {
+        "es": "El ruido de las obras no me dejó pegar ojo; llegué a la reunión con los ojos como platos.",
+        "en": "The construction noise didn't let me sleep a wink; I arrived at the meeting with my eyes wide open from exhaustion."
+      },
+      {
+        "es": "No pegamos ojo pensando en los resultados del examen, y al final salió todo bien.",
+        "en": "We didn't sleep a wink worrying about the exam results, and in the end everything turned out fine."
+      }
+    ]
+  },
+  {
+    "id": "idioms-021",
+    "term": "poner en tela de juicio",
+    "meaning_es": "Dudar de la validez, veracidad o idoneidad de algo; cuestionar seriamente algo que antes se daba por hecho.",
+    "meaning_en": "To call into question; to cast serious doubt on the validity, truth, or appropriateness of something.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "poner en tela de juicio la credibilidad",
+    "note": "Más formal que 'cuestionar'. Habitual en los registros académico, periodístico y jurídico. La duda puede estar bien fundada o ser meramente estratégica.",
+    "examples": [
+      {
+        "es": "El escándalo puso en tela de juicio la integridad de toda la cúpula directiva de la empresa.",
+        "en": "The scandal called into question the integrity of the entire senior management of the company."
+      },
+      {
+        "es": "El estudio pone en tela de juicio los supuestos sobre los que se basa la terapia más extendida.",
+        "en": "The study calls into question the assumptions on which the most widely used therapy is based."
+      }
+    ]
+  },
+  {
+    "id": "idioms-022",
+    "term": "salir el tiro por la culata",
+    "meaning_es": "Tener un plan el efecto contrario al deseado; resultar contraproducente algo que se había hecho con buena intención.",
+    "meaning_en": "To backfire; for a plan or action to produce exactly the opposite of the intended result.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "salirle el tiro por la culata a alguien",
+    "note": "La construcción frecuente es 'a alguien le sale el tiro por la culata'. Su acción termina perjudicándolo o produciendo lo contrario de lo que buscaba.",
+    "examples": [
+      {
+        "es": "Con aquella campaña les salió el tiro por la culata: los usuarios se burlaron del eslogan en redes.",
+        "en": "That campaign backfired on them: users mocked the slogan on social media."
+      },
+      {
+        "es": "Intentó negociar un aumento amenazando con irse, y el tiro le salió por la culata: lo dejaron marchar.",
+        "en": "He tried to negotiate a raise by threatening to leave, and it backfired: they let him go."
+      }
+    ]
+  },
+  {
+    "id": "idioms-023",
+    "term": "romper el hielo",
+    "meaning_es": "Iniciar una conversación o actividad superando la tensión o incomodidad inicial en un grupo de personas.",
+    "meaning_en": "To break the ice; to overcome the initial awkwardness in a group and start interaction or conversation.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "romper el hielo en una reunión",
+    "note": "Plenamente asentada en el español. Se usa en contextos profesionales y sociales. Quien 'rompe el hielo' da el primer paso para aliviar la tensión colectiva.",
+    "examples": [
+      {
+        "es": "El facilitador propuso una dinámica de grupo para romper el hielo antes de la sesión de trabajo.",
+        "en": "The facilitator proposed a group activity to break the ice before the working session."
+      },
+      {
+        "es": "Fue él quien rompió el hielo en la fiesta con un comentario divertido sobre el horario del autobús.",
+        "en": "He was the one who broke the ice at the party with a funny comment about the bus schedule."
+      }
+    ]
+  },
+  {
+    "id": "idioms-024",
+    "term": "a brazo partido",
+    "meaning_es": "Con toda la energía, dedicación o empeño que se tiene; luchar o esforzarse al máximo por algo.",
+    "meaning_en": "With all one's might; to fight or strive with maximum effort and determination.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "luchar a brazo partido por algo",
+    "note": "Más expresivo que 'con todas sus fuerzas'. Funciona bien con luchar, defender, pelear, trabajar. Denota un esfuerzo físico y emocional extremo.",
+    "examples": [
+      {
+        "es": "Las vecinas lucharon a brazo partido para que no demolieran el jardín histórico del barrio.",
+        "en": "The neighbors fought tooth and nail to prevent the demolition of the neighborhood's historic garden."
+      },
+      {
+        "es": "Trabajó a brazo partido durante años para sacar adelante a sus hijos en solitario.",
+        "en": "She worked with all her might for years to raise her children on her own."
+      }
+    ]
+  },
+  {
+    "id": "idioms-025",
+    "term": "cortar por lo sano",
+    "meaning_es": "Resolver una situación problemática de forma drástica y definitiva, eliminando el problema de raíz.",
+    "meaning_en": "To take drastic action to solve a problem once and for all; to cut cleanly through a difficult situation.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "cortar por lo sano con una relación tóxica",
+    "note": "Implica una ruptura limpia y definitiva, no una solución gradual. Se aplica con frecuencia a relaciones personales, conflictos laborales o situaciones estancadas.",
+    "examples": [
+      {
+        "es": "Después de meses de disputas internas, la junta directiva decidió cortar por lo sano y reorganizar el departamento.",
+        "en": "After months of internal disputes, the board decided to take drastic action and reorganize the department."
+      },
+      {
+        "es": "Cortó por lo sano con esa amistad cuando descubrió que le estaba mintiendo sistemáticamente.",
+        "en": "She made a clean break from that friendship when she discovered they had been systematically lying to her."
+      }
+    ]
+  },
+  {
+    "id": "idioms-026",
+    "term": "no tener ni pies ni cabeza",
+    "meaning_es": "Carecer de coherencia, lógica o sentido; ser algo incomprensible, absurdo o desordenado.",
+    "meaning_en": "To make no sense whatsoever; to be utterly incoherent, illogical, or incomprehensible.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "un argumento que no tiene ni pies ni cabeza",
+    "note": "El sujeto suele ser un argumento, plan, explicación o acción. Más enfático que 'no tiene sentido'. Frecuente en reacciones de frustración o incredulidad.",
+    "examples": [
+      {
+        "es": "La justificación que dio para el retraso no tenía ni pies ni cabeza; nadie entendió nada.",
+        "en": "The justification he gave for the delay made no sense whatsoever; nobody understood a thing."
+      },
+      {
+        "es": "Me mandaron un correo con instrucciones que no tenían ni pies ni cabeza para instalar el programa.",
+        "en": "They sent me an email with instructions for installing the program that made absolutely no sense."
+      }
+    ]
+  },
+  {
+    "id": "idioms-027",
+    "term": "echar por tierra",
+    "meaning_es": "Arruinar, destruir o hacer fracasar algo, como una ilusión, un plan o un argumento.",
+    "meaning_en": "To shatter; to ruin or demolish something such as a plan, argument, hope, or effort.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "echar por tierra los argumentos del contrario",
+    "note": "El complemento directo es habitualmente abstracto: teoría, ilusión, esperanza, reputación. Más formal que 'arruinar'. Funciona bien en contextos intelectuales y emocionales.",
+    "examples": [
+      {
+        "es": "Un solo dato echaría por tierra toda la teoría que el investigador había defendido durante décadas.",
+        "en": "A single piece of data would demolish the entire theory the researcher had defended for decades."
+      },
+      {
+        "es": "La lluvia torrencial echó por tierra los planes de una boda al aire libre que llevaban un año organizando.",
+        "en": "The torrential rain shattered the plans for an outdoor wedding they had been organizing for a year."
+      }
+    ]
+  },
+  {
+    "id": "idioms-028",
+    "term": "perder los estribos",
+    "meaning_es": "Perder el control de las emociones, especialmente la ira; reaccionar de forma exaltada e irreflexiva.",
+    "meaning_en": "To lose one's temper; to lose emotional control, especially anger, and react in an unrestrained way.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "perder los estribos en una discusión",
+    "note": "Implica una reacción visible y desproporcionada. Puede emplearse también como consejo o advertencia: 'no pierdas los estribos'.",
+    "examples": [
+      {
+        "es": "El entrenador perdió los estribos cuando el árbitro anuló el gol y tuvo que ser expulsado del banquillo.",
+        "en": "The coach lost his temper when the referee disallowed the goal and had to be ejected from the bench."
+      },
+      {
+        "es": "Hay que aprender a no perder los estribos en las reuniones; la irritación nunca ayuda a negociar.",
+        "en": "You have to learn not to lose your temper in meetings; irritation never helps in negotiations."
+      }
+    ]
+  },
+  {
+    "id": "idioms-029",
+    "term": "no dar pie con bola",
+    "meaning_es": "No acertar en nada; cometer errores continuamente en lo que se hace o se dice.",
+    "meaning_en": "To not get anything right; to keep making mistakes and fail at everything one attempts.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "no dar pie con bola en el trabajo",
+    "note": "Puede describir tanto un estado transitorio de errores encadenados como un rasgo más persistente. Es frecuente en primera persona para expresar un mal día.",
+    "examples": [
+      {
+        "es": "Hoy no doy pie con bola: se me olvidaron las llaves, llegué tarde y cometí un error en el informe.",
+        "en": "Today I can't do anything right: I forgot my keys, arrived late, and made an error in the report."
+      },
+      {
+        "es": "Durante el examen oral no daba pie con bola; el nerviosismo le bloqueó por completo.",
+        "en": "During the oral exam he couldn't get anything right; the nerves blocked him completely."
+      }
+    ]
+  },
+  {
+    "id": "idioms-030",
+    "term": "poner los puntos sobre las íes",
+    "meaning_es": "Aclarar algo con precisión, especialmente para corregir un malentendido o dejar las cosas muy claras.",
+    "meaning_en": "To make something crystal clear; to clarify something precisely, especially to correct a misunderstanding.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "poner los puntos sobre las íes en una conversación",
+    "note": "El énfasis recae en la precisión verbal y en dejar sin margen de ambigüedad. Se usa cuando alguien quiere corregir una interpretación errónea o zanjar una discusión.",
+    "examples": [
+      {
+        "es": "La ministra puso los puntos sobre las íes: el gobierno no contempla ninguna subida de impuestos este año.",
+        "en": "The minister made things crystal clear: the government is not considering any tax increase this year."
+      },
+      {
+        "es": "Tuve que ponerle los puntos sobre las íes porque seguía malinterpretando mis palabras.",
+        "en": "I had to spell things out precisely because he kept misinterpreting what I was saying."
+      }
+    ]
+  },
+  {
+    "id": "idioms-031",
+    "term": "dar carpetazo",
+    "meaning_es": "Dar por terminado y archivado un asunto, generalmente sin haberlo resuelto satisfactoriamente.",
+    "meaning_en": "To shelve something; to close a matter definitively, often without a satisfactory resolution.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "dar carpetazo a un caso",
+    "note": "Habitual en contextos políticos y judiciales. Implica una decisión unilateral de no seguir tratando el asunto, a menudo antes de agotarse las posibilidades.",
+    "examples": [
+      {
+        "es": "El gobierno dio carpetazo al caso antes de que se agotaran todas las vías de investigación.",
+        "en": "The government shelved the case before all avenues of investigation had been exhausted."
+      },
+      {
+        "es": "Después de cinco años de conflicto, decidieron dar carpetazo al asunto y firmar un acuerdo.",
+        "en": "After five years of conflict, they decided to close the matter and sign an agreement."
+      }
+    ]
+  },
+  {
+    "id": "idioms-032",
+    "term": "coger el toro por los cuernos",
+    "meaning_es": "Afrontar un problema difícil de manera directa y valiente, sin eludirlo ni aplazarlo.",
+    "meaning_en": "To take the bull by the horns; to face a difficult problem head-on with courage and resolve.",
+    "register": "coloquial",
+    "region": "España principalmente",
+    "collocation": "coger el toro por los cuernos y actuar",
+    "note": "En Latinoamérica se prefiere 'agarrar el toro por los cuernos'. La imagen taurina es comprensible en todo el ámbito hispanohablante pero el verbo varía según la región.",
+    "examples": [
+      {
+        "es": "Llevábamos meses evitando la conversación; por fin cogimos el toro por los cuernos y lo hablamos todo.",
+        "en": "We had been avoiding the conversation for months; we finally took the bull by the horns and talked everything through."
+      },
+      {
+        "es": "La empresa cogió el toro por los cuernos y reestructuró la deuda antes de que fuera demasiado tarde.",
+        "en": "The company took the bull by the horns and restructured the debt before it was too late."
+      }
+    ]
+  },
+  {
+    "id": "idioms-033",
+    "term": "salir a flote",
+    "meaning_es": "Superar una situación difícil, especialmente económica o personal, y recuperar la estabilidad.",
+    "meaning_en": "To stay afloat; to overcome a difficult situation and recover stability, especially financially.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "salir a flote tras una crisis",
+    "note": "También existe 'sacar a flote' en forma transitiva. El sujeto puede ser una persona, empresa o proyecto. Implica una recuperación activa, no solo supervivencia pasiva.",
+    "examples": [
+      {
+        "es": "Gracias al apoyo de su familia, consiguió salir a flote después de la quiebra del negocio.",
+        "en": "Thanks to her family's support, she managed to stay afloat after the business went bankrupt."
+      },
+      {
+        "es": "El nuevo equipo directivo trabajó sin descanso para sacar a flote la editorial que estaba en quiebra.",
+        "en": "The new management team worked tirelessly to keep the publishing house afloat as it was going under."
+      }
+    ]
+  },
+  {
+    "id": "idioms-034",
+    "term": "dar la talla",
+    "meaning_es": "Estar a la altura de lo que se exige o espera; cumplir con los requisitos o estándares de una situación.",
+    "meaning_en": "To measure up; to meet the expected standard or prove oneself equal to what a situation demands.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "dar la talla como líder",
+    "note": "Con frecuencia aparece en forma negativa: 'no dar la talla'. Muy habitual en contextos laborales y deportivos para evaluar si alguien está a la altura de lo requerido.",
+    "examples": [
+      {
+        "es": "No todos los candidatos dan la talla para un puesto que exige tomar decisiones bajo tanta presión.",
+        "en": "Not all candidates measure up for a position that demands making decisions under so much pressure."
+      },
+      {
+        "es": "La joven escritora dio la talla en su debut: los críticos la compararon con los mejores de su generación.",
+        "en": "The young writer measured up on her debut: critics compared her to the best of her generation."
+      }
+    ]
+  },
+  {
+    "id": "idioms-035",
+    "term": "tener mano izquierda",
+    "meaning_es": "Tener habilidad diplomática y tacto para manejar situaciones delicadas o a personas difíciles.",
+    "meaning_en": "To have a light touch; to handle delicate situations or difficult people with tact and diplomatic skill.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "tener mucha mano izquierda con la gente",
+    "note": "Describe el tacto al manejar personas o situaciones delicadas. Suele valorarse positivamente: 'tiene mucha mano izquierda con los clientes'.",
+    "examples": [
+      {
+        "es": "Para gestionar a ese cliente hay que tener mucha mano izquierda; es exigente y se ofende con facilidad.",
+        "en": "Managing that client requires a very light touch; he's demanding and takes offense easily."
+      },
+      {
+        "es": "La mediadora tiene una mano izquierda extraordinaria y consiguió que ambas partes llegaran a un acuerdo.",
+        "en": "The mediator has extraordinary diplomatic skill and managed to bring both sides to an agreement."
+      }
+    ]
+  },
+  {
+    "id": "idioms-036",
+    "term": "meter baza",
+    "meaning_es": "Intervenir en una conversación o asunto, a menudo sin haber sido invitado o de forma impertinente.",
+    "meaning_en": "To butt in; to interject or interfere in a conversation or matter, often uninvited or presumptuously.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "meter baza en la conversación",
+    "note": "Puede implicar que la intervención no es bienvenida. También se usa en sentido inverso: 'no dejar meter baza' (acaparar la conversación sin dejar hablar a nadie).",
+    "examples": [
+      {
+        "es": "No había manera de meter baza: él monopolizó la conversación durante toda la cena.",
+        "en": "There was no way to get a word in edgewise: he monopolized the conversation for the entire dinner."
+      },
+      {
+        "es": "Metió baza en la reunión de junta aunque no era miembro y sus comentarios incomodaron a todos.",
+        "en": "She butted into the board meeting even though she was not a member and her comments made everyone uncomfortable."
+      }
+    ]
+  },
+  {
+    "id": "idioms-037",
+    "term": "volver a las andadas",
+    "meaning_es": "Retomar los malos hábitos o comportamientos negativos después de haber prometido cambiar.",
+    "meaning_en": "To fall back into old habits; to revert to negative behavior after having promised to change.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "volver a las andadas después de la promesa",
+    "note": "Casi siempre peyorativo. Denota un ciclo de intentos fallidos de cambio. Con frecuencia lo usa alguien decepcionado por la recaída de otra persona.",
+    "examples": [
+      {
+        "es": "Le creyeron cuando prometió que cambiaría, pero al mes había vuelto a las andadas.",
+        "en": "They believed him when he promised to change, but within a month he had fallen back into his old ways."
+      },
+      {
+        "es": "Después de dos años sobria, volvió a las andadas cuando perdió el trabajo y la relación se deterioró.",
+        "en": "After two years sober, she relapsed into her old patterns when she lost her job and the relationship deteriorated."
+      }
+    ]
+  },
+  {
+    "id": "idioms-038",
+    "term": "ponerse las pilas",
+    "meaning_es": "Esforzarse más, activarse y tomar actitud proactiva ante una situación que lo requiere.",
+    "meaning_en": "To pull one's socks up; to get one's act together and start putting in the effort a situation demands.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "ponerse las pilas de una vez",
+    "note": "Muy frecuente en España y con creciente uso en Latinoamérica. Habitual en imperativo como forma de motivar o advertir: 'ponte las pilas'.",
+    "examples": [
+      {
+        "es": "Si quieres aprobar el examen de certificación, tendrás que ponerte las pilas en serio este mes.",
+        "en": "If you want to pass the certification exam, you are going to have to pull your socks up seriously this month."
+      },
+      {
+        "es": "Le dijeron que se pusiera las pilas o que buscara otro trabajo; no podían aguantar más su desidia.",
+        "en": "They told him to get his act together or find another job; they could no longer tolerate his apathy."
+      }
+    ]
+  },
+  {
+    "id": "idioms-039",
+    "term": "llevar agua a su molino",
+    "meaning_es": "Actuar de modo que todo lo que sucede beneficie los propios intereses, aunque se perjudique a los demás.",
+    "meaning_en": "To feather one's own nest; to turn everything to one's own advantage, often at others' expense.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "siempre lleva el agua a su molino",
+    "note": "Se usa de forma crítica para señalar que alguien aprovecha cualquier situación en su propio beneficio. Contrasta con actitudes de buena fe o de servicio común.",
+    "examples": [
+      {
+        "es": "Sus declaraciones en la rueda de prensa estaban diseñadas para llevar el agua a su molino antes de las elecciones.",
+        "en": "His statements at the press conference were designed to serve his own interests ahead of the elections."
+      },
+      {
+        "es": "En las negociaciones siempre lleva el agua a su molino; rara vez ofrece concesiones reales.",
+        "en": "In negotiations he always turns things to his own advantage; he rarely offers genuine concessions."
+      }
+    ]
+  },
+  {
+    "id": "idioms-040",
+    "term": "pillar en renuncio",
+    "meaning_es": "Sorprender a alguien en una contradicción o mentira, especialmente cuando se niega algo que se ha dicho antes.",
+    "meaning_en": "To catch someone in a contradiction or lie; to expose an inconsistency between what they say now and before.",
+    "register": "coloquial",
+    "region": "España principalmente",
+    "collocation": "pillar a alguien en renuncio",
+    "note": "Expresión propia del español peninsular. En Latinoamérica se prefiere 'agarrar en contradicción' o 'dejar en evidencia' para el mismo sentido.",
+    "examples": [
+      {
+        "es": "El periodista le pilló en renuncio cuando le mostró las declaraciones que él mismo había hecho un año antes.",
+        "en": "The journalist caught him in a contradiction when he showed him the statements he had made a year before."
+      },
+      {
+        "es": "La defensora le pilló en renuncio ante el jurado y el acusado no supo cómo salir del paso.",
+        "en": "The defense attorney caught him in a lie before the jury and the accused didn't know how to talk his way out of it."
+      }
+    ]
+  },
+  {
+    "id": "idioms-041",
+    "term": "a la buena de Dios",
+    "meaning_es": "Sin planificación, dejando algo al azar o a la providencia sin control ni previsión.",
+    "meaning_en": "To chance it; to leave something entirely to chance or fate without any plan or precaution.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "lanzarse a algo a la buena de Dios",
+    "note": "Puede usarse con desaprobación (irresponsabilidad) o con tono autoirónico. Implica ausencia total de planificación, no solo relajación de los controles.",
+    "examples": [
+      {
+        "es": "Se lanzaron al viaje a la buena de Dios, sin reservas ni itinerario, con solo una mochila cada uno.",
+        "en": "They set out on the trip leaving everything to chance, with no reservations or itinerary, just a backpack each."
+      },
+      {
+        "es": "No se puede gestionar una empresa a la buena de Dios; hay que planificar con datos reales.",
+        "en": "You cannot run a company by the seat of your pants; you need to plan with real data."
+      }
+    ]
+  },
+  {
+    "id": "idioms-042",
+    "term": "estar en las nubes",
+    "meaning_es": "Estar distraído, ensimismado o soñando despierto, sin prestar atención a lo que sucede alrededor.",
+    "meaning_en": "To have one's head in the clouds; to be daydreaming or distracted and out of touch with what is happening.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "quedarse en las nubes durante la clase",
+    "note": "Describe tanto un despiste puntual como un rasgo habitual de carácter. Puede aplicarse a personas y, en sentido figurado, a organizaciones que ignoran la realidad.",
+    "examples": [
+      {
+        "es": "Durante toda la reunión estuvo en las nubes; tuvimos que repetirle las decisiones que se habían tomado.",
+        "en": "She had her head in the clouds throughout the entire meeting; we had to repeat the decisions that had been made."
+      },
+      {
+        "es": "Si la empresa sigue en las nubes respecto a la competencia digital, perderá cuota de mercado rápidamente.",
+        "en": "If the company keeps its head in the clouds regarding digital competition, it will lose market share quickly."
+      }
+    ]
+  },
+  {
+    "id": "idioms-043",
+    "term": "no poder ver ni en pintura",
+    "meaning_es": "Tener una antipatía profunda hacia alguien; no soportar a esa persona en absoluto.",
+    "meaning_en": "To not be able to stand someone; to have a deep personal dislike for someone, not even tolerating their image.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "no poder verle ni en pintura al vecino",
+    "note": "Expresión enfática de rechazo hacia personas o cosas. Lleva complemento directo: 'no la puedo ver ni en pintura'.",
+    "examples": [
+      {
+        "es": "Desde el incidente en la junta, no pueden verse ni en pintura; evitan cualquier contacto.",
+        "en": "Since the incident at the meeting, they can't stand each other; they avoid any contact whatsoever."
+      },
+      {
+        "es": "A mi madre no la podía ver ni en pintura su jefa durante años, pero con el tiempo se hicieron amigas.",
+        "en": "My mother's boss couldn't stand her for years, but over time they actually became friends."
+      }
+    ]
+  },
+  {
+    "id": "idioms-044",
+    "term": "dar con la tecla",
+    "meaning_es": "Encontrar la solución, el enfoque o el método correcto después de varios intentos fallidos.",
+    "meaning_en": "To hit upon the right solution or approach after trying several things; to finally find what works.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "dar con la tecla para resolver el problema",
+    "note": "Implica una solución precisa entre múltiples opciones posibles. Con frecuencia expresa alivio tras una búsqueda laboriosa.",
+    "examples": [
+      {
+        "es": "Llevábamos semanas buscando el enfoque adecuado y por fin dimos con la tecla en la última sesión.",
+        "en": "We had been looking for the right approach for weeks and finally hit upon it in the last session."
+      },
+      {
+        "es": "Cuando cambió el titular, el artículo empezó a funcionar; había dado con la tecla.",
+        "en": "When she changed the headline, the article started to perform; she had finally found what worked."
+      }
+    ]
+  },
+  {
+    "id": "idioms-045",
+    "term": "andar con pies de plomo",
+    "meaning_es": "Actuar con extrema precaución y prudencia para no cometer errores o despertar suspicacias.",
+    "meaning_en": "To tread very carefully; to act with extreme caution so as not to make a mistake or arouse suspicion.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "andar con pies de plomo en las negociaciones",
+    "note": "Denota un avance lento y calculado cuando el entorno es políticamente cargado o el margen de error es escaso. Con frecuencia suena a consejo o advertencia.",
+    "examples": [
+      {
+        "es": "En ese departamento hay que andar con pies de plomo; los conflictos internos son muy intensos.",
+        "en": "In that department you have to tread very carefully; the internal conflicts are very intense."
+      },
+      {
+        "es": "Anduvo con pies de plomo durante toda la investigación para no comprometer las fuentes confidenciales.",
+        "en": "She trod very carefully throughout the investigation so as not to compromise confidential sources."
+      }
+    ]
+  },
+  {
+    "id": "idioms-046",
+    "term": "irse a pique",
+    "meaning_es": "Fracasar o hundirse completamente; quedar en ruina un negocio, proyecto, relación o situación.",
+    "meaning_en": "To sink; to fail or collapse completely, said of a business, project, relationship, or situation.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "irse a pique el negocio",
+    "note": "Se aplica a sujetos abstractos: empresa, reputación, relación, proyecto. Implica a menudo un hundimiento rápido e irreversible. Próximo a 'hundirse' pero más coloquial.",
+    "examples": [
+      {
+        "es": "La agencia de viajes se fue a pique cuando las aerolíneas empezaron a vender directamente por internet.",
+        "en": "The travel agency went under when airlines started selling directly online."
+      },
+      {
+        "es": "Su reputación profesional se fue a pique después de que se publicara el informe de la auditoría.",
+        "en": "His professional reputation sank completely after the audit report was published."
+      }
+    ]
+  },
+  {
+    "id": "idioms-047",
+    "term": "dejar a alguien en la estacada",
+    "meaning_es": "Abandonar a alguien en una situación difícil, faltándole cuando más necesitaba apoyo o ayuda.",
+    "meaning_en": "To leave someone in the lurch; to abandon someone when they most needed support, betraying their trust.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "dejar a alguien en la estacada en el peor momento",
+    "note": "Connotación muy negativa: implica traición de confianza. Se construye habitualmente con complemento directo: 'dejar a alguien en la estacada'.",
+    "examples": [
+      {
+        "es": "Sus socios lo dejaron en la estacada cuando las cosas se pusieron difíciles y tuvo que enfrentar la quiebra solo.",
+        "en": "His partners left him in the lurch when things got difficult and he had to face the bankruptcy alone."
+      },
+      {
+        "es": "No pienso dejaros en la estacada ahora; si firmamos juntos el contrato, lo terminamos juntos.",
+        "en": "I'm not going to leave you in the lurch now; if we signed the contract together, we finish it together."
+      }
+    ]
+  },
+  {
+    "id": "idioms-048",
+    "term": "tirar la toalla",
+    "meaning_es": "Rendirse y abandonar un empeño o lucha al considerarla perdida o demasiado costosa.",
+    "meaning_en": "To throw in the towel; to give up and abandon a struggle or effort, accepting defeat.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "tirar la toalla antes de tiempo",
+    "note": "Implica una rendición definitiva, a menudo prematura. 'Arrojar la toalla' es la variante más formal y literaria. Frecuente en contextos deportivos, laborales y personales.",
+    "examples": [
+      {
+        "es": "Después de diez años intentando montar la empresa, tiró la toalla y aceptó un trabajo por cuenta ajena.",
+        "en": "After ten years trying to launch the company, he threw in the towel and accepted a salaried job."
+      },
+      {
+        "es": "No tires la toalla ahora; estás a punto de conseguirlo y sería una pena rendirse en el último tramo.",
+        "en": "Don't throw in the towel now; you are almost there and it would be a shame to give up in the final stretch."
+      }
+    ]
+  },
+  {
+    "id": "idioms-049",
+    "term": "hacerse el sueco",
+    "meaning_es": "Fingir que no se entiende o no se sabe algo para evitar una responsabilidad o una situación incómoda.",
+    "meaning_en": "To play dumb; to pretend not to understand or know something to avoid responsibility or an awkward situation.",
+    "register": "coloquial",
+    "region": "España principalmente",
+    "collocation": "hacerse el sueco cuando le preguntan",
+    "note": "Expresión característica del español peninsular. En Latinoamérica se prefiere 'hacerse el loco' para el mismo sentido.",
+    "examples": [
+      {
+        "es": "Le preguntamos quién había roto la ventana y se hizo el sueco mirando hacia otro lado.",
+        "en": "We asked him who had broken the window and he played dumb, looking the other way."
+      },
+      {
+        "es": "No te hagas el sueco; sabes perfectamente que ese fichero era tu responsabilidad.",
+        "en": "Don't play dumb; you know perfectly well that file was your responsibility."
+      }
+    ]
+  },
+  {
+    "id": "idioms-050",
+    "term": "meter el dedo en la llaga",
+    "meaning_es": "Tocar un tema doloroso o un punto sensible de alguien, a menudo de forma precisa aunque hiriente.",
+    "meaning_en": "To touch a raw nerve; to bring up a painful subject or sensitive issue, often precisely and sometimes hurtfully.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "meter el dedo en la llaga con ese comentario",
+    "note": "Puede señalar un problema central o reavivar un asunto doloroso. 'Poner el dedo en la llaga' se usa con sentidos semejantes; no hay una separación rígida.",
+    "examples": [
+      {
+        "es": "El periodista metió el dedo en la llaga al preguntar por el contrato que el partido quería olvidar.",
+        "en": "The journalist touched a raw nerve by asking about the contract the party wanted to forget."
+      },
+      {
+        "es": "Sin querer metió el dedo en la llaga al mencionar las vacaciones; ella acababa de perder a su madre.",
+        "en": "Without meaning to, she touched a raw nerve by mentioning holidays; her mother had just died."
+      }
+    ]
+  },
+  {
+    "id": "idioms-051",
+    "term": "a ojos vistas",
+    "meaning_es": "De manera visible, evidente y apreciable sin dificultad; de forma que cualquiera puede notarlo.",
+    "meaning_en": "Visibly; in a way that is evident and unmistakable to any observer; before everyone's eyes.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "deteriorarse a ojos vistas",
+    "note": "Funciona como adverbio y modifica verbos de cambio: mejorar, empeorar, crecer, deteriorarse. Más enfático que 'claramente' o 'visiblemente'.",
+    "examples": [
+      {
+        "es": "El barrio se ha transformado a ojos vistas en los últimos cinco años; ya no lo reconoces.",
+        "en": "The neighborhood has been visibly transformed over the last five years; you wouldn't recognize it now."
+      },
+      {
+        "es": "La paciente mejoraba a ojos vistas desde que le cambiaron la medicación hace tres semanas.",
+        "en": "The patient was visibly improving since they changed her medication three weeks ago."
+      }
+    ]
+  },
+  {
+    "id": "idioms-052",
+    "term": "de pe a pa",
+    "meaning_es": "De principio a fin, completamente, sin omitir nada; de cabo a rabo.",
+    "meaning_en": "From beginning to end; completely and thoroughly, without omitting anything.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "leer algo de pe a pa",
+    "note": "Informal pero vivaz. Sinónimo de 'de cabo a rabo' y 'de arriba abajo'. Puede aparecer antes o después del verbo según el ritmo de la frase.",
+    "examples": [
+      {
+        "es": "Me leí el contrato de pe a pa antes de firmarlo y encontré una cláusula muy problemática en el anexo.",
+        "en": "I read the contract from beginning to end before signing it and found a very problematic clause in the annex."
+      },
+      {
+        "es": "Me contó la historia de pe a pa, sin saltarse ningún detalle por incómodo que fuera.",
+        "en": "She told me the story from beginning to end, without skipping any detail however uncomfortable."
+      }
+    ]
+  },
+  {
+    "id": "idioms-053",
+    "term": "sin comerlo ni beberlo",
+    "meaning_es": "Sin haber hecho nada para merecer una situación, ya sea buena o mala; sin intervención propia.",
+    "meaning_en": "Without having done anything to deserve it; finding oneself in a situation through no fault or merit of one's own.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "verse involucrado sin comerlo ni beberlo",
+    "note": "Describe con mayor frecuencia situaciones negativas en las que uno se ve envuelto sin haberlo provocado. Puede usarse con sorpresas positivas, aunque es menos habitual.",
+    "examples": [
+      {
+        "es": "Sin comerlo ni beberlo, me vi en medio de una disputa entre dos departamentos que llevaban meses enfrentados.",
+        "en": "Without having done anything to deserve it, I found myself caught in the middle of a dispute between two departments that had been at odds for months."
+      },
+      {
+        "es": "Llegó a la empresa hace un año y sin comerlo ni beberlo heredó la gestión de un proyecto en crisis.",
+        "en": "She joined the company a year ago and, without doing anything to earn it, inherited the management of a project in crisis."
+      }
+    ]
+  },
+  {
+    "id": "idioms-054",
+    "term": "costar un ojo de la cara",
+    "meaning_es": "Ser algo muy caro, tener un precio exorbitante o exigir un esfuerzo o sacrificio enorme.",
+    "meaning_en": "To cost an arm and a leg; to be extremely expensive or to require great personal sacrifice.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "costar un ojo de la cara la reforma",
+    "note": "Se aplica a precios, obras, honorarios o esfuerzos extraordinarios. 'Costar un riñón' es sinónimo de uso igualmente extendido en España y Latinoamérica.",
+    "examples": [
+      {
+        "es": "Aparcar en el centro de la ciudad le costaba un ojo de la cara y decidió venirse en bicicleta.",
+        "en": "Parking in the city center was costing him an arm and a leg, so he decided to come by bicycle."
+      },
+      {
+        "es": "La reforma de la cocina les costó un ojo de la cara, pero el resultado fue exactamente lo que querían.",
+        "en": "The kitchen renovation cost them an arm and a leg, but the result was exactly what they wanted."
+      }
+    ]
+  },
+  {
+    "id": "idioms-055",
+    "term": "tomarse a pecho",
+    "meaning_es": "Tomar algo muy en serio, afectándole emocionalmente de manera intensa o excesiva.",
+    "meaning_en": "To take something to heart; to be deeply and personally affected by something, sometimes excessively.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "tomarse a pecho las críticas",
+    "note": "El pronombre reflexivo de objeto indirecto es parte de la estructura ('se lo tomó a pecho'). Puede indicar compromiso positivo o susceptibilidad excesiva según el contexto.",
+    "examples": [
+      {
+        "es": "Se tomó a pecho la crítica del editor y reescribió el capítulo entero en un solo fin de semana.",
+        "en": "She took the editor's criticism to heart and rewrote the entire chapter in a single weekend."
+      },
+      {
+        "es": "Te lo tomas demasiado a pecho; los comentarios anónimos en internet no dicen nada sobre tu valor como persona.",
+        "en": "You take it too much to heart; anonymous internet comments say nothing about your worth as a person."
+      }
+    ]
+  },
+  {
+    "id": "idioms-056",
+    "term": "hacer tabla rasa",
+    "meaning_es": "Ignorar o prescindir completamente de algo, como antecedentes, normas o privilegios, para empezar de cero.",
+    "meaning_en": "To make a clean sweep; to disregard everything that came before and start completely from scratch.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "hacer tabla rasa del pasado",
+    "note": "Puede ser neutral (empezar de cero de forma constructiva) o crítico (ignorar precedentes inconvenientes). Frecuente en el discurso político y académico.",
+    "examples": [
+      {
+        "es": "El nuevo rector quiso hacer tabla rasa de todos los acuerdos firmados por su predecesora.",
+        "en": "The new rector wanted to make a clean sweep of all the agreements signed by his predecessor."
+      },
+      {
+        "es": "No podemos hacer tabla rasa de décadas de política medioambiental solo porque sea conveniente ahora.",
+        "en": "We cannot wipe the slate clean of decades of environmental policy just because it is convenient now."
+      }
+    ]
+  },
+  {
+    "id": "idioms-057",
+    "term": "salir por los cerros de Úbeda",
+    "meaning_es": "Responder a algo con una digresión completamente irrelevante o salirse del tema de forma llamativa.",
+    "meaning_en": "To go completely off topic; to respond with something totally irrelevant or to wander far from the subject.",
+    "register": "coloquial",
+    "region": "España principalmente",
+    "collocation": "salir por los cerros de Úbeda en la respuesta",
+    "note": "Expresión típicamente peninsular. Implica una digresión especialmente llamativa e injustificada. En Latinoamérica se preferirá 'irse por las ramas' o 'salirse del tema'.",
+    "examples": [
+      {
+        "es": "Le pregunté por el presupuesto y salió por los cerros de Úbeda hablando de la historia del proyecto.",
+        "en": "I asked him about the budget and he went completely off topic talking about the project's history."
+      },
+      {
+        "es": "Cada vez que le piden que clarifique su posición, sale por los cerros de Úbeda con anécdotas irrelevantes.",
+        "en": "Every time he is asked to clarify his position, he wanders completely off topic with irrelevant anecdotes."
+      }
+    ]
+  },
+  {
+    "id": "idioms-058",
+    "term": "llevar la contraria",
+    "meaning_es": "Contradecir sistemáticamente a alguien o mantener una posición opuesta por costumbre o por carácter.",
+    "meaning_en": "To contradict someone on principle; to consistently take the opposing view out of habit or stubbornness.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "llevarle la contraria a alguien por sistema",
+    "note": "Puede ser puntual o habitual. Se indica a quién se contradice: 'le lleva la contraria a su jefe'. 'Por llevar la contraria' sugiere oposición sin otro motivo.",
+    "examples": [
+      {
+        "es": "Le encanta llevar la contraria en las reuniones; nunca está de acuerdo con la primera propuesta que se hace.",
+        "en": "He loves contradicting everyone in meetings; he never agrees with the first proposal put forward."
+      },
+      {
+        "es": "No le lleves la contraria solo por quedar bien con los demás; si tienes razón, defiéndelo con argumentos.",
+        "en": "Don't contradict her just to look good in front of others; if you're right, defend it with arguments."
+      }
+    ]
+  },
+  {
+    "id": "idioms-059",
+    "term": "echar en falta",
+    "meaning_es": "Notar la ausencia de algo o de alguien con sentimiento de carencia; añorar lo que no está presente.",
+    "meaning_en": "To miss something or someone; to notice and feel the absence of something or someone.",
+    "register": "neutro",
+    "region": "España principalmente",
+    "collocation": "echar en falta la presencia de alguien",
+    "note": "Sinónima de 'echar de menos', que es la forma preferida en Latinoamérica. Ambas son igualmente correctas en España; 'echar de menos' es la única forma de uso general.",
+    "examples": [
+      {
+        "es": "Desde que se mudó a otra ciudad, echo en falta las conversaciones que teníamos después de comer.",
+        "en": "Since she moved to another city, I miss the conversations we used to have after lunch."
+      },
+      {
+        "es": "En el nuevo trabajo se echa en falta el ambiente más informal y creativo de la startup anterior.",
+        "en": "At the new job, you really miss the more informal and creative atmosphere of the previous startup."
+      }
+    ]
+  },
+  {
+    "id": "idioms-060",
+    "term": "dar largas",
+    "meaning_es": "Aplazar o demorar algo de forma repetida con pretextos o evasivas para no tener que resolverlo.",
+    "meaning_en": "To stall; to keep putting something or someone off repeatedly with excuses so as to avoid dealing with it.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "dar largas a una petición",
+    "note": "Implica aplazamiento deliberado con evasivas, no un simple retraso. Requiere complemento directo o indirecto según la construcción.",
+    "examples": [
+      {
+        "es": "La administración lleva meses dando largas a nuestra solicitud de licencia sin una explicación real.",
+        "en": "The administration has been stalling on our license application for months without a real explanation."
+      },
+      {
+        "es": "Deja de darle largas y dile claramente si vas a contratarla o no; se merece una respuesta.",
+        "en": "Stop stalling and tell her clearly whether you are going to hire her or not; she deserves an answer."
+      }
+    ]
+  },
+  {
+    "id": "idioms-061",
+    "term": "a título de",
+    "meaning_es": "En calidad de; con el carácter o función de; a modo de algo específico.",
+    "meaning_en": "In the capacity of; by way of; serving in the role or function of something specified.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "hablar a título personal",
+    "note": "La colocación más frecuente es 'a título personal', para distinguir la opinión propia de la institucional. También en 'a título póstumo', 'a título informativo', etc.",
+    "examples": [
+      {
+        "es": "Hablo a título personal, no en representación de la institución, cuando digo que el proyecto me preocupa.",
+        "en": "I speak in a personal capacity, not on behalf of the institution, when I say that the project concerns me."
+      },
+      {
+        "es": "Le entregaron el trofeo a título póstumo en reconocimiento a una carrera dedicada a la investigación.",
+        "en": "The trophy was awarded to her posthumously in recognition of a career dedicated to research."
+      }
+    ]
+  },
+  {
+    "id": "idioms-062",
+    "term": "tomar cartas en el asunto",
+    "meaning_es": "Intervenir activamente en un problema o situación para poner remedio; implicarse de manera decisiva.",
+    "meaning_en": "To take matters into one's own hands; to step in and actively intervene to address a problem.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "tomar cartas en el asunto de inmediato",
+    "note": "No requiere que quien actúe tenga autoridad formal; basta con que decida implicarse para resolver la situación. Habitual en el discurso formal y periodístico.",
+    "examples": [
+      {
+        "es": "Cuando el conflicto entre empleados llegó a los clientes, la dirección tuvo que tomar cartas en el asunto.",
+        "en": "When the conflict between employees reached the clients, management had to step in and take action."
+      },
+      {
+        "es": "El regulador tomó cartas en el asunto tras recibir cientos de denuncias de consumidores afectados.",
+        "en": "The regulator intervened after receiving hundreds of complaints from affected consumers."
+      }
+    ]
+  },
+  {
+    "id": "idioms-063",
+    "term": "estar hecho una sopa",
+    "meaning_es": "Estar completamente empapado por la lluvia u otro líquido; mojado hasta los huesos.",
+    "meaning_en": "To be soaked to the bone; to be completely drenched from rain or another liquid.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "llegar a casa hecho una sopa",
+    "note": "Se construye con 'estar', no con 'ser'. Puede aplicarse también, en tono humorístico, a quien ha sudado abundantemente. Muy frecuente en la lengua oral.",
+    "examples": [
+      {
+        "es": "Salimos sin paraguas y llegamos al restaurante hechos una sopa; tuvimos que pedir servilletas de más.",
+        "en": "We went out without umbrellas and arrived at the restaurant soaked to the bone; we had to ask for extra napkins."
+      },
+      {
+        "es": "Después de correr bajo la tormenta, estaba hecha una sopa y tardé una hora en entrar en calor.",
+        "en": "After running in the storm, I was soaked through and it took me an hour to warm up."
+      }
+    ]
+  },
+  {
+    "id": "idioms-064",
+    "term": "en un santiamén",
+    "meaning_es": "En muy poco tiempo, de forma extremadamente rápida; en un instante.",
+    "meaning_en": "In no time at all; extremely quickly, in a very short instant.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "terminar algo en un santiamén",
+    "note": "Invariable y siempre adverbial. Transmite cierta sorpresa o satisfacción ante la velocidad del resultado. Equivale a 'en un abrir y cerrar de ojos'.",
+    "examples": [
+      {
+        "es": "El técnico identificó el problema y lo resolvió en un santiamén; tardó menos de diez minutos.",
+        "en": "The technician identified the problem and fixed it in no time; it took him less than ten minutes."
+      },
+      {
+        "es": "Los niños se terminaron la pizza en un santiamén y ya estaban pidiendo el postre.",
+        "en": "The children finished the pizza in no time at all and were already asking for dessert."
+      }
+    ]
+  },
+  {
+    "id": "idioms-065",
+    "term": "sin ton ni son",
+    "meaning_es": "Sin motivo ni razón aparente; de forma arbitraria, aleatoria o injustificada.",
+    "meaning_en": "Without rhyme or reason; arbitrarily, with no apparent motive or justification.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "actuar sin ton ni son",
+    "note": "Subraya la falta de justificación y de coherencia o patrón reconocible. Invariable; puede aparecer antes o después del verbo que modifica.",
+    "examples": [
+      {
+        "es": "Cambiaban las normas sin ton ni son y los empleados nunca sabían qué se esperaba de ellos.",
+        "en": "They kept changing the rules without rhyme or reason and the employees never knew what was expected of them."
+      },
+      {
+        "es": "No puedes interrumpir una reunión sin ton ni son; espera a que haya una pausa para intervenir.",
+        "en": "You can't interrupt a meeting without any reason; wait for a pause before you speak."
+      }
+    ]
+  },
+  {
+    "id": "idioms-066",
+    "term": "a contracorriente",
+    "meaning_es": "En sentido contrario a la tendencia dominante o al pensamiento mayoritario; yendo contra la corriente.",
+    "meaning_en": "Against the current; going against the prevailing trend, majority view, or conventional wisdom.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "nadar a contracorriente de la opinión pública",
+    "note": "Se combina con verbos como nadar, ir, apostar, trabajar. Puede ser elogioso (pensador independiente) o crítico (terquedad sin fundamento) según el tono.",
+    "examples": [
+      {
+        "es": "Apostó a contracorriente por el papel impreso cuando todos daban por muerta la prensa escrita.",
+        "en": "He bet against the current on print media when everyone was declaring print journalism dead."
+      },
+      {
+        "es": "Nadar a contracorriente no siempre es heroico; a veces es solo terquedad disfrazada de independencia.",
+        "en": "Swimming against the current is not always heroic; sometimes it is just stubbornness dressed up as independence."
+      }
+    ]
+  },
+  {
+    "id": "idioms-067",
+    "term": "dejar con la palabra en la boca",
+    "meaning_es": "Marcharse o cortar la comunicación mientras la otra persona aún está hablando, de forma abrupta.",
+    "meaning_en": "To cut someone off mid-sentence; to leave abruptly or hang up while the other person is still talking.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "dejar a alguien con la palabra en la boca",
+    "note": "Se deja a alguien hablando sin poder terminar. Puede ocurrir deliberadamente, al marcharse o colgar, o por una interrupción accidental.",
+    "examples": [
+      {
+        "es": "Me dejó con la palabra en la boca: colgó el teléfono antes de que pudiera explicarle qué había pasado.",
+        "en": "He cut me off mid-sentence: he hung up before I could explain what had happened."
+      },
+      {
+        "es": "Se fue de la reunión sin avisar, dejando a la coordinadora con la palabra en la boca delante de todos.",
+        "en": "She left the meeting without warning, leaving the coordinator mid-sentence in front of everyone."
+      }
+    ]
+  },
+  {
+    "id": "idioms-068",
+    "term": "echar el guante",
+    "meaning_es": "Detener o atrapar a alguien que se ha estado buscando, especialmente con fines judiciales o disciplinarios.",
+    "meaning_en": "To collar someone; to catch or apprehend a person who has been sought after, especially by authorities.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "echarle el guante al estafador",
+    "note": "Más expresivo que 'detener' o 'atrapar'. Habitual en el registro periodístico para describir la captura de personas buscadas por la justicia.",
+    "examples": [
+      {
+        "es": "La policía tardó dos años en echarle el guante al líder de la red de fraude fiscal internacional.",
+        "en": "The police took two years to collar the leader of the international tax fraud network."
+      },
+      {
+        "es": "Por fin le echaron el guante al ciberdelincuente gracias a una colaboración entre tres países europeos.",
+        "en": "They finally collared the cybercriminal thanks to cooperation between three European countries."
+      }
+    ]
+  },
+  {
+    "id": "idioms-069",
+    "term": "en carne viva",
+    "meaning_es": "Con una herida física o emocional expuesta y sin cicatrizar; en un estado de extrema vulnerabilidad o dolor.",
+    "meaning_en": "Raw; in an exposed, unhealed state of physical or emotional pain; extremely vulnerable.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "tener los nervios en carne viva",
+    "note": "En sentido figurado evoca dolor emocional o gran sensibilidad. 'Tener los nervios en carne viva' indica que se está especialmente alterado o vulnerable.",
+    "examples": [
+      {
+        "es": "Hablar del accidente le dejó los sentimientos en carne viva; se notaba que el duelo aún no había sanado.",
+        "en": "Talking about the accident left her feelings raw; it was clear that the grief had not yet healed."
+      },
+      {
+        "es": "Después de meses de conflicto laboral, los trabajadores tenían los nervios en carne viva.",
+        "en": "After months of labor conflict, the workers' nerves were completely raw."
+      }
+    ]
+  },
+  {
+    "id": "idioms-070",
+    "term": "dar tumbos",
+    "meaning_es": "Avanzar de manera inestable, dando traspiés o enfrentando dificultades sin rumbo definido.",
+    "meaning_en": "To lurch along; to move forward unsteadily, going through repeated difficulties without a clear direction.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "ir dando tumbos por la vida",
+    "note": "Puede describir a una persona, un vehículo o un proyecto que avanza de forma errática. Con frecuencia implica falta de planificación o de estabilidad a lo largo del tiempo.",
+    "examples": [
+      {
+        "es": "El proyecto fue dando tumbos durante tres años hasta que encontraron un inversor que creyera en él.",
+        "en": "The project lurched along for three years until they found an investor who believed in it."
+      },
+      {
+        "es": "Pasó la veintena dando tumbos entre empleos temporales antes de encontrar su vocación real.",
+        "en": "She spent her twenties lurching between temporary jobs before finding her true calling."
+      }
+    ]
+  },
+  {
+    "id": "idioms-071",
+    "term": "no hay mal que por bien no venga",
+    "meaning_es": "Expresión que indica que de las situaciones negativas pueden surgir consecuencias positivas e inesperadas.",
+    "meaning_en": "Every cloud has a silver lining; there is a positive side to any negative situation if you look for it.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "no hay mal que por bien no venga, ya verás",
+    "note": "Se usa para consolar o para reconocer, a posteriori, un beneficio inesperado. Puede resultar poco empático si se usa demasiado pronto tras un golpe difícil.",
+    "examples": [
+      {
+        "es": "Perder aquel trabajo fue duro, pero no hay mal que por bien no venga: la siguiente empresa le pagó el doble.",
+        "en": "Losing that job was hard, but every cloud has a silver lining: the next company paid him twice as much."
+      },
+      {
+        "es": "La cancelación del vuelo nos obligó a quedarnos un día más y descubrimos el mejor restaurante de la ciudad.",
+        "en": "The flight cancellation forced us to stay an extra day and we discovered the best restaurant in the city."
+      }
+    ]
+  },
+  {
+    "id": "idioms-072",
+    "term": "tener algo entre ceja y ceja",
+    "meaning_es": "Estar obsesionado con algo o alguien; tener una idea o propósito fijos en la mente con gran determinación.",
+    "meaning_en": "To have something fixed in one's mind; to be obsessed with an idea, plan, or person and unable to let go.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "tener entre ceja y ceja una idea",
+    "note": "Cuando el complemento es una idea o proyecto, denota empeño tenaz. Cuando el complemento es una persona, puede indicar que se le tiene manía o rencor.",
+    "examples": [
+      {
+        "es": "Tiene entre ceja y ceja abrir su propio restaurante; no para de hacer cursos de hostelería.",
+        "en": "She has it fixed in her mind to open her own restaurant; she keeps signing up for hospitality courses."
+      },
+      {
+        "es": "El inspector le tiene entre ceja y ceja desde que lo criticó públicamente hace dos años.",
+        "en": "The inspector has had it in for him since he criticized him publicly two years ago."
+      }
+    ]
+  },
+  {
+    "id": "idioms-073",
+    "term": "a la vuelta de la esquina",
+    "meaning_es": "Muy cerca, ya sea en el espacio o en el tiempo; a punto de suceder o de estar disponible.",
+    "meaning_en": "Just around the corner; very close in space or time; about to happen or become available.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "tener el éxito a la vuelta de la esquina",
+    "note": "En el uso temporal indica proximidad: 'las vacaciones están a la vuelta de la esquina'. Puede referirse tanto a algo deseado como a un problema.",
+    "examples": [
+      {
+        "es": "Las vacaciones están a la vuelta de la esquina y aún no hemos reservado nada para el viaje.",
+        "en": "The holidays are just around the corner and we still haven't booked anything for the trip."
+      },
+      {
+        "es": "Después de tanto trabajo, el estreno ya está a la vuelta de la esquina; queda menos de una semana.",
+        "en": "After all that work, the premiere is just around the corner; there is less than a week to go."
+      }
+    ]
+  },
+  {
+    "id": "idioms-074",
+    "term": "pasarse de la raya",
+    "meaning_es": "Excederse en el comportamiento, cruzando los límites de lo aceptable o lo correcto.",
+    "meaning_en": "To overstep the mark; to exceed the limits of acceptable behavior and go too far.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "pasarse de la raya con ese comentario",
+    "note": "Muy frecuente en intercambios acalorados. Puede referirse a palabras, conducta o exigencias. La forma reducida 'te has pasado' es igualmente común.",
+    "examples": [
+      {
+        "es": "Con ese comentario sobre su aspecto físico te pasaste de la raya; tienes que pedirle disculpas.",
+        "en": "With that comment about her appearance you overstepped the mark; you need to apologize."
+      },
+      {
+        "es": "La empresa se pasó de la raya al exigir disponibilidad total los fines de semana sin compensación.",
+        "en": "The company went too far when it demanded full availability on weekends with no additional compensation."
+      }
+    ]
+  },
+  {
+    "id": "idioms-075",
+    "term": "no ver tres en un burro",
+    "meaning_es": "Ver muy mal; tener muy poca agudeza visual o, figuradamente, no entender una situación obvia.",
+    "meaning_en": "To be as blind as a bat; to have very poor eyesight or, figuratively, to fail to see something obvious.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "no ver tres en un burro sin las gafas",
+    "note": "El sentido literal (mala visión) es el más frecuente. El figurado (no ver lo evidente) aparece en contextos de frustración o incredulidad.",
+    "examples": [
+      {
+        "es": "Sin las gafas no veo tres en un burro; no puedo ni leer el menú del restaurante.",
+        "en": "Without my glasses I'm as blind as a bat; I can't even read the restaurant menu."
+      },
+      {
+        "es": "¿Cómo no viste que te estaba mintiendo? ¡No ves tres en un burro aunque te lo pongan delante!",
+        "en": "How did you not see he was lying to you? You can't see what's right in front of your face!"
+      }
+    ]
+  },
+  {
+    "id": "idioms-076",
+    "term": "a sus anchas",
+    "meaning_es": "Con toda comodidad, libertad y tranquilidad; sin presiones, restricciones ni incomodidades externas.",
+    "meaning_en": "At one's ease; in complete comfort and freedom, without any external pressure or constraint.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "estar a sus anchas en casa",
+    "note": "Se combina especialmente con estar, sentirse, moverse. Transmite una relajación genuina o la capacidad de actuar sin trabas, no solo ausencia de molestias.",
+    "examples": [
+      {
+        "es": "Cuando se fue la visita, al fin pudo estar a sus anchas y quitarse el traje de etiqueta.",
+        "en": "When the guests left, he could finally relax at ease and take off his formal suit."
+      },
+      {
+        "es": "La documentalista se movía a sus anchas en la zona de conflicto gracias a sus contactos locales.",
+        "en": "The documentary filmmaker moved with complete ease in the conflict zone thanks to her local contacts."
+      }
+    ]
+  },
+  {
+    "id": "idioms-077",
+    "term": "en el candelero",
+    "meaning_es": "En el centro de la atención pública, de moda o en la posición de mayor protagonismo en un momento dado.",
+    "meaning_en": "In the spotlight; at the center of public attention, fashionable or in the most prominent position at a given moment.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "estar en el candelero de la actualidad",
+    "note": "Habitual en el lenguaje periodístico. Puede aplicarse a personas, temas o tendencias que concentran la atención pública en un período determinado.",
+    "examples": [
+      {
+        "es": "El debate sobre la semana laboral de cuatro días está en el candelero en toda Europa.",
+        "en": "The debate over the four-day working week is in the spotlight across Europe."
+      },
+      {
+        "es": "Lleva dos años en el candelero después de ganar el premio literario más importante del país.",
+        "en": "She has been in the spotlight for two years since winning the country's most important literary prize."
+      }
+    ]
+  },
+  {
+    "id": "idioms-078",
+    "term": "dar la vuelta a la tortilla",
+    "meaning_es": "Invertir completamente una situación, haciendo que quien tenía ventaja o poder pase a estar en desventaja.",
+    "meaning_en": "To turn the tables; to completely reverse a situation so that the side with the advantage ends up at a disadvantage.",
+    "register": "coloquial",
+    "region": "España principalmente",
+    "collocation": "dar la vuelta a la tortilla en el marcador",
+    "note": "Muy frecuente en el español peninsular, aunque se entiende y usa en otras variedades. Frecuente en comentarios deportivos y políticos.",
+    "examples": [
+      {
+        "es": "Iban perdiendo dos a cero al descanso, pero dieron la vuelta a la tortilla con tres goles en diez minutos.",
+        "en": "They were losing two-nil at half time, but they turned the tables with three goals in ten minutes."
+      },
+      {
+        "es": "La acusada dio la vuelta a la tortilla en el juicio presentando mensajes que comprometían al demandante.",
+        "en": "The defendant turned the tables in the trial by presenting messages that implicated the claimant."
+      }
+    ]
+  },
+  {
+    "id": "idioms-079",
+    "term": "no hay tu tía",
+    "meaning_es": "No hay remedio ni solución posible; lo que se desea no va a ocurrir de ninguna manera.",
+    "meaning_en": "There's nothing to be done; there is no way around it, no solution available, and no changing the outcome.",
+    "register": "coloquial",
+    "region": "España principalmente",
+    "collocation": "no hay tu tía, tenemos que aceptarlo",
+    "note": "Expresión marcadamente peninsular. Se emplea cuando se han agotado las opciones y la situación es inamovible. En Latinoamérica se preferirá 'no hay de otra' o 'no tiene remedio'.",
+    "examples": [
+      {
+        "es": "He intentado arreglar el portátil de tres formas distintas y no hay tu tía; habrá que llevarlo al técnico.",
+        "en": "I've tried to fix the laptop in three different ways and there's nothing to be done; it will have to go to a technician."
+      },
+      {
+        "es": "No hay tu tía: si quieres el certificado, tienes que presentarte en persona con todos los documentos.",
+        "en": "There's no way around it: if you want the certificate, you have to appear in person with all the documents."
+      }
+    ]
+  }
+]

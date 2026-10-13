@@ -1,0 +1,1642 @@
+[
+  {
+    "id": "qz-001",
+    "term": "quebrantar",
+    "meaning_es": "Incumplir o violar una norma, promesa o acuerdo establecido.",
+    "meaning_en": "To break or violate a rule, promise, or established agreement.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "quebrantar la ley, quebrantar el ánimo",
+    "note": "Más formal y rotundo que 'romper'. Se combina con objetos abstractos: quebrantar la ley, el silencio, un juramento.",
+    "examples": [
+      {
+        "es": "El funcionario quebrantó deliberadamente las normas de confidencialidad.",
+        "en": "The official deliberately broke the confidentiality rules."
+      },
+      {
+        "es": "La empresa quebrantó el acuerdo de exclusividad al firmar con un distribuidor rival.",
+        "en": "The company violated the exclusivity agreement by signing with a rival distributor."
+      }
+    ]
+  },
+  {
+    "id": "qz-002",
+    "term": "quebradizo",
+    "meaning_es": "Que se rompe o quiebra con facilidad; dicho de personas, de carácter frágil o susceptible.",
+    "meaning_en": "Brittle, fragile; said of people, easily upset or emotionally fragile.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "material quebradizo, carácter quebradizo",
+    "note": "Aplicado a personas connota fragilidad emocional, no necesariamente debilidad peyorativa.",
+    "examples": [
+      {
+        "es": "El cristal de la vidriera resultó más quebradizo de lo esperado.",
+        "en": "The stained glass turned out to be more brittle than expected."
+      },
+      {
+        "es": "Desde la pérdida de su madre, se había vuelto emocionalmente quebradizo.",
+        "en": "Since his mother's death, he had become emotionally fragile."
+      }
+    ]
+  },
+  {
+    "id": "qz-003",
+    "term": "quehacer",
+    "meaning_es": "Ocupación, tarea o actividad que hay que realizar; en plural, las obligaciones cotidianas.",
+    "meaning_en": "Task, duty, chore; in the plural, daily or professional responsibilities.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "quehaceres domésticos, quehacer intelectual",
+    "note": "El plural 'quehaceres' es muy frecuente para referirse a las tareas del hogar. El singular puede tener sentido más elevado: 'el quehacer filosófico'.",
+    "examples": [
+      {
+        "es": "Repartió los quehaceres domésticos de forma equitativa entre todos los miembros.",
+        "en": "She divided the household chores fairly among all the members."
+      },
+      {
+        "es": "El quehacer pedagógico exige una actualización constante.",
+        "en": "The work of teaching demands constant updating."
+      }
+    ]
+  },
+  {
+    "id": "qz-004",
+    "term": "querencia",
+    "meaning_es": "Tendencia o inclinación hacia un lugar, persona o ambiente al que se siente apego profundo.",
+    "meaning_en": "Strong attachment or pull toward a place or environment; a longing for one's roots or home.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "sentir querencia por un lugar",
+    "note": "Término con resonancias poéticas y taurinas. Evoca un apego casi instintivo, más que una mera preferencia racional.",
+    "examples": [
+      {
+        "es": "Pese a vivir en el extranjero, sentía una querencia irresistible hacia su pueblo natal.",
+        "en": "Despite living abroad, he felt an irresistible pull toward his hometown."
+      },
+      {
+        "es": "La querencia por el mar define a quienes crecen en ciudades costeras.",
+        "en": "A deep attachment to the sea defines those who grow up in coastal cities."
+      }
+    ]
+  },
+  {
+    "id": "qz-005",
+    "term": "quimera",
+    "meaning_es": "Ilusión o proyecto irrealizable que se persigue sin fundamento en la realidad.",
+    "meaning_en": "Pipe dream, chimera; an illusion or unrealizable project pursued without grounding in reality.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "perseguir una quimera, alimentar quimeras",
+    "note": "Del monstruo mitológico. Útil para describir expectativas o planes que carecen de base real, sin ser necesariamente tonto hacerlo.",
+    "examples": [
+      {
+        "es": "Creer que el problema se resolvería solo era una quimera.",
+        "en": "Believing the problem would resolve itself was wishful thinking."
+      },
+      {
+        "es": "No era una quimera: con disciplina, el proyecto resultó viable.",
+        "en": "It was no pipe dream: with discipline, the project proved viable."
+      }
+    ]
+  },
+  {
+    "id": "qz-006",
+    "term": "quejumbroso",
+    "meaning_es": "Que se queja frecuente y exageradamente, de tono o actitud lamentosa.",
+    "meaning_en": "Whining, querulous, given to constant complaining.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "tono quejumbroso, voz quejumbrosa",
+    "note": "Connotación negativa: implica que las quejas son excesivas o injustificadas. Se aplica tanto a personas como a estilos de escritura o música.",
+    "examples": [
+      {
+        "es": "El artículo adoptaba un tono quejumbroso que cansaba al lector.",
+        "en": "The article adopted a querulous tone that tired the reader."
+      },
+      {
+        "es": "Sus compañeros evitaban hablar con él porque siempre era quejumbroso.",
+        "en": "His colleagues avoided talking to him because he was always whining."
+      }
+    ]
+  },
+  {
+    "id": "qz-007",
+    "term": "quimérico",
+    "meaning_es": "Propio de una quimera; que carece de fundamento real o resulta imposible de realizar.",
+    "meaning_en": "Chimerical, fanciful; unrealistic or impossible.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "proyecto quimérico, esperanza quimérica",
+    "note": "Adjetivo culto. Más preciso que 'utópico', que en muchos contextos es positivo; 'quimérico' siempre implica falta de realismo.",
+    "examples": [
+      {
+        "es": "La propuesta resultó quimérica por la falta de financiación disponible.",
+        "en": "The proposal proved chimerical due to the lack of available funding."
+      },
+      {
+        "es": "Pensar que la paz llegaría sin negociación era quimérico.",
+        "en": "Thinking that peace would come without negotiation was unrealistic."
+      }
+    ]
+  },
+  {
+    "id": "qz-008",
+    "term": "rebatir",
+    "meaning_es": "Contradecir y refutar un argumento, afirmación o acusación con razones o pruebas.",
+    "meaning_en": "To rebut, counter, refute; to argue against a claim with evidence or reasoning.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "rebatir un argumento, rebatir una acusación",
+    "note": "Implica respuesta directa a algo que otro ha dicho o escrito. Frecuente en debates, juicios y textos académicos.",
+    "examples": [
+      {
+        "es": "El abogado rebatió cada uno de los cargos con documentos notariales.",
+        "en": "The lawyer rebutted each of the charges with notarized documents."
+      },
+      {
+        "es": "La investigadora rebatió la hipótesis dominante con datos empíricos.",
+        "en": "The researcher countered the dominant hypothesis with empirical data."
+      }
+    ]
+  },
+  {
+    "id": "qz-009",
+    "term": "recabar",
+    "meaning_es": "Obtener o conseguir algo —información, apoyo, fondos— mediante gestiones o solicitudes.",
+    "meaning_en": "To gather, obtain, or secure something (information, support, funds) through effort or requests.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "recabar información, recabar apoyo, recabar datos",
+    "note": "Implica un esfuerzo activo de recopilación. Frecuente en contextos administrativos, periodísticos y académicos.",
+    "examples": [
+      {
+        "es": "El periodista viajó a tres países para recabar testimonios de primera mano.",
+        "en": "The journalist traveled to three countries to gather firsthand testimonies."
+      },
+      {
+        "es": "La ONG logró recabar fondos suficientes para abrir dos nuevos centros.",
+        "en": "The NGO managed to secure enough funds to open two new centers."
+      }
+    ]
+  },
+  {
+    "id": "qz-010",
+    "term": "recelo",
+    "meaning_es": "Desconfianza o sospecha hacia alguien o algo, generalmente sin motivo comprobado o por experiencia negativa.",
+    "meaning_en": "Mistrust, wariness, suspicion; a lingering sense of distrust, often without confirmed cause.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "sentir recelo, mirar con recelo",
+    "note": "Más subjetivo e interno que 'sospecha', que implica algo más concreto. 'Recelo' es el estado emocional de quien desconfía por intuición o experiencia.",
+    "examples": [
+      {
+        "es": "Aceptó la propuesta, pero con cierto recelo que no supo explicar.",
+        "en": "She accepted the proposal, but with a certain wariness she couldn't explain."
+      },
+      {
+        "es": "Los vecinos miraban con recelo cualquier cambio en las normas del edificio.",
+        "en": "The neighbors looked with suspicion at any change to the building's rules."
+      }
+    ]
+  },
+  {
+    "id": "qz-011",
+    "term": "receloso",
+    "meaning_es": "Que siente o muestra recelo; desconfiado, suspicaz.",
+    "meaning_en": "Wary, mistrustful, suspicious.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "mostrarse receloso, actitud recelosa",
+    "note": "Adjetivo derivado de 'recelo'. Se usa para describir tanto personas como actitudes institucionales o colectivas.",
+    "examples": [
+      {
+        "es": "El comité se mostró receloso ante la propuesta del nuevo inversor.",
+        "en": "The committee was wary of the new investor's proposal."
+      },
+      {
+        "es": "Los ciudadanos, escarmentados, se habían vuelto recelosos de las promesas electorales.",
+        "en": "The citizens, having learned their lesson, had grown suspicious of electoral promises."
+      }
+    ]
+  },
+  {
+    "id": "qz-012",
+    "term": "recaer en",
+    "meaning_es": "Volver a caer en una enfermedad, vicio o estado negativo del que se había salido.",
+    "meaning_en": "To relapse; to fall back into an illness, vice, or negative state one had overcome.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "recaer en un vicio, recaer la responsabilidad en",
+    "note": "Siempre pronominal en el sentido de recaída: 'recayó en la adicción'. La preposición requerida es 'en'.",
+    "examples": [
+      {
+        "es": "Tras meses de recuperación, recayó en los mismos patrones destructivos.",
+        "en": "After months of recovery, he relapsed into the same destructive patterns."
+      },
+      {
+        "es": "Pese a haber seguido el tratamiento con rigor, recayó en la depresión al cabo de un año.",
+        "en": "Despite having followed the treatment rigorously, she relapsed into depression after a year."
+      }
+    ]
+  },
+  {
+    "id": "qz-013",
+    "term": "recriminar",
+    "meaning_es": "Reprochar a alguien una falta o conducta pasada, a menudo con insistencia o amargura.",
+    "meaning_en": "To reproach, reprimand, or rebuke someone for past conduct, often bitterly or repeatedly.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "recriminar a alguien por algo",
+    "note": "Conlleva un tono de reproche sostenido, no una simple corrección. Frecuente en contextos de conflicto interpersonal.",
+    "examples": [
+      {
+        "es": "No tenía sentido recriminarle un error que ya no tenía solución.",
+        "en": "There was no point in reproaching him for a mistake that was already irreversible."
+      },
+      {
+        "es": "Se pasaron la cena recriminándose mutuamente viejas decisiones.",
+        "en": "They spent the dinner reproaching each other over old decisions."
+      }
+    ]
+  },
+  {
+    "id": "qz-014",
+    "term": "refutar",
+    "meaning_es": "Demostrar mediante argumentos o pruebas que una afirmación, teoría o acusación es falsa o errónea.",
+    "meaning_en": "To refute; to disprove a claim, theory, or accusation with arguments or evidence.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "refutar una hipótesis, refutar un argumento",
+    "note": "Estrictamente implica demostración, no mera negación. 'Negar' no equivale a 'refutar'. Frecuente en ciencia, filosofía y debate académico.",
+    "examples": [
+      {
+        "es": "El experimento refutó la teoría que había dominado el campo durante décadas.",
+        "en": "The experiment refuted the theory that had dominated the field for decades."
+      },
+      {
+        "es": "Refutar una afirmación exige pruebas, no solo una opinión contraria.",
+        "en": "Refuting a claim requires evidence, not just a contrary opinion."
+      }
+    ]
+  },
+  {
+    "id": "qz-015",
+    "term": "rehuir",
+    "meaning_es": "Evitar deliberadamente a una persona, situación o conversación que resulta incómoda o comprometida.",
+    "meaning_en": "To shun, avoid, or shy away from a person, situation, or topic.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "rehuir el contacto, rehuir una pregunta",
+    "note": "Implica evasión deliberada, a menudo con cierta cobardía o incomodidad. Más culto que 'esquivar' en registros escritos.",
+    "examples": [
+      {
+        "es": "El director rehuyó las preguntas sobre el presupuesto durante toda la rueda de prensa.",
+        "en": "The director avoided questions about the budget throughout the entire press conference."
+      },
+      {
+        "es": "Desde la discusión, rehuía cualquier contacto con su antiguo socio.",
+        "en": "Since the argument, he avoided any contact with his former partner."
+      }
+    ]
+  },
+  {
+    "id": "qz-016",
+    "term": "reivindicar",
+    "meaning_es": "Reclamar activamente algo que se considera propio por derecho o que ha sido negado injustamente.",
+    "meaning_en": "To claim, demand, or assert something considered a right or unjustly denied.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "reivindicar derechos, reivindicar la memoria de alguien",
+    "note": "Distinto de 'reclamar' a secas: reivindicar implica una demanda pública y con convicción.",
+    "examples": [
+      {
+        "es": "Las trabajadoras salieron a la calle para reivindicar la igualdad salarial.",
+        "en": "The workers took to the streets to demand equal pay."
+      },
+      {
+        "es": "Los agricultores reivindicaron precios justos frente a la presión de los grandes distribuidores.",
+        "en": "The farmers demanded fair prices against the pressure of large distributors."
+      }
+    ]
+  },
+  {
+    "id": "qz-017",
+    "term": "relegar",
+    "meaning_es": "Desplazar o poner en un segundo plano a alguien o algo, quitándole importancia o reconocimiento.",
+    "meaning_en": "To relegate, sideline, or push into the background.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "relegar a un segundo plano, relegar al olvido",
+    "note": "A menudo refleja una injusticia o una pérdida de estatus. 'Relegar al olvido' es una colocación muy frecuente.",
+    "examples": [
+      {
+        "es": "El nuevo proyecto relegó al equipo veterano a tareas secundarias.",
+        "en": "The new project sidelined the veteran team to secondary tasks."
+      },
+      {
+        "es": "No podemos permitir que se relegue al olvido esta parte de la historia.",
+        "en": "We cannot allow this part of history to be consigned to oblivion."
+      }
+    ]
+  },
+  {
+    "id": "qz-018",
+    "term": "remilgo",
+    "meaning_es": "Gesto o actitud de afectada delicadeza, escrúpulo exagerado o reparo ante algo.",
+    "meaning_en": "Squeamishness, prudishness, affected fastidiousness; an exaggerated display of delicacy or reluctance.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "hacer remilgos, sin remilgos",
+    "note": "Casi siempre en plural: 'hacer remilgos' o 'sin remilgos'. Tono de ligera burla hacia quien muestra escrúpulos injustificados.",
+    "examples": [
+      {
+        "es": "Aceptó el trabajo sin hacer remilgos, aunque no era exactamente lo que buscaba.",
+        "en": "She took the job without any fuss, even though it wasn't exactly what she was looking for."
+      },
+      {
+        "es": "Los remilgos del comité retrasaron la aprobación del proyecto varios meses.",
+        "en": "The committee's squeamishness delayed the project's approval by several months."
+      }
+    ]
+  },
+  {
+    "id": "qz-019",
+    "term": "remordimiento",
+    "meaning_es": "Sentimiento de culpa o pesar por una acción pasada que se considera moralmente incorrecta.",
+    "meaning_en": "Remorse; a feeling of guilt or regret for a past action one considers morally wrong.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "sentir remordimiento, sin remordimiento alguno",
+    "note": "Más intenso y moral que 'arrepentimiento', que puede ser meramente práctico. 'Remordimiento' siempre implica conciencia moral.",
+    "examples": [
+      {
+        "es": "Le corroía el remordimiento por haber ignorado las señales de alarma.",
+        "en": "He was eaten up with remorse for having ignored the warning signs."
+      },
+      {
+        "es": "Actuó sin remordimiento alguno, lo que desconcertó al tribunal.",
+        "en": "She acted without any remorse, which baffled the court."
+      }
+    ]
+  },
+  {
+    "id": "qz-020",
+    "term": "reparar en",
+    "meaning_es": "Fijarse o prestar atención a algo que antes había pasado desapercibido.",
+    "meaning_en": "To notice, take note of, or pay attention to something previously overlooked.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "reparar en un detalle, sin reparar en las consecuencias",
+    "note": "Construcción siempre con 'en'. La frase 'sin reparar en' es muy frecuente para indicar que alguien actuó sin considerar algo.",
+    "examples": [
+      {
+        "es": "Nadie reparó en la pequeña nota escrita al margen del contrato.",
+        "en": "Nobody noticed the small note written in the margin of the contract."
+      },
+      {
+        "es": "Actuó sin reparar en el efecto que tendría sobre los demás.",
+        "en": "She acted without paying attention to the effect it would have on others."
+      }
+    ]
+  },
+  {
+    "id": "qz-021",
+    "term": "reparo",
+    "meaning_es": "Objeción, escrúpulo o duda que impide actuar con total decisión; dificultad que se opone a algo.",
+    "meaning_en": "Objection, qualm, scruple; a reservation or difficulty that prevents wholehearted action.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "poner reparos, sin reparos",
+    "note": "'Poner reparos' es la colocación más frecuente: significa objetar o poner obstáculos. 'Sin reparos' significa sin escrúpulos ni dudas.",
+    "examples": [
+      {
+        "es": "El auditor puso reparos a varios apartados del informe financiero.",
+        "en": "The auditor raised objections to several sections of the financial report."
+      },
+      {
+        "es": "Expresó su opinión sin reparos, aunque sabía que sería impopular.",
+        "en": "She expressed her opinion without reservations, even knowing it would be unpopular."
+      }
+    ]
+  },
+  {
+    "id": "qz-022",
+    "term": "repercutir en",
+    "meaning_es": "Tener consecuencias o efectos —generalmente negativos— sobre algo o alguien.",
+    "meaning_en": "To have repercussions on; to affect or impact, often negatively.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "repercutir en la salud, repercutir en el resultado",
+    "note": "Siempre con 'en'. Puede usarse en sentido neutro, pero frecuentemente implica consecuencias no deseadas.",
+    "examples": [
+      {
+        "es": "La crisis de suministros repercutió directamente en los precios al consumidor.",
+        "en": "The supply crisis had a direct impact on consumer prices."
+      },
+      {
+        "es": "El estrés crónico termina repercutiendo en la salud física.",
+        "en": "Chronic stress ends up taking a toll on physical health."
+      }
+    ]
+  },
+  {
+    "id": "qz-023",
+    "term": "reprochar",
+    "meaning_es": "Censurar o hacer ver a alguien que su conducta ha causado daño o decepción.",
+    "meaning_en": "To reproach, rebuke; to blame someone for a failing or to express disappointment in their conduct.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "reprochar a alguien algo, reprocharse a uno mismo",
+    "note": "Se puede usar reflexivamente: 'me reprocho no haber actuado antes'. Menos intenso que 'recriminar', sin la connotación de insistencia amarga.",
+    "examples": [
+      {
+        "es": "Le reprochó que no hubiera avisado con tiempo suficiente.",
+        "en": "She reproached him for not having given enough notice."
+      },
+      {
+        "es": "Se reprochaba a sí mismo no haber escuchado mejor a su amigo.",
+        "en": "He blamed himself for not having listened more carefully to his friend."
+      }
+    ]
+  },
+  {
+    "id": "qz-024",
+    "term": "resabio",
+    "meaning_es": "Rasgo negativo o hábito arraigado que persiste de una etapa anterior, difícil de erradicar.",
+    "meaning_en": "A lingering negative trait or habit carried over from a past era; an ingrained remnant.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "resabios del pasado, un resabio de amargura",
+    "note": "Frecuente en plural: 'resabios autoritarios', 'resabios coloniales'. Implica algo que persiste cuando ya debería haber desaparecido.",
+    "examples": [
+      {
+        "es": "La nueva ley arrastraba resabios paternalistas de legislaciones anteriores.",
+        "en": "The new law carried lingering paternalistic traces from earlier legislation."
+      },
+      {
+        "es": "La reforma educativa no logró eliminar los resabios memorísticos del sistema anterior.",
+        "en": "The educational reform failed to eliminate the rote-learning habits of the previous system."
+      }
+    ]
+  },
+  {
+    "id": "qz-025",
+    "term": "resarcir",
+    "meaning_es": "Compensar a alguien por un daño, perjuicio o pérdida sufridos.",
+    "meaning_en": "To compensate, indemnify, or make amends for a harm or loss caused.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "resarcir los daños, resarcirse de una pérdida",
+    "note": "Frecuente en contextos legales y económicos. La forma reflexiva 'resarcirse' indica que uno mismo recupera lo perdido.",
+    "examples": [
+      {
+        "es": "La empresa fue condenada a resarcir a los afectados por los daños causados.",
+        "en": "The company was ordered to compensate those affected for the damages caused."
+      },
+      {
+        "es": "Tardó años en resarcirse de las pérdidas económicas del proyecto fallido.",
+        "en": "It took her years to recover from the financial losses of the failed project."
+      }
+    ]
+  },
+  {
+    "id": "qz-026",
+    "term": "resentirse de",
+    "meaning_es": "Verse perjudicado o debilitado por algo; sufrir las consecuencias negativas de una situación.",
+    "meaning_en": "To suffer from, be adversely affected by; to show the negative effects of something.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "resentirse de la falta de, resentirse del estrés",
+    "note": "Siempre con 'de'. Distinto del castellano 'estar resentido', que implica rencor personal; 'resentirse de' describe el deterioro causado por algo.",
+    "examples": [
+      {
+        "es": "La calidad del trabajo empezó a resentirse de la falta de recursos.",
+        "en": "The quality of the work began to suffer from the lack of resources."
+      },
+      {
+        "es": "Su salud se resintió de años de exceso laboral.",
+        "en": "Her health suffered the effects of years of overwork."
+      }
+    ]
+  },
+  {
+    "id": "qz-027",
+    "term": "resquemor",
+    "meaning_es": "Sentimiento de amargura o resentimiento que queda tras una ofensa, injusticia o decepción.",
+    "meaning_en": "Lingering bitterness or resentment; a smoldering grievance left by an offense or disappointment.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "sentir resquemor, resquemor contenido",
+    "note": "Implica que el sentimiento persiste de forma larvada, sin exteriorizarse del todo. Más literario y matizado que 'rencor'.",
+    "examples": [
+      {
+        "es": "La decisión de la junta dejó un resquemor duradero entre los empleados.",
+        "en": "The board's decision left lasting bitterness among the employees."
+      },
+      {
+        "es": "Hablaba con cortesía, pero el resquemor que sentía era perceptible.",
+        "en": "She spoke politely, but the resentment she felt was perceptible."
+      }
+    ]
+  },
+  {
+    "id": "qz-028",
+    "term": "reticencia",
+    "meaning_es": "Resistencia o reserva con que alguien se muestra ante algo que no quiere hacer o expresar abiertamente.",
+    "meaning_en": "Reticence, reluctance; a guarded resistance to acting or expressing something openly.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "mostrar reticencia, con reticencias",
+    "note": "'Con reticencias' es colocación muy frecuente: aceptó la propuesta con reticencias = con reservas visibles.",
+    "examples": [
+      {
+        "es": "El gobierno mostró reticencias a transparentar los datos antes de las elecciones.",
+        "en": "The government showed reluctance to make the data transparent before the elections."
+      },
+      {
+        "es": "Aceptó la propuesta, aunque con visibles reticencias.",
+        "en": "He accepted the proposal, though with visible reservations."
+      }
+    ]
+  },
+  {
+    "id": "qz-029",
+    "term": "retractarse",
+    "meaning_es": "Desdecirse de lo que se había dicho o afirmado anteriormente; rectificar una declaración pública.",
+    "meaning_en": "To retract, recant, or take back something previously said or affirmed.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "retractarse de una afirmación, retractarse públicamente",
+    "note": "Siempre pronominal: 'retractarse de'. No implica necesariamente reconocer error; basta con desdecirse públicamente.",
+    "examples": [
+      {
+        "es": "Ante las pruebas presentadas, el testigo se retractó de su declaración inicial.",
+        "en": "Faced with the evidence presented, the witness retracted his initial statement."
+      },
+      {
+        "es": "La directora se retractó públicamente de los comentarios polémicos.",
+        "en": "The director publicly retracted the controversial comments."
+      }
+    ]
+  },
+  {
+    "id": "qz-030",
+    "term": "remitirse a",
+    "meaning_es": "Referirse a algo o deferir a la autoridad de algo para fundar o apoyar lo que se dice.",
+    "meaning_en": "To refer to, defer to, or cite something as an authority or source.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "remitirse a los hechos, remitirse a lo dicho",
+    "note": "Muy frecuente en discurso formal, legal y académico. 'Me remito a lo dicho' evita repetir un argumento ya expuesto.",
+    "examples": [
+      {
+        "es": "Para mayor detalle, me remito al informe completo anexo a esta nota.",
+        "en": "For further detail, I refer you to the full report attached to this note."
+      },
+      {
+        "es": "El fiscal se remitió a los hechos recogidos en el sumario.",
+        "en": "The prosecutor deferred to the facts recorded in the case file."
+      }
+    ]
+  },
+  {
+    "id": "qz-031",
+    "term": "rezumar",
+    "meaning_es": "Dejar salir un líquido por los poros o grietas; figuradamente, desprender o transmitir una cualidad de forma evidente.",
+    "meaning_en": "To ooze, seep; figuratively, to exude or radiate a quality visibly.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "rezumar confianza, rezumar amargura",
+    "note": "El uso figurado es muy expresivo: 'rezumar arrogancia' o 'rezumar entusiasmo' implica que la cualidad es tan intensa que se nota sin que nadie lo diga.",
+    "examples": [
+      {
+        "es": "Su discurso rezumaba condescendencia en cada párrafo.",
+        "en": "His speech oozed condescension in every paragraph."
+      },
+      {
+        "es": "La pintura rezumaba humedad por la pared mal aislada.",
+        "en": "Moisture seeped through the poorly insulated wall."
+      }
+    ]
+  },
+  {
+    "id": "qz-032",
+    "term": "resignarse a",
+    "meaning_es": "Aceptar con conformidad algo negativo o inevitable, renunciando a resistirlo.",
+    "meaning_en": "To resign oneself to; to accept something negative or inevitable with equanimity.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "resignarse a su suerte, resignarse a lo inevitable",
+    "note": "La preposición requerida es 'a' + infinitivo o sustantivo. Implica aceptación, no necesariamente pasividad irresponsable.",
+    "examples": [
+      {
+        "es": "Tras agotar todas las vías legales, se resignó a aceptar el fallo.",
+        "en": "After exhausting all legal avenues, she resigned herself to accepting the ruling."
+      },
+      {
+        "es": "No me resigno a que esta sea la única solución posible.",
+        "en": "I refuse to accept that this is the only possible solution."
+      }
+    ]
+  },
+  {
+    "id": "qz-033",
+    "term": "rudimentario",
+    "meaning_es": "Elemental, básico, sin desarrollar; que se encuentra en sus fases más iniciales o carece de refinamiento.",
+    "meaning_en": "Rudimentary, basic, undeveloped; lacking refinement or in its earliest stage.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "conocimiento rudimentario, herramienta rudimentaria",
+    "note": "No siempre peyorativo: puede indicar simplemente un estadio inicial. Pero en contextos de evaluación suele implicar insuficiencia.",
+    "examples": [
+      {
+        "es": "Sus conocimientos de contabilidad eran rudimentarios para el puesto exigido.",
+        "en": "Her accounting knowledge was too rudimentary for the demands of the position."
+      },
+      {
+        "es": "Con herramientas rudimentarias, el equipo logró construir un prototipo funcional.",
+        "en": "Using rudimentary tools, the team managed to build a working prototype."
+      }
+    ]
+  },
+  {
+    "id": "qz-034",
+    "term": "saciar",
+    "meaning_es": "Satisfacer completamente un deseo, necesidad o apetito hasta el punto de no querer más.",
+    "meaning_en": "To satiate, satisfy fully; to fill a desire, hunger, or need to the point of fulfillment.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "saciar la sed, saciar la curiosidad",
+    "note": "No solo para alimentos: 'saciar la curiosidad', 'saciar las ambiciones'. El participio 'saciado' implica plenitud, a veces casi hasta el exceso.",
+    "examples": [
+      {
+        "es": "El documental no logró saciar su curiosidad; necesitaba saber más.",
+        "en": "The documentary failed to satisfy his curiosity; he needed to know more."
+      },
+      {
+        "es": "Bebieron agua de montaña hasta saciar la sed tras horas de marcha.",
+        "en": "They drank mountain water until their thirst was fully quenched after hours of hiking."
+      }
+    ]
+  },
+  {
+    "id": "qz-035",
+    "term": "sigilo",
+    "meaning_es": "Cautela y discreción para actuar sin ser notado; secreto o reserva con que se lleva algo.",
+    "meaning_en": "Stealth, secrecy; the caution or discretion with which something is done to avoid detection.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "actuar con sigilo, moverse con sigilo",
+    "note": "La colocación más frecuente es 'con sigilo'. En sentido profesional puede ser neutral (llevar un asunto con sigilo = con discreción).",
+    "examples": [
+      {
+        "es": "Se movió con sigilo para no despertar a los demás.",
+        "en": "She moved with stealth so as not to wake the others."
+      },
+      {
+        "es": "La operación se planeó con gran sigilo para evitar filtraciones.",
+        "en": "The operation was planned with great secrecy to prevent leaks."
+      }
+    ]
+  },
+  {
+    "id": "qz-036",
+    "term": "sinsabor",
+    "meaning_es": "Disgusto, pesar o decepción que deja algo en el ánimo; sensación de amargura tras una experiencia.",
+    "meaning_en": "Displeasure, bitterness, or bitter aftertaste; the emotional unpleasantness left by a difficult experience.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "dejar un sinsabor, pasar por muchos sinsabores",
+    "note": "Literalmente 'sin sabor', pero su uso es casi exclusivamente figurado. 'Dejar un sinsabor' es colocación muy frecuente.",
+    "examples": [
+      {
+        "es": "La forma en que terminó la reunión le dejó un sinsabor que duró días.",
+        "en": "The way the meeting ended left a bitter taste that lingered for days."
+      },
+      {
+        "es": "Tras muchos sinsabores, llegó a valorar los pequeños triunfos cotidianos.",
+        "en": "After many disappointments, he came to appreciate small everyday victories."
+      }
+    ]
+  },
+  {
+    "id": "qz-037",
+    "term": "sobrellevar",
+    "meaning_es": "Soportar o tolerar con paciencia y resignación una carga, dificultad o situación penosa.",
+    "meaning_en": "To endure, bear, or cope with a burden or hardship with patience.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "sobrellevar la pérdida, sobrellevar la enfermedad",
+    "note": "Matiz de esfuerzo y dignidad en la aceptación. No implica pasividad total, sino la capacidad de seguir funcionando pese a la dificultad.",
+    "examples": [
+      {
+        "es": "Aprendió a sobrellevar la incertidumbre con más calma de lo esperado.",
+        "en": "She learned to cope with uncertainty more calmly than expected."
+      },
+      {
+        "es": "El apoyo familiar fue clave para sobrellevar el duelo.",
+        "en": "Family support was key to getting through the grieving process."
+      }
+    ]
+  },
+  {
+    "id": "qz-038",
+    "term": "solapar",
+    "meaning_es": "Coincidir o superponerse parcialmente dos cosas, áreas o funciones.",
+    "meaning_en": "To overlap; for two things, areas, or functions to partially coincide.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "solaparse las funciones, solapar irregularidades",
+    "note": "El reflexivo 'solaparse' es la forma más frecuente. Habitual en contextos organizativos y académicos para señalar duplicidades.",
+    "examples": [
+      {
+        "es": "Las responsabilidades de ambos departamentos se solapaban sin que nadie lo admitiera.",
+        "en": "The responsibilities of both departments overlapped without anyone admitting it."
+      },
+      {
+        "es": "Los marcos legales de ambas instituciones se solapaban en varios puntos clave.",
+        "en": "The legal frameworks of both institutions overlapped at several key points."
+      }
+    ]
+  },
+  {
+    "id": "qz-039",
+    "term": "soliviantar",
+    "meaning_es": "Incitar o agitar a alguien provocando desasosiego, rebeldía o indignación.",
+    "meaning_en": "To stir up, incite, or unsettle; to provoke unrest, rebellion, or indignation in someone.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "soliviantar los ánimos, soliviantar a las masas",
+    "note": "Conlleva un matiz de agitación emocional o política. Se usa tanto para incitar a la acción como para describir el estado de alguien perturbado.",
+    "examples": [
+      {
+        "es": "El discurso soliviantó los ánimos de una audiencia ya de por sí crispada.",
+        "en": "The speech stirred up an audience that was already tense."
+      },
+      {
+        "es": "Las noticias falsas consiguen soliviantar a comunidades enteras en cuestión de horas.",
+        "en": "Fake news can incite entire communities within a matter of hours."
+      }
+    ]
+  },
+  {
+    "id": "qz-040",
+    "term": "solventar",
+    "meaning_es": "Resolver un problema, dificultad o deuda de manera efectiva y definitiva.",
+    "meaning_en": "To resolve, sort out, or settle a problem, difficulty, or debt.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "solventar un problema, solventar una deuda",
+    "note": "Implica que la cuestión queda resuelta de forma efectiva. Admite tanto problemas prácticos como deudas económicas.",
+    "examples": [
+      {
+        "es": "El técnico solventó el problema de conectividad en menos de veinte minutos.",
+        "en": "The technician sorted out the connectivity problem in under twenty minutes."
+      },
+      {
+        "es": "Aprovechó el buen trimestre para solventar todas las deudas pendientes.",
+        "en": "He took advantage of the good quarter to settle all outstanding debts."
+      }
+    ]
+  },
+  {
+    "id": "qz-041",
+    "term": "sondear",
+    "meaning_es": "Explorar discretamente la opinión, intención o conocimientos de alguien; indagar con cuidado.",
+    "meaning_en": "To sound out, probe; to discreetly explore someone's opinion, intentions, or knowledge.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "sondear la opinión, sondear el terreno",
+    "note": "La expresión 'sondear el terreno' es una metáfora frecuente para preparar una negociación o propuesta antes de hacer algo oficial.",
+    "examples": [
+      {
+        "es": "Antes de presentar la propuesta, sondeó a los miembros del comité de forma individual.",
+        "en": "Before presenting the proposal, she sounded out the committee members individually."
+      },
+      {
+        "es": "El gobierno sondeó la opinión pública antes de anunciar la medida.",
+        "en": "The government gauged public opinion before announcing the measure."
+      }
+    ]
+  },
+  {
+    "id": "qz-042",
+    "term": "sórdido",
+    "meaning_es": "Sucio, miserable o degradante moralmente; que revela bajeza o falta de decoro.",
+    "meaning_en": "Squalid, sordid; physically or morally degrading, mean, or ignoble.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "asunto sórdido, ambiente sórdido",
+    "note": "Puede referirse a lo físicamente miserable (un piso sórdido) o a lo moralmente bajo (un asunto sórdido). La tilde es obligatoria.",
+    "examples": [
+      {
+        "es": "El reportaje sacó a la luz los aspectos más sórdidos del caso.",
+        "en": "The report brought to light the most sordid aspects of the case."
+      },
+      {
+        "es": "Vivían en unas condiciones sórdidas que nadie parecía dispuesto a mejorar.",
+        "en": "They lived in squalid conditions that nobody seemed willing to improve."
+      }
+    ]
+  },
+  {
+    "id": "qz-043",
+    "term": "sopesar",
+    "meaning_es": "Considerar cuidadosamente los factores, ventajas e inconvenientes de algo antes de tomar una decisión.",
+    "meaning_en": "To weigh up, consider carefully; to balance the pros and cons before deciding.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "sopesar las opciones, sopesar pros y contras",
+    "note": "La metáfora viene de sostener el peso de algo en la palma. Implica un proceso deliberado, no impulsivo.",
+    "examples": [
+      {
+        "es": "Antes de aceptar, se tomó varios días para sopesar las implicaciones.",
+        "en": "Before accepting, she took several days to weigh up the implications."
+      },
+      {
+        "es": "El arquitecto sopesó distintas soluciones antes de proponer el diseño final.",
+        "en": "The architect carefully considered different solutions before proposing the final design."
+      }
+    ]
+  },
+  {
+    "id": "qz-044",
+    "term": "sortear",
+    "meaning_es": "Evitar un obstáculo, dificultad o problema con habilidad; también, eludir algo que se interpone.",
+    "meaning_en": "To get around, navigate, or sidestep an obstacle or difficulty skillfully.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "sortear obstáculos, sortear la crisis",
+    "note": "Connota habilidad o ingenio en la superación del obstáculo. Habitual en crónicas deportivas, económicas y políticas.",
+    "examples": [
+      {
+        "es": "La empresa logró sortear la crisis gracias a una gestión flexible.",
+        "en": "The company managed to navigate the crisis thanks to flexible management."
+      },
+      {
+        "es": "Los ciclistas sortearon los baches con precisión y sin perder velocidad.",
+        "en": "The cyclists skillfully avoided the potholes without losing speed."
+      }
+    ]
+  },
+  {
+    "id": "qz-045",
+    "term": "soslayar",
+    "meaning_es": "Eludir intencionadamente un tema, problema o dificultad para no tener que afrontarlo directamente.",
+    "meaning_en": "To sidestep, evade, or gloss over a topic or difficulty intentionally.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "soslayar el tema, soslayar el problema",
+    "note": "Implica evasión deliberada, más marcada que 'evitar'. 'De soslayo' (mirar de soslayo) es expresión relacionada pero distinta.",
+    "examples": [
+      {
+        "es": "El portavoz soslayó todas las preguntas sobre el escándalo financiero.",
+        "en": "The spokesperson sidestepped all questions about the financial scandal."
+      },
+      {
+        "es": "No es posible soslayar los problemas estructurales con parches temporales.",
+        "en": "It is not possible to paper over structural problems with temporary fixes."
+      }
+    ]
+  },
+  {
+    "id": "qz-046",
+    "term": "subsanar",
+    "meaning_es": "Corregir, remediar o compensar un defecto, error o carencia de forma que quede solventado.",
+    "meaning_en": "To correct, remedy, or make good a defect, error, or shortcoming.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "subsanar un error, subsanar una deficiencia",
+    "note": "Frecuente en contextos administrativos, legales y académicos. Se aplica a errores documentales, deficiencias técnicas e imprecisiones.",
+    "examples": [
+      {
+        "es": "El solicitante tuvo diez días para subsanar los errores detectados en su expediente.",
+        "en": "The applicant was given ten days to correct the errors found in her file."
+      },
+      {
+        "es": "La revisión del manual subsanó varias imprecisiones que habían generado confusión.",
+        "en": "The manual revision corrected several inaccuracies that had caused confusion."
+      }
+    ]
+  },
+  {
+    "id": "qz-047",
+    "term": "sucinto",
+    "meaning_es": "Breve, conciso y preciso; que expresa lo necesario sin rodeos ni adornos superfluos.",
+    "meaning_en": "Succinct, concise; brief and to the point, without unnecessary elaboration.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "respuesta sucinta, exposición sucinta",
+    "note": "Positivo: implica eficacia y claridad, no pobreza de ideas. Contrasta con 'prolijo'. Un texto sucinto puede ser muy rico en contenido.",
+    "examples": [
+      {
+        "es": "Su respuesta fue sucinta pero suficientemente clara para cerrar el debate.",
+        "en": "His answer was succinct but clear enough to close the debate."
+      },
+      {
+        "es": "El informe, aunque sucinto, contenía todos los datos relevantes.",
+        "en": "The report, though brief, contained all the relevant data."
+      }
+    ]
+  },
+  {
+    "id": "qz-048",
+    "term": "subyacer",
+    "meaning_es": "Estar presente por debajo de algo visible o explícito, siendo la base o causa real de ello.",
+    "meaning_en": "To underlie; to exist beneath the surface as the real basis or cause of something.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "subyacer a un conflicto, el problema que subyace",
+    "note": "Muy útil en análisis intelectuales. 'Subyacer a' y 'subyacer en' son ambas correctas; en escritura crítica se prefiere 'lo que subyace'.",
+    "examples": [
+      {
+        "es": "Bajo la disputa territorial subyacía un conflicto histórico mucho más profundo.",
+        "en": "Beneath the territorial dispute lay a much deeper historical conflict."
+      },
+      {
+        "es": "Hay que entender el problema económico que subyace al malestar social.",
+        "en": "One must understand the economic problem underlying the social unrest."
+      }
+    ]
+  },
+  {
+    "id": "qz-049",
+    "term": "suscitar",
+    "meaning_es": "Provocar o dar lugar a algo, especialmente a un debate, reacción, sentimiento o problema.",
+    "meaning_en": "To give rise to, stir up, or provoke a reaction, debate, feeling, or problem.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "suscitar debate, suscitar dudas, suscitar polémica",
+    "note": "Más formal y neutro que 'provocar'. Usual en discurso académico y periodístico: 'el informe suscitó críticas', 'la propuesta suscitó interés'.",
+    "examples": [
+      {
+        "es": "La publicación del informe suscitó un encendido debate en el Parlamento.",
+        "en": "The release of the report sparked a heated debate in Parliament."
+      },
+      {
+        "es": "Sus declaraciones suscitaron más dudas de las que pretendían resolver.",
+        "en": "His statements raised more doubts than they aimed to resolve."
+      }
+    ]
+  },
+  {
+    "id": "qz-050",
+    "term": "sutileza",
+    "meaning_es": "Cualidad de lo que es delicado, fino o difícil de percibir; matiz o distinción de escasa evidencia.",
+    "meaning_en": "Subtlety; fineness of perception or distinction; a nuance that is difficult to grasp.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "apreciar la sutileza, con gran sutileza",
+    "note": "Puede ser positivo (inteligencia fina) o señalar que algo se escapa por ser demasiado sutil para captar en la práctica.",
+    "examples": [
+      {
+        "es": "La sutileza de los matices jurídicos escapaba a quienes no eran especialistas.",
+        "en": "The subtlety of the legal nuances escaped those who were not specialists."
+      },
+      {
+        "es": "Con gran sutileza, redirigió la conversación hacia el punto que más le interesaba.",
+        "en": "With great subtlety, she steered the conversation toward the point that interested her most."
+      }
+    ]
+  },
+  {
+    "id": "qz-051",
+    "term": "tajante",
+    "meaning_es": "Que corta o zanja sin admitir discusión ni réplica; dicho o decidido de forma rotunda e inequívoca.",
+    "meaning_en": "Categorical, blunt, or definitive; said or decided in a way that leaves no room for debate.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "respuesta tajante, negativa tajante",
+    "note": "Metáfora de filo cortante. En una negativa tajante no hay matices ni posibilidad de negociación. Puede ser admirado o percibido como falta de diplomacia.",
+    "examples": [
+      {
+        "es": "La dirección fue tajante: no habría negociaciones fuera de los cauces establecidos.",
+        "en": "Management was categorical: there would be no negotiations outside the established channels."
+      },
+      {
+        "es": "Se negó de manera tajante a revelar sus fuentes periodísticas.",
+        "en": "She flatly refused to reveal her journalistic sources."
+      }
+    ]
+  },
+  {
+    "id": "qz-052",
+    "term": "talante",
+    "meaning_es": "Disposición de ánimo o actitud con que alguien actúa; modo de ser o temperamento habitual.",
+    "meaning_en": "Disposition, temperament, or attitude; the characteristic manner in which someone approaches things.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "buen talante, talante dialogante, talante abierto",
+    "note": "Frecuente en discurso político: 'talante dialogante', 'talante autoritario'. No confundir con 'talento', con el que se confunde ocasionalmente.",
+    "examples": [
+      {
+        "es": "La nueva presidenta demostró desde el primer día un talante dialogante y abierto.",
+        "en": "The new president demonstrated from day one a disposition open to dialogue."
+      },
+      {
+        "es": "Su talante tranquilo en situaciones de crisis tranquilizó a todo el equipo.",
+        "en": "His calm temperament in crisis situations reassured the whole team."
+      }
+    ]
+  },
+  {
+    "id": "qz-053",
+    "term": "tergiversar",
+    "meaning_es": "Deformar o distorsionar el sentido de algo —hechos, palabras, argumentos— para que diga lo contrario.",
+    "meaning_en": "To distort, misrepresent, or twist; to alter the meaning of facts or words to suit one's ends.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "tergiversar los hechos, tergiversar las palabras",
+    "note": "Implica intencionalidad: no es un malentendido sino una deformación deliberada. Muy útil en discursos sobre política, medios y debate.",
+    "examples": [
+      {
+        "es": "El editorial tergiversó las declaraciones del científico de manera flagrante.",
+        "en": "The editorial flagrantly distorted the scientist's statements."
+      },
+      {
+        "es": "Tergiversar los hechos para ganar el debate es una forma de deshonestidad intelectual.",
+        "en": "Twisting the facts to win a debate is a form of intellectual dishonesty."
+      }
+    ]
+  },
+  {
+    "id": "qz-054",
+    "term": "tesón",
+    "meaning_es": "Firmeza y perseverancia inquebrantable en la consecución de un objetivo, pese a las dificultades.",
+    "meaning_en": "Tenacity, doggedness, perseverance; unwavering firmness in pursuing a goal despite obstacles.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "actuar con tesón, defender con tesón",
+    "note": "De uso habitualmente positivo: denota virtud de esfuerzo sostenido. 'Con tesón' es la colocación más frecuente.",
+    "examples": [
+      {
+        "es": "Con tesón y disciplina, terminó la tesis doctoral en tiempo récord.",
+        "en": "With tenacity and discipline, she finished her doctoral thesis in record time."
+      },
+      {
+        "es": "El equipo defendió su postura con tesón a lo largo de toda la negociación.",
+        "en": "The team held its position with dogged determination throughout the entire negotiation."
+      }
+    ]
+  },
+  {
+    "id": "qz-055",
+    "term": "tenue",
+    "meaning_es": "Que tiene poca intensidad, espesor o fuerza; débil, ligero o casi imperceptible.",
+    "meaning_en": "Faint, tenuous, slight; weak or barely perceptible in intensity, thickness, or force.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "luz tenue, vínculo tenue, diferencia tenue",
+    "note": "Aplicable tanto a lo físico (luz tenue, voz tenue) como a lo abstracto (argumento tenue, conexión tenue). Sugiere fragilidad sin llegar a la inexistencia.",
+    "examples": [
+      {
+        "es": "La sala estaba iluminada por una luz tenue que invitaba a la concentración.",
+        "en": "The room was lit by a faint light that invited concentration."
+      },
+      {
+        "es": "El vínculo entre las dos teorías era demasiado tenue para afirmar una relación causal.",
+        "en": "The connection between the two theories was too tenuous to assert a causal relationship."
+      }
+    ]
+  },
+  {
+    "id": "qz-056",
+    "term": "tibieza",
+    "meaning_es": "Falta de entusiasmo, convicción o energía; actitud templada que raya en la indiferencia.",
+    "meaning_en": "Lukewarmness, half-heartedness; a lack of enthusiasm or conviction.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "tibieza en el apoyo, reaccionar con tibieza",
+    "note": "Metáfora térmica: ni frío ni caliente. En política, la tibieza de un aliado es casi tan problemática como la oposición directa.",
+    "examples": [
+      {
+        "es": "La tibieza de la respuesta institucional decepcionó a los afectados.",
+        "en": "The lukewarm institutional response disappointed those affected."
+      },
+      {
+        "es": "Recibió el elogio con tibieza, consciente de que no era sincero.",
+        "en": "He received the compliment with indifference, aware that it was not sincere."
+      }
+    ]
+  },
+  {
+    "id": "qz-057",
+    "term": "torticero",
+    "meaning_es": "Que es torcido, injusto o fraudulento; que actúa o argumenta con doblez o mala fe.",
+    "meaning_en": "Devious, wrongful, underhand; acting or arguing in bad faith or with a deliberately twisted logic.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "argumentación torticera, uso torticero",
+    "note": "Término marcadamente formal y culto. 'Uso torticero de la ley' es colocación frecuente en lenguaje jurídico y periodístico.",
+    "examples": [
+      {
+        "es": "El informe denunció el uso torticero del reglamento para bloquear a la competencia.",
+        "en": "The report denounced the devious use of the regulations to block the competition."
+      },
+      {
+        "es": "La argumentación torticera del fiscal no convenció al tribunal.",
+        "en": "The prosecutor's twisted argumentation failed to convince the court."
+      }
+    ]
+  },
+  {
+    "id": "qz-058",
+    "term": "torpeza",
+    "meaning_es": "Falta de habilidad, destreza o agilidad, tanto física como intelectual o social.",
+    "meaning_en": "Clumsiness, ineptitude; lack of physical, intellectual, or social skill or grace.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "una torpeza garrafal, cometer una torpeza",
+    "note": "'Cometer una torpeza' es una colocación muy frecuente en el sentido de error social o comunicativo. Diferente de 'error' porque enfatiza la falta de destreza.",
+    "examples": [
+      {
+        "es": "La torpeza diplomática del embajador agravó una situación ya delicada.",
+        "en": "The ambassador's diplomatic blunder worsened an already delicate situation."
+      },
+      {
+        "es": "Admitir la torpeza con humor es una forma de ganar credibilidad.",
+        "en": "Acknowledging a blunder with humor is a way of gaining credibility."
+      }
+    ]
+  },
+  {
+    "id": "qz-059",
+    "term": "trascender",
+    "meaning_es": "Ir más allá de ciertos límites o de la medida ordinaria; superar el ámbito en que algo se origina.",
+    "meaning_en": "To transcend, go beyond ordinary limits; to extend beyond the sphere in which something originates.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "trascender fronteras, trascender a la opinión pública",
+    "note": "Frecuente con complementos de ámbito: trascender las fronteras, trascender el momento, trascender lo anecdótico.",
+    "examples": [
+      {
+        "es": "Su influencia trascendió el ámbito académico y llegó al gran público.",
+        "en": "Her influence transcended the academic sphere and reached the general public."
+      },
+      {
+        "es": "Su compromiso trascendió lo profesional y se convirtió en una causa personal.",
+        "en": "His commitment went beyond the professional and became a personal cause."
+      }
+    ]
+  },
+  {
+    "id": "qz-060",
+    "term": "trastocar",
+    "meaning_es": "Alterar, perturbar o desordenar profundamente el orden o estado normal de algo.",
+    "meaning_en": "To disrupt, upset, or turn upside down; to profoundly alter the normal order of things.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "trastocar los planes, trastocar el orden",
+    "note": "Implica desorden o alteración profunda, más que un simple retraso o cambio menor. No confundir con 'trasladar'.",
+    "examples": [
+      {
+        "es": "La pandemia trastocó los planes de toda una generación de universitarios.",
+        "en": "The pandemic disrupted the plans of an entire generation of university students."
+      },
+      {
+        "es": "La llegada imprevista de un inversor rival trastocó todas las negociaciones.",
+        "en": "The unexpected arrival of a rival investor upended all the negotiations."
+      }
+    ]
+  },
+  {
+    "id": "qz-061",
+    "term": "trascendental",
+    "meaning_es": "De gran importancia o con consecuencias que van más allá de lo inmediato; decisivo o capital.",
+    "meaning_en": "Transcendental, momentous, far-reaching; of great importance with lasting consequences.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "decisión trascendental, momento trascendental",
+    "note": "En el uso común, equivale a 'de gran trascendencia', no al sentido filosófico kantiano. Conviene reservarlo para lo que realmente cambia el curso de algo.",
+    "examples": [
+      {
+        "es": "La sentencia sentó un precedente trascendental para los derechos digitales.",
+        "en": "The ruling set a momentous precedent for digital rights."
+      },
+      {
+        "es": "Tomaron una decisión trascendental sin consultar a las partes afectadas.",
+        "en": "They made a far-reaching decision without consulting the parties involved."
+      }
+    ]
+  },
+  {
+    "id": "qz-062",
+    "term": "ufanarse",
+    "meaning_es": "Enorgullecerse o jactarse de algo propio, con cierto exceso de satisfacción.",
+    "meaning_en": "To boast, pride oneself on; to take excessive satisfaction in one's achievements.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "ufanarse de sus logros, ufanarse de su origen",
+    "note": "Siempre pronominal: 'ufanarse de'. Tiene connotación ligeramente negativa de vanidad, pero menos fuerte que 'jactarse'.",
+    "examples": [
+      {
+        "es": "Se ufanaba de no haber faltado nunca a una sola reunión del consejo.",
+        "en": "He prided himself on never having missed a single board meeting."
+      },
+      {
+        "es": "La empresa se ufanaba de su servicio al cliente, aunque los datos decían otra cosa.",
+        "en": "The company boasted of its customer service, even though the data told a different story."
+      }
+    ]
+  },
+  {
+    "id": "qz-063",
+    "term": "umbral",
+    "meaning_es": "Límite o nivel mínimo a partir del cual algo comienza a tener efecto o a ser perceptible.",
+    "meaning_en": "Threshold; the minimum level or boundary at which something begins to take effect or become perceptible.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "umbral de rentabilidad, umbral del dolor, superar el umbral",
+    "note": "El sentido figurado (límite abstracto) es hoy el más frecuente en textos técnicos y periodísticos. El umbral literal es el escalón de la puerta.",
+    "examples": [
+      {
+        "es": "El proyecto superó el umbral de rentabilidad al tercer año de operación.",
+        "en": "The project crossed the profitability threshold in its third year of operation."
+      },
+      {
+        "es": "El nivel de ruido urbano ya supera el umbral de lo tolerable para la salud.",
+        "en": "The level of urban noise already exceeds the threshold of what is tolerable for health."
+      }
+    ]
+  },
+  {
+    "id": "qz-064",
+    "term": "unívoco",
+    "meaning_es": "Que tiene un solo significado o interpretación posible; que no da lugar a ambigüedad.",
+    "meaning_en": "Unambiguous, univocal; having only one possible meaning or interpretation.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "señal unívoca, interpretación unívoca",
+    "note": "Término filosófico y lógico de uso frecuente en textos académicos, jurídicos y científicos cuando se quiere afirmar que algo no admite doble lectura.",
+    "examples": [
+      {
+        "es": "La legislación exige que las instrucciones sean claras y unívocas.",
+        "en": "The legislation requires that instructions be clear and unambiguous."
+      },
+      {
+        "es": "No existe una señal unívoca de que la economía haya tocado fondo.",
+        "en": "There is no unequivocal signal that the economy has hit bottom."
+      }
+    ]
+  },
+  {
+    "id": "qz-065",
+    "term": "vacilar",
+    "meaning_es": "Dudar o titubear antes de actuar o hablar, sin terminar de decidirse.",
+    "meaning_en": "To hesitate, waver; to be indecisive or uncertain before acting or speaking.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "vacilar en la decisión, sin vacilar",
+    "note": "'Sin vacilar' es colocación muy productiva para indicar decisión inmediata y convicción plena.",
+    "examples": [
+      {
+        "es": "Firmó el contrato sin vacilar, convencida de que era la decisión correcta.",
+        "en": "She signed the contract without hesitation, convinced it was the right decision."
+      },
+      {
+        "es": "Vaciló un instante antes de responder, buscando las palabras precisas.",
+        "en": "He hesitated a moment before answering, searching for the right words."
+      }
+    ]
+  },
+  {
+    "id": "qz-066",
+    "term": "vehemencia",
+    "meaning_es": "Intensidad o fuerza apasionada con que alguien expresa sus sentimientos o defiende algo.",
+    "meaning_en": "Vehemence; passionate intensity or forcefulness in expressing feelings or defending a position.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "defender con vehemencia, hablar con vehemencia",
+    "note": "No implica agresividad necesariamente; puede ser positivo cuando connota convicción profunda. Más intenso que 'entusiasmo'.",
+    "examples": [
+      {
+        "es": "Defendió su postura con una vehemencia que dejó sin palabras a sus oponentes.",
+        "en": "She defended her position with a vehemence that left her opponents speechless."
+      },
+      {
+        "es": "La vehemencia del discurso movilizó a los asistentes como no se esperaba.",
+        "en": "The vehemence of the speech mobilized the audience in a way no one had anticipated."
+      }
+    ]
+  },
+  {
+    "id": "qz-067",
+    "term": "velar por",
+    "meaning_es": "Cuidar con diligencia e interés de algo o alguien para que no sufra daño o se cumpla lo debido.",
+    "meaning_en": "To watch over, look after; to ensure something or someone is protected or that something is properly upheld.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "velar por los intereses, velar por el cumplimiento",
+    "note": "Siempre con 'por'. Implica responsabilidad activa y sostenida, no solo vigilancia pasiva. Frecuente en contextos institucionales y legales.",
+    "examples": [
+      {
+        "es": "La fiscalía tiene la obligación de velar por el cumplimiento de la ley.",
+        "en": "The public prosecutor's office has an obligation to ensure compliance with the law."
+      },
+      {
+        "es": "Como tutor, velaba por los intereses del menor con absoluta dedicación.",
+        "en": "As guardian, he watched over the minor's interests with absolute dedication."
+      }
+    ]
+  },
+  {
+    "id": "qz-068",
+    "term": "venerar",
+    "meaning_es": "Respetar y honrar profundamente a alguien o algo, a menudo con una devoción que roza lo sagrado.",
+    "meaning_en": "To venerate, revere; to hold in deep reverence or honor, often with a quasi-sacred devotion.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "venerar la memoria de alguien, venerar a un maestro",
+    "note": "Más intenso que 'respetar' o 'admirar'. Puede tener matiz religioso o simplemente indicar una admiración muy profunda.",
+    "examples": [
+      {
+        "es": "Las generaciones siguientes veneraron su obra como fundacional para la disciplina.",
+        "en": "Subsequent generations revered his work as foundational to the discipline."
+      },
+      {
+        "es": "En aquella comunidad se veneraba la memoria de los fundadores con una devoción extraordinaria.",
+        "en": "In that community, the memory of the founders was revered with extraordinary devotion."
+      }
+    ]
+  },
+  {
+    "id": "qz-069",
+    "term": "verosímil",
+    "meaning_es": "Que parece verdadero o tiene apariencia de poder ser real; que resulta creíble o plausible.",
+    "meaning_en": "Plausible, verisimilar; appearing true or likely, believable.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "hipótesis verosímil, argumento verosímil",
+    "note": "No implica que sea verdadero, sino que parece razonable. Muy útil en crítica literaria ('narrador verosímil') y en evaluación de hipótesis.",
+    "examples": [
+      {
+        "es": "La teoría era verosímil, pero carecía aún de evidencia empírica sólida.",
+        "en": "The theory was plausible, but still lacked solid empirical evidence."
+      },
+      {
+        "es": "Los personajes resultan verosímiles porque el autor conoce bien ese mundo.",
+        "en": "The characters feel believable because the author knows that world intimately."
+      }
+    ]
+  },
+  {
+    "id": "qz-070",
+    "term": "vínculo",
+    "meaning_es": "Lazo, relación o unión entre personas, cosas o conceptos que los ata o conecta.",
+    "meaning_en": "Bond, tie, link; a connecting relationship between people, things, or concepts.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "vínculo afectivo, estrechar vínculos, romper un vínculo",
+    "note": "Más formal que 'lazo' o 'relación'. Puede ser afectivo, institucional, jurídico o conceptual. 'Vínculo laboral' es término legal frecuente.",
+    "examples": [
+      {
+        "es": "El programa buscaba estrechar los vínculos entre las universidades de los dos países.",
+        "en": "The program sought to strengthen ties between universities in both countries."
+      },
+      {
+        "es": "Existe un vínculo innegable entre la desigualdad económica y el fracaso educativo.",
+        "en": "There is an undeniable link between economic inequality and educational failure."
+      }
+    ]
+  },
+  {
+    "id": "qz-071",
+    "term": "vislumbrar",
+    "meaning_es": "Percibir algo de manera vaga o incipiente; entrever una posibilidad o señal todavía no del todo clara.",
+    "meaning_en": "To glimpse, make out dimly; to begin to perceive or foresee something not yet fully clear.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "vislumbrar una solución, vislumbrar el futuro",
+    "note": "Metáfora de luz escasa. No es ver claramente sino entrever. Frecuente en análisis político y económico: 'se vislumbra una mejora'.",
+    "examples": [
+      {
+        "es": "Tras meses de negociaciones, por fin se vislumbraba un acuerdo posible.",
+        "en": "After months of negotiations, a possible agreement was finally coming into view."
+      },
+      {
+        "es": "En las últimas cifras se vislumbraba un cambio de tendencia.",
+        "en": "In the latest figures, a shift in trend could dimly be perceived."
+      }
+    ]
+  },
+  {
+    "id": "qz-072",
+    "term": "vulnerar",
+    "meaning_es": "Quebrantar o infringir una norma, derecho o acuerdo; también, dañar o perjudicar a alguien.",
+    "meaning_en": "To violate, infringe; to breach a right, rule, or agreement; also, to harm or damage someone.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "vulnerar derechos, vulnerar la normativa",
+    "note": "Más jurídico y rotundo que 'incumplir'. 'Vulnerar derechos fundamentales' es expresión estándar en el ámbito constitucional y de derechos humanos.",
+    "examples": [
+      {
+        "es": "El tribunal determinó que la medida vulneraba el derecho a la privacidad.",
+        "en": "The court determined that the measure violated the right to privacy."
+      },
+      {
+        "es": "Actuar de esa manera vulneraría los compromisos internacionales adquiridos.",
+        "en": "Acting in that way would breach the international commitments made."
+      }
+    ]
+  },
+  {
+    "id": "qz-073",
+    "term": "vacuo",
+    "meaning_es": "Falto de contenido, sentido o sustancia; hueco e intrascendente pese a las apariencias.",
+    "meaning_en": "Vacuous, hollow; lacking real content or substance despite outward appearance.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "discurso vacuo, argumento vacuo",
+    "note": "Término culto con connotación claramente negativa. Se aplica a discursos, argumentos o personas que parecen importantes pero carecen de sustancia.",
+    "examples": [
+      {
+        "es": "El comunicado era tan vacuo que nadie supo qué posición tomaba realmente la empresa.",
+        "en": "The press release was so vacuous that nobody could tell what position the company was actually taking."
+      },
+      {
+        "es": "Detrás del lenguaje grandilocuente había una propuesta realmente vacua.",
+        "en": "Behind the grandiose language was a genuinely hollow proposal."
+      }
+    ]
+  },
+  {
+    "id": "qz-074",
+    "term": "xenofobia",
+    "meaning_es": "Hostilidad, rechazo o discriminación hacia personas extranjeras o de origen distinto al propio.",
+    "meaning_en": "Xenophobia; hostility, rejection, or discrimination toward foreigners or people of different origin.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "discurso de xenofobia, combatir la xenofobia",
+    "note": "Distinto de 'racismo' aunque pueden solaparse: la xenofobia puede apuntar a la nacionalidad o cultura sin implicar categorías raciales.",
+    "examples": [
+      {
+        "es": "Los organismos internacionales alertaron sobre el aumento de la xenofobia en varios países.",
+        "en": "International bodies warned about the rise of xenophobia in several countries."
+      },
+      {
+        "es": "La xenofobia se alimenta con frecuencia de la desinformación y la inseguridad económica.",
+        "en": "Xenophobia is often fueled by misinformation and economic insecurity."
+      }
+    ]
+  },
+  {
+    "id": "qz-075",
+    "term": "yacer",
+    "meaning_es": "Estar echado o tendido; estar enterrado en un lugar; o encontrarse una cosa en cierta posición.",
+    "meaning_en": "To lie (be situated lying down); to lie buried; to be situated in a certain position (literary).",
+    "register": "literario",
+    "region": "general",
+    "collocation": "yacer enterrado, yacer en el olvido",
+    "note": "Verbo de uso marcadamente literario o fúnebre en el español moderno. 'Aquí yace' es la fórmula epitáfica tradicional.",
+    "examples": [
+      {
+        "es": "Allí yacían enterrados los fundamentos de una civilización olvidada.",
+        "en": "There lay buried the foundations of a forgotten civilization."
+      },
+      {
+        "es": "Yacía herido al pie del derrumbe, sin posibilidad de moverse.",
+        "en": "He lay wounded at the foot of the rubble, unable to move."
+      }
+    ]
+  },
+  {
+    "id": "qz-076",
+    "term": "yerro",
+    "meaning_es": "Error o equivocación, especialmente de carácter moral o en una decisión importante.",
+    "meaning_en": "Error, mistake; especially a moral failing or a serious wrong decision (literary register).",
+    "register": "literario",
+    "region": "general",
+    "collocation": "cometer un yerro, enmendar el yerro",
+    "note": "Término clásico, hoy literario o elevado. En el habla cotidiana se prefiere 'error'; 'yerro' aparece en discurso formal elevado o en literatura.",
+    "examples": [
+      {
+        "es": "La historia no olvida fácilmente los yerros de quienes gobernaron en aquel período.",
+        "en": "History does not easily forget the errors of those who governed during that period."
+      },
+      {
+        "es": "Reconocer el propio yerro es el primer paso para enmendar la situación.",
+        "en": "Acknowledging one's own mistake is the first step toward making things right."
+      }
+    ]
+  },
+  {
+    "id": "qz-077",
+    "term": "yuxtaponer",
+    "meaning_es": "Poner dos o más cosas una junto a la otra, especialmente para que el contraste o la relación resulte evidente.",
+    "meaning_en": "To juxtapose; to place two or more things side by side, especially to highlight contrast or relationship.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "yuxtaponer imágenes, yuxtaponer conceptos",
+    "note": "Más culto que 'poner uno al lado del otro'. En análisis literario, artístico y filosófico es el término estándar para describir esta técnica.",
+    "examples": [
+      {
+        "es": "El documental yuxtapone declaraciones contradictorias de las mismas fuentes.",
+        "en": "The documentary juxtaposes contradictory statements from the same sources."
+      },
+      {
+        "es": "Al yuxtaponer ambas imágenes, el contraste resulta tan elocuente que no necesita comentario.",
+        "en": "By juxtaposing both images, the contrast becomes so eloquent it needs no commentary."
+      }
+    ]
+  },
+  {
+    "id": "qz-078",
+    "term": "zafarse",
+    "meaning_es": "Librarse con habilidad o astucia de una obligación, situación comprometida o peligro.",
+    "meaning_en": "To get out of, wriggle out of, or extricate oneself from an obligation or difficult situation.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "zafarse de una obligación, zafarse de la responsabilidad",
+    "note": "Connotación de escapatoria astuta o evasiva. Registro coloquial. En España se usa también 'escaquearse' para el mismo sentido.",
+    "examples": [
+      {
+        "es": "Intentó zafarse del compromiso con cualquier excusa, pero no lo consiguió.",
+        "en": "He tried to wriggle out of the commitment with any excuse, but he didn't manage it."
+      },
+      {
+        "es": "No es tan fácil zafarse de las consecuencias de una decisión mal tomada.",
+        "en": "It is not so easy to escape the consequences of a poorly made decision."
+      }
+    ]
+  },
+  {
+    "id": "qz-079",
+    "term": "zafio",
+    "meaning_es": "Grosero, inculto o falto de educación y refinamiento en el trato o el comportamiento.",
+    "meaning_en": "Coarse, uncouth, boorish; lacking refinement or basic manners in behavior or expression.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "comentario zafio, comportamiento zafio",
+    "note": "Más expresivo y literario que 'grosero'. Connota incultura estructural, no solo un mal momento puntual.",
+    "examples": [
+      {
+        "es": "Su comentario zafio sobre el aspecto físico de la candidata causó indignación general.",
+        "en": "His boorish comment about the candidate's appearance caused widespread indignation."
+      },
+      {
+        "es": "El personaje es deliberadamente zafio para contrastar con el refinamiento del entorno.",
+        "en": "The character is deliberately uncouth to contrast with the refinement of the setting."
+      }
+    ]
+  },
+  {
+    "id": "qz-080",
+    "term": "zanjar",
+    "meaning_es": "Resolver de manera definitiva y tajante una discusión, disputa o asunto pendiente.",
+    "meaning_en": "To settle definitively, put an end to; to resolve a dispute or matter in a conclusive way.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "zanjar una discusión, zanjar el tema",
+    "note": "Implica que la cuestión queda cerrada con autoridad. 'Zanjar el asunto' es colocación muy frecuente en debates, negociaciones y medios.",
+    "examples": [
+      {
+        "es": "La presidenta zanjó el debate con una sola frase que no admitía réplica.",
+        "en": "The chairwoman ended the debate with a single sentence that allowed no rebuttal."
+      },
+      {
+        "es": "Acordaron zanjar el asunto de forma privada para evitar un litigio.",
+        "en": "They agreed to settle the matter privately to avoid a lawsuit."
+      }
+    ]
+  },
+  {
+    "id": "qz-081",
+    "term": "zozobra",
+    "meaning_es": "Angustia, inquietud o agitación interior causada por la incertidumbre o el temor a algo.",
+    "meaning_en": "Anxiety, distress, anguish; inner turmoil caused by uncertainty or fear.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "vivir en zozobra, sentir zozobra",
+    "note": "Originalmente término náutico (el barco que zozobra se hunde). El sentido figurado de angustia interior es hoy predominante en prosa literaria y periodística.",
+    "examples": [
+      {
+        "es": "La espera de los resultados médicos la mantuvo en zozobra durante toda la semana.",
+        "en": "Waiting for the medical results kept her in a state of anxiety all week."
+      },
+      {
+        "es": "La zozobra colectiva ante la crisis era palpable en todos los sectores.",
+        "en": "The collective distress in the face of the crisis was palpable across all sectors."
+      }
+    ]
+  },
+  {
+    "id": "qz-082",
+    "term": "zozobrar",
+    "meaning_es": "Fracasar o venirse abajo un proyecto, negociación o situación de forma abrupta.",
+    "meaning_en": "To founder, collapse; for a project, negotiation, or plan to fail abruptly.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "el proyecto zozobró, la negociación zozobró",
+    "note": "Imagen más vívida que 'fracasar': evoca hundimiento súbito. Habitual en crónica política y económica.",
+    "examples": [
+      {
+        "es": "Las negociaciones zozobraron en el último momento por una discrepancia sobre el calendario.",
+        "en": "The negotiations foundered at the last moment over a disagreement about the timeline."
+      },
+      {
+        "es": "El modelo de negocio zozobró en cuanto cambiaron las condiciones del mercado.",
+        "en": "The business model capsized as soon as market conditions changed."
+      }
+    ]
+  }
+]

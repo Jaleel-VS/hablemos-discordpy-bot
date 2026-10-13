@@ -1,0 +1,1150 @@
+[
+  {
+    "id": "dh-001",
+    "term": "desentrañar",
+    "meaning_es": "Llegar a comprender algo difícil o confuso analizándolo con profundidad; descifrar lo que está oculto o enredado.",
+    "meaning_en": "To unravel or get to the bottom of something complex; to decipher what is hidden or deeply tangled.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "desentrañar el misterio",
+    "note": "Se combina bien con sustantivos abstractos: desentrañar el sentido, la verdad, el problema. Transmite un análisis más profundo que simplemente entender o descubrir.",
+    "examples": [
+      { "es": "Los investigadores tardaron años en desentrañar los entresijos de la red de corrupción.", "en": "The investigators took years to unravel the intricacies of the corruption network." },
+      { "es": "El filósofo intentó desentrañar el significado oculto del antiguo manuscrito.", "en": "The philosopher attempted to unravel the hidden meaning of the ancient manuscript." }
+    ]
+  },
+  {
+    "id": "dh-002",
+    "term": "desasosiego",
+    "meaning_es": "Estado de inquietud, intranquilidad o malestar interior que impide la calma o el reposo.",
+    "meaning_en": "A state of inner unease, restlessness, or disquiet that prevents calm or rest.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "sentir un profundo desasosiego",
+    "note": "Describe una ansiedad vaga y persistente más que un miedo concreto. Se usa habitualmente con verbos como causar, provocar o sembrar.",
+    "examples": [
+      { "es": "Las noticias sobre la crisis le causaron un desasosiego que no pudo sacudirse en toda la semana.", "en": "The news about the crisis caused him an unease he could not shake off all week." },
+      { "es": "Había algo en aquella casa silenciosa que llenaba a los visitantes de desasosiego.", "en": "There was something about that silent house that filled visitors with a sense of disquiet." }
+    ]
+  },
+  {
+    "id": "dh-003",
+    "term": "desazón",
+    "meaning_es": "Disgusto o malestar difuso producido por algo que no sale bien o resulta insatisfactorio.",
+    "meaning_en": "A nagging displeasure or dissatisfaction, often without a single clear cause.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "dejar un sabor de desazón",
+    "note": "Expresa un malestar difuso, sin un origen único y claro. Se usa para describir situaciones que terminan de forma insatisfactoria sin llegar a ser un conflicto abierto.",
+    "examples": [
+      { "es": "La reunión terminó sin acuerdos claros, dejando en todos una sensación de desazón.", "en": "The meeting ended without clear agreements, leaving everyone with a feeling of dissatisfaction." },
+      { "es": "Le producía desazón ver cómo su trabajo pasaba siempre desapercibido.", "en": "It gave him a nagging displeasure to see how his work always went unnoticed." }
+    ]
+  },
+  {
+    "id": "dh-004",
+    "term": "desparpajo",
+    "meaning_es": "Soltura, descaro o facilidad para hablar y actuar sin timidez ni inhibición, a veces con cierta desfachatez.",
+    "meaning_en": "Boldness, nerve, or breezy self-assurance in speech or behavior; sometimes verging on cheekiness.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "hablar con desparpajo",
+    "note": "Puede usarse con admiración (soltura ingeniosa) o con ligera crítica (exceso de confianza). No equivale exactamente a descaro, que tiene una carga más negativa.",
+    "examples": [
+      { "es": "Respondió a las preguntas difíciles del entrevistador con un desparpajo que dejó a todos impresionados.", "en": "She answered the interviewer's tough questions with a breezy confidence that impressed everyone." },
+      { "es": "Ese niño tiene un desparpajo increíble; le dice la verdad a cualquiera sin pensarlo dos veces.", "en": "That kid has incredible nerve; he tells anyone the truth without a second thought." }
+    ]
+  },
+  {
+    "id": "dh-005",
+    "term": "desidia",
+    "meaning_es": "Pereza, negligencia o abandono en la realización de las propias obligaciones o en el cuidado de las cosas.",
+    "meaning_en": "Sloth, negligence, or careless indifference to one's duties or responsibilities.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "la desidia de las autoridades",
+    "note": "Implica un patrón de descuido con consecuencias reales, no un episodio aislado. Frecuente en el registro periodístico y crítico.",
+    "examples": [
+      { "es": "La desidia del ayuntamiento permitió que el edificio histórico se deteriorara hasta el punto de no tener remedio.", "en": "The council's negligence allowed the historic building to deteriorate beyond repair." },
+      { "es": "Su desidia a la hora de estudiar le pasó factura cuando llegaron los exámenes finales.", "en": "His lazy indifference toward studying cost him dearly when the final exams arrived." }
+    ]
+  },
+  {
+    "id": "dh-006",
+    "term": "dilucidar",
+    "meaning_es": "Aclarar o explicar algo que resultaba oscuro, confuso o dudoso, llegando a una conclusión o respuesta clara.",
+    "meaning_en": "To elucidate, clarify, or settle something that was unclear or uncertain.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "dilucidar una cuestión",
+    "note": "De uso frecuente en textos académicos, jurídicos y periodísticos. Implica llegar a una conclusión, no solo aclarar parcialmente.",
+    "examples": [
+      { "es": "El juicio sirvió para dilucidar las responsabilidades de cada parte en el accidente.", "en": "The trial served to clarify each party's responsibilities in the accident." },
+      { "es": "Aún no se ha podido dilucidar si el incendio fue accidental o intencionado.", "en": "It has not yet been possible to determine whether the fire was accidental or deliberate." }
+    ]
+  },
+  {
+    "id": "dh-007",
+    "term": "dirimir",
+    "meaning_es": "Resolver o zanjar definitivamente un conflicto, disputa o controversia, poniendo fin a ella.",
+    "meaning_en": "To settle or resolve a dispute or conflict definitively, putting an end to it.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "dirimir un conflicto",
+    "note": "De uso predominantemente jurídico y formal. Aparece en contextos de disputas, controversias y empates. En la lengua coloquial se sustituye por resolver o zanjar.",
+    "examples": [
+      { "es": "Acordaron acudir a un árbitro para dirimir la disputa sin necesidad de recurrir a los tribunales.", "en": "They agreed to go to an arbitrator to settle the dispute without going to court." },
+      { "es": "El voto de calidad del presidente serviría para dirimir el empate en el consejo.", "en": "The president's casting vote would serve to resolve the tie in the board." }
+    ]
+  },
+  {
+    "id": "dh-008",
+    "term": "discernir",
+    "meaning_es": "Distinguir algo de otra cosa mediante el juicio o la razón; separar lo verdadero de lo falso o lo bueno de lo malo.",
+    "meaning_en": "To discern; to distinguish or tell apart through reason or judgment.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "discernir entre lo verdadero y lo falso",
+    "note": "Admite la construcción con entre (discernir entre opciones) o con objeto directo solo (discernir la diferencia). Subraya el ejercicio del juicio, no solo la percepción.",
+    "examples": [
+      { "es": "Con los años aprende uno a discernir qué críticas son constructivas y cuáles son simple envidia.", "en": "With time one learns to discern which criticisms are constructive and which are mere envy." },
+      { "es": "Era difícil discernir si su sonrisa expresaba alegría genuina o simple cortesía.", "en": "It was hard to discern whether her smile expressed genuine joy or mere politeness." }
+    ]
+  },
+  {
+    "id": "dh-009",
+    "term": "desdeñar",
+    "meaning_es": "Tratar algo o a alguien con desdén; rechazar o ignorar algo por considerarlo indigno o sin valor.",
+    "meaning_en": "To disdain, scorn, or dismiss someone or something as unworthy of attention or interest.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "desdeñar una oferta",
+    "note": "Conlleva un gesto de superioridad o desprecio. El sustantivo correspondiente es desdén. Frecuente en registros literarios e intelectuales.",
+    "examples": [
+      { "es": "Desdeñó la oferta de colaboración con un gesto que no dejaba lugar a dudas sobre su opinión.", "en": "He dismissed the collaboration offer with a gesture that left no doubt about his opinion." },
+      { "es": "Nunca desdeñes las opiniones ajenas solo porque vengan de alguien menos experimentado que tú.", "en": "Never scorn other people's opinions just because they come from someone less experienced than you." }
+    ]
+  },
+  {
+    "id": "dh-010",
+    "term": "desfallecer",
+    "meaning_es": "Perder las fuerzas o el ánimo de manera repentina; sentir un decaimiento físico o moral intenso.",
+    "meaning_en": "To faint, grow faint, or lose strength suddenly; to feel an acute physical or moral collapse.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "desfallecer de cansancio",
+    "note": "No requiere el reflexivo se. Son collocaciones habituales desfallecer de hambre, de miedo o de emoción, tanto en sentido físico como figurado.",
+    "examples": [
+      { "es": "Llevaba tanto tiempo en pie que cuando llegó a casa casi desfallece de agotamiento.", "en": "She had been on her feet so long that when she got home she nearly collapsed from exhaustion." },
+      { "es": "El equipo desfallecía a medida que los rivales marcaban gol tras gol sin encontrar respuesta.", "en": "The team was losing heart as their rivals scored goal after goal without response." }
+    ]
+  },
+  {
+    "id": "dh-011",
+    "term": "desmedido",
+    "meaning_es": "Que excede lo razonable o lo proporcionado; exagerado, desproporcionado.",
+    "meaning_en": "Excessive, disproportionate, or far beyond what is reasonable or appropriate.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "una ambición desmedida",
+    "note": "Adjetivo que concuerda en género y número. Aparece con frecuencia junto a ambición, orgullo, gasto y uso.",
+    "examples": [
+      { "es": "Su desmedida ambición terminó por alejar a todos los colegas que de verdad querían ayudarle.", "en": "His excessive ambition ended up driving away all the colleagues who genuinely wanted to help him." },
+      { "es": "Las autoridades reaccionaron con una fuerza desmedida ante la protesta pacífica.", "en": "The authorities responded with disproportionate force to the peaceful protest." }
+    ]
+  },
+  {
+    "id": "dh-012",
+    "term": "desmoronarse",
+    "meaning_es": "Derrumbarse o deshacerse gradualmente algo que estaba construido o unido; perder la solidez o la cohesión.",
+    "meaning_en": "To crumble, fall apart, or collapse gradually; to lose structural or emotional cohesion.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "desmoronarse ante la presión",
+    "note": "Válido tanto para estructuras físicas como para realidades abstractas: el proyecto, la relación, la confianza se desmorona. Sugiere un proceso gradual de pérdida de solidez.",
+    "examples": [
+      { "es": "Con cada nueva revelación, la coartada del acusado se iba desmoronando ante los ojos del jurado.", "en": "With each new revelation, the defendant's alibi crumbled before the jury's eyes." },
+      { "es": "El viejo muro de piedra se desmorona poco a poco por la falta de mantenimiento.", "en": "The old stone wall is crumbling bit by bit due to lack of maintenance." }
+    ]
+  },
+  {
+    "id": "dh-013",
+    "term": "desvelos",
+    "meaning_es": "Preocupaciones intensas o esfuerzos afanosos dedicados a alguien o algo que importa mucho.",
+    "meaning_en": "Anxious concern or devoted effort on behalf of something or someone one cares deeply about.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "los desvelos de una madre",
+    "note": "En plural designa la dedicación sacrificada que alguien pone en cuidar o sacar adelante algo. Se usa con verbos como agradecer, reconocer o recompensar.",
+    "examples": [
+      { "es": "Agradecemos los desvelos de todos los voluntarios que hicieron posible el evento.", "en": "We appreciate the devoted efforts of all the volunteers who made the event possible." },
+      { "es": "Sus desvelos por mantener unida a la familia durante años de dificultad merecen todo el reconocimiento.", "en": "Her devoted efforts to keep the family together through years of hardship deserve every recognition." }
+    ]
+  },
+  {
+    "id": "dh-014",
+    "term": "disentir de",
+    "meaning_es": "Tener una opinión o punto de vista diferente al de otra persona; no estar de acuerdo con algo.",
+    "meaning_en": "To dissent from or disagree with a person or position; to hold a differing opinion.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "disentir de la opinión mayoritaria",
+    "note": "Rige de + sustantivo o de que + cláusula. Habitual en el debate académico y el lenguaje parlamentario.",
+    "examples": [
+      { "es": "El magistrado firmó la sentencia pero adjuntó un voto particular para disentir de la interpretación de sus colegas.", "en": "The magistrate signed the ruling but attached a dissenting opinion to disagree with his colleagues' interpretation." },
+      { "es": "Es perfectamente legítimo disentir de las conclusiones del estudio sin cuestionar la integridad de sus autores.", "en": "It is perfectly legitimate to dissent from the study's conclusions without questioning its authors' integrity." }
+    ]
+  },
+  {
+    "id": "dh-015",
+    "term": "diatriba",
+    "meaning_es": "Discurso o escrito violento y agresivo en que se critica o ataca duramente a una persona, institución o idea.",
+    "meaning_en": "A diatribe; a harsh, aggressive speech or piece of writing attacking a person, institution, or idea.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "lanzar una diatriba contra",
+    "note": "Siempre peyorativo en cuanto a la forma del ataque. Los verbos más habituales son lanzar y soltar. No equivale a crítica, que es neutra.",
+    "examples": [
+      { "es": "El articulista dedicó toda la columna a una diatriba contra las nuevas políticas fiscales.", "en": "The columnist devoted the entire piece to a diatribe against the new tax policies." },
+      { "es": "En lugar de debatir con argumentos, se limitó a soltar una diatriba llena de descalificaciones personales.", "en": "Instead of debating with arguments, he simply launched into a diatribe full of personal attacks." }
+    ]
+  },
+  {
+    "id": "dh-016",
+    "term": "dilatar",
+    "meaning_es": "Retrasar o prolongar algo en el tiempo más allá de lo previsto o necesario.",
+    "meaning_en": "To delay or drag out something beyond what was planned or necessary.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "dilatar una decisión",
+    "note": "En sentido figurado apunta a un retraso deliberado o evitable. La forma reflexiva dilatarse es la más frecuente cuando el sujeto es el proceso en cuestión.",
+    "examples": [
+      { "es": "El gobierno prefirió dilatar la reforma fiscal hasta después de las elecciones.", "en": "The government preferred to delay the tax reform until after the elections." },
+      { "es": "Las negociaciones se dilataron semanas más de lo previsto por la falta de acuerdo en los puntos clave.", "en": "The negotiations dragged on weeks longer than expected due to lack of agreement on the key points." }
+    ]
+  },
+  {
+    "id": "dh-017",
+    "term": "disquisición",
+    "meaning_es": "Examen o análisis detallado y minucioso de una materia, a veces excesivamente extenso o digresivo.",
+    "meaning_en": "A detailed examination or disquisition on a subject; often implying excessive length or digression.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "largas disquisiciones filosóficas",
+    "note": "Aparece con frecuencia en plural. Cuando se usa críticamente, sugiere que el análisis se ha vuelto demasiado extenso o que se ha perdido el hilo principal.",
+    "examples": [
+      { "es": "La conferencia estuvo llena de interesantes disquisiciones sobre la naturaleza del tiempo.", "en": "The lecture was full of interesting disquisitions on the nature of time." },
+      { "es": "Dejemos las disquisiciones teóricas para otro momento; ahora mismo necesitamos una solución práctica.", "en": "Let us leave the theoretical disquisitions for another time; right now we need a practical solution." }
+    ]
+  },
+  {
+    "id": "dh-018",
+    "term": "desdén",
+    "meaning_es": "Indiferencia o desprecio que se manifiesta hacia alguien o algo que se considera inferior o sin importancia.",
+    "meaning_en": "Disdain or contempt expressed through indifference toward someone or something deemed inferior.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "tratar con desdén",
+    "note": "Corresponde al verbo desdeñar. Colocaciones útiles: 'una mirada de desdén', 'un gesto de desdén', 'responder con desdén'.",
+    "examples": [
+      { "es": "Respondió a las críticas con desdén, como si no merecieran siquiera el esfuerzo de una refutación.", "en": "He responded to the criticisms with disdain, as if they were not even worth the effort of a rebuttal." },
+      { "es": "Su desdén hacia las personas de menor rango social le granjeó fama de arrogante.", "en": "His disdain toward people of lower social standing earned him a reputation for arrogance." }
+    ]
+  },
+  {
+    "id": "dh-019",
+    "term": "desestimar",
+    "meaning_es": "Rechazar o no tomar en consideración algo, como una propuesta, recurso o petición, generalmente de forma oficial.",
+    "meaning_en": "To dismiss, reject, or rule out something—especially a petition, appeal, or proposal—usually in an official context.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "desestimar un recurso",
+    "note": "Término propio del lenguaje jurídico y administrativo: el tribunal desestimó la demanda. En la conversación cotidiana resulta más natural rechazar o descartar.",
+    "examples": [
+      { "es": "El tribunal desestimó el recurso por falta de pruebas que sustentaran la acusación.", "en": "The court dismissed the appeal for lack of evidence to support the accusation." },
+      { "es": "La comisión desestimó la propuesta por considerarla inviable en el plazo previsto.", "en": "The committee rejected the proposal, deeming it unworkable within the planned timeframe." }
+    ]
+  },
+  {
+    "id": "dh-020",
+    "term": "desvanecerse",
+    "meaning_es": "Ir perdiendo intensidad gradualmente hasta desaparecer por completo; diluirse en el aire.",
+    "meaning_en": "To fade away or dissolve gradually until completely gone; to vanish into nothing.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "desvanecerse en el aire",
+    "note": "Se aplica a esperanzas, recuerdos, sonidos, olores o imágenes que pierden presencia poco a poco. El sujeto suele ser algo inmaterial.",
+    "examples": [
+      { "es": "Sus últimas esperanzas de conseguir el trabajo se desvanecieron cuando no recibió respuesta al cabo de dos semanas.", "en": "Her last hopes of getting the job faded away when she received no response after two weeks." },
+      { "es": "La música se fue desvaneciendo hasta que el silencio tomó de nuevo el control de la sala.", "en": "The music gradually faded until silence once again took hold of the room." }
+    ]
+  },
+  {
+    "id": "dh-021",
+    "term": "desconcertar",
+    "meaning_es": "Causar confusión, turbación o pérdida de la calma o la orientación en alguien; descuadrar planes o expectativas.",
+    "meaning_en": "To disconcert, unsettle, or throw someone off; to cause confusion or disorientation.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "desconcertar al oponente",
+    "note": "El participio desconcertado es muy habitual como adjetivo: quedarse desconcertado. La forma reflexiva desconcertarse indica que el sujeto pierde momentáneamente la compostura.",
+    "examples": [
+      { "es": "La pregunta tan directa la desconcertó y tardó unos segundos en recomponerse para responder.", "en": "The very direct question threw her off, and she took a few seconds to collect herself before answering." },
+      { "es": "El equipo visitante usó una táctica inusual para desconcertar a sus rivales desde el primer minuto.", "en": "The visiting team used an unusual tactic to unsettle their opponents from the first minute." }
+    ]
+  },
+  {
+    "id": "dh-022",
+    "term": "desdoblarse",
+    "meaning_es": "Dividirse en dos aspectos o funciones a la vez; desempeñar simultáneamente dos papeles o identidades.",
+    "meaning_en": "To split into two roles or functions simultaneously; to play two parts at once.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "desdoblarse en dos funciones",
+    "note": "En este sentido se usa en forma reflexiva. Útil para describir a personas que asumen dos roles a la vez o que muestran dos facetas distintas.",
+    "examples": [
+      { "es": "Para sacar adelante el proyecto, tuvo que desdoblarse entre su rol de diseñadora y el de gestora de clientes.", "en": "To carry the project through, she had to split herself between her role as designer and as client manager." },
+      { "es": "El actor supo desdoblarse magistralmente entre los dos personajes opuestos de la obra.", "en": "The actor masterfully managed to play both opposing characters in the play." }
+    ]
+  },
+  {
+    "id": "dh-023",
+    "term": "denotar",
+    "meaning_es": "Indicar, señalar o ser signo de algo; tener un significado preciso en el plano lingüístico o simbólico.",
+    "meaning_en": "To denote, indicate, or signal something; to be a sign of a quality or state.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "denotar una actitud de rechazo",
+    "note": "Habitual en contextos analíticos y lingüísticos. Se opone a connotar: denotar alude al significado directo; connotar, a las asociaciones implícitas.",
+    "examples": [
+      { "es": "Su tono de voz denotaba una impaciencia que sus palabras cuidadosamente elegidas trataban de ocultar.", "en": "His tone of voice denoted an impatience that his carefully chosen words tried to conceal." },
+      { "es": "El uso del tuteo entre colegas denota un ambiente de trabajo informal y cercano.", "en": "The use of the informal tú among colleagues denotes a relaxed and friendly work environment." }
+    ]
+  },
+  {
+    "id": "dh-024",
+    "term": "explayarse",
+    "meaning_es": "Hablar o escribir sobre algo con amplitud y detalle; extenderse en la exposición de un tema.",
+    "meaning_en": "To elaborate; to speak or write at length and in full detail about something.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "explayarse sobre un tema",
+    "note": "Rige sobre o en: explayarse sobre la situación / en los detalles. Neutro en cuanto a valoración; el tono positivo o negativo lo aporta el contexto.",
+    "examples": [
+      { "es": "El ponente se explayó sobre las consecuencias económicas de la pandemia durante casi una hora.", "en": "The speaker elaborated at length on the economic consequences of the pandemic for nearly an hour." },
+      { "es": "No tenemos tiempo para explayarnos ahora, pero podemos hablar de los detalles después de la reunión.", "en": "We do not have time to go into detail now, but we can discuss the specifics after the meeting." }
+    ]
+  },
+  {
+    "id": "dh-025",
+    "term": "esgrimir",
+    "meaning_es": "Usar o invocar un argumento, razón o derecho como recurso para defender una postura o atacar la contraria.",
+    "meaning_en": "To wield or invoke an argument, right, or claim in defense or attack; to brandish figuratively.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "esgrimir un argumento",
+    "note": "El sentido figurado (esgrimir razones, argumentos, pruebas) es el de uso más frecuente en la escritura de hoy.",
+    "examples": [
+      { "es": "El abogado defensor esgrimió la falta de motivación como principal argumento para solicitar la absolución.", "en": "The defense lawyer wielded the lack of motive as the main argument in requesting acquittal." },
+      { "es": "Los sindicatos esgrimieron el derecho a la negociación colectiva para justificar su postura en la mesa de diálogo.", "en": "The unions invoked the right to collective bargaining to justify their position at the negotiating table." }
+    ]
+  },
+  {
+    "id": "dh-026",
+    "term": "encauzar",
+    "meaning_es": "Dirigir o canalizar algo, como una situación, actividad o energía, hacia un cauce o camino adecuado.",
+    "meaning_en": "To channel, guide, or direct something into a proper course; to steer productively.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "encauzar los esfuerzos",
+    "note": "En sentido figurado se aplica a conversaciones, energías o negociaciones: encauzar el debate, encauzar la energía. Implica redirigir algo hacia un fin constructivo.",
+    "examples": [
+      { "es": "El mediador logró encauzar el debate hacia los puntos de acuerdo en lugar de centrarse en las diferencias.", "en": "The mediator managed to steer the debate toward points of agreement rather than dwelling on differences." },
+      { "es": "Es fundamental encauzar la energía de los jóvenes hacia actividades que les aporten algo positivo.", "en": "It is essential to channel young people's energy toward activities that give them something positive." }
+    ]
+  },
+  {
+    "id": "dh-027",
+    "term": "escueto",
+    "meaning_es": "Breve, conciso y sin adornos ni detalles innecesarios; que expresa lo esencial con pocas palabras.",
+    "meaning_en": "Terse, concise, and bare; expressing only what is essential without embellishment.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un mensaje escueto",
+    "note": "Puede tener valor positivo (comunicación eficiente) o negativo (información insuficiente) según el contexto. Concuerda en género y número.",
+    "examples": [
+      { "es": "Su respuesta fue escueta pero contundente: no aceptaría ningún cambio en las condiciones pactadas.", "en": "His answer was terse but forceful: he would not accept any changes to the agreed terms." },
+      { "es": "El informe es demasiado escueto para que los directivos puedan tomar una decisión bien fundamentada.", "en": "The report is too bare-bones for the directors to make a well-grounded decision." }
+    ]
+  },
+  {
+    "id": "dh-028",
+    "term": "esmero",
+    "meaning_es": "Cuidado especial, dedicación y atención meticulosa que se pone en la realización de algo.",
+    "meaning_en": "Special care, diligence, and meticulous attention put into doing something well.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "hacer algo con esmero",
+    "note": "Siempre positivo. La locución con esmero es la fórmula adverbial estándar. Las formas verbales correspondientes son poner esmero en y esmerarse.",
+    "examples": [
+      { "es": "El maestro artesano talló cada figura con el mismo esmero que le había caracterizado toda su vida.", "en": "The master craftsman carved each figure with the same care and diligence that had defined him all his life." },
+      { "es": "Se nota el esmero con el que se ha preparado cada plato; los sabores están perfectamente equilibrados.", "en": "The care and attention put into preparing each dish is evident; the flavors are perfectly balanced." }
+    ]
+  },
+  {
+    "id": "dh-029",
+    "term": "entrañar",
+    "meaning_es": "Llevar implícito o conllevar algo, especialmente una dificultad, riesgo o consecuencia de cierta importancia.",
+    "meaning_en": "To entail, involve, or carry within it; to imply as a necessary consequence or risk.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "entrañar un riesgo",
+    "note": "Se combina con objetos directos abstractos: peligro, dificultad, consecuencias, responsabilidad. Frecuente en textos técnicos, jurídicos y periodísticos.",
+    "examples": [
+      { "es": "Aceptar ese cargo entrañaría renunciar a su vida privada durante al menos cuatro años.", "en": "Accepting that position would entail giving up his private life for at least four years." },
+      { "es": "El proyecto entraña serias dificultades logísticas que deben evaluarse antes de su aprobación.", "en": "The project entails serious logistical difficulties that must be assessed before approval." }
+    ]
+  },
+  {
+    "id": "dh-030",
+    "term": "estulticia",
+    "meaning_es": "Necedad o estupidez grandes; actitud o comportamiento propio de quien carece de inteligencia o reflexión.",
+    "meaning_en": "Great foolishness or stupidity; behavior characteristic of someone lacking intelligence or reflection.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "la estulticia humana",
+    "note": "Voz elevada y literaria que señala claramente un registro formal o irónico. El adjetivo correspondiente es estulto.",
+    "examples": [
+      { "es": "Sería una estulticia ignorar las advertencias del comité científico por razones meramente políticas.", "en": "It would be sheer foolishness to ignore the scientific committee's warnings for purely political reasons." },
+      { "es": "El narrador observa con amargura la estulticia de una sociedad incapaz de aprender de sus errores.", "en": "The narrator observes with bitterness the foolishness of a society incapable of learning from its mistakes." }
+    ]
+  },
+  {
+    "id": "dh-031",
+    "term": "exhortar",
+    "meaning_es": "Animar o instar a alguien con palabras, razones o ruegos a que realice o se abstenga de una acción.",
+    "meaning_en": "To exhort; to strongly urge or appeal to someone to do or refrain from something.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "exhortar a la calma",
+    "note": "Rige a + infinitivo: exhortó a los ciudadanos a participar. Implica un llamamiento de peso moral o colectivo, frecuente en discursos públicos y declaraciones oficiales.",
+    "examples": [
+      { "es": "El alcalde exhortó a los vecinos a mantener la calma y seguir las indicaciones de los servicios de emergencia.", "en": "The mayor exhorted residents to remain calm and follow the instructions of the emergency services." },
+      { "es": "En su discurso de graduación, exhortó a los estudiantes a no perder de vista sus principios al incorporarse al mundo laboral.", "en": "In his graduation speech, he exhorted the students not to lose sight of their principles when entering the workforce." }
+    ]
+  },
+  {
+    "id": "dh-032",
+    "term": "empecinarse en",
+    "meaning_es": "Obstinarse terquamente en una idea, postura o curso de acción a pesar de las razones en contra.",
+    "meaning_en": "To stubbornly persist in or dig one's heels into an idea or course of action despite counterarguments.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "empecinarse en tener razón",
+    "note": "Rige en + infinitivo o en + sustantivo. Implica una terquedad irracional o contraproducente. El sustantivo relacionado es empecinamiento.",
+    "examples": [
+      { "es": "Se empecinó en usar el método antiguo aunque todos le mostraban que el nuevo era más eficiente.", "en": "He stubbornly insisted on using the old method even though everyone showed him the new one was more efficient." },
+      { "es": "No tiene sentido empecinarse en esa estrategia cuando los datos muestran claramente que no está funcionando.", "en": "There is no point in digging your heels in over that strategy when the data clearly show it is not working." }
+    ]
+  },
+  {
+    "id": "dh-033",
+    "term": "encarnar",
+    "meaning_es": "Representar o dar cuerpo concreto a un concepto abstracto, un ideal o un valor; personificar.",
+    "meaning_en": "To embody, incarnate, or give concrete form to an abstract concept or ideal.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "encarnar un ideal",
+    "note": "Se aplica tanto a personas (ella encarnaba la generosidad) como a objetos o lugares (el edificio encarna la modernidad). Transmite una identificación plena con el concepto.",
+    "examples": [
+      { "es": "Para muchos, aquel músico encarnaba la resistencia cultural de toda una generación.", "en": "For many, that musician embodied the cultural resistance of an entire generation." },
+      { "es": "El personaje de Antígona encarna el conflicto entre la ley humana y la ley moral.", "en": "The character of Antigone embodies the conflict between human law and moral law." }
+    ]
+  },
+  {
+    "id": "dh-034",
+    "term": "exacerbar",
+    "meaning_es": "Agravar, intensificar o irritar en mayor grado algo que ya era malo, difícil o desagradable.",
+    "meaning_en": "To exacerbate, aggravate, or intensify something already bad or difficult.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "exacerbar la situación",
+    "note": "Se usa con frecuencia con crisis, tensiones, conflicto, síntomas o dolor. También puede tener como objeto a una persona: eso me exacerba (me irrita profundamente).",
+    "examples": [
+      { "es": "La sequía prolongada exacerbó la crisis alimentaria en varias regiones del continente.", "en": "The prolonged drought exacerbated the food crisis in several regions of the continent." },
+      { "es": "Responder con agresividad solo exacerba el conflicto en lugar de contribuir a su resolución.", "en": "Responding with aggression only exacerbates the conflict instead of helping to resolve it." }
+    ]
+  },
+  {
+    "id": "dh-035",
+    "term": "entrometerse",
+    "meaning_es": "Meterse sin invitación en asuntos ajenos, dando opiniones o tomando decisiones que no corresponden.",
+    "meaning_en": "To meddle, interfere, or poke one's nose into other people's affairs uninvited.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "entrometerse en los asuntos ajenos",
+    "note": "Se usa en forma reflexiva y tiene siempre connotación negativa. El sustantivo correspondiente es entrometido/a. Rige en + sustantivo.",
+    "examples": [
+      { "es": "Se entromete constantemente en las decisiones del equipo, aunque no forme parte del proyecto.", "en": "He constantly meddles in the team's decisions even though he is not part of the project." },
+      { "es": "No te entrometas en su relación; ellos resolverán sus problemas sin necesitar tu opinión.", "en": "Do not interfere in their relationship; they will sort out their problems without needing your opinion." }
+    ]
+  },
+  {
+    "id": "dh-036",
+    "term": "esbozar",
+    "meaning_es": "Trazar las líneas generales de algo sin entrar en detalles; presentar una idea o plan de forma provisional.",
+    "meaning_en": "To sketch out or outline something in broad strokes; to present an idea provisionally without detail.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "esbozar un plan",
+    "note": "En sentido figurado se aplica a soluciones, argumentos e incluso gestos: esbozar una sonrisa (insinuar una sonrisa). Da la idea de algo incompleto que está por desarrollar.",
+    "examples": [
+      { "es": "En la primera reunión se limitaron a esbozar las líneas generales del proyecto para ver si había consenso.", "en": "In the first meeting they simply sketched out the broad outlines of the project to see whether there was consensus." },
+      { "es": "Esbozó una sonrisa cuando le dijeron que había sido seleccionado, pero esperó a la carta oficial para celebrarlo.", "en": "He allowed himself a faint smile when they told him he had been selected, but waited for the official letter to celebrate." }
+    ]
+  },
+  {
+    "id": "dh-037",
+    "term": "enmendar",
+    "meaning_es": "Corregir errores o defectos en algo; subsanar un daño o modificar un texto, ley o conducta para mejorarla.",
+    "meaning_en": "To amend, correct, or remedy; to fix an error, modify a text or law, or make up for a wrong.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "enmendar un error",
+    "note": "La forma reflexiva enmendarse significa reformarse o corregir la propia conducta. En su uso legal se aplica a leyes y textos; en el cotidiano, también a daños morales.",
+    "examples": [
+      { "es": "El parlamento enmendó la ley para incluir protecciones adicionales a los trabajadores eventuales.", "en": "Parliament amended the law to include additional protections for temporary workers." },
+      { "es": "Ya es tarde para enmendar lo que se dijo en aquella reunión; el daño está hecho.", "en": "It is too late to remedy what was said in that meeting; the damage is done." }
+    ]
+  },
+  {
+    "id": "dh-038",
+    "term": "estancarse",
+    "meaning_es": "Detenerse o interrumpirse el curso o progreso de algo, quedando sin movimiento ni avance.",
+    "meaning_en": "To stall or come to a standstill; to stop progressing.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "estancarse en la negociación",
+    "note": "La forma reflexiva estancarse es la más habitual: las conversaciones se estancaron. Se aplica a procesos, proyectos, aprendizajes o carreras que dejan de avanzar.",
+    "examples": [
+      { "es": "Las conversaciones de paz se estancaron en cuanto se llegó al punto más conflictivo del acuerdo.", "en": "The peace talks stalled as soon as they reached the most contentious point of the agreement." },
+      { "es": "Siente que lleva meses estancado en el mismo nivel de inglés sin conseguir avanzar.", "en": "He feels he has spent months stuck at the same level of English without being able to progress." }
+    ]
+  },
+  {
+    "id": "dh-039",
+    "term": "eludir",
+    "meaning_es": "Evitar de forma hábil o astuta algo que resulta comprometido o difícil, sin afrontarlo directamente.",
+    "meaning_en": "To elude, evade, or dodge something awkward or difficult; to avoid it with skill rather than confronting it.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "eludir una pregunta",
+    "note": "Implica una evitación hábil o estratégica. Los objetos más frecuentes son responsabilidades, impuestos, una pregunta o una confrontación.",
+    "examples": [
+      { "es": "El político eludió la pregunta sobre el escándalo respondiendo con un largo discurso sobre economía.", "en": "The politician dodged the question about the scandal by launching into a lengthy speech about economics." },
+      { "es": "No podemos seguir eludiendo las responsabilidades que nos corresponden como empresa.", "en": "We cannot keep evading the responsibilities that fall to us as a company." }
+    ]
+  },
+  {
+    "id": "dh-040",
+    "term": "evocar",
+    "meaning_es": "Traer a la memoria o hacer revivir algo del pasado, o sugerir algo mediante imágenes, sonidos u olores.",
+    "meaning_en": "To evoke or call to mind a memory, feeling, or image; to conjure up something from the past.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "evocar recuerdos de infancia",
+    "note": "Puede ser un estímulo el que haga surgir el recuerdo: 'el olor evocó su niñez'. También una obra evoca una época o un ambiente al representarlos.",
+    "examples": [
+      { "es": "Ese aroma a pan recién horneado evoca inevitablemente los domingos en casa de la abuela.", "en": "That aroma of freshly baked bread inevitably evokes Sunday mornings at grandmother's house." },
+      { "es": "La película evoca con gran fidelidad la atmósfera de los años cuarenta en la ciudad.", "en": "The film evokes with great fidelity the atmosphere of the nineteen forties in the city." }
+    ]
+  },
+  {
+    "id": "dh-041",
+    "term": "esfumarse",
+    "meaning_es": "Desaparecer de manera repentina e inexplicable; escabullirse sin ser notado.",
+    "meaning_en": "To vanish into thin air; to disappear suddenly or slip away unnoticed.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "esfumarse sin dejar rastro",
+    "note": "Se usa en forma reflexiva. Coloquial y expresivo; se aplica a personas, dinero, oportunidades o dudas que desaparecen de golpe.",
+    "examples": [
+      { "es": "En cuanto llegó la hora de limpiar, todos los voluntarios se esfumaron misteriosamente.", "en": "As soon as the time came to clean up, all the volunteers mysteriously vanished." },
+      { "es": "Sus ahorros se esfumaron en cuestión de meses por las imprevisibles fluctuaciones del mercado.", "en": "His savings vanished in a matter of months due to unpredictable market swings." }
+    ]
+  },
+  {
+    "id": "dh-042",
+    "term": "empeño",
+    "meaning_es": "Determinación, esfuerzo intenso y constante puesto en conseguir algo; también, objeto o propósito al que se dedica ese esfuerzo.",
+    "meaning_en": "Determination and sustained effort directed at achieving something; also the goal that effort is applied toward.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "poner empeño en algo",
+    "note": "Las fórmulas habituales son poner empeño en y con empeño. En España también designa la prenda dejada en una casa de empeños, pero el sentido de dedicación es el más extendido.",
+    "examples": [
+      { "es": "Con el empeño que le pone a todo lo que hace, no me sorprende que haya llegado tan lejos.", "en": "With the determination she puts into everything she does, it is no surprise she has come so far." },
+      { "es": "Su empeño por aprender el idioma en seis meses parecía ambicioso, pero lo consiguió.", "en": "Her determination to learn the language in six months seemed ambitious, but she pulled it off." }
+    ]
+  },
+  {
+    "id": "dh-043",
+    "term": "endeble",
+    "meaning_es": "De poca consistencia, fuerza o solidez; que se resiste mal a la presión o al análisis.",
+    "meaning_en": "Feeble, flimsy, or weak; that which does not hold up well under pressure or scrutiny.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un argumento endeble",
+    "note": "Válido tanto para cosas físicas (una estructura endeble) como abstractas (pruebas endebles, razonamiento endeble). Invariable en género; solo varía en número.",
+    "examples": [
+      { "es": "La defensa presentó pruebas endebles que no convencieron al jurado en ningún momento.", "en": "The defense presented flimsy evidence that failed to convince the jury at any point." },
+      { "es": "Su postura es demasiado endeble para resistir un interrogatorio serio por parte de los periodistas.", "en": "His position is too weak to withstand a serious grilling from journalists." }
+    ]
+  },
+  {
+    "id": "dh-044",
+    "term": "ensayar",
+    "meaning_es": "Practicar o probar algo antes de realizarlo definitivamente; también, intentar o explorar algo por primera vez.",
+    "meaning_en": "To rehearse or practice something before the final performance; also, to try out or test.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "ensayar una respuesta",
+    "note": "Abarca tanto el ensayo teatral o musical como la prueba de un enfoque nuevo. El sustantivo ensayo cubre ambos sentidos: el de práctica previa y el de texto literario.",
+    "examples": [
+      { "es": "Ensayaron la presentación tres veces antes de entrar a la sala de juntas para asegurarse de que fluía bien.", "en": "They rehearsed the presentation three times before entering the boardroom to make sure it flowed well." },
+      { "es": "El director ensayó distintos enfoques narrativos antes de decidirse por la estructura no lineal.", "en": "The director tried out different narrative approaches before settling on the non-linear structure." }
+    ]
+  },
+  {
+    "id": "dh-045",
+    "term": "espinoso",
+    "meaning_es": "Que presenta dificultades, riesgos o susceptibilidades que hacen difícil su manejo o tratamiento.",
+    "meaning_en": "Thorny, tricky, or delicate; presenting difficulties or sensitivities that make it hard to handle.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un asunto espinoso",
+    "note": "En sentido figurado se aplica a asuntos, temas o situaciones delicadas o políticamente cargadas. Más expresivo que complicado.",
+    "examples": [
+      { "es": "La mediadora tuvo que navegar por el espinoso asunto de las indemnizaciones sin herir susceptibilidades.", "en": "The mediator had to navigate the thorny issue of compensation without stepping on anyone's toes." },
+      { "es": "Abordar la reforma laboral siempre ha sido un terreno espinoso para cualquier gobierno.", "en": "Tackling labor reform has always been a thorny area for any government." }
+    ]
+  },
+  {
+    "id": "dh-046",
+    "term": "escrutar",
+    "meaning_es": "Examinar o analizar algo con gran detenimiento y detalle, sin dejar nada sin observar.",
+    "meaning_en": "To scrutinize; to examine or analyze something with close, detailed attention.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "escrutar el horizonte",
+    "note": "También se usa en contextos electorales: escrutar votos. En sentido figurado implica una observación intensa, a veces incómoda para el que es observado.",
+    "examples": [
+      { "es": "El periodista escrutó las cuentas de la empresa durante meses antes de publicar el reportaje.", "en": "The journalist scrutinized the company's accounts for months before publishing the report." },
+      { "es": "Lo escrutó de arriba abajo con la mirada antes de decidir si podía confiarle el encargo.", "en": "She scrutinized him from head to toe before deciding whether she could trust him with the task." }
+    ]
+  },
+  {
+    "id": "dh-047",
+    "term": "enredar",
+    "meaning_es": "Mezclar o complicar algo de modo que sea difícil de resolver; involucrar a alguien en un problema o situación comprometida.",
+    "meaning_en": "To tangle up or complicate something; to embroil someone in a problem or messy situation.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "enredar a alguien en un asunto",
+    "note": "La forma reflexiva enredarse en indica quedar atrapado en algo. El contexto determina si el uso es literal o figurado.",
+    "examples": [
+      { "es": "Sin darse cuenta, fue enredando a más y más colegas en su disputa con la dirección.", "en": "Without realizing it, he gradually embroiled more and more colleagues in his dispute with management." },
+      { "es": "No te enredes en conversaciones que no llevan a ningún lado; céntrate en lo importante.", "en": "Do not get tangled up in conversations that lead nowhere; focus on what matters." }
+    ]
+  },
+  {
+    "id": "dh-048",
+    "term": "erradicar",
+    "meaning_es": "Eliminar algo completamente de raíz, como una enfermedad, un problema o una práctica dañina.",
+    "meaning_en": "To eradicate; to eliminate something completely from the root, leaving no trace.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "erradicar la pobreza",
+    "note": "Implica una eliminación total y definitiva. Frecuente en textos de política, salud y contextos sociales.",
+    "examples": [
+      { "es": "La campaña de vacunación masiva consiguió erradicar la enfermedad en menos de una década.", "en": "The mass vaccination campaign managed to eradicate the disease in less than a decade." },
+      { "es": "Erradicar la corrupción estructural requiere algo más que sanciones; hace falta un cambio cultural profundo.", "en": "Eradicating structural corruption requires more than sanctions; it takes a profound cultural shift." }
+    ]
+  },
+  {
+    "id": "dh-049",
+    "term": "estupor",
+    "meaning_es": "Asombro o pasmo intenso que deja a alguien momentáneamente paralizado o sin capacidad de reacción.",
+    "meaning_en": "Stupor; intense astonishment or stunned amazement that temporarily leaves one unable to react.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "causar estupor",
+    "note": "En el uso cotidiano designa la conmoción emocional, no la pérdida de consciencia médica. Expresión habitual: quedarse paralizado de estupor.",
+    "examples": [
+      { "es": "La noticia del cierre repentino de la empresa causó estupor entre los miles de empleados afectados.", "en": "The news of the company's sudden closure caused stunned disbelief among the thousands of employees affected." },
+      { "es": "Se quedó paralizada de estupor al ver que el cuadro había desaparecido de la pared.", "en": "She stood frozen in stupor when she saw that the painting had vanished from the wall." }
+    ]
+  },
+  {
+    "id": "dh-050",
+    "term": "fehaciente",
+    "meaning_es": "Que demuestra o prueba algo de manera fidedigna, clara e indiscutible; que no deja lugar a dudas.",
+    "meaning_en": "Irrefutable, reliable, and beyond doubt; providing clear and unquestionable proof.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "prueba fehaciente",
+    "note": "Propio del lenguaje jurídico, periodístico y administrativo. La colocación más característica es prueba fehaciente. Es menos habitual en función predicativa.",
+    "examples": [
+      { "es": "Las imágenes de las cámaras de seguridad constituyeron una prueba fehaciente de que el acusado estuvo en el lugar de los hechos.", "en": "The security camera footage constituted irrefutable proof that the accused had been at the scene." },
+      { "es": "Aún no existen datos fehacientes que demuestren una relación causal entre ambos fenómenos.", "en": "There are still no reliable data demonstrating a causal relationship between the two phenomena." }
+    ]
+  },
+  {
+    "id": "dh-051",
+    "term": "farragoso",
+    "meaning_es": "Que es confuso, desordenado y difícil de entender por contener demasiados elementos mezclados sin orden.",
+    "meaning_en": "Rambling, muddled, and hard to follow; cluttered with too many elements mixed together without order.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un texto farragoso",
+    "note": "Se aplica a textos, discursos, procesos burocráticos o explicaciones. Apunta a un problema de organización, no necesariamente de contenido.",
+    "examples": [
+      { "es": "El manual de instrucciones es tan farragoso que muchos usuarios lo abandonan y aprenden por prueba y error.", "en": "The instruction manual is so muddled that many users give up on it and learn by trial and error." },
+      { "es": "Su intervención fue farragosa y llena de digresiones que dificultaban seguir el hilo de su argumento.", "en": "His contribution was rambling and full of digressions that made it hard to follow the thread of his argument." }
+    ]
+  },
+  {
+    "id": "dh-052",
+    "term": "fustigar",
+    "meaning_es": "Criticar duramente o censurar con energía a una persona, institución o conducta.",
+    "meaning_en": "To castigate or lambaste; to criticize someone or something with force and severity.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "fustigar la corrupción",
+    "note": "El sentido crítico y figurado es el predominante en el uso moderno. Implica una denuncia pública y enérgica.",
+    "examples": [
+      { "es": "El editorialista fustigó sin piedad las políticas de austeridad que habían empobrecido a miles de familias.", "en": "The editorial writer lambasted without mercy the austerity policies that had impoverished thousands of families." },
+      { "es": "En sus novelas, el autor fustigaba la hipocresía de la burguesía provincial de su época.", "en": "In his novels, the author castigated the hypocrisy of the provincial bourgeoisie of his time." }
+    ]
+  },
+  {
+    "id": "dh-053",
+    "term": "flagrante",
+    "meaning_es": "Que es muy evidente y no admite duda; que resulta manifiesto e innegable.",
+    "meaning_en": "Flagrant or blatant; obviously evident and undeniable.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "una flagrante contradicción",
+    "note": "En este sentido se combina con faltas evidentes: 'una flagrante injusticia'. Es distinto del uso jurídico 'en flagrante delito': sorprendido en el acto.",
+    "examples": [
+      { "es": "La diferencia entre lo prometido y lo cumplido supone una flagrante contradicción que nadie se molesta en explicar.", "en": "The gap between what was promised and what was delivered constitutes a blatant contradiction that no one bothers to explain." },
+      { "es": "Negar lo que estaba grabado en vídeo fue una flagrante mentira que acabó con su credibilidad.", "en": "Denying what was recorded on video was a blatant lie that destroyed his credibility." }
+    ]
+  },
+  {
+    "id": "dh-054",
+    "term": "falaz",
+    "meaning_es": "Que contiene o se basa en un razonamiento erróneo o engañoso que aparenta ser válido.",
+    "meaning_en": "Fallacious, deceptive, or misleading; based on or containing faulty reasoning that appears sound.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "un argumento falaz",
+    "note": "Falaz no equivale a falso: apunta a una falla estructural en el razonamiento, no solo a la inexactitud de los datos. El sustantivo correspondiente es falacia.",
+    "examples": [
+      { "es": "Su razonamiento era falaz: comparaba situaciones fundamentalmente distintas como si fueran equivalentes.", "en": "His reasoning was fallacious: he compared fundamentally different situations as if they were equivalent." },
+      { "es": "Resulta falaz afirmar que los inmigrantes quitan empleos sin analizar su aportación a la economía.", "en": "It is fallacious to claim that immigrants take jobs without analyzing their contribution to the economy." }
+    ]
+  },
+  {
+    "id": "dh-055",
+    "term": "fastidio",
+    "meaning_es": "Sensación de molestia, tedio o enfado leve producida por algo que resulta incómodo o enojoso.",
+    "meaning_en": "Annoyance, irritation, or mild exasperation caused by something inconvenient or tiresome.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "¡qué fastidio!",
+    "note": "La exclamación ¡qué fastidio! es muy frecuente. El verbo es fastidiar. Expresa más incomodidad o contrariedad que una ira intensa.",
+    "examples": [
+      { "es": "¡Qué fastidio! Justo cuando iba a salir, empezó a llover a cántaros.", "en": "What a nuisance! Just as I was about to leave, it started pouring." },
+      { "es": "Le causaba fastidio tener que explicar el mismo procedimiento una y otra vez a cada nuevo empleado.", "en": "It annoyed her to have to explain the same procedure over and over again to each new employee." }
+    ]
+  },
+  {
+    "id": "dh-056",
+    "term": "fomentar",
+    "meaning_es": "Promover, impulsar o favorecer el desarrollo o crecimiento de algo.",
+    "meaning_en": "To foster, promote, or encourage the development or growth of something.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "fomentar el diálogo",
+    "note": "No implica juicio de valor sobre lo fomentado: se puede fomentar el diálogo o fomentar el odio. El hablante evalúa el objeto según el contexto.",
+    "examples": [
+      { "es": "El programa educativo busca fomentar el pensamiento crítico desde los primeros años de escuela.", "en": "The educational program seeks to foster critical thinking from the first years of school." },
+      { "es": "Es responsabilidad de los medios fomentar un debate público basado en datos contrastados.", "en": "It is the media's responsibility to encourage public debate grounded in verified facts." }
+    ]
+  },
+  {
+    "id": "dh-057",
+    "term": "franqueza",
+    "meaning_es": "Cualidad de quien expresa sus pensamientos u opiniones con sinceridad y sin rodeos.",
+    "meaning_en": "Frankness or candor; expressing thoughts honestly and directly.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "hablar con franqueza",
+    "note": "La locución con franqueza o con toda franqueza es la fórmula adverbial estándar. Implica valentía para decir la verdad, no solo falta de tacto.",
+    "examples": [
+      { "es": "Le agradezco su franqueza: prefiero una crítica directa a que me halaguen sin decirme la verdad.", "en": "I appreciate your frankness: I prefer a direct critique to being flattered without being told the truth." },
+      { "es": "Con toda franqueza, creo que el proyecto tiene posibilidades, pero necesita una revisión profunda antes de presentarlo.", "en": "In all frankness, I think the project has potential, but it needs a thorough overhaul before being presented." }
+    ]
+  },
+  {
+    "id": "dh-058",
+    "term": "fugaz",
+    "meaning_es": "Que dura muy poco tiempo; que pasa o desaparece rápidamente, a veces sin dejar rastro.",
+    "meaning_en": "Fleeting, brief, or transient; lasting only a very short time, sometimes without leaving a trace.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "una mirada fugaz",
+    "note": "Colocaciones habituales: una visita fugaz, una ilusión fugaz, estrellas fugaces. Tiene un matiz más poético que breve o corto.",
+    "examples": [
+      { "es": "Intercambiaron una mirada fugaz al cruzarse en el pasillo, pero ninguno de los dos dijo nada.", "en": "They exchanged a fleeting glance as they passed in the corridor, but neither of them said anything." },
+      { "es": "La felicidad que sentimos en esos instantes es fugaz, pero su recuerdo puede durar toda una vida.", "en": "The happiness we feel in those moments is fleeting, but the memory of it can last a lifetime." }
+    ]
+  },
+  {
+    "id": "dh-059",
+    "term": "fervoroso",
+    "meaning_es": "Que siente o expresa un entusiasmo o devoción intensos; que actúa con ardor y convicción.",
+    "meaning_en": "Fervent, ardent, or impassioned; acting or feeling with intense enthusiasm or devotion.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un defensor fervoroso",
+    "note": "Describe tanto la devoción religiosa como la pasión laica: un fervoroso seguidor del equipo, una fervorosa creyente. Tiene un ligero tono elevado.",
+    "examples": [
+      { "es": "Era una fervorosa defensora de los derechos de los animales que nunca perdía la oportunidad de alzar la voz.", "en": "She was a fervent defender of animal rights who never missed an opportunity to speak up." },
+      { "es": "El público tributó un fervoroso aplauso al artista al término de su actuación más esperada.", "en": "The audience gave the artist a fervent round of applause at the end of his most anticipated performance." }
+    ]
+  },
+  {
+    "id": "dh-060",
+    "term": "fisgar",
+    "meaning_es": "Intentar enterarse de cosas ajenas con disimulo; curiosear en lo que no le incumbe a uno.",
+    "meaning_en": "To snoop, pry, or nose into other people's business; to try to find out things one has no business knowing.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "fisgar en la vida ajena",
+    "note": "Fisgonear es variante de uso similar. El sustantivo es fisgón/fisgona. Menos grave que espiar, que implica una vigilancia deliberada y organizada.",
+    "examples": [
+      { "es": "Se acercó al escritorio de su compañero con la excusa de coger un bolígrafo, pero en realidad estaba fisgando sus documentos.", "en": "He went over to his colleague's desk under the pretense of picking up a pen, but was really snooping at his papers." },
+      { "es": "En los pueblos pequeños, todo el mundo fisga en la vida de los demás sin el menor disimulo.", "en": "In small towns, everyone pries into everyone else's business without the slightest pretense." }
+    ]
+  },
+  {
+    "id": "dh-061",
+    "term": "flaqueza",
+    "meaning_es": "Debilidad o falta de fortaleza moral, física o de carácter; punto vulnerable por el que alguien puede ser tentado o vencido.",
+    "meaning_en": "Weakness, frailty, or failing; a vulnerable point in one's character or will through which one may be tempted or overcome.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "tener una flaqueza",
+    "note": "En este sentido designa una debilidad de carácter o una tentación: 'el chocolate es su flaqueza'. No se limita a la debilidad física.",
+    "examples": [
+      { "es": "El chocolate es su flaqueza: ninguna dieta le dura más de una semana antes de caer en la tentación.", "en": "Chocolate is his weakness: no diet lasts him more than a week before temptation wins out." },
+      { "es": "La flaqueza más peligrosa de un líder no es la ignorancia, sino la incapacidad de admitirla.", "en": "The most dangerous weakness in a leader is not ignorance but the inability to admit it." }
+    ]
+  },
+  {
+    "id": "dh-062",
+    "term": "granjear",
+    "meaning_es": "Conseguir o ganarse algo —afecto, respeto, enemistades, fama— mediante el propio comportamiento.",
+    "meaning_en": "To earn or bring upon oneself something—affection, respect, enmity, a reputation—through one's own behavior.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "granjear la confianza",
+    "note": "Admite resultados positivos o negativos: 'granjearse el respeto', 'granjearse enemistades'. También: 'sus comentarios le granjearon mala fama'.",
+    "examples": [
+      { "es": "Con su trato amable y cercano, logró granjearse el respeto de todos los miembros del equipo.", "en": "With her warm and approachable manner, she managed to earn the respect of all the team members." },
+      { "es": "Sus continuas interrupciones le granjearon fama de maleducado en todos los foros en los que participaba.", "en": "His constant interruptions earned him a reputation for rudeness in every forum he participated in." }
+    ]
+  },
+  {
+    "id": "dh-063",
+    "term": "grandilocuente",
+    "meaning_es": "Que usa un lenguaje muy ampuloso, exagerado o pretencioso, en desproporción con el contenido real.",
+    "meaning_en": "Grandiloquent; using inflated, pompous, or high-flown language disproportionate to the actual content.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un discurso grandilocuente",
+    "note": "Implica una desproporción entre la forma y el fondo: el estilo promete más de lo que el contenido entrega. El sustantivo es grandilocuencia.",
+    "examples": [
+      { "es": "El discurso fue grandilocuente pero vacío: muchas palabras rimbombantes y ninguna propuesta concreta.", "en": "The speech was grandiloquent but hollow: many high-sounding words and not a single concrete proposal." },
+      { "es": "Prefiero un trato directo a la grandilocuencia de quienes no saben decir nada sin recurrir al efectismo.", "en": "I prefer plain speaking to the grandiloquence of those who cannot say anything without reaching for theatrical effect." }
+    ]
+  },
+  {
+    "id": "dh-064",
+    "term": "gravoso",
+    "meaning_es": "Que supone una carga pesada, un coste elevado o una molestia considerable para quien lo soporta.",
+    "meaning_en": "Burdensome, onerous, or costly; that which imposes a heavy load—financial, practical, or moral.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "una carga gravosa",
+    "note": "Frecuente en el lenguaje jurídico y económico: un impuesto gravoso, una obligación gravosa. No equivale a grave, aunque comparte raíz.",
+    "examples": [
+      { "es": "Los nuevos requisitos burocráticos resultan gravosos para las pequeñas empresas que no pueden asumir los costes de cumplimiento.", "en": "The new bureaucratic requirements are burdensome for small businesses that cannot absorb the compliance costs." },
+      { "es": "Mantener la segunda residencia les resultaba cada vez más gravoso a medida que subían los precios.", "en": "Keeping the second home was becoming increasingly onerous as prices rose." }
+    ]
+  },
+  {
+    "id": "dh-065",
+    "term": "genuino",
+    "meaning_es": "Auténtico, verdadero y sin mezcla de falsedad; que es lo que aparenta ser y no una imitación.",
+    "meaning_en": "Genuine, authentic, and unfeigned; truly what it appears to be and not an imitation or pretense.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "una sonrisa genuina",
+    "note": "Pone el énfasis en la ausencia de artificio o fingimiento. Aparece con frecuencia junto a emociones, interés, talento o preocupación.",
+    "examples": [
+      { "es": "Su interés por el bienestar de los empleados parecía genuino, no una estrategia de relaciones públicas.", "en": "Her interest in the employees' well-being seemed genuine, not a public-relations strategy." },
+      { "es": "El cuadro resultó ser genuino tras años de debate sobre su autenticidad.", "en": "The painting turned out to be genuine after years of debate about its authenticity." }
+    ]
+  },
+  {
+    "id": "dh-066",
+    "term": "gestionar",
+    "meaning_es": "Realizar los trámites necesarios para conseguir algo o para que un asunto funcione; administrar recursos o procesos.",
+    "meaning_en": "To manage, handle, or process; to carry out the necessary steps to achieve something or run something.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "gestionar un trámite",
+    "note": "Muy habitual en el español burocrático, empresarial y administrativo. Implica navegar por un sistema o procedimiento, no solo ejecutar una tarea.",
+    "examples": [
+      { "es": "El departamento de recursos humanos se encarga de gestionar todas las solicitudes de vacaciones y bajas.", "en": "The HR department handles all holiday and leave requests." },
+      { "es": "Tardó meses en gestionar los papeles necesarios para regularizar su situación administrativa.", "en": "It took him months to process the paperwork needed to regularize his administrative status." }
+    ]
+  },
+  {
+    "id": "dh-067",
+    "term": "griterío",
+    "meaning_es": "Ruido confuso y molesto producido por muchas personas que gritan al mismo tiempo.",
+    "meaning_en": "A din, uproar, or clamor produced by many people shouting at the same time.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un griterío ensordecedor",
+    "note": "Designa ruido desordenado, no una ovación organizada. También puede aplicarse a animales o a sonidos naturales confusos.",
+    "examples": [
+      { "es": "El griterío de la tribuna de animación hacía prácticamente imposible seguir una conversación normal.", "en": "The clamor from the supporters' stand made it practically impossible to hold a normal conversation." },
+      { "es": "Se armó un griterío tremendo cuando el árbitro señaló el penalti en los últimos segundos del partido.", "en": "A tremendous uproar broke out when the referee awarded the penalty in the final seconds of the match." }
+    ]
+  },
+  {
+    "id": "dh-068",
+    "term": "guarecerse de",
+    "meaning_es": "Protegerse o ponerse a resguardo de algo que puede causar daño, como la lluvia, el frío o el peligro.",
+    "meaning_en": "To shelter or take cover from something harmful such as rain, cold, or danger.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "guarecerse de la lluvia",
+    "note": "Forma reflexiva de guarecer. De tono algo literario; en la conversación cotidiana suelen preferirse refugiarse o protegerse. Rige de + sustantivo.",
+    "examples": [
+      { "es": "Corrieron a guarecerse bajo el porche cuando el cielo se oscureció y comenzó la tormenta.", "en": "They ran to take shelter under the porch when the sky darkened and the storm began." },
+      { "es": "El pastor buscó una cueva en la que guarecerse del granizo con el rebaño.", "en": "The shepherd looked for a cave in which to shelter from the hail with the flock." }
+    ]
+  },
+  {
+    "id": "dh-069",
+    "term": "galimatías",
+    "meaning_es": "Lenguaje, discurso o escrito confuso, enredado e ininteligible, difícil de comprender por su desorden.",
+    "meaning_en": "Gibberish, babble, or gobbledygook; speech or writing that is confused and nearly impossible to understand.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "hablar en galimatías",
+    "note": "Invariable en número. Se usa de forma hiperbólica en la conversación para describir la jerga burocrática o un discurso incoherente.",
+    "examples": [
+      { "es": "El contrato estaba escrito en tal galimatías jurídico que ni el propio cliente entendía lo que firmaba.", "en": "The contract was written in such legal gobbledygook that even the client did not understand what he was signing." },
+      { "es": "Sus explicaciones eran un puro galimatías; cada vez que preguntábamos algo, nos perdíamos más.", "en": "His explanations were pure gibberish; every time we asked something, we got more confused." }
+    ]
+  },
+  {
+    "id": "dh-070",
+    "term": "gravar",
+    "meaning_es": "Imponer un tributo, carga o gravamen sobre algo o alguien; cargar financieramente a algo.",
+    "meaning_en": "To tax, levy, or impose a financial burden on something; to encumber with a charge.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "gravar con impuestos",
+    "note": "No confundir con grabar (registrar sonido o imagen). Habitual en contextos fiscales y jurídicos: gravar una herencia, gravar las ganancias de capital.",
+    "examples": [
+      { "es": "El gobierno propone gravar las ganancias extraordinarias de las empresas energéticas con un tipo del quince por ciento.", "en": "The government proposes to tax the windfall profits of energy companies at a rate of fifteen percent." },
+      { "es": "La finca estaba gravada con una hipoteca que limitaba considerablemente su valor en el mercado.", "en": "The property was encumbered with a mortgage that considerably limited its market value." }
+    ]
+  },
+  {
+    "id": "dh-071",
+    "term": "hilvanar",
+    "meaning_es": "Enlazar ideas, hechos o partes de un relato de modo que formen un conjunto coherente.",
+    "meaning_en": "To thread together or weave; to link ideas, facts, or narrative elements into a coherent whole.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "hilvanar un argumento",
+    "note": "En sentido figurado pone el énfasis en la labor de conexión y articulación de elementos dispersos. No implica necesariamente fragilidad en el resultado.",
+    "examples": [
+      { "es": "Con los datos disponibles, el detective logró hilvanar una hipótesis que explicaba la mayor parte de los hechos.", "en": "With the available data, the detective managed to string together a hypothesis that explained most of the facts." },
+      { "es": "El guionista tardó semanas en hilvanar los distintos arcos narrativos en una trama coherente.", "en": "The screenwriter spent weeks threading the different narrative arcs into a coherent plot." }
+    ]
+  },
+  {
+    "id": "dh-072",
+    "term": "holgazán",
+    "meaning_es": "Que evita el trabajo o el esfuerzo de manera habitual; que vive en la pereza y la ociosidad.",
+    "meaning_en": "Lazy, idle, or work-shy; habitually avoiding effort or work.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "tachado de holgazán",
+    "note": "Funciona como sustantivo y como adjetivo. La acusación que conlleva tiene un componente social: alguien que elude sus obligaciones ante los demás.",
+    "examples": [
+      { "es": "Le llamaban holgazán, pero la verdad es que trabajaba en proyectos que nadie más en la oficina sabía ver.", "en": "They called him lazy, but the truth was he was working on projects that no one else in the office could see." },
+      { "es": "No era holgazana; simplemente priorizaba de manera distinta a lo que su jefe esperaba.", "en": "She was not idle; she simply prioritized differently from what her boss expected." }
+    ]
+  },
+  {
+    "id": "dh-073",
+    "term": "hastío",
+    "meaning_es": "Sensación de profundo aburrimiento, tedio o repugnancia ante algo que ha perdido todo interés o atractivo.",
+    "meaning_en": "Weariness, deep boredom, or disgust; a feeling that something has lost all interest or appeal.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "sentir hastío de algo",
+    "note": "Expresa un rechazo emocional, no solo aburrimiento pasivo. Las construcciones habituales son sentir hastío de, provocar hastío y causar hastío.",
+    "examples": [
+      { "es": "Después de años haciendo exactamente lo mismo, el hastío le empujó a pedir un traslado.", "en": "After years doing exactly the same thing, a deep weariness pushed him to request a transfer." },
+      { "es": "La rutina del trabajo le producía un hastío que ningún fin de semana lograba disipar del todo.", "en": "The routine of the job produced in her a weariness that no weekend could fully dispel." }
+    ]
+  },
+  {
+    "id": "dh-074",
+    "term": "hazaña",
+    "meaning_es": "Acción o hecho notable que exige gran esfuerzo, valentía o habilidad, y que merece admiración.",
+    "meaning_en": "A feat, exploit, or deed requiring great effort, courage, or skill and worthy of admiration.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "realizar una hazaña",
+    "note": "Admite uso hiperbólico en la lengua coloquial: que hayas llegado puntual es toda una hazaña. En plural (hazañas) aparece con frecuencia en contextos narrativos o épicos.",
+    "examples": [
+      { "es": "Completar el ultramaratón de montaña sin ningún entrenamiento previo fue toda una hazaña.", "en": "Completing the mountain ultramarathon with no prior training was quite a feat." },
+      { "es": "La hazaña del equipo de rescate, que trabajó tres días sin dormir, fue reconocida con una mención oficial.", "en": "The rescue team's feat, working three days without sleep, was recognized with an official commendation." }
+    ]
+  },
+  {
+    "id": "dh-075",
+    "term": "hosco",
+    "meaning_es": "De trato áspero y poco amigable; que muestra ceño, sequedad o antipatía en sus relaciones con los demás.",
+    "meaning_en": "Sullen, surly, or gruff; showing unfriendliness or a forbidding demeanor in one's dealings with others.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un carácter hosco",
+    "note": "Describe una forma de ser o de relacionarse, no solo un estado de ánimo pasajero. Implica una actitud taciturna y cerrada.",
+    "examples": [
+      { "es": "El portero era hosco y parco en palabras, pero con el tiempo demostraron ser la persona más fiable del edificio.", "en": "The doorman was surly and of few words, but in time he proved to be the most reliable person in the building." },
+      { "es": "Su actitud hosca en las entrevistas le restó puntos a pesar de su brillante expediente académico.", "en": "His sullen manner in interviews counted against him despite his brilliant academic record." }
+    ]
+  },
+  {
+    "id": "dh-076",
+    "term": "hostigar",
+    "meaning_es": "Molestar o perseguir a alguien de manera continua y deliberada para causarle malestar o presión.",
+    "meaning_en": "To harass, pester, or goad; to subject someone to persistent and deliberate pressure or annoyance.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "hostigar a un compañero",
+    "note": "Implica un patrón sostenido y deliberado, no un incidente aislado. También se usa en contextos militares: hostigar al enemigo con incursiones.",
+    "examples": [
+      { "es": "Varios testigos declararon que el supervisor llevaba meses hostigando a la empleada antes de que ella presentara la queja.", "en": "Several witnesses testified that the supervisor had been harassing the employee for months before she filed the complaint." },
+      { "es": "Las tropas utilizaron tácticas de hostigamiento para desgastar al adversario sin entrar en combate directo.", "en": "The troops used harassment tactics to wear down the enemy without engaging in direct combat." }
+    ]
+  },
+  {
+    "id": "dh-077",
+    "term": "holgura",
+    "meaning_es": "Margen o espacio de sobra en el tiempo, el dinero o cualquier recurso; amplitud que excede lo estrictamente necesario.",
+    "meaning_en": "Margin or slack; room to spare in time, money, or any resource beyond what is strictly needed.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "con holgura",
+    "note": "La locución con holgura indica que algo se hace o se dispone con margen de sobra. Se aplica a plazos, presupuestos, espacios físicos y recursos en general.",
+    "examples": [
+      { "es": "El proyecto se entregó con holgura antes del plazo, algo inusual en ese equipo.", "en": "The project was delivered with time to spare before the deadline, which was unusual for that team." },
+      { "es": "Con el presupuesto ampliado había holgura suficiente para cubrir imprevistos sin tensionar las cuentas.", "en": "With the expanded budget there was enough margin to cover unexpected costs without straining the accounts." }
+    ]
+  },
+  {
+    "id": "dh-078",
+    "term": "henchirse de",
+    "meaning_es": "Llenarse de orgullo, satisfacción o emoción hasta el punto de no poder contenerse.",
+    "meaning_en": "To swell or be filled with pride, satisfaction, or emotion to the point of barely containing it.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "henchirse de orgullo",
+    "note": "Se usa sobre todo en sentido figurado y en forma reflexiva: henchirse de orgullo, de emoción. De tono literario; en el habla cotidiana se prefiere llenarse de orgullo.",
+    "examples": [
+      { "es": "El pecho se le henchía de orgullo cada vez que oía mencionar el nombre de su hija entre los mejores del curso.", "en": "His chest swelled with pride every time he heard his daughter's name mentioned among the top students." },
+      { "es": "La directora se henchía de satisfacción al ver que los años de esfuerzo habían dado fruto.", "en": "The director swelled with satisfaction seeing that years of effort had borne fruit." }
+    ]
+  },
+  {
+    "id": "dh-079",
+    "term": "hurgar en",
+    "meaning_es": "Remover o buscar entre cosas desordenadas; indagar de forma curiosa o indiscreta en algo.",
+    "meaning_en": "To rummage through or poke around in; to probe or delve into something, often nosily.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "hurgar en el pasado",
+    "note": "Rige en + sustantivo. La expresión hurgar en la herida, de uso muy extendido, significa reabrir un tema doloroso ya superado.",
+    "examples": [
+      { "es": "Estuvo hurgando en los cajones de su abuela hasta dar con las cartas que buscaba.", "en": "He rummaged through his grandmother's drawers until he found the letters he was looking for." },
+      { "es": "No tiene sentido seguir hurgando en el pasado; lo que importa es cómo afrontamos el futuro.", "en": "There is no point in keep probing at the past; what matters is how we face the future." }
+    ]
+  },
+  {
+    "id": "dh-080",
+    "term": "hipérbole",
+    "meaning_es": "Figura retórica que consiste en exagerar desproporcionadamente para enfatizar una idea o una emoción.",
+    "meaning_en": "Hyperbole; a rhetorical figure involving disproportionate exaggeration to emphasize an idea or emotion.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "recurrir a la hipérbole",
+    "note": "Usada tanto en el análisis literario como en la conversación cotidiana: eso es una hipérbole. El acento recae en la segunda sílaba: hi-PÉR-bo-le.",
+    "examples": [
+      { "es": "Decir que tienes un millón de cosas que hacer es una hipérbole, pero expresa perfectamente la sensación de agobio.", "en": "Saying you have a million things to do is a hyperbole, but it perfectly expresses the feeling of being overwhelmed." },
+      { "es": "La poesía romántica hace uso constante de la hipérbole para comunicar la intensidad del sentimiento amoroso.", "en": "Romantic poetry makes constant use of hyperbole to convey the intensity of the amorous feeling." }
+    ]
+  },
+  {
+    "id": "dh-081",
+    "term": "hipócrita",
+    "meaning_es": "Que finge virtudes, sentimientos o actitudes que no tiene, especialmente para causar buena impresión.",
+    "meaning_en": "Hypocritical; pretending to have virtues, feelings, or principles one does not actually hold.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "actitud hipócrita",
+    "note": "Funciona como sustantivo (es un hipócrita) y como adjetivo (una actitud hipócrita). El sustantivo abstracto es hipocresía.",
+    "examples": [
+      { "es": "Sería hipócrita por su parte criticar el consumo excesivo cuando él mismo es el primero en comprarse el último modelo.", "en": "It would be hypocritical of him to criticize excessive consumption when he is always the first to buy the latest model." },
+      { "es": "No le tolera la gente hipócrita: prefiere alguien que le diga sus defectos a la cara.", "en": "She cannot stand hypocritical people: she prefers someone who tells her her faults to her face." }
+    ]
+  },
+  {
+    "id": "dh-082",
+    "term": "halagüeño",
+    "meaning_es": "Que resulta agradable, prometedor o que augura un buen resultado; que halaga o anima.",
+    "meaning_en": "Flattering, promising, or encouraging; that which augurs well or offers a pleasing outlook.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "un panorama halagüeño",
+    "note": "Se usa con frecuencia en construcciones negativas: el panorama no es muy halagüeño. También puede significar que algo resulta halagador para una persona.",
+    "examples": [
+      { "es": "Los datos de empleo presentados hoy ofrecen un panorama más halagüeño que el de los últimos trimestres.", "en": "The employment data released today offer a more promising outlook than that of the last few quarters." },
+      { "es": "El informe no era halagüeño: señalaba problemas estructurales que exigirían años de trabajo para resolverse.", "en": "The report was not encouraging: it pointed to structural problems that would take years of work to resolve." }
+    ]
+  }
+]

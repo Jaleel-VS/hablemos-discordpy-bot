@@ -1,0 +1,1642 @@
+[
+  {
+    "id": "ip-001",
+    "term": "impugnar",
+    "meaning_es": "Rebatir o cuestionar la validez de algo, especialmente un argumento, decisión o acto jurídico.",
+    "meaning_en": "To challenge or contest the validity of something, especially a legal act, decision, or argument.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "impugnar una decisión; impugnar el fallo",
+    "note": "Frecuente en el ámbito jurídico y académico. Implica un cuestionamiento formal, más contundente que 'cuestionar'. Lleva complemento directo.",
+    "examples": [
+      {
+        "es": "El abogado decidió impugnar las pruebas presentadas por la fiscalía, alegando que habían sido obtenidas de forma irregular.",
+        "en": "The lawyer decided to challenge the evidence presented by the prosecution, arguing it had been obtained irregularly."
+      },
+      {
+        "es": "Varios académicos impugnaron las conclusiones del informe oficial, señalando graves inconsistencias metodológicas.",
+        "en": "Several academics contested the official report's conclusions, pointing out serious methodological inconsistencies."
+      }
+    ]
+  },
+  {
+    "id": "ip-002",
+    "term": "imputar",
+    "meaning_es": "Atribuir a alguien la responsabilidad de un hecho, especialmente un delito o error.",
+    "meaning_en": "To impute or attribute responsibility for an act, especially a crime or fault, to someone.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "imputar un delito; imputar responsabilidad a alguien",
+    "note": "Propio del lenguaje judicial. A diferencia de 'acusar', imputar designa el cargo formal previo al juicio. Lleva complemento indirecto con 'a'.",
+    "examples": [
+      {
+        "es": "Al sospechoso le fueron imputados tres cargos de fraude fiscal durante la audiencia preliminar.",
+        "en": "The suspect was charged with three counts of tax fraud during the preliminary hearing."
+      },
+      {
+        "es": "No es justo imputarle al equipo directivo todos los errores estratégicos de la empresa.",
+        "en": "It is not fair to attribute all of the company's strategic errors to the management team."
+      }
+    ]
+  },
+  {
+    "id": "ip-003",
+    "term": "impertérrito/a",
+    "meaning_es": "Que permanece sereno e impasible ante situaciones difíciles, peligrosas o perturbadoras.",
+    "meaning_en": "Undaunted; remaining calm and unmoved in the face of difficulty, danger, or provocation.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "permanecer impertérrito; mostrarse impertérrito ante las críticas",
+    "note": "Registro literario o periodístico. Admite uso admirativo o irónico. Más habitual en posición predicativa que como adjetivo antepuesto.",
+    "examples": [
+      {
+        "es": "Ante las acusaciones del fiscal, el acusado permaneció impertérrito, sin alterar en ningún momento su expresión.",
+        "en": "Faced with the prosecutor's accusations, the defendant remained undaunted, not once altering his expression."
+      },
+      {
+        "es": "La directora escuchó impertérrita las quejas del sindicato y luego expuso su contrapropuesta con calma.",
+        "en": "The director listened to the union's grievances without flinching, then calmly laid out her counterproposal."
+      }
+    ]
+  },
+  {
+    "id": "ip-004",
+    "term": "inaplazable",
+    "meaning_es": "Que no puede ni debe ser postergado o diferido; urgente en grado máximo.",
+    "meaning_en": "That cannot be postponed; pressing or urgent to the highest degree.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "una cita inaplazable; una reforma inaplazable",
+    "note": "Tono formal, propio de la burocracia y el periodismo. Más enfático que 'urgente'; señala que el aplazamiento resulta imposible o inadmisible.",
+    "examples": [
+      {
+        "es": "La modernización del sistema de salud pública es una tarea inaplazable que ningún gobierno puede ignorar.",
+        "en": "Modernising the public health system is an unavoidable task that no government can ignore."
+      },
+      {
+        "es": "Tengo un compromiso inaplazable mañana por la mañana, así que deberemos reunirnos otro día.",
+        "en": "I have a pressing prior commitment tomorrow morning, so we will have to meet another day."
+      }
+    ]
+  },
+  {
+    "id": "ip-005",
+    "term": "incidir",
+    "meaning_es": "Influir o repercutir sobre algo de manera directa y apreciable.",
+    "meaning_en": "To have a direct and noticeable impact or effect on something.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "incidir en la calidad; incidir sobre el resultado; incidir negativamente en",
+    "note": "Lleva preposición 'en' o 'sobre'. Las dos acepciones —repercutir y hacer hincapié— pueden coincidir en el mismo enunciado; el contexto las distingue.",
+    "examples": [
+      {
+        "es": "La falta de inversión en educación incide directamente en las perspectivas laborales de las nuevas generaciones.",
+        "en": "The lack of investment in education has a direct impact on the job prospects of younger generations."
+      },
+      {
+        "es": "El ruido urbano incide en la calidad del sueño de los habitantes y aumenta los niveles de estrés crónico.",
+        "en": "Urban noise has an impact on the sleep quality of residents and raises chronic stress levels."
+      }
+    ]
+  },
+  {
+    "id": "ip-006",
+    "term": "incisivo/a",
+    "meaning_es": "Dicho de un comentario, análisis o persona: agudo, penetrante y directo, a veces con intención crítica.",
+    "meaning_en": "Incisive; sharp, penetrating, and direct in thought or expression, sometimes with a critical edge.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "una crítica incisiva; un análisis incisivo; tono incisivo",
+    "note": "Se aplica a personas y a sus producciones (análisis, preguntas, estilo). No es necesariamente negativo, aunque implica una franqueza que puede incomodar.",
+    "examples": [
+      {
+        "es": "Su artículo de opinión fue especialmente incisivo al desenmascarar las contradicciones del discurso oficial.",
+        "en": "His opinion piece was particularly incisive in exposing the contradictions in the official narrative."
+      },
+      {
+        "es": "La periodista hizo preguntas incisivas que pusieron en aprietos al ministro durante la rueda de prensa.",
+        "en": "The journalist asked pointed questions that put the minister on the spot during the press conference."
+      }
+    ]
+  },
+  {
+    "id": "ip-007",
+    "term": "incurrir en",
+    "meaning_es": "Cometer un error, falta o vicio; caer en algo negativo por descuido o voluntad propia.",
+    "meaning_en": "To incur; to fall into or commit an error, fault, or undesirable act, often through carelessness.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "incurrir en un error; incurrir en contradicción; incurrir en gastos",
+    "note": "Siempre requiere 'en'. El sujeto suele tener alguna responsabilidad en el hecho. Frecuente también en contextos jurídicos y financieros: incurrir en deuda.",
+    "examples": [
+      {
+        "es": "Al simplificar tanto el argumento, el autor incurrió en una contradicción que debilitó toda su tesis.",
+        "en": "By oversimplifying his argument, the author fell into a contradiction that undermined his entire thesis."
+      },
+      {
+        "es": "El informe advierte que si se toman esas medidas se podría incurrir en graves violaciones del derecho internacional.",
+        "en": "The report warns that taking such measures could result in serious violations of international law."
+      }
+    ]
+  },
+  {
+    "id": "ip-008",
+    "term": "indagar",
+    "meaning_es": "Investigar o buscar información con cuidado y sistematismo para averiguar algo.",
+    "meaning_en": "To inquire into, investigate, or probe carefully in order to find something out.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "indagar sobre los hechos; indagar en las causas",
+    "note": "Más sistemático que 'preguntar'; implica un esfuerzo sostenido por averiguar algo. Lleva 'sobre' o 'en' cuando sigue un grupo nominal.",
+    "examples": [
+      {
+        "es": "La comisión fue creada para indagar en las posibles irregularidades contables ocurridas durante la última gestión.",
+        "en": "The committee was set up to investigate possible accounting irregularities that occurred during the previous administration."
+      },
+      {
+        "es": "El detective comenzó a indagar sobre el paradero del sospechoso en las semanas anteriores al crimen.",
+        "en": "The detective began to inquire into the suspect's whereabouts in the weeks leading up to the crime."
+      }
+    ]
+  },
+  {
+    "id": "ip-009",
+    "term": "indolencia",
+    "meaning_es": "Falta de energía, iniciativa o interés; disposición a evitar el esfuerzo o la acción.",
+    "meaning_en": "Indolence; a lack of drive, initiative, or engagement; a tendency to avoid effort or action.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "indolencia política; una actitud de indolencia; caer en la indolencia",
+    "note": "Más grave que 'pereza'; conlleva crítica moral, especialmente en contextos políticos o institucionales. Adjetivo derivado: indolente.",
+    "examples": [
+      {
+        "es": "La indolencia de las autoridades ante las repetidas advertencias de los científicos costó miles de vidas.",
+        "en": "The authorities' indolence in the face of repeated warnings from scientists cost thousands of lives."
+      },
+      {
+        "es": "No confundas la serenidad con la indolencia: él observaba todo con atención, pero nunca se precipitaba.",
+        "en": "Do not confuse serenity with indolence: he observed everything carefully but never acted rashly."
+      }
+    ]
+  },
+  {
+    "id": "ip-010",
+    "term": "ineludible",
+    "meaning_es": "Que no se puede evitar, esquivar ni ignorar; inevitable por su propia naturaleza o por las circunstancias.",
+    "meaning_en": "Inescapable; that cannot be avoided, dodged, or ignored, either by its very nature or by circumstances.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "una consecuencia ineludible; una obligación ineludible",
+    "note": "Cercano a 'insoslayable', pero más neutro. Mientras 'insoslayable' subraya la futilidad de esquivar algo, 'ineludible' acentúa la inevitabilidad misma.",
+    "examples": [
+      {
+        "es": "Aceptar las consecuencias de nuestras decisiones es una responsabilidad ineludible de la vida adulta.",
+        "en": "Accepting the consequences of our decisions is an inescapable responsibility of adult life."
+      },
+      {
+        "es": "El cambio climático plantea un desafío ineludible que las naciones deben abordar de manera coordinada.",
+        "en": "Climate change poses an inescapable challenge that nations must address in a coordinated manner."
+      }
+    ]
+  },
+  {
+    "id": "ip-011",
+    "term": "infausto/a",
+    "meaning_es": "De mal agüero; que trae desgracia o está marcado por un destino adverso.",
+    "meaning_en": "Ill-fated; bringing or marked by misfortune, a bad omen, or an adverse destiny.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "un día infausto; un desenlace infausto; infausto presagio",
+    "note": "Registro elevado, habitual en escritura literaria, histórica o periodística sobre tragedias. Su antónimo 'fausto' (auspicioso) es poco frecuente.",
+    "examples": [
+      {
+        "es": "El infausto accidente ferroviario de aquel verano marcó a toda una generación de la pequeña ciudad.",
+        "en": "The ill-fated rail accident that summer left its mark on an entire generation of that small town."
+      },
+      {
+        "es": "Nadie quería recordar aquella infausta jornada en la que el equipo perdió el campeonato en los últimos segundos.",
+        "en": "No one wanted to remember that ill-starred day on which the team lost the championship in the final seconds."
+      }
+    ]
+  },
+  {
+    "id": "ip-012",
+    "term": "ínfimo/a",
+    "meaning_es": "Mínimo, insignificante o de muy baja calidad, rango o cantidad.",
+    "meaning_en": "Minimal, negligible, or of very low quality, rank, or quantity; the lowest of the low.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un porcentaje ínfimo; de ínfima calidad; a un precio ínfimo",
+    "note": "Más enfático que 'mínimo'. Puede aparecer antepuesto al sustantivo (ínfima calidad) o en posición predicativa (el porcentaje fue ínfimo).",
+    "examples": [
+      {
+        "es": "Solo un porcentaje ínfimo de los solicitantes logra acceder a ese programa de becas tan competitivo.",
+        "en": "Only a negligible percentage of applicants manage to gain access to that highly competitive scholarship programme."
+      },
+      {
+        "es": "Trabajaban en condiciones de ínfima calidad, sin contratos y con salarios que no cubrían sus necesidades básicas.",
+        "en": "They worked in appalling conditions, without contracts and with wages that did not cover their basic needs."
+      }
+    ]
+  },
+  {
+    "id": "ip-013",
+    "term": "inmiscuirse",
+    "meaning_es": "Entrometerse en asuntos que no le conciernen a uno, generalmente sin haber sido invitado.",
+    "meaning_en": "To meddle or interfere in matters that are not one's own business, typically uninvited.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "inmiscuirse en los asuntos ajenos; inmiscuirse en la política interna",
+    "note": "Verbo pronominal. Rige 'en'. Más formal que 'meterse' o 'entrometerse'. Implica traspasar un límite no autorizado.",
+    "examples": [
+      {
+        "es": "El embajador fue convocado al ministerio por haberse inmiscuido en los asuntos internos del país anfitrión.",
+        "en": "The ambassador was summoned to the ministry for having interfered in the host country's internal affairs."
+      },
+      {
+        "es": "Ella prefiere no inmiscuirse en las discusiones familiares de su pareja a menos que le pidan su opinión.",
+        "en": "She prefers not to meddle in her partner's family arguments unless she is asked for her opinion."
+      }
+    ]
+  },
+  {
+    "id": "ip-014",
+    "term": "inopinado/a",
+    "meaning_es": "Que ocurre sin que nadie lo esperara; repentino e imprevisto.",
+    "meaning_en": "Unexpected, sudden, and unforeseen; occurring without prior warning or anticipation.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "una visita inopinada; un giro inopinado; de forma inopinada",
+    "note": "Más literario que 'inesperado'. Habitual en periodismo y ensayo. El adverbio correspondiente es 'inopinadamente' (sin tilde interna).",
+    "examples": [
+      {
+        "es": "La dimisión inopinada del presidente del banco sacudió los mercados financieros a primera hora de la mañana.",
+        "en": "The bank president's unexpected resignation rattled financial markets first thing in the morning."
+      },
+      {
+        "es": "Su inopinada aparición en la fiesta provocó un silencio incómodo que nadie supo cómo romper.",
+        "en": "Her unexpected appearance at the party produced an awkward silence that no one knew how to break."
+      }
+    ]
+  },
+  {
+    "id": "ip-015",
+    "term": "insoslayable",
+    "meaning_es": "Que no se puede soslayar, evitar ni ignorar; que exige atención o solución imperiosamente.",
+    "meaning_en": "Unavoidable; that cannot be sidestepped or ignored and demands attention or resolution.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "un problema insoslayable; una realidad insoslayable",
+    "note": "Derivado de 'soslayar' (esquivar, rehuir). Insiste en lo inútil de intentar evitar algo. Común en el discurso político y editorial.",
+    "examples": [
+      {
+        "es": "La brecha entre ricos y pobres es un problema insoslayable que cualquier programa de gobierno serio debe abordar.",
+        "en": "The gap between rich and poor is an unavoidable problem that any serious government programme must address."
+      },
+      {
+        "es": "Ante la evidencia acumulada, la necesidad de reformar la ley resultaba insoslayable para todos los legisladores.",
+        "en": "Faced with the accumulated evidence, the need to reform the law was inescapable for all legislators."
+      }
+    ]
+  },
+  {
+    "id": "ip-016",
+    "term": "intempestivo/a",
+    "meaning_es": "Fuera de tiempo o de la ocasión adecuada; que llega o se produce en el momento menos oportuno.",
+    "meaning_en": "Untimely; occurring at an inconvenient or inopportune moment; ill-timed.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "una interrupción intempestiva; a horas intempestivas; llegada intempestiva",
+    "note": "Frecuente con 'hora': 'a horas intempestivas' indica un momento inconveniente del día. Algo más elevado que 'inoportuno'.",
+    "examples": [
+      {
+        "es": "Su intempestiva intervención en plena negociación rompió el clima de entendimiento que se había logrado.",
+        "en": "Her untimely intervention in the middle of negotiations shattered the atmosphere of understanding that had been achieved."
+      },
+      {
+        "es": "El teléfono sonó a horas intempestivas con la noticia de que el vuelo había sido cancelado.",
+        "en": "The phone rang at an ungodly hour with the news that the flight had been cancelled."
+      }
+    ]
+  },
+  {
+    "id": "ip-017",
+    "term": "irrefutable",
+    "meaning_es": "Que no puede ser refutado ni contradicho porque está respaldado por evidencia sólida o lógica incontestable.",
+    "meaning_en": "Irrefutable; that cannot be refuted or contradicted because it is backed by solid evidence or airtight logic.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "una prueba irrefutable; un argumento irrefutable; evidencia irrefutable",
+    "note": "Adjetivo absoluto: los intensificadores de grado resultan redundantes. Funciona tanto en posición atributiva como predicativa.",
+    "examples": [
+      {
+        "es": "El equipo forense presentó pruebas irrefutables que vinculaban al acusado con la escena del crimen.",
+        "en": "The forensic team presented irrefutable evidence linking the accused to the crime scene."
+      },
+      {
+        "es": "No hay ningún argumento irrefutable para justificar la exclusión de determinados grupos del proceso democrático.",
+        "en": "There is no irrefutable argument to justify excluding certain groups from the democratic process."
+      }
+    ]
+  },
+  {
+    "id": "ip-018",
+    "term": "irrisorio/a",
+    "meaning_es": "Tan pequeño, insignificante o inadecuado que resulta ridículo o digno de burla.",
+    "meaning_en": "Derisory; laughably small, inadequate, or insignificant.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "una oferta irrisoria; un salario irrisorio; suma irrisoria",
+    "note": "Se aplica sobre todo a cantidades, ofertas o sanciones para señalar que quedan muy por debajo de lo razonable o merecido.",
+    "examples": [
+      {
+        "es": "La empresa ofreció una indemnización irrisoria a los trabajadores despedidos, quienes decidieron recurrir a los tribunales.",
+        "en": "The company offered the dismissed workers a derisory redundancy payment, so they decided to take the matter to court."
+      },
+      {
+        "es": "El coste de reparación era irrisorio comparado con el valor histórico del edificio que se pretendía demoler.",
+        "en": "The repair cost was laughably small compared with the historical value of the building slated for demolition."
+      }
+    ]
+  },
+  {
+    "id": "ip-019",
+    "term": "jactarse",
+    "meaning_es": "Presumir con arrogancia de cualidades, logros o posesiones propias, muchas veces de forma exagerada.",
+    "meaning_en": "To boast or brag about one's own qualities, achievements, or possessions, often in an exaggerated way.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "jactarse de sus logros; jactarse de conocer a alguien; no jactarse en vano",
+    "note": "Verbo pronominal. Rige 'de'. Siempre connota vanidad o exageración; es una variante peyorativa de 'presumir de'.",
+    "examples": [
+      {
+        "es": "Se jactaba constantemente de sus contactos en el ministerio, aunque nadie podía verificar si eran reales.",
+        "en": "He constantly boasted of his contacts in the ministry, though no one could verify whether they were real."
+      },
+      {
+        "es": "No es sano jactarse de las desgracias ajenas; la empatía es una virtud que se cultiva con esfuerzo.",
+        "en": "It is not healthy to gloat over other people's misfortunes; empathy is a virtue that takes effort to cultivate."
+      }
+    ]
+  },
+  {
+    "id": "ip-020",
+    "term": "jerarquizar",
+    "meaning_es": "Ordenar o estructurar elementos según un criterio de importancia, prioridad o rango.",
+    "meaning_en": "To rank or prioritise; to arrange elements in a hierarchy according to importance, priority, or level.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "jerarquizar prioridades; jerarquizar la información; jerarquizar tareas",
+    "note": "Frecuente en gestión, educación y escritura académica. Implica un ordenamiento analítico e intencional, no una mera enumeración casual.",
+    "examples": [
+      {
+        "es": "Antes de redactar el informe conviene jerarquizar las ideas para que el lector siga el argumento con facilidad.",
+        "en": "Before drafting the report it is worth ranking the ideas so that the reader can follow the argument with ease."
+      },
+      {
+        "es": "El director de proyecto tuvo que jerarquizar las tareas del equipo cuando se redujo el presupuesto a la mitad.",
+        "en": "The project manager had to reprioritise the team's tasks when the budget was cut in half."
+      }
+    ]
+  },
+  {
+    "id": "ip-021",
+    "term": "lacónico/a",
+    "meaning_es": "Que expresa mucho con pocas palabras; breve y conciso hasta el punto de parecer seco o reservado.",
+    "meaning_en": "Laconic; expressing much in few words; so brief and concise as to seem terse or guarded.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "una respuesta lacónica; estilo lacónico; un mensaje lacónico",
+    "note": "Puede ser admirativo (eficiente, denso) o levemente crítico (frío, poco comunicativo). Adverbio: lacónicamente.",
+    "examples": [
+      {
+        "es": "Cuando le preguntaron sobre su dimisión, el ministro se mostró lacónico: 'Por motivos personales, sin más.'",
+        "en": "When asked about his resignation, the minister was laconic: 'For personal reasons, nothing more.'"
+      },
+      {
+        "es": "Su prosa lacónica es una de las marcas de estilo más valoradas por la crítica literaria contemporánea.",
+        "en": "His laconic prose is one of the stylistic hallmarks most valued by contemporary literary critics."
+      }
+    ]
+  },
+  {
+    "id": "ip-022",
+    "term": "latente",
+    "meaning_es": "Que existe o está presente pero no se manifiesta todavía de forma visible o activa.",
+    "meaning_en": "Latent; present or existing but not yet manifesting in a visible or active way.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un conflicto latente; tensión latente; un talento latente",
+    "note": "Propio de la medicina (enfermedad latente), la psicología, el análisis social y el habla común. Se opone a 'manifiesto'.",
+    "examples": [
+      {
+        "es": "La tensión latente entre las dos facciones del partido estalló públicamente durante el congreso nacional.",
+        "en": "The latent tension between the party's two factions exploded publicly during the national congress."
+      },
+      {
+        "es": "Un virus puede permanecer latente en el organismo durante años antes de reactivarse bajo ciertas condiciones.",
+        "en": "A virus can remain dormant in the body for years before reactivating under certain conditions."
+      }
+    ]
+  },
+  {
+    "id": "ip-023",
+    "term": "laxo/a",
+    "meaning_es": "Poco estricto, rígido o exigente; aplicado a normas, disciplina o moral, indica exceso de permisividad.",
+    "meaning_en": "Lax; insufficiently strict, rigorous, or exacting; used of rules, discipline, or morals to indicate excessive permissiveness.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "una normativa laxa; disciplina laxa; criterios laxos",
+    "note": "También tiene un sentido físico (tejido laxo), pero en el habla culta predomina el uso moral o normativo.",
+    "examples": [
+      {
+        "es": "Los expertos atribuyen la crisis a la regulación laxa del sector financiero durante la última década.",
+        "en": "Experts attribute the crisis to lax regulation of the financial sector over the past decade."
+      },
+      {
+        "es": "Un sistema de evaluación demasiado laxo puede desmotivar a los estudiantes que buscan superar sus propios límites.",
+        "en": "An evaluation system that is too lax can demotivate students who are seeking to push their own boundaries."
+      }
+    ]
+  },
+  {
+    "id": "ip-024",
+    "term": "legar",
+    "meaning_es": "Transmitir algo a alguien, especialmente mediante testamento; dejar en herencia bienes o valores.",
+    "meaning_en": "To bequeath; to pass on or leave something to someone, especially through a will or as a legacy.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "legar una fortuna; legar el patrimonio cultural; legar a las generaciones futuras",
+    "note": "Admite uso literal (bienes en testamento) y figurado (herencia cultural o intelectual). Lleva complemento indirecto con 'a'.",
+    "examples": [
+      {
+        "es": "La pintora legó toda su obra al museo de la ciudad natal con la condición de que fuera de acceso gratuito.",
+        "en": "The painter bequeathed her entire body of work to the museum in her hometown on condition that it be freely accessible."
+      },
+      {
+        "es": "Nuestra generación tiene la responsabilidad de legar a la siguiente un planeta habitable y recursos naturales preservados.",
+        "en": "Our generation has a responsibility to leave the next one a habitable planet and preserved natural resources."
+      }
+    ]
+  },
+  {
+    "id": "ip-025",
+    "term": "lenitivo/a",
+    "meaning_es": "Que suaviza o mitiga el dolor, la angustia o una situación difícil; que aporta alivio.",
+    "meaning_en": "Lenitive; that soothes, alleviates, or softens pain, distress, or a difficult situation.",
+    "register": "literario",
+    "region": "general",
+    "collocation": "un efecto lenitivo; actuar como lenitivo; palabras lenitivas",
+    "note": "Puede funcionar como adjetivo o como sustantivo. En el uso figurado designa cualquier cosa que alivia un sufrimiento moral o emocional.",
+    "examples": [
+      {
+        "es": "La música actuó como un lenitivo para el dolor que sentía tras la pérdida de su compañero de vida.",
+        "en": "Music served as a balm for the pain she felt after losing her life companion."
+      },
+      {
+        "es": "Sus palabras lenitivas no bastaron para calmar la angustia de los familiares que esperaban noticias del rescate.",
+        "en": "Her soothing words were not enough to calm the anxiety of the family members waiting for news of the rescue."
+      }
+    ]
+  },
+  {
+    "id": "ip-026",
+    "term": "lisonjear",
+    "meaning_es": "Adular a alguien con elogios exagerados, generalmente con la intención de obtener un favor.",
+    "meaning_en": "To flatter; to compliment someone with excessive or insincere praise, usually to gain favour.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "lisonjear al jefe; lisonjear a alguien con elogios; dejarse lisonjear",
+    "note": "Connota cierta insinceridad o interés propio; 'elogiar' es neutro, 'lisonjear' implica adulación calculada. Sustantivo: lisonja.",
+    "examples": [
+      {
+        "es": "En vez de buscar soluciones, se dedicó a lisonjear a los directivos con comentarios vacíos sobre su liderazgo.",
+        "en": "Instead of looking for solutions, he spent his time flattering the executives with empty comments about their leadership."
+      },
+      {
+        "es": "Le gustaba que la lisonjearan, aunque sabía perfectamente que muchas de esas alabanzas eran interesadas.",
+        "en": "She enjoyed being flattered, even though she knew perfectly well that many of those compliments were self-serving."
+      }
+    ]
+  },
+  {
+    "id": "ip-027",
+    "term": "locuaz",
+    "meaning_es": "Que habla mucho y con facilidad; muy dado a la conversación, a veces en exceso.",
+    "meaning_en": "Loquacious; given to talking a great deal and with ease, sometimes to excess.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un interlocutor locuaz; mostrarse locuaz; locuaz por naturaleza",
+    "note": "Puede ser neutro-positivo (conversador ameno) o levemente negativo (habla en exceso). Sustantivo: locuacidad.",
+    "examples": [
+      {
+        "es": "Normalmente reservado, se volvió locuaz después de la segunda copa y comenzó a contar anécdotas de su infancia.",
+        "en": "Usually reserved, he became loquacious after the second glass and began sharing anecdotes from his childhood."
+      },
+      {
+        "es": "Una presentadora locuaz y bien preparada puede transformar un aburrido acto institucional en un evento memorable.",
+        "en": "A loquacious and well-prepared host can transform a dull institutional event into a memorable occasion."
+      }
+    ]
+  },
+  {
+    "id": "ip-028",
+    "term": "lucubrar",
+    "meaning_es": "Reflexionar o especular con profundidad y a veces en exceso, especialmente sobre asuntos abstractos.",
+    "meaning_en": "To speculate or theorise at length, especially on abstract matters; to over-think or cerebrate.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "lucubrar teorías; lucubrar sobre el futuro; lucubraciones filosóficas",
+    "note": "Tiene un matiz levemente peyorativo: especulación excesiva o autorreferencial. Sustantivo: lucubración (frecuente en plural).",
+    "examples": [
+      {
+        "es": "Prefería la acción directa a lucubrar interminablemente sobre las causas filosóficas de los problemas sociales.",
+        "en": "He preferred direct action to endlessly speculating about the philosophical causes of social problems."
+      },
+      {
+        "es": "Sus lucubraciones sobre el sentido de la existencia ocupaban cuadernos enteros que nunca mostró a nadie.",
+        "en": "His extended musings on the meaning of existence filled entire notebooks that he never showed to anyone."
+      }
+    ]
+  },
+  {
+    "id": "ip-029",
+    "term": "manido/a",
+    "meaning_es": "Dicho de una idea, expresión o recurso: muy repetido y desgastado por el uso; trillado.",
+    "meaning_en": "Hackneyed; worn out and stale from overuse; clichéd.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un argumento manido; una metáfora manida; recurso manido",
+    "note": "Crítica evaluativa más fuerte que 'repetitivo'. Habitual en la crítica literaria y periodística para señalar falta de originalidad.",
+    "examples": [
+      {
+        "es": "El crítico señaló que la novela recurría a personajes manidos sin aportar ninguna perspectiva nueva al género.",
+        "en": "The critic noted that the novel relied on hackneyed characters without adding any new perspective to the genre."
+      },
+      {
+        "es": "Evita los comparativos manidos como 'fácil como respirar' si quieres que tu escritura resulte fresca y original.",
+        "en": "Avoid hackneyed comparisons like 'easy as breathing' if you want your writing to feel fresh and original."
+      }
+    ]
+  },
+  {
+    "id": "ip-030",
+    "term": "matizar",
+    "meaning_es": "Introducir precisiones, gradaciones o distinciones en un enunciado para evitar simplificaciones.",
+    "meaning_en": "To nuance or qualify; to introduce distinctions, gradations, or precision into a statement to avoid oversimplification.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "matizar una afirmación; matizar el discurso; hay que matizar que...",
+    "note": "Palabra clave en el español académico y periodístico. El sustantivo 'matiz' (nuance) y el derivado 'matización' son igualmente útiles.",
+    "examples": [
+      {
+        "es": "La profesora matizó que los datos del estudio, aunque prometedores, no permiten aún extraer conclusiones definitivas.",
+        "en": "The professor qualified her remarks, noting that the study's data, although promising, did not yet allow definitive conclusions."
+      },
+      {
+        "es": "El debate mejoró considerablemente cuando los participantes empezaron a matizar sus posiciones en lugar de simplificar.",
+        "en": "The debate improved considerably once participants began nuancing their positions rather than oversimplifying."
+      }
+    ]
+  },
+  {
+    "id": "ip-031",
+    "term": "menoscabar",
+    "meaning_es": "Reducir o deteriorar el valor, la dignidad, la reputación o la integridad de algo o alguien.",
+    "meaning_en": "To diminish, impair, or undermine the value, dignity, reputation, or integrity of something or someone.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "menoscabar la autoridad; menoscabar los derechos; menoscabar la confianza",
+    "note": "Más literario que 'dañar'. Frecuente en textos legales (menoscabo de derechos) y en el lenguaje editorial. Sustantivo: menoscabo.",
+    "examples": [
+      {
+        "es": "Filtrar esa información confidencial menoscabaría gravemente la reputación de la institución ante la opinión pública.",
+        "en": "Leaking that confidential information would gravely undermine the institution's reputation in the eyes of the public."
+      },
+      {
+        "es": "Las restricciones impuestas menoscaban el derecho de los ciudadanos a expresarse libremente sin temor a represalias.",
+        "en": "The imposed restrictions impair citizens' right to express themselves freely without fear of reprisals."
+      }
+    ]
+  },
+  {
+    "id": "ip-032",
+    "term": "mermar",
+    "meaning_es": "Disminuir o reducir gradualmente la cantidad, calidad, fuerza o valor de algo.",
+    "meaning_en": "To diminish, dwindle, or erode; to gradually reduce the quantity, quality, strength, or value of something.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "mermar las reservas; mermar la confianza; mermar la capacidad",
+    "note": "Implica un proceso gradual y continuado. Puede ser transitivo (mermar recursos) o intransitivo (las reservas mermaron). Sustantivo: merma.",
+    "examples": [
+      {
+        "es": "La sequía prolongada ha mermado considerablemente las reservas de agua de los embalses de toda la región.",
+        "en": "The prolonged drought has considerably eroded the water reserves of reservoirs throughout the region."
+      },
+      {
+        "es": "Años de críticas injustas mermaron su confianza hasta el punto de que ya no quería publicar ningún trabajo.",
+        "en": "Years of unjust criticism eroded his confidence to the point where he no longer wanted to publish any work."
+      }
+    ]
+  },
+  {
+    "id": "ip-033",
+    "term": "mesura",
+    "meaning_es": "Moderación, equilibrio y templanza en el comportamiento, el lenguaje o los juicios.",
+    "meaning_en": "Moderation, restraint, and equanimity in behaviour, language, or judgment; measured composure.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "actuar con mesura; una persona de gran mesura; mesura en el trato",
+    "note": "Virtud retórica de larga tradición en español. Sinónimo de 'moderación', con un tono más clásico y elevado. Adjetivo: mesurado.",
+    "examples": [
+      {
+        "es": "La clave del éxito diplomático reside a menudo en la capacidad de responder con mesura ante las provocaciones.",
+        "en": "The key to diplomatic success often lies in the ability to respond with restraint in the face of provocation."
+      },
+      {
+        "es": "Habló con mesura y precisión, evitando los extremos que dominaban el debate público en esas semanas.",
+        "en": "He spoke with measured precision, avoiding the extremes that were dominating the public debate in those weeks."
+      }
+    ]
+  },
+  {
+    "id": "ip-034",
+    "term": "mimetizar(se)",
+    "meaning_es": "Adoptar las características del entorno o del grupo para fundirse con él o pasar desapercibido.",
+    "meaning_en": "To mimic, blend in, or camouflage oneself by adopting the features of the surroundings or group.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "mimetizarse con el entorno; mimetizar el estilo; capacidad de mimetización",
+    "note": "Funciona de forma literal (camuflaje animal) y figurada (adaptación social). En el sentido figurado es habitual la forma reflexiva.",
+    "examples": [
+      {
+        "es": "El pulpo es uno de los animales más hábiles a la hora de mimetizarse con las rocas y la arena del fondo marino.",
+        "en": "The octopus is one of the most skilled animals at blending into the rocks and sand of the seabed."
+      },
+      {
+        "es": "Llegó a la nueva ciudad con una capacidad asombrosa para mimetizarse con los distintos ambientes sociales.",
+        "en": "She arrived in the new city with an astonishing ability to blend in with different social environments."
+      }
+    ]
+  },
+  {
+    "id": "ip-035",
+    "term": "mitigar",
+    "meaning_es": "Disminuir la intensidad o gravedad de algo negativo: un daño, un dolor, una consecuencia adversa.",
+    "meaning_en": "To mitigate; to lessen the intensity, severity, or gravity of something negative.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "mitigar el daño; mitigar el impacto; medidas para mitigar el riesgo",
+    "note": "Frecuente en política, derecho, medicina y el habla común. Se diferencia de 'eliminar' porque la mitigación es solo una reducción parcial.",
+    "examples": [
+      {
+        "es": "El gobierno adoptó medidas de emergencia para mitigar los efectos del huracán sobre las comunidades más vulnerables.",
+        "en": "The government adopted emergency measures to mitigate the hurricane's effects on the most vulnerable communities."
+      },
+      {
+        "es": "Aunque no podía cambiar lo sucedido, sus disculpas ayudaron a mitigar el daño causado a la relación profesional.",
+        "en": "Although she could not change what had happened, her apology helped to mitigate the damage done to the professional relationship."
+      }
+    ]
+  },
+  {
+    "id": "ip-036",
+    "term": "mofarse",
+    "meaning_es": "Burlarse de alguien o algo con desprecio o ironía, haciendo escarnio de ello.",
+    "meaning_en": "To mock or scoff at someone or something with contempt or irony; to make fun of derisively.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "mofarse de alguien; mofarse de las tradiciones; sin mofarse",
+    "note": "Verbo pronominal, rige 'de'. Más intenso que 'burlarse': implica desprecio visible. Sustantivo: mofa.",
+    "examples": [
+      {
+        "es": "Sus compañeros se mofaban de él cada vez que proponía ideas poco convencionales en las reuniones de equipo.",
+        "en": "His colleagues would mock him every time he proposed unconventional ideas in team meetings."
+      },
+      {
+        "es": "El panfleto se mofaba abiertamente de la solemnidad del acto oficial con un humor corrosivo y efectivo.",
+        "en": "The pamphlet openly mocked the solemnity of the official ceremony with a corrosive and effective humour."
+      }
+    ]
+  },
+  {
+    "id": "ip-037",
+    "term": "morigerar",
+    "meaning_es": "Moderar o templar los excesos en la conducta, los impulsos o las costumbres de alguien.",
+    "meaning_en": "To moderate or temper excesses in conduct, impulses, or habits; to make more restrained.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "morigerar las costumbres; morigerar el tono; morigerar los instintos",
+    "note": "Tono formal, algo elevado. Implica una atenuación deliberada de conductas o impulsos excesivos.",
+    "examples": [
+      {
+        "es": "El asesor le aconsejó morigerar el tono de sus declaraciones públicas para no alienar a los votantes moderados.",
+        "en": "His adviser urged him to tone down his public statements so as not to alienate moderate voters."
+      },
+      {
+        "es": "Con los años aprendió a morigerar su temperamento impulsivo y a escuchar antes de reaccionar.",
+        "en": "Over the years she learned to temper her impulsive temperament and to listen before reacting."
+      }
+    ]
+  },
+  {
+    "id": "ip-038",
+    "term": "nimio/a",
+    "meaning_es": "Insignificante, sin importancia o demasiado pequeño para merecer atención.",
+    "meaning_en": "Trivial, trifling, or far too minor to deserve attention; negligible.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un detalle nimio; cuestiones nimias; preocuparse por nimiedades",
+    "note": "El sustantivo 'nimiedad' también es frecuente. No confundir con 'nimio' en su acepción latina original (excesivo), ya en desuso.",
+    "examples": [
+      {
+        "es": "Se perdía en detalles nimios y nunca lograba ver el conjunto del proyecto antes de los plazos de entrega.",
+        "en": "He got lost in trivial details and could never see the project as a whole before deadlines arrived."
+      },
+      {
+        "es": "No es sensato arruinar una amistad de años por una nimiedad que ambas partes podrían resolver hablando.",
+        "en": "It makes no sense to ruin a years-long friendship over a trifle that both parties could resolve by talking."
+      }
+    ]
+  },
+  {
+    "id": "ip-039",
+    "term": "nocivo/a",
+    "meaning_es": "Que causa daño, perjuicio o efectos negativos sobre la salud, el medio ambiente o la sociedad.",
+    "meaning_en": "Harmful, noxious, or damaging; causing injury or adverse effects on health, the environment, or society.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "sustancias nocivas; efectos nocivos; nocivo para la salud",
+    "note": "Más amplio que 'tóxico', que remite a un daño de tipo químico. 'Nocivo' abarca desde un hábito hasta una tendencia social.",
+    "examples": [
+      {
+        "es": "Varios estudios confirman los efectos nocivos de la exposición prolongada a pantallas brillantes antes de dormir.",
+        "en": "Several studies confirm the harmful effects of prolonged exposure to bright screens before sleep."
+      },
+      {
+        "es": "Una cultura laboral en la que el agotamiento se glorifica resulta nociva tanto para las personas como para las empresas.",
+        "en": "A workplace culture that glorifies burnout is harmful both to individuals and to the organisations they work for."
+      }
+    ]
+  },
+  {
+    "id": "ip-040",
+    "term": "obstaculizar",
+    "meaning_es": "Poner obstáculos o dificultades que impiden o retrasan el avance de algo o alguien.",
+    "meaning_en": "To obstruct or hinder; to place obstacles that prevent or slow down the progress of something or someone.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "obstaculizar las negociaciones; obstaculizar la justicia; obstaculizar el desarrollo",
+    "note": "Lleva complemento directo. Distinto de 'impedir' (bloquear por completo): obstaculizar implica ralentizar o complicar, no necesariamente vetar.",
+    "examples": [
+      {
+        "es": "Las trabas burocráticas obstaculizan con frecuencia la creación de nuevas empresas en el país.",
+        "en": "Bureaucratic red tape frequently obstructs the creation of new businesses in the country."
+      },
+      {
+        "es": "Fue acusado de obstaculizar la investigación judicial al negar el acceso a documentos clave de la empresa.",
+        "en": "He was accused of obstructing the judicial investigation by denying access to key company documents."
+      }
+    ]
+  },
+  {
+    "id": "ip-041",
+    "term": "obviar",
+    "meaning_es": "Evitar, pasar por alto o hacer caso omiso de algo deliberadamente; sortear un obstáculo.",
+    "meaning_en": "To bypass, sidestep, or deliberately overlook something; to work around an obstacle.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "obviar un problema; obviar las dificultades; obviar los detalles",
+    "note": "Falso amigo para angloparlantes: 'obviar' significa sortear o pasar por alto, no 'hacer evidente' (que sería 'hacer patente' o 'evidenciar').",
+    "examples": [
+      {
+        "es": "El acuerdo permitió obviar los trámites habituales y agilizar la aprobación del proyecto urbanístico.",
+        "en": "The agreement made it possible to bypass the usual formalities and speed up the urban planning project's approval."
+      },
+      {
+        "es": "No podemos simplemente obviar los riesgos que plantea el nuevo sistema; deben evaluarse en profundidad.",
+        "en": "We cannot simply ignore the risks posed by the new system; they must be thoroughly assessed."
+      }
+    ]
+  },
+  {
+    "id": "ip-042",
+    "term": "opacar",
+    "meaning_es": "Hacer que algo o alguien pierda brillo, relevancia o protagonismo ante la presencia de otra cosa.",
+    "meaning_en": "To overshadow, eclipse, or dim; to cause something or someone to lose prominence or shine in comparison.",
+    "register": "neutro",
+    "region": "Latinoamérica; España: eclipsar, oscurecer",
+    "collocation": "opacar los logros; opacar el talento; opacar con su presencia",
+    "note": "Muy frecuente en el español de América Latina. En España el sentido figurado se expresa más a menudo con 'eclipsar' o 'ensombrecer'.",
+    "examples": [
+      {
+        "es": "El escándalo político opacó los verdaderos avances económicos del gobierno durante ese trimestre.",
+        "en": "The political scandal overshadowed the government's genuine economic progress during that quarter."
+      },
+      {
+        "es": "Su debut brillante opacó el rendimiento del resto del equipo, aunque todos habían jugado a buen nivel.",
+        "en": "Her dazzling debut overshadowed the rest of the team's performance, even though everyone had played well."
+      }
+    ]
+  },
+  {
+    "id": "ip-043",
+    "term": "oprobio",
+    "meaning_es": "Deshonra o vergüenza pública muy grave que recae sobre una persona, institución o acción.",
+    "meaning_en": "Opprobrium; great public disgrace or shame brought upon a person, institution, or action.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "cubrir de oprobio; el oprobio de la esclavitud; caer en el oprobio",
+    "note": "Registro elevado; propio del discurso editorial, histórico y oratorio. Adjetivo derivado: oprobioso (vergonzoso, infamante).",
+    "examples": [
+      {
+        "es": "El oprobio de la trata de personas no recae solo sobre los traficantes sino también sobre las sociedades que lo toleran.",
+        "en": "The opprobrium of human trafficking falls not only on the traffickers but also on the societies that tolerate it."
+      },
+      {
+        "es": "Aquella decisión cubrió de oprobio a la institución durante años, dañando la confianza del público en ella.",
+        "en": "That decision brought years of opprobrium on the institution, damaging public trust in it for a long time."
+      }
+    ]
+  },
+  {
+    "id": "ip-044",
+    "term": "ostentar",
+    "meaning_es": "Mostrar o exhibir algo de manera llamativa y con cierta arrogancia; hacer alarde de ello.",
+    "meaning_en": "To flaunt or display conspicuously and with some arrogance; to show off.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "ostentar riqueza; ostentar su poder; ostentar privilegios",
+    "note": "Lleva complemento directo. Registro formal en el sentido de 'poseer un cargo'. Las dos acepciones conviven con naturalidad en el español estándar.",
+    "examples": [
+      {
+        "es": "Ostentaba su fortuna con una insolencia que resultaba chocante en un barrio tan empobrecido.",
+        "en": "He flaunted his wealth with an insolence that felt jarring in such an impoverished neighbourhood."
+      },
+      {
+        "es": "La empresa ostentaba sus beneficios ante la prensa mientras recortaba puestos de trabajo en las plantas.",
+        "en": "The company flaunted its profits before the press while cutting jobs in its factories."
+      }
+    ]
+  },
+  {
+    "id": "ip-045",
+    "term": "otorgar",
+    "meaning_es": "Conceder, dar o conferir algo de manera formal, especialmente un derecho, reconocimiento o poder.",
+    "meaning_en": "To grant, award, or confer something formally, especially a right, recognition, or power.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "otorgar un premio; otorgar poderes; otorgar un contrato",
+    "note": "Más formal que 'dar' o 'conceder'. Habitual en textos legales: otorgar testamento (= formalizar un testamento) y en el discurso oficial.",
+    "examples": [
+      {
+        "es": "El jurado otorgó el primer premio a la novela por su extraordinaria hondura emocional y su prosa impecable.",
+        "en": "The jury awarded first prize to the novel for its extraordinary emotional depth and its impeccable prose."
+      },
+      {
+        "es": "La nueva ley otorga a los trabajadores el derecho a desconectarse fuera del horario laboral sin consecuencias.",
+        "en": "The new law grants workers the right to disconnect outside working hours without consequences."
+      }
+    ]
+  },
+  {
+    "id": "ip-046",
+    "term": "paliar",
+    "meaning_es": "Aliviar o reducir parcialmente los efectos negativos de algo sin eliminarlos completamente.",
+    "meaning_en": "To palliate or alleviate; to partially reduce the negative effects of something without fully resolving it.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "paliar el sufrimiento; paliar las consecuencias; medidas para paliar la crisis",
+    "note": "Implica alivio parcial, no una cura. Habitual en medicina (cuidados paliativos) y en el lenguaje de políticas públicas. Adjetivo: paliativo.",
+    "examples": [
+      {
+        "es": "Los cuidados paliativos buscan paliar el dolor y mejorar la calidad de vida del paciente terminal.",
+        "en": "Palliative care aims to alleviate pain and improve the terminally ill patient's quality of life."
+      },
+      {
+        "es": "Los subsidios aprobados por el gobierno no bastan para paliar la crisis social derivada del desempleo masivo.",
+        "en": "The subsidies approved by the government are not enough to ease the social crisis resulting from mass unemployment."
+      }
+    ]
+  },
+  {
+    "id": "ip-047",
+    "term": "palmario/a",
+    "meaning_es": "Que resulta evidente, claro y manifiesto para cualquiera; que no admite dudas ni discusión.",
+    "meaning_en": "Obvious, patent, and clear to everyone; admitting no doubt or dispute.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "una prueba palmaria; un error palmario; de forma palmaria",
+    "note": "Más enfático que 'evidente'; subraya que algo resulta incontestable para cualquier observador. Habitual en la argumentación formal.",
+    "examples": [
+      {
+        "es": "La discrepancia entre los dos testimonios era palmaria: alguien mentía, y la defensa lo sabía perfectamente.",
+        "en": "The discrepancy between the two testimonies was patent: someone was lying, and the defence knew it perfectly well."
+      },
+      {
+        "es": "Su falta de preparación fue palmaria desde el primer momento en que tomó la palabra ante el comité.",
+        "en": "His lack of preparation was plain for all to see from the moment he first took the floor before the committee."
+      }
+    ]
+  },
+  {
+    "id": "ip-048",
+    "term": "parafrasear",
+    "meaning_es": "Reformular o reproducir el contenido de un texto o discurso con palabras propias, conservando el sentido.",
+    "meaning_en": "To paraphrase; to restate or reproduce the content of a text or speech in one's own words, preserving the meaning.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "parafrasear un texto; parafrasear al autor; sin parafrasear",
+    "note": "Término neutro para reformular con palabras propias. Se distingue de 'citar' (reproducción literal) y de 'resumir' (condensación más amplia).",
+    "examples": [
+      {
+        "es": "El estudiante se limitó a parafrasear el manual en lugar de analizar críticamente las ideas que contenía.",
+        "en": "The student merely paraphrased the textbook instead of critically analysing the ideas it contained."
+      },
+      {
+        "es": "Parafraseando a Ortega y Gasset, podríamos decir que somos nosotros y nuestras circunstancias tecnológicas.",
+        "en": "Paraphrasing Ortega y Gasset, we might say that we are ourselves and our technological circumstances."
+      }
+    ]
+  },
+  {
+    "id": "ip-049",
+    "term": "parco/a",
+    "meaning_es": "Escaso en el habla, el gasto o el uso de algo; que usa o dice solo lo mínimo necesario.",
+    "meaning_en": "Sparing; using or saying only the bare minimum; frugal or restrained in speech, expenditure, or expression.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "parco en palabras; parco en elogios; un estilo parco",
+    "note": "Construcciones más frecuentes: 'parco en palabras' (persona de pocas palabras) y 'parco en elogios' (poco dado a reconocer méritos).",
+    "examples": [
+      {
+        "es": "Era un hombre parco en palabras, pero cuando hablaba todo el equipo le prestaba una atención absoluta.",
+        "en": "He was a man of few words, but when he spoke, the entire team paid him absolute attention."
+      },
+      {
+        "es": "La directora fue más bien parca en elogios, lo cual hacía que sus reconocimientos puntuales resultaran aún más valiosos.",
+        "en": "The director was rather sparing with praise, which made her occasional words of recognition all the more valuable."
+      }
+    ]
+  },
+  {
+    "id": "ip-050",
+    "term": "patente",
+    "meaning_es": "Manifiesto, visible y obvio; que se percibe sin dificultad o que no deja lugar a dudas.",
+    "meaning_en": "Manifest, evident, and clear; easily perceived and leaving no room for doubt.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "quedar patente; hacer patente; de forma patente",
+    "note": "Adjetivo (no el sustantivo 'patente' = licencia). La construcción 'quedar patente' es muy habitual para indicar que algo se hace evidente.",
+    "examples": [
+      {
+        "es": "Con ese gesto, quedó patente que la candidata tenía un dominio del debate muy superior al de su rival.",
+        "en": "With that gesture, it became evident that the candidate had a far superior command of the debate than her rival."
+      },
+      {
+        "es": "Su entusiasmo era patente: gesticulaba, interrumpía y apenas podía contener la emoción mientras hablaba.",
+        "en": "Her enthusiasm was obvious: she gestured, interrupted, and could barely contain her excitement as she spoke."
+      }
+    ]
+  },
+  {
+    "id": "ip-051",
+    "term": "perentorio/a",
+    "meaning_es": "Urgente e imperativo; que no admite demora ni réplica, y exige cumplimiento inmediato.",
+    "meaning_en": "Peremptory; urgent and imperative; allowing no delay or argument and demanding immediate compliance.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "un plazo perentorio; una orden perentoria; de forma perentoria",
+    "note": "Habitual en el lenguaje jurídico-administrativo: 'plazo perentorio' designa un límite de tiempo que no admite prórroga. Más rotundo que 'urgente'.",
+    "examples": [
+      {
+        "es": "El juez fijó un plazo perentorio de diez días para que la empresa presentara la documentación requerida.",
+        "en": "The judge set a firm ten-day deadline for the company to submit the required documentation."
+      },
+      {
+        "es": "Su tono era perentorio y no dejaba margen para negociar: debíamos decidir antes del mediodía.",
+        "en": "Her tone was peremptory and left no room for negotiation: we had to decide before noon."
+      }
+    ]
+  },
+  {
+    "id": "ip-052",
+    "term": "perenne",
+    "meaning_es": "Que dura o se mantiene de forma continua e ininterrumpida, sin extinguirse ni caducar.",
+    "meaning_en": "Perennial; lasting or enduring continuously and without interruption; everlasting.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un problema perenne; una fuente perenne; una preocupación perenne",
+    "note": "En botánica, planta que rebrota cada año. En sentido figurado describe problemas o cualidades que se mantienen sin extinguirse.",
+    "examples": [
+      {
+        "es": "La falta de financiación es un problema perenne en la investigación pública española que ningún gobierno ha resuelto.",
+        "en": "The lack of funding is a perennial problem in Spanish public research that no government has managed to resolve."
+      },
+      {
+        "es": "La nieve perenne de esas cimas andinas está retrocediendo a un ritmo alarmante por el calentamiento global.",
+        "en": "The permanent snowpack on those Andean peaks is retreating at an alarming rate due to global warming."
+      }
+    ]
+  },
+  {
+    "id": "ip-053",
+    "term": "perorar",
+    "meaning_es": "Pronunciar un discurso largo y a menudo pomposo; hablar extensamente sobre algo con cierta solemnidad.",
+    "meaning_en": "To hold forth; to deliver a long and often pompous speech; to discourse at length with excessive solemnity.",
+    "register": "coloquial",
+    "region": "general",
+    "collocation": "perorar sobre política; perorar durante horas; ponerse a perorar",
+    "note": "Tono burlón; implica que el hablante es ampuloso y se extiende sin que nadie se lo haya pedido. Sustantivo: perorata.",
+    "examples": [
+      {
+        "es": "Se puso a perorar sobre la decadencia de los valores modernos sin que nadie le hubiera preguntado su opinión.",
+        "en": "He launched into a lengthy speech about the decline of modern values without anyone having asked for his opinion."
+      },
+      {
+        "es": "Después de que el ponente llevara media hora perorando, el moderador le pidió amablemente que concluyera.",
+        "en": "After the speaker had been holding forth for half an hour, the moderator politely asked him to wrap up."
+      }
+    ]
+  },
+  {
+    "id": "ip-054",
+    "term": "perspicacia",
+    "meaning_es": "Agudeza mental para percibir, comprender o intuir lo que no es evidente o está oculto.",
+    "meaning_en": "Perspicacity; keenness of insight; the ability to perceive, understand, or intuit what is not obvious or hidden.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "perspicacia política; perspicacia analítica; demostrar perspicacia",
+    "note": "Adjetivo: perspicaz. Se distingue de 'inteligencia' en que pone el acento en la agudeza perceptiva, no en la capacidad analítica general.",
+    "examples": [
+      {
+        "es": "Fue su perspicacia la que le permitió detectar la irregularidad contable que todos sus colegas habían pasado por alto.",
+        "en": "It was her perspicacity that allowed her to detect the accounting irregularity that all her colleagues had overlooked."
+      },
+      {
+        "es": "Un buen entrevistador necesita perspicacia para captar lo que el entrevistado no dice pero deja entrever.",
+        "en": "A good interviewer needs perspicacity to pick up on what the interviewee does not say but lets show through."
+      }
+    ]
+  },
+  {
+    "id": "ip-055",
+    "term": "pertinaz",
+    "meaning_es": "Que persiste de manera obstinada en una actitud, error o situación a pesar de las razones en contra.",
+    "meaning_en": "Pertinacious; stubbornly persistent in an attitude, error, or situation despite reasons against it.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "una sequía pertinaz; pertinaz en su empeño; un error pertinaz",
+    "note": "Habitual en contextos meteorológicos: 'lluvia pertinaz' (lluvia persistente y molesta). En el plano humano implica terquedad ante evidencias contrarias.",
+    "examples": [
+      {
+        "es": "La pertinaz sequía que azota la región ha llevado a los agricultores a pedir al gobierno medidas de emergencia.",
+        "en": "The relentless drought hitting the region has led farmers to request emergency measures from the government."
+      },
+      {
+        "es": "A pesar de las evidencias en contra, siguió pertinaz en su convicción de que la empresa sobreviviría la crisis.",
+        "en": "Despite the evidence against it, he remained stubbornly convinced that the company would survive the crisis."
+      }
+    ]
+  },
+  {
+    "id": "ip-056",
+    "term": "peyorativo/a",
+    "meaning_es": "Que expresa o implica un juicio negativo, despreciativo o de menosprecio sobre aquello que designa.",
+    "meaning_en": "Pejorative; expressing or implying a negative, derogatory, or dismissive judgment about what it designates.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "connotación peyorativa; uso peyorativo; sentido peyorativo",
+    "note": "Término metalingüístico esencial. Se usa al analizar cómo una palabra adquiere carga negativa con el tiempo o en determinados contextos.",
+    "examples": [
+      {
+        "es": "La palabra 'politiquero' tiene un sentido claramente peyorativo: implica que el político actúa por interés y no por vocación.",
+        "en": "The word 'politiquero' has a clearly pejorative sense: it implies the politician acts out of self-interest rather than vocation."
+      },
+      {
+        "es": "En su origen, el término no era peyorativo, pero su uso repetido en contextos negativos fue cargándolo de connotaciones.",
+        "en": "In its origin the term was not pejorative, but repeated use in negative contexts gradually loaded it with negative connotations."
+      }
+    ]
+  },
+  {
+    "id": "ip-057",
+    "term": "ponderar",
+    "meaning_es": "Considerar con cuidado y equilibrio los distintos aspectos de algo antes de tomar una decisión.",
+    "meaning_en": "To weigh up carefully; to give due consideration to the different aspects of something before deciding.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "ponderar los pros y los contras; ponderar las circunstancias; ponderar el riesgo",
+    "note": "Lleva complemento directo. El sentido de 'elogiar' también existe, pero en el uso culto actual predomina claramente el de 'sopesar' o 'valorar'.",
+    "examples": [
+      {
+        "es": "Antes de firmar el contrato, el director ponderó detenidamente las ventajas y los riesgos que conllevaba la inversión.",
+        "en": "Before signing the contract, the director carefully weighed up the advantages and risks that the investment entailed."
+      },
+      {
+        "es": "Es necesario ponderar el impacto social de la medida antes de aprobarla, no solo su impacto económico inmediato.",
+        "en": "It is necessary to weigh the social impact of the measure before approving it, not only its immediate economic impact."
+      }
+    ]
+  },
+  {
+    "id": "ip-058",
+    "term": "pormenorizar",
+    "meaning_es": "Describir o explicar algo con todos sus detalles y particularidades, sin omitir ningún aspecto.",
+    "meaning_en": "To detail thoroughly; to describe or explain something with all its particulars and nuances, leaving nothing out.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "pormenorizar los hechos; pormenorizar el proceso; sin pormenorizar",
+    "note": "Derivado de 'pormenor' (detalle). Implica exhaustividad metódica. Más formal que 'detallar'. El sustantivo 'pormenor' es frecuente en plural.",
+    "examples": [
+      {
+        "es": "El informe pericial pormenoriza cada fase del proceso de construcción, identificando dónde se produjeron los fallos.",
+        "en": "The expert report details each phase of the construction process, identifying where the failures occurred."
+      },
+      {
+        "es": "Sin pormenorizar las causas técnicas, es difícil que los responsables entiendan qué salió mal y cómo prevenirlo.",
+        "en": "Without detailing the technical causes, it is hard for those responsible to understand what went wrong and how to prevent it."
+      }
+    ]
+  },
+  {
+    "id": "ip-059",
+    "term": "postergar",
+    "meaning_es": "Retrasar o aplazar algo para un momento posterior; posponerlo de forma deliberada.",
+    "meaning_en": "To postpone or defer something deliberately to a later time.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "postergar una decisión; postergar el debate; postergar los intereses colectivos",
+    "note": "Lleva complemento directo. El sentido de 'relegar a una persona' es más frecuente en América Latina; en España suele preferirse 'aplazar' o 'relegar'.",
+    "examples": [
+      {
+        "es": "El consejo decidió postergar la votación sobre la fusión hasta recibir un dictamen jurídico independiente.",
+        "en": "The board decided to postpone the vote on the merger until it received an independent legal opinion."
+      },
+      {
+        "es": "No es prudente seguir postergando la reforma educativa: cada año de inacción agrava el problema.",
+        "en": "It is not wise to keep deferring the education reform: every year of inaction makes the problem worse."
+      }
+    ]
+  },
+  {
+    "id": "ip-060",
+    "term": "postular",
+    "meaning_es": "Defender o proponer algo como principio, hipótesis o verdad en un debate o argumentación.",
+    "meaning_en": "To postulate or put forward something as a principle, hypothesis, or truth in argument.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "postular una teoría; postular el principio de; postular que...",
+    "note": "La forma reflexiva 'postularse' con el sentido de 'presentar su candidatura' es especialmente frecuente en América Latina.",
+    "examples": [
+      {
+        "es": "El físico postuló que la velocidad de la luz es constante en todos los sistemas de referencia inerciales.",
+        "en": "The physicist postulated that the speed of light is constant in all inertial reference systems."
+      },
+      {
+        "es": "La autora postula que la identidad cultural no es fija sino que se reconstituye continuamente a través del lenguaje.",
+        "en": "The author postulates that cultural identity is not fixed but is continuously reconstituted through language."
+      }
+    ]
+  },
+  {
+    "id": "ip-061",
+    "term": "pragmático/a",
+    "meaning_es": "Que privilegia las consecuencias prácticas y la eficacia sobre los principios teóricos o ideológicos.",
+    "meaning_en": "Pragmatic; favouring practical consequences and effectiveness over theoretical principles or ideology.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un enfoque pragmático; ser pragmático ante los problemas; política pragmática",
+    "note": "Puede ser laudatorio (resolutivo, práctico) o crítico (sin principios, oportunista) según el contexto. Sustantivo: pragmatismo.",
+    "examples": [
+      {
+        "es": "Más allá de los debates ideológicos, la negociadora adoptó una postura pragmática y buscó acuerdos concretos.",
+        "en": "Beyond ideological debates, the negotiator adopted a pragmatic stance and sought concrete agreements."
+      },
+      {
+        "es": "Un diseño pragmático prioriza la usabilidad real del usuario por encima de la elegancia estética del producto.",
+        "en": "A pragmatic design prioritises real user usability over the aesthetic elegance of the product."
+      }
+    ]
+  },
+  {
+    "id": "ip-062",
+    "term": "preconizar",
+    "meaning_es": "Defender o recomendar públicamente algo como conveniente o necesario; abogar por ello.",
+    "meaning_en": "To advocate or recommend publicly; to champion something as beneficial or necessary.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "preconizar una reforma; preconizar el diálogo; preconizar medidas",
+    "note": "Más formal que 'recomendar' o 'proponer'. Implica una defensa pública y sostenida. No confundir con 'pronosticar' (predecir).",
+    "examples": [
+      {
+        "es": "El organismo internacional preconiza un modelo educativo basado en el pensamiento crítico y la colaboración.",
+        "en": "The international body advocates an educational model based on critical thinking and collaboration."
+      },
+      {
+        "es": "Desde sus primeras publicaciones siempre preconizó la transparencia como el pilar de la gestión pública.",
+        "en": "From his earliest publications he always championed transparency as the cornerstone of public administration."
+      }
+    ]
+  },
+  {
+    "id": "ip-063",
+    "term": "precipitar(se)",
+    "meaning_es": "Actuar con excesiva rapidez y sin la reflexión necesaria; obrar de forma impulsiva.",
+    "meaning_en": "To act rashly or hastily, without sufficient reflection; to be impulsive.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "precipitarse en una decisión; no precipitarse; actuar de forma precipitada",
+    "note": "La forma reflexiva 'precipitarse' expresa actuar con precipitación: 'no te precipites'. La forma transitiva significa desencadenar algo: precipitar la crisis.",
+    "examples": [
+      {
+        "es": "No conviene precipitarse al sacar conclusiones antes de contar con todos los datos del experimento.",
+        "en": "It is not wise to rush to conclusions before having all the data from the experiment."
+      },
+      {
+        "es": "Se precipitó al firmar el contrato sin leer las cláusulas y luego tuvo que asumir consecuencias inesperadas.",
+        "en": "He acted rashly in signing the contract without reading the clauses and later had to face unexpected consequences."
+      }
+    ]
+  },
+  {
+    "id": "ip-064",
+    "term": "predisponer",
+    "meaning_es": "Crear de antemano una actitud favorable o desfavorable en alguien hacia algo; inclinar previamente.",
+    "meaning_en": "To predispose; to create in advance a favourable or unfavourable attitude in someone toward something.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "predisponer al público; predisponer en contra; factores que predisponen a",
+    "note": "Lleva complemento directo: 'predisponer a alguien a/contra algo'. Sustantivo: predisposición. También frecuente en medicina (predisposición genética).",
+    "examples": [
+      {
+        "es": "La cobertura negativa de los medios predispuso a la ciudadanía en contra del proyecto antes de conocer sus detalles.",
+        "en": "The media's negative coverage predisposed the public against the project before they knew its details."
+      },
+      {
+        "es": "Tener antecedentes familiares no predispone inevitablemente a desarrollar la enfermedad, según el estudio.",
+        "en": "Having a family history does not inevitably predispose someone to developing the illness, according to the study."
+      }
+    ]
+  },
+  {
+    "id": "ip-065",
+    "term": "prescindible",
+    "meaning_es": "De lo que se puede prescindir sin pérdida importante; no esencial ni indispensable.",
+    "meaning_en": "Dispensable; that which can be done without without significant loss; not essential or indispensable.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un elemento prescindible; sentirse prescindible; considerarlo prescindible",
+    "note": "Antónimo de 'imprescindible'. Se usa a menudo para describir personas en el ámbito laboral que sienten que podrían ser reemplazadas sin pérdida.",
+    "examples": [
+      {
+        "es": "Nadie debería sentirse prescindible en un equipo de trabajo bien gestionado y con una cultura sana.",
+        "en": "No one should feel dispensable in a well-managed team with a healthy workplace culture."
+      },
+      {
+        "es": "El coordinador suprimió los capítulos que consideró prescindibles para no sobrepasar el límite de páginas del informe.",
+        "en": "The coordinator cut the chapters he considered dispensable so as not to exceed the report's page limit."
+      }
+    ]
+  },
+  {
+    "id": "ip-066",
+    "term": "presuponer",
+    "meaning_es": "Dar por supuesto algo de antemano, antes de analizar los hechos o sin tener confirmación explícita.",
+    "meaning_en": "To presuppose; to assume or take for granted in advance, before examining the facts or without explicit confirmation.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "presuponer la culpabilidad; presuponer el acuerdo; lo que presupone el argumento",
+    "note": "En lógica y lingüística, la presuposición está incorporada en la estructura del enunciado. Sustantivo: presuposición. Más preciso que 'suponer'.",
+    "examples": [
+      {
+        "es": "Al preguntar '¿cuándo dejaste de mentir?', el periodista presuponía ya que el político había mentido.",
+        "en": "By asking 'when did you stop lying?', the journalist was already presupposing that the politician had lied."
+      },
+      {
+        "es": "No podemos presuponer que todos los participantes comparten el mismo nivel de conocimiento previo sobre el tema.",
+        "en": "We cannot assume that all participants share the same level of prior knowledge about the topic."
+      }
+    ]
+  },
+  {
+    "id": "ip-067",
+    "term": "prevalecer",
+    "meaning_es": "Imponerse o mantenerse sobre otras cosas por tener mayor fuerza, autoridad o mérito.",
+    "meaning_en": "To prevail; to triumph over other things or endure because of greater strength, authority, or merit.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "prevalecer sobre; prevalecer en el tiempo; hacer prevalecer",
+    "note": "Lleva 'sobre' cuando se especifica aquello que se supera. La construcción 'hacer prevalecer' implica lograr que una postura sea aceptada.",
+    "examples": [
+      {
+        "es": "En la deliberación final, prevaleció la postura más moderada gracias al apoyo de los vocales independientes.",
+        "en": "In the final deliberation, the more moderate position prevailed thanks to the support of the independent members."
+      },
+      {
+        "es": "A pesar de la oposición, el sentido común prevaleció y el proyecto fue aprobado por unanimidad.",
+        "en": "Despite the opposition, common sense prevailed and the project was approved unanimously."
+      }
+    ]
+  },
+  {
+    "id": "ip-068",
+    "term": "primar",
+    "meaning_es": "Tener mayor importancia, peso o prioridad que otras cosas en un contexto determinado.",
+    "meaning_en": "To take precedence or be of paramount importance; to outweigh other considerations in a given context.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "primar la eficiencia; primar sobre; primar los intereses colectivos",
+    "note": "Intransitivo con 'sobre': 'la salud prima sobre el beneficio'. También transitivo: 'el sistema prima la productividad'. Ambos usos son estándar.",
+    "examples": [
+      {
+        "es": "En momentos de emergencia, la seguridad debe primar sobre cualquier otra consideración económica o logística.",
+        "en": "In emergencies, safety must take precedence over any other economic or logistical consideration."
+      },
+      {
+        "es": "Un sistema educativo que prima el resultado sobre el proceso corre el riesgo de descuidar el aprendizaje real.",
+        "en": "An educational system that prioritises outcomes over process risks neglecting genuine learning."
+      }
+    ]
+  },
+  {
+    "id": "ip-069",
+    "term": "privativo/a",
+    "meaning_es": "Exclusivo de algo o alguien; que pertenece solo a una persona, grupo o ámbito y no a otros.",
+    "meaning_en": "Exclusive to; pertaining only to a specific person, group, or domain and not to others.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "competencia privativa; un rasgo privativo de; derecho privativo",
+    "note": "En derecho, 'competencia privativa' designa una jurisdicción exclusiva e intransferible. Distinto de 'privado' (no público) y de 'privador' (que priva de algo).",
+    "examples": [
+      {
+        "es": "La gestión de las relaciones exteriores es una competencia privativa del Estado central, no de las regiones.",
+        "en": "The management of foreign relations is an exclusive competence of the central state, not of the regions."
+      },
+      {
+        "es": "El lenguaje no es un rasgo privativo del ser humano, pero sí su mayor exponente de complejidad comunicativa.",
+        "en": "Language is not an exclusive trait of human beings, but it is their greatest example of communicative complexity."
+      }
+    ]
+  },
+  {
+    "id": "ip-070",
+    "term": "proclive",
+    "meaning_es": "Inclinado o con tendencia natural hacia algo, generalmente algo negativo o perjudicial.",
+    "meaning_en": "Prone or inclined toward something, typically something negative or harmful; disposed to.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "proclive a los errores; proclive al pesimismo; ser proclive a",
+    "note": "Rige 'a'. Describe sobre todo tendencias de carácter. La connotación negativa es la más frecuente, aunque no es obligatoria.",
+    "examples": [
+      {
+        "es": "El informe señala que los adolescentes son especialmente proclives a adoptar comportamientos de riesgo en grupos.",
+        "en": "The report notes that adolescents are especially prone to adopting risky behaviour in group settings."
+      },
+      {
+        "es": "Su carácter perfeccionista la hacía proclive a la autocrítica excesiva que frenaba su productividad.",
+        "en": "Her perfectionist character made her prone to excessive self-criticism that held back her productivity."
+      }
+    ]
+  },
+  {
+    "id": "ip-071",
+    "term": "proferir",
+    "meaning_es": "Pronunciar o emitir palabras, a menudo de naturaleza violenta, ofensiva o solemne.",
+    "meaning_en": "To utter or let out words, typically of a violent, offensive, or solemn nature.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "proferir insultos; proferir amenazas; proferir un grito",
+    "note": "Casi siempre acompaña a enunciados cargados de emoción o agresividad: insultos, amenazas, gritos. Para el habla ordinaria es más natural 'decir' o 'pronunciar'.",
+    "examples": [
+      {
+        "es": "El acusado profirió insultos contra el tribunal y tuvo que ser retirado de la sala por el personal de seguridad.",
+        "en": "The accused hurled insults at the court and had to be removed from the chamber by security staff."
+      },
+      {
+        "es": "Sin proferir una sola queja, soportó horas de interrogatorio bajo una presión psicológica considerable.",
+        "en": "Without uttering a single complaint, he endured hours of interrogation under considerable psychological pressure."
+      }
+    ]
+  },
+  {
+    "id": "ip-072",
+    "term": "profundizar",
+    "meaning_es": "Examinar un tema con mayor detenimiento y rigor; ir más allá de la superficie para entenderlo mejor.",
+    "meaning_en": "To delve deeper into; to examine a subject with greater care and rigour, going beyond the surface.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "profundizar en el tema; profundizar el análisis; profundizar sobre las causas",
+    "note": "Lo más habitual es 'profundizar en': 'profundizar en un tema'. También se usa como transitivo: 'profundizar el análisis'.",
+    "examples": [
+      {
+        "es": "El simposio ofrecerá a los asistentes la oportunidad de profundizar en los últimos avances de la neurociencia cognitiva.",
+        "en": "The symposium will give participants an opportunity to delve deeper into the latest advances in cognitive neuroscience."
+      },
+      {
+        "es": "Para profundizar de verdad en un idioma, la exposición constante es más eficaz que cualquier manual.",
+        "en": "To truly go deep in a language, constant exposure is more effective than any textbook."
+      }
+    ]
+  },
+  {
+    "id": "ip-073",
+    "term": "prolijo/a",
+    "meaning_es": "Excesivamente extenso o detallado en el lenguaje; que dice más de lo necesario, resultando tedioso.",
+    "meaning_en": "Prolix; excessively lengthy or detailed in expression; saying more than necessary, to the point of tedium.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un texto prolijo; una explicación prolija; pecar de prolijo",
+    "note": "En Argentina y algunas variedades latinoamericanas, 'prolijo' significa 'ordenado' o 'pulcro', sentido diferente al de 'verboso' propio del español general.",
+    "examples": [
+      {
+        "es": "Su argumentación, aunque sólida en el fondo, resultaba prolija: empleaba cien palabras donde bastaban veinte.",
+        "en": "His argumentation, though sound in substance, was prolix: he used a hundred words where twenty would have sufficed."
+      },
+      {
+        "es": "Una presentación prolija cansa al auditorio y puede acabar siendo contraproducente, aunque los datos sean excelentes.",
+        "en": "A long-winded presentation exhausts the audience and can end up being counterproductive, however excellent the data."
+      }
+    ]
+  },
+  {
+    "id": "ip-074",
+    "term": "propiciar",
+    "meaning_es": "Favorecer o crear las condiciones adecuadas para que algo ocurra o se desarrolle.",
+    "meaning_en": "To foster, facilitate, or bring about; to create favourable conditions for something to happen or develop.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "propiciar el diálogo; propiciar un cambio; propiciar el entendimiento",
+    "note": "El sujeto puede ser una persona o una circunstancia; no es necesario que haya intención. El adjetivo 'propicio' (favorable) comparte la misma raíz.",
+    "examples": [
+      {
+        "es": "La mediación internacional contribuyó a propiciar un ambiente de confianza entre las partes en conflicto.",
+        "en": "International mediation helped to foster an atmosphere of trust between the parties in conflict."
+      },
+      {
+        "es": "Un horario de trabajo flexible puede propiciar mayor bienestar sin comprometer la productividad del equipo.",
+        "en": "A flexible work schedule can foster greater well-being without compromising the team's productivity."
+      }
+    ]
+  },
+  {
+    "id": "ip-075",
+    "term": "propugnar",
+    "meaning_es": "Defender con convicción una idea, causa o propuesta y promoverla activamente ante otros.",
+    "meaning_en": "To advocate or champion; to defend an idea, cause, or proposal with conviction and promote it actively.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "propugnar una reforma; propugnar los derechos; propugnar el cambio",
+    "note": "Implica un compromiso más firme que 'defender' o 'apoyar'; sugiere una campaña pública y sostenida. Sustantivo: propugnador.",
+    "examples": [
+      {
+        "es": "Durante toda su carrera política propugnó una fiscalidad más justa y progresiva para reducir la desigualdad.",
+        "en": "Throughout his political career he championed a fairer and more progressive taxation system to reduce inequality."
+      },
+      {
+        "es": "La organización propugna un modelo económico que sea compatible con la preservación del medio ambiente.",
+        "en": "The organisation advocates an economic model that is compatible with the preservation of the natural environment."
+      }
+    ]
+  },
+  {
+    "id": "ip-076",
+    "term": "proscribir",
+    "meaning_es": "Prohibir formalmente algo o desterrar a alguien; excluir algo del uso o del ámbito permitido.",
+    "meaning_en": "To proscribe; to formally ban or prohibit something; to outlaw or exclude from accepted use.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "proscribir el uso de; proscribir a un grupo; proscribir una práctica",
+    "note": "Más absoluto que 'prohibir'; implica una exclusión oficial o un destierro. Sustantivo: proscripción. Adjetivo: proscrito (también sustantivo: el proscrito).",
+    "examples": [
+      {
+        "es": "El tratado internacional proscribe el uso de armas químicas en conflictos armados bajo cualquier circunstancia.",
+        "en": "The international treaty proscribes the use of chemical weapons in armed conflict under any circumstances."
+      },
+      {
+        "es": "Durante la dictadura, los partidos de oposición fueron proscritos y sus líderes enviados al exilio.",
+        "en": "During the dictatorship, opposition parties were proscribed and their leaders sent into exile."
+      }
+    ]
+  },
+  {
+    "id": "ip-077",
+    "term": "puntilloso/a",
+    "meaning_es": "Excesivamente atento a los detalles, las formas o los puntos de honor; quisquilloso en cuestiones de protocolo.",
+    "meaning_en": "Punctilious; excessively attentive to details, formalities, or points of honour; fussy about protocol.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "ser puntilloso con el protocolo; un jefe puntilloso; puntilloso en extremo",
+    "note": "Tiene matiz negativo: implica exceso de sensibilidad ante las formas. Se diferencia de 'meticuloso', que es neutro o positivo.",
+    "examples": [
+      {
+        "es": "Era tan puntilloso con las formas que rechazó el informe solo porque el encabezado no seguía el formato oficial.",
+        "en": "He was so punctilious about formalities that he rejected the report simply because the heading did not follow official format."
+      },
+      {
+        "es": "Su carácter puntilloso hacía las reuniones más largas de lo necesario, deteniendo el debate por cuestiones de etiqueta.",
+        "en": "His punctilious character made meetings longer than necessary, halting the debate over points of etiquette."
+      }
+    ]
+  },
+  {
+    "id": "ip-078",
+    "term": "puntualizar",
+    "meaning_es": "Precisar o aclarar un punto concreto de lo que se ha dicho, corrigiendo o completando la información.",
+    "meaning_en": "To specify or pin down; to clarify or correct a particular point in what has been said.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "puntualizar que...; puntualizar un detalle; quiero puntualizar",
+    "note": "Construcción frecuente en debates y entrevistas: 'quisiera puntualizar que...'. Sustantivo: puntualización.",
+    "examples": [
+      {
+        "es": "La ministra quiso puntualizar que la reforma afecta solo a los contratos nuevos y no a los ya en vigor.",
+        "en": "The minister wished to clarify that the reform applies only to new contracts and not to those already in force."
+      },
+      {
+        "es": "Permítame puntualizar: no dije que el plan era perfecto, sino que era el mejor de los disponibles en ese momento.",
+        "en": "Allow me to be precise: I did not say the plan was perfect, only that it was the best of those available at the time."
+      }
+    ]
+  },
+  {
+    "id": "ip-079",
+    "term": "precario/a",
+    "meaning_es": "De poca estabilidad, solidez o seguridad; que puede deteriorarse o desaparecer en cualquier momento.",
+    "meaning_en": "Precarious; lacking stability, solidity, or security; liable to deteriorate or disappear at any moment.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "situación precaria; empleo precario; condiciones precarias",
+    "note": "El sustantivo 'precariedad' es clave en el debate socioeconómico sobre el mercado laboral en España y América Latina.",
+    "examples": [
+      {
+        "es": "Millones de trabajadores jóvenes encadenan contratos temporales y viven en una situación económica muy precaria.",
+        "en": "Millions of young workers chain together temporary contracts and live in a very precarious economic situation."
+      },
+      {
+        "es": "El cese del fuego se mantenía en un equilibrio precario que cualquier incidente menor podía hacer colapsar.",
+        "en": "The ceasefire held in a precarious balance that any minor incident could cause to collapse."
+      }
+    ]
+  },
+  {
+    "id": "ip-080",
+    "term": "inocuo/a",
+    "meaning_es": "Que no causa daño, peligro ni efecto nocivo alguno; inofensivo.",
+    "meaning_en": "Innocuous; causing no harm, danger, or adverse effect; harmless.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "una sustancia inocua; un comentario inocuo; resultar inocuo",
+    "note": "Se usa en sentido literal (sustancia sin toxicidad) y figurado (comentario sin efecto ni fuerza). No equivale a 'inútil', que implica falta de utilidad.",
+    "examples": [
+      {
+        "es": "La dosis administrada es perfectamente inocua para los adultos, aunque debe evitarse en niños menores de dos años.",
+        "en": "The administered dose is perfectly harmless for adults, though it should be avoided in children under two years old."
+      },
+      {
+        "es": "Su intervención fue tan inocua que no cambió nada: ni irritó ni convenció ni aportó ninguna perspectiva nueva.",
+        "en": "His contribution was so inoffensive that it changed nothing: it neither irritated nor convinced nor added any new perspective."
+      }
+    ]
+  },
+  {
+    "id": "ip-081",
+    "term": "interponer",
+    "meaning_es": "Presentar formalmente una acción o recurso jurídico ante la autoridad competente.",
+    "meaning_en": "To lodge or file a formal legal appeal or action before the competent authority.",
+    "register": "formal",
+    "region": "general",
+    "collocation": "interponer un recurso; interponer una denuncia; interponer una queja",
+    "note": "En derecho, 'interponer un recurso' es una fórmula fija para presentar una apelación. Lleva complemento directo.",
+    "examples": [
+      {
+        "es": "La empresa interpuso un recurso de apelación contra la sentencia en el plazo establecido por la ley.",
+        "en": "The company lodged an appeal against the ruling within the time limit established by law."
+      },
+      {
+        "es": "Cualquier ciudadano puede interponer una denuncia ante el defensor del pueblo si considera vulnerados sus derechos.",
+        "en": "Any citizen can file a complaint with the ombudsman if they consider their rights to have been violated."
+      }
+    ]
+  },
+  {
+    "id": "ip-082",
+    "term": "interlocutor/a",
+    "meaning_es": "Cada una de las personas que participan en un diálogo o negociación, especialmente quien representa a un grupo.",
+    "meaning_en": "Interlocutor; each of the parties in a dialogue or negotiation, especially one who represents a group.",
+    "register": "neutro",
+    "region": "general",
+    "collocation": "un interlocutor válido; los interlocutores sociales; encontrar un interlocutor",
+    "note": "En el discurso político, 'interlocutores sociales' designa a sindicatos y patronales como partes del diálogo. La forma plural es muy frecuente.",
+    "examples": [
+      {
+        "es": "El gobierno necesita un interlocutor válido al otro lado de la mesa para que las negociaciones avancen.",
+        "en": "The government needs a credible interlocutor on the other side of the table for negotiations to move forward."
+      },
+      {
+        "es": "Como buena interlocutora, supo adaptar su registro y vocabulario al nivel de comprensión de cada persona.",
+        "en": "As a skilled interlocutor, she was able to adapt her register and vocabulary to each person's level of understanding."
+      }
+    ]
+  }
+]

@@ -87,7 +87,7 @@ def _collect_cog_entries(bot: Hablemos) -> list[tuple[str, str, list[str], list[
 
         prefix_lines: list[str] = []
         for cmd in cog.get_commands():
-            if _is_owner_command(cmd):
+            if cmd.hidden or _is_owner_command(cmd):
                 continue
             prefix_lines.append(_format_prefix_cmd(prefix, cmd))
 
@@ -205,7 +205,7 @@ class General(BaseCog):
     async def help(self, ctx, arg=''):
         if arg:
             requested = self.bot.get_command(arg)
-            if not requested:
+            if requested is None or requested.hidden:
                 await ctx.send("I was unable to find the command you requested")
                 return
             message = f"**{self.bot.command_prefix}{requested.qualified_name}**\n"

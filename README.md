@@ -226,6 +226,14 @@ To add or bump a dependency, use `uv add <pkg>` (or `uv add --dev <pkg>`) and co
 ./scripts/check_deadcode.sh
 ```
 
+### Unlisted Vocabulary Preview
+
+`$c` opens a shuffled advanced-Spanish study deck; `$c explayarse` finds a term. Searches ignore case and accents (`$c ahinco`) and accept headword fragments. The command is deliberately absent from `/help`, help autocomplete, `$help c`, and unknown-command suggestions. It is unlisted, **not owner-restricted**: anyone who knows its name can use it.
+
+The bundled catalog contains **419 entries and 838 original bilingual examples**. Components V2 cards show Spanish/English meanings, register and regional guidance, a natural collocation, and a Spanish usage note. The invoker can move backward/forward and hide/show English. A deck does not repeat entries; opening another deck reshuffles independently. Controls expire after ten minutes of inactivity while the last card remains readable. The per-user command cooldown is five seconds.
+
+Data live in `cogs/advanced_spanish_cog/data/*.json` and are validated on cog load. No runtime AI, API, or database calls are needed, and browsing progress is not persisted. The Cervantes inventory link is further reading, not a claim that every original card has an official C1/C2 classification. The cog is auto-discovered; no `$sync` is required.
+
 ### Docker
 
 ```bash
