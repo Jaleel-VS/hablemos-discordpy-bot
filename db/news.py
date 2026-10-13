@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 from db import DatabaseMixin
 
-NEWS_MAX_AGE = timedelta(days=14)
+NEWS_MAX_AGE = timedelta(days=90)
 
 
 @dataclass(frozen=True, slots=True)

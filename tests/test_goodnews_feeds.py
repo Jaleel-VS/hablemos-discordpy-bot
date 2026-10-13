@@ -4,7 +4,7 @@ Deterministic boundary tests only — no network, no mocked forwarding.
 """
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from html import escape
 
 import pytest
@@ -17,7 +17,7 @@ from cogs.goodnews_cog.feeds import FEEDS, Feed, parse_feed
 
 _EN = FEEDS["en"]
 _NOW = datetime(2026, 10, 13, 12, 0, 0, tzinfo=UTC)
-_PUB = "Mon, 13 Oct 2026 09:00:00 +0000"  # within 14-day window
+_PUB = "Tue, 13 Oct 2026 09:00:00 +0000"
 
 
 def _rss(items: str, *, root: str = '<rss version="2.0">') -> bytes:
@@ -102,16 +102,15 @@ def test_future_date_skipped() -> None:
 
 
 def test_article_older_than_max_age_skipped() -> None:
-    old = "Sun, 28 Sep 2026 09:00:00 +0000"  # 15 days before _NOW
+    old = (_NOW - timedelta(days=90, seconds=1)).strftime("%a, %d %b %Y %H:%M:%S +0000")
     assert _parse(_rss(_item(pub=old))) == []
 
 
 def test_exactly_at_max_age_boundary_accepted() -> None:
-    from db.news import NEWS_MAX_AGE
-    boundary = _NOW - NEWS_MAX_AGE
+    boundary = _NOW - timedelta(days=90)
     pub_str = boundary.strftime("%a, %d %b %Y %H:%M:%S +0000")
     articles = _parse(_rss(_item(pub=pub_str)))
-    assert len(articles) == 1
+    assert [article.published_at for article in articles] == [boundary]
 
 
 def test_missing_pubdate_skipped() -> None:

@@ -94,7 +94,7 @@ async def test_concurrent_draws_one_per_article(news_db: Database) -> None:
 async def test_language_and_freshness_isolation(news_db: Database) -> None:
     """Language filter and age cutoff are both respected."""
     en = _article("en-1", "en", offset=timedelta(days=1))
-    es = _article("es-1", "es", offset=timedelta(days=1))
+    es = _article("es-1", "es", offset=timedelta(days=60))
     stale = _article("stale", "en", offset=NEWS_MAX_AGE + timedelta(minutes=1))
     future = _article("future", "en", offset=-timedelta(hours=1))  # published_at in future
     await _seed(news_db, [en, es, stale, future])
@@ -112,7 +112,7 @@ async def test_language_and_freshness_isolation(news_db: Database) -> None:
         await news_db.next_good_news(100, "en")
 
     await news_db._execute(
-        "UPDATE good_news_articles SET published_at = NOW() - INTERVAL '15 days' WHERE url = $1",
+        "UPDATE good_news_articles SET published_at = NOW() - INTERVAL '91 days' WHERE url = $1",
         en.url,
     )
     await news_db.prune_good_news()
@@ -123,11 +123,12 @@ async def test_language_and_freshness_isolation(news_db: Database) -> None:
 
 async def test_exhaustion_raises_not_cycles(news_db: Database) -> None:
     """After all articles are seen, LookupError is raised — no silent cycle reset."""
-    articles = [_article(f"a{i}", offset=timedelta(hours=i + 1)) for i in range(3)]
+    articles = [_article(f"a{days}", offset=timedelta(days=days)) for days in (60, 1, 30)]
     await _seed(news_db, articles)
+    await news_db.prune_good_news()
 
     draws = [await news_db.next_good_news(100, "en") for _ in articles]
-    assert [article.url for article in draws] == [article.url for article in articles]
+    assert [article.url for article in draws] == [articles[1].url, articles[2].url, articles[0].url]
 
     with pytest.raises(LookupError):
         await news_db.next_good_news(100, "en")
