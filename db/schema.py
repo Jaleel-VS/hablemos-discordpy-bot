@@ -999,4 +999,28 @@ async def initialize_schema(pool):
             )
         ''')
 
+        # Bilingual facts: channel-level progress, no user IDs or message content.
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS fun_facts (
+                id TEXT PRIMARY KEY,
+                es TEXT NOT NULL,
+                en TEXT NOT NULL,
+                source_name TEXT NOT NULL,
+                source_url TEXT NOT NULL
+            )
+        ''')
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS fact_cycles (
+                channel_id BIGINT PRIMARY KEY,
+                last_fact_id TEXT REFERENCES fun_facts(id) ON DELETE SET NULL
+            )
+        ''')
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS fact_seen (
+                channel_id BIGINT NOT NULL REFERENCES fact_cycles(channel_id) ON DELETE CASCADE,
+                fact_id TEXT NOT NULL REFERENCES fun_facts(id) ON DELETE CASCADE,
+                PRIMARY KEY (channel_id, fact_id)
+            )
+        ''')
+
         logger.info("Database schema initialized")

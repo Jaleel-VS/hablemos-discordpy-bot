@@ -1,0 +1,765 @@
+[
+  {
+    "id": "space-001",
+    "es": "La mayoría de las galaxias grandes albergan un agujero negro supermasivo en su centro, incluyendo la Vía Láctea, cuyo agujero negro se llama Sagitario A*.",
+    "en": "Most large galaxies host a supermassive black hole at their center, including the Milky Way, whose black hole is called Sagittarius A*.",
+    "source_name": "ESA – Black Holes",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Black_holes"
+  },
+  {
+    "id": "space-002",
+    "es": "El Telescopio Espacial Hubble ha realizado más de 1,7 millones de observaciones y contribuido a más de 23.000 artículos científicos revisados por pares desde su lanzamiento en 1990.",
+    "en": "The Hubble Space Telescope has made over 1.7 million observations and contributed to more than 23,000 peer-reviewed papers since its 1990 launch.",
+    "source_name": "NASA – About Hubble",
+    "source_url": "https://science.nasa.gov/mission/hubble/overview/about-hubble/"
+  },
+  {
+    "id": "space-003",
+    "es": "El universo observable tiene aproximadamente 13.800 millones de años; su edad fue determinada a partir de mediciones del fondo cósmico de microondas y de la tasa de expansión del universo.",
+    "en": "The observable universe is approximately 13.8 billion years old, determined from measurements of the cosmic microwave background and the universe's expansion rate.",
+    "source_name": "NASA – Hubble Constant and Tension",
+    "source_url": "https://science.nasa.gov/mission/hubble/science/science-behind-the-discoveries/hubble-constant-and-tension/"
+  },
+  {
+    "id": "space-004",
+    "es": "El universo está compuesto en un 68% de energía oscura, un 27% de materia oscura y solo un 5% de materia ordinaria visible, como estrellas, planetas y gas.",
+    "en": "The universe is made up of about 68% dark energy, 27% dark matter, and only 5% ordinary visible matter such as stars, planets, and gas.",
+    "source_name": "NASA – Dark Matter",
+    "source_url": "https://science.nasa.gov/dark-matter/"
+  },
+  {
+    "id": "space-005",
+    "es": "La primera imagen directa de un agujero negro fue capturada en 2019 por el Telescopio del Horizonte de Eventos (EHT) y mostró el agujero negro supermasivo en el centro de la galaxia M87, a unos 55 millones de años luz de la Tierra.",
+    "en": "The first direct image of a black hole was captured in 2019 by the Event Horizon Telescope (EHT), revealing the supermassive black hole at the center of galaxy M87, about 55 million light-years from Earth.",
+    "source_name": "NASA – First Image of a Black Hole",
+    "source_url": "https://science.nasa.gov/resource/first-image-of-a-black-hole/"
+  },
+  {
+    "id": "space-006",
+    "es": "El agujero negro en M87 tiene una masa de unos 6.500 millones de soles, confirmada por el anillo de luz observado en la primera imagen del EHT.",
+    "en": "The black hole in M87 has a mass of about 6.5 billion suns, confirmed by the bright ring of light seen in the EHT's first image.",
+    "source_name": "Event Horizon Telescope – First M87 Results",
+    "source_url": "https://eventhorizontelescope.org/publications/first-m87-event-horizon-telescope-results-i-shadow-supermassive-black-hole"
+  },
+  {
+    "id": "space-007",
+    "es": "Sagitario A*, el agujero negro en el centro de la Vía Láctea, tiene una masa de aproximadamente 4 millones de veces la del Sol y fue fotografiado por el EHT en 2022.",
+    "en": "Sagittarius A*, the black hole at the Milky Way's center, has a mass of about 4 million solar masses and was imaged by the EHT in 2022.",
+    "source_name": "Event Horizon Telescope – First Sgr A* Results",
+    "source_url": "https://eventhorizontelescope.org/publications/first-sagittarius-event-horizon-telescope-results-i-shadow-supermassive-black-hole"
+  },
+  {
+    "id": "space-008",
+    "es": "El 17 de agosto de 2017, los detectores LIGO y Virgo captaron las primeras ondas gravitacionales de una fusión de estrellas de neutrones, denominada GW170817, también observada con luz a través de múltiples telescopios.",
+    "en": "On August 17, 2017, LIGO and Virgo detected the first gravitational waves from a neutron star merger, GW170817, which was also observed in light by telescopes worldwide.",
+    "source_name": "LIGO – GW170817 Press Release",
+    "source_url": "https://ligo.org/detections/gw170817/"
+  },
+  {
+    "id": "space-009",
+    "es": "La colisión de estrellas de neutrones que produjo GW170817 ocurrió en la galaxia NGC 4993, a unos 130 millones de años luz, y generó elementos pesados como el oro en su eyección.",
+    "en": "The neutron star collision that produced GW170817 occurred in galaxy NGC 4993, about 130 million light-years away, and forged heavy elements including gold in its ejected debris.",
+    "source_name": "LIGO – GW170817 Science Summary",
+    "source_url": "https://ligo.org/science-summaries/gw170817mma/"
+  },
+  {
+    "id": "space-010",
+    "es": "La misión Planck de la ESA, lanzada en 2009, cartografió el fondo cósmico de microondas con una sensibilidad sin precedentes, revelando fluctuaciones de temperatura de apenas una parte en 100.000.",
+    "en": "ESA's Planck mission, launched in 2009, mapped the cosmic microwave background with unprecedented sensitivity, revealing temperature fluctuations of only one part in 100,000.",
+    "source_name": "ESA – Planck Overview",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Planck_overview"
+  },
+  {
+    "id": "space-011",
+    "es": "Planck midió la temperatura del fondo cósmico de microondas en aproximadamente 2,7 Kelvin, que es el resplandor residual del Big Bang que ocurrió hace 13.800 millones de años.",
+    "en": "Planck measured the temperature of the cosmic microwave background at about 2.7 Kelvin — the residual glow from the Big Bang 13.8 billion years ago.",
+    "source_name": "ESA – Planck Overview",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Planck_overview"
+  },
+  {
+    "id": "space-012",
+    "es": "El Telescopio Espacial James Webb, lanzado el 25 de diciembre de 2021, orbita el Sol en el punto L2 a unos 1,5 millones de kilómetros de la Tierra y tiene un espejo primario de 6,5 metros.",
+    "en": "The James Webb Space Telescope, launched on December 25, 2021, orbits the Sun at the L2 point about 1.5 million km from Earth and features a 6.5-meter primary mirror.",
+    "source_name": "NASA – James Webb Space Telescope",
+    "source_url": "https://science.nasa.gov/mission/webb/"
+  },
+  {
+    "id": "space-013",
+    "es": "El Webb observó galaxias sorprendentemente brillantes formadas apenas 300 millones de años después del Big Bang, desafiando los modelos de formación galáctica temprana.",
+    "en": "Webb observed surprisingly bright galaxies formed just 300 million years after the Big Bang, challenging models of early galaxy formation.",
+    "source_name": "NASA – 3 Years of Webb Science",
+    "source_url": "https://science.nasa.gov/missions/webb/3-years-of-science-10-cosmic-surprises-from-nasas-webb-telescope/"
+  },
+  {
+    "id": "space-014",
+    "es": "En sus tres primeros años, el Webb completó más de 860 programas científicos, recopilando casi 550 terabytes de datos y produciendo más de 1.600 artículos de investigación.",
+    "en": "In its first three years, Webb completed over 860 scientific programs, collecting nearly 550 terabytes of data and yielding more than 1,600 research papers.",
+    "source_name": "NASA – 3 Years of Webb Science",
+    "source_url": "https://science.nasa.gov/missions/webb/3-years-of-science-10-cosmic-surprises-from-nasas-webb-telescope/"
+  },
+  {
+    "id": "space-015",
+    "es": "El Webb detectó una galaxia similar a la Vía Láctea cuando el universo tenía solo 600 millones de años, revelando que las galaxias espirales bien formadas surgieron mucho más temprano de lo esperado.",
+    "en": "Webb detected a Milky Way–like galaxy when the universe was only 600 million years old, revealing that well-formed spiral galaxies arose much earlier than expected.",
+    "source_name": "NASA – 3 Years of Webb Science",
+    "source_url": "https://science.nasa.gov/missions/webb/3-years-of-science-10-cosmic-surprises-from-nasas-webb-telescope/"
+  },
+  {
+    "id": "space-016",
+    "es": "El Telescopio Hubble observó el objeto más lejano jamás confirmado: la estrella individual Earendel, cuya luz viajó durante 12.900 millones de años antes de llegar a Hubble.",
+    "en": "Hubble observed the farthest individual star ever confirmed: Earendel, whose light traveled 12.9 billion years before reaching the telescope.",
+    "source_name": "NASA – Hubble by the Numbers",
+    "source_url": "https://science.nasa.gov/mission/hubble/overview/hubble-by-the-numbers/"
+  },
+  {
+    "id": "space-017",
+    "es": "El Hubble encontró agujeros negros hasta 3.000 millones de veces más masivos que el Sol en el centro de ciertas galaxias, demostrando que cuanto mayor es la galaxia, mayor es su agujero negro central.",
+    "en": "Hubble found black holes up to 3 billion times the mass of the Sun at the centers of certain galaxies, showing that larger galaxies harbor larger central black holes.",
+    "source_name": "ESA – Black Holes",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Black_holes"
+  },
+  {
+    "id": "space-018",
+    "es": "Las estrellas enanas rojas son las más comunes en la Vía Láctea, representando aproximadamente el 75% de su población estelar, y pueden vivir durante billones de años.",
+    "en": "Red dwarf stars are the most common type in the Milky Way, making up about 75% of its stellar population, and can live for trillions of years.",
+    "source_name": "NASA Science – Star Types",
+    "source_url": "https://science.nasa.gov/universe/stars/types/"
+  },
+  {
+    "id": "space-019",
+    "es": "Las estrellas de neutrones son los objetos más densos que se pueden observar directamente: una cucharadita de su material pesaría unos mil millones de toneladas en la Tierra.",
+    "en": "Neutron stars are the densest directly observable objects: a teaspoon of their material would weigh about a billion tons on Earth.",
+    "source_name": "NASA Science – Neutron Stars Are Weird!",
+    "source_url": "https://science.nasa.gov/universe/stories/quick-reads/neutron-stars-are-weird/"
+  },
+  {
+    "id": "space-020",
+    "es": "Los púlsares son estrellas de neutrones que giran rápidamente y emiten haces de radiación gamma o de radio desde sus polos magnéticos, creando destellos regulares similares a faros.",
+    "en": "Pulsars are rapidly rotating neutron stars that beam gamma-ray or radio radiation from their magnetic poles, creating regular pulses like cosmic lighthouses.",
+    "source_name": "NASA Science – Star Types",
+    "source_url": "https://science.nasa.gov/universe/stars/types/"
+  },
+  {
+    "id": "space-021",
+    "es": "El Telescopio Fermi de la NASA ha detectado más de 300 púlsares emisores de rayos gamma, incluyendo el primero descubierto fuera de nuestra galaxia.",
+    "en": "NASA's Fermi telescope has detected more than 300 gamma-ray–emitting pulsars, including the first ever discovered beyond our galaxy.",
+    "source_name": "NASA Science – Fermi Mission",
+    "source_url": "https://science.nasa.gov/mission/fermi/"
+  },
+  {
+    "id": "space-022",
+    "es": "Fermi reveló las 'Burbujas de Fermi', dos enormes lóbulos de emisión de rayos gamma que, en conjunto, abarcan unos 50 000 años luz por encima y por debajo del plano de la Vía Láctea.",
+    "en": "Fermi revealed the 'Fermi Bubbles', two enormous lobes of gamma-ray emission that together span about 50,000 light-years above and below the Milky Way's plane.",
+    "source_name": "NASA Science – Fermi Mission",
+    "source_url": "https://science.nasa.gov/mission/fermi/"
+  },
+  {
+    "id": "space-023",
+    "es": "Los destellos de rayos gamma son las explosiones más energéticas del universo; el Fermi monitorea unos 200 de ellos al año con su Monitor de Destellos de Rayos Gamma.",
+    "en": "Gamma-ray bursts are the most energetic explosions in the universe; Fermi monitors about 200 of them per year with its Gamma-ray Burst Monitor.",
+    "source_name": "NASA Fermi – Exploring the Extreme Universe",
+    "source_url": "https://fermi.gsfc.nasa.gov/science/eteu/grbs/"
+  },
+  {
+    "id": "space-024",
+    "es": "Los destellos de rayos gamma de larga duración se asocian con la muerte de estrellas masivas, mientras que los de corta duración resultan de fusiones de estrellas de neutrones u objetos compactos.",
+    "en": "Long-duration gamma-ray bursts are linked to the deaths of massive stars, while short-duration ones result from neutron star mergers or compact object collisions.",
+    "source_name": "NASA Fermi – GRBs Science",
+    "source_url": "https://fermi.gsfc.nasa.gov/science/eteu/grbs/"
+  },
+  {
+    "id": "space-025",
+    "es": "La misión Gaia de la ESA cartografió la posición, movimiento y propiedades de casi dos mil millones de objetos en la Vía Láctea, realizando más de tres billones de observaciones entre 2014 y 2025.",
+    "en": "ESA's Gaia mission mapped the position, motion, and properties of nearly two billion objects in the Milky Way, making over three trillion observations between 2014 and 2025.",
+    "source_name": "ESA – Gaia",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia"
+  },
+  {
+    "id": "space-026",
+    "es": "Gaia descubrió que la Vía Láctea se fusionó con otra galaxia grande llamada Gaia-Salchicha-Enceladus hace unos 10.000 millones de años, lo que influyó profundamente en su forma actual.",
+    "en": "Gaia revealed that the Milky Way merged with another large galaxy called Gaia-Sausage-Enceladus about 10 billion years ago, profoundly shaping its current form.",
+    "source_name": "ESA – Gaia's Decade of Discoveries",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia/Gaia_s_decade_of_discoveries_unravelling_the_intricacies_of_our_galaxy"
+  },
+  {
+    "id": "space-027",
+    "es": "Gaia identificó seis eventos de fusión distintos en la historia de la Vía Láctea, con un séptimo candidato llamado Kraken que ocurrió hace unos 11.000 millones de años.",
+    "en": "Gaia identified six distinct merger events in the Milky Way's history, with a seventh candidate called Kraken suggested to have occurred about 11 billion years ago.",
+    "source_name": "ESA – Gaia's Decade of Discoveries",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia/Gaia_s_decade_of_discoveries_unravelling_the_intricacies_of_our_galaxy"
+  },
+  {
+    "id": "space-028",
+    "es": "Gaia detectó 'terremotos estelares', pequeñas oscilaciones en la superficie de estrellas que antes se creía demasiado estables para presentar tales movimientos.",
+    "en": "Gaia detected 'starquakes', tiny surface oscillations in stars that were previously thought too stable to show such movements.",
+    "source_name": "ESA – Gaia Factsheet",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia/Gaia_factsheet"
+  },
+  {
+    "id": "space-029",
+    "es": "El Observatorio de Rayos X Chandra de la NASA detectó el agujero negro supermasivo en crecimiento más distante jamás visto en rayos X, ubicado en la galaxia UHZ1 solo 470 millones de años después del Big Bang.",
+    "en": "NASA's Chandra X-ray Observatory detected the most distant growing supermassive black hole ever seen in X-rays, located in galaxy UHZ1 just 470 million years after the Big Bang.",
+    "source_name": "Chandra – Record-Breaking Black Hole",
+    "source_url": "https://chandra.harvard.edu/press/23_releases/press_110623.html"
+  },
+  {
+    "id": "space-030",
+    "es": "El agujero negro en UHZ1 tiene una masa de entre 10 y 100 millones de soles, comparable a la de toda su galaxia anfitriona, apoyando la teoría del colapso directo de nubes de gas.",
+    "en": "The black hole in UHZ1 has a mass of 10 to 100 million suns, comparable to its entire host galaxy, supporting the 'direct-collapse' theory of black hole formation from massive gas clouds.",
+    "source_name": "Chandra – Record-Breaking Black Hole",
+    "source_url": "https://chandra.harvard.edu/press/23_releases/press_110623.html"
+  },
+  {
+    "id": "space-031",
+    "es": "El cúmulo de galaxias Coma contiene más de 1.000 galaxias y se extiende unos 20 millones de años luz; aproximadamente el 80% de su masa total está en forma de materia oscura.",
+    "en": "The Coma galaxy cluster contains more than 1,000 galaxies and spans about 20 million light-years; roughly 80% of its total mass is dark matter.",
+    "source_name": "NASA – Large Scale Structures",
+    "source_url": "https://science.nasa.gov/universe/galaxies/large-scale-structures/"
+  },
+  {
+    "id": "space-032",
+    "es": "La estructura a gran escala del universo forma una 'telaraña cósmica' de filamentos, paredes y vacíos; el supercúmulo Laniakea, hogar del Grupo Local, tiene unos 520 millones de años luz de diámetro.",
+    "en": "The universe's large-scale structure forms a 'cosmic web' of filaments, walls, and voids; the Laniakea supercluster, home of the Local Group, spans about 520 million light-years.",
+    "source_name": "NASA – Large Scale Structures",
+    "source_url": "https://science.nasa.gov/universe/galaxies/large-scale-structures/"
+  },
+  {
+    "id": "space-033",
+    "es": "La expansión del universo no solo continúa sino que se acelera, un descubrimiento hecho con supernovas de Tipo Ia por el que se otorgó el Premio Nobel de Física en 2011.",
+    "en": "The universe's expansion is not only continuing but accelerating, a discovery made using Type Ia supernovae that earned the 2011 Nobel Prize in Physics.",
+    "source_name": "NASA – Discovering a Runaway Universe",
+    "source_url": "https://science.nasa.gov/mission/hubble/science/science-highlights/discovering-a-runaway-universe/"
+  },
+  {
+    "id": "space-034",
+    "es": "Los quásares son los núcleos activos de galaxias lejanas alimentados por agujeros negros supermasivos; pueden brillar entre 100 y 1.000 veces más que una galaxia entera.",
+    "en": "Quasars are the active cores of distant galaxies powered by supermassive black holes; they can outshine an entire galaxy by 100 to 1,000 times.",
+    "source_name": "NASA – Hubble Quasars",
+    "source_url": "https://science.nasa.gov/mission/hubble/science/science-behind-the-discoveries/hubble-quasars/"
+  },
+  {
+    "id": "space-035",
+    "es": "El Hubble ayudó a identificar J043947.08+163415.7, posiblemente el quásar más brillante del universo temprano, visto cuando el cosmos tenía solo 1.200 millones de años.",
+    "en": "Hubble helped identify J043947.08+163415.7, possibly the brightest quasar in the early universe, seen when the cosmos was only 1.2 billion years old.",
+    "source_name": "NASA – Brightest Quasar in the Early Universe",
+    "source_url": "https://science.nasa.gov/missions/hubble/nasas-hubble-helps-astronomers-uncover-the-brightest-quasar-in-the-early-universe/"
+  },
+  {
+    "id": "space-036",
+    "es": "Los blazares son una subclase de quásares con un chorro relativista apuntando directamente hacia la Tierra, lo que hace que su brillo aparente varíe rápidamente.",
+    "en": "Blazars are a subclass of quasars with a relativistic jet aimed directly at Earth, causing their apparent brightness to vary rapidly.",
+    "source_name": "NASA – What Are Active Galactic Nuclei?",
+    "source_url": "https://science.nasa.gov/mission/webb/science-overview/science-explainers/what-are-active-galactic-nuclei/"
+  },
+  {
+    "id": "space-037",
+    "es": "El Chandra de la NASA identificó el quásar RACS J0320-35, que acreta materia a 2,4 veces el límite de Eddington, acumulando entre 300 y 3.000 masas solares por año.",
+    "en": "NASA's Chandra identified quasar RACS J0320-35 accreting matter at 2.4 times the Eddington limit, consuming between 300 and 3,000 solar masses per year.",
+    "source_name": "NASA – Chandra Finds Black Hole With Tremendous Growth",
+    "source_url": "https://www.nasa.gov/missions/chandra/nasas-chandra-finds-black-hole-with-tremendous-growth/"
+  },
+  {
+    "id": "space-038",
+    "es": "Las estrellas de masa baja se convierten en gigantes rojas antes de expulsar sus capas externas para formar nebulosas planetarias y dejar atrás enanas blancas.",
+    "en": "Low-mass stars evolve into red giants before expelling their outer layers to form planetary nebulae, leaving behind white dwarfs.",
+    "source_name": "NASA – Stars",
+    "source_url": "https://science.nasa.gov/universe/stars/"
+  },
+  {
+    "id": "space-039",
+    "es": "Las estrellas de gran masa, al agotar el hierro en su núcleo, sufren un colapso gravitacional que desencadena una supernova, dejando como remanente una estrella de neutrones o un agujero negro.",
+    "en": "High-mass stars, once they form iron in their core, undergo gravitational collapse that triggers a supernova, leaving a neutron star or black hole remnant.",
+    "source_name": "NASA – Stars",
+    "source_url": "https://science.nasa.gov/universe/stars/"
+  },
+  {
+    "id": "space-040",
+    "es": "Las estrellas de entre 8 y 25 masas solares dejan estrellas de neutrones al explotar, mientras que las de más de 25 masas solares generalmente forman agujeros negros.",
+    "en": "Stars between 8 and 25 solar masses leave neutron stars when they explode, while those above about 25 solar masses generally form black holes.",
+    "source_name": "NASA Science – What's Inside a Dead Star?",
+    "source_url": "https://science.nasa.gov/universe/stories/quick-reads/whats-inside-a-dead-star/"
+  },
+  {
+    "id": "space-041",
+    "es": "El instrumento NICER de la NASA en la ISS estudia el interior de estrellas de neutrones midiendo sus radios y masas para inferir el estado de la materia a densidades cercanas a las de los agujeros negros.",
+    "en": "NASA's NICER instrument on the ISS studies neutron star interiors by measuring their radii and masses to infer the state of matter at near–black-hole densities.",
+    "source_name": "NASA Science – What's Inside a Dead Star?",
+    "source_url": "https://science.nasa.gov/universe/stories/quick-reads/whats-inside-a-dead-star/"
+  },
+  {
+    "id": "space-042",
+    "es": "La Vía Láctea tiene entre 100.000 millones y 400.000 millones de estrellas y el Sol es solo una de ellas, ubicada a unos 26.000 años luz del centro galáctico.",
+    "en": "The Milky Way contains between 100 billion and 400 billion stars, and the Sun is just one of them, located about 26,000 light-years from the galactic center.",
+    "source_name": "ESA – Galaxies (Space for Kids)",
+    "source_url": "https://www.esa.int/kids/en/learn/Our_Universe/Stars_and_galaxies/Galaxies"
+  },
+  {
+    "id": "space-043",
+    "es": "Las galaxias comenzaron a formarse apenas unos cientos de millones de años después del Big Bang; las primeras eran pequeñas y se fusionaron con otras para crecer con el tiempo.",
+    "en": "Galaxies began forming just a few hundred million years after the Big Bang; the earliest were small and grew by merging with others over time.",
+    "source_name": "ESA – Galaxies (Space for Kids)",
+    "source_url": "https://www.esa.int/kids/en/learn/Our_Universe/Stars_and_galaxies/Galaxies"
+  },
+  {
+    "id": "space-044",
+    "es": "Las galaxias se clasifican principalmente en espirales, espirales barradas, elípticas e irregulares según su forma; la Vía Láctea es una espiral barrada.",
+    "en": "Galaxies are classified mainly as spirals, barred spirals, ellipticals, and irregulars based on their shape; the Milky Way is a barred spiral.",
+    "source_name": "ESA – Galaxies and the Expanding Universe",
+    "source_url": "https://sci.esa.int/web/education/-/36827-galaxies-and-the-expanding-universe"
+  },
+  {
+    "id": "space-045",
+    "es": "En 2018, el XMM-Newton de la ESA descubrió el mejor candidato a agujero negro de masa intermedia hasta entonces observado, apoyando la teoría de que estos objetos son el eslabón perdido entre los agujeros negros estelares y los supermasivos.",
+    "en": "In 2018, ESA's XMM-Newton discovered the best intermediate-mass black hole candidate observed so far, supporting the theory that these objects are the missing link between stellar-mass and supermassive black holes.",
+    "source_name": "ESA – Black Holes",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Black_holes"
+  },
+  {
+    "id": "space-046",
+    "es": "La futura misión LISA de la ESA detectará ondas gravitacionales de fusiones de agujeros negros supermasivos, explorando la física de estos eventos a escalas cósmicas.",
+    "en": "ESA's future LISA mission will detect gravitational waves from supermassive black hole mergers, exploring the physics of these events at cosmic scales.",
+    "source_name": "ESA – Black Holes",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Black_holes"
+  },
+  {
+    "id": "space-047",
+    "es": "La 'tensión de Hubble' es un desacuerdo entre la tasa de expansión del universo medida con supernovas cercanas (~70-76 km/s/Mpc) y la inferida del fondo cósmico de microondas (~67-68 km/s/Mpc).",
+    "en": "The 'Hubble tension' is a disagreement between the expansion rate measured with nearby supernovas (~70-76 km/s/Mpc) and that inferred from the cosmic microwave background (~67-68 km/s/Mpc).",
+    "source_name": "NASA – Hubble Constant and Tension",
+    "source_url": "https://science.nasa.gov/mission/hubble/science/science-behind-the-discoveries/hubble-constant-and-tension/"
+  },
+  {
+    "id": "space-048",
+    "es": "El Webb corroboró las mediciones de Hubble del Hubble constante usando Cefeidas en la galaxia NGC 5468, confirmando la tensión de Hubble y sugiriendo posiblemente nueva física.",
+    "en": "Webb independently confirmed Hubble's Hubble constant measurements using Cepheid stars in galaxy NGC 5468, reinforcing the Hubble tension and hinting at possible new physics.",
+    "source_name": "ESA – Webb & Hubble Confirm Universe's Expansion Rate",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Webb/Webb_Hubble_confirm_Universe_s_expansion_rate"
+  },
+  {
+    "id": "space-049",
+    "es": "La materia oscura no emite, absorbe ni refleja luz, pero su presencia se infiere por sus efectos gravitacionales sobre galaxias y cúmulos; forma la espina dorsal de la telaraña cósmica.",
+    "en": "Dark matter emits, absorbs, or reflects no light, but its presence is inferred from gravitational effects on galaxies and clusters; it forms the backbone of the cosmic web.",
+    "source_name": "NASA – Dark Matter",
+    "source_url": "https://science.nasa.gov/dark-matter/"
+  },
+  {
+    "id": "space-050",
+    "es": "La energía oscura, que representa el 68% del universo, actúa como una fuerza repulsiva que impulsa la aceleración de la expansión cósmica; su naturaleza sigue siendo desconocida.",
+    "en": "Dark energy, making up 68% of the universe, acts as a repulsive force driving the cosmic expansion's acceleration; its nature remains unknown.",
+    "source_name": "NASA – What is Dark Energy?",
+    "source_url": "https://science.nasa.gov/dark-energy/"
+  },
+  {
+    "id": "space-051",
+    "es": "El Hubble cartografió en tres dimensiones la distribución de materia oscura de la telaraña cósmica, revelando una red grumosa de filamentos que conforma la estructura a gran escala del universo.",
+    "en": "Hubble mapped the 3D distribution of dark matter in the cosmic web, revealing a clumpy network of filaments shaping the universe's large-scale structure.",
+    "source_name": "NASA – Mapping the Cosmic Web",
+    "source_url": "https://science.nasa.gov/mission/hubble/science/science-highlights/mapping-the-cosmic-web/"
+  },
+  {
+    "id": "space-052",
+    "es": "Planck fue la primera misión europea dedicada al estudio de la radiación remanente del Big Bang: el fondo cósmico de microondas.",
+    "en": "Planck was Europe's first mission dedicated to studying the Big Bang's remnant radiation: the cosmic microwave background.",
+    "source_name": "ESA – Planck Overview",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Planck_overview"
+  },
+  {
+    "id": "space-053",
+    "es": "Hubble descubrió GN-z11, la galaxia más lejana confirmada hasta su época, cuya luz tardó ~13.400 millones de años en llegar a nosotros, mostrándonos el universo cuando tenía solo ~400 millones de años.",
+    "en": "Hubble discovered GN-z11, the farthest confirmed galaxy in its era, whose light took ~13.4 billion years to reach us, showing the universe when it was only ~400 million years old.",
+    "source_name": "NASA – Hubble by the Numbers",
+    "source_url": "https://science.nasa.gov/mission/hubble/overview/hubble-by-the-numbers/"
+  },
+  {
+    "id": "space-054",
+    "es": "Un análisis de 2012 con datos del Hubble predijo que la Vía Láctea y la galaxia de Andrómeda están destinadas a una colisión frontal en aproximadamente 4.000 millones de años, formando una gran galaxia elíptica.",
+    "en": "A 2012 analysis using Hubble data predicted that the Milky Way and Andromeda are destined for a head-on collision in about 4 billion years, forming a large elliptical galaxy.",
+    "source_name": "NASA – Hubble Science Timeline",
+    "source_url": "https://science.nasa.gov/mission/hubble/overview/hubble-timeline/hubble-science-timeline-full-text/"
+  },
+  {
+    "id": "space-055",
+    "es": "El gas intracumular en cúmulos de galaxias puede alcanzar temperaturas de hasta 100 millones de Kelvin y emite rayos X detectables por el Chandra de la NASA.",
+    "en": "Intracluster gas in galaxy clusters can reach temperatures up to 100 million Kelvin, emitting X-rays detectable by NASA's Chandra observatory.",
+    "source_name": "NASA – Painting Galaxy Clusters by Numbers",
+    "source_url": "https://www.nasa.gov/general/painting-galaxy-clusters-by-numbers-and-physics/"
+  },
+  {
+    "id": "space-056",
+    "es": "Los agujeros negros supermasivos en el centro de cúmulos de galaxias pueden inflar burbujas de energía que calientan el gas circundante, regulando la formación de nuevas estrellas.",
+    "en": "Supermassive black holes at the centers of galaxy clusters can inflate energy bubbles that heat the surrounding gas, regulating new star formation.",
+    "source_name": "NASA – Painting Galaxy Clusters by Numbers",
+    "source_url": "https://www.nasa.gov/general/painting-galaxy-clusters-by-numbers-and-physics/"
+  },
+  {
+    "id": "space-057",
+    "es": "El Hubble orbitó la Tierra unas 95 minutos por vuelta a una altitud de ~483 km y fue sometido a cinco misiones de servicio en órbita que actualizaron sus instrumentos.",
+    "en": "Hubble orbits Earth every ~95 minutes at an altitude of ~483 km and underwent five servicing missions in orbit that upgraded its instruments.",
+    "source_name": "NASA – Hubble by the Numbers",
+    "source_url": "https://science.nasa.gov/mission/hubble/overview/hubble-by-the-numbers/"
+  },
+  {
+    "id": "space-058",
+    "es": "El espectrógrafo de Orígenes Cósmicos (COS) del Hubble es 10 veces más sensible en el ultravioleta que sus predecesores, observando quásares y estrellas en longitudes de onda invisibles desde la Tierra.",
+    "en": "Hubble's Cosmic Origins Spectrograph (COS) is 10 times more UV-sensitive than its predecessors, observing quasars and stars at wavelengths invisible from Earth.",
+    "source_name": "NASA – About Hubble",
+    "source_url": "https://science.nasa.gov/mission/hubble/overview/about-hubble/"
+  },
+  {
+    "id": "space-059",
+    "es": "Chandra descubrió en 2005 una estrella de neutrones en el cúmulo Westerlund 1, donde se esperaba un agujero negro, demostrando que estrellas de hasta 40 masas solares pueden dejar estrellas de neutrones.",
+    "en": "Chandra discovered in 2005 a neutron star in the Westerlund 1 cluster where a black hole was expected, showing that stars up to 40 solar masses can leave neutron stars.",
+    "source_name": "Chandra – Neutron Star Discovered Where a Black Hole Was Expected",
+    "source_url": "https://chandra.harvard.edu/press/05_releases/press_110205.html"
+  },
+  {
+    "id": "space-060",
+    "es": "El Webb observó galaxias que ya habían dejado de formar estrellas apenas mil millones de años después del Big Bang, lo que supone un misterio sobre qué pudo haberlas 'apagado' tan rápido.",
+    "en": "Webb observed galaxies that had already stopped forming stars just one billion years after the Big Bang, posing a mystery about what could have 'quenched' them so quickly.",
+    "source_name": "NASA – 3 Years of Webb Science",
+    "source_url": "https://science.nasa.gov/missions/webb/3-years-of-science-10-cosmic-surprises-from-nasas-webb-telescope/"
+  },
+  {
+    "id": "space-061",
+    "es": "Los magnetares son estrellas de neutrones con campos magnéticos extremadamente poderosos, billones de veces más fuertes que el campo magnético terrestre, y emiten poderosas llamaradas de rayos gamma.",
+    "en": "Magnetars are neutron stars with extremely powerful magnetic fields, trillions of times stronger than Earth's, and emit powerful gamma-ray flares.",
+    "source_name": "NASA Fermi – Exploring the Extreme Universe",
+    "source_url": "https://fermi.gsfc.nasa.gov/ssc/library/support/Fermi_Fact_Sheet.pdf"
+  },
+  {
+    "id": "space-062",
+    "es": "La Burbuja Local de la Vía Láctea, una región de gas caliente y baja densidad donde reside nuestro Sol, fue excavada por múltiples explosiones de supernovas hace millones de años.",
+    "en": "The Milky Way's Local Bubble, a region of hot, low-density gas where our Sun resides, was carved out by multiple supernova explosions millions of years ago.",
+    "source_name": "ESA – Gaia's Decade of Discoveries",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia/Gaia_s_decade_of_discoveries_unravelling_the_intricacies_of_our_galaxy"
+  },
+  {
+    "id": "space-063",
+    "es": "El Fermi rastreó un neutrino de alta energía hasta su origen en una lejana galaxia impulsada por un agujero negro, conectando por primera vez los neutrinos con una fuente extragaláctica específica.",
+    "en": "Fermi tracked a high-energy neutrino back to a distant black hole–powered galaxy, connecting for the first time a neutrino with a specific extragalactic source.",
+    "source_name": "NASA Science – Fermi Mission",
+    "source_url": "https://science.nasa.gov/mission/fermi/"
+  },
+  {
+    "id": "space-064",
+    "es": "El Webb ha detectado en exoplanetas gases como sulfuro de hidrógeno, amoníaco, dióxido de carbono, metano y dióxido de azufre en sus atmósferas, abriendo la era de la caracterización atmosférica detallada.",
+    "en": "Webb detected gases like hydrogen sulfide, ammonia, carbon dioxide, methane, and sulfur dioxide in exoplanet atmospheres, opening the era of detailed atmospheric characterization.",
+    "source_name": "NASA – 3 Years of Webb Science",
+    "source_url": "https://science.nasa.gov/missions/webb/3-years-of-science-10-cosmic-surprises-from-nasas-webb-telescope/"
+  },
+  {
+    "id": "space-065",
+    "es": "Las ondas gravitacionales viajan a la velocidad de la luz, confirmado en la detección de GW170817, cuyas ondas gravitacionales y luz llegaron a los detectores con una diferencia de solo 1,7 segundos tras viajar 130 millones de años luz.",
+    "en": "Gravitational waves travel at the speed of light, confirmed with GW170817 whose gravitational waves and light arrived just 1.7 seconds apart after traveling 130 million light-years.",
+    "source_name": "LIGO – GW170817 Press Release",
+    "source_url": "https://ligo.org/detections/gw170817/"
+  },
+  {
+    "id": "space-066",
+    "es": "El disco de la parte gruesa de la Vía Láctea comenzó a formarse hace unos 13.000 millones de años, unos 2.000 millones de años antes de lo que se pensaba, según los datos de Gaia.",
+    "en": "The Milky Way's thick disk began forming about 13 billion years ago, some 2 billion years earlier than previously thought, according to Gaia data.",
+    "source_name": "ESA – Gaia Factsheet",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia/Gaia_factsheet"
+  },
+  {
+    "id": "space-067",
+    "es": "La cámara de casi mil millones de píxeles de Gaia es la más grande jamás enviada al espacio, permitiéndole medir distancias estelares con una precisión del 0,001% para las estrellas más cercanas.",
+    "en": "Gaia's nearly one-billion-pixel camera is the largest ever sent to space, allowing it to measure stellar distances with 0.001% precision for the nearest stars.",
+    "source_name": "ESA – Gaia Factsheet",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia/Gaia_factsheet"
+  },
+  {
+    "id": "space-068",
+    "es": "El INTEGRAL de la ESA es el primer observatorio espacial capaz de observar objetos simultáneamente en rayos gamma, rayos X y luz visible; sus objetivos principales incluyen los destellos de rayos gamma y las regiones con agujeros negros.",
+    "en": "ESA's INTEGRAL is the first space observatory capable of simultaneously observing objects in gamma rays, X-rays, and visible light; its principal targets include gamma-ray bursts and regions thought to contain black holes.",
+    "source_name": "ESA – Black Holes",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Black_holes"
+  },
+  {
+    "id": "space-069",
+    "es": "El telescopio Fermi usó el destello de rayos gamma GRB 090510, que llegó de miles de millones de años luz, para confirmar que la velocidad de la luz no varía con la energía de los fotones.",
+    "en": "Fermi used gamma-ray burst GRB 090510, arriving from billions of light-years away, to confirm that the speed of light does not vary with photon energy.",
+    "source_name": "NASA Fermi – GRBs Science",
+    "source_url": "https://fermi.gsfc.nasa.gov/science/eteu/grbs/"
+  },
+  {
+    "id": "space-070",
+    "es": "El Hubble hizo la primera observación directa de la atmósfera de un exoplaneta el 27 de noviembre de 2001, detectando sodio en la envoltura gaseosa de HD 209458b, a 150 años luz.",
+    "en": "Hubble made the first direct detection of an exoplanet atmosphere on November 27, 2001, finding sodium in the gas envelope of HD 209458b, located 150 light-years away.",
+    "source_name": "NASA – Hubble Science Timeline",
+    "source_url": "https://science.nasa.gov/mission/hubble/overview/hubble-timeline/hubble-science-timeline-full-text/"
+  },
+  {
+    "id": "space-071",
+    "es": "Las imágenes del Campo Profundo del Hubble revelaron miles de galaxias en diminutos parches de cielo aparentemente vacío, mostrando que el universo observable contiene cientos de miles de millones de galaxias.",
+    "en": "Hubble Deep Field images revealed thousands of galaxies in tiny patches of apparently empty sky, showing the observable universe contains hundreds of billions of galaxies.",
+    "source_name": "NASA – Hubble Science Highlights",
+    "source_url": "https://science.nasa.gov/mission/hubble/science/science-highlights/"
+  },
+  {
+    "id": "space-072",
+    "es": "La óptica del Hubble puede distinguir dos luciérnagas separadas por 1 metro a una distancia equivalente a la mitad de la distancia a la Luna, lo que representa su resolución angular extraordinaria.",
+    "en": "Hubble's optics can distinguish two fireflies 1 meter apart at a distance equal to half the distance to the Moon, illustrating its extraordinary angular resolution.",
+    "source_name": "NASA – Hubble's Impacts & Benefits",
+    "source_url": "https://science.nasa.gov/mission/hubble/impacts-and-benefits/"
+  },
+  {
+    "id": "space-073",
+    "es": "El 25 de mayo de 1994, el Hubble confirmó la existencia de agujeros negros supermasivos al encontrar evidencia de un objeto en rotación gravitacionalmente colapsado en el núcleo de la galaxia M87.",
+    "en": "On May 25, 1994, Hubble confirmed the existence of supermassive black holes by finding evidence of a rapidly rotating gravitationally collapsed object at the core of galaxy M87.",
+    "source_name": "NASA – Hubble Science Timeline",
+    "source_url": "https://science.nasa.gov/mission/hubble/overview/hubble-timeline/hubble-science-timeline-full-text/"
+  },
+  {
+    "id": "space-074",
+    "es": "El Webb observó Stephan's Quintet, un grupo de cinco galaxias, iluminando la dinámica de sus interacciones gravitacionales, las ondas de choque intergalácticas y la formación estelar en detalle sin precedentes.",
+    "en": "Webb observed Stephan's Quintet, a group of five galaxies, illuminating the dynamics of their gravitational interactions, intergalactic shock waves, and star formation in unprecedented detail.",
+    "source_name": "NASA – Webb Science Overview",
+    "source_url": "https://science.nasa.gov/mission/webb/science-overview/"
+  },
+  {
+    "id": "space-075",
+    "es": "El Planck realizó cinco barridos completos del cielo entre 2009 y 2013, usando nueve bandas de frecuencia que van desde ~1 cm hasta ~0,3 mm de longitud de onda.",
+    "en": "Planck performed five complete sky surveys between 2009 and 2013, using nine frequency bands ranging from ~1 cm to ~0.3 mm in wavelength.",
+    "source_name": "ESA – COSMOS Planck Home",
+    "source_url": "https://www.cosmos.esa.int/web/planck"
+  },
+  {
+    "id": "space-076",
+    "es": "El Big Bang no ocurrió en un punto del espacio, sino que fue el inicio del propio espacio-tiempo; el universo se ha estado expandiendo desde ese momento hace 13.800 millones de años.",
+    "en": "The Big Bang did not occur at a point in space, but was the beginning of space-time itself; the universe has been expanding from that moment 13.8 billion years ago.",
+    "source_name": "ESA – The History of the Universe",
+    "source_url": "https://www.esa.int/ESA_Multimedia/Images/2015/02/The_history_of_the_Universe"
+  },
+  {
+    "id": "space-077",
+    "es": "La reionización cósmica, fase en la que el gas neutro del universo primitivo fue ionizado por la luz de las primeras estrellas y galaxias, se completó en su mayor parte unos 1.000 millones de años después del Big Bang.",
+    "en": "Cosmic reionization, the phase where the early universe's neutral gas was ionized by light from the first stars and galaxies, was largely complete about 1 billion years after the Big Bang.",
+    "source_name": "NASA – Webb Science Overview",
+    "source_url": "https://science.nasa.gov/mission/webb/science-overview/"
+  },
+  {
+    "id": "space-078",
+    "es": "El Webb puede observar galaxias hasta 13.500 millones de años atrás en el tiempo, situadas en la época del 'amanecer cósmico', cuando se formaron los primeros objetos luminosos del universo.",
+    "en": "Webb can look back 13.5 billion years in time to observe galaxies from the era of 'Cosmic Dawn,' when the universe's first luminous objects were forming.",
+    "source_name": "NASA – Webb Science Overview",
+    "source_url": "https://science.nasa.gov/mission/webb/science-overview/"
+  },
+  {
+    "id": "space-079",
+    "es": "Los agujeros negros de masa intermedia se consideran una pieza clave en la cadena evolutiva que une los agujeros negros estelares con los supermasivos; la ESA busca más candidatos con XMM-Newton.",
+    "en": "Intermediate-mass black holes are considered a key link between stellar-mass and supermassive black holes; ESA is searching for more candidates with XMM-Newton.",
+    "source_name": "ESA – Black Holes",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Black_holes"
+  },
+  {
+    "id": "space-080",
+    "es": "Los agujeros negros primordiales son candidatos a materia oscura; la misión Euclid de la ESA podría ayudar a identificarlos, mientras que Fermi busca señales de su evaporación en datos de rayos gamma.",
+    "en": "Primordial black holes are dark matter candidates; ESA's Euclid mission could help identify them, while Fermi searches for signatures of their evaporation in gamma-ray data.",
+    "source_name": "ESA – Black Holes",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Black_holes"
+  },
+  {
+    "id": "space-081",
+    "es": "Gaia descubrió la estructura gaseosa más grande de la Vía Láctea: una larga y delgada red de regiones de formación estelar cerca del Sol, apodada la 'Gran Ola Galáctica'.",
+    "en": "Gaia discovered the Milky Way's largest gaseous structure: a long, thin network of star-forming regions near the Sun nicknamed the 'Galactic Wave'.",
+    "source_name": "ESA – Gaia",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia"
+  },
+  {
+    "id": "space-082",
+    "es": "En junio de 2021, LIGO-Virgo-KAGRA confirmaron las primeras fusiones de agujero negro con estrella de neutrones: dos eventos ocurridos en enero de 2020, cuyas ondas gravitacionales viajaron más de 900 millones de años luz.",
+    "en": "In June 2021, LIGO-Virgo-KAGRA confirmed the first black hole–neutron star mergers: two events from January 2020 whose gravitational waves traveled over 900 million light-years to reach Earth.",
+    "source_name": "LIGO – BH-NS Merger Announcement",
+    "source_url": "https://ligo.org/ligo-virgo-kagra-finds-elusive-mergers-of-black-holes-with-neutron-stars/"
+  },
+  {
+    "id": "space-083",
+    "es": "El Fermi Bubbles cubre un área en el cielo de unas 100 veces la Luna llena y su origen se atribuye a actividad pasada del agujero negro supermasivo del centro de la Vía Láctea o a una tormenta de formación estelar.",
+    "en": "The Fermi Bubbles spans an area in the sky about 100 times that of the full Moon; their origin is linked to past activity from the Milky Way's central black hole or a burst of star formation.",
+    "source_name": "NASA Science – Fermi Mission",
+    "source_url": "https://science.nasa.gov/mission/fermi/"
+  },
+  {
+    "id": "space-085",
+    "es": "La Gran Muralla de Sloan es una de las estructuras más grandes del universo conocidas: una enorme pared de galaxias que se extiende hasta unos 1.400 millones de años luz de longitud.",
+    "en": "The Sloan Great Wall is one of the largest known structures in the universe: a massive sheet of galaxies stretching up to about 1.4 billion light-years in length.",
+    "source_name": "NASA – Large Scale Structures",
+    "source_url": "https://science.nasa.gov/universe/galaxies/large-scale-structures/"
+  },
+  {
+    "id": "space-086",
+    "es": "El Hubble descubrió que las supernovas de Tipo Ia en galaxias lejanas son más débiles de lo esperado, lo que llevó al descubrimiento de la expansión acelerada del universo en 1998.",
+    "en": "Hubble discovered that Type Ia supernovas in distant galaxies are fainter than expected, leading to the 1998 discovery of the accelerating expansion of the universe.",
+    "source_name": "NASA – Hubble Pinpoints Distant Supernovae",
+    "source_url": "https://science.nasa.gov/missions/hubble/hubble-pinpoints-distant-supernovae/"
+  },
+  {
+    "id": "space-087",
+    "es": "El Webb fue diseñado como un 'origami espacial': su espejo de 6,5 m tuvo que plegarse para caber en el cohete y desplegarse en el espacio de forma totalmente autónoma.",
+    "en": "Webb was designed as a 'space origami': its 6.5-m mirror had to fold to fit inside the rocket and unfold autonomously in space.",
+    "source_name": "NASA – James Webb Space Telescope Overview",
+    "source_url": "https://science.nasa.gov/mission/webb/about-overview/"
+  },
+  {
+    "id": "space-088",
+    "es": "La ESA espera que la misión Athena, telescopio de rayos X de próxima generación, revolucione el estudio de los agujeros negros combinando capacidad espectroscópica de alta resolución con gran área de colección de fotones.",
+    "en": "ESA's forthcoming Athena X-ray telescope is expected to revolutionize black hole science by combining high-resolution spectroscopy with a large photon collection area.",
+    "source_name": "ESA – Black Holes",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Black_holes"
+  },
+  {
+    "id": "space-089",
+    "es": "En julio de 2024, el Hubble halló evidencia sólida de un agujero negro de masa intermedia dentro del cúmulo globular Omega Centauri, rastreando los movimientos de 1,4 millones de estrellas en más de 500 imágenes.",
+    "en": "In July 2024, Hubble found strong evidence for an intermediate-mass black hole inside globular cluster Omega Centauri by tracking 1.4 million stars across more than 500 images.",
+    "source_name": "NASA – Hubble Science Timeline",
+    "source_url": "https://science.nasa.gov/mission/hubble/overview/hubble-timeline/hubble-science-timeline-full-text/"
+  },
+  {
+    "id": "space-090",
+    "es": "La espectroscopía del Webb para el exoplaneta WASP-39 b reveló dióxido de azufre formado por fotoquímica en su atmósfera, la primera detección de este tipo en un planeta fuera del Sistema Solar.",
+    "en": "Webb's spectroscopy of exoplanet WASP-39 b revealed sulfur dioxide formed by photochemistry in its atmosphere, the first such detection on a planet outside the Solar System.",
+    "source_name": "NASA – 3 Years of Webb Science",
+    "source_url": "https://science.nasa.gov/missions/webb/3-years-of-science-10-cosmic-surprises-from-nasas-webb-telescope/"
+  },
+  {
+    "id": "space-091",
+    "es": "El universo pasó por un período de 'Edad Oscura' entre la emisión del fondo cósmico de microondas y el encendido de las primeras estrellas, una era que el Webb está ayudando a iluminar.",
+    "en": "The universe went through a 'Dark Ages' period between the emission of the cosmic microwave background and the ignition of the first stars, an era Webb is helping to illuminate.",
+    "source_name": "ESA – The History of the Universe",
+    "source_url": "https://www.esa.int/ESA_Multimedia/Images/2015/02/The_history_of_the_Universe"
+  },
+  {
+    "id": "space-092",
+    "es": "El fenómeno de 'espaguetificación' ocurre cerca de los agujeros negros: la diferencia en la atracción gravitacional entre la cabeza y los pies de un objeto es tan extrema que lo estira como un espagueti.",
+    "en": "The phenomenon of 'spaghettification' occurs near black holes: the difference in gravitational pull between the head and feet of an object is so extreme it stretches the object like spaghetti.",
+    "source_name": "ESA – Black Holes (Space for Kids)",
+    "source_url": "https://www.esa.int/kids/en/learn/Our_Universe/Story_of_the_Universe/Black_Holes"
+  },
+  {
+    "id": "space-093",
+    "es": "Los agujeros negros no 'aspiran' la materia que les rodea como una aspiradora; un objeto en órbita segura a su alrededor seguirá orbitando indefinidamente, igual que los planetas orbitan el Sol.",
+    "en": "Black holes do not suck in surrounding matter like a vacuum cleaner; an object in a safe orbit around one will continue orbiting indefinitely, just as planets orbit the Sun.",
+    "source_name": "ESA – Black Holes (Space for Kids)",
+    "source_url": "https://www.esa.int/kids/en/learn/Our_Universe/Story_of_the_Universe/Black_Holes"
+  },
+  {
+    "id": "space-094",
+    "es": "El Hubble observó el remanente de la Supernova 1987A con un detalle sin precedentes, determinando la distancia a la Gran Nube de Magallanes en 169.000 años luz con una precisión del 5%.",
+    "en": "Hubble observed the remnant of Supernova 1987A in unprecedented detail, determining the distance to the Large Magellanic Cloud at 169,000 light-years with 5% accuracy.",
+    "source_name": "NASA – Hubble Science Timeline",
+    "source_url": "https://science.nasa.gov/mission/hubble/overview/hubble-timeline/hubble-science-timeline-full-text/"
+  },
+  {
+    "id": "space-095",
+    "es": "Gaia midió posiciones, movimientos, temperaturas, luminosidades y composiciones estelares de unos 1.500 millones de estrellas, de las cuales el 99,9% tenían sus distancias medidas por primera vez.",
+    "en": "Gaia measured positions, motions, temperatures, luminosities, and compositions of about 1.5 billion stars, of which 99.9% had their distances measured for the first time.",
+    "source_name": "ESA – Last Starlight for Gaia",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia/Last_starlight_for_ground-breaking_Gaia"
+  },
+  {
+    "id": "space-096",
+    "es": "Las dos estrellas de neutrones que se fusionaron en GW170817 tenían masas estimadas de entre 1,1 y 1,6 veces la del Sol; su señal de ondas gravitacionales se pudo detectar durante unos 100 segundos antes de la colisión.",
+    "en": "The two neutron stars that merged in GW170817 had estimated masses between 1.1 and 1.6 times the Sun's mass; their gravitational-wave signal was detectable for about 100 seconds before the collision.",
+    "source_name": "LIGO – GW170817 Press Release",
+    "source_url": "https://ligo.org/detections/gw170817/"
+  },
+  {
+    "id": "space-097",
+    "es": "Las cepheidas son estrellas pulsantes cuya luminosidad varía con un período predecible; sirven como 'escalones de distancia' fundamentales para medir las distancias a galaxias lejanas.",
+    "en": "Cepheid variables are pulsating stars whose luminosity varies with a predictable period; they serve as fundamental 'distance ladder rungs' for measuring distances to far galaxies.",
+    "source_name": "NASA – Discovering a Runaway Universe",
+    "source_url": "https://science.nasa.gov/mission/hubble/science/science-highlights/discovering-a-runaway-universe/"
+  },
+  {
+    "id": "space-098",
+    "es": "El Monitor de Destellos de Rayos Gamma de Fermi cubre un intervalo de energías de 8 keV a 40 MeV, lo que permite estudiar destellos en un amplio rango espectral.",
+    "en": "Fermi's Gamma-ray Burst Monitor covers energies from 8 keV to 40 MeV, allowing it to study bursts across a broad spectral range.",
+    "source_name": "NASA Fermi – GRBs Science",
+    "source_url": "https://fermi.gsfc.nasa.gov/science/eteu/grbs/"
+  },
+  {
+    "id": "space-099",
+    "es": "La futura misión Athena de la ESA observará centenares de miles de agujeros negros, desde los cercanos hasta los más distantes, y cartografiará la materia a millones de grados que los rodea.",
+    "en": "ESA's upcoming Athena mission will observe hundreds of thousands of black holes, from relatively nearby to the most distant, and map the million-degree-hot matter surrounding them.",
+    "source_name": "ESA – Black Holes",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Black_holes"
+  },
+  {
+    "id": "space-100",
+    "es": "La coalescencia de dos estrellas de neutrones en GW170817 produjo un destello de rayos gamma de corta duración (GRB 170817A) dos segundos después de la señal gravitacional.",
+    "en": "The coalescence of two neutron stars in GW170817 produced a short gamma-ray burst (GRB 170817A) two seconds after the gravitational-wave signal.",
+    "source_name": "LIGO – GW170817 Press Release",
+    "source_url": "https://ligo.org/detections/gw170817/"
+  },
+  {
+    "id": "space-101",
+    "es": "Los quásares son más comunes cuando las galaxias colisionan, evento que fue más frecuente en el universo joven; por eso la mayoría de los quásares observados son muy lejanos y antiguos.",
+    "en": "Quasars are more common when galaxies collide, an event more frequent in the young universe; that is why most observed quasars are very distant and ancient.",
+    "source_name": "NASA – Hubble Quasars",
+    "source_url": "https://science.nasa.gov/mission/hubble/science/science-behind-the-discoveries/hubble-quasars/"
+  },
+  {
+    "id": "space-102",
+    "es": "La futura misión LISA de la ESA será el primer observatorio espacial dedicado a las ondas gravitacionales, formado por tres naves en formación triangular separadas por millones de kilómetros, y explorará la historia del universo a través de estas ondas.",
+    "en": "ESA's LISA will be the first space-based observatory dedicated to gravitational waves, formed by three spacecraft in a triangular formation millions of kilometers apart, probing the full history of the universe.",
+    "source_name": "ESA – Black Holes",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Black_holes"
+  },
+  {
+    "id": "space-103",
+    "es": "El universo comenzó con la inflación cósmica, una expansión extremadamente rápida en los primeros instantes tras el Big Bang, que estiró pequeñas fluctuaciones cuánticas en las semillas de las estructuras cósmicas actuales.",
+    "en": "The universe began with cosmic inflation, an extremely rapid expansion in the first moments after the Big Bang that stretched tiny quantum fluctuations into the seeds of today's cosmic structures.",
+    "source_name": "ESA – The History of the Universe",
+    "source_url": "https://www.esa.int/ESA_Multimedia/Images/2015/02/The_history_of_the_Universe"
+  },
+  {
+    "id": "space-104",
+    "es": "El Hubble ha recorrido más de 8.000 millones de kilómetros en órbita desde su lanzamiento en 1990, completando más de 195.000 vueltas alrededor de la Tierra.",
+    "en": "Hubble has traveled more than 8 billion kilometers (5 billion miles) in orbit since its 1990 launch, completing more than 195,000 orbits around Earth.",
+    "source_name": "NASA – Hubble by the Numbers",
+    "source_url": "https://science.nasa.gov/mission/hubble/overview/hubble-by-the-numbers/"
+  },
+  {
+    "id": "space-105",
+    "es": "El Webb detectó metano en el cometa interestelar 3I/ATLAS, el tercer objeto confirmado procedente de otro sistema estelar, proporcionando datos sobre la química de otros sistemas planetarios.",
+    "en": "Webb detected methane on interstellar comet 3I/ATLAS, the third confirmed object arriving from another star system, providing data on the chemistry of other planetary systems.",
+    "source_name": "NASA – James Webb Space Telescope",
+    "source_url": "https://science.nasa.gov/mission/webb/"
+  },
+  {
+    "id": "space-106",
+    "es": "Las galaxias elípticas gigantes son las más grandes del universo: algunas superan el millón de años luz de diámetro y contienen billones de estrellas; se forman principalmente por fusiones repetidas de galaxias más pequeñas.",
+    "en": "Giant elliptical galaxies are the largest in the universe: some exceed one million light-years in diameter and contain trillions of stars; they form mainly through repeated mergers of smaller galaxies.",
+    "source_name": "ESA – Galaxies and the Expanding Universe",
+    "source_url": "https://sci.esa.int/web/education/-/36827-galaxies-and-the-expanding-universe"
+  },
+  {
+    "id": "space-107",
+    "es": "La espectroscopía del Webb estudia el gas entre galaxias durante la época de reionización cósmica, revelando cómo el universo pasó de ser opaco a transparente a la luz ultravioleta.",
+    "en": "Webb's spectroscopy studies the gas between galaxies during the cosmic reionization epoch, revealing how the universe transitioned from opaque to transparent to ultraviolet light.",
+    "source_name": "NASA – Webb and Quasars in the Early Universe",
+    "source_url": "https://science.nasa.gov/missions/webb/nasas-webb-will-use-quasars-to-unlock-the-secrets-of-the-early-universe/"
+  },
+  {
+    "id": "space-108",
+    "es": "El Chandra observó en 2024 un agujero negro supermasivo que destruyó una estrella y ahora consume los detritos de esa estrella mientras acecha a una segunda estrella cercana.",
+    "en": "Chandra observed in 2024 a supermassive black hole that destroyed one star and is now consuming that star's debris while targeting a second nearby star.",
+    "source_name": "Chandra – Black Hole Destroys Star, Goes After Another",
+    "source_url": "https://chandra.harvard.edu/press/24_releases/press_100924.html"
+  },
+  {
+    "id": "space-109",
+    "es": "La colisión de dos estrellas de neutrones en una pequeña galaxia enana embebida en un flujo de gas de 600.000 años luz fue descubierta por la NASA, revelando que estas fusiones ocurren en entornos más variados de lo esperado.",
+    "en": "NASA discovered a neutron star collision in a tiny dwarf galaxy embedded in a 600,000-light-year gas stream, revealing these mergers occur in more diverse environments than expected.",
+    "source_name": "NASA – Crash of Extreme Stars in Unexpected Site",
+    "source_url": "https://www.nasa.gov/missions/chandra/nasa-discovers-crash-of-extreme-stars-in-unexpected-site/"
+  },
+  {
+    "id": "space-110",
+    "es": "El XMM-Newton de la ESA, lanzado en 1999, ha ayudado a estudiar fenómenos cósmicos violentos como la interacción de agujeros negros con su entorno y el origen de los destellos de rayos gamma.",
+    "en": "ESA's XMM-Newton, launched in 1999, has helped study violent cosmic phenomena including the interaction of black holes with their surroundings and the origin of gamma-ray bursts.",
+    "source_name": "ESA – Black Holes",
+    "source_url": "https://www.esa.int/Science_Exploration/Space_Science/Black_holes"
+  }
+]

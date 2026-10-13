@@ -1,0 +1,737 @@
+[
+  {
+    "id": "earth-001",
+    "es": "Los volcanes son aberturas o conductos por donde la lava, las rocas pequeñas (tefra) y el vapor emergen a la superficie terrestre.",
+    "en": "Volcanoes are openings, or vents, where lava, tephra (small rocks), and steam erupt onto Earth's surface.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-002",
+    "es": "El magma es roca fundida debajo de la superficie terrestre; una vez que erupciona desde un volcán, se llama lava.",
+    "en": "Magma is molten rock below Earth's surface; once it erupts from a volcano, it is called lava.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-003",
+    "es": "El magma está compuesto por roca fundida, cristales y gases disueltos, y contiene los elementos oxígeno, silicio, aluminio, hierro, magnesio, calcio, sodio, potasio, titanio y manganeso.",
+    "en": "Magma is made of molten rock, crystals, and dissolved gases, and contains the elements oxygen, silicon, aluminum, iron, magnesium, calcium, sodium, potassium, titanium, and manganese.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-004",
+    "es": "El USGS monitorea más de 160 volcanes activos y potencialmente activos en los Estados Unidos, la mayoría en Alaska.",
+    "en": "The USGS monitors over 160 active and potentially active volcanoes in the United States, most of which are in Alaska.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-005",
+    "es": "Existen alrededor de 1,350 volcanes potencialmente activos en todo el mundo, sin contar los volcanes submarinos.",
+    "en": "There are about 1,350 potentially active volcanoes worldwide, not counting volcanoes under the oceans.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-006",
+    "es": "Unos 500 volcanes han entrado en erupción en los últimos 100 años; muchos están ubicados alrededor del Océano Pacífico en lo que se conoce como el 'Anillo de Fuego'.",
+    "en": "About 500 volcanoes have erupted in the past 100 years; many are located around the Pacific Ocean in what is known as the 'Ring of Fire.'",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-007",
+    "es": "El volcán Kīlauea en la isla de Hawái estuvo en erupción de manera casi continua durante 35 años, de 1983 a 2018, convirtiéndose en uno de los volcanes más activos de la Tierra durante ese período.",
+    "en": "Kīlauea volcano on the Island of Hawai'i erupted nearly continuously for 35 years, from 1983 to 2018, making it one of the most persistently active volcanoes on Earth during that period.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-008",
+    "es": "Los conos de cinder son el tipo de volcán más simple; están formados por pequeñas piezas de lava sólida llamadas cinder y pueden alcanzar hasta 300 metros de altura.",
+    "en": "Cinder cones are the simplest type of volcano, made of small pieces of solid lava called cinder, and can rise as high as about 1,000 feet (300 meters) above the surrounding ground.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-009",
+    "es": "Los volcanes compuestos (estratovolcanes) son algunos de los más majestuosos del mundo; el Ojos del Salado en Chile es el más alto, con una elevación de 6,893 metros.",
+    "en": "Composite volcanoes (stratovolcanoes) are among Earth's grandest mountains; Ojos del Salado in Chile is the tallest, with a summit elevation of 22,615 feet (6,893 meters).",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-010",
+    "es": "Los volcanes de escudo se construyen casi por completo de flujos de lava fluida y forman una forma de domo amplio y de pendiente suave parecida a un escudo de guerrero.",
+    "en": "Shield volcanoes are built almost entirely of fluid lava flows and form a broad, gently sloping dome shape that resembles a warrior's shield.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-011",
+    "es": "Mauna Loa en Hawái es el volcán de escudo activo más grande del mundo y forma parte de las Islas Hawaianas.",
+    "en": "Mauna Loa in Hawai'i is the world's largest active shield volcano and forms part of the Hawaiian Islands.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-012",
+    "es": "La cúpula de Novarupta se formó durante la erupción del volcán Katmai en Alaska en 1912, que el USGS considera la erupción más grande y violenta registrada en los Estados Unidos; mide 244 metros de diámetro y 61 metros de altura.",
+    "en": "The Novarupta Dome formed during the 1912 eruption of Katmai Volcano, Alaska — which the USGS considers the largest and most violent eruption on record in the United States — and measures 800 feet across and 200 feet high.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-013",
+    "es": "La erupción lateral del Monte Santa Helena en 1980 viajó a más de 480 km/h y quemó 596 km² de bosque, convirtiéndose en una de las erupciones más famosas de la historia de EE. UU.",
+    "en": "The lateral blast of Mount St. Helens in 1980 traveled at more than 300 miles per hour and scorched 230 square miles of forest, becoming one of the most infamous eruption events in U.S. history.",
+    "source_name": "USGS — Volcanoes and USGS Volcano Science: Just the Facts",
+    "source_url": "https://www.usgs.gov/news/featured-story/volcanoes-and-usgs-volcano-science-just-facts"
+  },
+  {
+    "id": "earth-014",
+    "es": "Aproximadamente hace 3,600 años, los pueblos indígenas abandonaron la zona del Monte Santa Helena cuando una erupción cuatro veces más grande que la de 1980 devastó su sustento.",
+    "en": "Around 3,600 years ago, indigenous peoples abandoned the area around Mount St. Helens when an eruption four times larger than the 1980 event devastated their food supplies and dwellings.",
+    "source_name": "USGS — Volcanoes and USGS Volcano Science: Just the Facts",
+    "source_url": "https://www.usgs.gov/news/featured-story/volcanoes-and-usgs-volcano-science-just-facts"
+  },
+  {
+    "id": "earth-015",
+    "es": "Las cenizas volcánicas son partículas diminutas de tefra del grosor de un cabello; pueden ser transportadas por el viento muchos kilómetros y dar la vuelta al mundo en la atmósfera superior.",
+    "en": "Volcanic ash consists of tiny tephra particles as thin as a strand of hair; they can be carried by upper-atmosphere winds and travel many times around the world before falling to the ground.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-016",
+    "es": "Un terremoto es causado por un deslizamiento repentino en una falla; las placas tectónicas se mueven lentamente pero se atoran en sus bordes por la fricción hasta que la tensión se libera.",
+    "en": "An earthquake is caused by a sudden slip on a fault; tectonic plates are always slowly moving but get stuck at their edges due to friction until the stress releases.",
+    "source_name": "USGS Earthquake Hazards Program",
+    "source_url": "https://www.usgs.gov/faqs/what-earthquake-and-what-causes-them-happen"
+  },
+  {
+    "id": "earth-017",
+    "es": "La Falla de San Andrés tiene más de 1,045 km de longitud y se extiende a profundidades de al menos 16 km; es el límite principal entre la Placa del Pacífico y la Placa Norteamericana.",
+    "en": "The San Andreas Fault is more than 650 miles long and extends to depths of at least 10 miles; it is the primary boundary between the Pacific Plate and the North American Plate.",
+    "source_name": "USGS Earthquake Hazards Program",
+    "source_url": "https://www.usgs.gov/faqs/what-earthquake-and-what-causes-them-happen"
+  },
+  {
+    "id": "earth-018",
+    "es": "La Placa del Pacífico se desplaza hacia el noroeste junto a la Placa Norteamericana a una velocidad de unos 5 centímetros por año.",
+    "en": "The Pacific Plate grinds northwestward past the North American Plate at a rate of about two inches (5 centimeters) per year.",
+    "source_name": "USGS Earthquake Hazards Program",
+    "source_url": "https://www.usgs.gov/faqs/what-earthquake-and-what-causes-them-happen"
+  },
+  {
+    "id": "earth-019",
+    "es": "En algunas partes de la Falla de San Andrés, la tensión puede acumularse durante cientos de años, produciendo grandes terremotos cuando finalmente se libera.",
+    "en": "In areas where creep along the San Andreas Fault is NOT constant, strain can build up for hundreds of years, producing great earthquakes when it finally releases.",
+    "source_name": "USGS Earthquake Hazards Program",
+    "source_url": "https://www.usgs.gov/faqs/what-earthquake-and-what-causes-them-happen"
+  },
+  {
+    "id": "earth-020",
+    "es": "Las rocas ígneas (del latín 'ignis', fuego) se forman cuando la roca fundida se cristaliza y solidifica; se originan profundamente dentro de la Tierra, cerca de los límites de las placas tectónicas o de los puntos calientes.",
+    "en": "Igneous rocks (from the Latin word for fire) form when hot, molten rock crystallizes and solidifies; they originate deep within the Earth near active plate boundaries or hot spots.",
+    "source_name": "USGS — What are igneous rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-igneous-rocks"
+  },
+  {
+    "id": "earth-021",
+    "es": "Las rocas ígneas intrusivas (plutónicas) como el granito se forman cuando el magma queda atrapado profundamente en la Tierra y se enfría muy lentamente durante miles o millones de años, formando grandes cristales.",
+    "en": "Intrusive (plutonic) igneous rocks like granite form when magma is trapped deep inside the Earth and cools very slowly over many thousands or millions of years, growing large mineral crystals.",
+    "source_name": "USGS — What are igneous rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-igneous-rocks"
+  },
+  {
+    "id": "earth-022",
+    "es": "Las rocas ígneas extrusivas (volcánicas) como el basalto y la obsidiana se enfrían casi instantáneamente al salir a la superficie, formando cristales muy finos o incluso una textura vítrea.",
+    "en": "Extrusive (volcanic) igneous rocks such as basalt and obsidian cool almost instantly when exposed to the relatively cool atmosphere, forming very fine-grained or even glassy textures.",
+    "source_name": "USGS — What are igneous rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-igneous-rocks"
+  },
+  {
+    "id": "earth-023",
+    "es": "Las burbujas de gas caliente atrapadas en la lava que se enfría rápidamente forman una textura vesicular característica en las rocas ígneas extrusivas.",
+    "en": "Hot gas bubbles often trapped in rapidly quenched lava form a bubbly, vesicular texture characteristic of extrusive igneous rocks.",
+    "source_name": "USGS — What are igneous rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-igneous-rocks"
+  },
+  {
+    "id": "earth-024",
+    "es": "Las rocas sedimentarias se forman a partir de rocas preexistentes o de restos de organismos vivos; con frecuencia presentan capas o estratos distintivos.",
+    "en": "Sedimentary rocks are formed from pre-existing rocks or pieces of once-living organisms; they often have distinctive layering or bedding.",
+    "source_name": "USGS — What are sedimentary rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-sedimentary-rocks"
+  },
+  {
+    "id": "earth-025",
+    "es": "Las rocas sedimentarias clásticas están compuestas de fragmentos (clastos) de rocas preexistentes que son erosionados, transportados y luego compactados y cementados.",
+    "en": "Clastic sedimentary rocks are made up of pieces (clasts) of pre-existing rocks that are loosened by weathering, transported, then compacted and cemented together.",
+    "source_name": "USGS — What are sedimentary rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-sedimentary-rocks"
+  },
+  {
+    "id": "earth-026",
+    "es": "El tamaño de los clastos determina el nombre de la roca sedimentaria: la arcilla forma lutitas, el limo forma limolitas, la arena forma areniscas y los guijarros forman conglomerados.",
+    "en": "Clast size determines the rock name: clay forms shale, silt forms siltstone, sand forms sandstone, and pebbles form conglomerate.",
+    "source_name": "USGS — What are sedimentary rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-sedimentary-rocks"
+  },
+  {
+    "id": "earth-027",
+    "es": "Las rocas sedimentarias biológicas como la caliza pueden formarse cuando grandes cantidades de organismos mueren y sus restos se acumulan, o bien precipitando directamente del agua.",
+    "en": "Biologic sedimentary rocks like limestone can form when large numbers of living things die and accumulate, or by precipitating directly out of the water.",
+    "source_name": "USGS — What are sedimentary rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-sedimentary-rocks"
+  },
+  {
+    "id": "earth-028",
+    "es": "Las rocas metamórficas se forman cuando las rocas preexistentes se someten a alta temperatura, alta presión o fluidos mineralizados calientes, generalmente en las profundidades de la Tierra o en los límites de las placas tectónicas.",
+    "en": "Metamorphic rocks form when pre-existing rocks are subjected to high heat, high pressure, or hot mineral-rich fluids, typically deep within the Earth or at tectonic plate boundaries.",
+    "source_name": "USGS — What are metamorphic rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-metamorphic-rocks"
+  },
+  {
+    "id": "earth-029",
+    "es": "El proceso de metamorfismo no funde las rocas, sino que las transforma en rocas más densas y compactas mediante la reorganización de minerales y reacciones con fluidos.",
+    "en": "The process of metamorphism does not melt rocks, but instead transforms them into denser, more compact rocks through mineral rearrangement and reactions with fluids.",
+    "source_name": "USGS — What are metamorphic rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-metamorphic-rocks"
+  },
+  {
+    "id": "earth-030",
+    "es": "Las rocas metamórficas foliadas como el gneis y el esquisto tienen una apariencia rayada o bandeada que refleja la dirección en que se aplicó la presión sobre los minerales planos o elongados.",
+    "en": "Foliated metamorphic rocks like gneiss and schist have a striped or banded appearance that reflects the direction pressure was applied to flat or elongate minerals.",
+    "source_name": "USGS — What are metamorphic rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-metamorphic-rocks"
+  },
+  {
+    "id": "earth-031",
+    "es": "Las rocas metamórficas no foliadas como el mármol y la cuarcita carecen de estructura laminar porque sus protolitos (caliza y arenisca, respectivamente) están compuestos de minerales que no se alinean bajo presión.",
+    "en": "Non-foliated metamorphic rocks like marble and quartzite lack a platy structure because their protoliths (limestone and sandstone, respectively) are composed of minerals that do not align under pressure.",
+    "source_name": "USGS — What are metamorphic rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-metamorphic-rocks"
+  },
+  {
+    "id": "earth-032",
+    "es": "El metamorfismo de contacto ocurre cuando una roca ígnea caliente se introduce en una roca preexistente, 'horneándola' y cambiando su estructura mineral sin necesidad de presión adicional.",
+    "en": "Contact metamorphism occurs when hot igneous rock intrudes into pre-existing rock, essentially baking it and changing its mineral structure without the addition of pressure.",
+    "source_name": "USGS — What are metamorphic rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-metamorphic-rocks"
+  },
+  {
+    "id": "earth-033",
+    "es": "El agua subterránea es la mayor fuente de agua dulce líquida de la Tierra; se almacena en acuíferos y existe casi en cualquier lugar del planeta si se cava lo suficientemente profundo.",
+    "en": "Groundwater is the largest source of liquid fresh water on Earth; it is stored in aquifers and exists almost everywhere on the planet if you dig deep enough.",
+    "source_name": "USGS Groundwater Basics",
+    "source_url": "https://www.usgs.gov/mission-areas/water-resources/science/groundwater-basics"
+  },
+  {
+    "id": "earth-034",
+    "es": "El agua subterránea se almacena en y se mueve lentamente a través de rocas permeables llamadas acuíferos, que pueden ser capas de grava, arena, arenisca, caliza o coladas de lava enterradas.",
+    "en": "Groundwater is stored in and moves slowly through permeable rocks called aquifers, which may be layers of gravel, sand, sandstone, limestone, or a buried lava flow.",
+    "source_name": "USGS Groundwater Basics",
+    "source_url": "https://www.usgs.gov/mission-areas/water-resources/science/groundwater-basics"
+  },
+  {
+    "id": "earth-035",
+    "es": "El agua subterránea puede contener minerales disueltos como sodio, calcio, magnesio, potasio, cloruro, bicarbonato y sulfato, lo que le da un sabor característico.",
+    "en": "Groundwater may contain dissolved minerals including sodium, calcium, magnesium, potassium, chloride, bicarbonate, and sulfate, giving it a distinctive taste.",
+    "source_name": "USGS Groundwater Basics",
+    "source_url": "https://www.usgs.gov/mission-areas/water-resources/science/groundwater-basics"
+  },
+  {
+    "id": "earth-036",
+    "es": "La edad del agua subterránea varía enormemente: el agua cerca de la superficie puede tener pocas horas, mientras que el agua a gran profundidad puede tener miles de años.",
+    "en": "Groundwater age varies enormously: water near the surface can be just a few hours old, while water at great depth may have been there for thousands of years.",
+    "source_name": "USGS Groundwater Basics",
+    "source_url": "https://www.usgs.gov/mission-areas/water-resources/science/groundwater-basics"
+  },
+  {
+    "id": "earth-037",
+    "es": "El agua subterránea es menos susceptible a la contaminación que el agua superficial porque el suelo y las rocas la filtran naturalmente a medida que se infiltra en el suelo.",
+    "en": "Groundwater is less susceptible to pollution than surface water because soil and rocks naturally filter much of the water as it passes through the ground.",
+    "source_name": "USGS Groundwater Basics",
+    "source_url": "https://www.usgs.gov/mission-areas/water-resources/science/groundwater-basics"
+  },
+  {
+    "id": "earth-038",
+    "es": "El bombeo excesivo de agua subterránea puede reducir la tabla de agua, provocar la intrusión de agua salada en acuíferos de agua dulce y causar hundimiento del terreno.",
+    "en": "Excessive pumping of groundwater can lower water tables, cause saltwater to intrude into freshwater aquifers, and cause land to subside (sink).",
+    "source_name": "USGS Groundwater Basics",
+    "source_url": "https://www.usgs.gov/mission-areas/water-resources/science/groundwater-basics"
+  },
+  {
+    "id": "earth-039",
+    "es": "La superficie superior de la zona saturada de agua subterránea se llama tabla de agua; el área saturada por debajo de ella se denomina acuífero.",
+    "en": "The upper surface of the water-saturated zone of groundwater is called the water table; the saturated area beneath it is called an aquifer.",
+    "source_name": "USGS Water Science School — Aquifers and Groundwater",
+    "source_url": "https://www.usgs.gov/water-science-school/science/aquifers-and-groundwater"
+  },
+  {
+    "id": "earth-040",
+    "es": "En algunos materiales permeables, el agua subterránea puede moverse varios metros en un día; en otros, avanza solo unos centímetros en un siglo.",
+    "en": "In some permeable materials groundwater may move several meters in a day; in other places it moves only a few centimeters in a century.",
+    "source_name": "USGS Water Science School — Aquifers and Groundwater",
+    "source_url": "https://www.usgs.gov/water-science-school/science/aquifers-and-groundwater"
+  },
+  {
+    "id": "earth-041",
+    "es": "Los acuíferos artesianos están confinados bajo presión entre capas de roca poco permeables; cuando se perfora un pozo en uno de ellos, la presión interna puede empujar el agua hacia arriba sin necesidad de bomba.",
+    "en": "Artesian aquifers are confined under pressure between layers of poorly permeable rock; when a well is drilled into one, the internal pressure can push water up the well without a pump.",
+    "source_name": "USGS Water Science School — Aquifers and Groundwater",
+    "source_url": "https://www.usgs.gov/water-science-school/science/aquifers-and-groundwater"
+  },
+  {
+    "id": "earth-042",
+    "es": "Se han encontrado rocas que contienen agua dulce a profundidades de más de 1,800 metros; el agua salada ha surgido de pozos petrolíferos a profundidades de hasta 9,100 metros.",
+    "en": "Rocks that yield freshwater have been found at depths of more than 6,000 feet (1,800 m); salty water has come from oil wells at depths ranging up to 30,000 feet (9,100 m).",
+    "source_name": "USGS Water Science School — Aquifers and Groundwater",
+    "source_url": "https://www.usgs.gov/water-science-school/science/aquifers-and-groundwater"
+  },
+  {
+    "id": "earth-043",
+    "es": "El agua subterránea ingresa a los ríos cuando el nivel del río corta la capa saturada del suelo, razón por la cual incluso durante sequías suele haber algo de agua en los cauces.",
+    "en": "Groundwater seeps into rivers when the riverbed cuts into the saturated zone, which is why there is usually some water in streams even during droughts.",
+    "source_name": "USGS Water Science School — Rivers, Streams, and Creeks",
+    "source_url": "https://www.usgs.gov/water-science-school/science/rivers-streams-and-creeks"
+  },
+  {
+    "id": "earth-044",
+    "es": "Los ríos se forman cuando el agua se mueve desde una elevación mayor a una menor por la fuerza de gravedad; pequeñas corrientes se fusionan para formar ríos cada vez más grandes.",
+    "en": "Rivers form from water moving from higher to lower elevation due to gravity; small creeks merge to form larger streams and rivers.",
+    "source_name": "USGS Water Science School — Rivers, Streams, and Creeks",
+    "source_url": "https://www.usgs.gov/water-science-school/science/rivers-streams-and-creeks"
+  },
+  {
+    "id": "earth-045",
+    "es": "El área de terreno que drena hacia un río, de modo que toda el agua que cae en esa área puede llegar al río, se llama cuenca hidrográfica o cuenca de drenaje.",
+    "en": "The area of land that slopes toward a river, such that all water falling on it can potentially flow to the river, is called a watershed or drainage basin.",
+    "source_name": "USGS Water Science School — Rivers, Streams, and Creeks",
+    "source_url": "https://www.usgs.gov/water-science-school/science/rivers-streams-and-creeks"
+  },
+  {
+    "id": "earth-046",
+    "es": "El río Colorado, que durante mucho tiempo fluyó hacia el Golfo de California en México, hoy desaparece literalmente en las tierras agrícolas debido al uso excesivo del agua por riego y consumo urbano.",
+    "en": "The Colorado River, which once flowed into the Gulf of California, today literally disappears into farmland due to heavy water use for irrigation and urban needs.",
+    "source_name": "USGS Water Science School — Rivers, Streams, and Creeks",
+    "source_url": "https://www.usgs.gov/water-science-school/science/rivers-streams-and-creeks"
+  },
+  {
+    "id": "earth-047",
+    "es": "El total de agua en la Tierra es de aproximadamente 1,386 millones de km³; más del 96% es agua salada en los océanos.",
+    "en": "Earth's total water is approximately 332.5 million cubic miles (1,386 million km³); over 96 percent is saline water in the oceans.",
+    "source_name": "USGS Water Science School — Where is Earth's Water?",
+    "source_url": "https://www.usgs.gov/water-science-school/science/where-earths-water"
+  },
+  {
+    "id": "earth-048",
+    "es": "Del total del agua dulce de la Tierra, aproximadamente el 68.7% está atrapada en casquetes polares, glaciares y nieve permanente.",
+    "en": "Of all Earth's freshwater, approximately 68.7 percent is locked up in ice caps, glaciers, and permanent snow.",
+    "source_name": "USGS Water Science School — Where is Earth's Water?",
+    "source_url": "https://www.usgs.gov/water-science-school/science/where-earths-water"
+  },
+  {
+    "id": "earth-049",
+    "es": "El agua subterránea representa aproximadamente el 30.1% del agua dulce total de la Tierra, mientras que los lagos y ríos juntos representan menos del 0.3% del agua dulce total.",
+    "en": "Groundwater accounts for about 30.1 percent of all Earth's freshwater, while lakes and rivers together represent less than 0.3 percent of total freshwater.",
+    "source_name": "USGS Water Science School — Where is Earth's Water?",
+    "source_url": "https://www.usgs.gov/water-science-school/science/where-earths-water"
+  },
+  {
+    "id": "earth-050",
+    "es": "Los ríos representan solo el 0.49% del agua superficial dulce total de la Tierra, pero son la fuente de gran parte del agua que las personas usan cada día.",
+    "en": "Rivers represent only 0.49 percent of Earth's surface freshwater, yet they are the source of much of the water people use every day.",
+    "source_name": "USGS Water Science School — Where is Earth's Water?",
+    "source_url": "https://www.usgs.gov/water-science-school/science/where-earths-water"
+  },
+  {
+    "id": "earth-051",
+    "es": "Los glaciares se forman donde cae más nieve de la que se derrite a lo largo de años; la nieve se compacta en hielo y, al volverse suficientemente gruesa, comienza a moverse por su propio peso.",
+    "en": "Glaciers form where more snow falls than melts over a period of years; snow compacts into ice and, once thick enough, begins to move due to its own weight.",
+    "source_name": "USGS Water Science School — Glaciers: Things to Know",
+    "source_url": "https://www.usgs.gov/water-science-school/science/glaciers-things-know"
+  },
+  {
+    "id": "earth-052",
+    "es": "El hielo glaciar aparece azul porque la parte roja de la luz blanca es absorbida por el hielo, mientras que la luz azul (longitudes de onda cortas) se transmite y dispersa.",
+    "en": "Glacier ice appears blue because the red (long wavelength) part of white light is absorbed by ice while the blue (short wavelength) light is transmitted and scattered.",
+    "source_name": "USGS Water Science School — Glaciers: Things to Know",
+    "source_url": "https://www.usgs.gov/water-science-school/science/glaciers-things-know"
+  },
+  {
+    "id": "earth-053",
+    "es": "Los glaciares no retroceden 'hacia atrás' por el valle; el hielo siempre fluye cuesta abajo por la gravedad, y el 'retroceso' ocurre cuando el derretimiento supera el flujo de reabastecimiento.",
+    "en": "Glaciers do not retreat back up the valley; ice always flows downhill due to gravity, and 'retreat' occurs when melting or calving removes ice more quickly than glacier flow replenishes it.",
+    "source_name": "USGS Water Science School — Glaciers: Things to Know",
+    "source_url": "https://www.usgs.gov/water-science-school/science/glaciers-things-know"
+  },
+  {
+    "id": "earth-054",
+    "es": "Alaska tiene 657 glaciares oficialmente nombrados y se estima que tiene en total unos 100,000 glaciares.",
+    "en": "Alaska has 657 officially named glaciers and is estimated to have approximately 100,000 glaciers in total.",
+    "source_name": "USGS Water Science School — Glaciers: Things to Know",
+    "source_url": "https://www.usgs.gov/water-science-school/science/glaciers-things-know"
+  },
+  {
+    "id": "earth-055",
+    "es": "El grosor de los glaciares varía ampliamente: desde unas pocas decenas de metros en glaciares pequeños hasta unos 1,500 metros en los más grandes de Alaska.",
+    "en": "Glacier thickness ranges widely, from a few tens of meters for small glaciers to about 1,500 meters for the largest glaciers in Alaska.",
+    "source_name": "USGS Water Science School — Glaciers: Things to Know",
+    "source_url": "https://www.usgs.gov/water-science-school/science/glaciers-things-know"
+  },
+  {
+    "id": "earth-056",
+    "es": "La mayoría del hielo glaciar de Alaska es 'templado': se encuentra solo a unas pocas décimas de grado por debajo del punto de fusión y generalmente no está congelado en su lecho.",
+    "en": "Most glacier ice in Alaska is 'temperate': only a few tenths of a degree below the melting temperature, and most Alaska glaciers are not frozen to their beds.",
+    "source_name": "USGS Water Science School — Glaciers: Things to Know",
+    "source_url": "https://www.usgs.gov/water-science-school/science/glaciers-things-know"
+  },
+  {
+    "id": "earth-057",
+    "es": "Dado que el flujo glaciar desplaza la nieve y el hielo a lo largo del glaciar completo en 100 años o menos, la mayor parte del hielo glaciar en Alaska tiene menos de 100 años.",
+    "en": "Since glacier flow moves snow and ice through the entire glacier in 100 years or less, most of the glacier ice in Alaska is less than 100 years old.",
+    "source_name": "USGS Water Science School — Glaciers: Things to Know",
+    "source_url": "https://www.usgs.gov/water-science-school/science/glaciers-things-know"
+  },
+  {
+    "id": "earth-058",
+    "es": "Los glaciares cubren aproximadamente el 10% de la masa terrestre del planeta y actúan como un reservorio de agua congelada dentro del ciclo hidrológico global.",
+    "en": "Glaciers cover about 10 percent of Earth's land mass and act as a frozen water reservoir within the global water cycle.",
+    "source_name": "USGS Water Science School — Where is Earth's Water?",
+    "source_url": "https://www.usgs.gov/water-science-school/science/where-earths-water"
+  },
+  {
+    "id": "earth-059",
+    "es": "Un mineral es un elemento o compuesto inorgánico de origen natural con una estructura interna ordenada, composición química específica, forma cristalina y propiedades físicas definidas.",
+    "en": "A mineral is a naturally occurring inorganic element or compound with an orderly internal structure, specific chemical composition, crystal form, and defined physical properties.",
+    "source_name": "USGS Minerals 101",
+    "source_url": "https://www.usgs.gov/science/science-explorer/minerals/minerals-101"
+  },
+  {
+    "id": "earth-060",
+    "es": "Una roca es un agregado de uno o más minerales (o materia mineral indiferenciada); ejemplos comunes son el granito, el basalto, la caliza y la arenisca.",
+    "en": "A rock is an aggregate of one or more minerals (or undifferentiated mineral matter); common examples include granite, basalt, limestone, and sandstone.",
+    "source_name": "USGS — What is the difference between a rock and a mineral?",
+    "source_url": "https://www.usgs.gov/faqs/what-difference-between-a-rock-and-a-mineral"
+  },
+  {
+    "id": "earth-061",
+    "es": "Los flujos de basalto del río Columbia en el noroeste de los Estados Unidos, visibles en el Monte Steens en Oregón, hicieron erupción hace aproximadamente 17 millones de años.",
+    "en": "The Columbia River Basalt flows visible at Steens Mountain, Oregon, erupted approximately 17 million years ago.",
+    "source_name": "USGS — What are igneous rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-igneous-rocks"
+  },
+  {
+    "id": "earth-062",
+    "es": "El hornfels es una roca metamórfica extremadamente resistente y duradera que se forma cuando una roca sedimentaria como la arenisca o la pizarra es 'horneada' por material volcánico que sube desde abajo.",
+    "en": "Hornfels is an exceptionally tough and durable metamorphic rock that forms when sedimentary rock like sandstone or shale is baked by volcanic material pushing up from below.",
+    "source_name": "USGS — What are metamorphic rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-metamorphic-rocks"
+  },
+  {
+    "id": "earth-063",
+    "es": "Los conglomerados son rocas sedimentarias formadas por fragmentos variados de roca mezclados con material de grano más fino; los clastos tienen más de 2 mm de diámetro y están rodeados por una matriz de arena o lodo.",
+    "en": "Conglomerates are sedimentary rocks made up of various rock fragments larger than 2 mm in diameter surrounded by a matrix of sand or mud.",
+    "source_name": "USGS — What are sedimentary rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-sedimentary-rocks"
+  },
+  {
+    "id": "earth-064",
+    "es": "El granito es una roca ígnea intrusiva de grano grueso; el dioritita es similar pero tiene menos sílice que el granito, mientras que el gabro tiene incluso menos sílice y es de color más oscuro.",
+    "en": "Granite is a coarse-grained intrusive igneous rock; diorite is similar but contains less silica than granite, while gabbro contains even less silica and is darker in color.",
+    "source_name": "USGS — What are igneous rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-igneous-rocks"
+  },
+  {
+    "id": "earth-065",
+    "es": "La andesita es una roca ígnea extrusiva de grano fino que se forma cuando la lava de composición intermedia se enfría rápidamente en la superficie; contiene más sílice que el basalto pero menos que la riolita.",
+    "en": "Andesite is a fine-grained extrusive igneous rock that forms when intermediate-composition lava cools rapidly at the surface; it contains more silica than basalt but less than rhyolite.",
+    "source_name": "USGS — What are igneous rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-igneous-rocks"
+  },
+  {
+    "id": "earth-066",
+    "es": "La cartografía geológica ha evolucionado desde 1879 y permite identificar tipos de rocas y sedimentos que revelan la historia del subsuelo terrestre, con usos que van desde la gestión del uso del suelo hasta la evaluación de riesgos sísmicos y volcánicos.",
+    "en": "Geologic mapping has evolved since 1879 and allows identification of rock and sediment types that reveal the story of Earth's subsurface, with uses ranging from land management to earthquake and volcanic hazard assessment.",
+    "source_name": "USGS — Mapping What's Under Our Feet",
+    "source_url": "https://www.usgs.gov/science/science-explorer/maps-and-mapping/mapping-whats-under-our-feet"
+  },
+  {
+    "id": "earth-068",
+    "es": "En general, la porosidad y la permeabilidad de las rocas disminuyen con la profundidad porque el peso de las capas superiores cierra los poros y las grietas; sin embargo, esta relación no siempre se cumple.",
+    "en": "In general, the porosity and permeability of rocks decrease with depth because the weight of overlying rocks closes pores and cracks; however, this relationship does not always hold.",
+    "source_name": "USGS Water Science School — Aquifers and Groundwater",
+    "source_url": "https://www.usgs.gov/water-science-school/science/aquifers-and-groundwater"
+  },
+  {
+    "id": "earth-069",
+    "es": "Los volcanes de Yellowstone y Hawái se forman sobre 'puntos calientes': columnas de roca fundida que ascienden desde el manto y no están ubicados en los bordes de las placas tectónicas.",
+    "en": "Yellowstone and Hawaiian volcanoes form over 'hot spots': upwelling plumes of molten rock from the mantle that are not located at tectonic plate boundaries.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-070",
+    "es": "Las cadenas de volcanes en los Aleutianos de Alaska forman parte del Anillo de Fuego del Pacífico y están asociadas a zonas de subducción donde una placa oceánica se hunde bajo otra.",
+    "en": "The Aleutian volcanic chain in Alaska is part of the Pacific Ring of Fire and is associated with subduction zones where one oceanic plate sinks beneath another.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-071",
+    "es": "El magma es más ligero que la roca sólida circundante; esta diferencia de densidad, junto con la presión del gas disuelto, es lo que impulsa al magma a ascender hacia la superficie.",
+    "en": "Magma is lighter than surrounding solid rock; this density difference, together with dissolved gas pressure, drives magma upward toward the surface.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-073",
+    "es": "El terreno volcánico se construye por la acumulación lenta de lava en erupción; el conducto puede crecer hasta que el volcán ya no es estable y partes de él colapsan como caídas de roca o deslizamientos.",
+    "en": "Volcanic terrain is built by the slow accumulation of erupted lava; the vent may grow until the volcano is no longer stable and pieces collapse as rock falls or landslides.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-074",
+    "es": "En las zonas de subducción, la Placa Juan de Fuca se sumerge bajo la Placa Norteamericana, creando volcanes como el Monte Santa Helena y el Monte Hood en el noroeste del Pacífico.",
+    "en": "In the Pacific Northwest subduction zone, the Juan de Fuca Plate dives beneath the North American Plate, creating volcanoes like Mt. St. Helens and Mt. Hood.",
+    "source_name": "USGS Earthquake Hazards Program",
+    "source_url": "https://www.usgs.gov/faqs/what-earthquake-and-what-causes-them-happen"
+  },
+  {
+    "id": "earth-075",
+    "es": "Un graben es un bloque hundido de la corteza terrestre resultante de la extensión o estiramiento de la corteza; un horst es el bloque elevado adyacente entre las fallas.",
+    "en": "A graben is a down-dropped block of Earth's crust resulting from extension or pulling of the crust; a horst is the elevated adjacent block between the faults.",
+    "source_name": "USGS Earthquake Hazards Program",
+    "source_url": "https://www.usgs.gov/faqs/what-earthquake-and-what-causes-them-happen"
+  },
+  {
+    "id": "earth-076",
+    "es": "Una falla de desgarre lateral derecho es aquella en que, si uno se para en la falla y mira a lo largo de ella, el bloque de la derecha se mueve hacia el observador mientras el de la izquierda se aleja.",
+    "en": "A right-lateral strike-slip fault is one where, if you stand on the fault and look along its length, the right block moves toward you and the left block moves away.",
+    "source_name": "USGS Earthquake Hazards Program",
+    "source_url": "https://www.usgs.gov/faqs/what-earthquake-and-what-causes-them-happen"
+  },
+  {
+    "id": "earth-077",
+    "es": "La cuarcita es una roca metamórfica no foliada derivada de la arenisca; es extremadamente dura porque los granos de cuarzo y el cemento que los une han sido recristalizados.",
+    "en": "Quartzite is a non-foliated metamorphic rock derived from sandstone; it is extremely hard because the quartz grains and the cement binding them have been recrystallized.",
+    "source_name": "USGS — What are metamorphic rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-metamorphic-rocks"
+  },
+  {
+    "id": "earth-078",
+    "es": "El esquisto de granate es una roca metamórfica que contiene cristales de granate; el granate se usa principalmente como abrasivo, en filtración de agua y en algunos componentes electrónicos.",
+    "en": "Garnet schist is a metamorphic rock containing garnet crystals; garnet is used primarily as an abrasive, in water filtration, and in some electronics.",
+    "source_name": "USGS — What are metamorphic rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-metamorphic-rocks"
+  },
+  {
+    "id": "earth-079",
+    "es": "El grafito (C) se encuentra en la roca pegmatita; sus usos incluyen revestimientos de frenos, fundiciones, lubricantes resistentes al calor, aplicaciones refractarias y fabricación de acero.",
+    "en": "Graphite (C) is found in pegmatite rock; its uses include brake linings, foundry operations, heat-resistant lubricants, refractory applications, and steelmaking.",
+    "source_name": "USGS — What is the difference between a rock and a mineral?",
+    "source_url": "https://www.usgs.gov/faqs/what-difference-between-a-rock-and-a-mineral"
+  },
+  {
+    "id": "earth-080",
+    "es": "Las rocas sedimentarias conforman muchas de las vistas panorámicas del suroeste desértico de EE. UU.; las mesas y los arcos icónicos están formados por capas de roca sedimentaria.",
+    "en": "Sedimentary rocks make up many of the picturesque views of the desert southwest U.S.; the iconic mesas and arches are formed by layered sedimentary rock.",
+    "source_name": "USGS — What are sedimentary rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-sedimentary-rocks"
+  },
+  {
+    "id": "earth-081",
+    "es": "La chert es una roca sedimentaria biológica que se forma por la acumulación de esqueletos de organismos silíceos; es muy dura y se ha utilizado para fabricar herramientas desde la prehistoria.",
+    "en": "Chert is a biologic sedimentary rock formed from the accumulation of siliceous organism skeletons; it is very hard and has been used to make tools since prehistoric times.",
+    "source_name": "USGS — What are sedimentary rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-sedimentary-rocks"
+  },
+  {
+    "id": "earth-082",
+    "es": "Las areniscas tufáceas contienen cenizas volcánicas mezcladas con granos de arena, lo que las convierte en un registro geológico de erupciones pasadas.",
+    "en": "Tuffaceous sandstones contain volcanic ash mixed with sand grains, making them a geological record of past eruptions.",
+    "source_name": "USGS — What are sedimentary rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-sedimentary-rocks"
+  },
+  {
+    "id": "earth-084",
+    "es": "El mármol es una roca metamórfica no foliada derivada de la caliza; los granos de calcita dentro de la caliza no se alinean bajo presión, por lo que el mármol no desarrolla foliación.",
+    "en": "Marble is a non-foliated metamorphic rock derived from limestone; the calcite grains in limestone do not align under pressure, so marble does not develop foliation.",
+    "source_name": "USGS — What are metamorphic rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-metamorphic-rocks"
+  },
+  {
+    "id": "earth-085",
+    "es": "La filita es una roca metamórfica de grano fino con un brillo satinado característico, que representa un grado de metamorfismo entre la pizarra y el esquisto.",
+    "en": "Phyllite is a fine-grained metamorphic rock with a characteristic satiny sheen, representing a grade of metamorphism between slate and schist.",
+    "source_name": "USGS — What are metamorphic rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-metamorphic-rocks"
+  },
+  {
+    "id": "earth-086",
+    "es": "Las rocas metamórficas pueden ser tan deformadas bajo condiciones extremas que quedan aplastadas, estiradas y plegadas, aunque sin llegar a fundirse en roca ígnea.",
+    "en": "Metamorphic rocks can become so deformed under extreme conditions that they are squished, smeared out, and folded, yet they never quite melt into igneous rock.",
+    "source_name": "USGS — What are metamorphic rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-metamorphic-rocks"
+  },
+  {
+    "id": "earth-088",
+    "es": "Los grandes glaciares continentales de Groenlandia y la Antártida influyen en el clima porque el color blanco de su superficie refleja más luz solar (calor) que las superficies más oscuras, enfriando el planeta.",
+    "en": "Large continental glaciers in Greenland and Antarctica influence climate because their white surfaces reflect more sunlight (heat) than darker surfaces, helping cool the planet.",
+    "source_name": "USGS Water Science School — Ice, Snow, and Glaciers and the Water Cycle",
+    "source_url": "https://www.usgs.gov/water-science-school/science/ice-snow-and-glaciers-and-water-cycle"
+  },
+  {
+    "id": "earth-089",
+    "es": "El Proyecto de Glaciares de Referencia del USGS combina décadas de mediciones glaciológicas directas con teledetección para cuantificar las interacciones glaciar-clima.",
+    "en": "The USGS Benchmark Glacier Project combines decades of direct glaciological measurements with remote sensing to quantify glacier-climate interactions.",
+    "source_name": "USGS Northern Rocky Mountain Science Center — Glacier Research",
+    "source_url": "https://www.usgs.gov/centers/norock/science/glacier-research"
+  },
+  {
+    "id": "earth-090",
+    "es": "El retroceso global de los glaciares desde la Pequeña Edad de Hielo está contribuyendo al aumento del nivel del mar; el USGS rastrea estos cambios con imágenes satelitales y de repetición fotográfica.",
+    "en": "Global glacier loss since the Little Ice Age is contributing to sea-level rise; the USGS tracks these changes with satellite imagery and repeat photography.",
+    "source_name": "USGS Northern Rocky Mountain Science Center — Glacier Research",
+    "source_url": "https://www.usgs.gov/centers/norock/science/glacier-research"
+  },
+  {
+    "id": "earth-091",
+    "es": "Los gusanos de hielo son lombrices reales de la clase Oligochaeta que habitan las superficies de los glaciares, junto con varios insectos y algas que también viven en ese ambiente extremo.",
+    "en": "Ice worms are real annelid worms (class Oligochaeta) that inhabit glacier surfaces, alongside several insects and algae that also live in this extreme environment.",
+    "source_name": "USGS Water Science School — Glaciers: Things to Know",
+    "source_url": "https://www.usgs.gov/water-science-school/science/glaciers-things-know"
+  },
+  {
+    "id": "earth-092",
+    "es": "El 'Hombre de hielo' del Cobre encontrado en 1991 en los Alpes europeos sobrevivió a ser cubierto por un glaciar porque se encontraba en una depresión protegida de lecho rocoso cerca del borde del glaciar.",
+    "en": "The Copper Age 'Iceman' found in 1991 in the European Alps survived being overridden by a glacier because he was near the glacier's edge in a protective bedrock depression.",
+    "source_name": "USGS Water Science School — Glaciers: Things to Know",
+    "source_url": "https://www.usgs.gov/water-science-school/science/glaciers-things-know"
+  },
+  {
+    "id": "earth-093",
+    "es": "Los restos de animales prehistóricos como mamuts y bisontes gigantes se encuentran en el permafrost, no en el hielo glaciar; el permafrost puede tener decenas de miles de años.",
+    "en": "Remains of prehistoric animals like mammoths and giant bison are found in permafrost, not glacier ice; permafrost may be many tens of thousands of years old.",
+    "source_name": "USGS Water Science School — Glaciers: Things to Know",
+    "source_url": "https://www.usgs.gov/water-science-school/science/glaciers-things-know"
+  },
+  {
+    "id": "earth-095",
+    "es": "El espesor del hielo de un glaciar suele estimarse como aproximadamente la mitad de la anchura superficial del glaciar, aunque pocas mediciones directas confirman este criterio general.",
+    "en": "A glacier's ice thickness is roughly estimated as about half of its surface width, though few direct measurements have confirmed this general rule.",
+    "source_name": "USGS Water Science School — Glaciers: Things to Know",
+    "source_url": "https://www.usgs.gov/water-science-school/science/glaciers-things-know"
+  },
+  {
+    "id": "earth-096",
+    "es": "El Programa de Glaciares y Nieve del USGS tiene su sede en el Centro de Ciencias de Alaska y Washington y realiza investigaciones de largo plazo sobre la hidrología de los glaciares.",
+    "en": "The USGS Glacier and Snow Program is based at the Alaska and Washington Science Center and conducts long-term research on glacier hydrology.",
+    "source_name": "USGS Water Science School — Glaciers: Things to Know",
+    "source_url": "https://www.usgs.gov/water-science-school/science/glaciers-things-know"
+  },
+  {
+    "id": "earth-097",
+    "es": "Los terremotos liberan energía en forma de ondas sísmicas que viajan a través de la corteza terrestre y causan el temblor que se percibe en la superficie.",
+    "en": "Earthquakes release energy as seismic waves that travel through Earth's crust and cause the shaking felt at the surface.",
+    "source_name": "USGS Earthquake Hazards Program",
+    "source_url": "https://www.usgs.gov/faqs/what-earthquake-and-what-causes-them-happen"
+  },
+  {
+    "id": "earth-098",
+    "es": "Partes del sistema de la Falla de San Andrés se adaptan al movimiento de las placas mediante un 'deslizamiento continuo' que produce muchos microsismos y algunos terremotos moderados en lugar de grandes terremotos.",
+    "en": "Parts of the San Andreas Fault system adapt to plate movement through constant 'creep,' resulting in many tiny shocks and a few moderate earth tremors instead of large earthquakes.",
+    "source_name": "USGS Earthquake Hazards Program",
+    "source_url": "https://www.usgs.gov/faqs/what-earthquake-and-what-causes-them-happen"
+  },
+  {
+    "id": "earth-099",
+    "es": "La Red de Monitoreo Activo de Nivel de Aguas Subterráneas del USGS contiene información de casi 20,000 pozos en todo Estados Unidos.",
+    "en": "The USGS Active Groundwater Level Network contains well information from nearly 20,000 wells across the United States.",
+    "source_name": "USGS Groundwater Basics",
+    "source_url": "https://www.usgs.gov/mission-areas/water-resources/science/groundwater-basics"
+  },
+  {
+    "id": "earth-100",
+    "es": "El suelo y las rocas filtran naturalmente el agua subterránea, pero la expansión de la industria, la tecnología y el uso de fertilizantes, herbicidas y pesticidas ha contaminado acuíferos en muchas partes de los EE. UU.",
+    "en": "Soil and rocks naturally filter groundwater, but growth of industry, technology, and use of fertilizers, herbicides, and pesticides has contaminated aquifers in many parts of the U.S.",
+    "source_name": "USGS Groundwater Basics",
+    "source_url": "https://www.usgs.gov/mission-areas/water-resources/science/groundwater-basics"
+  },
+  {
+    "id": "earth-102",
+    "es": "Los lagos se forman cuando el agua fluye hacia un lugar rodeado por tierra más alta en todos lados; algunos lagos tienen una o más corrientes que entran pero ninguna salida.",
+    "en": "Lakes form when water flows to a place surrounded by higher land on all sides; some lakes have one or several streams flowing in but no outlet.",
+    "source_name": "USGS Water Science School — Rivers, Streams, and Creeks",
+    "source_url": "https://www.usgs.gov/water-science-school/science/rivers-streams-and-creeks"
+  },
+  {
+    "id": "earth-103",
+    "es": "Podría parecer que los ríos atraviesan las ciudades por casualidad, pero en realidad las ciudades fueron construidas y crecieron alrededor de los ríos, porque el agua es esencial para toda forma de vida.",
+    "en": "It might seem that rivers happen to run through many cities by chance, but in reality cities were built and grew up around rivers, because water is essential to all life.",
+    "source_name": "USGS Water Science School — Rivers, Streams, and Creeks",
+    "source_url": "https://www.usgs.gov/water-science-school/science/rivers-streams-and-creeks"
+  },
+  {
+    "id": "earth-104",
+    "es": "Los acuíferos ígneos y metamórficos de roca cristalina tienen poros pequeños y mal conectados, pero los acuíferos volcánicos pueden almacenar cantidades significativas de agua en fracturas y vacíos.",
+    "en": "Crystalline igneous and metamorphic rock aquifers have small and poorly connected pores, but volcanic rock aquifers can store significant amounts of water in fractures and voids.",
+    "source_name": "USGS — Igneous and metamorphic-rock aquifers",
+    "source_url": "https://www.usgs.gov/mission-areas/water-resources/science/igneous-and-metamorphic-rock-aquifers"
+  },
+  {
+    "id": "earth-105",
+    "es": "El agua subterránea es parte del ciclo hidrológico: comienza como precipitación, se infiltra en el suelo y eventualmente regresa a la superficie a través de manantiales, corrientes o pozos.",
+    "en": "Groundwater is part of the hydrological cycle: it starts as precipitation, infiltrates into the ground, and eventually returns to the surface through springs, streams, or wells.",
+    "source_name": "USGS Water Science School — Aquifers and Groundwater",
+    "source_url": "https://www.usgs.gov/water-science-school/science/aquifers-and-groundwater"
+  },
+  {
+    "id": "earth-106",
+    "es": "El bombeo de un pozo genera un 'cono de depresión' en la tabla de agua local; si el agua se extrae más rápido de lo que se recarga, el pozo puede secarse.",
+    "en": "Pumping a well creates a 'cone of depression' in the local water table; if water is withdrawn faster than it is recharged, the well can go dry.",
+    "source_name": "USGS Water Science School — Aquifers and Groundwater",
+    "source_url": "https://www.usgs.gov/water-science-school/science/aquifers-and-groundwater"
+  },
+  {
+    "id": "earth-108",
+    "es": "Los manantiales se forman cuando la tabla de agua intersecta la superficie del terreno y el agua subterránea fluye de manera natural hacia afuera.",
+    "en": "Springs form when the water table intersects the land surface and groundwater flows naturally outward.",
+    "source_name": "USGS Water Science School — Aquifers and Groundwater",
+    "source_url": "https://www.usgs.gov/water-science-school/science/aquifers-and-groundwater"
+  },
+  {
+    "id": "earth-109",
+    "es": "El ciclo del agua está siempre en progreso; el agua de los ríos fluye hacia los océanos, donde se evapora, cae como precipitación y vuelve a infiltrarse o escurrir hacia los ríos.",
+    "en": "The water cycle is always in progress; river water flows to the oceans, where it evaporates, falls as precipitation, and infiltrates or runs off back into rivers.",
+    "source_name": "USGS Water Science School — Rivers, Streams, and Creeks",
+    "source_url": "https://www.usgs.gov/water-science-school/science/rivers-streams-and-creeks"
+  },
+  {
+    "id": "earth-110",
+    "es": "El Monte Rainier en Washington es el estratovolcán más alto de la Cordillera de las Cascadas, con una elevación de 4,392 metros sobre el nivel del mar.",
+    "en": "Mount Rainier in Washington State is the tallest composite volcano in the Cascade Range, with a summit elevation of 14,410 feet (4,392 meters) above sea level.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-111",
+    "es": "Las cúpulas de lava crecen principalmente por expansión desde adentro; a medida que el magma fresco llena el interior, la superficie exterior más fría y dura se rompe y derrama roca caliente y gases por la ladera.",
+    "en": "Lava domes grow largely by expansion from within; as fresh magma fills the inside, the cooler, harder outer surface shatters and spills hot rock and gases down the mountainside.",
+    "source_name": "USGS Volcano Hazards Program",
+    "source_url": "https://www.usgs.gov/programs/vhp/about-volcanoes"
+  },
+  {
+    "id": "earth-112",
+    "es": "La peridotita es una roca ígnea intrusiva muy densa compuesta principalmente de olivino y piroxeno; constituye la mayor parte del manto superior de la Tierra.",
+    "en": "Peridotite is a very dense intrusive igneous rock composed mainly of olivine and pyroxene; it makes up most of Earth's upper mantle.",
+    "source_name": "USGS — What are igneous rocks?",
+    "source_url": "https://www.usgs.gov/faqs/what-are-igneous-rocks"
+  }
+]

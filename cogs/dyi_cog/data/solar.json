@@ -1,0 +1,793 @@
+[
+  {
+    "id": "solar-001",
+    "es": "El Sol tiene unos 4,600 millones de años de antigüedad y es una estrella enana amarilla en el centro de nuestro sistema solar.",
+    "en": "The Sun is about 4.6 billion years old and is a yellow dwarf star at the center of our solar system.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-002",
+    "es": "El Sol contiene aproximadamente el 99.8% de toda la masa del sistema solar.",
+    "en": "The Sun contains about 99.8% of all the mass in the solar system.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-003",
+    "es": "El diámetro del Sol mide cerca de 1.4 millones de kilómetros, lo que lo hace unas 100 veces más ancho que la Tierra.",
+    "en": "The Sun's diameter is about 1.4 million kilometers, making it roughly 100 times wider than Earth.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-004",
+    "es": "La temperatura en el núcleo del Sol supera los 15 millones de grados Celsius, suficiente para sostener la fusión nuclear.",
+    "en": "The temperature in the Sun's core tops 15 million degrees Celsius, hot enough to sustain nuclear fusion.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-005",
+    "es": "La superficie visible del Sol, la fotosfera, tiene una temperatura de aproximadamente 5,500 grados Celsius.",
+    "en": "The Sun's visible surface, the photosphere, has a temperature of about 5,500 degrees Celsius.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-006",
+    "es": "La corona solar, la atmósfera exterior del Sol, alcanza temperaturas de hasta 2 millones de grados Celsius, mucho más caliente que la superficie.",
+    "en": "The Sun's outer atmosphere, the corona, reaches temperatures up to 2 million degrees Celsius — far hotter than the surface.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-007",
+    "es": "El Sol rota más rápido en el ecuador (una vez cada 25 días terrestres) que en los polos (una vez cada 36 días).",
+    "en": "The Sun rotates faster at its equator (once every 25 Earth days) than at its poles (once every 36 Earth days).",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-008",
+    "es": "El Sol no tiene superficie sólida; está compuesto de plasma, un gas extremadamente caliente y cargado eléctricamente.",
+    "en": "The Sun has no solid surface; it is made of plasma, an extremely hot, electrically charged gas.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-009",
+    "es": "La actividad solar sigue un ciclo de aproximadamente 11 años, durante el cual los polos magnéticos del Sol intercambian posiciones.",
+    "en": "Solar activity follows a roughly 11-year cycle during which the Sun's magnetic poles swap positions.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-010",
+    "es": "Las manchas solares son regiones algo más frías en la fotosfera del Sol, creadas donde los campos magnéticos perforan la superficie.",
+    "en": "Sunspots are slightly cooler regions on the Sun's photosphere, created where magnetic field lines poke through the surface.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-011",
+    "es": "Las llamaradas solares son las explosiones más poderosas del sistema solar, con liberaciones de energía comparables a miles de millones de bombas de hidrógeno.",
+    "en": "Solar flares are the most powerful explosions in the solar system, releasing energy comparable to billions of hydrogen bombs.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-012",
+    "es": "Las eyecciones de masa coronal (CME) son nubes inmensas de partículas magnetizadas lanzadas desde el Sol a más de un millón de millas por hora.",
+    "en": "Coronal mass ejections (CMEs) are immense clouds of magnetized particles blasted from the Sun at over a million miles per hour.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-013",
+    "es": "La heliosfera es la enorme burbuja magnética creada por el viento solar que se extiende más allá de la órbita de los planetas.",
+    "en": "The heliosphere is the enormous magnetic bubble created by the solar wind that extends beyond the orbit of the planets.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-014",
+    "es": "Se estima que el Sol agotará su combustible de hidrógeno en unos 5,000 millones de años más, expandiéndose entonces hasta convertirse en una gigante roja.",
+    "en": "The Sun is estimated to exhaust its hydrogen fuel in about 5 billion more years, expanding into a red giant star.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-015",
+    "es": "La energía producida en el núcleo solar tarda aproximadamente 170,000 años en llegar a la superficie a través de la zona radiativa.",
+    "en": "Energy produced in the Sun's core takes about 170,000 years to travel through the radiative zone to the surface.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-016",
+    "es": "Mercurio es el planeta más pequeño del sistema solar y el más cercano al Sol, con un radio de apenas 2,440 kilómetros.",
+    "en": "Mercury is the smallest planet in the solar system and the closest to the Sun, with a radius of just 2,440 kilometers.",
+    "source_name": "NASA Science – Mercury Facts",
+    "source_url": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+    "id": "solar-017",
+    "es": "Mercurio completa una órbita alrededor del Sol en solo 88 días terrestres, convirtiéndolo en el planeta más rápido del sistema solar.",
+    "en": "Mercury completes one orbit around the Sun in just 88 Earth days, making it the fastest planet in the solar system.",
+    "source_name": "NASA Science – Mercury Facts",
+    "source_url": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+    "id": "solar-018",
+    "es": "A pesar de ser el planeta más cercano al Sol, Mercurio no es el más caliente; las temperaturas diurnas alcanzan 430 °C pero caen a -180 °C por la noche por falta de atmósfera.",
+    "en": "Despite being closest to the Sun, Mercury is not the hottest planet; daytime temperatures reach 430 °C but plummet to -180 °C at night due to its lack of atmosphere.",
+    "source_name": "NASA Science – Mercury Facts",
+    "source_url": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+    "id": "solar-019",
+    "es": "El núcleo metálico de Mercurio abarca aproximadamente el 85% del radio del planeta, siendo proporcionalmente el núcleo más grande del sistema solar.",
+    "en": "Mercury's metallic core spans about 85% of the planet's radius, giving it proportionally the largest core in the solar system.",
+    "source_name": "NASA Science – Mercury Facts",
+    "source_url": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+    "id": "solar-020",
+    "es": "Un día solar en Mercurio (de amanecer a amanecer) equivale a 176 días terrestres, exactamente el doble de su año de 88 días.",
+    "en": "One solar day on Mercury (sunrise to sunrise) equals 176 Earth days, exactly twice the length of its 88-day year.",
+    "source_name": "NASA Science – Mercury Facts",
+    "source_url": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+    "id": "solar-021",
+    "es": "Mercurio podría tener hielo de agua en el interior de los cráteres permanentemente a la sombra de sus polos.",
+    "en": "Mercury may have water ice inside permanently shadowed craters near its poles.",
+    "source_name": "NASA Science – Mercury Facts",
+    "source_url": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+    "id": "solar-022",
+    "es": "Venus es el planeta más caliente del sistema solar, con temperaturas superficiales de unos 467 °C, suficientes para derretir el plomo.",
+    "en": "Venus is the hottest planet in the solar system, with surface temperatures around 467 °C, hot enough to melt lead.",
+    "source_name": "NASA Science – Venus Facts",
+    "source_url": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+    "id": "solar-023",
+    "es": "Venus gira en dirección opuesta a la mayoría de los planetas, por lo que el Sol sale por el oeste y se pone por el este.",
+    "en": "Venus spins in the opposite direction from most planets, meaning the Sun rises in the west and sets in the east there.",
+    "source_name": "NASA Science – Venus Facts",
+    "source_url": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+    "id": "solar-024",
+    "es": "Venus gira en dirección retrógrada y tan despacio que su día sidéreo dura 243 días terrestres, más que su año orbital de 225 días terrestres.",
+    "en": "Venus rotates in a retrograde direction so slowly that its sidereal day lasts 243 Earth days, longer than its orbital year of 225 Earth days.",
+    "source_name": "NASA Science – Venus Facts",
+    "source_url": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+    "id": "solar-025",
+    "es": "La presión atmosférica en la superficie de Venus es aproximadamente 93 veces la de la Tierra a nivel del mar.",
+    "en": "The atmospheric pressure at Venus' surface is about 93 times that of Earth at sea level.",
+    "source_name": "NASA Science – Venus Facts",
+    "source_url": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+    "id": "solar-026",
+    "es": "Venus es el tercer objeto más brillante del cielo, después del Sol y la Luna.",
+    "en": "Venus is the third brightest object in the sky, after the Sun and the Moon.",
+    "source_name": "NASA Science – Venus Facts",
+    "source_url": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+    "id": "solar-027",
+    "es": "La atmósfera de Venus está compuesta principalmente de dióxido de carbono con nubes densas de ácido sulfúrico.",
+    "en": "Venus' atmosphere is composed mainly of carbon dioxide with dense clouds of sulfuric acid.",
+    "source_name": "NASA Science – Venus Facts",
+    "source_url": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+    "id": "solar-028",
+    "es": "Venus tiene un cuasisatélite oficial llamado Zoozve, un asteroide que orbita el Sol manteniéndose cerca de Venus.",
+    "en": "Venus has an officially named quasi-satellite called Zoozve, an asteroid that orbits the Sun while staying close to Venus.",
+    "source_name": "NASA Science – Venus Facts",
+    "source_url": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+    "id": "solar-029",
+    "es": "Marte alberga el volcán más grande del sistema solar: el Olimpo Mons, que supera los 22 kilómetros de altura.",
+    "en": "Mars is home to the solar system's largest volcano, Olympus Mons, which rises more than 22 kilometers above the surrounding plains.",
+    "source_name": "NASA Science – Mars Facts",
+    "source_url": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+    "id": "solar-030",
+    "es": "El sistema de cañones Valles Marineris en Marte tiene unos 3,870 kilómetros de longitud, más de diez veces el largo del Gran Cañón.",
+    "en": "Mars' Valles Marineris canyon system stretches about 3,870 kilometers, more than ten times the length of Earth's Grand Canyon.",
+    "source_name": "NASA Science – Mars Facts",
+    "source_url": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+    "id": "solar-031",
+    "es": "Marte tiene dos pequeñas lunas, Fobos y Deimos, que posiblemente son asteroides capturados.",
+    "en": "Mars has two small moons, Phobos and Deimos, which may be captured asteroids.",
+    "source_name": "NASA Science – Mars Facts",
+    "source_url": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+    "id": "solar-032",
+    "es": "Fobos, la luna más grande de Marte, se acerca lentamente al planeta y chocará con él o se fragmentará en unos 50 millones de años.",
+    "en": "Phobos, Mars' larger moon, is slowly moving toward Mars and will crash into it or break apart in about 50 million years.",
+    "source_name": "NASA Science – Mars Facts",
+    "source_url": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+    "id": "solar-033",
+    "es": "Un día en Marte (un sol) dura 24.6 horas, muy similar al día terrestre de 23.9 horas.",
+    "en": "A day on Mars (called a sol) lasts 24.6 hours, very similar to Earth's 23.9-hour day.",
+    "source_name": "NASA Science – Mars Facts",
+    "source_url": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+    "id": "solar-034",
+    "es": "Marte tiene una inclinación axial de 25 grados, similar a la de la Tierra, lo que le confiere estaciones bien definidas.",
+    "en": "Mars has an axial tilt of 25 degrees, similar to Earth's, giving it well-defined seasons.",
+    "source_name": "NASA Science – Mars Facts",
+    "source_url": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+    "id": "solar-035",
+    "es": "El color rojizo de Marte se debe a la oxidación del hierro en su suelo, básicamente a que la superficie está cubierta de óxido.",
+    "en": "Mars' reddish color is caused by the oxidation of iron minerals in its soil — essentially, the surface is covered in rust.",
+    "source_name": "NASA Science – Mars Facts",
+    "source_url": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+    "id": "solar-036",
+    "es": "Júpiter es el planeta más grande del sistema solar; si fuera una cáscara hueca, cabrían dentro más de 1,000 Tierras.",
+    "en": "Jupiter is the largest planet in the solar system; if it were a hollow shell, more than 1,000 Earths could fit inside.",
+    "source_name": "NASA Science – Jupiter Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "solar-037",
+    "es": "Júpiter tiene el día más corto del sistema solar: completa una rotación en solo 9.9 horas.",
+    "en": "Jupiter has the shortest day in the solar system, completing one rotation in just 9.9 hours.",
+    "source_name": "NASA Science – Jupiter Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "solar-038",
+    "es": "La Gran Mancha Roja de Júpiter es una tormenta gigante que ha rugido durante más de 300 años y es más grande que la Tierra.",
+    "en": "Jupiter's Great Red Spot is a giant storm that has raged for more than 300 years and is larger than Earth.",
+    "source_name": "NASA Science – Jupiter Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "solar-039",
+    "es": "Júpiter tiene un océano de hidrógeno líquido en su interior, el más grande del sistema solar.",
+    "en": "Jupiter has an ocean of liquid hydrogen in its interior, the largest ocean in the solar system.",
+    "source_name": "NASA Science – Jupiter Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "solar-040",
+    "es": "El campo magnético de Júpiter es de 16 a 54 veces más potente que el de la Tierra.",
+    "en": "Jupiter's magnetic field is 16 to 54 times as powerful as Earth's.",
+    "source_name": "NASA Science – Jupiter Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "solar-042",
+    "es": "Los vientos en la atmósfera de Júpiter pueden alcanzar 539 kilómetros por hora en el ecuador.",
+    "en": "Winds in Jupiter's atmosphere can reach 539 kilometers per hour at the equator.",
+    "source_name": "NASA Science – Jupiter Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "solar-043",
+    "es": "Los anillos de Júpiter fueron descubiertos en 1979 por la sonda Voyager 1 de la NASA y están compuestos de pequeñas partículas oscuras.",
+    "en": "Jupiter's rings were discovered in 1979 by NASA's Voyager 1 spacecraft and are composed of small, dark particles.",
+    "source_name": "NASA Science – Jupiter Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "solar-044",
+    "es": "Io, luna de Júpiter, es el cuerpo más volcánicamente activo del sistema solar, con cientos de volcanes en erupción.",
+    "en": "Io, a moon of Jupiter, is the most volcanically active body in the solar system, with hundreds of erupting volcanoes.",
+    "source_name": "NASA Science – Io Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-moons/io/facts/"
+  },
+  {
+    "id": "solar-045",
+    "es": "El volcanism de Io es provocado por el calor de las fuerzas de marea de la enorme gravedad de Júpiter.",
+    "en": "Io's volcanism is driven by heat generated by Jupiter's enormous tidal gravitational forces.",
+    "source_name": "NASA Science – Io Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-moons/io/facts/"
+  },
+  {
+    "id": "solar-046",
+    "es": "Europa, luna de Júpiter, tiene debajo de su capa de hielo un océano de agua salada que podría albergar vida.",
+    "en": "Europa, a moon of Jupiter, has a saltwater ocean beneath its ice shell that could potentially harbor life.",
+    "source_name": "NASA Science – Europa Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-moons/europa/europa-facts/"
+  },
+  {
+    "id": "solar-047",
+    "es": "La capa de hielo de Europa mide entre 15 y 25 kilómetros de grosor, y el océano que tiene debajo podría alcanzar 150 kilómetros de profundidad.",
+    "en": "Europa's ice shell is 15–25 kilometers thick, and the ocean beneath may reach 150 kilometers deep.",
+    "source_name": "NASA Science – Europa Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-moons/europa/europa-facts/"
+  },
+  {
+    "id": "solar-048",
+    "es": "Ganímedes, luna de Júpiter, es la luna más grande del sistema solar, incluso mayor que el planeta Mercurio.",
+    "en": "Ganymede, a moon of Jupiter, is the largest moon in the solar system, even bigger than the planet Mercury.",
+    "source_name": "NASA Science – Jupiter Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "solar-049",
+    "es": "Las cuatro lunas galileanas de Júpiter (Io, Europa, Ganímedes y Calisto) fueron observadas por Galileo en 1610 con un telescopio rudimentario.",
+    "en": "Jupiter's four Galilean moons (Io, Europa, Ganymede, and Callisto) were observed by Galileo in 1610 using an early telescope.",
+    "source_name": "NASA Science – Jupiter Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "solar-050",
+    "es": "Saturno tiene el segundo día más corto del sistema solar, completando una rotación en solo 10.7 horas.",
+    "en": "Saturn has the second shortest day in the solar system, completing one rotation in just 10.7 hours.",
+    "source_name": "NASA Science – Saturn Facts",
+    "source_url": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+    "id": "solar-051",
+    "es": "Saturno es el único planeta del sistema solar con una densidad promedio menor que la del agua; flotaría en una bañera gigante.",
+    "en": "Saturn is the only planet in the solar system with an average density less than water; it would float in a giant bathtub.",
+    "source_name": "NASA Science – Saturn Facts",
+    "source_url": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+    "id": "solar-052",
+    "es": "El sistema de anillos de Saturno se extiende hasta 282,000 kilómetros desde el planeta, pero su grosor vertical es de apenas unos 10 metros en los anillos principales.",
+    "en": "Saturn's ring system extends up to 282,000 kilometers from the planet, yet the vertical thickness of the main rings is typically just about 10 meters.",
+    "source_name": "NASA Science – Saturn Facts",
+    "source_url": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+    "id": "solar-053",
+    "es": "Los anillos de Saturno están compuestos de miles de millones de fragmentos de hielo y roca, desde granos del tamaño del polvo hasta trozos tan grandes como montañas.",
+    "en": "Saturn's rings are made of billions of chunks of ice and rock ranging from dust-sized grains to chunks as large as mountains.",
+    "source_name": "NASA Science – Saturn Facts",
+    "source_url": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+    "id": "solar-054",
+    "es": "A partir de marzo de 2025, Saturno tiene 274 lunas confirmadas en órbita, más que cualquier otro planeta del sistema solar.",
+    "en": "As of March 2025, Saturn has 274 confirmed moons in orbit, more than any other planet in the solar system.",
+    "source_name": "NASA Science – Saturn Facts",
+    "source_url": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+    "id": "solar-055",
+    "es": "El polo norte de Saturno exhibe una corriente de chorro hexagonal con un diámetro de unos 30,000 kilómetros.",
+    "en": "Saturn's north pole features a hexagonal jet stream about 30,000 kilometers across.",
+    "source_name": "NASA Science – Saturn Facts",
+    "source_url": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+    "id": "solar-056",
+    "es": "Los vientos en la atmósfera superior de Saturno alcanzan velocidades de 500 metros por segundo, más rápidos que los huracanes más fuertes de la Tierra.",
+    "en": "Winds in Saturn's upper atmosphere reach speeds of 500 meters per second, faster than the strongest hurricanes on Earth.",
+    "source_name": "NASA Science – Saturn Facts",
+    "source_url": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+    "id": "solar-057",
+    "es": "Titán, la luna más grande de Saturno, es el único mundo además de la Tierra que tiene líquidos estables en su superficie.",
+    "en": "Titan, Saturn's largest moon, is the only world besides Earth known to have stable liquids on its surface.",
+    "source_name": "NASA Science – Titan Facts",
+    "source_url": "https://science.nasa.gov/saturn/moons/titan/facts/"
+  },
+  {
+    "id": "solar-058",
+    "es": "Titán tiene ríos, lagos y mares de metano y etano líquido en lugar de agua.",
+    "en": "Titan has rivers, lakes, and seas of liquid methane and ethane instead of water.",
+    "source_name": "NASA Science – Titan Facts",
+    "source_url": "https://science.nasa.gov/saturn/moons/titan/facts/"
+  },
+  {
+    "id": "solar-059",
+    "es": "La atmósfera de Titán es principalmente nitrógeno, similar a la de la Tierra, pero también contiene un cinco por ciento de metano.",
+    "en": "Titan's atmosphere is primarily nitrogen, similar to Earth's, but also contains about five percent methane.",
+    "source_name": "NASA Science – Titan Facts",
+    "source_url": "https://science.nasa.gov/saturn/moons/titan/facts/"
+  },
+  {
+    "id": "solar-060",
+    "es": "La presión atmosférica en la superficie de Titán es un 60% mayor que la de la Tierra, aunque la gravedad de Titán es menor.",
+    "en": "Atmospheric pressure at Titan's surface is about 60% greater than on Earth, even though Titan's gravity is weaker.",
+    "source_name": "NASA Science – Titan Facts",
+    "source_url": "https://science.nasa.gov/saturn/moons/titan/facts/"
+  },
+  {
+    "id": "solar-061",
+    "es": "Titán tiene un ciclo de líquidos similar al ciclo del agua en la Tierra, pero con metano: llueve metano, fluye por la superficie y se evapora.",
+    "en": "Titan has a liquid cycle similar to Earth's water cycle, but with methane: methane rains down, flows across the surface, and evaporates.",
+    "source_name": "NASA Science – Titan Facts",
+    "source_url": "https://science.nasa.gov/saturn/moons/titan/facts/"
+  },
+  {
+    "id": "solar-062",
+    "es": "Se cree que Titán tiene un océano subterráneo de agua líquida mezclada con sales y amoníaco.",
+    "en": "Titan is thought to have a subsurface ocean of liquid water mixed with salts and ammonia.",
+    "source_name": "NASA Science – Titan Facts",
+    "source_url": "https://science.nasa.gov/saturn/moons/titan/facts/"
+  },
+  {
+    "id": "solar-063",
+    "es": "Titán es más grande que el planeta Mercurio y es la segunda luna más grande del sistema solar.",
+    "en": "Titan is larger than the planet Mercury and is the second largest moon in the solar system.",
+    "source_name": "NASA Science – Titan Facts",
+    "source_url": "https://science.nasa.gov/saturn/moons/titan/facts/"
+  },
+  {
+    "id": "solar-064",
+    "es": "Urano es el único planeta cuyo ecuador forma casi un ángulo recto con su órbita; su inclinación axial es de 97.77 grados.",
+    "en": "Uranus is the only planet whose equator is nearly at a right angle to its orbit, with an axial tilt of 97.77 degrees.",
+    "source_name": "NASA Science – Uranus Facts",
+    "source_url": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+    "id": "solar-065",
+    "es": "Urano fue el primer planeta descubierto con la ayuda de un telescopio, por el astrónomo William Herschel en 1781.",
+    "en": "Uranus was the first planet discovered with the aid of a telescope, by astronomer William Herschel in 1781.",
+    "source_name": "NASA Science – Uranus Facts",
+    "source_url": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+    "id": "solar-066",
+    "es": "Urano tiene la temperatura mínima de atmósfera más fría del sistema solar, llegando a -224.2 grados Celsius.",
+    "en": "Uranus has the coldest minimum atmospheric temperature in the solar system, reaching -224.2 degrees Celsius.",
+    "source_name": "NASA Science – Uranus Facts",
+    "source_url": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+    "id": "solar-067",
+    "es": "Urano obtiene su color azul-verdoso del metano en su atmósfera, que absorbe la luz roja y refleja la luz azul y verde.",
+    "en": "Uranus gets its blue-green color from methane in its atmosphere, which absorbs red light and reflects blue-green light.",
+    "source_name": "NASA Science – Uranus Facts",
+    "source_url": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+    "id": "solar-068",
+    "es": "Urano tiene dos conjuntos de anillos: uno interno de anillos oscuros y uno externo con un anillo interior rojizo y uno exterior azul.",
+    "en": "Uranus has two sets of rings: an inner system of dark grey rings and an outer system with a reddish inner ring and a blue outer ring.",
+    "source_name": "NASA Science – Uranus Facts",
+    "source_url": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+    "id": "solar-069",
+    "es": "Las lunas de Urano son únicas en el sistema solar por estar nombradas en honor a personajes de las obras de William Shakespeare y Alexander Pope.",
+    "en": "Uranus' moons are unique in the solar system for being named after characters from the works of William Shakespeare and Alexander Pope.",
+    "source_name": "NASA Science – Uranus Facts",
+    "source_url": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+    "id": "solar-070",
+    "es": "El eje magnético de Urano está inclinado casi 60 grados respecto al eje de rotación del planeta, lo que produce variaciones extremas en su magnetosfera.",
+    "en": "Uranus' magnetic axis is tilted nearly 60 degrees from its rotation axis, causing extreme variations in its magnetosphere.",
+    "source_name": "NASA Science – Uranus Facts",
+    "source_url": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+    "id": "solar-071",
+    "es": "Neptuno fue el primer planeta localizado mediante predicciones matemáticas más que por observación directa, en 1846.",
+    "en": "Neptune was the first planet located through mathematical predictions rather than direct observation, in 1846.",
+    "source_name": "NASA Science – Neptune Facts",
+    "source_url": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+    "id": "solar-072",
+    "es": "Neptuno es el mundo más ventoso del sistema solar; sus vientos pueden superar los 2,000 kilómetros por hora.",
+    "en": "Neptune is the windiest world in the solar system; its winds can exceed 2,000 kilometers per hour.",
+    "source_name": "NASA Science – Neptune Facts",
+    "source_url": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+    "id": "solar-073",
+    "es": "Neptuno tardó 165 años terrestres en completar su primera órbita completa desde su descubrimiento, lo que ocurrió en 2011.",
+    "en": "Neptune took 165 Earth years to complete its first full orbit since its discovery, which happened in 2011.",
+    "source_name": "NASA Science – Neptune Facts",
+    "source_url": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+    "id": "solar-074",
+    "es": "Tritón, la luna más grande de Neptuno, orbita en dirección retrógrada, contraria a la rotación del planeta, lo que sugiere que fue capturada.",
+    "en": "Triton, Neptune's largest moon, orbits in a retrograde direction opposite to the planet's rotation, suggesting it was captured.",
+    "source_name": "NASA Science – Neptune Facts",
+    "source_url": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+    "id": "solar-075",
+    "es": "La Voyager 2 descubrió géiseres en Tritón que expulsan material helado más de 8 kilómetros hacia arriba, a pesar de sus temperaturas de -235 °C.",
+    "en": "Voyager 2 discovered geysers on Triton that spew icy material more than 8 kilometers upward, despite surface temperatures of -235 °C.",
+    "source_name": "NASA Science – Neptune Facts",
+    "source_url": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+    "id": "solar-076",
+    "es": "El campo magnético de Neptuno está inclinado 47 grados respecto a su eje de rotación y es unas 27 veces más potente que el de la Tierra.",
+    "en": "Neptune's magnetic field is tilted 47 degrees from its rotation axis and is about 27 times more powerful than Earth's.",
+    "source_name": "NASA Science – Neptune Facts",
+    "source_url": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+    "id": "solar-077",
+    "es": "Los anillos exteriores de Neptuno tienen misteriosos arcos de polvo llamados Liberté, Egalité, Fraternité y Courage, que se agrupan en lugar de distribuirse uniformemente.",
+    "en": "Neptune's outer rings have mysterious dust clumps called Liberté, Egalité, Fraternité, and Courage that cluster rather than spread evenly.",
+    "source_name": "NASA Science – Neptune Facts",
+    "source_url": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+    "id": "solar-078",
+    "es": "Plutón fue reclasificado como planeta enano en 2006 por la Unión Astronómica Internacional porque no ha limpiado su órbita de otros objetos.",
+    "en": "Pluto was reclassified as a dwarf planet in 2006 by the IAU because it has not cleared its orbital neighborhood of other objects.",
+    "source_name": "NASA Science – Pluto Facts",
+    "source_url": "https://science.nasa.gov/dwarf-planets/pluto/facts/"
+  },
+  {
+    "id": "solar-079",
+    "es": "Plutón fue nombrado por Venetia Burney, una niña inglesa de 11 años, en 1930.",
+    "en": "Pluto was named by Venetia Burney, an 11-year-old English girl, in 1930.",
+    "source_name": "NASA Science – Pluto Facts",
+    "source_url": "https://science.nasa.gov/dwarf-planets/pluto/facts/"
+  },
+  {
+    "id": "solar-080",
+    "es": "Caronte, la luna más grande de Plutón, tiene aproximadamente la mitad del tamaño de Plutón, lo que los convierte en el sistema de doble planeta más destacado del sistema solar.",
+    "en": "Charon, Pluto's largest moon, is about half Pluto's size, making them the most prominent double-planet system in the solar system.",
+    "source_name": "NASA Science – Pluto Facts",
+    "source_url": "https://science.nasa.gov/dwarf-planets/pluto/facts/"
+  },
+  {
+    "id": "solar-081",
+    "es": "La órbita de Plutón es tan elíptica que entre 1979 y 1999 estuvo más cerca del Sol que Neptuno.",
+    "en": "Pluto's orbit is so elliptical that between 1979 and 1999 it was closer to the Sun than Neptune.",
+    "source_name": "NASA Science – Pluto Facts",
+    "source_url": "https://science.nasa.gov/dwarf-planets/pluto/facts/"
+  },
+  {
+    "id": "solar-082",
+    "es": "Plutón tiene una atmósfera delgada de nitrógeno, metano y monóxido de carbono que se expande cuando se acerca al Sol y colapsa cuando se aleja.",
+    "en": "Pluto has a thin atmosphere of nitrogen, methane, and carbon monoxide that expands as it nears the Sun and collapses as it moves away.",
+    "source_name": "NASA Science – Pluto Facts",
+    "source_url": "https://science.nasa.gov/dwarf-planets/pluto/facts/"
+  },
+  {
+    "id": "solar-083",
+    "es": "Plutón tiene cinco lunas conocidas: Caronte, Nix, Hidra, Cerbero y Estigia.",
+    "en": "Pluto has five known moons: Charon, Nix, Hydra, Kerberos, and Styx.",
+    "source_name": "NASA Science – Pluto Facts",
+    "source_url": "https://science.nasa.gov/dwarf-planets/pluto/facts/"
+  },
+  {
+    "id": "solar-084",
+    "es": "Ceres es el único planeta enano del sistema solar interior y el objeto más grande del cinturón de asteroides.",
+    "en": "Ceres is the only dwarf planet in the inner solar system and the largest object in the asteroid belt.",
+    "source_name": "NASA Science – Ceres Facts",
+    "source_url": "https://science.nasa.gov/dwarf-planets/ceres/facts/"
+  },
+  {
+    "id": "solar-085",
+    "es": "Ceres podría estar compuesto por hasta un 25% de agua, lo que equivaldría a tener más agua que toda la Tierra.",
+    "en": "Ceres could be composed of as much as 25% water, which would mean it has more water than all of Earth.",
+    "source_name": "NASA Science – Ceres Facts",
+    "source_url": "https://science.nasa.gov/dwarf-planets/ceres/facts/"
+  },
+  {
+    "id": "solar-086",
+    "es": "Ceres fue descubierto en 1801 por Giuseppe Piazzi y fue el primer miembro del cinturón de asteroides en ser hallado.",
+    "en": "Ceres was discovered in 1801 by Giuseppe Piazzi and was the first member of the asteroid belt to be found.",
+    "source_name": "NASA Science – Ceres Facts",
+    "source_url": "https://science.nasa.gov/dwarf-planets/ceres/facts/"
+  },
+  {
+    "id": "solar-087",
+    "es": "La gravedad de Júpiter impidió que Ceres se convirtiera en un planeta completo; los científicos lo describen como un 'planeta embrionario'.",
+    "en": "Jupiter's gravity prevented Ceres from becoming a full planet; scientists describe it as an 'embryonic planet'.",
+    "source_name": "NASA Science – Ceres Facts",
+    "source_url": "https://science.nasa.gov/dwarf-planets/ceres/facts/"
+  },
+  {
+    "id": "solar-088",
+    "es": "Los asteroides y cometas son reliquias de los materiales que formaron el sistema solar hace 4,600 millones de años.",
+    "en": "Asteroids and comets are relics of the materials that formed the solar system 4.6 billion years ago.",
+    "source_name": "NASA Science – Asteroids, Comets & Meteors Facts",
+    "source_url": "https://science.nasa.gov/asteroids-comets-meteors/facts/"
+  },
+  {
+    "id": "solar-089",
+    "es": "El aminoácido glicina, usado por los seres vivos para fabricar proteínas, fue descubierto en el polvo de un cometa traído a la Tierra por la misión Stardust de la NASA.",
+    "en": "The amino acid glycine, used by living organisms to make proteins, was discovered in comet dust returned to Earth by NASA's Stardust mission.",
+    "source_name": "NASA Science – Asteroids, Comets & Meteors Facts",
+    "source_url": "https://science.nasa.gov/asteroids-comets-meteors/facts/"
+  },
+  {
+    "id": "solar-091",
+    "es": "El sistema solar tiene ocho planetas oficiales: Mercurio, Venus, Tierra, Marte, Júpiter, Saturno, Urano y Neptuno.",
+    "en": "The solar system has eight official planets: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune.",
+    "source_name": "NASA Science – Our Solar System",
+    "source_url": "https://solarsystem.nasa.gov/solar-system/our-solar-system/in-depth/"
+  },
+  {
+    "id": "solar-092",
+    "es": "El sistema solar se formó hace unos 4,500 millones de años a partir del colapso de una nube gigante de gas y polvo llamada nebulosa solar.",
+    "en": "The solar system formed about 4.5 billion years ago from the collapse of a giant cloud of gas and dust called the solar nebula.",
+    "source_name": "NASA Science – Our Solar System",
+    "source_url": "https://solarsystem.nasa.gov/solar-system/our-solar-system/in-depth/"
+  },
+  {
+    "id": "solar-093",
+    "es": "El cinturón de Kuiper se extiende más allá de la órbita de Neptuno y contiene miles de cuerpos helados, incluyendo a Plutón.",
+    "en": "The Kuiper Belt extends beyond Neptune's orbit and contains thousands of icy bodies, including Pluto.",
+    "source_name": "NASA Science – Our Solar System",
+    "source_url": "https://solarsystem.nasa.gov/solar-system/our-solar-system/in-depth/"
+  },
+  {
+    "id": "solar-094",
+    "es": "Se estima que el sistema solar podría estar rodeado por hasta tres billones de cometas en la Nube de Oort.",
+    "en": "The solar system is estimated to be surrounded by as many as three trillion comets in the Oort Cloud.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-095",
+    "es": "Mercurio es el segundo planeta más denso del sistema solar, después de la Tierra, con una densidad de 5.43 g/cm³.",
+    "en": "Mercury is the second densest planet in the solar system after Earth, with a density of 5.43 g/cm³.",
+    "source_name": "NASA Science – Mercury Facts",
+    "source_url": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+    "id": "solar-096",
+    "es": "Desde la superficie de Mercurio, el Sol se vería más de tres veces más grande que desde la Tierra y la luz solar sería hasta siete veces más brillante.",
+    "en": "From Mercury's surface, the Sun would appear more than three times as large as from Earth, and sunlight would be up to seven times brighter.",
+    "source_name": "NASA Science – Mercury Facts",
+    "source_url": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+    "id": "solar-097",
+    "es": "El efecto invernadero descontrolado de Venus eleva la temperatura de su superficie a unos 467 °C, creando un ambiente considerado no propicio para la vida tal como la conocemos.",
+    "en": "Venus' runaway greenhouse effect raises its surface temperature to about 467 °C, creating an environment considered not conducive to life as we know it.",
+    "source_name": "NASA Science – Venus Facts",
+    "source_url": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+    "id": "solar-098",
+    "es": "A 50 kilómetros sobre la superficie de Venus, la temperatura y la presión atmosférica son similares a las de la superficie terrestre.",
+    "en": "About 50 kilometers above Venus' surface, the temperature and atmospheric pressure are similar to those at Earth's surface.",
+    "source_name": "NASA Science – Venus Facts",
+    "source_url": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+    "id": "solar-099",
+    "es": "Marte tiene la misma área de tierra seca que la Tierra aunque es solo la mitad de su diámetro, por carecer de océanos.",
+    "en": "Mars has roughly the same area of dry land as Earth even though it is only half Earth's diameter, because it has no oceans.",
+    "source_name": "NASA Science – Mars Facts",
+    "source_url": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+    "id": "solar-100",
+    "es": "Marte no tiene campo magnético global hoy en día, pero zonas de su corteza en el hemisferio sur presentan vestigios de uno antiguo de hace 4,000 millones de años.",
+    "en": "Mars has no global magnetic field today, but regions of its southern crust show remnants of one that existed 4 billion years ago.",
+    "source_name": "NASA Science – Mars Facts",
+    "source_url": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+    "id": "solar-101",
+    "es": "Júpiter acumula más masa que todos los demás cuerpos del sistema solar combinados, excluyendo el Sol.",
+    "en": "Jupiter has more mass than all other bodies in the solar system combined, excluding the Sun.",
+    "source_name": "NASA Science – Jupiter Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "solar-102",
+    "es": "Los ciclones en los polos de Júpiter se organizan en patrones poligonales: ocho en el polo norte y cinco en el polo sur.",
+    "en": "Cyclones at Jupiter's poles arrange themselves in polygonal patterns: eight at the north pole and five at the south pole.",
+    "source_name": "NASA Science – Jupiter Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "solar-103",
+    "es": "La luna Enceladus de Saturno tiene penachos de vapor de agua que se disparan al espacio desde grietas en su polo sur.",
+    "en": "Saturn's moon Enceladus has plumes of water vapor shooting into space from cracks near its south pole.",
+    "source_name": "NASA Science – Saturn Facts",
+    "source_url": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+    "id": "solar-104",
+    "es": "Según la sonda Cassini, algunas auroras de Saturno son causadas por partículas expulsadas de sus lunas y la rotación rápida de su campo magnético, no únicamente por el viento solar.",
+    "en": "Cassini found that some of Saturn's auroras are caused by particles ejected from its moons and the rapid rotation of its magnetic field, not solely by the solar wind.",
+    "source_name": "NASA Science – Saturn Facts",
+    "source_url": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+    "id": "solar-105",
+    "es": "Neptuno tarda más de 40 años terrestres en vivir una sola estación, porque su año dura 165 años terrestres.",
+    "en": "Neptune takes more than 40 Earth years to experience a single season, because its year lasts 165 Earth years.",
+    "source_name": "NASA Science – Neptune Facts",
+    "source_url": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+    "id": "solar-106",
+    "es": "El núcleo de la densidad del Sol es unas 150 gramos por centímetro cúbico, aproximadamente ocho veces más denso que el oro.",
+    "en": "The density of the Sun's core is about 150 grams per cubic centimeter, roughly eight times denser than gold.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-107",
+    "es": "Las espículas solares son chorros de plasma que brotan de la superficie del Sol a 100 km/s y pueden alcanzar 9,700 km de longitud.",
+    "en": "Solar spicules are jets of plasma that erupt from the Sun's surface at 100 km/s and can reach 9,700 km in length.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-108",
+    "es": "El gran evento de Carrington de 1859 fue la tormenta geomagnética más intensa registrada; sus auroras fueron visibles hasta Cuba y Hawái.",
+    "en": "The 1859 Carrington Event was the strongest recorded geomagnetic storm; its auroras were visible as far south as Cuba and Hawaii.",
+    "source_name": "NASA Science – Sun Facts",
+    "source_url": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+    "id": "solar-109",
+    "es": "Urano podría haber recibido el impacto de un objeto del tamaño de la Tierra que inclinó su eje al extremo de 97.77 grados.",
+    "en": "Uranus may have been hit by an Earth-sized object that tipped its axis to the extreme tilt of 97.77 degrees.",
+    "source_name": "NASA Science – Uranus Facts",
+    "source_url": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+    "id": "solar-110",
+    "es": "En Urano, cada polo experimenta un invierno oscuro que dura 21 años y un verano sin atardecer durante el mismo periodo.",
+    "en": "On Uranus, each pole experiences a dark winter lasting 21 years and a sunlit summer for the same period.",
+    "source_name": "NASA Science – Uranus Facts",
+    "source_url": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+    "id": "solar-111",
+    "es": "Los anillos de Saturno contienen una brecha llamada División de Cassini, de unos 4,700 kilómetros de ancho, que separa los anillos A y B.",
+    "en": "Saturn's rings contain a gap called the Cassini Division, about 4,700 kilometers wide, which separates rings A and B.",
+    "source_name": "NASA Science – Saturn Facts",
+    "source_url": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+    "id": "solar-112",
+    "es": "Los científicos han descubierto que los ciclones de Júpiter se extienden hasta 100 km por debajo de las cimas de las nubes, y la Gran Mancha Roja llega a más de 500 km de profundidad.",
+    "en": "Scientists found Jupiter's cyclones extend up to 100 km below cloud tops, and the Great Red Spot reaches over 500 km deep.",
+    "source_name": "NASA Science – Jupiter Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "solar-113",
+    "es": "La luna Io actúa como generador eléctrico al orbitar dentro del campo magnético de Júpiter, generando hasta 400,000 voltios y 3 millones de amperios.",
+    "en": "Io acts as an electric generator as it orbits within Jupiter's magnetic field, generating up to 400,000 volts and 3 million amperes.",
+    "source_name": "NASA Science – Io Facts",
+    "source_url": "https://science.nasa.gov/jupiter/jupiter-moons/io/facts/"
+  },
+  {
+    "id": "solar-114",
+    "es": "Las dunas de 'arena' en la superficie de Titán están compuestas de granos oscuros de hidrocarburos con un aspecto similar al del café molido.",
+    "en": "The 'sand' dunes on Titan's surface are made of dark hydrocarbon grains that look something like coffee grounds.",
+    "source_name": "NASA Science – Titan Facts",
+    "source_url": "https://science.nasa.gov/saturn/moons/titan/facts/"
+  },
+  {
+    "id": "solar-115",
+    "es": "Plutón se encuentra a una distancia promedio de 5,900 millones de kilómetros del Sol; la luz solar tarda 5.5 horas en llegar hasta él.",
+    "en": "Pluto is at an average distance of 5.9 billion kilometers from the Sun; sunlight takes 5.5 hours to reach it.",
+    "source_name": "NASA Science – Pluto Facts",
+    "source_url": "https://science.nasa.gov/dwarf-planets/pluto/facts/"
+  }
+]

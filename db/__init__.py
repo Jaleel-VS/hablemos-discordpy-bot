@@ -37,6 +37,7 @@ from db.conversations import ConversationsMixin
 from db.crossword import CrosswordMixin
 from db.dictation import DictationMixin
 from db.exchange_posts import ExchangePostsMixin
+from db.facts import FactsMixin
 from db.game_results import GameResultsMixin
 from db.interactions import InteractionsMixin
 from db.introductions import IntroductionsMixin
@@ -79,6 +80,7 @@ class Database(
     AutomodWatchMixin,
     SpotifyMixin,
     PrivacyMixin,
+    FactsMixin,
 ):
     def __init__(self, database_url: str):
         self.pool: asyncpg.Pool | None = None

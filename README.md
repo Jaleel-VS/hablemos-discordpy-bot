@@ -17,6 +17,7 @@ Built with discord.py 2.x and PostgreSQL (asyncpg). Deployed on AWS Lightsail co
 - **Bot Administration** — Cog toggle system, command metrics, data retention, interaction analysis
 - **Quote Generator** — Create shareable quote images from messages
 - **Spotify Integration** — See what users are listening to
+- **Did You Know?** — Sourced Spanish/English fun facts with persistent, non-repeating cycles
 
 ---
 
@@ -106,6 +107,18 @@ Categories: `animales` (199 words), `profesiones` (141), `ciudades` (49). One ga
 | `$lst` / `$list` | List conversation-starter categories |
 
 Categories: `general` (1), `phil` (2), `would` (3), `other` (4), `cursed` (5). Names are case-insensitive. Spanish-first channels show Spanish first; all other channels show English first.
+
+### Did You Know?
+
+| Command | Description |
+|---------|-------------|
+| `$dyi` | Show a sourced fun fact in Spanish and English in a Components V2 card |
+
+The bundled catalog contains **549 bilingual facts**, paraphrased from [NASA](https://science.nasa.gov/solar-system/solar-system-facts/), [ESA](https://www.esa.int/Science_Exploration/Space_Science/Black_holes), [LIGO](https://ligo.org/detections/gw170817/), [NOAA Ocean Facts](https://oceanservice.noaa.gov/facts/), [USGS](https://www.usgs.gov/programs/vhp/about-volcanoes), and [Smithsonian's National Zoo](https://nationalzoo.si.edu/animals). Each card links to its specific source. Translations are stored with the facts; no runtime AI, translation service, or web request is needed.
+
+Each channel (including DMs) gets its own random cycle: all facts are drawn once before any repeat, with no immediate repeat at a cycle boundary. Progress survives restarts and concurrent requests. Cooldown: one request per user every five seconds. A draw counts as used even if Discord delivery fails.
+
+The cog automatically upserts `cogs/dyi_cog/data/*.json` into PostgreSQL's `fun_facts` table on load, without resetting `fact_cycles` or `fact_seen`. Keep IDs stable when correcting facts; use a new ID for a new fact. The normal bot deployment includes the data and creates the tables; no `$sync` or manual import is required.
 
 ### Spotify
 

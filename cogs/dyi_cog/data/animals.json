@@ -1,0 +1,751 @@
+[
+  {
+    "id": "animals-001",
+    "es": "El panda gigante tiene un hueso de la muñeca alargado que actúa como un 'pulgar' para sujetar las cañas de bambú mientras come.",
+    "en": "The giant panda has an enlarged wrist bone that acts as a 'pseudo thumb,' helping it grasp bamboo stems while eating.",
+    "source_name": "Smithsonian's National Zoo – Giant Panda",
+    "source_url": "https://nationalzoo.si.edu/animals/giant-panda"
+  },
+  {
+    "id": "animals-002",
+    "es": "Aunque come principalmente bambú, el panda gigante tiene un sistema digestivo parecido al de un carnívoro; aprovecha pocos de los nutrientes del bambú y consume entre 32 y 45 kg al día.",
+    "en": "Despite eating mostly bamboo, giant pandas have a digestive system more like a carnivore's; they absorb little nutrition from bamboo and eat 70–100 pounds of it daily.",
+    "source_name": "Smithsonian's National Zoo – Giant Panda",
+    "source_url": "https://nationalzoo.si.edu/animals/giant-panda"
+  },
+  {
+    "id": "animals-003",
+    "es": "Los pandas gigantes no desarrollan señales visuales corporales para comunicarse; se apoyan principalmente en marcas de olor porque viven en densos bosques de bambú donde la visión es limitada.",
+    "en": "Giant pandas lack expressive body-language signals and rely almost entirely on scent marks because they live in dense, fog-shrouded bamboo forests where sight lines are short.",
+    "source_name": "Smithsonian's National Zoo – Giant Panda",
+    "source_url": "https://nationalzoo.si.edu/animals/giant-panda"
+  },
+  {
+    "id": "animals-004",
+    "es": "Una cría de panda gigante recién nacida pesa apenas entre 85 y 140 gramos, lo que la hace 1/900 del tamaño de su madre, una de las proporciones madre-cría más extremas entre los mamíferos no marsupiales.",
+    "en": "A newborn giant panda cub weighs only 3–5 ounces—about 1/900th the size of its mother—making it one of the most extreme mother-to-offspring size ratios among non-marsupial mammals.",
+    "source_name": "Smithsonian's National Zoo – Giant Panda",
+    "source_url": "https://nationalzoo.si.edu/animals/giant-panda"
+  },
+  {
+    "id": "animals-005",
+    "es": "Los siamang, el gibón más grande, pueden hacer vuelos libres de hasta 8–10 metros de rama en rama usando un movimiento pendular llamado braquiación.",
+    "en": "Siamangs, the largest gibbons, can make free-flying leaps of 25–32 feet (8–10 m) between branches using a pendulum-like swinging movement called brachiation.",
+    "source_name": "Smithsonian's National Zoo – Siamang",
+    "source_url": "https://nationalzoo.si.edu/animals/siamang"
+  },
+  {
+    "id": "animals-006",
+    "es": "Los siamang inflan su saco guttural hasta del tamaño de una toronja para producir dos tipos de llamadas: un retumbo grave con la boca cerrada y un agudo 'wow' con la boca abierta.",
+    "en": "Siamangs inflate their throat sac to the size of a grapefruit to produce two distinct call types: a deep boom with their mouth closed and a loud 'wow' with their mouth open.",
+    "source_name": "Smithsonian's National Zoo – Siamang",
+    "source_url": "https://nationalzoo.si.edu/animals/siamang"
+  },
+  {
+    "id": "animals-007",
+    "es": "Entre los gibones, el siamang destaca porque el macho asume la mayor parte del cuidado de la cría durante su segundo año de vida, lo cual es inusual en la familia.",
+    "en": "Among gibbons, male siamangs are notable for taking over most of the infant-carrying duties during the offspring's second year of life—unusual within their family.",
+    "source_name": "Smithsonian's National Zoo – Siamang",
+    "source_url": "https://nationalzoo.si.edu/animals/siamang"
+  },
+  {
+    "id": "animals-008",
+    "es": "El puercoespín norteamericano tiene alrededor de 30 000 púas, cada una con 700-800 pequeñas barbas microscópicas que se clavan con aproximadamente la mitad de la fuerza de una aguja hipodérmica.",
+    "en": "The North American porcupine has about 30,000 quills, each tipped with 700–800 microscopic barbs that penetrate flesh with roughly half the force of a hypodermic needle.",
+    "source_name": "Smithsonian's National Zoo – 11 Fascinating Facts About North American Porcupines",
+    "source_url": "https://nationalzoo.si.edu/animals/news/11-fascinating-facts-about-north-american-porcupines"
+  },
+  {
+    "id": "animals-009",
+    "es": "Las púas del puercoespín están cubiertas de una grasa cerosa con propiedades antibióticas que inhibe el crecimiento de bacterias, lo cual es útil porque el animal a veces se pincha a sí mismo al caer de los árboles.",
+    "en": "Porcupine quills are coated in a waxy, fatty grease with antibiotic properties that inhibits bacterial growth—handy because porcupines frequently fall from trees and occasionally stab themselves.",
+    "source_name": "Smithsonian's National Zoo – 11 Fascinating Facts About North American Porcupines",
+    "source_url": "https://nationalzoo.si.edu/animals/news/11-fascinating-facts-about-north-american-porcupines"
+  },
+  {
+    "id": "animals-010",
+    "es": "El puercoespín norteamericano es el segundo roedor más pesado de América del Norte, después del castor; los adultos pueden llegar a pesar entre 5 y 16 kg.",
+    "en": "The North American porcupine is the continent's second-heaviest rodent after the beaver, with adults sometimes weighing 12–35 pounds (about the size of a medium dog).",
+    "source_name": "Smithsonian's National Zoo – 11 Fascinating Facts About North American Porcupines",
+    "source_url": "https://nationalzoo.si.edu/animals/news/11-fascinating-facts-about-north-american-porcupines"
+  },
+  {
+    "id": "animals-011",
+    "es": "El cuervo común tiene más de 30 vocalizaciones distintas documentadas y en cautiverio puede imitar sonidos simples, incluso el habla humana.",
+    "en": "The common raven has more than 30 recorded distinct vocalizations and in human care can mimic simple sounds—including human speech.",
+    "source_name": "Smithsonian's National Zoo – Common Raven",
+    "source_url": "https://nationalzoo.si.edu/animals/common-raven"
+  },
+  {
+    "id": "animals-012",
+    "es": "Los cuervos han sido documentados usando herramientas para obtener alimento y defender territorios, y son objeto de múltiples estudios cognitivos sobre aprendizaje.",
+    "en": "Ravens have been documented using tools to obtain food and defend territories and are subjects of multiple cognitive research studies on learning and problem solving.",
+    "source_name": "Smithsonian's National Zoo – Common Raven",
+    "source_url": "https://nationalzoo.si.edu/animals/common-raven"
+  },
+  {
+    "id": "animals-013",
+    "es": "El lobo gris tiene aullidos únicos para cada individuo que pueden ser escuchados a distancias de 10-11 km, y un lobo perdido cambia su aullido a uno más corto y agudo para que la manada lo localice.",
+    "en": "Each gray wolf has a distinctive howl that can be heard 6–7 miles (10–11 km) away; a separated wolf switches to a short, rising 'lonesome howl' so the pack can find it.",
+    "source_name": "Smithsonian's National Zoo – Gray Wolf",
+    "source_url": "https://nationalzoo.si.edu/animals/gray-wolf"
+  },
+  {
+    "id": "animals-014",
+    "es": "En una manada de lobos grises, generalmente solo la pareja dominante se reproduce, y los demás miembros ayudan a criar a las crías y aprenden técnicas de caza.",
+    "en": "In a gray wolf pack, typically only the dominant pair reproduces; the rest of the pack helps raise the cubs and learns hunting techniques from the adults.",
+    "source_name": "Smithsonian's National Zoo – Gray Wolf",
+    "source_url": "https://nationalzoo.si.edu/animals/gray-wolf"
+  },
+  {
+    "id": "animals-015",
+    "es": "Los lobos grises usan un lenguaje corporal elaborado: la cola parcialmente erguida y los ojos fijos indican dominancia, mientras que la cola baja y la garganta expuesta indican sumisión.",
+    "en": "Gray wolves use elaborate body language: a partially raised tail and direct gaze signal dominance, while a lowered tail and exposed throat signal submission.",
+    "source_name": "Smithsonian's National Zoo – Gray Wolf",
+    "source_url": "https://nationalzoo.si.edu/animals/gray-wolf"
+  },
+  {
+    "id": "animals-016",
+    "es": "El gorila de las tierras bajas del oeste tiene una huella nasal única, distinta en cada individuo, de la misma manera que los humanos tenemos huellas dactilares.",
+    "en": "Western lowland gorillas have unique nose prints, distinct for each individual—just as humans have unique fingerprints.",
+    "source_name": "Smithsonian's National Zoo – Western Lowland Gorilla",
+    "source_url": "https://nationalzoo.si.edu/animals/western-lowland-gorilla"
+  },
+  {
+    "id": "animals-017",
+    "es": "Los gorilas adultos, incluido el macho dominante o espalda plateada, hacen nidos nuevos cada noche doblando ramas y hojas a su alrededor, y nunca duermen dos veces en el mismo nido.",
+    "en": "Adult gorillas—including the dominant silverback—build a fresh sleeping nest every night by bending branches and leaves around themselves and never sleep in the same nest twice.",
+    "source_name": "Smithsonian's National Zoo – Western Lowland Gorilla",
+    "source_url": "https://nationalzoo.si.edu/animals/western-lowland-gorilla"
+  },
+  {
+    "id": "animals-018",
+    "es": "El científico ha identificado hasta 22 vocalizaciones distintas en el gorila, y cuando un macho carga, generalmente pasa de largo sin tocar al intruso, usando el espectáculo para intimidar sin pelear.",
+    "en": "Scientists have recorded up to 22 distinct gorilla vocalizations; when a silverback charges, he usually veers away at the last moment—the charge is a display, not an attack.",
+    "source_name": "Smithsonian's National Zoo – Western Lowland Gorilla",
+    "source_url": "https://nationalzoo.si.edu/animals/western-lowland-gorilla"
+  },
+  {
+    "id": "animals-019",
+    "es": "El guepardo puede acelerar de 0 a 72 km/h en solo 2,5 segundos y alcanza una velocidad máxima de 96-112 km/h, avanzando 7 metros en cada zancada a cuatro zancadas por segundo.",
+    "en": "The cheetah can accelerate from 0 to 45 mph (72 km/h) in just 2.5 seconds and reaches top speeds of 60–70 mph (96–112 km/h), covering 23 feet (7 m) per stride at four strides per second.",
+    "source_name": "Smithsonian's National Zoo – Cheetah",
+    "source_url": "https://nationalzoo.si.edu/animals/cheetah"
+  },
+  {
+    "id": "animals-020",
+    "es": "El guepardo no ruge; en cambio, produce sonidos únicos como gorjeos, ladridos y ronroneos continuos que se producen tanto al inhalar como al exhalar.",
+    "en": "Cheetahs cannot roar; instead they make unique sounds including chirps, barks, and continuous purrs that are produced on both the inhale and exhale.",
+    "source_name": "Smithsonian's National Zoo – Cheetah",
+    "source_url": "https://nationalzoo.si.edu/animals/cheetah"
+  },
+  {
+    "id": "animals-021",
+    "es": "Los machos guepardos adultos, pero no las hembras, viven en grupos llamados coaliciones, generalmente formados por hermanos de camada, y permanecen juntos de por vida.",
+    "en": "Adult male cheetahs—but not females—live in permanent groups called coalitions, usually composed of littermates, and remain together for life.",
+    "source_name": "Smithsonian's National Zoo – Cheetah",
+    "source_url": "https://nationalzoo.si.edu/animals/cheetah"
+  },
+  {
+    "id": "animals-022",
+    "es": "El guepardo tiene una diversidad genética extremadamente baja comparada con otros mamíferos, probablemente resultado de un cuello de botella poblacional severo ocurrido hace unos 10 000 años.",
+    "en": "Cheetahs have extremely low genetic variation compared with other mammals, likely the result of a severe population bottleneck that occurred roughly 10,000 years ago.",
+    "source_name": "Smithsonian's National Zoo – Cheetah",
+    "source_url": "https://nationalzoo.si.edu/animals/cheetah"
+  },
+  {
+    "id": "animals-023",
+    "es": "El perezoso de dos dedos tiene un metabolismo que equivale solo al 40-45 % de lo esperado para su tamaño corporal, lo que le permite vivir de hojas de bajo valor calórico.",
+    "en": "The two-toed sloth has a metabolic rate only 40–45% of what would be expected for its body size, allowing it to survive on a low-calorie diet of leaves.",
+    "source_name": "Smithsonian's National Zoo – Why Are Sloths So Slow?",
+    "source_url": "https://nationalzoo.si.edu/animals/news/why-are-sloths-so-slow-and-other-sloth-facts"
+  },
+  {
+    "id": "animals-024",
+    "es": "El perezoso solo baja de su árbol aproximadamente una vez a la semana para defecar, y tanto duerme, come, se aparea como da a luz colgado boca abajo.",
+    "en": "Sloths descend from their tree only about once a week to defecate, and they sleep, eat, mate, and even give birth while hanging upside down.",
+    "source_name": "Smithsonian's National Zoo – Why Are Sloths So Slow?",
+    "source_url": "https://nationalzoo.si.edu/animals/news/why-are-sloths-so-slow-and-other-sloth-facts"
+  },
+  {
+    "id": "animals-025",
+    "es": "Cada hebra del pelaje del perezoso tiene ranuras donde crecen dos tipos de algas azul-verdes, dándole un tinte verdoso que sirve de camuflaje y creando un ecosistema para polillas, ácaros y escarabajos que viven exclusivamente en su pelaje.",
+    "en": "Each strand of a sloth's coarse hair has grooves where two species of blue-green algae grow, giving its coat a greenish camouflage tint and hosting an entire ecosystem of moths, mites, and beetles that live exclusively on sloth fur.",
+    "source_name": "Smithsonian's National Zoo – Why Are Sloths So Slow?",
+    "source_url": "https://nationalzoo.si.edu/animals/news/why-are-sloths-so-slow-and-other-sloth-facts"
+  },
+  {
+    "id": "animals-026",
+    "es": "El elefante asiático produce retumbos infrasonoros tan graves que los humanos apenas pueden escucharlos, pero otros elefantes los comprenden a más de 3 km de distancia.",
+    "en": "Asian elephants produce infrasonic rumbles so low-pitched that humans can barely detect them, yet other elephants can hear and understand these messages from more than 2 miles (3+ km) away.",
+    "source_name": "Smithsonian's National Zoo – Asian Elephant",
+    "source_url": "https://nationalzoo.si.edu/animals/asian-elephant"
+  },
+  {
+    "id": "animals-027",
+    "es": "La trompa del elefante asiático contiene alrededor de 150 000 unidades musculares y puede retener hasta 7,5 litros de agua; el elefante asiático tiene un solo 'dedo' en la punta de la trompa para la precisión.",
+    "en": "An Asian elephant's trunk contains about 150,000 muscle units and can hold up to 2 gallons (7.5 liters) of water; Asian elephants have a single 'finger' at the trunk tip for fine manipulation.",
+    "source_name": "Smithsonian's National Zoo – Asian Elephant",
+    "source_url": "https://nationalzoo.si.edu/animals/asian-elephant"
+  },
+  {
+    "id": "animals-028",
+    "es": "Los elefantes asiáticos tienen seis juegos de muelas a lo largo de su vida; los molares se reemplazan en progresión horizontal, como una cinta transportadora, y cuando se gasta el último juego, el elefante ya no puede comer bien.",
+    "en": "Asian elephants have six sets of molars over their lifetime; the teeth are replaced in horizontal progression, like a conveyor belt, and when the final set wears out the elephant can no longer chew properly.",
+    "source_name": "Smithsonian's National Zoo – Asian Elephant",
+    "source_url": "https://nationalzoo.si.edu/animals/asian-elephant"
+  },
+  {
+    "id": "animals-029",
+    "es": "El tigre es el mayor mamífero terrestre que se alimenta exclusivamente de carne; el tigre de Amur es la subespecie más grande y puede llegar a pesar 300 kg.",
+    "en": "The tiger is the largest terrestrial mammal whose diet consists entirely of meat; the Amur tiger is the biggest subspecies, with males reaching up to 660 pounds (300 kg).",
+    "source_name": "Smithsonian's National Zoo – Tiger",
+    "source_url": "https://nationalzoo.si.edu/animals/tiger"
+  },
+  {
+    "id": "animals-030",
+    "es": "Ningún tigre tiene el mismo patrón de rayas, igual que las huellas dactilares humanas, y los investigadores utilizan estas marcas para identificar individuos en la naturaleza.",
+    "en": "No two tigers share the same stripe pattern—like human fingerprints—and researchers use these markings to identify individuals in the wild.",
+    "source_name": "Smithsonian's National Zoo – Tiger",
+    "source_url": "https://nationalzoo.si.edu/animals/tiger"
+  },
+  {
+    "id": "animals-031",
+    "es": "Los tigres son nadadores hábiles y a menudo se meten al agua para escapar de moscas o refrescarse, cruzando ríos y lagos de hasta 8 km de ancho.",
+    "en": "Tigers are skilled swimmers that regularly enter water to cool off or escape flies, and can easily cross rivers and lakes up to 5 miles (8 km) wide.",
+    "source_name": "Smithsonian's National Zoo – Tiger",
+    "source_url": "https://nationalzoo.si.edu/animals/tiger"
+  },
+  {
+    "id": "animals-032",
+    "es": "Sin su pelaje, el cuerpo de un tigre y el de un león son tan similares que solo expertos pueden distinguirlos.",
+    "en": "Without their coats, a tiger's body and a lion's body are so similar that only experts can tell them apart.",
+    "source_name": "Smithsonian's National Zoo – Tiger",
+    "source_url": "https://nationalzoo.si.edu/animals/tiger"
+  },
+  {
+    "id": "animals-033",
+    "es": "La leona es la cazadora principal del grupo: aunque los machos suelen comerse primero, son las hembras quienes realizan la mayor parte de las cacerías cooperativas.",
+    "en": "Female lions are the pride's primary hunters; although males usually eat first, it is the females who carry out most cooperative hunts.",
+    "source_name": "Smithsonian's National Zoo – Lion",
+    "source_url": "https://nationalzoo.si.edu/animals/lion"
+  },
+  {
+    "id": "animals-034",
+    "es": "El rugido de un león puede escucharse a más de 8 km de distancia y es su principal forma de marcar el territorio junto a las marcas olfativas de orina.",
+    "en": "A lion's roar can be heard more than 5 miles (8 km) away and is its primary method of territory marking, alongside urine scent marks.",
+    "source_name": "Smithsonian's National Zoo – Lion",
+    "source_url": "https://nationalzoo.si.edu/animals/lion"
+  },
+  {
+    "id": "animals-035",
+    "es": "Hace más de 10 000 años, los leones vivían desde América del Norte y del Sur hasta Europa, África y Asia; hoy sobreviven casi exclusivamente en África, con una pequeña población aislada en el bosque de Gir, India.",
+    "en": "More than 10,000 years ago, lions ranged from the Americas to Europe, Africa, and Asia; today they survive almost exclusively in Africa, with a tiny isolated population in the Gir Forest of India.",
+    "source_name": "Smithsonian's National Zoo – Lion",
+    "source_url": "https://nationalzoo.si.edu/animals/lion"
+  },
+  {
+    "id": "animals-036",
+    "es": "El colibrí de garganta rubí bate sus alas más de 50 veces por segundo y puede volar hacia atrás, hacia adelante y mantenerse suspendido en el aire.",
+    "en": "The ruby-throated hummingbird beats its wings more than 50 times per second and can fly backward, forward, and hover in place.",
+    "source_name": "Smithsonian's National Zoo – Ruby-throated Hummingbird",
+    "source_url": "https://nationalzoo.si.edu/animals/ruby-throated-hummingbird"
+  },
+  {
+    "id": "animals-037",
+    "es": "El colibrí de garganta rubí tiene pies tan pequeños que es incapaz de caminar; solo puede desplazarse de lado sobre una percha.",
+    "en": "The ruby-throated hummingbird has feet so small it cannot walk; it can only scoot sideways along a perch.",
+    "source_name": "Smithsonian's National Zoo – Ruby-throated Hummingbird",
+    "source_url": "https://nationalzoo.si.edu/animals/ruby-throated-hummingbird"
+  },
+  {
+    "id": "animals-038",
+    "es": "Durante su migración estacional, el colibrí de garganta rubí puede cruzar el Golfo de México en un solo vuelo sin paradas.",
+    "en": "During its seasonal migration, the ruby-throated hummingbird can fly non-stop straight across the Gulf of Mexico in a single flight.",
+    "source_name": "Smithsonian's National Zoo – Ruby-throated Hummingbird",
+    "source_url": "https://nationalzoo.si.edu/animals/ruby-throated-hummingbird"
+  },
+  {
+    "id": "animals-039",
+    "es": "El colibrí de garganta rubí quema tanta energía que bebe hasta la mitad de su peso corporal en agua con azúcar y néctar cada día.",
+    "en": "Ruby-throated hummingbirds burn so much energy that they drink up to half their body weight in sugar water and nectar every single day.",
+    "source_name": "Smithsonian's National Zoo – Ruby-throated Hummingbird",
+    "source_url": "https://nationalzoo.si.edu/animals/ruby-throated-hummingbird"
+  },
+  {
+    "id": "animals-040",
+    "es": "El búho rayado tiene ojos marrones en lugar de los ojos amarillos típicos de la mayoría de los búhos, y los que cazan muchos cangrejos de río pueden desarrollar plumas del pecho teñidas de rosa por las sustancias carotenoides presentes en su presa.",
+    "en": "The barred owl has brown eyes instead of the yellow eyes typical of most owls, and those that prey heavily on crayfish can develop pink-tinged breast feathers from carotenoid pigments in their prey.",
+    "source_name": "Smithsonian's National Zoo – Barred Owl",
+    "source_url": "https://nationalzoo.si.edu/animals/barred-owl"
+  },
+  {
+    "id": "animals-041",
+    "es": "El búho rayado ha expandido su distribución al noroeste del Pacífico, donde puede hibridarse con el búho moteado.",
+    "en": "The barred owl has expanded its range into the Pacific Northwest, where it can hybridize with the spotted owl.",
+    "source_name": "Smithsonian's National Zoo – Barred Owl",
+    "source_url": "https://nationalzoo.si.edu/animals/barred-owl"
+  },
+  {
+    "id": "animals-042",
+    "es": "El suricato siempre designa a un individuo como centinela que vigila a los depredadores desde un lugar elevado mientras el resto del grupo forrajea; los centinelas se turnan durante el día.",
+    "en": "Meerkats always designate one individual as a sentinel to watch for predators from an elevated spot while the rest of the mob forages; sentries rotate throughout the day.",
+    "source_name": "Smithsonian's National Zoo – Meerkat",
+    "source_url": "https://nationalzoo.si.edu/animals/meerkat"
+  },
+  {
+    "id": "animals-043",
+    "es": "Los suricatos tienen al menos 10 vocalizaciones distintas y las hembras tienden a ser más vocales que los machos.",
+    "en": "Meerkats have at least 10 distinctive vocalizations, and females tend to be more vocal than males.",
+    "source_name": "Smithsonian's National Zoo – Meerkat",
+    "source_url": "https://nationalzoo.si.edu/animals/meerkat"
+  },
+  {
+    "id": "animals-044",
+    "es": "El castor norteamericano puede permanecer sumergido hasta 15 minutos y nadar a 10 km/h gracias a sus pulmones sobredimensionados.",
+    "en": "The North American beaver can stay submerged for up to 15 minutes and swim at 6 mph (10 km/h) thanks to its oversized lungs.",
+    "source_name": "Smithsonian's National Zoo – Beaver",
+    "source_url": "https://nationalzoo.si.edu/animals/beaver"
+  },
+  {
+    "id": "animals-045",
+    "es": "Los incisivos del castor crecen toda su vida, son de color naranja intenso por el alto contenido de hierro en el esmalte y se autoafilan con el uso diario.",
+    "en": "A beaver's incisors grow throughout its lifetime, are bright orange due to high iron content in the enamel, and self-sharpen through daily use.",
+    "source_name": "Smithsonian's National Zoo – Beaver",
+    "source_url": "https://nationalzoo.si.edu/animals/beaver"
+  },
+  {
+    "id": "animals-046",
+    "es": "Cuando un castor está encerrado bajo el hielo en invierno sin luz solar, su ritmo circadiano se alarga y sus 'días' internos pasan a durar de 26 a 29 horas.",
+    "en": "When a beaver is locked under ice in winter with no sunlight cues, its circadian rhythm breaks down and its internal 'days' stretch to 26–29 hours.",
+    "source_name": "Smithsonian's National Zoo – Beaver",
+    "source_url": "https://nationalzoo.si.edu/animals/beaver"
+  },
+  {
+    "id": "animals-047",
+    "es": "Las presas construidas por los castores forman lagunas de corriente lenta que reducen la erosión y crean hábitats para docenas de otras especies acuáticas y terrestres.",
+    "en": "Dams built by beavers create slow-moving ponds that reduce stream erosion and provide habitat and resources for dozens of other aquatic and terrestrial species.",
+    "source_name": "Smithsonian's National Zoo – Beaver",
+    "source_url": "https://nationalzoo.si.edu/animals/beaver"
+  },
+  {
+    "id": "animals-048",
+    "es": "El oso hormiguero gigante tiene una lengua de 60 cm de largo adherida al esternón que puede vibrar hasta 150 veces por minuto, recubierta de saliva pegajosa para atrapar hormigas y termitas.",
+    "en": "The giant anteater has a 2-foot-long tongue attached to its sternum that can flick in and out up to 150 times per minute, coated in sticky saliva to trap ants and termites.",
+    "source_name": "Smithsonian's National Zoo – Giant Anteater",
+    "source_url": "https://nationalzoo.si.edu/animals/giant-anteater"
+  },
+  {
+    "id": "animals-049",
+    "es": "Antes de abrir un termitero, el oso hormiguero gigante puede identificar por olfato la especie exacta de hormiga o termita que contiene.",
+    "en": "Before ripping open a nest, a giant anteater can identify the exact species of ant or termite inside by smell alone.",
+    "source_name": "Smithsonian's National Zoo – Giant Anteater",
+    "source_url": "https://nationalzoo.si.edu/animals/giant-anteater"
+  },
+  {
+    "id": "animals-050",
+    "es": "El oso hormiguero gigante camina apoyándose en los nudillos de sus patas delanteras para proteger sus enormes garras frontales, y puede galopar a más de 48 km/h si es necesario.",
+    "en": "The giant anteater walks on the knuckles of its front feet to protect its massive front claws, and can gallop at over 30 mph (48 km/h) when necessary.",
+    "source_name": "Smithsonian's National Zoo – Giant Anteater",
+    "source_url": "https://nationalzoo.si.edu/animals/giant-anteater"
+  },
+  {
+    "id": "animals-051",
+    "es": "El águila calva no emite el chillido dramático que aparece en películas; ese sonido es en realidad el grito del halcón colirrojo, usado por los productores de Hollywood.",
+    "en": "The bald eagle does not produce the dramatic screeching cry heard in movies; that sound is actually the call of the red-tailed hawk, repurposed by Hollywood sound engineers.",
+    "source_name": "Smithsonian's National Zoo – 9 Fascinating Facts About the Bald Eagle",
+    "source_url": "https://nationalzoo.si.edu/animals/news/how-well-do-you-know-americas-bird-9-fascinating-facts-about-bald-eagle"
+  },
+  {
+    "id": "animals-052",
+    "es": "El nido de águila calva más grande del que se tiene registro medía 2,9 m de ancho y 6 m de profundidad, y pesaba aproximadamente dos toneladas.",
+    "en": "The largest bald eagle nest on record measured 9.5 feet (2.9 m) wide, 20 feet (6 m) deep, and weighed approximately two tons—as much as a car.",
+    "source_name": "Smithsonian's National Zoo – 9 Fascinating Facts About the Bald Eagle",
+    "source_url": "https://nationalzoo.si.edu/animals/news/how-well-do-you-know-americas-bird-9-fascinating-facts-about-bald-eagle"
+  },
+  {
+    "id": "animals-053",
+    "es": "Las águilas calvas jóvenes no desarrollan la cabeza blanca distintiva hasta que tienen aproximadamente 5 años; hasta entonces tienen el plumaje moteado de marrón.",
+    "en": "Young bald eagles do not develop their iconic white head until they are about 5 years old; until then they sport mottled brown plumage that often confuses casual birdwatchers.",
+    "source_name": "Smithsonian's National Zoo – 9 Fascinating Facts About the Bald Eagle",
+    "source_url": "https://nationalzoo.si.edu/animals/news/how-well-do-you-know-americas-bird-9-fascinating-facts-about-bald-eagle"
+  },
+  {
+    "id": "animals-054",
+    "es": "Los abejorros y otros polinizadores de 'zumbido' vibran sus músculos torácicos sobre flores cuyos granos de polen solo se liberan con vibración, incluyendo arándanos, tomates y papas, lo que beneficia a más de 20 000 especies de plantas.",
+    "en": "Bumblebees and other buzz pollinators rapidly vibrate their thorax muscles to expel pollen locked inside certain flowers—including blueberries, tomatoes, and potatoes—a technique benefiting more than 20,000 plant species.",
+    "source_name": "Smithsonian's National Zoo – 7 Things You Should Know about Bees and Other Pollinators",
+    "source_url": "https://nationalzoo.si.edu/animals/news/7-things-you-should-know-about-bees-and-other-pollinators"
+  },
+  {
+    "id": "animals-055",
+    "es": "Las abejas melíferas contribuyen aproximadamente 15 000 millones de dólares anuales en cultivos agrícolas en EE.UU., y casi un tercio de todos los alimentos que comemos depende de la polinización por insectos.",
+    "en": "Honeybees alone contribute approximately $15 billion worth of agricultural crops in the U.S. each year, and nearly one-third of all food humans eat depends on insect pollination.",
+    "source_name": "Smithsonian's National Zoo – 7 Things You Should Know about Bees and Other Pollinators",
+    "source_url": "https://nationalzoo.si.edu/animals/news/7-things-you-should-know-about-bees-and-other-pollinators"
+  },
+  {
+    "id": "animals-056",
+    "es": "Los osos perezosos del zoológico demostraron reconocer fotografías bidimensionales de alimentos preferidos y elegir consistentemente los más atractivos, lo que evidencia capacidad de representación imagen-objeto.",
+    "en": "Sloth bears at the Smithsonian's National Zoo demonstrated they can recognize 2D photographs of preferred foods and consistently chose the most attractive items, evidencing 2D-to-3D object recognition.",
+    "source_name": "Smithsonian's National Zoo – Sloth Bears Recognize 2D Images",
+    "source_url": "https://nationalzoo.si.edu/news/sloth-bears-recognize-2d-images-representations-3d-objects-smithsonians-national-zoo-cognition"
+  },
+  {
+    "id": "animals-057",
+    "es": "Los orangutanes tienen mapas cognitivos y suelen regresar a los mismos sitios de alimentación que han visitado en el pasado para buscar fruta, insectos y flores.",
+    "en": "Orangutans have cognitive maps and often return to the same feeding sites they have visited in the past to forage for fruit, insects, and flowers.",
+    "source_name": "Smithsonian's National Zoo – Orangutan",
+    "source_url": "https://nationalzoo.si.edu/animals/orangutan"
+  },
+  {
+    "id": "animals-058",
+    "es": "Los orangutanes modifican palos para acceder a fruta y miel y transmiten estas técnicas culturalmente de una población a otra, similar a cómo los humanos transmiten herramientas culturales.",
+    "en": "Orangutans modify sticks to access fruit and honey and transmit these tool-use techniques culturally across populations, similar to how humans pass on cultural knowledge.",
+    "source_name": "Smithsonian's National Zoo – Orangutan",
+    "source_url": "https://nationalzoo.si.edu/animals/orangutan"
+  },
+  {
+    "id": "animals-059",
+    "es": "Cuando el calor sube, el zorro fennec regula su temperatura mediante jadeos extremos: su frecuencia respiratoria escala de 23 respiraciones por minuto hasta 690.",
+    "en": "When temperatures climb, fennec foxes regulate body heat through extreme panting: their breathing rate can escalate from 23 breaths per minute up to 690.",
+    "source_name": "Smithsonian's National Zoo – Fennec Fox",
+    "source_url": "https://nationalzoo.si.edu/animals/fennec-fox"
+  },
+  {
+    "id": "animals-060",
+    "es": "El armadillo peludo gritón consume grandes cantidades de arena mientras forrajea; se han registrado casos en que el 50 % del contenido estomacal del animal era arena.",
+    "en": "The screaming hairy armadillo consumes large amounts of sand while foraging; records show that as much as 50 percent of an individual's stomach contents can be sand.",
+    "source_name": "Smithsonian's National Zoo – Screaming Hairy Armadillo",
+    "source_url": "https://nationalzoo.si.edu/animals/screaming-hairy-armadillo"
+  },
+  {
+    "id": "animals-061",
+    "es": "El puercoespín norteamericano tiene antojos de sal tan intensos que roe botas de senderismo empapadas de sudor dejadas fuera de las tiendas de campaña y puede masticar maderas tratadas con sales preservantes en porches.",
+    "en": "North American porcupines have such intense salt cravings that they gnaw sweat-soaked hiking boots left outside tents and can chew through porch wood treated with salt-based preservatives.",
+    "source_name": "Smithsonian's National Zoo – 11 Fascinating Facts About North American Porcupines",
+    "source_url": "https://nationalzoo.si.edu/animals/news/11-fascinating-facts-about-north-american-porcupines"
+  },
+  {
+    "id": "animals-062",
+    "es": "Alrededor de un tercio de los especímenes de puercoespín estudiados en museos presentaban evidencia de huesos fracturados y sanados, lo que indica que las caídas de los árboles son una parte natural y frecuente de su vida.",
+    "en": "About one-third of porcupine museum specimens show evidence of healed broken bones, indicating that falls from trees are a natural and frequent occurrence in porcupine life.",
+    "source_name": "Smithsonian's National Zoo – 11 Fascinating Facts About North American Porcupines",
+    "source_url": "https://nationalzoo.si.edu/animals/news/11-fascinating-facts-about-north-american-porcupines"
+  },
+  {
+    "id": "animals-063",
+    "es": "El ritual de cortejo del puercoespín implica batalla entre machos, danzas de cortejo, vocalizaciones fuertes y que el macho rocíe a la hembra con orina que contiene señales hormonales.",
+    "en": "Porcupine courtship involves male battles, courtship dances, loud vocalizations, and the male spraying the female with urine containing hormonal signals—all within an 8-hour receptivity window.",
+    "source_name": "Smithsonian's National Zoo – 11 Fascinating Facts About North American Porcupines",
+    "source_url": "https://nationalzoo.si.edu/animals/news/11-fascinating-facts-about-north-american-porcupines"
+  },
+  {
+    "id": "animals-064",
+    "es": "Los siamang son ferozmente territoriales y defienden su territorio todos los días con rituales de canto; las disputas de frontera son muy raras pero incluyen persecuciones de alta velocidad con mordidas en las ramas.",
+    "en": "Siamangs are fiercely territorial and defend their range with daily singing rituals; actual boundary disputes are very rare but involve high-speed aerial chases with biting and slapping.",
+    "source_name": "Smithsonian's National Zoo – Siamang",
+    "source_url": "https://nationalzoo.si.edu/animals/siamang"
+  },
+  {
+    "id": "animals-065",
+    "es": "El lobo gris históricamente tenía el rango natural más amplio de cualquier mamífero terrestre vivo, ocupando todos los hábitats del hemisferio norte excepto los bosques tropicales.",
+    "en": "Gray wolves historically had the greatest natural range of any living terrestrial mammal, occupying all northern-hemisphere habitats except tropical forests.",
+    "source_name": "Smithsonian's National Zoo – Gray Wolf",
+    "source_url": "https://nationalzoo.si.edu/animals/gray-wolf"
+  },
+  {
+    "id": "animals-066",
+    "es": "Las guaridas de los lobos grises, que pueden ser túneles excavados por los mismos padres o reutilizados de otros animales, se usan repetidamente durante años generación tras generación.",
+    "en": "Gray wolf maternity dens—tunnels dug by the parents or enlarged from another animal's burrow—are often reused year after year across multiple generations.",
+    "source_name": "Smithsonian's National Zoo – Gray Wolf",
+    "source_url": "https://nationalzoo.si.edu/animals/gray-wolf"
+  },
+  {
+    "id": "animals-067",
+    "es": "El guepardo pierde aproximadamente el 50 % de las presas que caza a manos de leones, hienas y grupos de buitres que roban su comida antes de que pueda terminar de comer.",
+    "en": "Cheetahs lose roughly 50% of their kills to lions, hyenas, and vulture groups that steal their prey before they can finish eating.",
+    "source_name": "Smithsonian's National Zoo – Cheetah",
+    "source_url": "https://nationalzoo.si.edu/animals/cheetah"
+  },
+  {
+    "id": "animals-068",
+    "es": "El guepardo es el único félido del género Acinonyx y tiene garras semiretráctiles con puntas visibles, más parecidas a las de un perro que a las de un gato típico.",
+    "en": "The cheetah is the sole surviving member of the genus Acinonyx, and its semi-retractable claws leave visible claw tips in tracks—more like a dog's print than a typical cat's.",
+    "source_name": "Smithsonian's National Zoo – Cheetah",
+    "source_url": "https://nationalzoo.si.edu/animals/cheetah"
+  },
+  {
+    "id": "animals-069",
+    "es": "El gorila de las tierras bajas del oeste recorre menos de 1,6 km al día en promedio; como consecuencia de su gran tamaño, pasan la mayor parte del tiempo en el suelo.",
+    "en": "Western lowland gorillas travel less than 1 mile (1.6 km) per day on average and, because of their large size, spend most of their time on the ground rather than in trees.",
+    "source_name": "Smithsonian's National Zoo – Western Lowland Gorilla",
+    "source_url": "https://nationalzoo.si.edu/animals/western-lowland-gorilla"
+  },
+  {
+    "id": "animals-070",
+    "es": "El macho gorila de las tierras bajas del oeste tiene una cresta ósea en la cima y parte trasera del cráneo para anclar los enormes músculos necesarios para masticar su dieta fibrosa.",
+    "en": "Male western lowland gorillas have large bony crests on the top and back of the skull to anchor the massive muscles needed to support and operate their powerful jaws.",
+    "source_name": "Smithsonian's National Zoo – Western Lowland Gorilla",
+    "source_url": "https://nationalzoo.si.edu/animals/western-lowland-gorilla"
+  },
+  {
+    "id": "animals-071",
+    "es": "Los elefantes asiáticos pueden detectar la identidad, el sexo y el estado reproductivo de otro elefante utilizando su trompa para oler la boca, las glándulas temporales, los genitales o las heces.",
+    "en": "Asian elephants can determine another elephant's identity, sex, and reproductive status by using their trunk to smell the animal's mouth, temporal gland, genitals, or dung.",
+    "source_name": "Smithsonian's National Zoo – Asian Elephant",
+    "source_url": "https://nationalzoo.si.edu/animals/asian-elephant"
+  },
+  {
+    "id": "animals-072",
+    "es": "Los elefantes asiáticos machos entran en musth, un estado hormonal de altos niveles de testosterona que los hace agresivos y atractivos para las hembras, que puede comenzar tan temprano como a los 8 años en ejemplares en cautiverio.",
+    "en": "Male Asian elephants enter musth—a state of heightened testosterone that makes them aggressive and attractive to females—which can begin as early as age 8 in zoo animals due to consistent nutrition.",
+    "source_name": "Smithsonian's National Zoo – Asian Elephant",
+    "source_url": "https://nationalzoo.si.edu/animals/asian-elephant"
+  },
+  {
+    "id": "animals-073",
+    "es": "La gestación del elefante asiático dura entre 21,5 y 22 meses: casi dos años antes de que nazca la cría.",
+    "en": "An Asian elephant's gestation lasts 21.5 to 22 months: almost two years before the calf is born.",
+    "source_name": "Smithsonian's National Zoo – Asian Elephant",
+    "source_url": "https://nationalzoo.si.edu/animals/asian-elephant"
+  },
+  {
+    "id": "animals-074",
+    "es": "La piel del elefante asiático puede ser tan delgada como papel en el interior de las orejas pero tan gruesa como 2,5 cm en la espalda; a pesar de su grosor, es muy sensible gracias a una rica red de nervios.",
+    "en": "An Asian elephant's skin ranges from paper-thin inside the ears to about 1 inch (2.5 cm) thick on the back; despite that thickness it remains highly sensitive thanks to a rich nerve supply.",
+    "source_name": "Smithsonian's National Zoo – Asian Elephant",
+    "source_url": "https://nationalzoo.si.edu/animals/asian-elephant"
+  },
+  {
+    "id": "animals-075",
+    "es": "El bebé ternero elefante asiático recién nacido consume las heces de su madre durante los primeros años de vida para obtener la bacteria simbiótica necesaria para digerir la celulosa.",
+    "en": "Newborn Asian elephant calves eat their mother's dung for the first several years of life to acquire the symbiotic gut bacteria needed to digest cellulose.",
+    "source_name": "Smithsonian's National Zoo – Asian Elephant",
+    "source_url": "https://nationalzoo.si.edu/animals/asian-elephant"
+  },
+  {
+    "id": "animals-076",
+    "es": "El tigre es un ovulador inducido: la hembra no libera óvulos hasta que ocurre el apareamiento, asegurando la fertilización en un momento preciso.",
+    "en": "Tigers are induced ovulators: females do not release eggs until mating occurs, ensuring fertilization timing is precisely coordinated with successful mating.",
+    "source_name": "Smithsonian's National Zoo – Tiger",
+    "source_url": "https://nationalzoo.si.edu/animals/tiger"
+  },
+  {
+    "id": "animals-077",
+    "es": "La pata trasera del castor norteamericano tiene una segunda uña dividida especial, llamada 'uña de acicalamiento', que el animal usa como peine para mantener su pelaje impermeable.",
+    "en": "The North American beaver has a specialized split 'preening toenail' on its hind foot that it uses as a comb to keep its fur waterproofed and prevent matting.",
+    "source_name": "Smithsonian's National Zoo – Beaver",
+    "source_url": "https://nationalzoo.si.edu/animals/beaver"
+  },
+  {
+    "id": "animals-078",
+    "es": "La cola del castor norteamericano es plana, escamosa y sin pelos, y sirve como timón al nadar, soporte de equilibrio en tierra y señal de alarma cuando la golpea con fuerza sobre el agua.",
+    "en": "The North American beaver's flat, scaly, hairless tail serves as a swimming rudder, land-balance prop, and alarm signal when slapped loudly on the water's surface.",
+    "source_name": "Smithsonian's National Zoo – Beaver",
+    "source_url": "https://nationalzoo.si.edu/animals/beaver"
+  },
+  {
+    "id": "animals-079",
+    "es": "El perezoso de dos dedos tiene dientes que crecen continuamente a lo largo de su vida, gastándose con la masticación para no volverse demasiado largos.",
+    "en": "The two-toed sloth has teeth that grow continuously throughout its life, wearing down through chewing so they never grow too long.",
+    "source_name": "Smithsonian's National Zoo – Why Are Sloths So Slow?",
+    "source_url": "https://nationalzoo.si.edu/animals/news/why-are-sloths-so-slow-and-other-sloth-facts"
+  },
+  {
+    "id": "animals-080",
+    "es": "A pesar de su apariencia torpe en tierra, el perezoso es un nadador sorprendentemente fuerte, usando una especie de nado de perro para desplazarse por el agua.",
+    "en": "Despite their clumsy appearance on land, sloths are surprisingly strong swimmers that propel themselves through water using a type of doggy paddle.",
+    "source_name": "Smithsonian's National Zoo – Why Are Sloths So Slow?",
+    "source_url": "https://nationalzoo.si.edu/animals/news/why-are-sloths-so-slow-and-other-sloth-facts"
+  },
+  {
+    "id": "animals-081",
+    "es": "El puercoespín norteamericano produce un olor almizclado acre, descrito como mezcla de sudor corporal, cabra y queso, derivado de un compuesto llamado R-delta-decalactona, que sirve de advertencia a los depredadores.",
+    "en": "North American porcupines produce a pungent musky odor—described as a blend of body odor, goat, and cheese—from a compound called R-delta-decalactone, which warns predators away.",
+    "source_name": "Smithsonian's National Zoo – 11 Fascinating Facts About North American Porcupines",
+    "source_url": "https://nationalzoo.si.edu/animals/news/11-fascinating-facts-about-north-american-porcupines"
+  },
+  {
+    "id": "animals-082",
+    "es": "El panda gigante ovula solo una vez al año durante una ventana de apenas 24 a 72 horas, lo que hace que la reproducción sea un desafío biológico extremo.",
+    "en": "Female giant pandas ovulate only once a year, within a window of just 24–72 hours—making successful reproduction an extreme biological challenge.",
+    "source_name": "Smithsonian's National Zoo – Giant Panda",
+    "source_url": "https://nationalzoo.si.edu/animals/giant-panda"
+  },
+  {
+    "id": "animals-083",
+    "es": "El meerkat se puede parar sobre sus patas traseras usando la cola como soporte de trípode para escanear el horizonte en busca de depredadores desde una postura bípeda estable.",
+    "en": "A meerkat can stand upright on its hind legs, using its tail as a tripod support, to scan the horizon for predators in a stable bipedal stance.",
+    "source_name": "Smithsonian's National Zoo – Meerkat",
+    "source_url": "https://nationalzoo.si.edu/animals/meerkat"
+  },
+  {
+    "id": "animals-085",
+    "es": "El plaguicida DDT interfería con la formación de cáscaras fuertes en los huevos del águila calva; algunas quedaban tan delgadas que se rompían bajo el peso del ave que las incubaba.",
+    "en": "The pesticide DDT interfered with bald eagles' ability to produce strong eggshells; some shells became so thin they collapsed under the incubating parent's weight.",
+    "source_name": "Smithsonian's National Zoo – 9 Fascinating Facts About the Bald Eagle",
+    "source_url": "https://nationalzoo.si.edu/animals/news/how-well-do-you-know-americas-bird-9-fascinating-facts-about-bald-eagle"
+  },
+  {
+    "id": "animals-086",
+    "es": "Los brazos del siamang son más largos que los del gibón de mejillas blancas y pueden extenderse hasta dos veces y media la longitud del cuerpo.",
+    "en": "A siamang's arms are longer than those of the white-cheeked gibbon and can reach two-and-a-half times the length of its body.",
+    "source_name": "Smithsonian's National Zoo – Siamang",
+    "source_url": "https://nationalzoo.si.edu/animals/siamang"
+  },
+  {
+    "id": "animals-087",
+    "es": "El gorila de las tierras bajas del oeste hace nidos distintos para el descanso diurno y para dormir por la noche, y los bebés comparten el nido de sus madres.",
+    "en": "Western lowland gorillas build separate day nests for resting and night nests for sleeping; infants share their mother's nest.",
+    "source_name": "Smithsonian's National Zoo – Western Lowland Gorilla",
+    "source_url": "https://nationalzoo.si.edu/animals/western-lowland-gorilla"
+  },
+  {
+    "id": "animals-088",
+    "es": "La longitud y el color de la melena de un león están determinados en parte por la edad, la genética y las hormonas; las temperaturas ambientales más frías favorecen melenas más oscuras y abundantes.",
+    "en": "The length and color of a lion's mane is partly determined by age, genetics, and hormones; cooler ambient temperatures are associated with darker, fuller manes.",
+    "source_name": "Smithsonian's National Zoo – Lion",
+    "source_url": "https://nationalzoo.si.edu/animals/lion"
+  },
+  {
+    "id": "animals-089",
+    "es": "Hasta el 80 % de los cachorros de leones muere en sus primeros dos años de vida, víctimas del hambre o de machos que toman el control de la manada y eliminan las crías no relacionadas.",
+    "en": "Up to 80% of lion cubs die within their first two years, falling victim to starvation or to incoming males that kill unrelated cubs when taking over a pride.",
+    "source_name": "Smithsonian's National Zoo – Lion",
+    "source_url": "https://nationalzoo.si.edu/animals/lion"
+  },
+  {
+    "id": "animals-090",
+    "es": "Los leones son los únicos félidos verdaderamente sociales: viven en grupos de parientes del sexo femenino llamados manadas que pueden tener hasta 40 miembros.",
+    "en": "Lions are the world's only truly social cats, living in groups of related females called prides that can include up to 40 individuals.",
+    "source_name": "Smithsonian's National Zoo – Lion",
+    "source_url": "https://nationalzoo.si.edu/animals/lion"
+  },
+  {
+    "id": "animals-091",
+    "es": "El orangután tiene el intervalo entre partos más largo de cualquier mamífero terrestre: las hembras sumatras paren solo una cría cada ocho o más años.",
+    "en": "The orangutan has the longest inter-birth interval of any land-based mammal; Sumatran females give birth only once every eight or more years.",
+    "source_name": "Smithsonian's National Zoo – Orangutan",
+    "source_url": "https://nationalzoo.si.edu/animals/orangutan"
+  },
+  {
+    "id": "animals-092",
+    "es": "A pesar de su pequeño tamaño, el zorro fennec es un saltador sorprendente: los adultos pueden saltar hasta un metro de altura estando de pie.",
+    "en": "Despite their diminutive size, fennec foxes are surprisingly strong jumpers; adults can leap up to 3 feet (1 meter) in height from a standing position.",
+    "source_name": "Smithsonian's National Zoo – Fennec Fox",
+    "source_url": "https://nationalzoo.si.edu/animals/fennec-fox"
+  },
+  {
+    "id": "animals-093",
+    "es": "El colibrí de garganta rubí es la única especie de colibrí que se reproduce regularmente al este de las Grandes Llanuras de América del Norte.",
+    "en": "The ruby-throated hummingbird is the only hummingbird species that regularly breeds east of the Great Plains in North America.",
+    "source_name": "Smithsonian's National Zoo – Ruby-throated Hummingbird",
+    "source_url": "https://nationalzoo.si.edu/animals/ruby-throated-hummingbird"
+  },
+  {
+    "id": "animals-094",
+    "es": "La hembra del colibrí de garganta rubí construye el nido sola, usando hierbas y fibras vegetales camufladas con líquenes y hojas muertas, y pone solo dos huevos blancos.",
+    "en": "Female ruby-throated hummingbirds build the nest entirely alone, weaving grasses and plant fibers camouflaged with lichens and dead leaves, and lay just two white eggs.",
+    "source_name": "Smithsonian's National Zoo – Ruby-throated Hummingbird",
+    "source_url": "https://nationalzoo.si.edu/animals/ruby-throated-hummingbird"
+  },
+  {
+    "id": "animals-095",
+    "es": "El tigre caza principalmente al anochecer usando la vista y el oído, y sus rayas actúan como camuflaje en la hierba al acechar a su presa.",
+    "en": "Tigers hunt primarily at night using sight and sound, and their striped coats act as camouflage in tall grasses as they lie in wait for prey.",
+    "source_name": "Smithsonian's National Zoo – Tiger",
+    "source_url": "https://nationalzoo.si.edu/animals/tiger"
+  },
+  {
+    "id": "animals-096",
+    "es": "El oso hormiguero gigante raramente bebe agua directamente; obtiene casi toda la humedad que necesita de los insectos que come y de la humedad que queda en las plantas tras la lluvia.",
+    "en": "Giant anteaters rarely drink water directly; they obtain almost all the moisture they need from the insects they eat and from moisture left on plants after rain.",
+    "source_name": "Smithsonian's National Zoo – Giant Anteater",
+    "source_url": "https://nationalzoo.si.edu/animals/giant-anteater"
+  },
+  {
+    "id": "animals-097",
+    "es": "La cría del oso hormiguero gigante trepa sobre el lomo de su madre inmediatamente después del nacimiento y permanece allí hasta por un año, y su pelaje se alinea con el de la madre para parecer un solo animal grande.",
+    "en": "Giant anteater young climb onto their mother's back right after birth and ride there for up to a year; their fur pattern aligns with the mother's to make them appear as one large animal.",
+    "source_name": "Smithsonian's National Zoo – Giant Anteater",
+    "source_url": "https://nationalzoo.si.edu/animals/giant-anteater"
+  },
+  {
+    "id": "animals-098",
+    "es": "El búho rayado es uno de los búhos más vocales de América del Norte y su llamada icónica suena como '¿Quién cocina para ti? ¿Quién cocina para todos?'.",
+    "en": "The barred owl is one of North America's most vocal owls; its characteristic call is phonetically rendered as 'Who cooks for you? Who cooks for you all?'",
+    "source_name": "Smithsonian's National Zoo – Barred Owl",
+    "source_url": "https://nationalzoo.si.edu/animals/barred-owl"
+  },
+  {
+    "id": "animals-099",
+    "es": "El zorro fennec, el cánido más pequeño del mundo, obtiene casi toda el agua que necesita de su comida y puede sobrevivir largos períodos sin beber directamente.",
+    "en": "The fennec fox, the world's smallest canid, obtains nearly all the water it needs from its food and can survive extended periods without drinking directly.",
+    "source_name": "Smithsonian's National Zoo – Fennec Fox",
+    "source_url": "https://nationalzoo.si.edu/animals/fennec-fox"
+  },
+  {
+    "id": "animals-100",
+    "es": "Las enormes orejas del zorro fennec, de 10 a 15 cm, sirven para disipar calor y detectar el movimiento de presas bajo la arena del desierto.",
+    "en": "The fennec fox's enormous ears—4–6 inches (10–15 cm) long—serve to dissipate body heat and to detect the movement of prey buried beneath desert sand.",
+    "source_name": "Smithsonian's National Zoo – Fennec Fox",
+    "source_url": "https://nationalzoo.si.edu/animals/fennec-fox"
+  },
+  {
+    "id": "animals-101",
+    "es": "El armadillo peludo gritón, cuando se siente amenazado, emite un chillido muy agudo y puede atacar a serpientes pequeñas con los bordes afilados de su caparazón.",
+    "en": "The screaming hairy armadillo, when threatened, emits a loud squeal and can attack small snakes using the sharp edges of its carapace as a weapon.",
+    "source_name": "Smithsonian's National Zoo – Screaming Hairy Armadillo",
+    "source_url": "https://nationalzoo.si.edu/animals/screaming-hairy-armadillo"
+  },
+  {
+    "id": "animals-102",
+    "es": "El castor norteamericano es el segundo roedor más grande del mundo, superado solo por el capibara de América del Sur; el más pesado jamás registrado llegó a pesar 50 kg.",
+    "en": "The North American beaver is the world's second-largest rodent, surpassed only by South America's capybara; the heaviest individual on record weighed 110 pounds (50 kg).",
+    "source_name": "Smithsonian's National Zoo – Beaver",
+    "source_url": "https://nationalzoo.si.edu/animals/beaver"
+  },
+  {
+    "id": "animals-103",
+    "es": "Los cuervos comunes realizan acrobacias aéreas como caídas en picado y persecuciones giratorias durante el cortejo, y en ocasiones tienen combates aéreos cuerpo a cuerpo.",
+    "en": "Common ravens perform aerial acrobatics including dives and barrel rolls during courtship displays and occasionally engage in mid-air sparring matches.",
+    "source_name": "Smithsonian's National Zoo – Common Raven",
+    "source_url": "https://nationalzoo.si.edu/animals/common-raven"
+  },
+  {
+    "id": "animals-104",
+    "es": "El elefante asiático no tiene enemigos naturales en la adultez excepto los humanos, pero los adultos del grupo emiten llamadas de advertencia intensas al detectar tigres, que representan una amenaza para los elefantes jóvenes.",
+    "en": "Adult Asian elephants have no natural enemies except humans, but herd members emit intense warning calls when tigers—which threaten young calves—are detected nearby.",
+    "source_name": "Smithsonian's National Zoo – Asian Elephant",
+    "source_url": "https://nationalzoo.si.edu/animals/asian-elephant"
+  },
+  {
+    "id": "animals-105",
+    "es": "Los leones machos generalmente solo mantienen su posición como dominantes en una manada durante un promedio de dos años antes de ser expulsados por una nueva coalición de machos.",
+    "en": "Male lions typically hold their position as resident pride males for only an average of two years before being expelled by a new coalition of younger males.",
+    "source_name": "Smithsonian's National Zoo – Lion",
+    "source_url": "https://nationalzoo.si.edu/animals/lion"
+  },
+  {
+    "id": "animals-106",
+    "es": "El panda gigante a veces forma comunidades de 7 a 15 individuos que comparten un territorio de grupo, aunque sigan siendo en gran medida solitarios dentro de él.",
+    "en": "Giant pandas sometimes form loose communities of 7–15 individuals sharing a group territory, even though individuals within the range remain largely solitary.",
+    "source_name": "Smithsonian's National Zoo – Giant Panda",
+    "source_url": "https://nationalzoo.si.edu/animals/giant-panda"
+  },
+  {
+    "id": "animals-107",
+    "es": "Los gorilas de las tierras bajas del oeste, en cautiverio, a veces exhiben regurgitación y reingesta, coprofagia (comer heces) y consumo de orina, comportamientos que también se observan en la naturaleza y aún no se comprenden del todo.",
+    "en": "Western lowland gorillas in human care sometimes exhibit regurgitation-and-reingestion, coprophagy, and urine drinking—behaviors also seen in the wild whose exact purposes are not yet fully understood.",
+    "source_name": "Smithsonian's National Zoo – Western Lowland Gorilla",
+    "source_url": "https://nationalzoo.si.edu/animals/western-lowland-gorilla"
+  },
+  {
+    "id": "animals-108",
+    "es": "El águila calva roba activamente capturas de otras aves de presa más pequeñas como el águila pescadora, y no dudará en carroñear animales muertos si se le presenta la oportunidad.",
+    "en": "Bald eagles actively steal catches from smaller raptors like ospreys—a behavior called kleptoparasitism—and will readily scavenge dead animals when the opportunity arises.",
+    "source_name": "Smithsonian's National Zoo – 9 Fascinating Facts About the Bald Eagle",
+    "source_url": "https://nationalzoo.si.edu/animals/news/how-well-do-you-know-americas-bird-9-fascinating-facts-about-bald-eagle"
+  }
+]

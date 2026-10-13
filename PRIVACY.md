@@ -1,6 +1,6 @@
 # Hablemos Privacy Policy
 
-_Last updated: 2026-10-10_
+_Last updated: 2026-10-13_
 
 Hablemos is a Discord bot for the
 [Spanish-English Learning Server](https://discord.gg/spanish-english). This
@@ -34,6 +34,8 @@ policy explains what data the bot collects, why, and how to have it removed.
   `/vocab`, and the answers you type during the dictation game.
 - **Command usage metrics** (which command, when, by which user ID). Raw
   entries are rolled up into daily totals after 30 days.
+- **Fun-fact cycle progress**: channel IDs and fact IDs, so `$dyi` avoids
+  repeats across restarts. This progress does not record who requested a fact.
 
 The bot does not store your email, IP address, or private messages beyond
 the commands you send it.
