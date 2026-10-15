@@ -62,7 +62,8 @@ cogs/league_cog/
 - `detect_message_language(content)` - Detects Spanish/English from message text
   - Removes emojis (custom Discord + Unicode)
   - Validates minimum length
-  - Returns 'es', 'en', or None
+  - Uses lingua (ES/EN plus confusable neighbours); returns 'es', 'en', or None
+    when another language wins or confidence is below `LANGUAGE.MIN_CONFIDENCE`
 
 **Constants:**
 - `CUSTOM_EMOJI_PATTERN` - Regex for Discord emojis

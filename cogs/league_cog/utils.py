@@ -7,7 +7,7 @@ the main league cog and the admin cog.
 import logging
 import re
 
-from langdetect import LangDetectException, detect
+from lingua import Language, LanguageDetectorBuilder
 
 from cogs.league_cog.config import LANGUAGE, RATE_LIMITS
 
@@ -29,46 +29,52 @@ UNICODE_EMOJI_PATTERN = re.compile(
     flags=re.UNICODE
 )
 
+_LEAGUE_LANGUAGES = {
+    Language.SPANISH: LANGUAGE.SPANISH_CODE,
+    Language.ENGLISH: LANGUAGE.ENGLISH_CODE,
+}
+
+# Stage 1 picks the most likely language among ES/EN and their confusable
+# neighbours, so Portuguese, French, etc. are rejected rather than forced into
+# ES/EN. Stage 2 judges ES vs EN alone, where confidence is meaningful.
+_GATE_DETECTOR = LanguageDetectorBuilder.from_languages(
+    *_LEAGUE_LANGUAGES,
+    Language.PORTUGUESE,
+    Language.ITALIAN,
+    Language.FRENCH,
+    Language.CATALAN,
+    Language.GERMAN,
+).with_preloaded_language_models().build()
+_LEAGUE_DETECTOR = LanguageDetectorBuilder.from_languages(
+    *_LEAGUE_LANGUAGES,
+).with_preloaded_language_models().build()
+
+
 def detect_message_language(message_content: str) -> str | None:
     """
-    Detect the language of a message using langdetect.
+    Detect whether a message is Spanish or English.
 
-    This function:
-    1. Removes all Discord custom emojis and Unicode emojis
-    2. Checks if the remaining content meets minimum length
-    3. Detects language using langdetect
-    4. Only returns 'es' or 'en', None for other languages
+    Emojis are stripped first; messages shorter than the minimum length, in
+    another language, or below the confidence floor return None so short
+    ambiguous slang ("No mames w") is not counted as the wrong language.
 
     Args:
         message_content: The raw message content to analyze
 
     Returns:
-        'es' for Spanish, 'en' for English, None if uncertain or error
+        'es' for Spanish, 'en' for English, None if uncertain
     """
-    # Remove custom Discord emojis (format: <:name:id> or <a:name:id>)
     content_no_custom_emojis = CUSTOM_EMOJI_PATTERN.sub('', message_content)
+    clean_content = UNICODE_EMOJI_PATTERN.sub('', content_no_custom_emojis).strip()
 
-    # Remove Unicode emojis
-    content_no_emojis = UNICODE_EMOJI_PATTERN.sub('', content_no_custom_emojis)
-
-    # Strip whitespace and check if there's actual text content
-    clean_content = content_no_emojis.strip()
-
-    # Skip very short messages or emoji-only messages
     if len(clean_content) < RATE_LIMITS.MIN_MESSAGE_LENGTH:
         return None
 
-    try:
-        detected_lang = detect(clean_content)
+    language = _GATE_DETECTOR.detect_language_of(clean_content)
+    if language not in _LEAGUE_LANGUAGES:
+        return None
 
-        # Only return if we detected Spanish or English
-        if detected_lang in [LANGUAGE.SPANISH_CODE, LANGUAGE.ENGLISH_CODE]:
-            return detected_lang
-
+    confidence = _LEAGUE_DETECTOR.compute_language_confidence(clean_content, language)
+    if confidence < LANGUAGE.MIN_CONFIDENCE:
         return None
-    except LangDetectException:
-        # Detection failed (empty string, etc.)
-        return None
-    except Exception as e:
-        logger.error("Language detection error: %s", e)
-        return None
+    return _LEAGUE_LANGUAGES[language]

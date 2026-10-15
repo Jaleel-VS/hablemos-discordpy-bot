@@ -15,7 +15,6 @@ from typing import TYPE_CHECKING
 import discord
 from discord import Embed, Interaction, Member, app_commands
 from discord.ext import commands, tasks
-from langdetect import DetectorFactory
 
 from base_cog import BaseCog
 from cogs.league_cog.config import (
@@ -41,9 +40,6 @@ from cogs.utils.flags import random_english_flag, random_spanish_flag
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
-
-# Set seed for consistent language detection results
-DetectorFactory.seed = LANGUAGE.LANGDETECT_SEED
 
 logger = logging.getLogger(__name__)
 

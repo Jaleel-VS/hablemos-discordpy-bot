@@ -175,8 +175,8 @@ class LanguageConfig:
     SPANISH_CODE: str = 'es'
     ENGLISH_CODE: str = 'en'
 
-    # Seed for consistent langdetect results
-    LANGDETECT_SEED: int = 0
+    # Minimum detector confidence (0-1) for a message to count
+    MIN_CONFIDENCE: float = 0.8
 
 # Instantiate as a constant
 LANGUAGE = LanguageConfig()
