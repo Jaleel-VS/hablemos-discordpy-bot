@@ -310,14 +310,18 @@ class VocabularyCog(BaseCog):
                     if self.language == "en" else
                     f"No encontré ese término. Prueba otra palabra o usa `{hint}` sin argumentos."
                 )
-                await interaction.response.send_message(message, allowed_mentions=discord.AllowedMentions.none())
+                await interaction.response.send_message(
+                    message, ephemeral=True, allowed_mentions=discord.AllowedMentions.none(),
+                )
                 return
             if not query.strip():
                 deck = list(matches)
                 random.shuffle(deck)
                 matches = tuple(deck)
             view = VocabularyView(matches, interaction.user.id, language=self.language)
-            await interaction.response.send_message(view=view, allowed_mentions=discord.AllowedMentions.none())
+            await interaction.response.send_message(
+                view=view, ephemeral=True, allowed_mentions=discord.AllowedMentions.none(),
+            )
             view.message = await interaction.original_response()
         except discord.HTTPException:
             logger.exception("Unable to send an advanced vocabulary card")
