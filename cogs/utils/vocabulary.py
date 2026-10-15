@@ -12,8 +12,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
 import discord
-from discord import ui
-from discord.ext import commands
+from discord import app_commands, ui
 
 from base_cog import BaseCog
 
@@ -149,7 +148,7 @@ class VocabularyView(ui.LayoutView):
 
     def __init__(
         self, entries: tuple[VocabularyEntry, ...], invoker_id: int,
-        *, language: VocabularyLanguage, prefix: str = "$",
+        *, language: VocabularyLanguage,
     ) -> None:
         if not entries:
             raise ValueError("A vocabulary browser needs at least one entry")
@@ -157,7 +156,7 @@ class VocabularyView(ui.LayoutView):
         self.entries = entries
         self.invoker_id = invoker_id
         self.language = language
-        self.command_hint = f"{prefix}{_COMMANDS[language]}"
+        self.command_hint = f"/{_COMMANDS[language]}"
         self.index = 0
         self.show_translation = True
         self.expired = False
@@ -300,26 +299,52 @@ class VocabularyCog(BaseCog):
         self.entries = load_catalog(directory)
         self.language = language
 
-    async def show_card(self, ctx: commands.Context, query: str) -> None:
+    async def show_card(self, interaction: discord.Interaction, query: str) -> None:
         """Send an exact-match, search-results, or shuffled vocabulary browser."""
         matches = find_entries(self.entries, query)
         try:
             if not matches:
-                if ctx.command is not None:
-                    ctx.command.reset_cooldown(ctx)
-                hint = f"{ctx.clean_prefix}{_COMMANDS[self.language]}"
+                hint = f"/{_COMMANDS[self.language]}"
                 message = (
                     f"No matching term found. Try another word or use `{hint}` without arguments."
                     if self.language == "en" else
                     f"No encontré ese término. Prueba otra palabra o usa `{hint}` sin argumentos."
                 )
-                await ctx.send(message, allowed_mentions=discord.AllowedMentions.none())
+                await interaction.response.send_message(message, allowed_mentions=discord.AllowedMentions.none())
                 return
             if not query.strip():
                 deck = list(matches)
                 random.shuffle(deck)
                 matches = tuple(deck)
-            view = VocabularyView(matches, ctx.author.id, language=self.language, prefix=ctx.clean_prefix)
-            view.message = await ctx.send(view=view, allowed_mentions=discord.AllowedMentions.none())
+            view = VocabularyView(matches, interaction.user.id, language=self.language)
+            await interaction.response.send_message(view=view, allowed_mentions=discord.AllowedMentions.none())
+            view.message = await interaction.original_response()
         except discord.HTTPException:
             logger.exception("Unable to send an advanced vocabulary card")
+
+    async def cog_app_command_error(
+        self, interaction: discord.Interaction, error: app_commands.AppCommandError,
+    ) -> None:
+        """Answer slash-command failures without exposing exception details."""
+        if isinstance(error, app_commands.CommandOnCooldown):
+            message = (
+                f"Try again in {error.retry_after:.1f} seconds."
+                if self.language == "en" else
+                f"Vuelve a intentarlo en {error.retry_after:.1f} segundos."
+            )
+        else:
+            logger.error("Advanced vocabulary command failed", exc_info=(type(error), error, error.__traceback__))
+            message = (
+                "Could not open the card. Please try again."
+                if self.language == "en" else
+                "No se pudo abrir la tarjeta. Vuelve a intentarlo."
+            )
+        try:
+            if interaction.response.is_done():
+                await interaction.followup.send(message, ephemeral=True, allowed_mentions=discord.AllowedMentions.none())
+            else:
+                await interaction.response.send_message(
+                    message, ephemeral=True, allowed_mentions=discord.AllowedMentions.none(),
+                )
+        except discord.HTTPException:
+            logger.exception("Unable to send the vocabulary command error response")

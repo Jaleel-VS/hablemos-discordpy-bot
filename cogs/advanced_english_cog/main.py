@@ -1,11 +1,11 @@
-"""Unlisted advanced English vocabulary command with Spanish translations."""
+"""Advanced English vocabulary slash command with Spanish translations."""
 
 from __future__ import annotations
 
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from discord.ext import commands
+from discord import Interaction, app_commands
 
 from cogs.utils.vocabulary import VocabularyCog
 
@@ -16,18 +16,19 @@ DATA_DIR = Path(__file__).resolve().parent / "data"
 
 
 class AdvancedEnglish(VocabularyCog):
-    """An unlisted collection of precise English vocabulary and usage examples."""
+    """A collection of precise English vocabulary and usage examples."""
 
     def __init__(self, bot: Hablemos) -> None:
         super().__init__(bot, DATA_DIR, "en")
 
-    @commands.command(name="e", hidden=True)
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    async def vocabulary(self, ctx: commands.Context, *, query: str = "") -> None:
-        """Browse advanced English; optionally find a term, e.g. $e acerbic."""
-        await self.show_card(ctx, query)
+    @app_commands.command(name="e", description="Browse advanced English vocabulary or find a term")
+    @app_commands.describe(query="Optional word or headword fragment to find, e.g. acerbic")
+    @app_commands.checks.cooldown(1, 5)
+    async def vocabulary(self, interaction: Interaction, query: str = "") -> None:
+        """Browse advanced English; optionally find a term."""
+        await self.show_card(interaction, query)
 
 
 async def setup(bot: Hablemos) -> None:
-    """Load the hidden English vocabulary command through normal cog discovery."""
+    """Load the English vocabulary slash command through normal cog discovery."""
     await bot.add_cog(AdvancedEnglish(bot))

@@ -1,5 +1,6 @@
 """Advanced vocabulary data quality, search, visibility, and browser behavior."""
 
+from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
@@ -9,7 +10,6 @@ from discord.ext import commands
 
 from cogs.advanced_english_cog.main import AdvancedEnglish
 from cogs.advanced_spanish_cog.main import DATA_DIR, AdvancedSpanish
-from cogs.general_cog.main import _collect_cog_entries
 from cogs.utils.vocabulary import (
     VocabularyEntry,
     VocabularyView,
@@ -128,19 +128,25 @@ async def test_timeout_keeps_card_readable_and_freezes_controls(catalog: tuple[V
         view.stop()
 
 
-async def test_hidden_vocabulary_is_callable_but_absent_from_public_help() -> None:
-    class VisibleCog(commands.Cog):
-        @commands.command()
-        async def visible(self, ctx: commands.Context) -> None:
-            """A public command to ensure help still lists visible commands."""
-            await ctx.send("Public command")
-
+@pytest.mark.parametrize("cog_type", [AdvancedSpanish, AdvancedEnglish])
+async def test_slash_cooldown_is_per_user_and_expires(cog_type: type) -> None:
     async with commands.Bot(command_prefix="$", intents=discord.Intents.none(), help_command=None) as bot:
-        await bot.add_cog(AdvancedSpanish(bot))
-        await bot.add_cog(AdvancedEnglish(bot))
-        await bot.add_cog(VisibleCog())
-        for name in ("c", "e"):
-            command = bot.get_command(name)
-            assert command is not None and command.hidden
-        entries = _collect_cog_entries(bot)
-        assert [entry[0] for entry in entries] == ["VisibleCog"]
+        cog = cog_type(bot)
+        await bot.add_cog(cog)
+        command = cog.vocabulary
+        interaction = _interaction()
+        interaction.created_at = datetime(2026, 1, 1, tzinfo=UTC)
+        interaction.response.is_done = lambda: False
+        assert await command._check_can_run(interaction)
+        with pytest.raises(discord.app_commands.CommandOnCooldown) as caught:
+            await command._check_can_run(interaction)
+        await cog.cog_app_command_error(interaction, caught.value)
+        interaction.response.send_message.assert_awaited_once()
+        assert interaction.response.send_message.call_args.kwargs["ephemeral"]
+
+        another_reader = _interaction(user_id=2)
+        another_reader.created_at = interaction.created_at
+        assert await command._check_can_run(another_reader)
+
+        interaction.created_at += timedelta(seconds=6)
+        assert await command._check_can_run(interaction)
