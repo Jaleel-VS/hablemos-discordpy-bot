@@ -2,7 +2,7 @@
 
 **When:** the old app lost its privileged intents, its token can't be recovered, or you
 want a clean app. The bot and the Activity run under one application, so both move.
-**Last verified:** 2026-10-11
+**Last verified:** 2026-10-15 (command-sync behavior; portal steps not re-run)
 
 Database data carries over. It is keyed by user ID.
 
@@ -28,8 +28,9 @@ Database data carries over. It is keyed by user ID.
    (intro and command cleanups), Manage Roles (League champion role).
 6. **Role:** in Server Settings → Roles, move the bot's role above the roles it manages
    (the champion role). If `automod_watch_cog` is enabled, the role also needs Manage Server.
-7. **Slash commands:** run `$sync`. If it reports an Activity entry point conflict, it falls
-   back to a guild sync, which also works. Commands are registered per application.
+7. **Slash commands:** run `$sync` for global commands and `$sync <guild_id>` for guild-only
+   commands such as `/league`. A global Activity entry point conflict no longer falls back to
+   copying globals into the guild; see `commands-missing.md`. Commands are registered per application.
 8. **Panels:** re-post what the old bot posted (`$almightypanel`, `$langexpanel`, and any
    other persistent view). Buttons on the old bot's messages stay dead.
 9. Remove the old bot from the server.

@@ -1,7 +1,7 @@
 # Set up or debug the Discord Activity
 
 **When:** enabling the Activity on an application, running it locally, or a launch fails.
-**Last verified:** 2026-10-11 (ported from the old docs; the portal steps were not re-run)
+**Last verified:** 2026-10-15 (command-sync behavior; portal steps not re-run)
 
 Code: `activity/` (FastAPI backend in `activity/backend`, Vite SPA in `activity/frontend`).
 It is the `hablemos-activity` Lightsail service. The bot launches it from `$wordle` and
@@ -41,8 +41,9 @@ Quick tunnels change on every restart. A named tunnel avoids re-pasting the mapp
   and a URL Mapping, or it fails silently with `blocked:csp`. Discord strips `/.proxy`, so
   the FastAPI routes have no prefix.
 - `VITE_DISCORD_CLIENT_ID` is a **build-time** value. Changing it needs a rebuild and deploy.
-- A global `$sync` can fail with error 50240 because of the Entry Point command. `$sync`
-  then falls back to a guild sync (`runbooks/new-discord-app.md`).
+- A global `$sync` can fail with error 50240 because of the Entry Point command. It stops without
+  changing guild commands. Inspect the Entry Point configuration; do not clear all commands or
+  copy globals into the guild as a workaround (`runbooks/commands-missing.md`).
 
 ## Verify
 
