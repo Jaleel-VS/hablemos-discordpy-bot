@@ -47,3 +47,60 @@ Everything the iframe fetches is routed through
 call from the SPA must go through the `/.proxy/` prefix (e.g.
 `fetch("/.proxy/api/token")`) and be declared in the app's URL Mappings, or
 it silently fails with `blocked:csp`.
+
+## Outpost engine and simulator (Phase 0)
+
+`backend/app/outpost/` holds the engine for *Outpost*, the async strategy
+game designed in [`plans/outpost.md`](../plans/outpost.md). It isn't wired
+into any route yet.
+
+- `rules/`: `Params` (every tunable knob) and `v1.py` (the §6 numbers).
+  The integer level tables are generated from these once per `Params`.
+- `engine/`: deterministic integer-math engine (`core.Engine` over a
+  mutable `state.World`) and fixed-point combat (`combat.py`).
+- `sim/`: agents, the round runner, parameter sweeps, the evolutionary
+  strategy search, MAP-Elites, the SQLite results store and an HTML
+  dashboard. Agents explore within a round: they sample choices instead of
+  always taking the best-looking one, learn which raid targets pay, adjust
+  army spending day by day (`learning.py`), and can send fakes, gang up on
+  an alliance target, and dodge attacks by moving their army out.
+
+Run these from `activity/backend` with the repo-root venv (it has pytest):
+
+```sh
+python -m app.outpost.sim run --seed 1 --trace          # one round
+python -m app.outpost.sim sweep --grid bucket_hours=2,4,8 \
+    --grid vault_pct=5,10,20 --seeds 1,2,3              # grid sweep
+python -m app.outpost.sim sweep --random monument_base=50000:300000 --n 20
+python -m app.outpost.sim evolve --generations 8 --population 12
+python -m app.outpost.sim map --x loot_share --y army_frac   # strategy map
+python -m app.outpost.sim --set speed_pct=200 run       # override base params
+TYPESAFE_API_KEY=... python -m app.outpost.sim run --judge   # Jev experience
+TYPESAFE_API_KEY=... python -m app.outpost.sim sweep --grid bucket_hours=2,4,8 --judge
+TYPESAFE_API_KEY=... python -m app.outpost.sim run --jev 4       # 4 Jev players
+```
+
+Every command writes to `sim_out/` (gitignored): `results.sqlite`,
+`traces/` (replays) and `report.html`, a self-contained dashboard with
+sweep heatmaps, archetype power curves, invariant checks, evolution
+fitness, the strategy map (best strategy per style of play) and a map
+replay. A round of 40 agents takes about 1 s; sweeps, evolution and
+MAP-Elites use every CPU core.
+
+`--judge` sends each player's round diary (ranks, raids suffered, losses,
+wins, evacuations, alliance outcome; never their archetype or whether they
+quit) to TypeSafe's Jev model, which scores frustration, quit risk,
+perceived unfairness and pride (`sim/experience.py`). Results land in
+`player_experience` and as `exp_*` run metrics, so they show in the sweep
+table and heatmaps. One request per player; a 40-player round takes ~3 s.
+
+`--jev N` adds N players whose key calls Jev makes (`sim/jev.py`). Code
+still builds, trains and scores every legal option with the real combat
+rules; once per in-game day Jev picks a troop-spending stance and a focus
+(grow, expand or fortify), and at each check-in it picks a raid target
+from the top five (or none) and decides whether to evacuate before an
+incoming attack. Answers are cached in `sim_out/jev_cache.sqlite`, so
+rerunning a seed replays with no API calls. A fresh round with 4 Jev
+players makes about 350 calls and takes ~2.5 min; a replay takes ~1 s.
+
+Tests: `pytest tests/test_outpost_*.py`.

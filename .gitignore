@@ -5,6 +5,7 @@ venv/
 .venv/
 .env
 cogs/utils/data/testy.py
+activity/backend/sim_out/
 cogs/utils/unused_old
 database/
 bot_config.py
