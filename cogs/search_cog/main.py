@@ -18,7 +18,6 @@ logger = logging.getLogger(__name__)
 
 # Discord returns ~25 results per page (fixed, not configurable)
 RESULTS_PER_PAGE = 25
-# How many results to show per page in the bot
 DISPLAY_PER_PAGE = 5
 
 
@@ -113,11 +112,9 @@ def _build_search_view(
 
     view = ui.LayoutView(timeout=120)
 
-    # Header
     view.add_item(ui.TextDisplay(f"## 🔍 Search Results\n-# {query_info}"))
     view.add_item(ui.Separator())
 
-    # Results
     start_idx = page * DISPLAY_PER_PAGE
     page_msgs = messages[:DISPLAY_PER_PAGE]
 
@@ -134,7 +131,6 @@ def _build_search_view(
 
     view.add_item(ui.TextDisplay("\n\n".join(lines)))
 
-    # Footer with pagination info
     total_pages = max(1, (total + DISPLAY_PER_PAGE - 1) // DISPLAY_PER_PAGE)
     current_page = page + 1
     view.add_item(ui.Separator())
@@ -142,7 +138,6 @@ def _build_search_view(
         f"-# Page {current_page}/{total_pages} • {total} total results"
     ))
 
-    # Prev/Next buttons
     nav = ui.ActionRow()
     prev_btn = ui.Button(
         label="Previous",
@@ -207,7 +202,6 @@ class SearchCog(BaseCog):
 
     def __init__(self, bot: Hablemos):
         super().__init__(bot)
-        # Map message_id -> SearchState for active pagination sessions
         self._sessions: dict[int, SearchState] = {}
 
     @commands.command(name="search")
@@ -223,7 +217,6 @@ class SearchCog(BaseCog):
             await ctx.send("This command can only be used in a server.")
             return
 
-        # Parse inline filters from the query
         author_id = None
         channel_id = None
         has_filter = None
@@ -383,7 +376,6 @@ class SearchCog(BaseCog):
             )
             return
 
-        # Update page
         if custom_id == "search:next":
             state.page += 1
         else:

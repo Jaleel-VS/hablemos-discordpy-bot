@@ -79,4 +79,7 @@ async def test_second_dictation_is_rejected_while_first_is_fetching() -> None:
     await task
 
     assert any("already a dictation" in msg for msg in second.response.sent)
-    assert 9 not in cog._pending
+    second.response.sent.clear()
+    await DictationCog.dictation.callback(cog, second, lang, level)
+    assert second.response.deferred
+    assert not any("already a dictation" in msg for msg in second.response.sent)

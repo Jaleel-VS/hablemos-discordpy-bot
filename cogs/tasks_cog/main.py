@@ -63,21 +63,17 @@ class TaskManager(BaseCog):
         if not custom_id.startswith(("task_status:", "task_assign:")):
             return
 
-        # Parse task ID from custom_id
         try:
             task_id = int(custom_id.split(":")[1])
         except (IndexError, ValueError):
             return
 
-        # Reconstruct the view and let it handle the interaction
         view = TaskView(task_id)
-        # Find the matching component and dispatch
         for item in view.children:
             if getattr(item, "custom_id", None) == custom_id and hasattr(item, "callback"):
                 await item.callback(interaction)
                 return
 
-    # --- Slash commands (admin only) ---
 
     task_group = app_commands.Group(
         name="task",
@@ -133,7 +129,6 @@ class TaskManager(BaseCog):
             )
             return
 
-        # Group by status
         grouped: dict[str, list[dict]] = {}
         for t in tasks:
             grouped.setdefault(t["status"], []).append(t)
@@ -177,7 +172,6 @@ class TaskManager(BaseCog):
             )
             return
 
-        # Try to delete the message from the tasks channel
         if task.get("message_id"):
             channel = self.bot.get_channel(TASKS_CHANNEL_ID)
             if isinstance(channel, discord.TextChannel):

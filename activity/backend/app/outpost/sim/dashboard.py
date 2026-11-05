@@ -229,7 +229,6 @@ def _archetype_series(
         (r["run_id"], r["player_id"]): (r["archetype"] or "unknown")
         for r in player_results
     }
-    # Gather all power values per (archetype, t_h)
     by_arch_t: dict[str, dict[int, list[float]]] = {}
     for s in series_rows:
         key = (s["run_id"], s["player_id"])
@@ -255,7 +254,6 @@ def _sweep_overview_data(
     metrics_by_run: dict[int, dict[str, float]],
 ) -> dict[str, Any]:
     """Build overview table data and optional 2-param heatmap payload."""
-    # Determine which params actually vary
     varied_keys: set[str] = set()
     for run in runs:
         v = json.loads(run["varied"] or "{}")
@@ -280,7 +278,6 @@ def _sweep_overview_data(
     heatmap: dict[str, Any] | None = None
     if len(varied_keys_list) == 2:
         k0, k1 = varied_keys_list
-        # Collect all unique values for each param
         vals0: list[Any] = sorted(
             {json.loads(r["varied"] or "{}").get(k0) for r in runs},
             key=lambda x: (x is None, x),
@@ -289,14 +286,11 @@ def _sweep_overview_data(
             {json.loads(r["varied"] or "{}").get(k1) for r in runs},
             key=lambda x: (x is None, x),
         )
-        # metric names from all runs
         all_metrics: set[str] = set()
         for m in metrics_by_run.values():
             all_metrics.update(m.keys())
         metric_list = sorted(all_metrics)
 
-        # For each cell (v0, v1) gather run_ids grouped by seed
-        # then compute median per metric
         cell_metrics: dict[
             tuple[Any, Any], dict[str, list[float]]
         ] = {}
@@ -309,7 +303,6 @@ def _sweep_overview_data(
                     mname, []
                 ).append(mval)
 
-        # Build grid: metric -> list of rows, each row = list of median values
         grids: dict[str, list[list[float | None]]] = {}
         for mname in metric_list:
             grid: list[list[float | None]] = []
@@ -401,7 +394,6 @@ def _fetch_map_elites(
     conn: sqlite3.Connection,
 ) -> dict[str, Any] | None:
     """Fetch MAP-Elites archive data; return None if tables are absent or empty."""
-    # Guard: check tables exist
     tables = {
         row[0]
         for row in conn.execute(
@@ -412,7 +404,6 @@ def _fetch_map_elites(
     if "map_elites_meta" not in tables or "map_elites" not in tables:
         return None
 
-    # Pick the latest me_id
     row = conn.execute(
         "SELECT me_id, x_name, y_name, x_label, y_label,"
         " x_max, y_max, x_bins, y_bins, iterations, evaluations"
@@ -451,7 +442,6 @@ def _fetch_map_elites(
     qd_score = sum(c["fitness"] for c in cell_list)
     best = max(cell_list, key=lambda c: c["fitness"]) if cell_list else None
 
-    # Build list of me_ids for the selector
     all_ids = [
         r[0]
         for r in conn.execute(

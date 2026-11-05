@@ -1,20 +1,16 @@
 """Configuration for the Introduction Tracker cog."""
-from config import load_settings
+from config import get_int_env
 
-settings = load_settings()
-
-# Cooldown window (days) before a user can post another introduction
 INTRO_COOLDOWN_DAYS = 90
 
-# Default configurable channel IDs (used if not set in DB)
-DEFAULT_WARN_CHANNEL_ID = settings.intro_warn_channel_id
-DEFAULT_ALERT_CHANNEL_ID = settings.intro_alert_channel_id
+INTRO_CHANNEL_ID = get_int_env("INTRO_CHANNEL_ID", 399713966781235200)
+GENERAL_CHANNEL_ID = get_int_env("GENERAL_CHANNEL_ID", 296491080881537024)
+DEFAULT_WARN_CHANNEL_ID = get_int_env("INTRO_WARN_CHANNEL_ID", 247135634265735168)
+DEFAULT_ALERT_CHANNEL_ID = get_int_env("INTRO_ALERT_CHANNEL_ID", 297877202538594304)
 
-# DB setting keys
 SETTING_WARN_CHANNEL = 'intro_warn_channel'
 SETTING_ALERT_CHANNEL = 'intro_alert_channel'
 
-# Exempt roles that can post multiple times
 EXEMPT_ROLE_IDS = (
     643097537850376199,   # Rai
     243854949522472971,   # Admin

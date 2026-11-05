@@ -44,11 +44,6 @@ class GameResultsMixin(DatabaseMixin):
                 result_id,
             )
 
-    # ── owner-facing stats reads (see $activity_stats) ──────────────────────
-    # These are the read side of the Activity's own tables. Like the poller
-    # methods above they tolerate the tables not existing yet (Activity not
-    # deployed) by returning zero-valued results, so a fresh environment or a
-    # bot-only deploy never errors.
 
     async def activity_totals_by_game(self) -> list:
         """Per-game aggregate counts across all recorded results.
@@ -62,6 +57,8 @@ class GameResultsMixin(DatabaseMixin):
                 '''
                 SELECT
                     game_key,
+                    COALESCE(MAX(payload->>'display_name'),
+                             UPPER(LEFT(game_key, 1)) || LOWER(SUBSTRING(game_key FROM 2))) AS display_name,
                     COUNT(*)                                        AS games,
                     COUNT(DISTINCT user_id)                         AS players,
                     COUNT(*) FILTER (WHERE mode = 'daily')          AS daily,
@@ -98,6 +95,23 @@ class GameResultsMixin(DatabaseMixin):
         if row is None:
             return {"pending": 0, "oldest": None}
         return {"pending": row["pending"], "oldest": row["oldest"]}
+
+    async def activity_game_label(self, *, game_key: str) -> str:
+        """Read the backend label, or capitalize the key when no label exists."""
+        try:
+            label = await self._fetchval(
+                """
+                SELECT payload->>'display_name'
+                FROM game_results
+                WHERE game_key = $1 AND payload ? 'display_name'
+                ORDER BY created_at DESC
+                LIMIT 1
+                """,
+                game_key,
+            )
+        except asyncpg.UndefinedTableError:
+            return game_key.capitalize()
+        return label or game_key.capitalize()
 
     async def activity_top_streaks(self, *, game_key: str, limit: int = 10) -> list:
         """Top players for a game by max daily streak (tie-break: current).

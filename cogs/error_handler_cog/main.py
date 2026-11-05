@@ -9,6 +9,7 @@ import discord
 from discord.ext import commands
 
 from base_cog import BaseCog
+from cogs.utils.guild import HOME_GUILD_ID
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -40,18 +41,16 @@ class ErrorHandler(BaseCog):
                 failed=True,
             )
         except Exception:
-            pass
+            logger.warning("Failed to record command failure metric", exc_info=True)
 
         if getattr(ctx, 'error_handled', False):
             return
 
         try:
             if isinstance(error, commands.CommandNotFound):
-                # Only handle command-not-found in the main server
-                if not ctx.guild or ctx.guild.id != self.bot.settings.league_guild_id:
+                if not ctx.guild or ctx.guild.id != HOME_GUILD_ID:
                     return
 
-                # Suggest similar commands via fuzzy match
                 invoked = ctx.invoked_with
                 all_cmds = [c.name for c in self.bot.commands if not c.hidden]
                 close = (
@@ -92,7 +91,7 @@ class ErrorHandler(BaseCog):
                 logger.error("Unhandled error in command %s", ctx.command, exc_info=error)
                 await ctx.send("An unexpected error occurred. Please try again later.")
         except discord.HTTPException:
-            pass
+            logger.warning("Failed to reply to command error in %s", ctx.command, exc_info=True)
 
 
 async def setup(bot: Hablemos):

@@ -1,72 +1,49 @@
-"""Regression test for the `$tomato` early-return UnboundLocalError.
-
-`tomato` assigns `output_path` inside its try block, but the `finally`
-clause references it unconditionally. Any path that returns (or raises)
-before the assignment — most commonly the "no user supplied" early
-return — used to crash with `UnboundLocalError` in `finally`. The fix
-initializes `output_path = None` up front; this test pins that behavior.
-"""
-from __future__ import annotations
-
-from dataclasses import dataclass, field
+"""Tomato command reports missing targets and renders explicitly mentioned users."""
+from io import BytesIO
 from types import SimpleNamespace
-from typing import Any, cast
+from unittest.mock import AsyncMock
 
 import pytest
+from PIL import Image
 
-from cogs.tomatoes_cog.main import TomatoesCog, _target_user
-
-
-@dataclass
-class FakeMessage:
-    mentions: list = field(default_factory=list)
-    reference: Any = None
-
-
-@dataclass
-class FakeChannel:
-    id: int = 1
-
-
-@dataclass
-class FakeContext:
-    """Minimal Context: no mentions, no reply -> the early-return path."""
-
-    message: FakeMessage = field(default_factory=FakeMessage)
-    channel: FakeChannel = field(default_factory=FakeChannel)
-    guild: Any = None
-    sent: list = field(default_factory=list)
-
-    async def send(self, *args, **kwargs):
-        self.sent.append((args, kwargs))
+from cogs.tomatoes_cog.main import TomatoesCog
 
 
 @pytest.mark.asyncio
-async def test_tomato_no_user_does_not_raise_unbound_output_path() -> None:
-    cog = TomatoesCog.__new__(TomatoesCog)  # skip BaseCog __init__ (needs a bot)
-    ctx = FakeContext()
-
-    # Invoke the command's underlying coroutine directly. Before the fix this
-    # raised UnboundLocalError from the finally block; now it returns cleanly
-    # after sending the usage hint.
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
-    callback = cast(Any, cog.tomato.callback)  # bound command callback (test)
-    await callback(cog, ctx)
-
-    assert ctx.sent, "should send a usage hint when no user is supplied"
+async def test_tomato_without_target_sends_usage_hint() -> None:
+    cog = TomatoesCog.__new__(TomatoesCog)
+    ctx = SimpleNamespace(
+        message=SimpleNamespace(mentions=[], reference=None),
+        send=AsyncMock(), channel=SimpleNamespace(id=1), guild=None,
+    )
+    await cog.tomato.callback(cog, ctx)
+    assert "$help tomato" in ctx.send.call_args.kwargs["embed"].description
 
 
-def test_target_user_prefers_mention_in_command_text() -> None:
-    mentioned = SimpleNamespace(mention="<@1>", id=1)
-    reply_author = SimpleNamespace(mention="<@2>", id=2)
+@pytest.mark.asyncio
+async def test_tomato_prefers_explicit_mention_and_removes_temporary_output(monkeypatch) -> None:
+    avatar = BytesIO()
+    Image.new("RGB", (2, 2)).save(avatar, format="PNG")
+    asset = SimpleNamespace(read=AsyncMock(return_value=avatar.getvalue()))
+    mentioned = SimpleNamespace(mention="<@1>", display_avatar=SimpleNamespace(with_size=lambda _size: asset))
     ctx = SimpleNamespace(
         message=SimpleNamespace(
-            content="$tomato <@1>",
-            mentions=[mentioned],
-            reference=SimpleNamespace(
-                resolved=SimpleNamespace(author=reply_author),
-            ),
+            content="$tomato <@1>", mentions=[mentioned],
+            reference=SimpleNamespace(resolved=SimpleNamespace(author=SimpleNamespace(mention="<@2>"))),
         ),
+        send=AsyncMock(), channel=SimpleNamespace(id=1), guild=None,
     )
-    assert _target_user(ctx) is mentioned
+    paths = []
 
+    def render(_image, path):
+        from pathlib import Path
+        Path(path).write_bytes(b"rendered animation")
+        paths.append(Path(path))
+        return path
+
+    monkeypatch.setattr("cogs.tomatoes_cog.main.generate_tomatoes", render)
+    cog = TomatoesCog.__new__(TomatoesCog)
+    await cog.tomato.callback(cog, ctx)
+    assert ctx.send.call_args.kwargs["content"] == "<@1>"
+    assert ctx.send.call_args.kwargs["file"].filename.endswith(".webp")
+    assert not paths[0].exists()

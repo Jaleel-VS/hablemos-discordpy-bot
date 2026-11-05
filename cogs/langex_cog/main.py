@@ -5,10 +5,8 @@ introductions. A persistent panel in the langex channel offers three
 buttons: post/update your profile, find a mutual-match partner, and
 delete your profile.
 
-Profiles are stored in the shared ``exchange_posts`` table (reused from
-the legacy introduce flow) so the two systems read the same data during
-the transition. The persistent panel uses ``timeout=None`` with stable
-``custom_id``s and is registered once via ``bot.add_view``.
+Profiles are stored in the shared ``exchange_posts`` table. The persistent
+panel uses stable ``custom_id``s and is registered once via ``bot.add_view``.
 """
 from __future__ import annotations
 
@@ -23,7 +21,8 @@ from cogs.utils.embeds import green_embed, red_embed
 
 from .config import PANEL_CHANNEL_ID
 from .i18n import t
-from .views import LangExPanelView, _delete_message
+from .posts import delete_exchange_post
+from .views import LangExPanelView
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -36,7 +35,6 @@ class LangExCog(BaseCog):
 
     def __init__(self, bot: Hablemos):
         super().__init__(bot)
-        # Register the persistent panel once so the buttons survive restarts.
         if not any(isinstance(v, LangExPanelView) for v in bot.persistent_views):
             bot.add_view(LangExPanelView(bot))
 
@@ -65,12 +63,9 @@ class LangExCog(BaseCog):
     @commands.has_permissions(manage_messages=True)
     async def remove_profile(self, ctx: commands.Context, user: discord.Member):
         """[Mod] Remove a user's language-exchange profile (message + record)."""
-        post = await self.bot.db.get_exchange_post(user.id)
-        if not post:
+        if not await delete_exchange_post(self.bot, user.id):
             await ctx.send(embed=red_embed(f"{user.mention} has no active profile."))
             return
-        await _delete_message(self.bot, post.get("channel_id"), post.get("message_id"))
-        await self.bot.db.delete_exchange_post(user.id)
         await ctx.send(embed=green_embed(f"Removed {user.mention}'s language-exchange profile."))
 
 

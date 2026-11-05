@@ -19,10 +19,7 @@ from discord.ext import commands, tasks
 from base_cog import BaseCog
 from cogs.league_cog.config import (
     DISPLAY,
-    LANGUAGE,
-    LEAGUE_GUILD_ID,
     RATE_LIMITS,
-    ROLES,
     ROUNDS,
     SCORING,
 )
@@ -34,9 +31,16 @@ from cogs.league_cog.rounds import (
     process_round_end,
 )
 from cogs.league_cog.scoring import points_for_message
-from cogs.league_cog.utils import detect_message_language
 from cogs.league_cog.views import LeagueJoinView
 from cogs.utils.flags import random_english_flag, random_spanish_flag
+from cogs.utils.guild import (
+    ENGLISH_NATIVE_ROLE_ID,
+    HOME_GUILD_ID,
+    LEARNING_ENGLISH_ROLE_ID,
+    LEARNING_SPANISH_ROLE_ID,
+    SPANISH_NATIVE_ROLE_ID,
+)
+from cogs.utils.language import detect_message_language
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -66,7 +70,6 @@ def handle_interaction_errors[**P, T](
             )
             if not isinstance(interaction, Interaction):
                 return None
-            # Check if we've already responded/deferred
             if interaction.response.is_done():
                 await interaction.followup.send(embed=error_embed, ephemeral=True)
             else:
@@ -77,25 +80,19 @@ def handle_interaction_errors[**P, T](
 class LeagueCog(BaseCog):
     """Compete with other learners and track your language progress."""
 
-    # Cache TTL in seconds
     LEADERBOARD_CACHE_TTL = 30
 
     def __init__(self, bot: Hablemos):
         super().__init__(bot)
-        # In-memory cooldown cache: (user_id, channel_id) → last_counted_timestamp
         self._cooldowns: dict[tuple[int, int], float] = {}
-        # Leaderboard cache: {cache_key: (data, timestamp)}
         self._leaderboard_cache: dict[str, tuple[list, datetime]] = {}
         # In-memory caches to avoid DB hits on every message
         self._opted_in_users: set[int] = set()
         self._banned_users: set[int] = set()
         self._excluded_channels: set[int] = set()
-        # Per-user learning languages: {user_id: {'learning_spanish': bool, 'learning_english': bool}}
         # Refreshed on join/leave. Stale on Discord role changes until user re-runs /league join
         # (same staleness as the DB row, so no new bug surface).
         self._user_learning: dict[int, dict[str, bool]] = {}
-        # Daily message counter: user_id → (date, count).
-        # Resets automatically when the stored date differs from today.
         # On bot restart the count resets — at most a day's worth of extra
         # messages could be counted before the cap kicks in again, acceptable.
         self._daily_counts: dict[int, tuple[date, int]] = {}
@@ -107,7 +104,7 @@ class LeagueCog(BaseCog):
         # reloads don't stack duplicate views in ``bot.persistent_views``.
         if not any(isinstance(v, LeagueJoinView) for v in bot.persistent_views):
             bot.add_view(LeagueJoinView(bot))
-        self.check_round_end.start()  # Start scheduled task
+        self.check_round_end.start()
 
     async def cog_load(self):
         """Called when cog is loaded - ensure we have an active round and warm caches"""
@@ -184,7 +181,6 @@ class LeagueCog(BaseCog):
         cache_key = f"{board}:{limit}"
         now = datetime.now(UTC)
 
-        # Check if we have valid cached data
         if cache_key in self._leaderboard_cache:
             data, cached_at = self._leaderboard_cache[cache_key]
             age_seconds = (now - cached_at).total_seconds()
@@ -192,7 +188,6 @@ class LeagueCog(BaseCog):
                 logger.debug("Leaderboard cache hit for %s (age: %.1fs)", cache_key, age_seconds)
                 return data
 
-        # Cache miss or expired - fetch fresh data
         data = await self.bot.db.get_leaderboard(board, limit)
         self._leaderboard_cache[cache_key] = (data, now)
         logger.debug("Leaderboard cache miss for %s, fetched fresh data", cache_key)
@@ -211,7 +206,7 @@ class LeagueCog(BaseCog):
     league_group = app_commands.Group(
         name="league",
         description="Language League - Compete with other learners!",
-        guild_ids=[LEAGUE_GUILD_ID]  # Guild-specific for instant sync
+        guild_ids=[HOME_GUILD_ID]  # Guild-specific for instant sync
     )
 
     async def validate_user_roles(self, member: Member) -> dict:
@@ -226,16 +221,13 @@ class LeagueCog(BaseCog):
                 'error_message': str or None
             }
         """
-        # Get user's role IDs
         user_role_ids = {role.id for role in member.roles}
 
-        # Check what roles they have
-        has_english_native = ROLES.ENGLISH_NATIVE in user_role_ids
-        has_spanish_native = ROLES.SPANISH_NATIVE in user_role_ids
-        has_learning_spanish = ROLES.LEARNING_SPANISH in user_role_ids
-        has_learning_english = ROLES.LEARNING_ENGLISH in user_role_ids
+        has_english_native = ENGLISH_NATIVE_ROLE_ID in user_role_ids
+        has_spanish_native = SPANISH_NATIVE_ROLE_ID in user_role_ids
+        has_learning_spanish = LEARNING_SPANISH_ROLE_ID in user_role_ids
+        has_learning_english = LEARNING_ENGLISH_ROLE_ID in user_role_ids
 
-        # Rule 1: Must have EXACTLY ONE Learning role
         if not has_learning_spanish and not has_learning_english:
             return {
                 'valid': False,
@@ -244,13 +236,12 @@ class LeagueCog(BaseCog):
                 'error_message': (
                     "❌ **Invalid Role Configuration**\n\n"
                     "You must have exactly one learning role:\n"
-                    f"• <@&{ROLES.LEARNING_SPANISH}> (Learning Spanish)\n"
-                    f"• <@&{ROLES.LEARNING_ENGLISH}> (Learning English)\n\n"
+                    f"• <@&{LEARNING_SPANISH_ROLE_ID}> (Learning Spanish)\n"
+                    f"• <@&{LEARNING_ENGLISH_ROLE_ID}> (Learning English)\n\n"
                     "Please add the appropriate role and try again!"
                 )
             }
 
-        # Rule 2: Cannot have BOTH learning roles
         if has_learning_spanish and has_learning_english:
             return {
                 'valid': False,
@@ -260,13 +251,12 @@ class LeagueCog(BaseCog):
                     "❌ **Too Many Learning Roles**\n\n"
                     "You can only participate in ONE league at a time.\n"
                     "You currently have both:\n"
-                    f"• <@&{ROLES.LEARNING_SPANISH}> (Learning Spanish)\n"
-                    f"• <@&{ROLES.LEARNING_ENGLISH}> (Learning English)\n\n"
+                    f"• <@&{LEARNING_SPANISH_ROLE_ID}> (Learning Spanish)\n"
+                    f"• <@&{LEARNING_ENGLISH_ROLE_ID}> (Learning English)\n\n"
                     "Please keep only the role for the language you want to focus on!"
                 )
             }
 
-        # Rule 3: Cannot be native in language you're learning
         if has_learning_spanish and has_spanish_native:
             return {
                 'valid': False,
@@ -275,8 +265,8 @@ class LeagueCog(BaseCog):
                 'error_message': (
                     "❌ **Conflicting Roles**\n\n"
                     "You have both:\n"
-                    f"• <@&{ROLES.LEARNING_SPANISH}> (Learning Spanish)\n"
-                    f"• <@&{ROLES.SPANISH_NATIVE}> (Spanish Native)\n\n"
+                    f"• <@&{LEARNING_SPANISH_ROLE_ID}> (Learning Spanish)\n"
+                    f"• <@&{SPANISH_NATIVE_ROLE_ID}> (Spanish Native)\n\n"
                     "You cannot be native in a language you're learning.\n"
                     "Please remove one of these roles and try again!"
                 )
@@ -290,14 +280,13 @@ class LeagueCog(BaseCog):
                 'error_message': (
                     "❌ **Conflicting Roles**\n\n"
                     "You have both:\n"
-                    f"• <@&{ROLES.LEARNING_ENGLISH}> (Learning English)\n"
-                    f"• <@&{ROLES.ENGLISH_NATIVE}> (English Native)\n\n"
+                    f"• <@&{LEARNING_ENGLISH_ROLE_ID}> (Learning English)\n"
+                    f"• <@&{ENGLISH_NATIVE_ROLE_ID}> (English Native)\n\n"
                     "You cannot be native in a language you're learning.\n"
                     "Please remove one of these roles and try again!"
                 )
             }
 
-        # All checks passed
         return {
             'valid': True,
             'learning_spanish': has_learning_spanish,
@@ -313,7 +302,6 @@ class LeagueCog(BaseCog):
         responsible for sending the returned embed (typically ephemerally);
         this method never touches ``interaction.response``.
         """
-        # Banned users cannot (re-)join.
         if member.id in self._banned_users:
             return Embed(
                 title="❌ Banned from the league",
@@ -325,7 +313,6 @@ class LeagueCog(BaseCog):
                 color=discord.Color.red(),
             )
 
-        # Friendly short-circuit for users already in the league.
         if member.id in self._opted_in_users:
             learning = self._user_learning.get(member.id, {})
             if learning.get('learning_spanish'):
@@ -344,7 +331,6 @@ class LeagueCog(BaseCog):
                 color=discord.Color.green(),
             )
 
-        # Validate roles
         validation = await self.validate_user_roles(member)
         if not validation['valid']:
             return Embed(
@@ -360,7 +346,6 @@ class LeagueCog(BaseCog):
             learning_english=validation['learning_english'],
         )
 
-        # Update in-memory cache
         self._opted_in_users.add(member.id)
         self._user_learning[member.id] = {
             'learning_spanish': validation['learning_spanish'],
@@ -438,7 +423,6 @@ class LeagueCog(BaseCog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
             logger.info("User %s (%s) left Language League", interaction.user, interaction.user.id)
 
-            # Update in-memory cache
             self._opted_in_users.discard(interaction.user.id)
             self._user_learning.pop(interaction.user.id, None)
 
@@ -473,7 +457,6 @@ class LeagueCog(BaseCog):
         await interaction.response.defer()
 
         try:
-            # Get current round info
             current_round = await self.bot.db.get_current_round()
             if not current_round:
                 embed = Embed(
@@ -484,7 +467,6 @@ class LeagueCog(BaseCog):
                 await interaction.followup.send(embed=embed, ephemeral=True)
                 return
 
-            # Get top entries for image (use cache if available)
             rankings = await self.get_cached_leaderboard(board, SCORING.LEADERBOARD_DISPLAY_LIMIT)
 
             if not rankings:
@@ -496,7 +478,6 @@ class LeagueCog(BaseCog):
                 await interaction.followup.send(embed=embed, ephemeral=True)
                 return
 
-            # Enrich leaderboard data with avatars
             enriched_data = []
             for entry in rankings:
                 try:
@@ -527,15 +508,12 @@ class LeagueCog(BaseCog):
                         'avatar_url': f"https://cdn.discordapp.com/embed/avatars/{default_num}.png",
                     })
 
-            # Check if requester is in top rankings
             requester_in_top = any(entry['user_id'] == interaction.user.id for entry in rankings)
             requester_stats = None
 
-            # If not in top rankings, get their stats for the embed
             if not requester_in_top:
                 user_stats = await self.bot.db.get_user_stats(interaction.user.id)
                 if user_stats:
-                    # Determine which rank to show based on board type
                     if board == 'spanish' and user_stats.get('rank_spanish'):
                         requester_stats = {
                             'rank': user_stats['rank_spanish'],
@@ -561,13 +539,11 @@ class LeagueCog(BaseCog):
                             'user_id': interaction.user.id
                         }
 
-            # Generate leaderboard image (returns BytesIO — no temp file needed)
             buf = await asyncio.wait_for(
                 asyncio.to_thread(generate_leaderboard_image, enriched_data),
                 timeout=30,
             )
 
-            # Caption text shown below the image in the Components V2 container
             # Pick a random flag for the caption — better representation of
             # all Spanish/English-speaking countries than a fixed 🇪🇸/🇬🇧.
             if board == 'spanish':
@@ -630,7 +606,6 @@ class LeagueCog(BaseCog):
         try:
             target = user or interaction.user
 
-            # Get current round info
             current_round = await self.bot.db.get_current_round()
             if not current_round:
                 embed = Embed(
@@ -641,7 +616,6 @@ class LeagueCog(BaseCog):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
 
-            # Get stats
             stats = await self.bot.db.get_user_stats(target.id)
 
             if not stats:
@@ -656,7 +630,6 @@ class LeagueCog(BaseCog):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
 
-            # Build stats embed
             is_self = target == interaction.user
             title = "📊 Your League Stats" if is_self else f"📊 {target.display_name}'s League Stats"
 
@@ -676,7 +649,6 @@ class LeagueCog(BaseCog):
                 inline=False
             )
 
-            # Rankings
             rankings_text = []
             if stats['rank_spanish']:
                 rankings_text.append(f"🇪🇸 Spanish: **#{stats['rank_spanish']}**")
@@ -692,7 +664,6 @@ class LeagueCog(BaseCog):
                     inline=False
                 )
 
-            # Show round end date in footer
             end_date = current_round['end_date']
             if end_date.tzinfo is None:
                 end_date = end_date.replace(tzinfo=UTC)
@@ -715,7 +686,6 @@ class LeagueCog(BaseCog):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    # Message Listener for Activity Tracking
 
     @commands.Cog.listener()
     async def on_user_data_deleted(self, user_id: int) -> None:
@@ -731,19 +701,15 @@ class LeagueCog(BaseCog):
     async def on_message(self, message: discord.Message):
         """Track messages for league"""
         try:
-            # Ignore bots
             if message.author.bot:
                 return
 
-            # Ignore DMs
             if not message.guild:
                 return
 
-            # Only track activity in the league guild
-            if message.guild.id != LEAGUE_GUILD_ID:
+            if message.guild.id != HOME_GUILD_ID:
                 return
 
-            # Check caches (no DB hit)
             if message.author.id not in self._opted_in_users:
                 return
             if message.author.id in self._banned_users:
@@ -751,41 +717,33 @@ class LeagueCog(BaseCog):
             if message.channel.id in self._excluded_channels:
                 return
 
-            # Anti-spam: Check message cooldown
             if not self.check_message_cooldown(message.author.id, message.channel.id):
-                return  # Too soon, don't count
+                return
 
-            # Language detection: Only count messages in the language being learned.
-            # Done before the daily-cap DB query because it's free and rejects the
-            # majority of messages (short, emoji-only, mixed, undetectable).
-            detected_lang = detect_message_language(message.content)
+            # Reject undetectable text before consuming the daily message cap.
+            detected_lang = detect_message_language(message.content, min_length=RATE_LIMITS.MIN_MESSAGE_LENGTH)
             if not detected_lang:
-                return  # Could not detect language or message too short
+                return
 
-            # Anti-spam: Check daily cap (in-memory, no DB hit)
             if not self._check_and_increment_daily(message.author.id):
-                return  # Hit daily cap
+                return
 
-            # Get what language(s) the user is learning (from in-memory cache)
             learning = self._user_learning.get(message.author.id)
             if not learning:
                 return  # Not in cache (race with leave); skip
 
-            # Check if message is in the language they're learning
             is_valid_message = False
-            if (detected_lang == LANGUAGE.SPANISH_CODE and learning['learning_spanish']) or (detected_lang == LANGUAGE.ENGLISH_CODE and learning['learning_english']):
+            if (detected_lang == 'es' and learning['learning_spanish']) or (detected_lang == 'en' and learning['learning_english']):
                 is_valid_message = True
 
             if not is_valid_message:
-                return  # Message not in the language they're learning
+                return
 
-            # Get current round (from in-memory cache, refreshed by check_round_end task)
             current_round = self._current_round
             if not current_round:
                 logger.warning("No active round found, cannot record activity")
                 return
 
-            # Record activity
             await self.bot.db.record_activity(
                 user_id=message.author.id,
                 activity_type='message',
@@ -795,7 +753,6 @@ class LeagueCog(BaseCog):
                 message_id=message.id
             )
 
-            # Update cooldown cache
             self.update_message_cooldown(message.author.id, message.channel.id)
 
         except Exception as e:
@@ -833,11 +790,9 @@ class LeagueCog(BaseCog):
 
 async def setup(bot):
     """Setup function to add the cog to the bot"""
-    # Load main league cog
     await bot.add_cog(LeagueCog(bot))
     logger.info("LeagueCog loaded successfully")
 
-    # Load admin cog
     from cogs.league_cog.admin import LeagueAdminCog
     await bot.add_cog(LeagueAdminCog(bot))
     logger.info("LeagueAdminCog loaded successfully")

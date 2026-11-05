@@ -36,6 +36,15 @@ def _text(view: VocabularyView) -> str:
     return "\n".join(item.content for item in view.walk_children() if isinstance(item, discord.ui.TextDisplay))
 
 
+async def _click(view: VocabularyView, label: str, interaction: SimpleNamespace) -> None:
+    button = next(
+        item for item in view.walk_children()
+        if isinstance(item, discord.ui.Button) and item.label == label
+    )
+    if not button.disabled:
+        await button.callback(interaction)
+
+
 def test_catalog_has_distinct_bilingual_examples(catalog: tuple[VocabularyEntry, ...]) -> None:
     """The extensive catalog must not pad cards with duplicated examples."""
     assert len(catalog) >= 400
@@ -68,20 +77,20 @@ async def test_browsing_preserves_order_and_english_toggle(catalog: tuple[Vocabu
     try:
         first = deck[0]
         assert first.meaning_en in _text(view)
-        await view._toggle_translation(_interaction())
+        await _click(view, "Ocultar inglés", _interaction())
         assert first.meaning_es in _text(view)
         assert first.meaning_en not in _text(view)
         assert all(example.en not in _text(view) for example in first.examples)
-        await view._next(_interaction())
-        assert view.index == 1 and not view.show_translation
+        await _click(view, "Siguiente", _interaction())
+        assert deck[1].meaning_en not in _text(view)
         assert deck[1].meaning_es in _text(view)
-        await view._next(_interaction())
-        assert view.index == 1
-        await view._previous(_interaction())
-        assert view.index == 0 and first.meaning_es in _text(view)
-        await view._previous(_interaction())
-        assert view.index == 0
-        await view._toggle_translation(_interaction())
+        await _click(view, "Siguiente", _interaction())
+        assert deck[1].meaning_es in _text(view)
+        await _click(view, "Anterior", _interaction())
+        assert first.meaning_es in _text(view)
+        await _click(view, "Anterior", _interaction())
+        assert first.meaning_es in _text(view)
+        await _click(view, "Mostrar inglés", _interaction())
         assert first.meaning_en in _text(view)
     finally:
         view.stop()
@@ -107,8 +116,7 @@ async def test_failed_edit_does_not_advance_browser(catalog: tuple[VocabularyEnt
     original = _text(view)
     try:
         with pytest.raises(discord.HTTPException):
-            await view._next(interaction)
-        assert view.index == 0
+            await _click(view, "Siguiente", interaction)
         assert _text(view) == original
     finally:
         view.stop()
@@ -122,8 +130,8 @@ async def test_timeout_keeps_card_readable_and_freezes_controls(catalog: tuple[V
         assert catalog[0].meaning_es in _text(view)
         controls = [item for item in view.walk_children() if isinstance(item, discord.ui.Button) and item.url is None]
         assert all(button.disabled for button in controls)
-        await view._next(_interaction())
-        assert view.index == 0
+        await _click(view, "Siguiente", _interaction())
+        assert catalog[0].meaning_es in _text(view)
     finally:
         view.stop()
 

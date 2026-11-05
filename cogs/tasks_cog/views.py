@@ -29,7 +29,6 @@ def build_task_embed(task: dict, guild: discord.Guild) -> discord.Embed:
     embed.add_field(name="Status", value=f"{emoji} {label}", inline=True)
     embed.add_field(name="ID", value=f"`#{task['id']}`", inline=True)
 
-    # Assignees
     assignee_ids: list[int] = task.get("assignee_ids") or []
     if assignee_ids:
         mentions = []
@@ -40,7 +39,6 @@ def build_task_embed(task: dict, guild: discord.Guild) -> discord.Embed:
     else:
         embed.add_field(name="Assigned to", value="*Unassigned*", inline=False)
 
-    # Footer with creator and timestamps
     creator = guild.get_member(task["created_by"])
     creator_name = creator.display_name if creator else str(task["created_by"])
     embed.set_footer(text=f"Created by {creator_name}")
@@ -82,7 +80,6 @@ class TaskStatusSelect(Select):
             return
 
         new_status = self.values[0]
-        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         bot: Hablemos = interaction.client  # type: ignore[assignment]
         task = await bot.db.update_task_status(self.task_id, new_status)
         if not task:
@@ -122,7 +119,6 @@ class TaskAssignSelect(UserSelect):
             return
 
         new_ids = [u.id for u in self.values]
-        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         bot: Hablemos = interaction.client  # type: ignore[assignment]
         task = await bot.db.update_task_assignees(self.task_id, new_ids)
         if not task:
@@ -132,7 +128,6 @@ class TaskAssignSelect(UserSelect):
         embed = build_task_embed(task, interaction.guild)
         await interaction.response.edit_message(embed=embed)
 
-        # Ping newly assigned members
         if new_ids:
             mentions = " ".join(f"<@{uid}>" for uid in new_ids)
             await interaction.followup.send(

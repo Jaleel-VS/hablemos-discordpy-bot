@@ -114,14 +114,12 @@ class GameView(ui.View):
         if correct:
             self.streak += 1
 
-            # Show correct result on current message (no buttons)
             result = _result_embed(
                 self.known, self.known_vol, self.mystery, self.mystery_vol,
                 self.streak, "correct",
             )
             await interaction.response.edit_message(embed=result, view=None)
 
-            # Chain: mystery becomes the new known
             self.known = self.mystery
             self.known_vol = self.mystery_vol
 
@@ -151,7 +149,6 @@ class GameView(ui.View):
             msg = await interaction.followup.send(embed=embed, view=new_view, wait=True)
             new_view.message = msg
 
-            # Transfer active game tracking
             self.cog._active[self.player.id] = new_view
             self.stop()
         else:

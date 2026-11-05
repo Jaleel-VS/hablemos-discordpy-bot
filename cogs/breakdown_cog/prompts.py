@@ -1,8 +1,4 @@
-"""Gemini prompts for the breakdown cog.
-
-Each prompt is a stateless singleton — instantiate once at import time
-and pass the same instance to ``bot.gemini.run`` on every call.
-"""
+"""Structured sentence breakdown prompt and validated response contract."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -10,8 +6,6 @@ from dataclasses import dataclass
 from pydantic import BaseModel, Field
 
 from cogs.utils.gemini import Prompt
-
-# ── Pydantic models for structured output ──
 
 
 class WordBreakdown(BaseModel):
@@ -64,18 +58,12 @@ class SentenceBreakdown(BaseModel):
     )
 
 
-# ── Prompt input ──
-
-
 @dataclass(frozen=True)
 class BreakdownInput:
     """Input to the breakdown prompt."""
 
     sentence: str
     detected_language: str  # 'es' or 'en'
-
-
-# ── Prompt class ──
 
 
 class BreakdownPrompt(Prompt[BreakdownInput, SentenceBreakdown]):
@@ -86,6 +74,7 @@ class BreakdownPrompt(Prompt[BreakdownInput, SentenceBreakdown]):
     """
 
     feature = "breakdown"
+    timeout_seconds = 45
     temperature = 0.3
     max_output_tokens = 4096
     response_mime_type = "application/json"

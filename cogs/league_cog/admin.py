@@ -17,17 +17,18 @@ from discord import Embed
 from discord.ext import commands
 
 from base_cog import BaseCog
-from cogs.league_cog.config import LEAGUE_GUILD_ID, RATE_LIMITS
+from cogs.league_cog.config import RATE_LIMITS
 from cogs.league_cog.rounds import (
     build_round_end_announcement,
     get_eligible_champions,
 )
-from cogs.league_cog.utils import (
+from cogs.league_cog.views import LeagueJoinView
+from cogs.utils.guild import HOME_GUILD_ID
+from cogs.utils.language import (
     CUSTOM_EMOJI_PATTERN,
     UNICODE_EMOJI_PATTERN,
     detect_message_language,
 )
-from cogs.league_cog.views import LeagueJoinView
 
 if TYPE_CHECKING:
     from cogs.league_cog.main import LeagueCog
@@ -44,7 +45,6 @@ class LeagueAdminCog(BaseCog):
 
     def _league_cog(self) -> LeagueCog | None:
         """Return the main LeagueCog instance if loaded (typed accessor)."""
-        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         return cast("LeagueCog | None", self.bot.get_cog("LeagueCog"))
 
     @commands.group(name="league", invoke_without_command=True)
@@ -92,7 +92,6 @@ Rounds last 1 week. Top performers earn a champion role!"""
             ch = ctx.guild.get_channel(cid) if ctx.guild else None
             channel_labels[cid] = f"#{ch.name}" if ch else f"#{cid}"
 
-        # Lazy import + offload rendering off the event loop.
         from cogs.league_cog.league_helper.topchannels_image import (
             render_top_channels,
         )
@@ -205,11 +204,11 @@ Rounds last 1 week. Top performers earn a champion role!"""
 
         Usage: `$league reminder [#channel]` — defaults to the current channel.
         """
-        if ctx.guild is None or ctx.guild.id != LEAGUE_GUILD_ID:
+        if ctx.guild is None or ctx.guild.id != HOME_GUILD_ID:
             return await ctx.send("❌ This command can only be used in the league guild.")
 
         target = channel or ctx.channel
-        if not isinstance(target, discord.TextChannel) or target.guild.id != LEAGUE_GUILD_ID:
+        if not isinstance(target, discord.TextChannel) or target.guild.id != HOME_GUILD_ID:
             return await ctx.send("❌ Target channel must be a text channel in the league guild.")
 
         embed = Embed(
@@ -386,7 +385,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
             message = await channel.fetch_message(message_id)
 
             raw_content = message.content
-            detected_lang = detect_message_language(raw_content)
+            detected_lang = detect_message_language(raw_content, min_length=RATE_LIMITS.MIN_MESSAGE_LENGTH)
 
             content_no_custom = CUSTOM_EMOJI_PATTERN.sub('', raw_content)
             content_clean = UNICODE_EMOJI_PATTERN.sub('', content_no_custom).strip()
@@ -451,7 +450,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
             if not rows:
                 return await ctx.send(f"ℹ️ No counted messages found for user `{user_id}`.")
 
-            guild = self.bot.get_guild(LEAGUE_GUILD_ID)
+            guild = self.bot.get_guild(HOME_GUILD_ID)
             if not guild:
                 return await ctx.send("❌ Could not find league guild.")
 
@@ -474,7 +473,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
 
                     message = await channel.fetch_message(row['message_id'])
                     content = message.content[:500] + "..." if len(message.content) > 500 else message.content
-                    detected_lang = detect_message_language(message.content)
+                    detected_lang = detect_message_language(message.content, min_length=RATE_LIMITS.MIN_MESSAGE_LENGTH)
                     lang_display = f"**Detected:** {detected_lang.upper()}" if detected_lang else "**Detected:** None ❌"
 
                     embed.add_field(
@@ -597,8 +596,6 @@ Rounds last 1 week. Top performers earn a champion role!"""
             if last_round_recipients:
                 preview_footer = f"\n\n---\n**ℹ️ On Cooldown (from last round):** {', '.join(f'<@{uid}>' for uid in last_round_recipients)}"
 
-            # Render a preview of the podium image too, so admins can
-            # eyeball the final visual before a round actually ends.
             from cogs.league_cog.league_helper.round_end_image import (
                 render_round_end,
             )
@@ -695,7 +692,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
         content_clean = UNICODE_EMOJI_PATTERN.sub('', content_no_custom).strip()
 
         start = time.perf_counter()
-        detected = detect_message_language(content_no_mentions)
+        detected = detect_message_language(content_no_mentions, min_length=RATE_LIMITS.MIN_MESSAGE_LENGTH)
         elapsed_ms = (time.perf_counter() - start) * 1000
 
         if detected == 'es':

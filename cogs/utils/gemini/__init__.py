@@ -1,31 +1,12 @@
-"""Gemini deep module — prompt registry + dispatcher.
+"""Typed Gemini execution with shared model selection, deadlines, and retries.
 
-One module owns the ``genai.Client`` instance, model resolution
-(``GEMINI_<FEATURE>_MODEL`` → ``GEMINI_DEFAULT_MODEL`` → built-in
-default), the shared rate limiter, retry-on-5xx, and HTTP-code-aware
-error mapping (``GeminiError.user_message``). Cogs interact only via
-:meth:`Gemini.run`.
-
-Public API:
-    :class:`Prompt` — base class for typed prompts (``render`` + ``parse``).
-    :class:`Gemini` — runtime; constructed once and attached to ``bot.gemini``.
-    :class:`GeminiError` — raised on any failure.
-
-Adding a new Gemini-using feature:
-
-    1. Subclass ``Prompt[I, O]`` in your cog's ``prompts.py``. Set
-       ``feature`` to a short slug; declare ``temperature`` /
-       ``max_output_tokens`` / etc. Implement ``render`` and ``parse``.
-    2. Declare a module-level singleton: ``MY_PROMPT = MyPrompt()``.
-    3. In your cog: ``result = await self.bot.gemini.run(MY_PROMPT, inp)``
-       inside ``try / except GeminiError as e: await ctx.send(e.user_message)``.
-
-The model can be overridden at deploy time without touching code by
-setting ``GEMINI_<FEATURE>_MODEL`` (e.g. ``GEMINI_ASK_MODEL``).
+Prompts own rendering, parsing, and optional ``timeout_seconds`` overrides.
+``run`` bounds rate-limit waits and retries as well as the network call, mapping
+expired deadlines to ``GeminiError`` for every caller. Models can be selected
+with ``GEMINI_<FEATURE>_MODEL`` or ``GEMINI_DEFAULT_MODEL``.
 """
 import asyncio
 import logging
-import os
 import random
 
 from google import genai
@@ -33,6 +14,7 @@ from google.genai import errors as genai_errors
 from google.genai import types
 
 from cogs.utils.rate_limiter import RateLimiter
+from config import get_str_env
 
 from .errors import GeminiError, user_message_for
 
@@ -70,6 +52,7 @@ class Prompt[I, O]:
     top_k: int = 40
     response_mime_type: str | None = None
     response_schema: type | None = None
+    timeout_seconds: float = 30
 
     def render(self, inp: I) -> str:
         """Render the prompt template with ``inp``. Override in subclass."""
@@ -106,8 +89,7 @@ class Gemini:
         self._client = genai.Client(api_key=api_key)
         self._default_model = (
             default_model
-            or os.getenv("GEMINI_DEFAULT_MODEL")
-            or DEFAULT_MODEL_FALLBACK
+            or get_str_env("GEMINI_DEFAULT_MODEL", DEFAULT_MODEL_FALLBACK)
         )
         self._rate_limiter = RateLimiter(requests_per_minute=RATE_LIMIT_RPM)
 
@@ -118,7 +100,7 @@ class Gemini:
                 f"{type(prompt).__name__}.feature is empty; subclasses must set it",
             )
         env_var = f"GEMINI_{prompt.feature.upper()}_MODEL"
-        return os.getenv(env_var) or self._default_model
+        return get_str_env(env_var, self._default_model)
 
     async def run[I, O](self, prompt: Prompt[I, O], inp: I) -> O:
         """Run ``prompt`` against Gemini.
@@ -140,9 +122,17 @@ class Gemini:
         if prompt.response_schema:
             config_kwargs["response_schema"] = prompt.response_schema
         config = types.GenerateContentConfig(**config_kwargs)
-        text = await self._call_with_retry(
-            feature=prompt.feature, model=model, prompt=rendered, config=config,
-        )
+        try:
+            async with asyncio.timeout(prompt.timeout_seconds):
+                text = await self._call_with_retry(
+                    feature=prompt.feature, model=model, prompt=rendered, config=config,
+                )
+        except TimeoutError as exc:
+            raise GeminiError(
+                code=408,
+                message="Gemini call deadline expired",
+                user_message=f"Gemini didn't respond within {prompt.timeout_seconds:g}s. Try again.",
+            ) from exc
         return prompt.parse(text, inp)
 
     async def _generate_content(
@@ -204,7 +194,6 @@ class Gemini:
                     user_message=user_message_for(e),
                 ) from e
 
-        # All MAX_RETRIES attempts hit ServerError — surface it.
         assert last_server_err is not None
         raise GeminiError(
             code=last_server_err.code,

@@ -10,13 +10,10 @@ from typing import Final
 
 from config import get_int_env
 
-# Channel hosting the persistent trigger button.
 TRIGGER_CHANNEL_ID: Final[int] = get_int_env("ALMIGHTY_TRIGGER_CHANNEL_ID", 1515639236164980778)
 
-# Channel where submitted forms are posted.
 FEED_CHANNEL_ID: Final[int] = get_int_env("ALMIGHTY_FEED_CHANNEL_ID", 1515641245471473704)
 
-# Category options offered by the radio-group form. (label, description).
 # Between 2 and 10 entries per the RadioGroup component limit.
 CATEGORIES: Final[list[tuple[str, str]]] = [
     ("Question", "Ask something"),

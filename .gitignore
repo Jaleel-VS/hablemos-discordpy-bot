@@ -18,5 +18,4 @@ scripts/bee_preview_*.png
 .pi-*.json*
 cogs/crossword_cog/data/generated_batch.csv
 cogs/crossword_cog/data/generated_clean.csv
-cogs/tomatoes_cog/output.webp
 phrasal_source.json

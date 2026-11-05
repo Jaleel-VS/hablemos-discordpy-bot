@@ -17,12 +17,12 @@ from discord.ext import commands, tasks
 from base_cog import BaseCog
 from cogs.utils.duration import parse_duration
 from cogs.utils.embeds import red_embed
+from cogs.utils.guild import HOME_GUILD_ID
 
 from . import graphs
 from .config import (
     ROLE_LABELS,
     ROLE_MAP,
-    STATS_GUILD_ID,
     STATS_REPORT_CHANNEL_ID,
     STATS_WEEKLY_REPORT_DAY,
     STATS_WEEKLY_REPORT_HOUR_UTC,
@@ -74,14 +74,14 @@ class StatsCog(BaseCog):
 
     async def cog_check(self, ctx: commands.Context) -> bool:
         """Restrict all $stats commands to the tracked guild."""
-        return ctx.guild is not None and ctx.guild.id == STATS_GUILD_ID
+        return ctx.guild is not None and ctx.guild.id == HOME_GUILD_ID
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
         """Track every non-bot message for stats."""
         if message.author.bot:
             return
-        if not message.guild or message.guild.id != STATS_GUILD_ID:
+        if not message.guild or message.guild.id != HOME_GUILD_ID:
             return
 
         member = message.author
@@ -134,9 +134,9 @@ class StatsCog(BaseCog):
         ):
             return
 
-        guild = self.bot.get_guild(STATS_GUILD_ID)
+        guild = self.bot.get_guild(HOME_GUILD_ID)
         if guild is None:
-            logger.warning("Stats weekly report guild %s not found", STATS_GUILD_ID)
+            logger.warning("Stats weekly report guild %s not found", HOME_GUILD_ID)
             return
 
         channel = guild.get_channel(STATS_REPORT_CHANNEL_ID)
@@ -153,7 +153,6 @@ class StatsCog(BaseCog):
         """Wait until the bot is ready before scheduled reporting."""
         await self.bot.wait_until_ready()
 
-    # ── $myclock (self-serve activity clock) ──
 
     @commands.command(name="myclock", aliases=["reloj"])
     @commands.cooldown(1, 10, commands.BucketType.user)
@@ -169,7 +168,6 @@ class StatsCog(BaseCog):
         )
         await ctx.send(embed=embed, view=ClockLauncherView(self.bot))
 
-    # ── $stats command group ──
 
     @commands.group(name="stats", invoke_without_command=True)
     @commands.is_owner()
@@ -181,13 +179,11 @@ class StatsCog(BaseCog):
         role_data = await self.bot.db.get_role_breakdown(days)
         growth = await self.bot.db.get_growth_summary(new_user_days=days)
 
-        # Build summary embed
         embed = discord.Embed(
             title=f"📊 Server Stats — Last {days} days",
             color=0x5865F2,
         )
 
-        # Top channels
         if top_channels:
             channel_lines = []
             for i, row in enumerate(top_channels, 1):
@@ -200,7 +196,6 @@ class StatsCog(BaseCog):
                 inline=False,
             )
 
-        # Role breakdown
         if role_data:
             role_lines = [
                 f"**{ROLE_LABELS.get(r['role_type'], r['role_type'])}:** {r['total']:,}"
@@ -212,7 +207,6 @@ class StatsCog(BaseCog):
                 inline=True,
             )
 
-        # Growth
         embed.add_field(
             name="📈 Users",
             value=(
@@ -244,7 +238,6 @@ class StatsCog(BaseCog):
             await ctx.send(embed=red_embed("No channel data yet."))
             return
 
-        # Resolve channel names
         channel_names: dict[int, str] = {}
         for row in data:
             ch = ctx.guild.get_channel(row["channel_id"]) if ctx.guild else None

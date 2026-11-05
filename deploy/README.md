@@ -53,7 +53,6 @@ Set these in the repo: Settings → Secrets and variables → Actions.
 | `GEMINI_API_KEY` | Kept but unused: `bot.containers.json` doesn't pass it while Gemini is disabled. |
 | `ACTIVITY_RESULTS_CHANNEL_ID` |
 | `TICKETSUB_MIN_ROLE_ID` |
-| `WCBET_AUTO_SETTLE` |
 | `LOG_WEBHOOK_URL` |
 | `APP_AWS_ACCESS_KEY_ID` | The bot's *own* AWS key (distinct from the deploy key). |
 | `APP_AWS_SECRET_ACCESS_KEY` | " |

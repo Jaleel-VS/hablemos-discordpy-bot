@@ -21,9 +21,6 @@ from cogs.crossword_cog.grid import generate_grid
 from cogs.crossword_cog.main import CrosswordCog, CrosswordGame
 from cogs.crossword_cog.words import WordEntry
 
-# --------------------------------------------------------------------------- #
-# Word / game factories                                                       #
-# --------------------------------------------------------------------------- #
 
 def make_entry(
     word_es: str,
@@ -84,9 +81,6 @@ def build_game(
     return CrosswordGame(grid, ordered, language, difficulty)
 
 
-# --------------------------------------------------------------------------- #
-# Fake Discord objects                                                        #
-# --------------------------------------------------------------------------- #
 
 @dataclass
 class FakePermissions:
@@ -185,9 +179,6 @@ class FakeBot:
         return self._channels.get(channel_id)
 
 
-# --------------------------------------------------------------------------- #
-# Fixtures                                                                    #
-# --------------------------------------------------------------------------- #
 
 @pytest.fixture
 def seeded_random() -> None:
@@ -221,7 +212,6 @@ async def cog_with_game(
     DB word loader or start the global timeout watcher.
     """
     fake_bot._channels[fake_channel.id] = fake_channel
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     cog = CrosswordCog(fake_bot)  # type: ignore[arg-type]
     game = build_game()
     game.channel_id = fake_channel.id

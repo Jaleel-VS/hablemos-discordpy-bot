@@ -147,7 +147,6 @@ class Agent:
     dodges: int = 0
     explored: int = 0  # choices that weren't the greedy best
     evac: set[int] = field(default_factory=set)  # dodge marches to recall
-    # optional outside decision-maker (e.g. jev.JevController)
     controller: "Controller | None" = None
     # this check-in's decisions from the controller (stance/raid/evacuate)
     plan: dict = field(default_factory=dict)
@@ -243,7 +242,7 @@ class Brain:
         self._update_stance(agent, player)
         for bid in list(player.base_ids):
             base = self.w.bases[bid]
-            self._settle_view(base)
+            self.e.settle(base)
             if agent.genome.dodge > 0.5 or "evacuate" in agent.plan:
                 self._dodge(agent, player, base)
             self._builds(agent, player, base)
@@ -296,8 +295,6 @@ class Brain:
         bandit.started_worth = worth
         bandit.started_field = field_now
 
-    def _settle_view(self, base: Base) -> None:
-        self.e._settle(base)
 
     # ---------------------------------------------------------- building
 
@@ -490,7 +487,7 @@ class Brain:
             if score < g.min_return:
                 continue
             if focus is not None and target.id == focus:
-                score += 0.15  # alliance focus: pile on the same target
+                score += 0.15
             options.append((score, target, est))
         return party, options
 
@@ -622,9 +619,9 @@ class Brain:
         if base.buildings.get("tower", 0) < TOWER_SEES_COUNTS:
             return True  # can't see counts: assume the worst
         attacker = self.w.players[march.owner]
-        stacks, _loc = self.e._defender_stacks(base)
+        stacks, _loc = self.e.defender_stacks(base)
         if not stacks:
-            return False  # nothing to save
+            return False
         armor = {
             o: self.w.players[o].research.get("armor", 0)
             for o, _u in stacks
@@ -633,7 +630,7 @@ class Brain:
         res = combat.resolve_battle(
             {(attacker.id, u): n for u, n in march.units.items()},
             stacks,
-            self.e._stats,
+            self.e.unit_stats,
             arms_level=attacker.research.get("arms", 0),
             armor_by_owner=armor,
             wall=base.buildings.get("wall", 0),
@@ -739,7 +736,7 @@ class Brain:
         self, player: Player, party: dict[str, int], target: Base
     ) -> tuple[int, float] | None:
         e = self.e
-        owner = e._owner(target) if target.kind == "player" else None
+        owner = e.owner(target) if target.kind == "player" else None
         if owner is not None and (
             owner.protection_until > self.w.now_ms
             or owner.vacation_state != "none"
@@ -749,7 +746,7 @@ class Brain:
         morale = Q
         if owner is not None:
             morale = combat.morale_q(e.military(player), e.military(owner))
-        stacks, _loc = e._defender_stacks(target)
+        stacks, _loc = e.defender_stacks(target)
         armor = {
             o: self.w.players[o].research.get("armor", 0)
             for o, _u in stacks
@@ -759,7 +756,7 @@ class Brain:
         res = combat.resolve_battle(
             {(player.id, u): n for u, n in party.items()},
             stacks,
-            e._stats,
+            e.unit_stats,
             arms_level=player.research.get("arms", 0),
             armor_by_owner=armor,
             wall=wall,
@@ -784,11 +781,11 @@ class Brain:
             }
             bucket = None
             if owner is not None:
-                e._settle_bucket(owner)
+                e.settle_bucket(owner)
                 bucket = owner.bucket_m
             taken = combat.allocate_loot(
                 exposed,
-                e._cargo_capacity(player.id, survivors),
+                e.cargo_capacity(player.id, survivors),
                 bucket,
                 VALUE_PER_UNIT,
             )
@@ -821,7 +818,7 @@ class Brain:
             for dx in range(-radius, radius + 1):
                 for dy in (-radius, radius):
                     xy = (home.x + dx, home.y + dy)
-                    if self.e._tile_free(*xy) and self.e._spaced(xy):
+                    if self.e.tile_free(*xy) and self.e.spaced(xy):
                         return xy
         return None
 
@@ -850,7 +847,7 @@ class Brain:
         haulers = home.garrison.get("hauler", 0)
         if own.state != "building" and haulers and any(missing.values()):
             budget = int(self._liquid(home) * agent.genome.monument_share)
-            cap_m = self.e._cargo_capacity(player.id, {"hauler": haulers}) * 1000
+            cap_m = self.e.cargo_capacity(player.id, {"hauler": haulers}) * 1000
             cargo = {}
             room = cap_m
             for r in BUILD_RES:
@@ -894,7 +891,7 @@ class Brain:
             return
         for site in sorted(self.w.sites.values(), key=lambda s: s.base_id):
             target = self.w.bases[site.base_id]
-            stacks, _l = self.e._defender_stacks(target)
+            stacks, _l = self.e.defender_stacks(target)
             if not stacks:
                 stacks = {}
             armor = {
@@ -908,7 +905,7 @@ class Brain:
             res = combat.resolve_battle(
                 {(player.id, u): n for u, n in party.items()},
                 stacks,
-                self.e._stats,
+                self.e.unit_stats,
                 arms_level=player.research.get("arms", 0),
                 armor_by_owner=armor,
                 wall=0,

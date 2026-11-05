@@ -30,7 +30,12 @@ def value_m(amount_m: dict[str, int]) -> int:
 
 @dataclass(frozen=True, slots=True)
 class Params:
-    """Every tunable knob. Defaults are ruleset v1 (plans/outpost.md §6)."""
+    """Every tunable knob. Defaults are ruleset v1 (plans/outpost.md §6).
+
+    Stock fields are whole resource units and garrison fields are unit counts.
+    ``onboarding_hours`` sets tutorial lifetime and the simulator's quit-loss
+    lookback; protection and inactivity have independent windows.
+    """
 
     speed_pct: int = 100
     build_slots: int = 2
@@ -46,6 +51,19 @@ class Params:
     bucket_hours: int = 4
     bucket_refill_hours: int = 12
     protection_hours: int = 72
+    onboarding_hours: int = 72
+    min_travel_ms: int = 5 * 60 * 1000
+    max_train_batches: int = 5
+    start_ore: int = 600
+    start_wood: int = 600
+    start_gem: int = 100
+    start_food: int = 300
+    new_base_stock: int = 500
+    tutorial_ore: int = 500
+    tutorial_wood: int = 500
+    tutorial_gem: int = 200
+    site_wardens: int = 256
+    site_bulwarks: int = 32
     catchup_max_pct: int = 0  # extra production %; superseded by headstart
     # late joiners start at this percentile of players' building levels
     # (0 = off; §6.17)

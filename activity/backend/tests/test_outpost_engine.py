@@ -84,12 +84,6 @@ def _set_stock(base, **res_units: int) -> None:
         base.stock[r] = v * MILLI
 
 
-def _settle(engine: Engine, base) -> None:
-    """Force-settle a base (production is lazy; call to materialise stock)."""
-    engine._settle(base)
-
-
-
 def _clear_protection(engine: Engine, *player_ids: int) -> None:
     """Set protection_until to 0 for given players (or all players)."""
     targets = player_ids if player_ids else list(engine.w.players)
@@ -98,16 +92,47 @@ def _clear_protection(engine: Engine, *player_ids: int) -> None:
         if p is not None:
             p.protection_until = 0
 
-def _force_rate_update(engine: Engine, player_id: int) -> None:
-    """Settle bucket and re-project starvation after manual garrison changes."""
-    player = engine.w.players[player_id]
-    engine._before_rate_change(player, *[engine.w.bases[b] for b in player.base_ids])
-    engine._after_rate_change(player, *[engine.w.bases[b] for b in player.base_ids])
+def _train_army(engine: Engine, base, units: dict[str, int]) -> None:
+    """Establish the starvation scenario through completed training actions."""
+    base.buildings["barracks"] = 10
+    for unit, count in units.items():
+        for resource, cost in engine.r.units[unit].cost_m.items():
+            base.stock[resource] += cost * count
+        result = engine.train(base.owner, base.id, unit, count)
+        assert result.ok, result.code
+        engine.advance(result.data["end_ms"])
 
 
 # ---------------------------------------------------------------------------
 # 1. Production
 # ---------------------------------------------------------------------------
+
+
+def test_join_stock_and_tutorial_lifetime_follow_params() -> None:
+    params = _BASE_PARAMS.with_changes(
+        start_ore=11, start_wood=13, start_gem=17, start_food=19,
+        tutorial_ore=23, tutorial_wood=29, tutorial_gem=31,
+        onboarding_hours=2,
+    )
+    e = _engine(params)
+    result = e.join(1, (5, 0), (7, 0))
+    assert result.ok
+    base = e.w.bases[result.data["base_id"]]
+    tutorial = e.w.bases[result.data["tutorial_id"]]
+    assert base.stock == {
+        "ore": params.start_ore * MILLI, "wood": params.start_wood * MILLI,
+        "gem": params.start_gem * MILLI, "food": params.start_food * MILLI,
+    }
+    assert tutorial.stock == {
+        "ore": params.tutorial_ore * MILLI,
+        "wood": params.tutorial_wood * MILLI,
+        "gem": params.tutorial_gem * MILLI, "food": 0,
+    }
+    expires = params.onboarding_hours * HOUR_MS
+    e.advance(expires - 1)
+    assert not tutorial.removed
+    e.advance(expires)
+    assert tutorial.removed
 
 
 class TestProduction:
@@ -124,12 +149,11 @@ class TestProduction:
 
         rules = e.w.rules
         hours = 3
-        # expected = rate × 3h (rate already speed-adjusted)
         expected_ore = rules.prod_m["ore"][base.buildings.get("quarry", 0)] * hours
         expected_wood = rules.prod_m["wood"][base.buildings.get("sawmill", 0)] * hours
 
         e.advance(hours * HOUR_MS)
-        _settle(e, base)
+        e.settle(base)
 
         assert base.stock["ore"] == expected_ore, (
             f"ore: got {base.stock['ore']}, expected {expected_ore}"
@@ -137,7 +161,6 @@ class TestProduction:
         assert base.stock["wood"] == expected_wood, (
             f"wood: got {base.stock['wood']}, expected {expected_wood}"
         )
-        # residual must be zero on exact-hour boundary
         assert base.residual["ore"] == 0
         assert base.residual["wood"] == 0
 
@@ -155,7 +178,7 @@ class TestProduction:
             while t < target:
                 t = min(t + step_ms, target)
                 e.advance(t)
-            _settle(e, base)
+            e.settle(base)
             return dict(base.stock)
 
         one_shot = _run(6 * HOUR_MS)
@@ -172,7 +195,7 @@ class TestProduction:
         base.residual["ore"] = 0
 
         e.advance(10 * HOUR_MS)
-        _settle(e, base)
+        e.settle(base)
         assert base.stock["ore"] <= cap
 
 
@@ -211,7 +234,6 @@ class TestBuildLane:
             r = e.build(1, bid, "quarry")
             assert r.ok, r.code
             e.advance(r.data["end_ms"])
-        # quarry now at 5; next is 6 > cap(hall=0)=5
         r = e.build(1, bid, "quarry")
         assert not r.ok
         assert r.code == "hall_cap"
@@ -290,9 +312,8 @@ class TestStarvation:
         base.buildings.pop("farm", None)
         base.stock["food"] = 0
         base.residual["food"] = 0
-        base.garrison = {"brute": brutes}
-        base.away = {}
-        _force_rate_update(e, 1)
+        base.garrison = {}
+        _train_army(e, base, {"brute": brutes})
         return e, bid
 
     def test_units_desert_when_starving(self) -> None:
@@ -300,14 +321,14 @@ class TestStarvation:
         e, bid = self._starvation_base(brutes=50)
         base = e.w.bases[bid]
         initial_brutes = base.garrison.get("brute", 0)
-        e.advance(3 * HOUR_MS)
+        e.advance(e.w.now_ms + 3 * HOUR_MS)
         remaining = base.garrison.get("brute", 0)
         assert remaining < initial_brutes, "no desertion occurred"
 
     def test_desertion_restores_net_zero_or_positive(self) -> None:
         """After desertion the food net rate is ≥ 0."""
         e, bid = self._starvation_base(brutes=50)
-        e.advance(5 * HOUR_MS)
+        e.advance(e.w.now_ms + 5 * HOUR_MS)
         net = e.rates(e.w.bases[bid])["food"]
         assert net >= 0, f"still starving: net={net}"
 
@@ -320,19 +341,13 @@ class TestStarvation:
         base.buildings = {"barracks": 10, "hall": 5}
         base.stock["food"] = 0
         base.residual["food"] = 0
-        # 1 ram (stack upkeep = 3000m) + 5 brutes (stack = 5000m) = 8000m total
-        # farm L0 produces 20000m; deficit = 0. Use 30 brutes + 1 ram:
-        # brute stack = 30000m, ram stack = 3000m; total = 33000 > 20000 → deficit
-        # brute stack (30000) > ram stack (3000) → brutes desert first
-        base.garrison = {"ram": 1, "brute": 30}
-        base.away = {}
-        _force_rate_update(e, 1)
-        e.advance(3 * HOUR_MS)
+        base.garrison = {}
+        _train_army(e, base, {"ram": 1, "brute": 30})
+        e.advance(e.w.now_ms + 3 * HOUR_MS)
         remaining_brutes = base.garrison.get("brute", 0)
         remaining_rams = base.garrison.get("ram", 0)
         net = e.rates(base)["food"]
         assert net >= 0, f"still starving: net={net}"
-        # brutes (largest total upkeep stack = 30000) should have deserted; ram intact
         assert remaining_rams == 1, (
             f"ram should be last to desert; got remaining_rams={remaining_rams}"
         )
@@ -354,7 +369,6 @@ class TestStarvation:
         e.w.bases[bid2].garrison = {}
         _give_stock(base, ore=100_000, wood=100_000)
 
-        # Put all units into the march; none at home.
         # 25 brutes: upkeep 25 000m > farm L0 20 000m → deficit 5 000m
         base.garrison["brute"] = 25
         r = e.launch(1, bid, "raid", {"brute": 25}, target_base=bid2)
@@ -363,36 +377,36 @@ class TestStarvation:
         march = e.w.marches[march_id]
 
         brutes_before = march.units.get("brute", 0)
-        _force_rate_update(e, 1)
-        e.advance(3 * HOUR_MS)
+        e.advance(e.w.now_ms + 3 * HOUR_MS)
 
-        # home garrison is empty so desertion must come from the march
         brutes_after = march.units.get("brute", 0) if march_id in e.w.marches else 0
         assert brutes_after < brutes_before, "marching brutes were not deserted"
 
     def test_march_with_no_units_vanishes(self) -> None:
         """A march reduced to zero units is removed from world.marches."""
-        params = _BASE_PARAMS.with_changes(protection_hours=0)
+        params = _BASE_PARAMS.with_changes(protection_hours=0, prod_mult_pct=0)
         e = _engine(params)
+        e.w.keep_marches = True
         bid = _setup_player(e, 1, (5, 0), (7, 0))
         bid2 = _setup_player(e, 2, (-5, 0), (-7, 0))
         _clear_protection(e)
         base = e.w.bases[bid]
-        base.buildings = {}  # farm L0 = 20 000m
+        base.buildings = {}
         base.stock["food"] = 0
         base.residual["food"] = 0
         base.garrison = {}
         e.w.bases[bid2].garrison = {}
         _give_stock(base, ore=100_000, wood=100_000)
 
-        # Only 25 brutes total marching; deficit = 5000m; all will eventually desert
         base.garrison["brute"] = 25
         r = e.launch(1, bid, "raid", {"brute": 25}, target_base=bid2)
         assert r.ok, r.code
         march_id = r.data["march_id"]
-        _force_rate_update(e, 1)
-        e.advance(10 * HOUR_MS)
+        e.advance(e.w.now_ms + 10 * HOUR_MS)
         assert march_id not in e.w.marches, "deserted march should be removed"
+        finished = next(m for m in e.w.finished_marches if m.id == march_id)
+        assert finished.outcome == "deserted"
+        assert finished.units == {}
 
     def test_cargo_trimmed_to_survivors_capacity(self) -> None:
         """When march units desert, cargo is trimmed to remaining capacity."""
@@ -418,16 +432,11 @@ class TestStarvation:
         # Load cargo beyond what 20 brutes can hold (20*40 000=800 000m)
         march.cargo = {"ore": 900 * MILLI}  # 900 000m > 800 000m cap for 20 brutes
 
-        _force_rate_update(e, 1)
-        e.advance(4 * HOUR_MS)
+        e.advance(e.w.now_ms + HOUR_MS)
 
-        if march.id in e.w.marches and march.units:
-            survivors = march.units.get("brute", 0)
-            cap = e.r.units["brute"].cargo * survivors * MILLI
-            total_cargo = sum(march.cargo.values())
-            assert total_cargo <= cap, (
-                f"cargo {total_cargo} > capacity {cap} for {survivors} brutes"
-            )
+        assert march.id in e.w.marches
+        assert march.units == {"brute": 20}
+        assert march.cargo == {"ore": 800 * MILLI}
 
 
 # ---------------------------------------------------------------------------
@@ -508,7 +517,6 @@ class TestLootBucket:
         rules = e.w.rules
         dbase = e.w.bases[dbid]
         vault = rules.vault_m[0]  # store L0
-        # set ore exactly at vault level
         dbase.stock = {
             "ore": vault,
             "wood": vault,
@@ -520,7 +528,6 @@ class TestLootBucket:
         r = e.launch(1, abid, "raid", {"brute": 10_000}, target_base=dbid)
         assert r.ok
         e.advance(r.data["arrive_ms"])
-        # nothing above vault → nothing taken
         for res in ("ore", "wood", "gem"):
             assert dbase.stock[res] >= vault, (
                 f"{res} dropped below vault: {dbase.stock[res]} < {vault}"
@@ -538,7 +545,6 @@ class TestLootBucket:
         assert r.ok
         march_id = r.data["march_id"]
         e.advance(r.data["arrive_ms"] + 1)
-        # check any match in finished marches
         finished = [m for m in e.w.finished_marches if m.id == march_id]
         m = e.w.marches.get(march_id)
         cargo = finished[0].cargo if finished else (m.cargo if m else {})
@@ -606,15 +612,12 @@ class TestProtectionMoraleAffiliation:
         e, _, abid, _, dbid = self._two_players({"protection_hours": 0})
         _clear_protection(e)
         e.w.bases[dbid].garrison = {}
-        # launch BEFORE forming alliance
         r = e.launch(1, abid, "raid", {"brute": 50}, target_base=dbid)
         assert r.ok
         march_id = r.data["march_id"]
-        # now become allies
         ra = e.create_alliance(1, "Blades", "BL")
         e.invite(1, 2)
         e.accept_invite(2, ra.data["alliance_id"])
-        # advance to arrival – march must resolve (won or lost)
         e.advance(r.data["arrive_ms"])
         m = e.w.marches.get(march_id)
         if m is not None:
@@ -658,7 +661,6 @@ class TestVacationStateMachine:
         _clear_protection(e, 2)  # player 2 has protection_until=1 even with hours=0
         e.w.bases[bid2].garrison = {}
         e.w.bases[bid].garrison["brute"] = 200
-        # launch BEFORE vacation request
         rl = e.launch(pid, bid, "raid", {"brute": 50}, target_base=bid2)
         assert rl.ok, rl.code
         march_id = rl.data["march_id"]
@@ -667,7 +669,6 @@ class TestVacationStateMachine:
         rv = e.request_vacation(pid)
         assert rv.ok
         e.advance(rl.data["arrive_ms"])
-        # march must have resolved, not been cancelled by vacation
         m = e.w.marches.get(march_id)
         assert m is None or m.status in ("returning", "done")
 
@@ -752,7 +753,6 @@ class TestVacationStateMachine:
         e.request_vacation(1)
         player = e.w.players[1]
         e.advance(player.vacation_at + params.vacation_quota_days * DAY_MS + 1)
-        # vacation auto-ended; used up quota
         assert player.vacation_state == "none"
         assert player.vacation_used_ms >= params.vacation_quota_days * DAY_MS
         e.advance(player.vacation_cooldown_until + 1)
@@ -813,7 +813,6 @@ class TestSettle:
         # place a camp at the target tile before arrival
         e.add_camp(*target_xy)
         e.advance(r.data["arrive_ms"])
-        # check outcome
         finished = [m for m in e.w.finished_marches if m.id == march_id]
         m = e.w.marches.get(march_id)
         outcome = finished[0].outcome if finished else (m.status if m else "unknown")
@@ -827,6 +826,11 @@ class TestSettle:
         assert r.ok, r.code
         e.advance(r.data["arrive_ms"])
         assert len(e.w.players[pid].base_ids) == base_count_before + 1
+        new_base = e.w.bases[e.w.players[pid].base_ids[-1]]
+        assert new_base.stock == {
+            resource: e.p.new_base_stock * MILLI
+            for resource in ("ore", "wood", "gem", "food")
+        }
 
 
 # ---------------------------------------------------------------------------
@@ -875,6 +879,10 @@ class TestMonument:
         assert len(e.w.sites) == 0
         e.advance(18 * DAY_MS + 1)
         assert len(e.w.sites) >= 1, "sites should have spawned"
+        for site_id in e.w.sites:
+            assert e.w.bases[site_id].garrison == {
+                "warden": e.p.site_wardens, "bulwark": e.p.site_bulwarks,
+            }
 
     def test_no_sites_when_not_enough_members(self) -> None:
         """Only 2 active members → no sites spawn."""
@@ -1107,7 +1115,6 @@ class TestDeterminism:
         _give_stock(b1, ore=500_000, wood=500_000, gem=100_000)
         b2.garrison = {}
         b1.garrison["brute"] = 200
-        # Give barracks L1 so we can train tier-1 units
         b1.buildings["barracks"] = 1
         b1.buildings["hall"] = 1
 

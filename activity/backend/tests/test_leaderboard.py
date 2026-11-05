@@ -123,6 +123,7 @@ def test_finished_game_persists_guild_and_display_name(client, db):
     # Discord sends snowflakes as strings; they must coerce to int for BIGINT.
     r = _play_conjugation_to_the_end(client, guild_id="987654321098765432")
     assert r.status_code == 200
+    assert db.recorded[-1]["payload"]["display_name"] == "Conjugación"
     [saved] = db.recorded
     assert saved["guild_id"] == 987654321098765432
     assert saved["user_name"] == "tester"

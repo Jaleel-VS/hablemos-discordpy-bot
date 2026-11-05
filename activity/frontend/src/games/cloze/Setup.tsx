@@ -4,6 +4,7 @@ import type { Lang } from "../../i18n/lang";
 import { LangToggle, setLang, storedLang } from "../../i18n/lang";
 import { defaultLangForTarget, t } from "./i18n";
 interface SetupProps {
+  displayName: string;
   onStart: (mode: "daily" | "free", options?: StartOptions) => void;
   busy: boolean;
   error: string | null;
@@ -23,7 +24,7 @@ const DIFFICULTIES: { key: string; labelEN: string; labelES: string }[] = [
   { key: "advanced", labelEN: "Advanced", labelES: "Avanzado" },
 ];
 
-export default function Setup({ onStart, busy, error }: SetupProps) {
+export default function Setup({ displayName, onStart, busy, error }: SetupProps) {
   const [target, setTarget] = useState("es");
   // null = mixed / all difficulties.
   const [difficulty, setDifficulty] = useState<string | null>(null);
@@ -59,7 +60,7 @@ export default function Setup({ onStart, busy, error }: SetupProps) {
     <div className="cloze cloze-setup">
       <LangToggle lang={lang} onChange={handleLangChange} />
       <div className="setup-lede">
-        <h1 className="setup-title">{t(lang, "setup.title")}</h1>
+        <h1 className="setup-title">{displayName}</h1>
         <p className="muted">{t(lang, "setup.tagline")}</p>
       </div>
 

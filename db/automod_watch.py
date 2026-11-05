@@ -1,7 +1,6 @@
 """Database mixin for automod watch settings."""
 from db import DatabaseMixin
 
-# bot_settings keys
 KEY_LOG_CHANNEL = "automod_watch.log_channel_id"
 KEY_ALERT_CHANNEL = "automod_watch.alert_channel_id"
 KEY_THRESHOLD = "automod_watch.threshold"

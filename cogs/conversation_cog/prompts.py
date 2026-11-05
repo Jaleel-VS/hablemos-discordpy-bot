@@ -43,6 +43,8 @@ class ConversationPrompt(Prompt[ConversationInput, ParsedConversation | None]):
     """Generate a structured two-speaker language-learning conversation."""
 
     feature = "conversation"
+    # Batch generation may wait through the shared 60-second limiter window.
+    timeout_seconds = 90
     # Per-level temperature variation lives below in resolve_temperature;
     # this attribute is the safe fallback only.
     temperature = 0.7

@@ -12,10 +12,8 @@ from cogs.hangman_cog.hangman_help import (
     start_game,
 )
 
-# Set up logger for this module
 logger = logging.getLogger(__name__)
 
-# strings for the embeds
 DOES_NOT_EXIST = "{} La `{}` no se encuentra en esta palabra. Puedes volver a adivinar en 2 segundos"
 ALREADY_GUESSED = "{} La `{}` ya se ha adivinado . Puedes volver a adivinar en 2 segundos"
 CORRECT_GUESS = "{} ha adivinado la letra `{}`"
@@ -73,7 +71,6 @@ class Hangman:
 
             user_id, player_name, player_input = self.get_input_info(user_guess[1])
 
-            # Track player participation
             if user_id not in self.players:
                 self.players[user_id] = {"name": str(player_name), "guesses": 0}
                 logger.info("New player joined: %s (%s)", player_name, user_id)
@@ -94,7 +91,6 @@ class Hangman:
 
             await self.send_embed(ctx, player_name, player_input)
 
-            # Log game state after each turn
             if self.word_found():
                 logger.info("Game won by %s after %s turns!", player_name, turn_count)
                 break
@@ -102,7 +98,6 @@ class Hangman:
                 logger.info("Game lost after %s turns - max errors reached", turn_count)
                 break
 
-        # Log final game statistics
         total_players = len(self.players)
         total_guesses = sum(p["guesses"] for p in self.players.values())
         logger.info("Game ended: %s players, %s total guesses, %s errors", total_players, total_guesses, self.errors)

@@ -1,54 +1,46 @@
-"""Daily $convo quota is reserved atomically and refundable."""
-from __future__ import annotations
+"""Conversation quota behavior against an isolated PostgreSQL database."""
+import asyncio
+import os
+from collections.abc import AsyncIterator
+from uuid import uuid4
 
-from typing import Any
-
+import asyncpg
 import pytest
 
-from db.conversations import ConversationsMixin
+from db import Database
+from db.schema import initialize_schema
 
 
-class _Recorder(ConversationsMixin):
-    def __init__(self, fetchval: Any = 1) -> None:
-        self.executed: list[tuple[str, tuple[Any, ...]]] = []
-        self.fetchval_query: str | None = None
-        self.fetchval_args: tuple[Any, ...] = ()
-        self._fetchval_result = fetchval
-
-    def _pool(self):  # pragma: no cover - unused by overrides
-        raise RuntimeError("not used")
-
-    async def _fetchval(self, query: str, *args: Any):
-        self.fetchval_query = query
-        self.fetchval_args = args
-        return self._fetchval_result
-
-    async def _execute(self, query: str, *args: Any) -> str:
-        self.executed.append((query, args))
-        return "UPDATE 1"
-
-
-@pytest.mark.asyncio
-async def test_try_reserve_daily_usage_returns_true_when_row_returned() -> None:
-    db = _Recorder(fetchval=1)
-    assert await db.try_reserve_daily_usage(7, 2) is True
-    assert db.fetchval_query is not None
-    assert "ON CONFLICT (user_id) DO UPDATE" in db.fetchval_query
-    assert "conversation_count < $2" in db.fetchval_query
-    assert db.fetchval_args == (7, 2)
+@pytest.fixture
+async def conversation_db() -> AsyncIterator[Database]:
+    url = os.environ.get("TEST_DATABASE_URL", "")
+    if not url:
+        pytest.skip("set TEST_DATABASE_URL to run conversation quota integration tests")
+    name = "conversation_test_" + uuid4().hex
+    admin = await asyncpg.connect(url)
+    database = Database(url)
+    await admin.execute(f'CREATE DATABASE "{name}"')
+    try:
+        database.pool = await asyncpg.create_pool(url, database=name)
+        await initialize_schema(database._pool())
+        yield database
+    finally:
+        await database.close()
+        await admin.execute(f'DROP DATABASE "{name}"')
+        await admin.close()
 
 
-@pytest.mark.asyncio
-async def test_try_reserve_daily_usage_returns_false_when_at_limit() -> None:
-    db = _Recorder(fetchval=None)
-    assert await db.try_reserve_daily_usage(7, 2) is False
+async def test_concurrent_reservations_honor_quota(conversation_db: Database) -> None:
+    results = await asyncio.gather(*(conversation_db.try_reserve_daily_usage(7, 2) for _ in range(8)))
+    assert results.count(True) == 2
+    assert await conversation_db.get_daily_usage_remaining(7, 2) == 0
+    assert await conversation_db.try_reserve_daily_usage(8, 2)
 
 
-@pytest.mark.asyncio
-async def test_refund_daily_usage_decrements_today_only() -> None:
-    db = _Recorder()
-    await db.refund_daily_usage(7)
-    query, args = db.executed[0]
-    assert "conversation_count = conversation_count - 1" in query
-    assert "date = CURRENT_DATE" in query
-    assert args == (7,)
+async def test_refund_restores_one_slot_without_negative_usage(conversation_db: Database) -> None:
+    assert await conversation_db.try_reserve_daily_usage(7, 2)
+    await conversation_db.refund_daily_usage(7)
+    assert await conversation_db.get_daily_usage_remaining(7, 2) == 2
+    await conversation_db.refund_daily_usage(7)
+    assert await conversation_db.get_daily_usage_remaining(7, 2) == 2
+    assert await conversation_db.try_reserve_daily_usage(7, 2)

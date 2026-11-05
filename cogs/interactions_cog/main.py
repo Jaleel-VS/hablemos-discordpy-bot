@@ -33,7 +33,6 @@ class InteractionsCog(BaseCog):
     async def cog_unload(self):
         self.daily_purge.cancel()
 
-    # ── Recording ──
 
     async def _record(self, channel_id: int, guild_id: int, author_id: int, target_id: int, kind: str) -> None:
         """Record an interaction, suppressing repeated DB errors to avoid log spam."""
@@ -105,7 +104,6 @@ class InteractionsCog(BaseCog):
             if not mentioned.bot and mentioned.id != author_id and mentioned.id != replied_to_id:
                 await self._record(channel_id, guild_id, author_id, mentioned.id, "mention")
 
-    # ── Daily purge ──
 
     @tasks.loop(hours=24)
     async def daily_purge(self):
@@ -120,7 +118,6 @@ class InteractionsCog(BaseCog):
     async def before_daily_purge(self):
         await self.bot.wait_until_ready()
 
-    # ── $interactions (top pairs) ──
 
     @commands.command(name='interactions')
     @commands.cooldown(1, 60, commands.BucketType.channel)
@@ -208,7 +205,6 @@ class InteractionsCog(BaseCog):
             ctx.__dict__["error_handled"] = True
             return
 
-    # ── $whotalks / $wt (per-user) ──
 
     def _build_wt_view(self, display_name: str, scope: str, duration_label: str,
                        partners: list, guild: discord.Guild | None) -> ui.LayoutView:

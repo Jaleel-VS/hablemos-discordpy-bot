@@ -110,7 +110,7 @@ def _random_tile(
         d = math.hypot(x, y)
         if not (min_frac * r <= d <= max_frac * r):
             continue
-        if not engine._tile_free(x, y):
+        if not engine.tile_free(x, y):
             continue
         if any(
             (x - a) ** 2 + (y - b) ** 2 < spacing * spacing for a, b in taken
@@ -125,7 +125,7 @@ def _neighbor(
 ) -> tuple[int, int]:
     for dx, dy in ((2, 0), (0, 2), (-2, 0), (0, -2), (2, 2), (-2, -2)):
         cand = (xy[0] + dx, xy[1] + dy)
-        if engine._tile_free(*cand) and cand not in taken:
+        if engine.tile_free(*cand) and cand not in taken:
             return cand
     raise RuntimeError("no free tile next to spawn")
 
@@ -382,7 +382,7 @@ def _should_quit(
     entries = [
         (t, v)
         for t, v in recent_loss.get(agent.player_id, [])
-        if now - t <= 72 * HOUR_MS
+        if now - t <= engine.p.onboarding_hours * HOUR_MS
     ]
     recent_loss[agent.player_id] = entries
     player = engine.w.players[agent.player_id]
@@ -413,7 +413,7 @@ def _sample(
         stock = 0
         for bid in player.base_ids:
             base = engine.w.bases[bid]
-            engine._settle(base)
+            engine.settle(base)
             stock += value_m({r: base.stock[r] for r in BUILD_RES})
         series.append(
             (

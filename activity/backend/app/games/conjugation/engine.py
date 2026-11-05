@@ -125,8 +125,6 @@ class ConjugationEngine:
     key = "conjugation"
     display_name = "Conjugación"
 
-    # ── lifecycle ─────────────────────────────────────────────────────────
-
     def new_game(
         self, *, mode: Mode, user_id: str, options: dict[str, Any] | None = None,
     ) -> GuessOutcome:
@@ -214,7 +212,6 @@ class ConjugationEngine:
         timed = state.get("timed", True)
         awaiting_retry = bool(state.get("awaiting_retry", False))
 
-        # ── skip ──────────────────────────────────────────────────────────
         if action == "skip":
             if awaiting_retry:
                 raise GameError("No puedes saltar mientras esperas el reintento.")
@@ -242,7 +239,6 @@ class ConjugationEngine:
             self._check_items_autofinish(state, config)
             return GuessOutcome(state=state, client_view=self.client_view(state))
 
-        # ── retry (untimed free mode) ──────────────────────────────────────
         if action == "retry":
             if not awaiting_retry:
                 raise GameError("No hay reintento pendiente.")
@@ -279,7 +275,6 @@ class ConjugationEngine:
                 state["retry_attempts"] = retry_attempts
             return GuessOutcome(state=state, client_view=self.client_view(state))
 
-        # ── answer (default) ──────────────────────────────────────────────
         # If client is awaiting_retry and sends action="answer", treat as retry
         # (lenient: avoids race where client didn't see the awaiting_retry flag).
         if awaiting_retry:
@@ -339,8 +334,6 @@ class ConjugationEngine:
 
     def is_over(self, state: dict[str, Any]) -> bool:
         return state.get("status") == "over"
-
-    # ── result card ───────────────────────────────────────────────────────
 
     def result_payload(self, state: dict[str, Any]) -> dict[str, Any]:
         config = self._config(state)
@@ -420,8 +413,6 @@ class ConjugationEngine:
                 "pronouns": pronoun_breakdown,
             },
         }
-
-    # ── helpers ───────────────────────────────────────────────────────────
 
     def client_view(self, state: dict[str, Any]) -> dict[str, Any]:
         """What the client may see. Excludes the pending answer while playing."""

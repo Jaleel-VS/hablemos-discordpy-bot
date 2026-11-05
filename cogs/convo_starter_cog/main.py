@@ -34,11 +34,6 @@ def question_embed(primary: str, translation: str) -> Embed:
     )
 
 
-def embed_question(primary: str, translation: str) -> Embed:
-    """Backward-compatible alias for :func:`question_embed`."""
-    return question_embed(primary, translation)
-
-
 class ConvoStarter(BaseCog):
     """Random conversation starters and discussion topics."""
 

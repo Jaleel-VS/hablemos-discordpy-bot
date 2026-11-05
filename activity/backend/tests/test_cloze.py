@@ -14,16 +14,14 @@ from app.games.base import GameError
 from app.games.cloze import data as d
 from app.games.cloze.engine import ROUND_SIZE, ClozeEngine
 
-# ── committed content integrity ───────────────────────────────────────────
 
 def test_data_loaded():
-    assert d._ALL_CARDS, "cloze_sentences.json should be present and non-empty"
     assert "es" in d.TARGETS
     assert set(d.DIFFICULTIES) >= {"beginner", "intermediate", "advanced"}
 
 
 def test_every_card_is_well_formed():
-    for c in d._ALL_CARDS:
+    for c in (card for target in d.TARGETS for card in d.Config(target, None).pool):
         assert c["cloze"].count("___") == 1, f"{c['id']} must have exactly one blank"
         assert isinstance(c["distractors"], list) and len(c["distractors"]) == 3
         answer_lower = c["answer"].lower()
@@ -35,16 +33,14 @@ def test_every_card_is_well_formed():
 
 def test_both_decks_have_enough_for_a_round():
     for target in d.TARGETS:
-        assert len(d._BY_TARGET[target]) >= ROUND_SIZE
+        assert len(d.Config(target, None).pool) >= ROUND_SIZE
 
 
-# ── config resolution ──────────────────────────────────────────────────────
 
 def test_default_config_is_spanish_mixed():
     cfg = d.default_config()
     assert cfg.target == "es"
     assert cfg.difficulty is None
-    assert cfg.pool  # non-empty
 
 
 def test_resolve_config_falls_back_on_garbage():
@@ -70,13 +66,8 @@ def test_resolve_config_survives_unhashable_elements():
     assert cfg.difficulty is None
 
 
-def test_pool_never_empty_for_sparse_difficulty():
-    # Even if a difficulty were sparse, .pool must not return empty.
-    cfg = d.Config(target="es", difficulty="beginner")
-    assert cfg.pool
 
 
-# ── card selection ──────────────────────────────────────────────────────────
 
 def test_deterministic_cards_are_stable_and_distinct():
     cfg = d.daily_config()
@@ -109,7 +100,6 @@ def test_options_include_answer_and_are_stable():
         assert dstr in opts
 
 
-# ── round flow ──────────────────────────────────────────────────────────────
 
 @pytest.fixture
 def engine():
@@ -227,7 +217,6 @@ def test_submit_after_over_is_rejected(engine):
         engine.submit(state=over, guess="x")
 
 
-# ── daily determinism + anti-harvest ────────────────────────────────────────
 
 def test_daily_is_deterministic_across_users(engine):
     a = engine.new_game(mode="daily", user_id="1", options={})
@@ -352,7 +341,6 @@ def test_recap_includes_close_answers_for_correction(engine):
     assert close[0]["answer"] == "caf\u00e9"
 
 
-# ── hostile state guards ────────────────────────────────────────────────────
 
 def test_validate_rejects_wrong_game(engine):
     with pytest.raises(GameError):
@@ -450,9 +438,7 @@ def test_validate_rejects_out_of_enum_result(engine):
         engine.submit(state=state, guess="x")
 
 
-# ── new C1/C2/C5 behavior tests ────────────────────────────────────────────
 
-# ── C1 freeplay miss mechanics ──────────────────────────────────────────────
 
 def test_type_mode_wrong_sets_awaiting_retry(engine):
     # After a wrong answer in type mode freeplay, the same card stays and the
@@ -546,7 +532,6 @@ def test_daily_rejects_retry_skip_continue(engine):
             engine.submit(state=copy.deepcopy(oc.state), guess="x", action=action)
 
 
-# ── C2 result review_ids + misses sentence/context ──────────────────────────
 
 def test_result_has_review_ids_for_wrong_cards(engine):
     oc = engine.new_game(mode="daily", user_id="1", options={"answer_mode": "type"})
@@ -593,7 +578,6 @@ def test_id_not_in_in_play_prompt(engine):
     assert "id" not in oc.client_view.get("prompt", {})
 
 
-# ── options.ids review round ─────────────────────────────────────────────────
 
 def test_options_ids_freeplay_round_uses_specified_cards(engine):
     # Using options.ids in freeplay should draw from the given ids (minus any
@@ -602,13 +586,13 @@ def test_options_ids_freeplay_round_uses_specified_cards(engine):
     # Use non-daily cards by computing today's daily ids and picking outside them.
     from app.games.cloze.data import _today_daily_ids
     daily_ids = _today_daily_ids()
-    available = [c["id"] for c in d._BY_TARGET[cfg.target] if c["id"] not in daily_ids]
+    available = [c["id"] for c in cfg.pool if c["id"] not in daily_ids]
     pick_ids = available[:3]
     oc = engine.new_game(mode="free", user_id="1", options={
         "target": cfg.target, "answer_mode": "type", "ids": pick_ids,
     })
     actual_ids = [c["id"] for c in oc.state["cards"]]
-    assert all(i in pick_ids for i in actual_ids)
+    assert set(actual_ids) == set(pick_ids)
 
 
 def test_options_ids_drops_daily_ids(engine):
@@ -630,14 +614,12 @@ def test_options_ids_drops_daily_ids(engine):
 
 
 
-# ── C5 bucket data invariants ────────────────────────────────────────────────
 
 def test_each_bucket_has_at_least_40_cards():
     """Data contract: every (target, difficulty) bucket must have >= 40 cards."""
     for target in d.TARGETS:
         for diff in d.DIFFICULTIES:
-            bucket = [c for c in d._ALL_CARDS
-                      if c.get("target") == target and c.get("difficulty") == diff]
+            bucket = d.Config(target, diff).pool
             assert len(bucket) >= 40, (
                 f"Bucket {target}/{diff} has only {len(bucket)} cards (need >= 40)"
             )
@@ -654,7 +636,6 @@ def test_empty_bucket_raises_game_error(engine):
         _ = bad_cfg.pool
 
 
-# ── sealed state size ────────────────────────────────────────────────────────
 
 def _heaviest_ids(target: str) -> list[str]:
     """The ten largest cards in a deck — what a hostile `options.ids` would pick."""

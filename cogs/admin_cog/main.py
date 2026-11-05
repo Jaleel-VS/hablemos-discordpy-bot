@@ -18,7 +18,9 @@ from cogs.admin_cog.config import (
     REMINDER_INTERVAL_MINUTES,
     VC_ENRICH_CHANNEL_ID,
 )
-from cogs.utils.discovery import discover_extensions
+from cogs.utils.discovery import discover_extensions, is_code_enabled
+from cogs.utils.guild import HOME_GUILD_ID
+from cogs.utils.message_links import parse_message_link
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -28,8 +30,8 @@ logger = logging.getLogger(__name__)
 # Extensions that cannot be disabled (would lock you out)
 PROTECTED_EXTENSIONS = {'cogs.admin_cog.main'}
 
-_ROLE_A = 642847498070655056   # first role
-_ROLE_B = 1469480288886460578  # second role
+_ROLE_A = 642847498070655056
+_ROLE_B = 1469480288886460578
 
 # How many days of raw command_metrics to keep before rolling up
 METRICS_RETENTION_DAYS = 30
@@ -54,7 +56,6 @@ class AdminCog(BaseCog):
         if self._vc_enrich_ctx_menu:
             self.bot.tree.remove_command(self._vc_enrich_ctx_menu.name, type=self._vc_enrich_ctx_menu.type)
 
-    # ── Daily cleanup task ──
 
     @tasks.loop(hours=24)
     async def daily_cleanup(self):
@@ -75,7 +76,6 @@ class AdminCog(BaseCog):
     async def before_daily_cleanup(self):
         await self.bot.wait_until_ready()
 
-    # ── Cog management ──
 
     @commands.group(invoke_without_command=True)
     @commands.is_owner()
@@ -87,8 +87,6 @@ class AdminCog(BaseCog):
     @commands.is_owner()
     async def list_cogs(self, ctx: commands.Context):
         """List all cogs and their status."""
-        from hablemos import _is_code_enabled
-
         extensions = discover_extensions()
         disabled = await self.bot.db.get_disabled_cogs()
         loaded = set(self.bot.extensions.keys())
@@ -100,7 +98,7 @@ class AdminCog(BaseCog):
                 status = 'loaded (protected)'
             elif ext in disabled:
                 status = 'disabled'
-            elif not _is_code_enabled(ext):
+            elif not is_code_enabled(ext):
                 status = 'disabled (code)'
             elif ext in loaded:
                 status = 'loaded'
@@ -179,7 +177,6 @@ class AdminCog(BaseCog):
             logger.error("Failed to reload extension: %s", e, exc_info=True)
             await ctx.send("Failed to reload. Check logs.")
 
-    # ── Metrics ──
 
     @commands.group(invoke_without_command=True)
     @commands.is_owner()
@@ -195,7 +192,6 @@ class AdminCog(BaseCog):
             color=Color.blurple(),
         )
 
-        # Summary
         total = summary.get('total_commands', 0)
         users = summary.get('unique_users', 0)
         cmds = summary.get('unique_commands', 0)
@@ -213,7 +209,6 @@ class AdminCog(BaseCog):
             inline=False,
         )
 
-        # Top commands
         if top_commands:
             lines = []
             for i, cmd in enumerate(top_commands, 1):
@@ -240,7 +235,6 @@ class AdminCog(BaseCog):
             await ctx.send("No data yet.")
             return
 
-        # Build a simple bar chart
         hour_map = {h['hour']: h['uses'] for h in hourly}
         max_uses = max(hour_map.values()) if hour_map else 1
 
@@ -320,7 +314,6 @@ class AdminCog(BaseCog):
             )
         )
 
-    # ── Server info ──
 
     @commands.command(name='mystats')
     @commands.is_owner()
@@ -353,7 +346,6 @@ class AdminCog(BaseCog):
         await ctx.send(f"Left **{name}**.")
         logger.info("Left guild %s (%s) by request of %s", name, guild_id, ctx.author.id)
 
-    # ── Voice channel enrichment ──
 
     async def _parse_vc_embed(self, message: discord.Message) -> list[ui.LayoutView] | str:
         """Parse a Rai voice-join embed and return LayoutViews, or an error string."""
@@ -450,14 +442,11 @@ class AdminCog(BaseCog):
     @commands.has_permissions(manage_messages=True)
     async def vc_enrich(self, ctx: commands.Context, message_link: str):
         """Enrich a Rai voice-join log embed with avatars. Usage: $vcenrich <message_link>"""
-        parts = message_link.strip().split('/')
-        try:
-            guild_id = int(parts[-3])
-            channel_id = int(parts[-2])
-            message_id = int(parts[-1].split('?')[0])
-        except (IndexError, ValueError):
+        link = parse_message_link(message_link)
+        if link is None:
             await ctx.send("❌ Invalid message link.")
             return
+        guild_id, channel_id, message_id = link
 
         guild = self.bot.get_guild(guild_id)
         if not guild:
@@ -489,7 +478,6 @@ class AdminCog(BaseCog):
         for view in result:
             await ctx.send(view=view)
 
-    # ── Message export ──
 
     @commands.command(name='fetch')
     @commands.has_permissions(manage_messages=True)
@@ -568,17 +556,16 @@ class AdminCog(BaseCog):
     @commands.is_owner()
     async def fetch_range(self, ctx: commands.Context, start_link: str, end_link: str):
         """Export messages between two message links. Usage: $fetchrange <start_link> <end_link>"""
-        from cogs.summary_cog.message_parser import parse_message_link
-
-        start_guild, start_channel, start_id = parse_message_link(start_link)
-        end_guild, end_channel, end_id = parse_message_link(end_link)
-
-        if start_guild is None or start_channel is None or start_id is None:
+        start = parse_message_link(start_link)
+        end = parse_message_link(end_link)
+        if start is None:
             await ctx.send("Invalid start message link.")
             return
-        if end_guild is None or end_channel is None or end_id is None:
+        if end is None:
             await ctx.send("Invalid end message link.")
             return
+        start_guild, start_channel, start_id = start
+        _, end_channel, end_id = end
         if start_channel != end_channel:
             await ctx.send("Both links must be from the same channel.")
             return
@@ -659,20 +646,16 @@ class AdminCog(BaseCog):
         await status.edit(content=f"✅ Exported {len(messages)} messages from {channel.mention}.")
         await ctx.send(file=file)
 
-    # ── Raw embed output ──
 
     @commands.command(name='rawembed')
     @commands.is_owner()
     async def raw_embed(self, ctx: commands.Context, message_link: str):
         """Show the raw embed data from a message. Usage: $rawembed <message_link>"""
-        parts = message_link.strip().split('/')
-        try:
-            guild_id = int(parts[-3])
-            channel_id = int(parts[-2])
-            message_id = int(parts[-1].split('?')[0])
-        except (IndexError, ValueError):
+        link = parse_message_link(message_link)
+        if link is None:
             await ctx.send("❌ Invalid message link. Use: `https://discord.com/channels/guild/channel/message`")
             return
+        guild_id, channel_id, message_id = link
 
         guild = self.bot.get_guild(guild_id)
         if not guild:
@@ -709,7 +692,6 @@ class AdminCog(BaseCog):
             if len(header) + len(raw) + 8 <= 2000:  # +8 for code block markers
                 await ctx.send(f"{header}```\n{raw}\n```")
             else:
-                # Send as file if too long
                 file = discord.File(
                     __import__('io').BytesIO(raw.encode()),
                     filename=f"embed_{i + 1}.txt",
@@ -801,28 +783,23 @@ class AdminCog(BaseCog):
             logger.error("Sync failed: %s", e, exc_info=True)
             await ctx.send("❌ Sync failed. Check logs.")
 
-    # ── Server reminder task ──
 
     def _build_reminder_view(self) -> ui.LayoutView:
         """Build the bilingual server-rules reminder as a Components v2 LayoutView."""
-        rules_url = "https://discord.com/channels/243838819743432704/243859144962998272/1527368819188826276"
+        rules_url = f"https://discord.com/channels/{HOME_GUILD_ID}/243859144962998272/1527368819188826276"
         view = ui.LayoutView(timeout=None)
         view.add_item(ui.Container(
             ui.TextDisplay(
                 "## 📋 Server Rules Reminder · Recordatorio de Reglas\n"
                 "---\n"
                 "**🇬🇧 English**\n"
-                "A friendly reminder to everyone to please adhere to the server rules as we approach "
-                "the World Cup Final. We understand that emotions will be running high — this is a "
-                "deeply exciting moment! However, please remember that this is a **language learning "
-                "server** and we ask everyone to help maintain a kind, welcoming, and friendly "
-                "environment for all members.\n\n"
+                "A friendly reminder to everyone to please adhere to the server rules. Remember that "
+                "this is a **language learning server** and we ask everyone to help maintain a kind, "
+                "welcoming, and friendly environment for all members.\n\n"
                 "**🇪🇸 Español**\n"
-                "Un recordatorio amistoso para todos de que, por favor, respeten las reglas del servidor "
-                "conforme nos acercamos a la Final del Mundial. Entendemos que las emociones estarán a "
-                "flor de piel — ¡es un momento muy emocionante! Sin embargo, recuerden que este es un "
-                "**servidor de aprendizaje de idiomas** y pedimos a todos que contribuyan a mantener un "
-                "ambiente amable, acogedor y respetuoso para todos los miembros.\n\n"
+                "Un recordatorio amistoso para todos de que, por favor, respeten las reglas del servidor. "
+                "Recuerden que este es un **servidor de aprendizaje de idiomas** y pedimos a todos que "
+                "contribuyan a mantener un ambiente amable, acogedor y respetuoso para todos los miembros.\n\n"
                 f"📜 **More information:** {rules_url}"
             ),
             accent_colour=discord.Color.blurple(),
@@ -846,7 +823,6 @@ class AdminCog(BaseCog):
     async def before_server_reminder(self):
         await self.bot.wait_until_ready()
 
-    # ── $reminder command group ──
 
     @commands.group(name='reminder', invoke_without_command=True)
     @commands.is_owner()

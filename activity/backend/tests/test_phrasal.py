@@ -14,15 +14,13 @@ from app.games.base import GameError
 from app.games.phrasal import data as d
 from app.games.phrasal.engine import ROUND_SIZE, PhrasalEngine
 
-# ── committed content integrity ───────────────────────────────────────────
 
 def test_data_loaded():
-    assert d._ALL, "phrasal_verbs.json should be present and non-empty"
     assert set(d.DIFFICULTIES) >= {"beginner", "intermediate", "advanced"}
 
 
 def test_every_verb_is_well_formed():
-    for v in d._ALL:
+    for v in d.default_config().pool:
         assert v["example"].count("___") == 1, f"{v['id']} needs exactly one blank"
         assert v["particle"], f"{v['id']} must have a particle"
         assert v["definitions"], f"{v['id']} must have at least one definition"
@@ -34,10 +32,9 @@ def test_every_verb_is_well_formed():
 
 
 def test_enough_verbs_for_a_round():
-    assert len(d._ALL) >= ROUND_SIZE
+    assert len(d.default_config().pool) >= ROUND_SIZE
 
 
-# ── config + blank mode resolution ─────────────────────────────────────────
 
 def test_resolve_config_falls_back_on_garbage():
     assert d.resolve_config({"difficulty": "bogus"}).difficulty is None
@@ -60,7 +57,6 @@ def test_pool_never_empty_for_sparse_difficulty():
     assert d.Config(difficulty="advanced").pool  # falls back to all if sparse
 
 
-# ── verb selection ──────────────────────────────────────────────────────────
 
 def test_deterministic_verbs_stable_and_distinct():
     cfg = d.default_config()
@@ -92,7 +88,6 @@ def test_whole_distractors_exclude_answer():
     assert len(ds) == 3
 
 
-# ── round flow ──────────────────────────────────────────────────────────────
 
 @pytest.fixture
 def engine():
@@ -229,7 +224,6 @@ def test_hostile_state_rejected(engine):
         engine.submit(state={"game": "wrong"}, guess="x")
 
 
-# ── daily determinism + anti-harvest ────────────────────────────────────────
 
 def test_daily_is_deterministic_across_users(engine):
     a = engine.new_game(mode="daily", user_id="1", options={})
@@ -284,11 +278,10 @@ def test_recap_exposes_misses(engine):
     assert all("answer" in m for m in result["misses"])
 
 
-# ── Learn deck (read-only, not part of the engine) ──────────────────────────
 
 def test_learn_deck_is_answer_safe_and_unblanked():
     deck = d.learn_deck()
-    assert deck
+    assert len(deck) >= ROUND_SIZE
     for entry in deck[:20]:
         # Learn shows the verb in a full sentence (no blank) and all senses.
         assert "___" not in entry["example"]

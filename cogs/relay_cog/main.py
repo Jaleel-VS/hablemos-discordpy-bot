@@ -42,7 +42,6 @@ class RelayCog(BaseCog):
             logger.warning("Parrot: missing message text from %s at %s", invoker, source_loc)
             return
 
-        # Try to parse leading guild_id and channel_id from the message
         parts = message.split(maxsplit=2)
         target_guild_id: int | None = None
         target_channel_id: int | None = None
@@ -56,12 +55,10 @@ class RelayCog(BaseCog):
                 return
             message = parts[2]
 
-        # Default to current channel
         if target_guild_id is None:
             target_channel = ctx.channel
             target_guild = ctx.guild
         else:
-            # Validate guild
             if target_channel_id is None:
                 await ctx.send("❌ Usage: $parrot <guild_id> <channel_id> <message>")
                 return
@@ -74,7 +71,6 @@ class RelayCog(BaseCog):
                 await ctx.send("❌ I am not in that guild or cannot access it.")
                 return
 
-            # Validate channel
             target_channel = target_guild.get_channel(target_channel_id) or self.bot.get_channel(target_channel_id)
             if target_channel is None:
                 logger.error(
@@ -97,7 +93,6 @@ class RelayCog(BaseCog):
             invoker, source_loc, getattr(target_guild, "id", "DM"), target_channel.id,
         )
 
-        # Permission check: can the bot send messages in the target channel?
         if target_guild is not None:
             perms = target_channel.permissions_for(target_guild.me)
             if not perms.send_messages:

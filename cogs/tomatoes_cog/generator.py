@@ -6,8 +6,8 @@ from PIL import Image, ImageSequence
 BASE_DIR = Path(__file__).resolve().parent
 TOMATOES_OVERLAY = Image.open(BASE_DIR / "overlay.webp")
 
-def generate_tomatoes(background: Image.Image, output_path: str | None = None) -> str:
-    output_path = output_path or str(BASE_DIR / "output.webp")
+def generate_tomatoes(background: Image.Image, output_path: str) -> str:
+    """Render the tomato animation to the caller-owned output path."""
     durations = []
     frames = []
 

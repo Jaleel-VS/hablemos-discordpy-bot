@@ -10,7 +10,6 @@ This cog has been refactored following clean architecture principles:
 cogs/league_cog/
 ├── main.py              # User-facing features (slash commands, message tracking)
 ├── admin.py             # Admin-only commands (owner permissions required)
-├── utils.py             # Shared utilities (language detection, regex patterns)
 ├── config.py            # Configuration constants
 └── league_helper/       # Helper modules (image generation, etc.)
     └── leaderboard_image_pillow.py
@@ -55,19 +54,14 @@ cogs/league_cog/
 - Audit tools for debugging
 - Statistics dashboard
 
-### utils.py
-**Purpose:** Shared utilities used by both cogs
+### Shared language detection
 
-**Functions:**
-- `detect_message_language(content)` - Detects Spanish/English from message text
-  - Removes emojis (custom Discord + Unicode)
-  - Validates minimum length
-  - Uses lingua (ES/EN plus confusable neighbours); returns 'es', 'en', or None
-    when another language wins or confidence is below `LANGUAGE.MIN_CONFIDENCE`
-
-**Constants:**
-- `CUSTOM_EMOJI_PATTERN` - Regex for Discord emojis
-- `UNICODE_EMOJI_PATTERN` - Regex for Unicode emojis
+`cogs/utils/language.py` owns `detect_message_language(content, *, min_length,
+min_confidence=0.8)` and the custom Discord and Unicode emoji patterns.
+It removes emojis before measuring length, rejects unsupported languages,
+and returns `es`, `en`, or `None` below the confidence threshold.
+The league passes `RATE_LIMITS.MIN_MESSAGE_LENGTH` (10 characters).
+The breakdown cog passes its own `MIN_INPUT_LENGTH` (5 characters).
 
 ## Design Principles Applied
 
@@ -84,7 +78,7 @@ cogs/league_cog/
 3. **Single Responsibility Principle**
    - LeagueCog: Handles user interactions and league mechanics
    - LeagueAdminCog: Handles admin operations and debugging
-   - utils.py: Provides shared helper functions
+   - `cogs/utils/language.py` provides language detection for multiple features
 
 4. **Maintainability**
    - Admin features can evolve independently
@@ -105,16 +99,23 @@ This ensures both cogs are always loaded together when the league_cog module loa
 
 ## Configuration
 
-All configuration is centralized in `config.py`:
+League settings live in `cogs/league_cog/config.py`:
 
-- `LEAGUE_GUILD_ID` - Server ID where league is active
 - `WINNER_CHANNEL_ID` - Channel for winner announcements
-- `ROLES` - Role IDs for validation
 - `SCORING` - Points and multipliers
 - `RATE_LIMITS` - Anti-spam settings
 - `ROUNDS` - Round duration and check intervals
 - `DISPLAY` - UI strings and emojis
-- `LANGUAGE` - Language detection settings
+
+`cogs/utils/guild.py` owns the shared server identity. Its environment variables
+are `HOME_GUILD_ID`, `SPANISH_NATIVE_ROLE_ID`, `ENGLISH_NATIVE_ROLE_ID`,
+`OTHER_NATIVE_ROLE_ID`, `LEARNING_SPANISH_ROLE_ID`, and `LEARNING_ENGLISH_ROLE_ID`.
+League, stats, introductions, language exchange, and quote generation use these
+values rather than feature-specific copies.
+
+Scores add `SCORING.ACTIVE_DAY_BONUS_MULTIPLIER` for each active day. The board
+and personal stats both order users by score descending, then user ID ascending,
+so tied scores have distinct, consistent ranks.
 
 ## Future Enhancements
 

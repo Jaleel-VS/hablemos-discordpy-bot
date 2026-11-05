@@ -18,7 +18,6 @@ export const DEFAULT_LANG: Lang = "en";
 
 const EN: Record<string, string> = {
   // setup
-  "setup.title": "Cloze",
   "setup.tagline": "Fill in the missing word. 10 sentences per round.",
   "setup.practice.main": "Practice",
   "setup.practice.sub": "Random round · hints after misses",
@@ -72,7 +71,6 @@ const EN: Record<string, string> = {
 
 const ES: Record<string, string> = {
   // setup
-  "setup.title": "Cloze",
   "setup.tagline": "Completa la palabra que falta. 10 frases por ronda.",
   "setup.practice.main": "Práctica",
   "setup.practice.sub": "Ronda aleatoria · pistas después de los errores",

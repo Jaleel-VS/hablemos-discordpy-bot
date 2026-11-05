@@ -28,6 +28,8 @@ from .config import (
     DEFAULT_ALERT_CHANNEL_ID,
     DEFAULT_WARN_CHANNEL_ID,
     EXEMPT_ROLE_IDS,
+    GENERAL_CHANNEL_ID,
+    INTRO_CHANNEL_ID,
     INTRO_COOLDOWN_DAYS,
     RESETINTRO_ROLE_ID,
     SETTING_ALERT_CHANNEL,
@@ -70,32 +72,18 @@ class IntroductionTracker(BaseCog):
 
     def __init__(self, bot: Hablemos):
         super().__init__(bot)
-        self.intro_channel_id = bot.settings.intro_channel_id
-        self.general_channel_id = bot.settings.general_channel_id
-        self._exempt_users: set[int] = set()
-
-    async def cog_load(self) -> None:
-        """Cache exempt users from DB on cog load."""
-        self._exempt_users = await self.bot.db.get_intro_exempt_users()
-
-    # ── Helpers ──
+        self.intro_channel_id = INTRO_CHANNEL_ID
+        self.general_channel_id = GENERAL_CHANNEL_ID
 
     async def _get_channel_id(self, setting_key: str, default: int) -> int:
         """Get a configurable channel ID from DB, falling back to default."""
         channel_id = await self.bot.db.get_bot_setting(setting_key)
         return channel_id if channel_id is not None else default
 
-    def _is_exempt(self, member: Member | discord.User) -> bool:
-        """Check if a member is exempt via role or user exemption list."""
-        if member.id in self._exempt_users:
-            return True
-        return any(role.id in EXEMPT_ROLE_IDS for role in getattr(member, 'roles', []))
-
     async def _handle_duplicate_intro(self, message: Message, attempt_count: int) -> None:
         """Delete a duplicate intro, warn the user, and alert staff."""
         saved_content = message.content or "(no text content)"
 
-        # Attempt to delete — continue to warn/alert even on failure
         deleted = True
         try:
             await message.delete()
@@ -107,7 +95,6 @@ class IntroductionTracker(BaseCog):
             deleted = False
             logger.exception("HTTP error deleting duplicate intro from %s", message.author)
 
-        # Warn the user
         warn_channel_id = await self._get_channel_id(SETTING_WARN_CHANNEL, DEFAULT_WARN_CHANNEL_ID)
         warn_channel = self.bot.get_channel(warn_channel_id)
         if isinstance(warn_channel, discord.abc.Messageable):
@@ -124,7 +111,6 @@ class IntroductionTracker(BaseCog):
             except HTTPException:
                 logger.exception("Failed to send intro warning to warn channel")
 
-        # Alert staff
         alert_channel_id = await self._get_channel_id(SETTING_ALERT_CHANNEL, DEFAULT_ALERT_CHANNEL_ID)
         alert_channel = self.bot.get_channel(alert_channel_id)
         if isinstance(alert_channel, discord.abc.Messageable) and isinstance(message.author, Member):
@@ -136,7 +122,16 @@ class IntroductionTracker(BaseCog):
             except HTTPException:
                 logger.exception("Failed to send intro alert to staff channel")
 
-    # ── Listener ──
+    async def _admit(self, member: discord.User | discord.Member) -> bool:
+        """Record a channel introduction and return whether the cooldown accepts it."""
+        if not await self.bot.db.get_feature_setting("intro_tracker"):
+            return True
+        exempt_users = await self.bot.db.get_intro_exempt_users()
+        if member.id in exempt_users or any(
+            role.id in EXEMPT_ROLE_IDS for role in getattr(member, "roles", [])
+        ):
+            return True
+        return await self.bot.db.record_introduction(member.id, INTRO_COOLDOWN_DAYS)
 
     @Cog.listener()
     async def on_message(self, message: Message):
@@ -145,28 +140,15 @@ class IntroductionTracker(BaseCog):
             return
 
         try:
-            is_enabled = await self.bot.db.get_feature_setting('intro_tracker')
-            if not is_enabled:
-                return
-
-            if self._is_exempt(message.author):
-                logger.debug("User %s (%s) is exempt from intro tracking", message.author, message.author.id)
-                return
-
-            existing = await self.bot.db.check_user_introduction(message.author.id, INTRO_COOLDOWN_DAYS)
-
-            if existing:
-                await self.bot.db.record_introduction(message.author.id, accepted=False)
+            accepted = await self._admit(message.author)
+            if not accepted:
                 attempt_count = await self.bot.db.get_introduction_count(message.author.id)
                 await self._handle_duplicate_intro(message, attempt_count)
             else:
-                await self.bot.db.record_introduction(message.author.id)
                 logger.info("Recorded introduction from %s (%s)", message.author, message.author.id)
 
         except Exception:
             logger.exception("Unhandled error in introduction tracker for %s", message.author)
-
-    # ── Commands ──
 
     @commands.group(name='introtracker', aliases=['toggleintro'], invoke_without_command=True)
     @has_permissions(manage_messages=True)
@@ -236,7 +218,7 @@ class IntroductionTracker(BaseCog):
         logger.info("Intro warn channel set to %s by %s", channel.id, ctx.author)
 
     @commands.command(aliases=['clearintro'])
-    @min_role(RESETINTRO_ROLE_ID, fallback="manage_messages")
+    @min_role(RESETINTRO_ROLE_ID)
     async def resetintro(self, ctx: commands.Context, user_id: int | None = None):
         """Clear a user's introduction history so they can post again."""
         if user_id is None:
@@ -266,7 +248,6 @@ class IntroductionTracker(BaseCog):
         try:
             added = await self.bot.db.add_intro_exempt_user(user_id, ctx.author.id)
             if added:
-                self._exempt_users.add(user_id)
                 await ctx.send(embed=green_embed(f"User `{user_id}` is now exempt from intro tracking."))
                 logger.info("%s exempted user %s from intro tracking", ctx.author, user_id)
             else:
@@ -285,7 +266,6 @@ class IntroductionTracker(BaseCog):
         try:
             removed = await self.bot.db.remove_intro_exempt_user(user_id)
             if removed:
-                self._exempt_users.discard(user_id)
                 await ctx.send(embed=green_embed(f"User `{user_id}` is no longer exempt from intro tracking."))
                 logger.info("%s removed intro exemption for user %s", ctx.author, user_id)
             else:

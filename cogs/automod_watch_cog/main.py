@@ -62,7 +62,6 @@ class AutomodWatch(BaseCog):
         # channel_id -> deque[_FlagEvent]  (sliding window, oldest first)
         self._windows: dict[int, deque[_FlagEvent]] = defaultdict(deque)
 
-    # ── helpers ──────────────────────────────────────────────────────────────
 
     async def _get_config(self) -> dict:
         cfg = await self.bot.db.get_automod_watch_config()
@@ -116,12 +115,10 @@ class AutomodWatch(BaseCog):
 
         for i, event in enumerate(events, 1):
             parts = []
-            # Link to the original triggering message
             if event.message_id:
                 parts.append(
                     f"[Original message]({self._jump(guild.id, event.channel_id, event.message_id)})"
                 )
-            # Link to the AutoMod alert in the watch-log channel
             if event.alert_msg_id and log_channel_id:
                 parts.append(
                     f"[Watch-log entry]({self._jump(guild.id, log_channel_id, event.alert_msg_id)})"
@@ -146,7 +143,6 @@ class AutomodWatch(BaseCog):
                 "automod_watch: failed to send alert to channel %s", alert_channel_id
             )
 
-    # ── listener ─────────────────────────────────────────────────────────────
 
     @commands.Cog.listener()
     async def on_automod_action(self, execution: discord.AutoModAction) -> None:
@@ -208,7 +204,6 @@ class AutomodWatch(BaseCog):
                 window_seconds,
             )
 
-    # ── admin commands ────────────────────────────────────────────────────────
 
     @commands.group(name="automodwatch", aliases=["amwatch"], invoke_without_command=True)
     @commands.has_permissions(manage_guild=True)

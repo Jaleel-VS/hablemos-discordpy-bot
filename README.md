@@ -51,7 +51,7 @@ Daily limit of 2 per user (unlimited for moderators). Conversations regenerate a
 |---------|-------------|
 | `$ask <question>` | Ask Gemini anything (Owner) |
 
-Responses are generated with a 30-second timeout. After generation, choose to send publicly, send privately (ephemeral), or discard. Long responses are automatically paginated.
+Responses are generated with a 30-second deadline (`Gemini.run` default; breakdown uses 45 s, batch generation 90 s). After generation, choose to send publicly, send privately (ephemeral), or discard. Long responses are automatically paginated.
 
 ### Vocabulary Notes
 
@@ -207,6 +207,8 @@ INTRO_CHANNEL_ID=    # Intro channel ID (optional)
 GENERAL_CHANNEL_ID=  # General channel ID (optional)
 INTRO_WARN_CHANNEL_ID=  # Intro warning channel ID (optional)
 INTRO_ALERT_CHANNEL_ID= # Intro alert channel ID (optional)
+CONVERSATION_DAILY_LIMIT=2   # Conversations a user can generate per day (optional)
+CONVERSATION_BATCH_SIZE=10   # Conversations generated per refill batch (optional)
 ```
 
 ### Run Locally

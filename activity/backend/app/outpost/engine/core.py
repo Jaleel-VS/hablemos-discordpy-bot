@@ -48,12 +48,6 @@ MISSIONS = frozenset(
         "contribute",
     }
 )
-MIN_TRAVEL_MS = 5 * 60 * 1000
-MAX_TRAIN_BATCHES = 5
-START_STOCK = {"ore": 600, "wood": 600, "gem": 100, "food": 300}
-NEW_BASE_STOCK = 500
-TUTORIAL_STOCK = {"ore": 500, "wood": 500, "gem": 200}
-SITE_GARRISON = {"warden": 256, "bulwark": 32}
 
 
 @dataclass(frozen=True, slots=True)
@@ -80,7 +74,7 @@ class Engine:
         self.w = world
         self.r = world.rules
         self.p = world.rules.params
-        self._stats = {
+        self.unit_stats = {
             u.id: combat.UnitStats(
                 atk=u.atk,
                 cls=u.cls,
@@ -135,11 +129,12 @@ class Engine:
     # rates and settlement
     # ------------------------------------------------------------------
 
-    def _owner(self, base: Base) -> Player | None:
+    def owner(self, base: Base) -> Player | None:
+        """Return the player owning a base, or None for an unowned base."""
         return self.w.players.get(base.owner) if base.owner else None
 
     def _producing(self, base: Base) -> bool:
-        owner = self._owner(base)
+        owner = self.owner(base)
         return (
             base.kind == "player"
             and owner is not None
@@ -152,7 +147,7 @@ class Engine:
         rates = dict.fromkeys(RESOURCES, 0)
         if not self._producing(base):
             return rates
-        owner = self._owner(base)
+        owner = self.owner(base)
         if owner is None:
             return rates
         industry = owner.research.get("industry", 0)
@@ -189,7 +184,8 @@ class Engine:
             )
         return total
 
-    def _settle(self, base: Base) -> None:
+    def settle(self, base: Base) -> None:
+        """Materialize a base's production through the current world time."""
         t = self.w.now_ms
         dt = t - base.settled_ms
         if dt <= 0:
@@ -217,7 +213,8 @@ class Engine:
     def _bucket_cap(self, player: Player) -> int:
         return self.p.bucket_hours * self.hourly_value(player)
 
-    def _settle_bucket(self, player: Player) -> None:
+    def settle_bucket(self, player: Player) -> None:
+        """Materialize a player's loot allowance through the current world time."""
         t = self.w.now_ms
         dt = t - player.bucket_ms
         if dt <= 0:
@@ -238,11 +235,11 @@ class Engine:
     def _before_rate_change(self, player: Player | None, *bases: Base) -> None:
         """Settle bases and the owner's bucket before rates change."""
         if player is not None:
-            self._settle_bucket(player)
+            self.settle_bucket(player)
             for bid in player.base_ids:
-                self._settle(self.w.bases[bid])
+                self.settle(self.w.bases[bid])
         for base in bases:
-            self._settle(base)
+            self.settle(base)
 
     def _after_rate_change(self, player: Player | None, *bases: Base) -> None:
         """Clamp bucket to the new capacity and re-project starvation."""
@@ -279,7 +276,8 @@ class Engine:
         self.w.bases[base.id] = base
         self.w.tiles[(base.x, base.y)] = base.id
 
-    def _tile_free(self, x: int, y: int) -> bool:
+    def tile_free(self, x: int, y: int) -> bool:
+        """Whether a tile is inside the world and available for placement."""
         if x * x + y * y > self.w.radius * self.w.radius:
             return False
         bid = self.w.tiles.get((x, y))
@@ -320,7 +318,7 @@ class Engine:
             return _reject("already_joined")
         if w.now_ms >= (p.join_close_day - 1) * DAY_MS:
             return _reject("joins_closed")
-        if not self._tile_free(*xy) or not self._tile_free(*tutorial_xy):
+        if not self.tile_free(*xy) or not self.tile_free(*tutorial_xy):
             return _reject("tile_taken")
         round_day = w.now_ms // DAY_MS
         mult = 100 + round_day * 100 // 7
@@ -336,7 +334,15 @@ class Engine:
             player.catchup_until = w.now_ms + p.catchup_days * DAY_MS
             self._schedule(player.catchup_until, "catchup_end", player_id)
         w.players[player_id] = player
-        stock = {r: v * MILLI * mult // 100 for r, v in START_STOCK.items()}
+        stock = {
+            r: v * MILLI * mult // 100
+            for r, v in {
+                "ore": p.start_ore,
+                "wood": p.start_wood,
+                "gem": p.start_gem,
+                "food": p.start_food,
+            }.items()
+        }
         base = Base(
             id=w.new_id(),
             owner=player_id,
@@ -360,14 +366,18 @@ class Engine:
             y=tutorial_xy[1],
             tier=1,
             stock={
-                **dict.fromkeys(RESOURCES, 0),
-                **{r: v * MILLI for r, v in TUTORIAL_STOCK.items()},
+                "ore": p.tutorial_ore * MILLI,
+                "wood": p.tutorial_wood * MILLI,
+                "gem": p.tutorial_gem * MILLI,
+                "food": 0,
             },
             settled_ms=w.now_ms,
             garrison={"warden": 1},
         )
         self._place(tut)
-        self._schedule(w.now_ms + 72 * HOUR_MS, "tutorial_expire", tut.id)
+        self._schedule(
+            w.now_ms + p.onboarding_hours * HOUR_MS, "tutorial_expire", tut.id
+        )
         player.bucket_m = self._bucket_cap(player)
         self._schedule_inactivity(player)
         return _accept(base_id=base.id, tutorial_id=tut.id)
@@ -449,7 +459,7 @@ class Engine:
         return base
 
     def _pay(self, base: Base, cost_m: dict[str, int]) -> bool:
-        self._settle(base)
+        self.settle(base)
         if any(base.stock.get(r, 0) < v for r, v in cost_m.items()):
             return False
         for r, v in cost_m.items():
@@ -515,7 +525,7 @@ class Engine:
         item = base.build_queue[0]
         if item.id != item_id:
             return
-        owner = self._owner(base)
+        owner = self.owner(base)
         self._before_rate_change(owner, base)
         base.build_queue.pop(0)
         base.buildings[item.item] = item.amount
@@ -540,7 +550,7 @@ class Engine:
         barracks = base.buildings.get("barracks", 0)
         if barracks < self.r.barracks_tier_level[udef.tier]:
             return _reject("barracks_level")
-        if len(base.train_queue) >= MAX_TRAIN_BATCHES:
+        if len(base.train_queue) >= self.p.max_train_batches:
             return _reject("lane_full")
         cost = {r: v * count for r, v in udef.cost_m.items()}
         if not self._pay(base, cost):
@@ -567,7 +577,7 @@ class Engine:
         item = base.train_queue[0]
         if item.id != item_id:
             return
-        owner = self._owner(base)
+        owner = self.owner(base)
         self._before_rate_change(owner, base)
         base.train_queue.pop(0)
         base.garrison[item.item] = base.garrison.get(item.item, 0) + item.amount
@@ -639,7 +649,7 @@ class Engine:
         base = self.w.bases[base_id]
         if base.removed or base.rate_version != version:
             return
-        owner = self._owner(base)
+        owner = self.owner(base)
         self._before_rate_change(owner, base)
         net = self.rates(base)["food"]
         if base.stock["food"] > 0 or net >= 0:
@@ -680,7 +690,7 @@ class Engine:
             m.cargo = {}
             self._finish_march(m, "deserted")
             return
-        cap = self._cargo_capacity(m.owner, m.units) * MILLI
+        cap = self.cargo_capacity(m.owner, m.units) * MILLI
         total = sum(m.cargo.values())
         if total <= cap:
             return
@@ -721,9 +731,10 @@ class Engine:
             -dist_milli * HOUR_MS * 100
             // (MILLI * speed * (100 + 5 * logistics))
         )
-        return self._dur(max(MIN_TRAVEL_MS, ms))
+        return self._dur(max(self.p.min_travel_ms, ms))
 
-    def _cargo_capacity(self, owner: int, units: dict[str, int]) -> int:
+    def cargo_capacity(self, owner: int, units: dict[str, int]) -> int:
+        """Whole-resource cargo capacity, including the owner's logistics."""
         player = self.w.players.get(owner)
         logistics = player.research.get("logistics", 0) if player else 0
         raw = sum(self.r.units[u].cargo * n for u, n in units.items())
@@ -790,7 +801,7 @@ class Engine:
         if mission == "settle":
             if target_xy is None or units != {"settler": 1}:
                 return _reject("bad_settle")
-            if not self._tile_free(*target_xy) or not self._spaced(target_xy):
+            if not self.tile_free(*target_xy) or not self.spaced(target_xy):
                 return _reject("tile_unavailable")
             slots = 1 + player.research.get("charter", 0)
             if len(player.base_ids) + player.reserved_slots >= slots:
@@ -809,7 +820,7 @@ class Engine:
             cargo_m = {r: v for r, v in (cargo or {}).items() if v > 0}
             if not cargo_m or any(r not in BUILD_RES for r in cargo_m):
                 return _reject("bad_cargo")
-            if sum(cargo_m.values()) > self._cargo_capacity(
+            if sum(cargo_m.values()) > self.cargo_capacity(
                 player.id, units
             ) * MILLI:
                 return _reject("cargo_exceeds_capacity")
@@ -851,7 +862,8 @@ class Engine:
         self._after_rate_change(player, home)
         return _accept(march_id=march.id, arrive_ms=march.arrive_ms)
 
-    def _spaced(self, xy: tuple[int, int]) -> bool:
+    def spaced(self, xy: tuple[int, int]) -> bool:
+        """Whether a settlement respects the player/site spacing rule."""
         d = self.p.settle_min_distance
         for b in self.w.bases.values():
             if b.removed or b.kind not in ("player", "site"):
@@ -864,7 +876,7 @@ class Engine:
         self, player: Player, mission: str, units: dict, target: Base
     ) -> Result | None:
         now = self.w.now_ms
-        owner = self._owner(target)
+        owner = self.owner(target)
         attack_power = sum(self.r.units[u].atk * n for u, n in units.items())
         if mission in ("raid", "attack") and attack_power <= 0:
             return _reject("zero_attack")
@@ -909,7 +921,6 @@ class Engine:
             if inbound >= self.p.per_target_cap:
                 return _reject("per_target_cap")
             return None
-        # friendly missions
         if mission == "contribute":
             site = self.w.sites.get(target.id)
             if site is None or site.alliance_id is None:
@@ -1025,7 +1036,7 @@ class Engine:
     # mission resolution
     # ------------------------------------------------------------------
 
-    def _defender_stacks(
+    def defender_stacks(
         self, target: Base
     ) -> tuple[dict[tuple[int, str], int], list[tuple[int, dict[str, int]]]]:
         """Aggregate defenders by (owner, unit) and list their locations."""
@@ -1087,7 +1098,7 @@ class Engine:
     def _arrive_combat(self, m: March, target: Base) -> None:
         w = self.w
         attacker = w.players[m.owner]
-        defender = self._owner(target) if target.kind == "player" else None
+        defender = self.owner(target) if target.kind == "player" else None
         involved = self._involved_bases(m, target)
         for pl, bases in involved:
             self._before_rate_change(pl, *bases)
@@ -1099,7 +1110,7 @@ class Engine:
                 morale = combat.morale_q(
                     self.military(attacker), self.military(defender)
                 )
-        def_stacks, locations = self._defender_stacks(target)
+        def_stacks, locations = self.defender_stacks(target)
         armor = {
             o: w.players[o].research.get("armor", 0)
             for o, _u in def_stacks
@@ -1110,7 +1121,7 @@ class Engine:
         result = combat.resolve_battle(
             att_stacks,
             def_stacks,
-            self._stats,
+            self.unit_stats,
             arms_level=attacker.research.get("arms", 0),
             armor_by_owner=armor,
             wall=wall,
@@ -1199,7 +1210,7 @@ class Engine:
         if target.kind == "site":
             return 0
         if target.kind == "player":
-            self._settle(target)
+            self.settle(target)
         vault = (
             self.r.vault_m[target.buildings.get("store", 0)]
             if target.kind == "player"
@@ -1211,11 +1222,11 @@ class Engine:
         }
         bucket = None
         if defender is not None:
-            self._settle_bucket(defender)
+            self.settle_bucket(defender)
             bucket = defender.bucket_m
         taken = combat.allocate_loot(
             exposed,
-            self._cargo_capacity(attacker.id, m.units),
+            self.cargo_capacity(attacker.id, m.units),
             bucket,
             VALUE_PER_UNIT,
         )
@@ -1251,7 +1262,7 @@ class Engine:
 
     def _arrive_scout(self, m: March, target: Base) -> None:
         attacker = self.w.players[m.owner]
-        defender = self._owner(target)
+        defender = self.owner(target)
         att = m.units.get("scout", 0)
         dsc = target.garrison.get("scout", 0)
         esp_a = attacker.research.get("espionage", 0)
@@ -1294,7 +1305,7 @@ class Engine:
             site = self.w.sites[target.id]
             ok = site.alliance_id is not None and site.alliance_id == owner.alliance_id
         else:
-            host = self._owner(target)
+            host = self.owner(target)
             ok = (
                 host is not None
                 and owner.alliance_id is not None
@@ -1310,7 +1321,7 @@ class Engine:
 
     def _arrive_transport(self, m: March, target: Base) -> None:
         owner = self.w.players[m.owner]
-        host = self._owner(target)
+        host = self.owner(target)
         ok = host is not None and (
             host.id == owner.id
             or (
@@ -1319,7 +1330,7 @@ class Engine:
             )
         )
         if ok and host is not None:
-            self._settle(target)
+            self.settle(target)
             cap = self.r.cap_m[target.buildings.get("store", 0)]
             for r in list(m.cargo):
                 room = max(0, cap - target.stock[r])
@@ -1336,7 +1347,7 @@ class Engine:
         w = self.w
         player = w.players[m.owner]
         xy = m.target_xy
-        if not (self._tile_free(*xy) and self._spaced(xy)):
+        if not (self.tile_free(*xy) and self.spaced(xy)):
             m.outcome = "bounced"
             self._return(m, m.arrive_ms - m.depart_ms)
             return
@@ -1352,8 +1363,8 @@ class Engine:
             y=xy[1],
             tier=self.ring_tier(*xy),
             stock={
-                **{r: NEW_BASE_STOCK * MILLI for r in BUILD_RES},
-                "food": NEW_BASE_STOCK * MILLI,
+                **{r: self.p.new_base_stock * MILLI for r in BUILD_RES},
+                "food": self.p.new_base_stock * MILLI,
             },
             settled_ms=w.now_ms,
             buildings={"quarry": 1, "sawmill": 1, "farm": 1},
@@ -1383,8 +1394,10 @@ class Engine:
             return
         base.garrison = {"warden": 1}
         base.stock = {
-            **dict.fromkeys(RESOURCES, 0),
-            **{r: v * MILLI for r, v in TUTORIAL_STOCK.items()},
+            "ore": self.p.tutorial_ore * MILLI,
+            "wood": self.p.tutorial_wood * MILLI,
+            "gem": self.p.tutorial_gem * MILLI,
+            "food": 0,
         }
         base.full = True
 
@@ -1680,7 +1693,7 @@ class Engine:
         for _d, x, y in candidates:
             if len(spots) >= n:
                 break
-            if not self._tile_free(x, y):
+            if not self.tile_free(x, y):
                 continue
             if any((x - a) ** 2 + (y - b) ** 2 < 9 for a, b in spots):
                 continue
@@ -1695,7 +1708,10 @@ class Engine:
                 tier=6,
                 stock=dict.fromkeys(RESOURCES, 0),
                 settled_ms=self.w.now_ms,
-                garrison=dict(SITE_GARRISON),
+                garrison={
+                    "warden": self.p.site_wardens,
+                    "bulwark": self.p.site_bulwarks,
+                },
             )
             self._place(base)
             self.w.sites[base.id] = Site(base.id)
@@ -1805,7 +1821,7 @@ class Engine:
             if best and best[0].level > 0:
                 w.winner_alliance = best[0].alliance_id
         for player in w.players.values():
-            self._settle_bucket(player)
+            self.settle_bucket(player)
             for bid in player.base_ids:
-                self._settle(w.bases[bid])
+                self.settle(w.bases[bid])
         w.ended = True

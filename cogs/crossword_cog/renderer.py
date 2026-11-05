@@ -9,7 +9,6 @@ from PIL import Image, ImageDraw, ImageFont
 
 from .grid import Grid
 
-# Layout constants
 CELL_SIZE = 56
 CELL_GAP = 3
 PADDING = 24
@@ -60,11 +59,9 @@ def render_grid(
     img = Image.new("RGB", (width, height), BG_COLOR)
     draw = ImageDraw.Draw(img)
 
-    # _get_font is lru_cached, so repeated calls don't re-open the font file.
     letter_font = _get_font(LETTER_FONT_SIZE)
     number_font = _get_font(NUMBER_FONT_SIZE)
 
-    # Build set of solved cells
     solved_cells: set[tuple[int, int]] = set()
     for idx in solved_indices:
         for r, c in grid.placed[idx].cells:
@@ -77,20 +74,17 @@ def render_grid(
         if pos not in number_positions:
             number_positions[pos] = pw.number
 
-    # Draw cells
     for (r, c), letter in grid.cells.items():
         x = PADDING + (c - min_c) * step
         y = PADDING + (r - min_r) * step
 
         bg = CELL_SOLVED if (r, c) in solved_cells else CELL_BG
 
-        # Rounded rectangle cell
         draw.rounded_rectangle(
             [x, y, x + CELL_SIZE, y + CELL_SIZE],
             radius=4, fill=bg, outline=CELL_BORDER, width=1,
         )
 
-        # Draw number if this is a word start
         if (r, c) in number_positions:
             num_color = (255, 255, 255) if (r, c) in solved_cells else (30, 31, 34)
             draw.text(
@@ -99,7 +93,6 @@ def render_grid(
                 fill=num_color, font=number_font,
             )
 
-        # Draw letter if solved or revealed
         show_letter = None
         color = LETTER_COLOR
 

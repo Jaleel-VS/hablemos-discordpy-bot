@@ -164,8 +164,6 @@ class PhrasalEngine:
     key = "phrasal"
     display_name = "Phrasal Verbs"
 
-    # ── lifecycle ─────────────────────────────────────────────────────────
-
     def new_game(
         self, *, mode: Mode, user_id: str, options: dict[str, Any] | None = None,
     ) -> GuessOutcome:
@@ -246,7 +244,6 @@ class PhrasalEngine:
         if action not in _VALID_ACTIONS:
             raise GameError(f"Acción inválida: {action!r}.")
 
-        # ── awaiting_continue (choice mode after a miss, freeplay) ────────
         if state.get("awaiting_continue"):
             if action == "continue":
                 state["awaiting_continue"] = False
@@ -272,7 +269,6 @@ class PhrasalEngine:
         # The canonical answer shown in feedback/recap.
         answer = verb.particle if blank_mode == "particle" else verb.example_answer
 
-        # ── retry (type mode, freeplay, retype after a miss) ─────────────
         if state.get("awaiting_retry"):
             if action not in ("retry", "answer"):
                 raise GameError("Reescribe la respuesta para continuar.")
@@ -302,7 +298,6 @@ class PhrasalEngine:
                 state["retry_attempts"] = retry_attempts
             return GuessOutcome(state=state, client_view=self.client_view(state))
 
-        # ── normal answer ─────────────────────────────────────────────────
         state["answered"].append({
             "id": verb.id,
             "verb": verb.verb,
@@ -355,8 +350,6 @@ class PhrasalEngine:
     def is_over(self, state: dict[str, Any]) -> bool:
         return state.get("status") == "over"
 
-    # ── result card ───────────────────────────────────────────────────────
-
     def result_payload(self, state: dict[str, Any]) -> dict[str, Any]:
         correct = int(state.get("correct", 0))
         answered = state.get("answered", [])
@@ -399,8 +392,6 @@ class PhrasalEngine:
             "misses": misses,
             "review_ids": review_ids,
         }
-
-    # ── views ───────────────────────────────────────────────────────────────
 
     def client_view(self, state: dict[str, Any]) -> dict[str, Any]:
         """What the client may see. Excludes the pending answer while playing."""
@@ -447,8 +438,6 @@ class PhrasalEngine:
         if state.get("mode") == "daily" and not self.is_over(state):
             return None
         return state.get("last")
-
-    # ── helpers ───────────────────────────────────────────────────────────
 
     def _current_prompt(self, state: dict[str, Any]) -> dict[str, Any]:
         verb = self._current_verb(state)

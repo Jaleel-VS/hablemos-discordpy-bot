@@ -5,6 +5,7 @@ import { LangToggle } from "../../i18n/lang";
 import { DEFAULT_LANG, t } from "./i18n";
 
 interface SetupProps {
+  displayName: string;
   onStart: (mode: "daily" | "free", options?: StartOptions) => void;
   onLearn: () => void;
   busy: boolean;
@@ -14,7 +15,7 @@ interface SetupProps {
 // UI is Spanish (the community is Spanish natives learning English); the
 // CONTENT (the phrasal verbs) is English.
 
-export default function Setup({ onStart, onLearn, busy, error }: SetupProps) {
+export default function Setup({ displayName, onStart, onLearn, busy, error }: SetupProps) {
   const [lang, setLang] = useLang(DEFAULT_LANG);
   const [difficulty, setDifficulty] = useState<string | null>(null);
   const [blankMode, setBlankMode] = useState<"particle" | "whole">("particle");
@@ -46,7 +47,7 @@ export default function Setup({ onStart, onLearn, busy, error }: SetupProps) {
     <div className="phrasal phrasal-setup">
       <LangToggle lang={lang} onChange={setLang} />
       <div className="setup-lede">
-        <h1 className="setup-title">{t(lang, "setup.title")}</h1>
+        <h1 className="setup-title">{displayName}</h1>
         <p className="muted">{t(lang, "setup.tagline")}</p>
       </div>
 

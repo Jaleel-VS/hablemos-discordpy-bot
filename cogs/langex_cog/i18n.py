@@ -6,7 +6,6 @@ fallback for any missing key/language.
 from typing import Final
 
 STRINGS: Final[dict[str, dict[str, str]]] = {
-    # Panel
     "panel_title": {
         "en": "🤝 Language Exchange",
         "es": "🤝 Intercambio de Idiomas",
@@ -29,7 +28,6 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
     "btn_find": {"en": "Find a partner", "es": "Buscar compañero"},
     "btn_delete": {"en": "Delete my profile", "es": "Borrar mi perfil"},
 
-    # Prefs step
     "prefs_title": {"en": "Your language exchange", "es": "Tu intercambio de idiomas"},
     "prefs_body": {
         "en": "Pick your languages and details, then add a short bio.",
@@ -42,7 +40,6 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
     "select_dm": {"en": "How to contact me…", "es": "Cómo contactarme…"},
     "btn_next": {"en": "Next: about you →", "es": "Siguiente: sobre ti →"},
 
-    # Validation
     "missing_fields": {
         "en": "Please choose: {fields}.",
         "es": "Por favor elige: {fields}.",
@@ -61,7 +58,6 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "es": "Por favor no incluyas enlaces en tu perfil.",
     },
 
-    # Modal
     "modal_title": {"en": "About you", "es": "Sobre ti"},
     "modal_about_label": {"en": "About you", "es": "Sobre ti"},
     "modal_about_ph": {
@@ -89,7 +85,6 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
     "card_joined": {"en": "Joined", "es": "Se unió"},
     "card_member_since": {"en": "Member since", "es": "Miembro desde"},
 
-    # Posting result
     "posted_ok": {
         "en": "✅ Your profile is live. Manage it from the panel anytime.",
         "es": "✅ Tu perfil está publicado. Puedes gestionarlo desde el panel.",
@@ -99,7 +94,6 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "es": "Algo salió mal al publicar tu perfil. Inténtalo más tarde.",
     },
 
-    # Find results
     "find_no_profile": {
         "en": "Post your own profile first so partners can find you too — use **Post / update profile**.",
         "es": "Publica tu perfil primero para que también te encuentren — usa **Publicar / actualizar**.",
@@ -120,11 +114,9 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
     },
     "find_jump": {"en": "jump ➜", "es": "ir ➜"},
 
-    # Delete
     "delete_ok": {"en": "🗑️ Your profile was removed.", "es": "🗑️ Tu perfil fue eliminado."},
     "delete_none": {"en": "You don't have a profile to delete.", "es": "No tienes un perfil que borrar."},
 
-    # Generic
     "generic_error": {
         "en": "Something went wrong. Please try again later.",
         "es": "Algo salió mal. Inténtalo de nuevo más tarde.",

@@ -17,7 +17,6 @@ from matplotlib.figure import Figure
 
 from .config import ROLE_COLORS, ROLE_LABELS
 
-# Consistent style
 plt.style.use("dark_background")
 FIGSIZE = (10, 6)
 DPI = 100
@@ -32,7 +31,6 @@ def render_top_channels(
     channels = [channel_names.get(r["channel_id"], f"#{r['channel_id']}") for r in data]
     totals = [r["total"] for r in data]
 
-    # Reverse for horizontal bar (top = highest)
     channels.reverse()
     totals.reverse()
 
@@ -51,7 +49,6 @@ def render_role_daily(data: list[dict], days: int) -> io.BytesIO:
     """Stacked bar chart of daily messages by role type."""
     fig, ax = plt.subplots(figsize=FIGSIZE, dpi=DPI)
 
-    # Pivot data: {day: {role_type: total}}
     days_map: dict[str, dict[str, int]] = {}
     for row in data:
         day_label = row["day"].strftime("%m/%d")
@@ -81,7 +78,6 @@ def render_role_daily(data: list[dict], days: int) -> io.BytesIO:
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-    # Rotate x labels if many days
     if len(day_labels) > 10:
         plt.xticks(rotation=45, ha="right")
 
@@ -103,13 +99,11 @@ def render_growth(
         running += n
         cumulative.append(running)
 
-    # Bars: new users per week
     ax1.bar(weeks, new_users, color="#5865F2", alpha=0.7, label="New users")
     ax1.set_xlabel("Week of")
     ax1.set_ylabel("New Users", color="#5865F2")
     ax1.tick_params(axis="y", labelcolor="#5865F2")
 
-    # Line: cumulative
     ax2 = ax1.twinx()
     ax2.plot(weeks, cumulative, color="#FF6B6B", marker="o", linewidth=2, label="Total")
     ax2.set_ylabel("Total Users", color="#FF6B6B")
@@ -130,7 +124,6 @@ def render_heatmap(data: list[dict], days: int) -> io.BytesIO:
     """Hour × day-of-week activity heatmap."""
     fig, ax = plt.subplots(figsize=FIGSIZE, dpi=DPI)
 
-    # Build 7x24 grid (dow × hour)
     grid = np.zeros((7, 24))
     for row in data:
         dow = int(row["dow"])

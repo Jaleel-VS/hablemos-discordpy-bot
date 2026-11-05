@@ -8,12 +8,6 @@ def remove_markdown_from_message(message: str, current_recursion_size: int = 0, 
     Covers only Discord's subset of markdown.
     """
 
-    # We need to handle bold/italics/underline/strikethrough (**, */_, __, ~~)
-    # We need to handle hyperlinks ([hello](https://google.com/))
-    # We need to handle code blocks (`hello`, ```hello```)
-    # We need to handle spoilers (||hello||)
-    # We need to handle quotes (> hello)
-    # We need to handle escaped characters
 
     # If we've recursed 100 calls deep, it's probably a malicious message.
     # We'll just return the message as-is, which will likely cause the
@@ -38,7 +32,6 @@ def remove_markdown_from_message(message: str, current_recursion_size: int = 0, 
         next_three = message[index:index+3]
         is_in_code_block = expecting_closing["`"] or expecting_closing["```"]
 
-        # Handle escaped characters first
         if character == "\\" and index + 1 < len(message) and not message[index + 1].isalnum() and not is_in_code_block:
             if allow_escapes:
                 output.write(message[index + 1])
@@ -53,7 +46,6 @@ def remove_markdown_from_message(message: str, current_recursion_size: int = 0, 
             is_new_line = False
             continue
 
-        # Strip headers, subtext, and quotes
         if is_new_line and not is_in_code_block:
             next_four = message[index:index+4]
 
@@ -74,7 +66,6 @@ def remove_markdown_from_message(message: str, current_recursion_size: int = 0, 
 
         should_continue_after_templates = False
 
-        # Strip spoilers, bold, italics, underline, strikethrough, and code blocks
         for template in templates:
             if (expecting_closing["`"] and template != "`") or (expecting_closing["```"] and template != "```"):
                 continue
@@ -100,7 +91,6 @@ def remove_markdown_from_message(message: str, current_recursion_size: int = 0, 
         if should_continue_after_templates:
             continue
 
-        # Strip hyperlinks
         if character == "[" and not is_in_code_block:
             new_index = index + 1
             label = StringIO()
@@ -120,8 +110,6 @@ def remove_markdown_from_message(message: str, current_recursion_size: int = 0, 
                 is_new_line = False
                 continue
 
-            # By this point, we know that `message[new_index]` is `]` and
-            # that `message[new_index + 1]` is `(`, so we can skip 2 chars
             new_index += 2
             url = StringIO()
             is_nesting = False

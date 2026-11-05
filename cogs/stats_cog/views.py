@@ -180,7 +180,6 @@ class _TimezoneSelect(discord.ui.Select):
         super().__init__(placeholder="Elige tu zona horaria…", options=options)
 
     async def callback(self, interaction: discord.Interaction) -> None:
-        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         view: TimezonePickerView = self.view  # type: ignore[assignment]
         offset = int(self.values[0])
         await interaction.response.defer(ephemeral=True, thinking=True)
@@ -234,7 +233,6 @@ class ClockResultView(discord.ui.View):
             await interaction.followup.send(embed=red_embed(_LAUNCH_ERROR), ephemeral=True)
             return
 
-        # Disable the post button so the same ephemeral message can't re-post.
         button.disabled = True
         await interaction.edit_original_response(view=self)
 

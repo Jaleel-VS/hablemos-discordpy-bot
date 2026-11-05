@@ -72,7 +72,6 @@ def render_top_channels(
 
     bars = ax.barh(labels, counts, color=colors, edgecolor=_TEXT_COLOR, linewidth=0.5)
 
-    # Right-side annotation: exact count · unique users · share of total.
     max_count = max(counts) if counts else 1
     for bar, n, u in zip(bars, counts, users, strict=True):
         share = n / total * 100
@@ -94,7 +93,6 @@ def render_top_channels(
     ax.tick_params(axis="y", labelsize=9, colors=_TEXT_COLOR)
     ax.tick_params(axis="x", labelsize=8, colors=_TEXT_COLOR)
 
-    # Cleaner spines — keep bottom + left only.
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)
 

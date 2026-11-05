@@ -121,6 +121,7 @@ def build_router(get_db, get_secret, discord_context: dict[str, int | None]) -> 
         if db is None:
             return
         result = engine.result_payload(state)
+        result["display_name"] = engine.display_name
         # Close the engagement session (best-effort; never fail the request).
         session_id = state.get("_sid")
         if isinstance(session_id, str):

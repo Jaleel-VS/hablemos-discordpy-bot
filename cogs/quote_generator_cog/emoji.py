@@ -52,7 +52,6 @@ def _custom_to_img(match: re.Match) -> str:
 
 def _cluster_to_img(cluster: str) -> str:
     """Build a Twemoji <img> tag for a single emoji cluster."""
-    # Build codepoint string: strip variation selectors, join with -
     codepoints = "-".join(f"{ord(c):x}" for c in cluster if c != "\ufe0f")
     return (
         f'<img src="{_TWEMOJI_BASE}/{codepoints}.png"'
@@ -90,7 +89,6 @@ def replace_emoji_with_images(text: str) -> str:
     """
     text = _CUSTOM_EMOJI_RE.sub(_custom_to_img, text)
     text = _UNICODE_EMOJI_RE.sub(_unicode_to_img, text)
-    # Enlarge if the entire message is a single emoji image
     if _IMG_TAG_RE.fullmatch(text.strip()):
         text = text.replace(
             f'width="{_IMG_PX}" height="{_IMG_PX}"',

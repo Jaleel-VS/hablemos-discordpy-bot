@@ -12,7 +12,6 @@ export const DEFAULT_LANG: Lang = "es";
 
 const ES: Record<string, string> = {
   // setup
-  "setup.title": "Phrasal Verbs",
   "setup.tagline": "¿Conoces estos verbos?",
   "setup.learn": "Aprender",
   "setup.learn.sub": "Explora el vocabulario antes de practicar",
@@ -79,7 +78,6 @@ const ES: Record<string, string> = {
 
 const EN: Record<string, string> = {
   // setup
-  "setup.title": "Phrasal Verbs",
   "setup.tagline": "Test your knowledge of phrasal verbs",
   "setup.learn": "Learn",
   "setup.learn.sub": "Browse vocabulary before practicing",

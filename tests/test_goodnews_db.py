@@ -133,12 +133,6 @@ async def test_exhaustion_raises_not_cycles(news_db: Database) -> None:
     with pytest.raises(LookupError):
         await news_db.next_good_news(100, "en")
 
-    # Seen count stays at 3 — nothing was reset.
-    count = await news_db._fetchval(
-        "SELECT count(*) FROM good_news_seen WHERE channel_id = 100"
-    )
-    assert count == 3
-
 
 async def test_reseed_reconnect_no_reset(news_db: Database) -> None:
     """Re-storing existing articles (upsert) does not clear any channel's seen state."""

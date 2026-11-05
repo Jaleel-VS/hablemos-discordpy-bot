@@ -10,7 +10,6 @@ from db import DatabaseMixin
 
 
 class CrosswordMixin(DatabaseMixin):
-    # ── active-game snapshot (interrupt recovery) ─────────────────────────
 
     async def crossword_save_active_game(
         self,
@@ -24,6 +23,7 @@ class CrosswordMixin(DatabaseMixin):
         difficulty: str,
         total_words: int,
         game_id: uuid.UUID,
+        started_at: datetime,
     ) -> None:
         """Record a newly started crossword game."""
         await self._execute(
@@ -32,7 +32,7 @@ class CrosswordMixin(DatabaseMixin):
                 (channel_id, starter_id, guild_id, is_dm, message_id,
                  language, difficulty, total_words, solved_count,
                  game_id, started_at, updated_at)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0, $9, NOW(), NOW())
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0, $9, $10, NOW())
             ON CONFLICT (channel_id) DO UPDATE
             SET starter_id   = EXCLUDED.starter_id,
                 guild_id     = EXCLUDED.guild_id,
@@ -43,11 +43,11 @@ class CrosswordMixin(DatabaseMixin):
                 total_words  = EXCLUDED.total_words,
                 solved_count = 0,
                 game_id      = EXCLUDED.game_id,
-                started_at   = NOW(),
+                started_at   = EXCLUDED.started_at,
                 updated_at   = NOW()
             ''',
             channel_id, starter_id, guild_id, is_dm, message_id,
-            language, difficulty, total_words, game_id,
+            language, difficulty, total_words, game_id, started_at,
         )
 
     async def crossword_bump_solved(self, channel_id: int) -> None:
@@ -74,7 +74,6 @@ class CrosswordMixin(DatabaseMixin):
             'SELECT * FROM crossword_active_games ORDER BY started_at'
         )
 
-    # ── game outcome persistence (tier 1 + 2) ─────────────────────────────
 
     async def crossword_persist_game_outcome(
         self,
@@ -204,7 +203,6 @@ class CrosswordMixin(DatabaseMixin):
             started_at, ended_at, elapsed,
         )
 
-    # ── stats helpers (read from the new tables) ──────────────────────────
 
     async def crossword_get_stats(self, days: int | None = 30) -> dict:
         """Return aggregate crossword stats over a window.
@@ -334,7 +332,6 @@ class CrosswordMixin(DatabaseMixin):
             *args,
         )
 
-    # ── word-level (tier 2) ───────────────────────────────────────────────
 
     async def crossword_get_word_difficulty(
         self,

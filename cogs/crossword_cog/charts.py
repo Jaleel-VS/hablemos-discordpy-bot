@@ -115,9 +115,7 @@ def render_word_difficulty(
     # pandas-stubs types ``df[str]`` as ``Series | DataFrame``; these columns
     # are always Series, so cast to pick the Series ``.nsmallest``/``.nlargest``
     # overloads (which return a Series with a usable ``.index``).
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     solve_rate = cast("pd.Series", df["solve_rate_pct"])
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     avg_seconds = cast("pd.Series", df["avg_solve_seconds"])
     interesting += solve_rate.nsmallest(4).index.tolist()
     interesting += solve_rate.nlargest(3).index.tolist()
@@ -143,7 +141,6 @@ def render_word_difficulty(
             fontweight="medium",
         )
 
-    # Axis cosmetics.
     ax.set_ylim(-5, 105)
     ax.set_xlabel("Avg seconds to solve (successful solves only)", fontsize=10)
     ax.set_ylabel("Solve rate (%)", fontsize=10)

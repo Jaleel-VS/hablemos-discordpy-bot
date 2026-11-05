@@ -9,7 +9,6 @@ from base_cog import BaseCog
 from cogs.hangman_cog.hangman import Hangman
 from cogs.hangman_cog.hangman_help import get_word
 
-# Set up logger for this module
 logger = logging.getLogger(__name__)
 
 CATEGORIES = {
@@ -60,14 +59,12 @@ class HangmanController(BaseCog):
 
         logger.info("Hangman command invoked by %s (%s) in channel %s (%s) with category '%s'", ctx.author, user_id, ctx.channel, channel_id, category)
 
-        # Validate category
         if category not in CATEGORIES:
             logger.warning("Invalid category '%s' requested by %s (%s)", category, ctx.author, user_id)
             self.hangman.reset_cooldown(ctx)
             available = ', '.join(f'`{cat}` ({count})' for cat, count in CATEGORIES.items())
             return await ctx.send(f"❌ Category not found!\n\n**Available categories:**\n{available}")
 
-        # Use lock to prevent race conditions
         async with self._get_channel_lock(channel_id):
             if self._is_game_active(channel_id):
                 logger.info("Game start denied - game already active in channel %s", channel_id)
@@ -78,17 +75,14 @@ class HangmanController(BaseCog):
                 await self._start_new_game(ctx, channel_id, category)
                 logger.info("Hangman game successfully started in channel %s", channel_id)
             except Exception:
-                # Ensure cleanup on any error
                 self.active_games.pop(channel_id, None)
                 logger.exception("Failed to start hangman game in channel %s", channel_id)
                 await ctx.send("❌ Failed to start game. Please try again later.")
                 return
-            # Successfully started; nothing else to send here
 
     async def _start_new_game(self, ctx, channel_id: int, category: str):
         """Start a new hangman game with proper cleanup."""
         try:
-            # Get words for the category
             logger.debug("Getting words for category '%s'", category)
             words = get_word(category)
             if not words:
@@ -97,20 +91,17 @@ class HangmanController(BaseCog):
 
             logger.debug("Selected word for game: %s (%s)", words[0], words[1] if len(words) > 1 else 'no definition')
 
-            # Create and register the game
             game = Hangman(self.bot, words, category)
             self.active_games[channel_id] = game
 
             logger.info("Game registered for channel %s, starting game loop", channel_id)
 
-            # Start the game
             await game.game_loop(ctx)
 
         except Exception as e:
             logger.error("Error during game execution in channel %s: %s", channel_id, e, exc_info=True)
             raise
         finally:
-            # Always cleanup, even if game crashes
             if channel_id in self.active_games:
                 logger.info("Cleaning up game for channel %s", channel_id)
                 self.active_games.pop(channel_id, None)
@@ -134,7 +125,6 @@ class HangmanController(BaseCog):
         for channel_id in self.active_games:
             channel = self.bot.get_channel(channel_id)
             if channel:
-                # Handle different channel types
                 if isinstance(channel, discord.DMChannel):
                     recipient_name = channel.recipient.display_name if channel.recipient else "Unknown User"
                     channel_name = f"DM with {recipient_name}"

@@ -7,10 +7,10 @@ import discord
 
 from cogs.league_cog.config import (
     CHAMPION_ROLE_ID,
-    LEAGUE_GUILD_ID,
     WINNER_CHANNEL_ID,
 )
 from cogs.league_cog.league_helper.round_end_image import render_round_end
+from cogs.utils.guild import HOME_GUILD_ID
 
 logger = logging.getLogger(__name__)
 
@@ -111,7 +111,7 @@ async def process_round_end(bot, current_round: dict) -> dict:
 
     logger.info("Ending round %s (ID: %s)", round_number, round_id)
 
-    guild = bot.get_guild(LEAGUE_GUILD_ID)
+    guild = bot.get_guild(HOME_GUILD_ID)
     champion_role = guild.get_role(CHAMPION_ROLE_ID) if guild else None
 
     if not guild:
@@ -127,7 +127,6 @@ async def process_round_end(bot, current_round: dict) -> dict:
     spanish_top3 = spanish_top[:3]
     english_top3 = english_top[:3]
 
-    # Save winners
     winners_data = []
     for league_type, top3 in [('spanish', spanish_top3), ('english', english_top3)]:
         for rank, entry in enumerate(top3, start=1):
@@ -151,7 +150,6 @@ async def process_round_end(bot, current_round: dict) -> dict:
         e['user_id'] for e in spanish_champions + english_champions
     ))
 
-    # Role management
     roles_added = []
     roles_removed = []
 
@@ -177,7 +175,6 @@ async def process_round_end(bot, current_round: dict) -> dict:
     if new_role_recipient_ids:
         await bot.db.mark_role_recipients(round_id, new_role_recipient_ids)
 
-    # Announce
     try:
         channel = bot.get_channel(WINNER_CHANNEL_ID)
         if channel:
@@ -224,7 +221,6 @@ async def process_round_end(bot, current_round: dict) -> dict:
     except Exception as e:
         logger.error("Error announcing winners: %s", e, exc_info=True)
 
-    # Create next round
     now = datetime.now(UTC)
     days_until_sunday = (6 - now.weekday()) % 7
     if days_until_sunday == 0:

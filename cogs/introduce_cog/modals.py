@@ -8,11 +8,17 @@ import logging
 import re
 from typing import TYPE_CHECKING
 
+import asyncpg
 import discord
 from discord import Embed, Interaction, Member, TextStyle
 from discord.ui import Modal, TextInput
 
 from cogs.utils.embeds import green_embed, red_embed
+from cogs.utils.guild import (
+    ENGLISH_NATIVE_ROLE_ID,
+    OTHER_NATIVE_ROLE_ID,
+    SPANISH_NATIVE_ROLE_ID,
+)
 
 from .config import (
     COLOR_BOTH_NATIVE,
@@ -20,9 +26,6 @@ from .config import (
     COLOR_INTRO,
     COLOR_OTHER_NATIVE,
     COLOR_SPANISH_NATIVE,
-    ENGLISH_NATIVE_ROLE_ID,
-    OTHER_NATIVE_ROLE_ID,
-    SPANISH_NATIVE_ROLE_ID,
 )
 from .i18n import t
 
@@ -109,9 +112,6 @@ class IntroOnlyModal(Modal):
             await interaction.followup.send(embed=msg, ephemeral=True)
 
 
-# ── Post helpers ──
-
-
 async def _audit_log(client, user: discord.User | discord.Member, action: str) -> None:
     """Send a minimal audit entry to the audit channel."""
     from .config import AUDIT_CHANNEL_ID
@@ -128,7 +128,7 @@ async def _audit_log(client, user: discord.User | discord.Member, action: str) -
 async def _post_intro(
     interaction: Interaction[Hablemos], embed: Embed, channel_id: int, lang: str
 ) -> None:
-    """Post a simple introduction embed."""
+    """Post an introduction and record it as accepted."""
     await interaction.response.defer(ephemeral=True)
     channel = await _resolve_channel(interaction, channel_id)
     if channel is None:
@@ -144,8 +144,11 @@ async def _post_intro(
         logger.exception("Failed to post introduction in channel %s", channel_id)
         await interaction.followup.send(embed=red_embed(t("error_generic", lang)), ephemeral=True)
         return
+    try:
+        await interaction.client.db.record_accepted_introduction(interaction.user.id)
+    except asyncpg.PostgresError:
+        logger.exception("Failed to record introduction for %s", interaction.user.id)
 
-    await interaction.client.db.record_introduction(interaction.user.id)
     await interaction.followup.send(
         embed=green_embed(t("success_intro", lang, channel=channel.mention)), ephemeral=True,
     )

@@ -27,7 +27,6 @@ from app.games.sealed_state import seal
 _SECRET = "test-secret-for-size"
 
 
-# ── helpers ───────────────────────────────────────────────────────────────────
 
 
 @pytest.fixture
@@ -56,7 +55,6 @@ def _answer_all_wrong(engine, oc):
     return oc
 
 
-# ── P0: sealed-state size ─────────────────────────────────────────────────────
 
 
 def test_seal_size_3000_fresh_games_all_under_7000():
@@ -95,7 +93,6 @@ def test_seal_size_completed_round_with_misses_under_7000():
     assert len(token) < 7000, f"completed-round sealed size {len(token)} >= 7000"
 
 
-# ── P0: id not in prompt ──────────────────────────────────────────────────────
 
 
 def test_prompt_does_not_expose_id(engine):
@@ -104,7 +101,6 @@ def test_prompt_does_not_expose_id(engine):
     assert "id" not in prompt, "prompt must not contain id"
 
 
-# ── P0: unknown verb id → GameError ──────────────────────────────────────────
 
 
 def test_hostile_unknown_verb_id_raises(engine):
@@ -115,7 +111,6 @@ def test_hostile_unknown_verb_id_raises(engine):
         engine.submit(state=bad_state, guess="up")
 
 
-# ── P0: daily rejects skip/retry/continue ────────────────────────────────────
 
 
 @pytest.mark.parametrize("mode", ["daily", "free"])
@@ -138,7 +133,6 @@ def test_daily_rejects_continue(engine):
         engine.submit(state=oc.state, guess="up", action="continue")
 
 
-# ── P2: type-mode awaiting_retry ─────────────────────────────────────────────
 
 
 def test_type_mode_wrong_enters_awaiting_retry(engine):
@@ -201,7 +195,6 @@ def test_type_mode_retry_no_score_change(engine):
     assert oc3.state["correct"] == 0
 
 
-# ── P2: choice-mode awaiting_continue ────────────────────────────────────────
 
 
 def test_choice_mode_wrong_enters_awaiting_continue(engine):
@@ -238,7 +231,6 @@ def test_choice_mode_answer_rejected_while_awaiting_continue(engine):
         engine.submit(state=copy.deepcopy(oc2.state), guess=correct, action="answer")
 
 
-# ── P2: last carries gloss_es + sentence ─────────────────────────────────────
 
 
 def test_freeplay_miss_last_has_gloss_and_sentence(engine):
@@ -257,7 +249,6 @@ def test_freeplay_miss_last_has_gloss_and_sentence(engine):
     assert last["answer"] in last["sentence"]
 
 
-# ── P3: review_ids in result ──────────────────────────────────────────────────
 
 
 def test_review_ids_in_result_contains_missed_ids(engine):
@@ -266,8 +257,7 @@ def test_review_ids_in_result_contains_missed_ids(engine):
     result = oc.client_view["result"]
     assert "review_ids" in result
     assert len(result["review_ids"]) > 0
-    # All must be valid deck ids.
-    deck_ids = {v["id"] for v in d._ALL}
+    deck_ids = {v["id"] for v in d.learn_deck()}
     for vid in result["review_ids"]:
         assert vid in deck_ids
 
@@ -295,13 +285,11 @@ def test_review_ids_deduplicated(engine):
     assert len(result["review_ids"]) == len(set(result["review_ids"]))
 
 
-# ── P3: options.ids freeplay start ───────────────────────────────────────────
 
 
 def test_options_ids_starts_round_with_requested_verbs(engine):
-    # Pick some ids that are NOT today's daily ids.
     daily_ids = _today_daily_ids()
-    non_daily = [v["id"] for v in d._ALL if v["id"] not in daily_ids]
+    non_daily = [v["id"] for v in d.learn_deck() if v["id"] not in daily_ids]
     ids = non_daily[:5]
     oc = engine.new_game(mode="free", user_id="1", options={"answer_mode": "choice", "ids": ids})
     assert set(oc.state["verb_ids"]) == set(ids)
@@ -309,8 +297,7 @@ def test_options_ids_starts_round_with_requested_verbs(engine):
 
 def test_options_ids_deduped_and_capped_at_10(engine):
     daily_ids = _today_daily_ids()
-    non_daily = [v["id"] for v in d._ALL if v["id"] not in daily_ids]
-    # Pass 15 ids (5 duplicates).
+    non_daily = [v["id"] for v in d.learn_deck() if v["id"] not in daily_ids]
     ids = non_daily[:10] + non_daily[:5]
     oc = engine.new_game(mode="free", user_id="1", options={"answer_mode": "choice", "ids": ids})
     assert len(oc.state["verb_ids"]) <= 10
@@ -320,8 +307,7 @@ def test_options_ids_deduped_and_capped_at_10(engine):
 def test_options_ids_drops_today_daily_ids(engine):
     daily_ids = list(_today_daily_ids())
     assert len(daily_ids) == ROUND_SIZE
-    non_daily = [v["id"] for v in d._ALL if v["id"] not in daily_ids]
-    # Mix daily + non-daily ids.
+    non_daily = [v["id"] for v in d.learn_deck() if v["id"] not in daily_ids]
     ids = daily_ids[:3] + non_daily[:5]
     oc = engine.new_game(mode="free", user_id="1", options={"answer_mode": "choice", "ids": ids})
     for vid in oc.state["verb_ids"]:
@@ -341,11 +327,10 @@ def test_options_ids_falls_back_to_random_if_only_daily(engine):
     assert oc.state["round_size"] == ROUND_SIZE
 
 
-# ── data: verb_by_id ──────────────────────────────────────────────────────────
 
 
 def test_verb_by_id_returns_correct_verb():
-    first = d._ALL[0]
+    first = d.learn_deck()[0]
     verb = d.verb_by_id(first["id"])
     assert verb is not None
     assert verb.id == first["id"]
@@ -357,23 +342,23 @@ def test_verb_by_id_returns_none_for_unknown():
 
 
 def test_verbs_by_ids_order_preserved():
-    non_daily = [v["id"] for v in d._ALL if "id" in v][:5]
+    non_daily = [v["id"] for v in d.learn_deck()][:5]
     verbs = d.verbs_by_ids(non_daily)
     assert [v.id for v in verbs] == non_daily
 
 
 def test_verbs_by_ids_drops_unknown():
-    ids = [d._ALL[0]["id"], "pv-BAD", d._ALL[1]["id"]]
+    deck = d.learn_deck()
+    ids = [deck[0]["id"], "pv-BAD", deck[1]["id"]]
     verbs = d.verbs_by_ids(ids)
-    assert len(verbs) == 2
+    assert [v.id for v in verbs] == [ids[0], ids[2]]
 
 
-# ── particle mode reads as real English ───────────────────────────────────────
 
 
 def _verb_with_inflected_span() -> d.Verb:
     """A deck verb whose example blank is an inflected span ending in the particle."""
-    for vid in d._ID_INDEX:
+    for vid in (entry["id"] for entry in d.learn_deck()):
         v = d.verb_by_id(vid)
         if v.example_answer.lower() != v.verb.lower() and v.example_answer.lower().endswith(" " + v.particle):
             return v

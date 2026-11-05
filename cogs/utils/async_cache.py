@@ -26,7 +26,6 @@ def async_cache(maxsize: int = 128):
                 exc = task.exception()
                 if exc is None:
                     return task.result()
-                # Previous call failed — retry
                 del cache[key]
 
             task = asyncio.create_task(func(*args, **kwargs))

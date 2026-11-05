@@ -36,15 +36,6 @@ logger = logging.getLogger(__name__)
 _WIN_COLOR = 0x3AA394
 _LOSS_COLOR = 0xED4245
 
-# Friendly labels for known game keys. The bot doesn't import the Activity's
-# engine modules (separate service), so this is a small local map; an unknown
-# key falls back to its raw value, capitalized.
-_GAME_LABELS = {"wordle": "Wordle", "conjugation": "Conjugación"}
-
-
-def _game_label(game_key: str) -> str:
-    return _GAME_LABELS.get(game_key, game_key.capitalize())
-
 
 class ActivityResultPayload(TypedDict, total=False):
     """Validated fields consumed from an Activity result payload."""
@@ -72,6 +63,21 @@ def _coerce_payload(raw: Any) -> ActivityResultPayload:
     if isinstance(raw.get("grid"), str):
         payload["grid"] = raw["grid"]
     return payload
+
+
+def _normalize_distribution(raw: Any) -> dict[str, int]:
+    """Decode JSONB guess buckets without treating them as result-card fields."""
+    if isinstance(raw, str):
+        try:
+            raw = json.loads(raw)
+        except json.JSONDecodeError:
+            return {}
+    if not isinstance(raw, dict):
+        return {}
+    return {
+        key: count for key, count in raw.items()
+        if isinstance(key, str) and type(count) is int and count >= 0
+    }
 
 
 class ActivityResultsCog(BaseCog):
@@ -144,8 +150,6 @@ class ActivityResultsCog(BaseCog):
     async def _before_poll(self) -> None:
         await self.bot.wait_until_ready()
 
-    # ── owner stats command ─────────────────────────────────────────────────
-
     @commands.group(name="activity_stats", aliases=["astats"], invoke_without_command=True)
     @commands.is_owner()
     async def activity_stats(self, ctx: commands.Context) -> None:
@@ -182,9 +186,10 @@ class ActivityResultsCog(BaseCog):
     async def activity_stats_streaks(self, ctx: commands.Context, game_key: str = "wordle") -> None:
         """Top daily streaks for a game (default: wordle)."""
         rows = await self.bot.db.activity_top_streaks(game_key=game_key, limit=10)
+        label = await self.bot.db.activity_game_label(game_key=game_key)
         if not rows:
             await ctx.send(embed=blue_embed(
-                f"No hay rachas registradas para **{_game_label(game_key)}**."
+                f"No hay rachas registradas para **{label}**."
             ))
             return
         lines = [
@@ -193,7 +198,7 @@ class ActivityResultsCog(BaseCog):
             for i, r in enumerate(rows, start=1)
         ]
         embed = blue_embed("\n".join(lines))
-        embed.title = f"{_game_label(game_key)} · mejores rachas"
+        embed.title = f"{label} · mejores rachas"
         await ctx.send(embed=embed)
 
     @activity_stats.command(name="user")
@@ -202,12 +207,13 @@ class ActivityResultsCog(BaseCog):
     ) -> None:
         """One player's daily stats for a game (default: wordle)."""
         stats = await self.bot.db.activity_user_stats(game_key=game_key, user_id=member.id)
+        label = await self.bot.db.activity_game_label(game_key=game_key)
         if stats is None:
             await ctx.send(embed=blue_embed(
-                f"{member.mention} no ha jugado **{_game_label(game_key)}** (diario)."
+                f"{member.mention} no ha jugado **{label}** (diario)."
             ))
             return
-        dist = _coerce_payload(stats["distribution"])
+        dist = _normalize_distribution(stats["distribution"])
         dist_str = " · ".join(f"{k}: {v}" for k, v in sorted(dist.items())) or "—"
         embed = blue_embed(
             f"Partidas: **{stats['games']}** · Victorias: **{stats['wins']}**\n"
@@ -215,7 +221,7 @@ class ActivityResultsCog(BaseCog):
             f"Máxima: **{stats['max_streak']}**\n"
             f"Distribución: {dist_str}"
         )
-        embed.title = f"{_game_label(game_key)} · {member.display_name}"
+        embed.title = f"{label} · {member.display_name}"
         await ctx.send(embed=embed)
 
     async def _show_totals(self, ctx: commands.Context) -> None:
@@ -231,7 +237,7 @@ class ActivityResultsCog(BaseCog):
         for r in rows:
             total_games += r["games"]
             embed.add_field(
-                name=_game_label(r["game_key"]),
+                name=r["display_name"],
                 value=(
                     f"Partidas: **{r['games']}** ({r['daily']} diarias, "
                     f"{r['freeplay']} libres)\n"

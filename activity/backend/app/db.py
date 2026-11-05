@@ -166,7 +166,7 @@ class Database:
         self._url = database_url
         self._pool: asyncpg.Pool | None = None
 
-    async def connect(self, *, retries: int = 5) -> None:
+    async def connect(self, *, game_labels: dict[str, str], retries: int = 5) -> None:
         """Create the pool and ensure the schema, retrying transient failures.
 
         A freshly-started container can race the managed Postgres endpoint
@@ -184,6 +184,16 @@ class Database:
                 )
                 async with self._pool.acquire() as conn:
                     await conn.execute(_SCHEMA)
+                    await conn.execute(
+                        """
+                        UPDATE game_results
+                        SET payload = payload || jsonb_build_object(
+                            'display_name', $1::jsonb->>game_key
+                        )
+                        WHERE NOT payload ? 'display_name' AND $1::jsonb ? game_key
+                        """,
+                        json.dumps(game_labels),
+                    )
                 logger.info("Activity DB pool created and schema ensured")
                 return
             except Exception as exc:
@@ -203,8 +213,6 @@ class Database:
         if self._pool is None:
             raise RuntimeError("DB pool not initialized; call connect() first")
         return self._pool
-
-    # ── engagement sessions ───────────────────────────────────────────────
 
     async def start_session(
         self, *, session_id: str, game_key: str, user_id: int, mode: str,
@@ -237,8 +245,6 @@ class Database:
             """,
             session_id, outcome,
         )
-
-    # ── results ───────────────────────────────────────────────────────────
 
     async def record_result(
         self,
@@ -330,8 +336,6 @@ class Database:
             "UPDATE game_results SET posted_at = NOW() WHERE id = $1",
             result_id,
         )
-
-    # ── stats ─────────────────────────────────────────────────────────────
 
     async def get_stats(self, *, game_key: str, user_id: int) -> dict[str, Any]:
         """Per-user daily stats. Returns a zero-valued dict if none exist.
@@ -456,8 +460,6 @@ class Database:
             game_key, user_id, 1 if won else 0, new_streak, new_max,
             puzzle_no, dist_key,
         )
-
-    # ── pets ──────────────────────────────────────────────────────────────
 
     async def get_pet(self, user_id: int) -> dict[str, Any] | None:
         """Return the stored pet row for *user_id*, or ``None`` if not chosen.

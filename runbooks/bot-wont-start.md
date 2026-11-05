@@ -1,7 +1,7 @@
 # Bot is offline or won't start
 
 **When:** the Lightsail service is `RUNNING` but the bot isn't online, or a deploy failed.
-**Last verified:** 2026-10-11
+**Last verified:** 2026-11-05
 
 ## Steps
 
@@ -24,8 +24,10 @@
    import. A new cog needs `cogs/<name>_cog/__init__.py` and `setup(bot)` in
    `cogs/<name>_cog/main.py`.
    To keep a cog off without a deploy: `$cog disable <name>_cog`.
-4. **Schema.** `initialize_schema` runs on every start (`db/schema.py`). Fix the SQL.
-   Destructive changes belong in a script under `scripts/`, not in the schema.
+4. **Schema.** `initialize_schema` runs on every start (`db/schema.py`). A failed
+   statement aborts startup (after the 5 `setup_hook` attempts); the log shows the
+   PostgreSQL error. Fix the SQL. Destructive changes belong in a script under
+   `scripts/`, unless they drop a retired feature's tables with `DROP TABLE IF EXISTS`.
 5. **Env vars.** `BOT_TOKEN` and `DATABASE_URL` are required (`config.py`).
    Deploy secrets: `deploy/README.md`.
 

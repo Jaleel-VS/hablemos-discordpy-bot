@@ -16,7 +16,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# Static word bank — later this could pull from the DB or an API
 WORDS = {
     "beginner_en": {
         "word": "however",
@@ -46,11 +45,9 @@ class WotdView(ui.LayoutView):
 
     def __init__(self, files: list[File]):
         super().__init__()
-        # Header
         self.add_item(ui.TextDisplay("# 📖 Word of the Day"))
         self.add_item(ui.Separator())
 
-        # Gallery with all 4 cards
         descriptions = [
             "» Beginner English", "» Beginner Spanish",
             "★ Advanced English", "★ Advanced Spanish",
@@ -62,7 +59,6 @@ class WotdView(ui.LayoutView):
         gallery = ui.MediaGallery(*items)
         self.add_item(gallery)
 
-        # Footer text
         self.add_item(ui.Separator())
         self.add_item(ui.TextDisplay(
             "-# Try using today's words in a sentence! Practice makes perfect 💪"

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from types import SimpleNamespace
-from typing import Any, cast
 from unittest.mock import AsyncMock
 
 import discord
@@ -26,24 +25,27 @@ def test_pick_pair_raises_when_fewer_than_two_remain() -> None:
         pick_pair(exclude)
 
 
-def test_chained_view_keeps_selected_round_not_a_fresh_pair() -> None:
-    cog = SimpleNamespace(_active={})
+@pytest.mark.asyncio
+async def test_chained_round_uses_previous_mystery_and_advances_streak(monkeypatch) -> None:
+    cog = HigherOrLower(SimpleNamespace())
     player = SimpleNamespace(id=7)
-    seen = {"ChatGPT", "YouTube", "WhatsApp"}
     view = GameView(
-        cast(Any, cog),
-        cast(Any, player),
-        known="YouTube",
-        known_vol=1,
-        mystery="WhatsApp",
-        mystery_vol=2,
-        streak=3,
-        seen=seen,
+        cog, player, known="YouTube", known_vol=1,
+        mystery="WhatsApp", mystery_vol=2, streak=3,
+        seen={"ChatGPT", "YouTube", "WhatsApp"},
     )
-    assert view.known == "YouTube"
-    assert view.mystery == "WhatsApp"
-    assert view.streak == 3
-    assert view.seen is seen
+    monkeypatch.setattr("cogs.hol_cog.main.pick_pair", lambda _seen: ("unused", 0, "Reddit", 10))
+    interaction = SimpleNamespace(
+        response=SimpleNamespace(edit_message=AsyncMock()),
+        followup=SimpleNamespace(send=AsyncMock()),
+    )
+    await view.higher.callback(interaction)
+    result = interaction.response.edit_message.call_args.kwargs["embed"]
+    assert "Streak: 4" in result.title
+    round_embed = interaction.followup.send.call_args.kwargs["embed"]
+    assert "**WhatsApp**" in round_embed.description
+    assert "**Reddit**" in round_embed.description
+    assert "Streak: 4" in round_embed.title
 
 
 class _Forbidden(discord.Forbidden):
@@ -52,15 +54,15 @@ class _Forbidden(discord.Forbidden):
 
 
 @pytest.mark.asyncio
-async def test_failed_hol_send_clears_active_game() -> None:
+async def test_failed_hol_send_allows_a_new_game() -> None:
     ctx = SimpleNamespace(
         author=SimpleNamespace(id=7),
         channel=SimpleNamespace(id=HOL_CHANNEL_IDS[0]),
         send=AsyncMock(side_effect=_Forbidden()),
     )
-    cog = HigherOrLower(cast(Any, SimpleNamespace()))
-    cog._active = {}
-
+    cog = HigherOrLower(SimpleNamespace())
     await HigherOrLower.hol.callback(cog, ctx)
-
-    assert 7 not in cog._active
+    ctx.send.reset_mock(side_effect=True)
+    await HigherOrLower.hol.callback(cog, ctx)
+    ctx.send.assert_awaited_once()
+    assert ctx.send.call_args.kwargs["embed"].title.startswith("🎮 Higher or Lower?")

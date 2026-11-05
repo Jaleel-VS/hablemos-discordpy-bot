@@ -59,6 +59,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "activity" / "backend"))
 from _bedrock import (
     MODEL_HAIKU,
     accent_key,
@@ -67,6 +68,7 @@ from _bedrock import (
     extract_json_array,
     norm,
 )
+from app.games.cloze.engine import ROUND_SIZE
 from content_models import ClozeCard, StoredClozeCard
 
 # ── Paths ────────────────────────────────────────────────────────────────────
@@ -91,11 +93,6 @@ _LANG_NAMES = {
 #: the output token budget and keep a single bad batch cheap to discard.
 _BATCH = 25
 
-#: Hard floor per (target, difficulty) bucket regardless of --min-fill: a deck
-#: needs at least a full daily round (10) of cards per difficulty, plus headroom
-#: so the deterministic daily can pick a non-repeating set. Mirrors the engine's
-#: ROUND_SIZE (kept in sync manually — both are 10).
-ROUND_MIN = 10
 
 #: Bedrock inference config — deterministic-ish, bounded output.
 _MAX_TOKENS = 4096
@@ -438,7 +435,7 @@ def main() -> int:
     # a non-repeating daily round.
     #
     # Two tiers:
-    #  * a HARD per-bucket floor (ROUND_MIN) that ALWAYS applies, including to
+    #  * a HARD per-bucket floor (ROUND_SIZE) that ALWAYS applies, including to
     #    --merge — a merge against an absent or already-thin corpus must never
     #    ship a deck that can't fill a daily round.
     #  * a proportional floor (--min-fill of the per-difficulty target) that
@@ -446,7 +443,7 @@ def main() -> int:
     #    produced cards everywhere but fell well short.
     # Either can be overridden with --allow-underfill after review.
     proportional = 0 if args.merge else int(per_difficulty * args.min_fill)
-    floor = max(ROUND_MIN, proportional)
+    floor = max(ROUND_SIZE, proportional)
     # Check every (target, difficulty) bucket that will EXIST in the written
     # corpus — the union of the targets requested this run and any already
     # present in a merged pool — so a merge that leaves a pre-existing deck thin

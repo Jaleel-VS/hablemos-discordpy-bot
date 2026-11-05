@@ -3,7 +3,6 @@ Configuration data for language learning conversations
 Includes categories, levels, languages, and scenario definitions
 """
 
-# Categories with emojis and scenario ideas for each level
 CATEGORIES = {
     'restaurant': {
         'name': 'Restaurant',
@@ -142,7 +141,6 @@ CATEGORIES = {
     }
 }
 
-# Difficulty levels with learning guidance
 LEVELS = {
     'beginner': {
         'name': 'Beginner',
@@ -173,7 +171,6 @@ LEVELS = {
     }
 }
 
-# Supported languages
 LANGUAGES = {
     'spanish': {
         'name': 'Spanish',
@@ -189,7 +186,6 @@ LANGUAGES = {
     }
 }
 
-# Aliases for flexible command input
 LANGUAGE_ALIASES = {
     'spanish': 'spanish',
     'spa': 'spanish',

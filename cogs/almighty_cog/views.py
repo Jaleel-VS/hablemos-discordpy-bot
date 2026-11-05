@@ -81,9 +81,6 @@ class _RelayModal(Modal):
         self.bot = bot
 
     async def on_error(self, interaction: Interaction, error: Exception) -> None:
-        # Any unhandled error in on_submit lands here. Make sure the
-        # interaction is acknowledged so the user never sees a silent
-        # "interaction failed" with the modal stuck open.
         logger.error("Almighty modal error: %s", error, exc_info=True)
         message = red_embed("Something went wrong. Please try again later.")
         try:
@@ -92,7 +89,7 @@ class _RelayModal(Modal):
             else:
                 await interaction.response.send_message(embed=message, ephemeral=True)
         except discord.HTTPException:
-            pass
+            logger.exception("Failed to report Almighty modal error")
 
 
 class SubmissionModal(_RelayModal, title="New submission"):
@@ -152,9 +149,7 @@ class CategoryModal(_RelayModal, title="Categorize"):
     )
 
     async def on_submit(self, interaction: Interaction) -> None:
-        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         radio: RadioGroup = self.category.component  # type: ignore[assignment]
-        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         note: TextInput = self.note.component  # type: ignore[assignment]
         choice = radio.value or "—"
         body = str(note.value) if note.value else "_(no note)_"

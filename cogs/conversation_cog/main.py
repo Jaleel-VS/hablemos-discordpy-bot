@@ -17,6 +17,7 @@ from discord.ext import commands
 from base_cog import COLORS, BaseCog
 from cogs.utils.gemini import GeminiError
 
+from .config import BATCH_SIZE, DAILY_LIMIT
 from .conversation_data import (
     CATEGORIES,
     CATEGORY_ALIASES,
@@ -102,11 +103,10 @@ class ConversationCog(BaseCog):
             level = params['level']
             category = params['category']
 
-            # Reserve a daily slot (2 per day) - moderators are exempt.
             # In DMs, ctx.author is a User (no guild_permissions), so default to False.
             guild_perms = getattr(ctx.author, 'guild_permissions', None)
             is_moderator = bool(guild_perms and guild_perms.manage_messages)
-            daily_limit = 2
+            daily_limit = DAILY_LIMIT
             if not is_moderator:
                 reserved = await self.bot.db.try_reserve_daily_usage(ctx.author.id, daily_limit)
                 if not reserved:
@@ -122,26 +122,23 @@ class ConversationCog(BaseCog):
                     await ctx.send(embed=embed)
                     return
 
-            # Get conversation from database
             conversation = await self.bot.db.get_random_conversation(
                 language, level, category
             )
 
             if not conversation:
-                # No conversations exist - generate some
                 embed = discord.Embed(
                     title="🔄 Generating Conversations",
                     description=(
                         f"No conversations available for **{language} {level} {category}**.\n"
-                        f"Generating 10 new conversations... This may take a moment."
+                        f"Generating {BATCH_SIZE} new conversations... This may take a moment."
                     ),
                     color=0xFFA500
                 )
                 loading_msg = await ctx.send(embed=embed)
 
-                # Generate 10 conversations for this combo
                 success = await self.generate_conversations_batch(
-                    language, level, category, count=10
+                    language, level, category, count=BATCH_SIZE
                 )
 
                 if not success:
@@ -153,7 +150,6 @@ class ConversationCog(BaseCog):
                     await loading_msg.edit(embed=embed)
                     return
 
-                # Try again to get a conversation
                 conversation = await self.bot.db.get_random_conversation(
                     language, level, category
                 )
@@ -166,10 +162,8 @@ class ConversationCog(BaseCog):
                     await ctx.send("❌ Error retrieving conversation after generation.")
                     return
 
-            # Increment usage count
             await self.bot.db.increment_conversation_usage(conversation['id'])
 
-            # Check if regeneration is needed (all used at least once)
             needs_regen = await self.bot.db.check_regeneration_needed(
                 language, level, category
             )
@@ -189,7 +183,7 @@ class ConversationCog(BaseCog):
             await ctx.send(embed=embed)
 
     async def generate_conversations_batch(self, language: str, level: str,
-                                          category: str, count: int = 10) -> int:
+                                          category: str, count: int = BATCH_SIZE) -> int:
         """
         Generate a batch of conversations for a specific combo
 
@@ -205,10 +199,8 @@ class ConversationCog(BaseCog):
 
         for i in range(count):
             try:
-                # Select random scenario
                 scenario = random.choice(scenarios)
 
-                # Generate conversation
                 try:
                     parsed = await gemini.run(
                         CONVERSATION_PROMPT,
@@ -227,7 +219,6 @@ class ConversationCog(BaseCog):
                     parsed = None
 
                 if parsed is not None:
-                    # Save to database
                     await self.bot.db.add_conversation(
                         language=language,
                         level=level,
@@ -241,10 +232,6 @@ class ConversationCog(BaseCog):
                     logger.info("Generated conversation %s/%s for %s/%s/%s", i+1, count, language, level, category)
                 else:
                     logger.warning("Failed to generate conversation %s/%s", i+1, count)
-
-                # Rate limiting: 1 second between generations
-                if i < count - 1:
-                    await asyncio.sleep(1)
 
             except Exception as e:
                 logger.error("Error generating conversation %s/%s: %s", i+1, count, e)
@@ -261,16 +248,14 @@ class ConversationCog(BaseCog):
         try:
             logger.info("Starting regeneration for %s/%s/%s", language, level, category)
 
-            # Delete old conversations
             deleted = await self.bot.db.delete_old_conversations(language, level, category)
             logger.info("Deleted %s old conversations", deleted)
 
-            # Generate 10 new ones
             success_count = await self.generate_conversations_batch(
-                language, level, category, count=10
+                language, level, category, count=BATCH_SIZE
             )
 
-            logger.info("Regenerated %s/10 conversations for %s/%s/%s", success_count, language, level, category)
+            logger.info("Regenerated %s/%s conversations for %s/%s/%s", success_count, BATCH_SIZE, language, level, category)
 
         except Exception as e:
             logger.error("Error in background regeneration: %s", e, exc_info=True)
@@ -294,7 +279,6 @@ class ConversationCog(BaseCog):
             color=random.choice(COLORS)
         )
 
-        # Add conversation
         conversation_text = conversation['conversation_text']
 
         # Split if too long (Discord limit 1024 per field)
@@ -305,7 +289,6 @@ class ConversationCog(BaseCog):
                 inline=False
             )
         else:
-            # Split into chunks at natural break points (by line)
             lines = conversation_text.split('\n')
             current_chunk = []
             chunks = []
@@ -332,14 +315,12 @@ class ConversationCog(BaseCog):
                     inline=False
                 )
 
-        # Footer with metadata
         footer_text = (
             f"{lang_emoji} {conversation['language'].title()} • "
             f"{level_emoji} {conversation['level'].title()} • "
             f"ID: {conversation['id']}"
         )
 
-        # Add remaining uses info for non-moderators
         if remaining_uses is not None:
             if remaining_uses > 0:
                 footer_text += f" • {remaining_uses} remaining today"
@@ -356,18 +337,17 @@ class ConversationCog(BaseCog):
         """
         Generate all initial conversations (Moderators/Owner only)
 
-        Generates: 5 categories × 3 levels × 2 languages × 10 conversations = 300 total
-        This command can take 10-15 minutes to complete.
+        Generates every language, difficulty, and category using the configured batch size.
         """
-        # Confirm with user
+        target = len(CATEGORIES) * len(LEVELS) * len(LANGUAGES) * BATCH_SIZE
         confirm_embed = discord.Embed(
             title="⚠️ Generate All Conversations",
             description=(
-                "This will generate **300 conversations**:\n"
+                f"This will generate **{target} conversations**:\n"
                 "• 5 categories (Restaurant, Travel, Shopping, Workplace, Social)\n"
                 "• 3 difficulty levels (Beginner, Intermediate, Advanced)\n"
                 "• 2 languages (Spanish, English)\n"
-                "• 10 variations each\n\n"
+                f"• {BATCH_SIZE} variations each\n\n"
                 "**This will take approximately 10-15 minutes.**\n\n"
                 "React with ✅ to confirm or ❌ to cancel."
             ),
@@ -399,7 +379,6 @@ class ConversationCog(BaseCog):
             ))
             return
 
-        # Start generation
         progress_embed = discord.Embed(
             title="🔄 Generating Conversations",
             description="Starting generation...",
@@ -411,32 +390,25 @@ class ConversationCog(BaseCog):
         failed = 0
         start_time = time.monotonic()
 
-        # Generate for each combination
         for language in LANGUAGES:
             for level in LEVELS:
                 for category in CATEGORIES:
-                    # Update progress
                     elapsed = int(time.monotonic() - start_time)
                     progress_embed.description = (
-                        f"**Progress:** {total}/300 conversations generated\n"
+                        f"**Progress:** {total}/{target} conversations generated\n"
                         f"**Current:** {language} - {level} - {category}\n"
                         f"**Failed:** {failed}\n"
                         f"**Time elapsed:** {elapsed // 60}m {elapsed % 60}s"
                     )
                     await progress_msg.edit(embed=progress_embed)
 
-                    # Generate 10 conversations for this combo
                     success_count = await self.generate_conversations_batch(
-                        language, level, category, count=10
+                        language, level, category, count=BATCH_SIZE
                     )
 
                     total += success_count
-                    failed += (10 - success_count)
+                    failed += (BATCH_SIZE - success_count)
 
-                    # Rate limiting: wait 2 seconds between batches
-                    await asyncio.sleep(2)
-
-        # Final report
         elapsed_time = int(time.monotonic() - start_time)
         final_embed = discord.Embed(
             title="✅ Conversation Generation Complete",
@@ -457,10 +429,8 @@ class ConversationCog(BaseCog):
     async def conversation_stats(self, ctx):
         """Show conversation statistics (Owner only)"""
 
-        # Get total counts
         total_convos = await self.bot.db.get_conversation_count()
 
-        # Get breakdown by combo
         stats_by_combo = await self.bot.db.get_conversation_stats_by_combo()
 
         embed = discord.Embed(
@@ -469,7 +439,6 @@ class ConversationCog(BaseCog):
             color=0x3498db
         )
 
-        # Group by language
         for language in LANGUAGES:
             lang_stats = [s for s in stats_by_combo if s['language'] == language]
 

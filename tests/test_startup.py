@@ -3,12 +3,14 @@
 import runpy
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import AsyncMock
 
 import discord
 import pytest
 from discord.ext.commands import Bot
 
 import config
+import db
 import logger
 from db import Database
 
@@ -148,4 +150,20 @@ async def test_on_ready_missing_guild_is_nonfatal(
 
     assert bot.online_channel is None
     assert bot.error_channel is None
+
+
+async def test_schema_failure_propagates_and_closes_pool(monkeypatch: pytest.MonkeyPatch) -> None:
+    pool = SimpleNamespace(close=AsyncMock())
+    failure = RuntimeError("schema unavailable")
+    monkeypatch.setattr(db.asyncpg, "create_pool", AsyncMock(return_value=pool))
+    monkeypatch.setattr(db, "initialize_schema", AsyncMock(side_effect=failure))
+    database = Database("postgresql://unused")
+
+    with pytest.raises(RuntimeError) as caught:
+        await database.connect()
+
+    assert caught.value is failure
+    pool.close.assert_awaited_once()
+    await database.close()
+    pool.close.assert_awaited_once()
 

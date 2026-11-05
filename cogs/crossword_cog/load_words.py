@@ -12,7 +12,7 @@ DB_URL = sys.argv[1] if len(sys.argv) > 1 else ""
 CREATE_TABLE = """
 CREATE TABLE IF NOT EXISTS crossword_words (
     id SERIAL PRIMARY KEY,
-    word_es VARCHAR(12) NOT NULL,
+    word_es TEXT NOT NULL,
     word_en VARCHAR(30) NOT NULL,
     clue_es TEXT NOT NULL,
     clue_en TEXT NOT NULL,
@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS crossword_words (
     difficulty VARCHAR(10) NOT NULL CHECK (difficulty IN ('beginner', 'advanced')),
     UNIQUE (word_es, theme)
 );
+ALTER TABLE crossword_words ALTER COLUMN word_es TYPE TEXT;
 CREATE INDEX IF NOT EXISTS idx_crossword_difficulty ON crossword_words (difficulty);
 CREATE INDEX IF NOT EXISTS idx_crossword_theme ON crossword_words (theme);
 """
@@ -72,7 +73,6 @@ def main() -> None:
     rows = load_csvs()
     print(f"Loaded {len(rows)} unique words from CSVs")
 
-    # Write consolidated CSV
     out = DATA_DIR / "all_words.csv"
     with open(out, "w", newline="") as fh:
         writer = csv.writer(fh)

@@ -1,11 +1,12 @@
 """Logging setup — RotatingFileHandler + stdout + optional Discord webhook."""
 import asyncio
 import logging
-import os
 import sys
 from logging.handlers import RotatingFileHandler
 
 import aiohttp
+
+from config import get_str_env
 
 
 class DiscordWebhookHandler(logging.Handler):
@@ -25,27 +26,26 @@ class DiscordWebhookHandler(logging.Handler):
     def emit(self, record: logging.LogRecord):
         try:
             loop = asyncio.get_running_loop()
-            task = loop.create_task(self._send(self.format(record)))
+            task = loop.create_task(self._send(self.format(record), record))
             self._tasks.add(task)
             task.add_done_callback(self._tasks.discard)
-        except RuntimeError:
-            pass  # No running loop (e.g. during startup) — skip silently
+        except Exception:
+            self.handleError(record)
 
-    async def _send(self, message: str):
+    async def _send(self, message: str, record: logging.LogRecord):
         try:
             session = self._get_session()
             await session.post(self.webhook_url, json={"content": f"```\n{message[:1990]}\n```"})
         except Exception:
-            pass  # Never let the log handler crash the bot
+            self.handleError(record)
 
 
 def setup_logging():
     log_formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s')
 
-    level_name = os.getenv("LOG_LEVEL", "INFO").upper()
+    level_name = get_str_env("LOG_LEVEL", "INFO").upper()
     level = getattr(logging, level_name, logging.INFO)
 
-    # File Handler
     file_handler = RotatingFileHandler('bot.log', maxBytes=5*1024*1024, backupCount=2)
     file_handler.setFormatter(log_formatter)
     file_handler.setLevel(level)
@@ -55,14 +55,12 @@ def setup_logging():
     stream_handler.setFormatter(log_formatter)
     stream_handler.setLevel(level)
 
-    # Root Logger
     root_logger = logging.getLogger()
     root_logger.setLevel(level)
     root_logger.addHandler(file_handler)
     root_logger.addHandler(stream_handler)
 
-    # Discord webhook handler (WARNING+), if configured
-    webhook_url = os.getenv("LOG_WEBHOOK_URL")
+    webhook_url = get_str_env("LOG_WEBHOOK_URL", "")
     if webhook_url:
         webhook_handler = DiscordWebhookHandler(webhook_url)
         webhook_handler.setFormatter(log_formatter)

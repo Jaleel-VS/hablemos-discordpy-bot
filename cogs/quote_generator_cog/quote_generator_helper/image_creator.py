@@ -137,7 +137,6 @@ def create_image(user_name: str, user_avatar: str, message_content: str, *, outp
     imgkit.from_string(html, img_path, options=options)
     return img_path
 
-# for testing
 if __name__ == "__main__":
     create_image('Priúñaku',
                 'https://cdn.discordapp.com/avatars/166580565548466176/a106c3ab56c9c99d48b437b05a5552e4.png?size=256',

@@ -32,7 +32,6 @@ class DatabaseMixin:
             return await conn.execute(query, *args)
 
 from db.automod_watch import AutomodWatchMixin
-from db.bets import WCBetsMixin
 from db.conversations import ConversationsMixin
 from db.crossword import CrosswordMixin
 from db.dictation import DictationMixin
@@ -46,7 +45,6 @@ from db.metrics import MetricsMixin
 from db.news import NewsMixin
 from db.notes import NotesMixin
 from db.practice import PracticeMixin
-from db.predictions import WCPredictionsMixin
 from db.privacy import PrivacyMixin
 from db.quotes import QuotesMixin
 from db.schema import initialize_schema
@@ -73,8 +71,6 @@ class Database(
     TasksMixin,
     DictationMixin,
     CrosswordMixin,
-    WCPredictionsMixin,
-    WCBetsMixin,
     TicketSubsMixin,
     StatsMixin,
     GameResultsMixin,
@@ -105,8 +101,10 @@ class Database(
 
         try:
             await initialize_schema(self.pool)
-        except Exception as e:
-            logger.warning("Schema init failed (tables likely already exist): %s", e)
+        except Exception:
+            await self.close()
+            self.pool = None
+            raise
 
     async def close(self):
         """Close the database connection pool"""

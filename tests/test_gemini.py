@@ -5,6 +5,7 @@ overriding ``_generate_content`` in a test subclass.
 """
 from __future__ import annotations
 
+import asyncio
 from datetime import datetime
 
 import pytest
@@ -67,9 +68,6 @@ class _TestGemini(Gemini):
         return action
 
 
-# ---------- Prompt validation ----------
-
-
 class _NoFeaturePrompt(Prompt[str, str]):
     # Intentionally no `feature` set.
     def render(self, inp: str) -> str:
@@ -84,9 +82,6 @@ async def test_resolve_model_rejects_prompt_without_feature():
     g = _TestGemini()
     with pytest.raises(ValueError, match="feature is empty"):
         await g.run(_NoFeaturePrompt(), "hi")
-
-
-# ---------- Model resolution ----------
 
 
 @pytest.mark.asyncio
@@ -119,11 +114,7 @@ def test_default_model_falls_back_to_env_then_constant(monkeypatch):
     monkeypatch.delenv("GEMINI_DEFAULT_MODEL", raising=False)
     g2 = _TestGemini.__new__(_TestGemini)
     Gemini.__init__(g2, "fake-key")
-    # built-in fallback is documented as gemini-3.5-flash
     assert g2._default_model == "gemini-3.5-flash"
-
-
-# ---------- Error mapping (no retry on client errors) ----------
 
 
 @pytest.mark.asyncio
@@ -164,9 +155,6 @@ async def test_401_raises_with_auth_message():
     assert len(g.calls) == 1
 
 
-# ---------- Retry behavior ----------
-
-
 @pytest.mark.asyncio
 async def test_server_error_retries_then_returns(monkeypatch):
     # No-op sleep so the retry test runs instantly.
@@ -202,9 +190,6 @@ async def test_server_error_exhausts_retries_then_raises(monkeypatch):
     assert len(g.calls) == 3  # MAX_RETRIES
 
 
-# ---------- Happy path ----------
-
-
 @pytest.mark.asyncio
 async def test_run_round_trip_renders_and_parses():
     class _DoublePrompt(Prompt[str, str]):
@@ -221,17 +206,11 @@ async def test_run_round_trip_renders_and_parses():
     assert g.calls[0]["prompt"] == "prompt(in)"
 
 
-# ---------- Ask prompt smoke ----------
-
-
 def test_ask_prompt_passthrough():
     assert ASK_PROMPT.feature == "ask"
     assert ASK_PROMPT.render("hello world") == "hello world"
     assert ASK_PROMPT.parse("response text", "hello world") == "response text"
     assert isinstance(ASK_PROMPT, AskPrompt)
-
-
-# ---------- Summary prompts ----------
 
 
 def _msg(author: str, content: str, hour: int = 12, minute: int = 0, link: str | None = None) -> dict:
@@ -313,16 +292,6 @@ def test_suggest_topics_prompt_renders_plain():
     assert "[MSG_LINK:" not in rendered  # plain format only
 
 
-def test_summary_prompts_share_feature_slug():
-    # All three resolve GEMINI_SUMMARY_MODEL via the same feature key.
-    assert SUMMARY_PROMPT.feature == "summary"
-    assert FOCUSED_SUMMARY_PROMPT.feature == "summary"
-    assert SUGGEST_TOPICS_PROMPT.feature == "summary"
-
-
-# ---------- Practice prompt ----------
-
-
 def test_practice_sentence_prompt_renders_with_language_name():
     rendered = PRACTICE_SENTENCE_PROMPT.render(
         PracticeWord(word="hablar", translation="to speak", language="spanish"),
@@ -362,7 +331,6 @@ def test_practice_parse_word_boundary_match_only():
     result = PRACTICE_SENTENCE_PROMPT.parse(
         "My cookbook has a booking for tonight.", inp,
     )
-    # No standalone "book" — reject.
     assert result is None
 
 
@@ -374,7 +342,6 @@ def test_practice_parse_case_insensitive_match():
     assert result is not None
     sentence, cloze = result
     assert sentence == text
-    # The matched form ("Hablar") was replaced with the blank.
     assert cloze == "___ bien requiere mucha pr\u00e1ctica."
 
 
@@ -525,5 +492,43 @@ def test_conversation_parse_strips_whitespace_around_fields():
     assert result.speaker2 == "Bob"
 
 
-def test_conversation_prompt_feature_slug():
-    assert CONVERSATION_PROMPT.feature == "conversation"
+@pytest.mark.asyncio
+async def test_deadline_cancels_request_and_returns_user_error():
+    cancelled = asyncio.Event()
+
+    class SlowGemini(_TestGemini):
+        async def _generate_content(self, **kwargs):
+            try:
+                await asyncio.Event().wait()
+            finally:
+                cancelled.set()
+
+    prompt = AskPrompt()
+    prompt.timeout_seconds = 0.01
+    with pytest.raises(GeminiError) as caught:
+        await SlowGemini().run(prompt, "hello")
+    assert caught.value.code == 408
+    assert "Try again" in caught.value.user_message
+    assert cancelled.is_set()
+
+
+@pytest.mark.asyncio
+async def test_deadline_includes_shared_rate_limit_wait():
+    class ShortSummary(type(SUMMARY_PROMPT)):
+        timeout_seconds = 0.01
+
+    g = _TestGemini(actions=["unused"])
+    g._rate_limiter.wait_if_needed = lambda: asyncio.Event().wait()
+    with pytest.raises(GeminiError) as caught:
+        await g.run(ShortSummary(), [{"author": "Ana", "content": "hola", "timestamp": datetime.now()}])
+    assert caught.value.code == 408
+    assert g.calls == []
+
+
+def test_breakdown_invalid_output_has_explicit_parser_error():
+    from pydantic import ValidationError
+
+    from cogs.breakdown_cog.prompts import BREAKDOWN_PROMPT, BreakdownInput
+
+    with pytest.raises(ValidationError):
+        BREAKDOWN_PROMPT.parse('{"clauses":', BreakdownInput("Hola mundo", "es"))

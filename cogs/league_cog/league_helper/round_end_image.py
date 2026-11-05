@@ -37,17 +37,14 @@ logger = logging.getLogger(__name__)
 
 SCALE = 3
 OUTPUT_SCALE = 2
-S = SCALE * OUTPUT_SCALE  # 6 — matches leaderboard_image_pillow
+S = SCALE * OUTPUT_SCALE
 
-# --------------------------------------------------------------------------- #
-# Layout constants (nominal display pixels * S)                               #
-# --------------------------------------------------------------------------- #
 
 WIDTH = 900 * S
 BANNER_H = 90 * S
 SECTION_H = 430 * S     # per league
 DIVIDER_H = 20 * S
-HEIGHT = BANNER_H + SECTION_H * 2 + DIVIDER_H   # = 970 * S
+HEIGHT = BANNER_H + SECTION_H * 2 + DIVIDER_H
 
 # Palette — dark Discord-friendly background with bright accents.
 BG = (26, 27, 30)
@@ -75,7 +72,6 @@ PODIUM_LAYOUT = {
 PEDESTAL_WIDTH = 190 * S
 PODIUM_BASELINE_FROM_SECTION_TOP = 335 * S   # where pedestal bottoms sit
 
-# Avatars
 AVATAR_TOP = 110 * S       # bigger for 1st
 AVATAR_OTHER = 92 * S
 AVATAR_RUNNER = 48 * S      # small avatars for 4-6 cards
@@ -87,10 +83,6 @@ RUNNER_MARGIN_X = 18 * S
 RUNNER_CARD_COLOR_TOP = (88, 101, 191)
 RUNNER_CARD_COLOR_BOTTOM = (61, 72, 155)
 
-
-# --------------------------------------------------------------------------- #
-# Helpers                                                                     #
-# --------------------------------------------------------------------------- #
 
 def _load_avatar(url: str | None, size: int) -> Image.Image:
     """Best-effort avatar fetch with a default-avatar fallback."""
@@ -120,7 +112,6 @@ def _fit_text(
     """Truncate ``text`` with an ellipsis so it fits ``max_width``."""
     if draw.textlength(text, font=font) <= max_width:
         return text
-    # Binary-ish shrink: chop one char at a time is fine for usernames.
     while text and draw.textlength(text + "…", font=font) > max_width:
         text = text[:-1]
     return (text + "…") if text else ""
@@ -139,13 +130,8 @@ def _draw_centered_text(
     draw.text((xy_center[0] - w / 2, xy_center[1] - h / 2), text, fill=fill, font=font)
 
 
-# --------------------------------------------------------------------------- #
-# Section renderers                                                           #
-# --------------------------------------------------------------------------- #
-
 def _render_banner(image: Image.Image, draw: ImageDraw.ImageDraw, round_number: int) -> None:
     """Top banner across the whole image."""
-    # Gradient fill
     banner = Image.new("RGB", (WIDTH, BANNER_H), BG)
     banner_draw = ImageDraw.Draw(banner)
     draw_gradient_rect(banner_draw, (0, 0, WIDTH, BANNER_H), BANNER_TOP, BANNER_BOTTOM)
@@ -174,7 +160,6 @@ def _render_podium_slot(
     x_center, pedestal_h = PODIUM_LAYOUT[rank]
     baseline = section_top + PODIUM_BASELINE_FROM_SECTION_TOP
 
-    # Pedestal rectangle (gradient filled).
     ped_x0 = x_center - PEDESTAL_WIDTH // 2
     ped_y0 = baseline - pedestal_h
     ped_y1 = baseline
@@ -184,7 +169,6 @@ def _render_podium_slot(
     top_color, bot_color = MEDAL_COLORS[rank]
     draw_gradient_rect(ped_draw, (0, 0, PEDESTAL_WIDTH, pedestal_h), top_color, bot_color)
 
-    # Rounded-corner mask for the pedestal.
     mask = Image.new("L", (PEDESTAL_WIDTH, pedestal_h), 0)
     mask_draw = ImageDraw.Draw(mask)
     mask_draw.rounded_rectangle(
@@ -192,13 +176,11 @@ def _render_podium_slot(
     )
     image.paste(ped_img, (ped_x0, ped_y0), mask)
 
-    # Rank label at the top of the pedestal.
     rank_font = get_font(28, bold=True)
     _draw_centered_text(
         draw, (x_center, ped_y0 + 22 * S), MEDAL_EMOJI[rank], rank_font, (30, 30, 30),
     )
 
-    # Username + score inside the pedestal.
     name_font = get_font(18, bold=True)
     score_font = get_font(16, bold=False)
 
@@ -219,14 +201,12 @@ def _render_podium_slot(
             f"{entry['total_score']} pts", score_font, (60, 60, 60),
         )
 
-    # Avatar above the pedestal.
     avatar_size = AVATAR_TOP if rank == 1 else AVATAR_OTHER
     if entry is None:
         avatar = create_default_avatar(avatar_size)
         border_rgba: tuple[int, int, int, int] = (80, 80, 80, 255)
     else:
         avatar = _load_avatar(entry.get("avatar_url"), avatar_size)
-        # Winners get a bold colored ring matching their medal.
         medal_top = MEDAL_COLORS[rank][0]
         border_rgba = (*medal_top, 255)
 
@@ -235,7 +215,6 @@ def _render_podium_slot(
     ay = ped_y0 - bordered.height + 8 * S   # slightly overlap the pedestal top
     image.paste(bordered, (ax, ay), bordered)
 
-    # Gold-crown accent for 1st place.
     if rank == 1 and entry is not None:
         crown_font = get_font(30, bold=False)
         _draw_centered_text(
@@ -255,12 +234,11 @@ def _render_runner_card(
     """One of the three runner-up (ranks 4-6) cards at the bottom of a section."""
     usable_width = WIDTH - 2 * RUNNER_MARGIN_X
     gap = 12 * S
-    card_w = (usable_width - 2 * gap) // 3   # 12 px gap between cards
+    card_w = (usable_width - 2 * gap) // 3
     card_x0 = RUNNER_MARGIN_X + slot_index * (card_w + gap)
     card_y0 = section_top + RUNNER_Y_FROM_SECTION_TOP
     card_x1 = card_x0 + card_w
 
-    # Gradient background with rounded corners.
     card_img = Image.new("RGB", (card_w, RUNNER_H), BG)
     card_draw = ImageDraw.Draw(card_img)
     draw_gradient_rect(
@@ -276,7 +254,6 @@ def _render_runner_card(
     name_font = get_font(16, bold=True)
     score_font = get_font(14, bold=False)
 
-    # Rank label.
     draw.text(
         (card_x0 + 14 * S, card_y0 + (RUNNER_H - 26 * S) // 2),
         f"#{rank}", fill=TEXT_LIGHT, font=rank_font,
@@ -289,13 +266,11 @@ def _render_runner_card(
         )
         return
 
-    # Avatar.
     avatar = _load_avatar(entry.get("avatar_url"), AVATAR_RUNNER)
     ax = card_x0 + 56 * S
     ay = card_y0 + (RUNNER_H - AVATAR_RUNNER) // 2
     image.paste(avatar, (ax, ay), avatar)
 
-    # Name + score stacked to the right of the avatar.
     text_x = ax + AVATAR_RUNNER + 10 * S
     max_text_width = card_x1 - text_x - 10 * S
     name_text = _fit_text(draw, entry["username"], name_font, max_text_width)
@@ -317,14 +292,12 @@ def _render_section(
     section_top: int,
 ) -> None:
     """Render one league's header + podium + runners-up."""
-    # Header.
     header_font = get_font(26, bold=True)
     draw.text(
         (RUNNER_MARGIN_X, section_top + 14 * S),
         f"{flag}  {league_label}",
         fill=TEXT_LIGHT, font=header_font,
     )
-    # Thin underline for the section header.
     draw.line(
         [
             (RUNNER_MARGIN_X, section_top + 52 * S),
@@ -333,7 +306,6 @@ def _render_section(
         fill=DIVIDER_COLOR, width=1 * S,
     )
 
-    # Index entries by rank for easy lookup.
     by_rank: dict[int, dict] = {int(e["rank"]): e for e in entries if "rank" in e}
 
     # Podium (ranks 1-3). Draw 2, then 1, then 3 so the tallest pedestal
@@ -344,17 +316,12 @@ def _render_section(
             rank=rank, section_top=section_top,
         )
 
-    # Runners-up (ranks 4-6).
     for slot_index, rank in enumerate((4, 5, 6)):
         _render_runner_card(
             image, draw, by_rank.get(rank),
             rank=rank, slot_index=slot_index, section_top=section_top,
         )
 
-
-# --------------------------------------------------------------------------- #
-# Public API                                                                  #
-# --------------------------------------------------------------------------- #
 
 def render_round_end(
     *,
@@ -378,10 +345,8 @@ def render_round_end(
     image = Image.new("RGB", (WIDTH, HEIGHT), BG)
     draw = ImageDraw.Draw(image)
 
-    # Banner.
     _render_banner(image, draw, round_number)
 
-    # Spanish section.
     _render_section(
         image, draw,
         league_label="Spanish League",
@@ -390,14 +355,12 @@ def render_round_end(
         section_top=BANNER_H,
     )
 
-    # Divider between leagues.
     div_y = BANNER_H + SECTION_H
     draw.rectangle(
         [(0, div_y), (WIDTH, div_y + DIVIDER_H)],
         fill=DIVIDER_COLOR,
     )
 
-    # English section.
     _render_section(
         image, draw,
         league_label="English League",

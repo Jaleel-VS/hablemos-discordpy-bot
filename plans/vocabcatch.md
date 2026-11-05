@@ -121,7 +121,7 @@ main.py        — VocabCatch cog: on_message (spawn + catch), $vocadex,
 renderer.py    — render_card(card, *, revealed) -> BytesIO (Pillow)
 config.py      — channel ID, spawn threshold/cooldown/jitter, rarity
                  weights, rarity colors, point values (centralized env helpers)
-admin.py       — WCBetAdmin-style owner group $vocatchadmin:
+admin.py       — owner group $vocatchadmin:
                  spawn (force), addcard, reload, stats
 seed.py        — initial curated card list (or a JSON the seed reads)
 ```
@@ -176,8 +176,7 @@ Rarity colors/labels also centralized in `config.py`.
 - Exact rarity palette (hex per tier) + whether Legendary gets an
   animated/holo treatment (static foil is simplest).
 - Whether example sentences ship in the first seed or come later.
-- Collection pagination style — reuse the wcbet `My bets`/history
-  Components-V2 paging, or a simple Pillow grid sheet.
+- Collection pagination style — Components-V2 paging, or a simple Pillow grid sheet.
 
 ## Build order (proposed)
 

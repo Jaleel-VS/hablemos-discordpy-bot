@@ -32,7 +32,6 @@ def _me(offer, seek, **kw):
     return {"user_id": 1, "post_data": me["post_data"]}
 
 
-# RECIPROCITY (the hard requirement)
 
 def test_reciprocal_match_is_returned():
     me = _me("english", "spanish")
@@ -67,7 +66,6 @@ def test_self_is_excluded():
     assert rank_matches(me, others, now=NOW) == []
 
 
-# RANKING
 
 def test_region_exact_beats_region_far():
     me = _me("english", "spanish", region="south_america")
@@ -113,7 +111,6 @@ def test_level_fit_rewards_close_levels():
     assert result[0].user_id == 2
 
 
-# OUTPUT SHAPE & LIMITS
 
 def test_limit_caps_results():
     me = _me("english", "spanish")

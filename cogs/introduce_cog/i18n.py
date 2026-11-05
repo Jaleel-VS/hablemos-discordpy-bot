@@ -2,7 +2,6 @@
 from typing import Final
 
 STRINGS: Final[dict[str, dict[str, str]]] = {
-    # ── IntroStartView ──
     "intro_title": {
         "en": "Introduction",
         "es": "Introducción",
@@ -43,7 +42,6 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "en": "Please select whether you're looking for an exchange partner.",
         "es": "Por favor selecciona si buscas un compañero de intercambio.",
     },
-    # ── ExchangePrefsView ──
     "exchange_title": {
         "en": "Find an Exchange Partner",
         "es": "Buscar un compañero de intercambio",
@@ -76,7 +74,6 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "en": "Please select: {fields}.",
         "es": "Por favor selecciona: {fields}.",
     },
-    # ── ExchangeDetailsModal ──
     "modal_title_exchange": {
         "en": "About You",
         "es": "Sobre ti",
@@ -113,7 +110,6 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "en": "e.g., Spain, USA, Mexico...",
         "es": "ej., España, EE.UU., México...",
     },
-    # ── IntroOnlyModal ──
     "modal_title_intro": {
         "en": "Introduce Yourself",
         "es": "Preséntate",
@@ -134,7 +130,6 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "en": "e.g., YouTube, sports, music, cooking, gaming...",
         "es": "ej., YouTube, deportes, música, cocina, videojuegos...",
     },
-    # ── Embed text ──
     "embed_seeking": {
         "en": "{mention}'s seeking an exchange partner!",
         "es": "¡{mention} busca un compañero de intercambio!",
@@ -187,7 +182,6 @@ STRINGS: Final[dict[str, dict[str, str]]] = {
         "en": "**{mention}** has joined the community!",
         "es": "¡**{mention}** se ha unido a la comunidad!",
     },
-    # ── Errors / confirmations ──
     "error_no_links": {
         "en": "Links are not allowed. Please remove any URLs and try again.",
         "es": "No se permiten enlaces. Por favor elimina cualquier URL e inténtalo de nuevo.",
@@ -232,13 +226,10 @@ def t(key: str, lang: str = "en", **kwargs) -> str:
     return text
 
 
-# Translated display values for select options shown in embeds
 DISPLAY_VALUES: Final[dict[str, dict[str, str]]] = {
-    # Languages
     "english": {"en": "English", "es": "Inglés"},
     "spanish": {"en": "Spanish", "es": "Español"},
     "other": {"en": "Other", "es": "Otro"},
-    # Proficiency
     "C2": {"en": "C2 (Proficient)", "es": "C2 (Competente)"},
     "C1": {"en": "C1 (Advanced)", "es": "C1 (Avanzado)"},
     "B2": {"en": "B2 (Upper Intermediate)", "es": "B2 (Intermedio alto)"},

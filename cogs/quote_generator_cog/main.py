@@ -33,15 +33,18 @@ from cogs.quote_generator_cog.quote_generator_helper.image_creator_multi import 
     create_multi_image,
 )
 from cogs.utils.embeds import green_embed, red_embed, yellow_embed
+from cogs.utils.guild import (
+    ENGLISH_NATIVE_ROLE_ID,
+    OTHER_NATIVE_ROLE_ID,
+    SPANISH_NATIVE_ROLE_ID,
+)
+from cogs.utils.message_links import parse_message_link
 
 from .config import (
     FEATURE_KEY_EMOJI,
     ROLE_COLOR_ENGLISH_NATIVE,
     ROLE_COLOR_OTHER_NATIVE,
     ROLE_COLOR_SPANISH_NATIVE,
-    ROLE_ID_ENGLISH_NATIVE,
-    ROLE_ID_OTHER_NATIVE,
-    ROLE_ID_SPANISH_NATIVE,
 )
 from .emoji import (
     render_visual_length,
@@ -54,6 +57,18 @@ logger = logging.getLogger(__name__)
 
 MAX_QUOTE_LENGTH = 250
 DEFAULT_AVATAR = "https://i.imgur.com/z9tOsSz.png"
+
+
+def username_color_for_member(member: discord.User | discord.Member) -> tuple[int, int, int] | None:
+    """Resolve the quote username color, preferring Spanish then other native roles."""
+    role_ids = {role.id for role in getattr(member, "roles", [])}
+    if SPANISH_NATIVE_ROLE_ID in role_ids:
+        return ROLE_COLOR_SPANISH_NATIVE
+    if OTHER_NATIVE_ROLE_ID in role_ids:
+        return ROLE_COLOR_OTHER_NATIVE
+    if ENGLISH_NATIVE_ROLE_ID in role_ids:
+        return ROLE_COLOR_ENGLISH_NATIVE
+    return None
 
 
 def _get_img_url(url_identifier: str | None) -> str:
@@ -152,15 +167,6 @@ async def _clean_message_content(
     return _resolve_mentions(content, mentions, role_mentions, channel_mentions, guild)
 
 
-def _parse_message_link(link: str) -> tuple[int, int, int] | None:
-    """Parse a Discord message link into (guild_id, channel_id, message_id). Returns None if invalid."""
-    parts = link.split('/')
-    try:
-        return int(parts[4]), int(parts[5]), int(parts[6])
-    except (IndexError, ValueError):
-        return None
-
-
 class QuoteGenerator(BaseCog):
     """Create styled quote images from Discord messages."""
 
@@ -201,17 +207,6 @@ class QuoteGenerator(BaseCog):
         avatar = _get_img_url(author.display_avatar)
         return username, avatar, content
 
-    @staticmethod
-    def _quotem_username_color(member) -> tuple[int, int, int] | None:
-        """Return the configured native-language color for a member."""
-        role_ids = {role.id for role in getattr(member, 'roles', [])}
-        if ROLE_ID_SPANISH_NATIVE in role_ids:
-            return ROLE_COLOR_SPANISH_NATIVE
-        if ROLE_ID_OTHER_NATIVE in role_ids:
-            return ROLE_COLOR_OTHER_NATIVE
-        if ROLE_ID_ENGLISH_NATIVE in role_ids:
-            return ROLE_COLOR_ENGLISH_NATIVE
-        return None
 
     async def _fetch_message_safe(self, ctx, channel, message_id):
         """Fetch a message, sending an error embed on failure. Returns the message or None."""
@@ -240,7 +235,6 @@ class QuoteGenerator(BaseCog):
             await ctx.send(embed=red_embed(f"Please type `$help {command_name}` for info on correct usage."))
             return None
 
-        # Detect bare message IDs (common mistake)
         if len(user_input) == 1 and user_input[0].isdigit() and not is_reply:
             await ctx.send(embed=red_embed(
                 "That looks like a message ID. Please use a message link or reply instead. "
@@ -248,7 +242,6 @@ class QuoteGenerator(BaseCog):
             ))
             return None
 
-        # Reply to a message
         if is_reply:
             ref = ctx.message.reference
             channel = self.bot.get_channel(ref.channel_id)
@@ -261,9 +254,8 @@ class QuoteGenerator(BaseCog):
                 return None
             return await self._extract_quote_data(ctx, msg)
 
-        # Message link
         if len(user_input) == 1 and user_input[0].startswith("https://discord.com/channels/"):
-            parsed = _parse_message_link(user_input[0])
+            parsed = parse_message_link(user_input[0])
             if parsed is None:
                 await ctx.send(embed=red_embed("That doesn't look like a valid message link."))
                 return None
@@ -283,7 +275,6 @@ class QuoteGenerator(BaseCog):
                 return None
             return await self._extract_quote_data(ctx, msg)
 
-        # Freetext — user is quoting themselves
         content = await _clean_message_content(
             ' '.join(user_input), ctx.message.mentions, ctx.message.role_mentions,
             ctx.message.channel_mentions, ctx.guild, db=self.bot.db,
@@ -402,7 +393,6 @@ class QuoteGenerator(BaseCog):
         if target is None:
             return
 
-        # Collect messages: walk reply chain first, then fall back to channel history
         collected = [target]
         current = target
         for _ in range(count):
@@ -414,7 +404,6 @@ class QuoteGenerator(BaseCog):
                     continue
                 except (NotFound, Forbidden, HTTPException):
                     pass
-            # No reply chain — grab from channel history before the oldest collected message
             oldest = collected[-1]
             try:
                 async for msg in channel.history(limit=1, before=oldest):
@@ -422,7 +411,6 @@ class QuoteGenerator(BaseCog):
             except (Forbidden, HTTPException):
                 break
 
-        # Oldest first
         collected.reverse()
 
         # Reject up front if an opted-out user (other than the invoker) is in
@@ -433,7 +421,6 @@ class QuoteGenerator(BaseCog):
             await ctx.send(embed=red_embed("Someone in this conversation has opted out of being quoted."))
             return
 
-        # Build message tuples.
         messages: list[tuple[str, str, str, tuple[int, int, int] | None]] = []
         total_length = 0
         for msg in collected:
@@ -448,7 +435,7 @@ class QuoteGenerator(BaseCog):
                 break
             username = _get_safe_username(msg.author, ctx.guild)
             avatar = _get_img_url(msg.author.display_avatar)
-            username_color = self._quotem_username_color(msg.author)
+            username_color = username_color_for_member(msg.author)
             messages.append((username, avatar, content, username_color))
 
         if not messages:

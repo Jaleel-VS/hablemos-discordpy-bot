@@ -15,7 +15,6 @@ class DictationMixin(DatabaseMixin):
     ) -> dict | None:
         """Return a random sentence, preferring unattempted ones for the user."""
         if user_id:
-            # Prefer sentences the user hasn't tried yet
             row = await self._fetchrow("""
                 SELECT s.id, s.language, s.level, s.sentence, s.audio_url
                 FROM dictation_sentences s
@@ -28,7 +27,6 @@ class DictationMixin(DatabaseMixin):
             if row:
                 return dict(row)
 
-        # Fallback: any sentence with audio
         row = await self._fetchrow("""
             SELECT id, language, level, sentence, audio_url
             FROM dictation_sentences

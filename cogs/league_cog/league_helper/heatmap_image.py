@@ -47,8 +47,6 @@ def render_heatmap(
     import pandas as pd
     import seaborn as sns
 
-    # Reorder rows Mon..Sun and label axes via a DataFrame so seaborn
-    # picks up tick labels for free.
     reordered = [grid[dow] for dow in _DOW_ORDER]
     df = pd.DataFrame(
         reordered,

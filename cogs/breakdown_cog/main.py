@@ -6,17 +6,17 @@ bot responds with a clause-level + word-level grammatical breakdown in the
 """
 from __future__ import annotations
 
-import asyncio
 import logging
 from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
+from pydantic import ValidationError
 
 from base_cog import BaseCog
-from cogs.league_cog.utils import detect_message_language
 from cogs.utils.embeds import red_embed, yellow_embed
 from cogs.utils.gemini import GeminiError
+from cogs.utils.language import detect_message_language
 
 from .config import (
     ALLOWED_CHANNEL_IDS,
@@ -31,8 +31,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-GEMINI_TIMEOUT = 45
-
 
 def render_breakdown(data: SentenceBreakdown, detected_lang: str, *, detailed: bool = False) -> str:
     """Render a SentenceBreakdown into compact markdown for an embed description.
@@ -42,11 +40,9 @@ def render_breakdown(data: SentenceBreakdown, detected_lang: str, *, detailed: b
     """
     lines: list[str] = []
 
-    # Spelling correction
     if data.correction:
         lines.append(f"✏️ **Corrected:** {data.correction}\n")
 
-    # Clause-level + word-level (compact single-line per word)
     for clause in data.clauses:
         lines.append(f"**{clause.clause_type}:** *{clause.clause_text}*\n")
         for w in clause.words:
@@ -59,7 +55,6 @@ def render_breakdown(data: SentenceBreakdown, detected_lang: str, *, detailed: b
             lines.append(parts)
         lines.append("")
 
-    # Full translation
     lang_arrow = "🇪🇸→🇺🇸" if detected_lang == "es" else "🇺🇸→🇪🇸"
     lines.append(f"**{lang_arrow}** {data.full_translation}")
 
@@ -95,7 +90,6 @@ class BreakdownCog(BaseCog):
         self, ctx: commands.Context, sentence: str | None, *, detailed: bool
     ) -> None:
         """Shared breakdown logic for simple and detailed commands."""
-        # Channel restriction
         if ctx.channel.id not in ALLOWED_CHANNEL_IDS:
             channels = " ".join(f"<#{cid}>" for cid in ALLOWED_CHANNEL_IDS)
             await ctx.send(
@@ -105,7 +99,6 @@ class BreakdownCog(BaseCog):
             )
             return
 
-        # Resolve sentence from reply if not provided inline
         if sentence is None:
             ref = ctx.message.reference
             if ref and ref.message_id:
@@ -124,7 +117,6 @@ class BreakdownCog(BaseCog):
             )
             return
 
-        # Validate length
         if len(sentence) < MIN_INPUT_LENGTH:
             await ctx.send(
                 embed=red_embed("Please provide a full sentence to break down.")
@@ -140,8 +132,7 @@ class BreakdownCog(BaseCog):
             )
             return
 
-        # Detect language
-        detected_lang = detect_message_language(sentence)
+        detected_lang = detect_message_language(sentence, min_length=MIN_INPUT_LENGTH)
         if detected_lang is None:
             await ctx.send(
                 embed=red_embed(
@@ -151,52 +142,39 @@ class BreakdownCog(BaseCog):
             )
             return
 
-        # Build input and call Gemini
         inp = BreakdownInput(sentence=sentence, detected_language=detected_lang)
 
-        assert self.bot.gemini is not None  # guarded in setup()
+        gemini = self.bot.gemini
+        if gemini is None:
+            await ctx.send(embed=red_embed("Sentence analysis is unavailable right now."))
+            return
         processing = await ctx.send("🔍 Analyzing sentence...")
 
         try:
-            result = await asyncio.wait_for(
-                self.bot.gemini.run(BREAKDOWN_PROMPT, inp),
-                timeout=GEMINI_TIMEOUT,
-            )
-        except TimeoutError:
-            await processing.edit(
-                content=None,
-                embed=red_embed(
-                    "Gemini took too long to respond. Please try again."
-                ),
-            )
-            return
+            result = await gemini.run(BREAKDOWN_PROMPT, inp)
         except GeminiError as e:
             logger.warning("Breakdown Gemini error code=%s: %s", e.code, e.message)
             await processing.edit(content=None, embed=red_embed(e.user_message))
             return
-        except (ValueError, Exception) as e:
-            # ValueError covers Pydantic validation failures (truncated JSON)
-            if "ValidationError" in type(e).__name__ or isinstance(e, ValueError):
-                logger.warning("Breakdown parse error: %s", e)
-                await processing.edit(
-                    content=None,
-                    embed=red_embed(
-                        "The sentence was too complex to analyze fully. "
-                        "Try a shorter sentence."
-                    ),
-                )
-            else:
-                logger.error("Breakdown unexpected error", exc_info=True)
-                await processing.edit(
-                    content=None,
-                    embed=red_embed("Something went wrong. Please try again later."),
-                )
+        except ValidationError as e:
+            logger.warning("Breakdown parse error: %s", e)
+            await processing.edit(
+                content=None,
+                embed=red_embed(
+                    "The sentence was too complex to analyze fully. Try a shorter sentence."
+                ),
+            )
+            return
+        except Exception:
+            logger.error("Breakdown unexpected error", exc_info=True)
+            await processing.edit(
+                content=None,
+                embed=red_embed("Something went wrong. Please try again later."),
+            )
             return
 
-        # Render structured data into markdown
         rendered = render_breakdown(result, detected_lang, detailed=detailed)
 
-        # Build response embed
         lang_label = "🇪🇸 Spanish" if detected_lang == "es" else "🇺🇸 English"
         embed = discord.Embed(
             title="📝 Sentence Breakdown",

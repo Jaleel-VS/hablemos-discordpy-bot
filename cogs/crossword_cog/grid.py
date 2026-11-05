@@ -7,7 +7,6 @@ alternate direction and must cross an already-placed word.
 from __future__ import annotations
 
 import random
-import unicodedata
 from dataclasses import dataclass, field
 
 from .config import (
@@ -15,6 +14,7 @@ from .config import (
     GRID_REDUCE_THRESHOLD,
     MAX_PLACEMENT_ATTEMPTS,
 )
+from .words import normalize_word
 
 
 @dataclass(frozen=True)
@@ -32,12 +32,6 @@ class PlacedWord:
         """Return all (row, col) cells this word occupies."""
         dr, dc = (0, 1) if self.direction == "across" else (1, 0)
         return [(self.row + dr * i, self.col + dc * i) for i in range(len(self.word))]
-
-
-def _normalize(char: str) -> str:
-    """Strip accents for grid matching (á → a)."""
-    nfkd = unicodedata.normalize("NFKD", char.lower())
-    return "".join(c for c in nfkd if not unicodedata.combining(c))
 
 
 @dataclass
@@ -58,7 +52,6 @@ class Grid:
         if before in self.cells:
             return False
 
-        # Check cell after the word is empty
         after = (row + dr * len(word), col + dc * len(word))
         if after in self.cells:
             return False
@@ -66,11 +59,10 @@ class Grid:
         has_intersection = False
         for i, ch in enumerate(word):
             r, c = row + dr * i, col + dc * i
-            norm_ch = _normalize(ch)
+            norm_ch = normalize_word(ch)
 
             if (r, c) in self.cells:
-                # Must match existing letter
-                if _normalize(self.cells[(r, c)]) != norm_ch:
+                if normalize_word(self.cells[(r, c)]) != norm_ch:
                     return False
                 has_intersection = True
             else:
@@ -120,13 +112,13 @@ def _find_placements(
 ) -> list[tuple[int, int]]:
     """Find all valid positions for *word* crossing existing words."""
     candidates: list[tuple[int, int]] = []
-    norm_word = [_normalize(ch) for ch in word]
+    norm_word = [normalize_word(ch) for ch in word]
 
     for pw in grid.placed:
         if pw.direction == direction:
-            continue  # Need opposite direction to cross
+            continue
         for pi, (pr, pc) in enumerate(pw.cells):
-            existing_ch = _normalize(pw.word[pi])
+            existing_ch = normalize_word(pw.word[pi])
             for wi, wch in enumerate(norm_word):
                 if wch == existing_ch:
                     if direction == "across":
@@ -147,7 +139,6 @@ def generate_grid(words: list[str]) -> Grid | None:
     if not words:
         return None
 
-    # Sort longest first for better placement
     ordered = sorted(enumerate(words), key=lambda t: -len(t[1]))
     original_indices = [i for i, _ in ordered]
     sorted_words = [w for _, w in ordered]
@@ -170,14 +161,12 @@ def generate_grid(words: list[str]) -> Grid | None:
         else:
             current_words = sorted_words
 
-        # Place first word horizontally at origin
         first = current_words[0]
         grid.place(first, 0, 0, "across")
 
         success = True
         for idx in range(1, len(current_words)):
             word = current_words[idx]
-            # Alternate preferred direction
             preferred = "down" if idx % 2 == 1 else "across"
             alt = "across" if preferred == "down" else "down"
 
@@ -196,7 +185,6 @@ def generate_grid(words: list[str]) -> Grid | None:
         if success:
             return grid
 
-        # Shuffle and retry
         combined = list(zip(sorted_words[1:], original_indices[1:], strict=True))
         random.shuffle(combined)
         sorted_words[1:] = [w for w, _ in combined]

@@ -6,7 +6,6 @@ import contextlib
 import logging
 import random
 import time
-import unicodedata
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -33,7 +32,7 @@ from .config import (
 )
 from .grid import generate_grid
 from .renderer import render_grid
-from .words import WordEntry, load_words_from_db, pick_words
+from .words import WordEntry, load_words_from_db, normalize_word, pick_words
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -62,12 +61,6 @@ class HintResult:
     reason: str | None  # Why hint failed (e.g., "max_hints_reached")
 
 
-def _normalize(text: str) -> str:
-    """Strip accents, punctuation, and lowercase for answer comparison."""
-    nfkd = unicodedata.normalize("NFKD", text.strip().lower())
-    return "".join(c for c in nfkd if not unicodedata.combining(c) and c.isalnum())
-
-
 class CrosswordGame:
     """State for a single crossword game in a channel.
 
@@ -88,15 +81,12 @@ class CrosswordGame:
         self.difficulty = difficulty
         self.solved: set[int] = set()
         self.solvers: dict[int, str] = {}
-        # Parallel to ``solvers``: user_id per solved word, used for metrics.
         self.solver_ids: dict[int, int] = {}
         # Monotonic seconds from game start when each word was solved.
         self.word_solved_at: dict[int, float] = {}
-        # Word indices that received a hint-revealed cell.
         self.word_hints: set[int] = set()
         self.revealed_cells: dict[tuple[int, int], str] = {}
         self.started_at = time.monotonic()
-        # Wall-clock start for DB persistence.
         self.started_at_wall: datetime = datetime.now(UTC)
         self.starter_id: int = 0
         self.channel_id: int = 0
@@ -128,7 +118,6 @@ class CrosswordGame:
 
     def try_solve(self, text: str) -> SolveAttempt:
         """Try to match *text* against unsolved words. Return attempt result."""
-        # Validate guess format
         if len(text) < MIN_GUESS_LENGTH or len(text) > MAX_GUESS_LENGTH:
             return SolveAttempt(
                 text=text,
@@ -137,8 +126,8 @@ class CrosswordGame:
                 is_valid_guess=False,
             )
 
-        norm = _normalize(text)
-        if not norm:  # Empty after normalization
+        norm = normalize_word(text)
+        if not norm:
             return SolveAttempt(
                 text=text,
                 normalized=norm,
@@ -149,7 +138,7 @@ class CrosswordGame:
         for idx, _pw in enumerate(self.grid.placed):
             if idx in self.solved:
                 continue
-            if _normalize(self.get_answer(idx)) == norm:
+            if normalize_word(self.get_answer(idx)) == norm:
                 return SolveAttempt(
                     text=text,
                     normalized=norm,
@@ -172,12 +161,10 @@ class CrosswordGame:
                 word=None,
                 reason="max_hints_reached",
             )
-        # Collect all cells already visible (solved words + pre-revealed)
         visible: set[tuple[int, int]] = set(self.revealed_cells.keys())
         for sidx in self.solved:
             for r, c in self.grid.placed[sidx].cells:
                 visible.add((r, c))
-        # Find unsolved words with truly hidden cells
         for idx, pw in enumerate(self.grid.placed):
             if idx in self.solved:
                 continue
@@ -327,7 +314,7 @@ def _build_game(
         # Filter out multi-word or overly long answers (can't place on grid)
         valid = [
             (aw, e) for aw, e in zip(answer_words, entries, strict=True)
-            if " " not in aw and len(aw) <= 13
+            if " " not in aw and len(aw) <= MAX_WORD_LENGTH
         ]
         if len(valid) < 3:
             continue
@@ -342,9 +329,9 @@ def _build_game(
         ordered_entries: list[WordEntry] = []
         used: set[int] = set()
         for pw in grid.placed:
-            norm_pw = _normalize(pw.word)
+            norm_pw = normalize_word(pw.word)
             for j, aw in enumerate(answer_words):
-                if j not in used and _normalize(aw) == norm_pw:
+                if j not in used and normalize_word(aw) == norm_pw:
                     ordered_entries.append(entries[j])
                     used.add(j)
                     break
@@ -354,7 +341,6 @@ def _build_game(
 
         game = CrosswordGame(grid, ordered_entries, language, difficulty)
 
-        # Pre-reveal letters for beginner
         diff_cfg = DIFFICULTIES[difficulty]
         if diff_cfg.reveal_fraction > 0:
             for pw in grid.placed:
@@ -388,7 +374,6 @@ class CrosswordCog(BaseCog):
         self._words = await load_words_from_db(self.bot.db.pool)
         logger.info("Crossword cog loaded with %s words", len(self._words))
         await self._recover_interrupted_games()
-        # Start global timeout watcher
         self._timeout_watcher_task = asyncio.create_task(
             self._global_timeout_watcher()
         )
@@ -440,7 +425,6 @@ class CrosswordCog(BaseCog):
         diff_cfg = DIFFICULTIES.get(row["difficulty"])
         diff_label = diff_cfg.label if diff_cfg else row["difficulty"]
 
-        # Resolve a Messageable: guild channel/thread via cache, DM via user.
         target: discord.abc.Messageable | None = None
         if not is_dm:
             cached = self.bot.get_channel(channel_id)
@@ -557,7 +541,6 @@ class CrosswordCog(BaseCog):
                 break
             except Exception:
                 logger.exception("_global_timeout_watcher: unexpected error")
-                # Continue watching despite errors
 
     def _get_lock(self, channel_id: int) -> asyncio.Lock:
         if channel_id not in self._locks:
@@ -640,6 +623,7 @@ class CrosswordCog(BaseCog):
                 difficulty=diff,
                 total_words=len(game.grid.placed),
                 game_id=game.game_id,
+                started_at=game.started_at_wall,
             )
         except asyncpg.PostgresError:
             logger.exception(
@@ -1030,6 +1014,7 @@ class CrosswordCog(BaseCog):
                 "ℹ️ Not enough per-word data yet — need words with at "
                 f"least {min_appearances} appearances."
             )
+            return
 
         from .charts import render_word_difficulty
         buf = await asyncio.to_thread(
@@ -1075,7 +1060,6 @@ class CrosswordCog(BaseCog):
         if channel_id not in self._active:
             return
 
-        # Ignore command invocations
         ctx = await self.bot.get_context(message)
         if ctx.valid:
             return
@@ -1100,14 +1084,12 @@ class CrosswordCog(BaseCog):
                 # we were waiting for the lock.
                 return
 
-            # Quit command — starter or members with manage_messages can end the game
             if text.lower() == "quit":
                 # message.author is User | Member; permissions_for wants
                 # Member | Role. In practice a quit only lands in a guild
                 # channel where the author is a Member, but we keep the
                 # original unconditional check (getattr tolerates the DM/User
                 # case) and cast to satisfy the type checker.
-                # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
                 author = cast("discord.Member", message.author)
                 can_quit = (
                     message.author.id == game.starter_id
@@ -1138,7 +1120,6 @@ class CrosswordCog(BaseCog):
                     await message.channel.send("🧩 Crossword cancelled.")
                     return
 
-            # Give up — owner-only, end game early but show answers (like timeout)
             if text.lower() in ("giveup", "give up", "reveal"):
                 if message.author.id == game.starter_id:
                     logger.info("Crossword give-up by %s in #%s", message.author, channel_id)
@@ -1146,7 +1127,6 @@ class CrosswordCog(BaseCog):
                     await self._end_game(channel_id, completed=False)
                 return
 
-            # Hint — reveal one letter, max 2 per game
             if text.lower() == "!hint":
                 hint_result = game.use_hint()
                 if not hint_result.success:
@@ -1171,18 +1151,15 @@ class CrosswordCog(BaseCog):
 
             attempt = game.try_solve(text)
 
-            # Invalid guess format (too short/long)
             if not attempt.is_valid_guess:
                 return
 
-            # Wrong answer
             if attempt.matched_idx is None:
                 # Only react ❌ on single-word messages (likely intentional guesses)
                 if " " not in text and len(text) <= MAX_WORD_LENGTH:
                     await message.add_reaction("❌")
                 return
 
-            # Correct answer!
             idx = attempt.matched_idx
             game.solved.add(idx)
             game.solvers[idx] = message.author.display_name
@@ -1279,7 +1256,6 @@ class CrosswordCog(BaseCog):
                                 "V2 render failed for completion in #%s, falling back to embed: %s",
                                 channel_id, e,
                             )
-                            # Fallback to embed
                             game.use_v2 = False
                             embed = Embed(
                                 title="🧩 Crossword Complete! 🎉",
@@ -1341,7 +1317,6 @@ class CrosswordCog(BaseCog):
                         channel_id,
                     )
 
-        # Persist normalized game outcome (games + participants + word events)
         await self._persist_game_outcome(
             game,
             truly_solved=truly_solved,
@@ -1432,7 +1407,6 @@ class CrosswordCog(BaseCog):
 
     async def cog_unload(self) -> None:
         """Clean up active games on cog unload."""
-        # Cancel global timeout watcher
         if self._timeout_watcher_task and not self._timeout_watcher_task.done():
             self._timeout_watcher_task.cancel()
             with contextlib.suppress(asyncio.CancelledError):

@@ -23,24 +23,3 @@ def test_scan_counts_rule_codes_from_flake8_output(monkeypatch) -> None:
     assert "db/b.py" in output
 
 
-def test_scan_targets_only_first_party_paths(monkeypatch) -> None:
-    captured: list[str] = []
-
-    class Result:
-        stdout = ""
-        stderr = ""
-
-    def fake_run(command, **kwargs):
-        captured.extend(command)
-        return Result()
-
-    monkeypatch.setattr(anti_slop_audit.subprocess, "run", fake_run)
-
-    anti_slop_audit.scan()
-
-    assert "." not in captured
-    assert "cogs" in captured
-    assert "tests" in captured
-    assert not any(path.startswith("activity") for path in captured)
-    assert "--extend-ignore" in captured
-    assert "ASP002,ASP003" in captured

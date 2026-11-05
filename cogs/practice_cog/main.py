@@ -60,10 +60,6 @@ class PracticeCog(BaseCog):
         if stale:
             logger.info("Purged %s stale practice sessions", len(stale))
 
-    # ========================
-    # Admin Commands
-    # ========================
-
     @commands.command(name='practice')
     @commands.has_permissions(manage_messages=True)
     async def practice_admin(self, ctx, action: str | None = None, language: str | None = None, count: int = 10):
@@ -127,12 +123,10 @@ class PracticeCog(BaseCog):
             word = word_data['word']
             translation = word_data['translation']
 
-            # Check if card already exists
             if word in existing_words:
                 skip_count += 1
                 continue
 
-            # Generate sentence using Gemini
             if self.bot.gemini is None:
                 logger.warning("Gemini unavailable — cannot seed practice cards")
                 break
@@ -151,7 +145,6 @@ class PracticeCog(BaseCog):
             if result:
                 sentence, sentence_with_blank = result
 
-                # Save to database
                 card_id = await self.bot.db.add_practice_card(
                     word=word,
                     translation=translation,
@@ -165,7 +158,6 @@ class PracticeCog(BaseCog):
                     existing_words.add(word)
                     logger.info("Created practice card for '%s' (%s)", word, language)
 
-            # Update progress
             if (i + 1) % 5 == 0 or i == len(words) - 1:
                 embed.description = (
                     f"Progress: {i + 1}/{len(words)}\n"
@@ -174,7 +166,6 @@ class PracticeCog(BaseCog):
                 )
                 await progress_msg.edit(embed=embed)
 
-        # Final summary
         embed.title = "Card Generation Complete"
         embed.description = (
             f"**Created:** {success_count} cards\n"
@@ -192,10 +183,6 @@ class PracticeCog(BaseCog):
 
         count = await self.bot.db.get_practice_card_count(language)
         await ctx.send(f"**{language.title()}:** {count} practice cards")
-
-    # ========================
-    # User Slash Commands
-    # ========================
 
     practice_group = app_commands.Group(
         name="practice",
@@ -262,10 +249,8 @@ class PracticeCog(BaseCog):
         user_id = interaction.user.id
         level_filter = None if level == "X" else level
 
-        # Clean up stale sessions
         self._purge_stale_sessions()
 
-        # Check for existing session
         if user_id in self.active_sessions:
             await interaction.response.send_message(
                 "You already have an active practice session. "
@@ -276,7 +261,6 @@ class PracticeCog(BaseCog):
 
         await interaction.response.defer(ephemeral=True)
 
-        # Get cards for session
         if tracked:
             cards = await self._get_session_cards(user_id, language, level=level_filter, limit=10)
         else:
@@ -290,7 +274,6 @@ class PracticeCog(BaseCog):
             )
             return
 
-        # Create session
         practice_mode = PracticeMode(mode)
         session = PracticeSession(
             user_id=user_id,
@@ -302,7 +285,6 @@ class PracticeCog(BaseCog):
         )
         self.active_sessions[user_id] = session
 
-        # Show first question
         await self._show_question(interaction, session, is_first=True)
 
     @practice_group.command(name="stats", description="View your practice statistics")
@@ -356,16 +338,11 @@ class PracticeCog(BaseCog):
             ephemeral=True
         )
 
-    # ========================
-    # Session Flow Methods
-    # ========================
-
     async def _get_session_cards(self, user_id: int, language: str, limit: int = 10,
                                     level: str | None = None) -> list[PracticeCard]:
         """Get cards for a practice session (due cards first, then new)"""
         cards = []
 
-        # Get due cards first
         due_cards = await self.bot.db.get_due_cards(user_id, language, limit, level=level)
         for card_data in due_cards:
             cards.append(PracticeCard(
@@ -380,7 +357,6 @@ class PracticeCog(BaseCog):
                 level=card_data.get('level') or "",
             ))
 
-        # Fill remaining with new cards
         remaining = limit - len(cards)
         if remaining > 0:
             new_cards = await self.bot.db.get_new_cards(user_id, language, remaining, level=level)
@@ -422,10 +398,8 @@ class PracticeCog(BaseCog):
             await self._end_session(interaction, session)
             return
 
-        # Determine mode for this card
         card_mode = session.get_mode_for_card()
 
-        # Get distractors for multiple choice
         distractors = []
         distractor_map: dict[str, str] = {}  # word → translation
         if card_mode == "choice":
@@ -434,11 +408,9 @@ class PracticeCog(BaseCog):
             )
             distractors = [d['word'] for d in raw]
             distractor_map = {d['word']: d['translation'] for d in raw}
-            # Fall back to typing if not enough distractors
             if len(distractors) < 3:
                 card_mode = "typing"
 
-        # Build question view
         view = build_question_view(
             session=session, card=card, card_mode=card_mode, distractors=distractors,
             on_answer=lambda i, a: self._handle_answer(i, session, a, distractor_map),
@@ -469,7 +441,6 @@ class PracticeCog(BaseCog):
         answer = _normalize(user_answer)
         was_correct = answer == _normalize(card.word)
         if not was_correct and "___" in card.sentence_with_blank:
-            # Extract the actual blanked word by diffing sentence vs sentence_with_blank
             blanked = card.sentence_with_blank.split("___")
             if len(blanked) == 2:
                 prefix, suffix = blanked
@@ -477,12 +448,10 @@ class PracticeCog(BaseCog):
                 was_correct = answer == _normalize(actual)
         session.record_answer(was_correct)
 
-        # Look up translation of wrong answer (for multiple choice)
         wrong_translation = ""
         if not was_correct and distractor_map:
             wrong_translation = distractor_map.get(user_answer, "")
 
-        # Create result view
         if session.tracked:
             view = build_result_view(
                 card, user_answer, was_correct, tracked=True,
@@ -499,7 +468,6 @@ class PracticeCog(BaseCog):
                 on_quit=lambda i: self._handle_quit(i, session),
             )
 
-        # Send result
         try:
             await interaction.response.edit_message(view=view)
         except discord.InteractionResponded:
@@ -510,7 +478,6 @@ class PracticeCog(BaseCog):
         """Handle quality rating and update SRS"""
         card_json, due_iso = review_card(card.card_json, Rating(quality))
 
-        # Update database
         await self.bot.db.update_user_progress(
             user_id=session.user_id,
             card_id=card.id,
@@ -518,10 +485,8 @@ class PracticeCog(BaseCog):
             next_review=due_iso,
         )
 
-        # Advance to next card
         session.advance()
 
-        # Show next question or summary
         if session.is_complete:
             await self._end_session(interaction, session)
         else:
@@ -543,17 +508,14 @@ class PracticeCog(BaseCog):
     async def _end_session(self, interaction: Interaction, session: PracticeSession,
                            quit_early: bool = False):
         """End a practice session and show summary"""
-        # Remove from active sessions
         if session.user_id in self.active_sessions:
             del self.active_sessions[session.user_id]
 
-        # Create summary
         if quit_early and session.total_reviewed == 0:
             view = build_summary_view(session, quit_early=True)
         else:
             view = build_summary_view(session, quit_early=quit_early)
 
-        # Send summary (session is over)
         try:
             await interaction.response.edit_message(view=view)
         except discord.InteractionResponded:

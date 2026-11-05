@@ -46,8 +46,6 @@ class WordleEngine:
     key = "wordle"
     display_name = "Wordle"
 
-    # ── lifecycle ─────────────────────────────────────────────────────────
-
     def new_game(
         self, *, mode: Mode, user_id: str, options: dict[str, Any] | None = None,
     ) -> GuessOutcome:
@@ -103,8 +101,6 @@ class WordleEngine:
     def is_over(self, state: dict[str, Any]) -> bool:
         return state.get("status") in ("won", "lost")
 
-    # ── result card ───────────────────────────────────────────────────────
-
     def result_payload(self, state: dict[str, Any]) -> dict[str, Any]:
         won = state["status"] == "won"
         guesses_used = len(state["rows"])
@@ -129,14 +125,11 @@ class WordleEngine:
             "answer": state["answer"],
         }
 
-        # W1: learning card derived from lexicon, only on game over.
         card = _learning_card(state["answer"])
         if card is not None:
             payload["learning_card"] = card
 
         return payload
-
-    # ── helpers ───────────────────────────────────────────────────────────
 
     def client_view(self, state: dict[str, Any]) -> dict[str, Any]:
         """What the client may see. Excludes the answer until the game ends."""
@@ -152,8 +145,6 @@ class WordleEngine:
         if self.is_over(state):
             view["result"] = self.result_payload(state)
         elif state.get("mode") == "free" and len(state["rows"]) >= 3:
-            # W4: after 3 non-winning guesses, freeplay gets a hint derived at
-            # view time from the lexicon. Never stored in state; never in daily.
             card = _learning_card(state["answer"])
             if card is not None:
                 view["hint"] = {"pos": card.get("pos", ""), "en": card.get("en", "")}

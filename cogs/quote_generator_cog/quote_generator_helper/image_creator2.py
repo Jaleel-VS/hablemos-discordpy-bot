@@ -46,7 +46,6 @@ def create_image2(user_name: str, user_avatar: str, message_content: str, *, out
     phrase_font_px = _compute_phrase_font_size(message_content)
     quote_glyph_font_px = _compute_quote_glyph_font_size(message_content)
 
-    # Use the user's avatar as the background image for the variant
     background_image_url = user_avatar
 
     html = f'''

@@ -16,7 +16,7 @@ import Summary from "./Summary";
 //   exercise   — the graded fill-in-the-blank round (setup → playing → done).
 type Screen = "setup" | "learn" | "playing" | "done";
 
-export default function Phrasal({ accessToken }: GameProps) {
+export default function Phrasal({ accessToken, displayName }: GameProps) {
   const [screen, setScreen] = useState<Screen>("setup");
   const [sealed, setSealed] = useState<string | null>(null);
   const [view, setView] = useState<PhrasalView | null>(null);
@@ -70,6 +70,7 @@ export default function Phrasal({ accessToken }: GameProps) {
   if (screen === "setup") {
     return (
       <Setup
+        displayName={displayName}
         onStart={begin}
         onLearn={() => setScreen("learn")}
         busy={busy}

@@ -69,23 +69,20 @@ def test_unknown_game_404(client):
     assert r.status_code == 404
 
 
-def test_guess_flow_and_win(client):
-    # Start, then brute a win by reading the answer from... we can't (sealed).
-    # Instead: play a free game, guess valid words until we win or exhaust.
+def test_guess_advances_board_and_reseals(client):
+    from app.games.wordle.words import ANSWERS
+
     start = client.post("/api/games/wordle/start", json={"access_token": "t", "mode": "free"}).json()
     sealed = start["sealed_state"]
-    # Submit a valid guess (a known answer-list word) and confirm the view
-    # updates with tiles and re-seals.
     r = client.post(
         "/api/games/wordle/guess",
-        json={"access_token": "t", "sealed_state": sealed, "guess": "gatos"},
+        json={"access_token": "t", "sealed_state": sealed, "guess": ANSWERS[0]},
     )
-    # "gatos" may or may not be a valid guess; if not, expect 400 with message.
-    assert r.status_code in (200, 400)
-    if r.status_code == 200:
-        body = r.json()
-        assert len(body["view"]["rows"]) == 1
-        assert body["sealed_state"] != sealed  # state advanced
+    assert r.status_code == 200
+    body = r.json()
+    assert len(body["view"]["rows"]) == 1
+    assert body["view"]["rows"][0]["guess"] == ANSWERS[0]
+    assert body["sealed_state"] != sealed
 
 
 def test_oversized_fields_rejected_as_422(client):
@@ -122,7 +119,10 @@ def test_invalid_guess_message(client):
 def test_stats_zero_without_db(client):
     r = client.post("/api/games/wordle/stats", json={"access_token": "t"})
     assert r.status_code == 200
-    assert r.json()["games"] == 0
+    assert r.json() == {
+        "games": 0, "wins": 0, "current_streak": 0,
+        "max_streak": 0, "distribution": {},
+    }
 
 
 # ── conjugation via the generic routes ────────────────────────────────────

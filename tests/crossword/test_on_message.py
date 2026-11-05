@@ -8,16 +8,12 @@ were replaced with a global watcher.
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, cast
 
 import pytest
 
+from cogs.crossword_cog.config import MAX_WORD_LENGTH
+
 from .conftest import FakeAuthor, FakePermissions, make_message
-
-if TYPE_CHECKING:
-    import discord
-
-    from .conftest import FakeDB
 
 
 async def test_correct_answer_awards_and_bumps_db(cog_with_game) -> None:
@@ -57,14 +53,22 @@ async def test_guess_too_long_is_silent(cog_with_game) -> None:
     assert msg.reactions == []
 
 
+@pytest.mark.parametrize("length, reacts", [(MAX_WORD_LENGTH, True), (MAX_WORD_LENGTH + 1, False)])
+async def test_wrong_guess_feedback_word_limit(cog_with_game, length, reacts) -> None:
+    cog, _game, channel = cog_with_game
+    msg = make_message(channel, FakeAuthor(42, "alice"), "z" * length)
+    await cog.on_message(msg)
+    assert ("❌" in msg.reactions) is reacts
+
+
 async def test_quit_as_starter_ends_game(cog_with_game) -> None:
     cog, _game, channel = cog_with_game
     msg = make_message(channel, FakeAuthor(42, "alice"), "quit")
     await cog.on_message(msg)
-    assert channel.id not in cog._active
-    assert channel.id not in cog._locks
+    later = make_message(channel, FakeAuthor(42, "alice"), "casa")
+    await cog.on_message(later)
+    assert later.reactions == []
     assert cog.bot.db.clear_calls == [channel.id]
-    # One "cancelled" message should have been sent to the channel.
     assert any("cancelled" in (s.get("content") or "") for s in channel.sent)
 
 
@@ -72,8 +76,9 @@ async def test_quit_as_non_starter_without_perms_noop(cog_with_game) -> None:
     cog, _game, channel = cog_with_game
     msg = make_message(channel, FakeAuthor(999, "bob"), "quit")
     await cog.on_message(msg)
-    # Game still active.
-    assert channel.id in cog._active
+    answer = make_message(channel, FakeAuthor(42, "alice"), "casa")
+    await cog.on_message(answer)
+    assert "✅" in answer.reactions
 
 
 async def test_quit_as_mod_ends_game(cog_with_game) -> None:
@@ -81,7 +86,8 @@ async def test_quit_as_mod_ends_game(cog_with_game) -> None:
     channel._perms = FakePermissions(manage_messages=True)
     msg = make_message(channel, FakeAuthor(999, "mod"), "quit")
     await cog.on_message(msg)
-    assert channel.id not in cog._active
+    assert "👋" in msg.reactions
+    assert cog.bot.db.persisted[0]["completion"] == "quit"
 
 
 async def test_ignores_bot_messages(cog_with_game) -> None:
@@ -109,9 +115,6 @@ async def test_third_hint_blocked_with_denied_reaction(cog_with_game) -> None:
     assert "🚫" in msg.reactions
 
 
-# --------------------------------------------------------------------------- #
-# Concurrency: these exercise the per-channel lock added in _get_lock.        #
-# --------------------------------------------------------------------------- #
 
 async def test_simultaneous_solvers_credit_only_one(cog_with_game) -> None:
     """Two users send the same correct answer concurrently. The lock
@@ -126,7 +129,6 @@ async def test_simultaneous_solvers_credit_only_one(cog_with_game) -> None:
 
     assert len(game.solvers) == 1
     assert cog.bot.db.bump_calls == [channel.id]
-    # Exactly one ✅ reaction total across the two messages.
     total_check = sum(r.count("✅") for r in (m1.reactions, m2.reactions))
     assert total_check == 1
 
@@ -142,69 +144,51 @@ async def test_simultaneous_quit_and_solve_no_double_end(cog_with_game) -> None:
 
     await asyncio.gather(cog.on_message(quitter), cog.on_message(solver))
 
-    # DB clear should happen at most once.
-    assert len(cog.bot.db.clear_calls) <= 1
-    # Game must be removed exactly once.
-    assert channel.id not in cog._active
-    assert channel.id not in cog._locks
+    assert cog.bot.db.clear_calls == [channel.id]
+    assert len(cog.bot.db.persisted) == 1
+    assert cog.bot.db.persisted[0]["completion"] == "quit"
 
 
 async def test_timeout_watcher_vs_solve_one_end_only(
     fake_bot, fake_channel, seeded_random, monkeypatch,
 ) -> None:
-    """Force the watcher to tick immediately and race a solver. Only one
-    of them should end the game; the other must see ``_active`` already
-    empty under the lock and bail."""
+    """A real watcher tick racing a solve must persist one timeout."""
     from cogs.crossword_cog.main import CrosswordCog
 
     fake_bot._channels[fake_channel.id] = fake_channel
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     cog = CrosswordCog(fake_bot)  # type: ignore[arg-type]
 
     from .conftest import build_game
     game = build_game()
     game.channel_id = fake_channel.id
     game.starter_id = 42
-    # Make the game instantly timed-out.
     game.started_at -= 10_000
     cog._active[fake_channel.id] = game
-    cog._timeout_override = 1  # any positive; game is already 10000s old
+    cog._timeout_override = 1
 
-    # Simulate a single watcher tick by running the same body inline —
-    # we don't want a 30s sleep in the test.
-    async def one_watcher_tick() -> None:
-        import time
-        now = time.monotonic()
-        timeout = cog._timeout_override or 1
-        to_end = [
-            cid for cid, g in cog._active.items()
-            if now - g.started_at > timeout
-        ]
-        for channel_id in to_end:
-            lock = cog._get_lock(channel_id)
-            async with lock:
-                g = cog._active.get(channel_id)
-                if g is None:
-                    continue
-                await cog._end_game(channel_id, completed=False)
+    original_sleep = asyncio.sleep
+    ticked = asyncio.Event()
+
+    async def controlled_sleep(_seconds: float) -> None:
+        if ticked.is_set():
+            raise asyncio.CancelledError
+        ticked.set()
+        await original_sleep(0)
+
+    monkeypatch.setattr("cogs.crossword_cog.main.asyncio.sleep", controlled_sleep)
 
     answer = game.grid.placed[0].word
     solver = make_message(
         fake_channel, FakeAuthor(2, "bob"), answer,
     )
 
-    await asyncio.gather(
-        one_watcher_tick(),
-        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
-        cog.on_message(cast("discord.Message", solver)),  # test double
-    )
-
-    # Regardless of who won, the cog must end up with no active game
-    # and exactly one cleanup of the DB active-game row.
-    assert fake_channel.id not in cog._active
-    assert fake_channel.id not in cog._locks
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
-    assert len(cast("FakeDB", cog.bot.db).clear_calls) == 1
+    await asyncio.gather(cog._global_timeout_watcher(), cog.on_message(solver))
+    assert fake_bot.db.clear_calls == [fake_channel.id]
+    assert len(fake_bot.db.persisted) == 1
+    assert fake_bot.db.persisted[0]["completion"] == "timeout"
+    later = make_message(fake_channel, FakeAuthor(2, "bob"), answer)
+    await cog.on_message(later)
+    assert later.reactions == []
 
 
 async def test_completion_flow_end_to_end(cog_with_game) -> None:
@@ -215,42 +199,21 @@ async def test_completion_flow_end_to_end(cog_with_game) -> None:
         answer = game.grid.placed[i].word
         msg = make_message(channel, FakeAuthor(42, "alice"), answer)
         await cog.on_message(msg)
-    assert channel.id not in cog._active
+    later = make_message(channel, FakeAuthor(42, "alice"), game.grid.placed[0].word)
+    await cog.on_message(later)
+    assert later.reactions == []
     assert len(cog.bot.db.bump_calls) == total
-    # Outcome was persisted exactly once.
     assert len(cog.bot.db.persisted) == 1
     assert cog.bot.db.persisted[0]["completion"] == "completed"
 
 
-async def test_lock_is_cleaned_up_after_quit(cog_with_game) -> None:
-    cog, _game, channel = cog_with_game
-    msg = make_message(channel, FakeAuthor(42, "alice"), "quit")
-    await cog.on_message(msg)
-    assert channel.id not in cog._locks
-
-
-async def test_many_games_lock_leak_check(
-    fake_bot, seeded_random,
-) -> None:
-    """1000 start→quit cycles must not leave orphaned locks behind."""
-    from cogs.crossword_cog.main import CrosswordCog
-
-    from .conftest import FakeChannel, build_game
-
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
-    cog = CrosswordCog(fake_bot)  # type: ignore[arg-type]
-    for i in range(1000):
-        ch = FakeChannel(id=10_000 + i)
-        fake_bot._channels[ch.id] = ch
-        game = build_game()
-        game.channel_id = ch.id
-        game.starter_id = 42
-        cog._active[ch.id] = game
-        msg = make_message(ch, FakeAuthor(42, "alice"), "quit")
-        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
-        await cog.on_message(cast("discord.Message", msg))  # test double
-    assert len(cog._active) == 0
-    assert len(cog._locks) == 0
+async def test_hinted_word_is_persisted_as_hinted(cog_with_game) -> None:
+    cog, game, channel = cog_with_game
+    await cog.on_message(make_message(channel, FakeAuthor(42, "alice"), "!hint"))
+    for placed in game.grid.placed:
+        await cog.on_message(make_message(channel, FakeAuthor(42, "alice"), placed.word))
+    events = cog.bot.db.persisted[0]["word_events"]
+    assert [event["had_hint"] for event in events].count(True) == 1
 
 
 @pytest.mark.parametrize("text", ["", " ", "a"])

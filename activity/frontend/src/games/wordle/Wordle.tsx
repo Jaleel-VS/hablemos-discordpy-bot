@@ -92,9 +92,9 @@ export default function Wordle({ accessToken }: GameProps) {
       setBusy(true);
       setError(null);
       try {
-        const resp = await startGame(GAME_KEY, accessToken, m);
+        const resp = await startGame<WordleView>(GAME_KEY, accessToken, m);
         setSealed(resp.sealed_state);
-        setView(resp.view as WordleView);
+        setView(resp.view);
         setMode(m);
         setCurrent("");
         setRevealRow(null);
@@ -129,10 +129,10 @@ export default function Wordle({ accessToken }: GameProps) {
     setBusy(true);
     setError(null);
     try {
-      const resp = await submitGuess(GAME_KEY, accessToken, sealed, current);
+      const resp = await submitGuess<WordleView>(GAME_KEY, accessToken, sealed, current);
       setSealed(resp.sealed_state);
       setRevealRow(resp.view.rows.length - 1);
-      setView(resp.view as WordleView);
+      setView(resp.view);
       setCurrent("");
       if (resp.view.status !== "playing") loadStats();
     } catch (e) {

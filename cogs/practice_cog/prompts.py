@@ -50,6 +50,8 @@ class PracticeSentencePrompt(Prompt[PracticeWord, tuple[str, str] | None]):
     """
 
     feature = "practice"
+    # Seeding may wait through the shared 60-second limiter window.
+    timeout_seconds = 90
     temperature = 0.7
     max_output_tokens = 100
 

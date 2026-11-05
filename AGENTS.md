@@ -89,8 +89,6 @@ origin, then pass non-optional values downstream. If a value is checked for
 - **Make illegal states unrepresentable.** Don't thread several independent
   optionals that are only valid in combination (e.g. match + outcome + stake) —
   model the combined state as one object or enum so there's a single check.
-- Highest-density `None`-checking today lives in `cogs/wcbet_cog/views.py` and
-  `db/bets.py`; treat those as the reference for what *not* to add more of.
 
 ### Naming
 - Cog directories: `<feature>_cog/`

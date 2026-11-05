@@ -6,7 +6,6 @@ logger = logging.getLogger(__name__)
 async def initialize_schema(pool):
     """Initialize database tables if they don't exist"""
     async with pool.acquire() as conn:
-        # Notes table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS notes (
                 id SERIAL PRIMARY KEY,
@@ -17,7 +16,6 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Introductions tracking table (stores every attempt, no unique constraint)
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS introductions (
                 id SERIAL PRIMARY KEY,
@@ -27,7 +25,6 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Migration: drop old unique constraint if it exists
         await conn.execute('''
             DO $$
             BEGIN
@@ -50,7 +47,6 @@ async def initialize_schema(pool):
             ADD COLUMN IF NOT EXISTS accepted BOOLEAN NOT NULL DEFAULT TRUE
         ''')
 
-        # Intro exempt users table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS intro_exempt_users (
                 user_id BIGINT PRIMARY KEY,
@@ -59,7 +55,6 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Bot settings table (general key-value store for channel IDs, etc.)
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS bot_settings (
                 setting_key VARCHAR(100) PRIMARY KEY,
@@ -67,7 +62,6 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Feature settings table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS feature_settings (
                 feature_name VARCHAR(100) PRIMARY KEY,
@@ -75,21 +69,18 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Initialize intro tracker as disabled by default
         await conn.execute('''
             INSERT INTO feature_settings (feature_name, enabled)
             VALUES ('intro_tracker', FALSE)
             ON CONFLICT (feature_name) DO NOTHING
         ''')
 
-        # Initialize quote emoji rendering as enabled by default
         await conn.execute('''
             INSERT INTO feature_settings (feature_name, enabled)
             VALUES ('quote_emoji', TRUE)
             ON CONFLICT (feature_name) DO NOTHING
         ''')
 
-        # Conversations table for language learning
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS conversations (
                 id SERIAL PRIMARY KEY,
@@ -106,13 +97,11 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Index for conversation lookups
         await conn.execute('''
             CREATE INDEX IF NOT EXISTS idx_conversation_lookup
             ON conversations(language, level, category, usage_count)
         ''')
 
-        # User conversation daily limits table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS user_conversation_limits (
                 user_id BIGINT PRIMARY KEY,
@@ -121,13 +110,11 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Index for daily limit lookups
         await conn.execute('''
             CREATE INDEX IF NOT EXISTS idx_user_limits_date
             ON user_conversation_limits(user_id, date)
         ''')
 
-        # Vocabulary notes table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS vocab_notes (
                 id SERIAL PRIMARY KEY,
@@ -140,7 +127,6 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Index for vocab note lookups
         await conn.execute('''
             CREATE INDEX IF NOT EXISTS idx_vocab_user_id
             ON vocab_notes(user_id)
@@ -151,7 +137,6 @@ async def initialize_schema(pool):
             ON vocab_notes(user_id, word)
         ''')
 
-        # Leaderboard users table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS leaderboard_users (
                 user_id BIGINT PRIMARY KEY,
@@ -170,7 +155,6 @@ async def initialize_schema(pool):
             ON leaderboard_users(opted_in, banned)
         ''')
 
-        # Leaderboard activity table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS leaderboard_activity (
                 id SERIAL PRIMARY KEY,
@@ -193,7 +177,6 @@ async def initialize_schema(pool):
             ON leaderboard_activity(created_at)
         ''')
 
-        # Add round_id column to leaderboard_activity if it doesn't exist
         await conn.execute('''
             DO $$
             BEGIN
@@ -211,7 +194,6 @@ async def initialize_schema(pool):
             ON leaderboard_activity(round_id)
         ''')
 
-        # Add message_id column to leaderboard_activity if it doesn't exist
         await conn.execute('''
             DO $$
             BEGIN
@@ -229,7 +211,6 @@ async def initialize_schema(pool):
             ON leaderboard_activity(message_id)
         ''')
 
-        # Leaderboard excluded channels table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS leaderboard_excluded_channels (
                 channel_id BIGINT PRIMARY KEY,
@@ -239,7 +220,6 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # League rounds table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS league_rounds (
                 round_id SERIAL PRIMARY KEY,
@@ -256,7 +236,6 @@ async def initialize_schema(pool):
             ON league_rounds(status)
         ''')
 
-        # League round winners table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS league_round_winners (
                 id SERIAL PRIMARY KEY,
@@ -273,7 +252,6 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Add received_role column if it doesn't exist (migration for existing DBs)
         await conn.execute('''
             ALTER TABLE league_round_winners
             ADD COLUMN IF NOT EXISTS received_role BOOLEAN DEFAULT FALSE
@@ -297,7 +275,6 @@ async def initialize_schema(pool):
             ON league_round_winners(user_id, rank)
         ''')
 
-        # Practice cards table (global card pool for SRS practice)
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS practice_cards (
                 id SERIAL PRIMARY KEY,
@@ -316,7 +293,6 @@ async def initialize_schema(pool):
             ON practice_cards(language)
         ''')
 
-        # User card progress table (per-user FSRS tracking)
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS user_card_progress (
                 id SERIAL PRIMARY KEY,
@@ -339,7 +315,6 @@ async def initialize_schema(pool):
             ON user_card_progress(user_id, next_review)
         ''')
 
-        # Migration: add card_json and drop SM-2 columns from user_card_progress
         await conn.execute('''
             DO $$
             BEGIN
@@ -362,7 +337,6 @@ async def initialize_schema(pool):
             END $$;
         ''')
 
-        # Migration: add level, topic, sentence_translation to practice_cards
         await conn.execute('''
             DO $$
             BEGIN
@@ -378,7 +352,6 @@ async def initialize_schema(pool):
             END $$;
         ''')
 
-        # Quote banned users table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS quote_banned_users (
                 user_id BIGINT PRIMARY KEY,
@@ -387,7 +360,6 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Quote banned channels table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS quote_banned_channels (
                 channel_id BIGINT PRIMARY KEY,
@@ -396,7 +368,6 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Quote opt-outs table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS quote_optouts (
                 user_id BIGINT PRIMARY KEY,
@@ -404,7 +375,6 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Cog toggle settings
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS cog_settings (
                 cog_name VARCHAR(100) PRIMARY KEY,
@@ -412,7 +382,6 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Command usage metrics
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS command_metrics (
                 id SERIAL PRIMARY KEY,
@@ -437,7 +406,6 @@ async def initialize_schema(pool):
             ON command_metrics(command_name, invoked_at)
         ''')
 
-        # Daily rollup table for long-term metrics retention
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS metrics_daily (
                 id SERIAL PRIMARY KEY,
@@ -456,7 +424,6 @@ async def initialize_schema(pool):
             ON metrics_daily(date)
         ''')
 
-        # Channel interaction tracking (replies and mentions between user pairs)
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS interactions (
                 id SERIAL PRIMARY KEY,
@@ -479,7 +446,6 @@ async def initialize_schema(pool):
             ON interactions(user_a, user_b)
         ''')
 
-        # Task management for admins
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS tasks (
                 id SERIAL PRIMARY KEY,
@@ -500,7 +466,6 @@ async def initialize_schema(pool):
             ON tasks(guild_id, status)
         ''')
 
-        # Exchange partner posts tracking (one active post per user)
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS exchange_posts (
                 user_id BIGINT PRIMARY KEY,
@@ -516,17 +481,15 @@ async def initialize_schema(pool):
             ON exchange_posts(message_id)
         ''')
 
-        # Migration: add post_data column if missing
         await conn.execute('''
             ALTER TABLE exchange_posts
             ADD COLUMN IF NOT EXISTS post_data JSONB
         ''')
 
-        # Crossword words table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS crossword_words (
                 id SERIAL PRIMARY KEY,
-                word_es VARCHAR(12) NOT NULL,
+                word_es TEXT NOT NULL,
                 word_en VARCHAR(30) NOT NULL,
                 clue_es TEXT NOT NULL,
                 clue_en TEXT NOT NULL,
@@ -536,10 +499,10 @@ async def initialize_schema(pool):
             )
         ''')
 
-        # Migration: widen word_es from VARCHAR(9) to VARCHAR(12)
+        # Storage stays unbounded so schema init cannot truncate existing words.
         await conn.execute('''
             ALTER TABLE crossword_words
-            ALTER COLUMN word_es TYPE VARCHAR(12)
+            ALTER COLUMN word_es TYPE TEXT
         ''')
 
         await conn.execute('''
@@ -552,31 +515,8 @@ async def initialize_schema(pool):
             ON crossword_words(theme)
         ''')
 
-        # Crossword scores table
-        await conn.execute('''
-            CREATE TABLE IF NOT EXISTS crossword_scores (
-                id SERIAL PRIMARY KEY,
-                user_id BIGINT NOT NULL,
-                display_name TEXT NOT NULL,
-                guild_id BIGINT NOT NULL,
-                words_solved INT NOT NULL DEFAULT 0,
-                total_words INT NOT NULL DEFAULT 0,
-                difficulty VARCHAR(10) NOT NULL,
-                language VARCHAR(2) NOT NULL,
-                elapsed_seconds REAL NOT NULL DEFAULT 0,
-                played_at TIMESTAMPTZ DEFAULT now()
-            )
-        ''')
-        await conn.execute('''
-            CREATE INDEX IF NOT EXISTS idx_crossword_scores_user
-            ON crossword_scores(user_id)
-        ''')
+        await conn.execute('DROP TABLE IF EXISTS crossword_scores')
 
-        # Crossword active games table
-        # One row per in-flight game, used to detect and notify interrupted
-        # games on bot restart. Rows are inserted on game start, updated on
-        # each correct solve, and deleted on natural end (completion, quit,
-        # timeout, or interrupt recovery).
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS crossword_active_games (
                 channel_id   BIGINT PRIMARY KEY,
@@ -600,7 +540,6 @@ async def initialize_schema(pool):
             ADD COLUMN IF NOT EXISTS game_id UUID
         ''')
 
-        # Crossword games (one row per completed/ended game) — tier 1 metrics.
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS crossword_games (
                 game_id         UUID PRIMARY KEY,
@@ -627,7 +566,6 @@ async def initialize_schema(pool):
             ON crossword_games(channel_id)
         ''')
 
-        # Crossword participants — one row per (game, user).
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS crossword_participants (
                 game_id       UUID NOT NULL REFERENCES crossword_games(game_id) ON DELETE CASCADE,
@@ -643,10 +581,6 @@ async def initialize_schema(pool):
             ON crossword_participants(user_id)
         ''')
 
-        # Crossword word-level events — tier 2 metrics.
-        # One row per word in a game, capturing whether it was solved,
-        # by whom, how long it took, and whether a hint revealed a cell
-        # inside it. Used for word-list difficulty tuning.
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS crossword_word_events (
                 id               SERIAL PRIMARY KEY,
@@ -669,7 +603,6 @@ async def initialize_schema(pool):
             ON crossword_word_events(game_id)
         ''')
 
-        # Dictation sentences table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS dictation_sentences (
                 id SERIAL PRIMARY KEY,
@@ -687,7 +620,6 @@ async def initialize_schema(pool):
             ON dictation_sentences(language, level)
         ''')
 
-        # Dictation scores table
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS dictation_scores (
                 id SERIAL PRIMARY KEY,
@@ -709,181 +641,16 @@ async def initialize_schema(pool):
             ON dictation_scores(sentence_id)
         ''')
 
-        # World Cup predictions table
-        await conn.execute('''
-            CREATE TABLE IF NOT EXISTS wc_predictions (
-                user_id      BIGINT PRIMARY KEY,
-                guild_id     BIGINT NOT NULL,
-                team_role_id BIGINT NOT NULL,
-                team_name    TEXT   NOT NULL,
-                created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
-            )
-        ''')
-
-        await conn.execute('''
-            CREATE INDEX IF NOT EXISTS idx_wc_predictions_team
-            ON wc_predictions(team_role_id)
-        ''')
-
-        # World Cup betting tables
-        await conn.execute('''
-            CREATE TABLE IF NOT EXISTS wc_bet_wallets (
-                user_id             BIGINT PRIMARY KEY,
-                guild_id            BIGINT NOT NULL,
-                balance             BIGINT NOT NULL,
-                last_allowance_date DATE,
-                created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
-            )
-        ''')
-
-        await conn.execute('''
-            CREATE TABLE IF NOT EXISTS wc_bets (
-                user_id    BIGINT NOT NULL REFERENCES wc_bet_wallets(user_id),
-                match_id   INTEGER NOT NULL,
-                guild_id   BIGINT NOT NULL,
-                outcome    TEXT NOT NULL CHECK (outcome IN ('home','draw','away')),
-                stake      BIGINT NOT NULL CHECK (stake > 0),
-                odds       NUMERIC(5,2) NOT NULL,
-                status     TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','won','lost','void')),
-                payout     BIGINT,
-                placed_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                settled_at TIMESTAMPTZ,
-                PRIMARY KEY (user_id, match_id)
-            )
-        ''')
-
-        await conn.execute('''
-            CREATE INDEX IF NOT EXISTS idx_wc_bets_match_status
-            ON wc_bets(match_id, status)
-        ''')
-
-        await conn.execute('''
-            CREATE TABLE IF NOT EXISTS wc_match_results (
-                match_id   INTEGER PRIMARY KEY,
-                home_score INTEGER NOT NULL,
-                away_score INTEGER NOT NULL,
-                outcome    TEXT NOT NULL,
-                settled_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-            )
-        ''')
-
-        await conn.execute('''
-            CREATE TABLE IF NOT EXISTS wc_bet_bans (
-                user_id    BIGINT PRIMARY KEY,
-                guild_id   BIGINT NOT NULL,
-                banned_by  BIGINT NOT NULL,
-                reason     TEXT,
-                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-            )
-        ''')
-
-        await conn.execute('''
-            CREATE TABLE IF NOT EXISTS wc_balance_log (
-                id         BIGSERIAL PRIMARY KEY,
-                user_id    BIGINT NOT NULL,
-                delta      BIGINT NOT NULL,
-                balance    BIGINT NOT NULL,
-                event      TEXT NOT NULL,
-                match_id   INTEGER,
-                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-            )
-        ''')
-
-        await conn.execute('''
-            CREATE INDEX IF NOT EXISTS idx_wc_balance_log_user
-            ON wc_balance_log(user_id, created_at)
-        ''')
-
-        # World Cup parlays (accumulator bets — multiple legs, all must win)
-        await conn.execute('''
-            CREATE TABLE IF NOT EXISTS wc_parlays (
-                id            BIGSERIAL PRIMARY KEY,
-                user_id       BIGINT NOT NULL REFERENCES wc_bet_wallets(user_id),
-                guild_id      BIGINT NOT NULL,
-                stake         BIGINT NOT NULL CHECK (stake > 0),
-                combined_odds NUMERIC(12,2) NOT NULL,
-                status        TEXT NOT NULL DEFAULT 'pending'
-                              CHECK (status IN ('pending','won','lost','void')),
-                payout        BIGINT,
-                placed_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                settled_at    TIMESTAMPTZ
-            )
-        ''')
-
-        await conn.execute('''
-            CREATE INDEX IF NOT EXISTS idx_wc_parlays_user
-            ON wc_parlays(user_id, status)
-        ''')
-
-        await conn.execute('''
-            CREATE TABLE IF NOT EXISTS wc_parlay_legs (
-                parlay_id BIGINT NOT NULL REFERENCES wc_parlays(id) ON DELETE CASCADE,
-                match_id  INTEGER NOT NULL,
-                outcome   TEXT NOT NULL CHECK (outcome IN ('home','draw','away')),
-                odds      NUMERIC(5,2) NOT NULL,
-                result    TEXT CHECK (result IN ('won','lost')),
-                PRIMARY KEY (parlay_id, match_id)
-            )
-        ''')
-
-        await conn.execute('''
-            CREATE INDEX IF NOT EXISTS idx_wc_parlay_legs_match
-            ON wc_parlay_legs(match_id)
-        ''')
-
-        # Migration: widen WC betting money columns from INTEGER to BIGINT.
-        # Balances (wc_bet_wallets.balance, wc_balance_log) were already
-        # BIGINT, but per-bet/parlay stake and payout were INTEGER (max
-        # ~2.1B). As balances grow, an all-in stake or a winning payout can
-        # exceed that and crash the placement/settlement transaction. The
-        # payout math is unbounded Python ints, so only the column type
-        # limits it. Widening INTEGER->BIGINT is a metadata-only change (no
-        # value rewrite) and is idempotent: re-running on an already-BIGINT
-        # column is a no-op. combined_odds gets extra headroom for deep
-        # parlays (999,999.99x -> 9,999,999,999.99x).
-        await conn.execute('''
-            ALTER TABLE wc_bets
-            ALTER COLUMN stake TYPE BIGINT,
-            ALTER COLUMN payout TYPE BIGINT
-        ''')
-        await conn.execute('''
-            ALTER TABLE wc_parlays
-            ALTER COLUMN stake TYPE BIGINT,
-            ALTER COLUMN payout TYPE BIGINT,
-            ALTER COLUMN combined_odds TYPE NUMERIC(12,2)
-        ''')
-
-        # ── Knockout fixture overrides ──
-        # The 104-match fixture list (cogs/wcpredict_cog/fixtures.py) ships
-        # knockout rows with bracket placeholders ("Winner Group A", "Winner
-        # Match 73") and provisional kickoff times. Once a knockout pairing is
-        # decided, an owner resolves it with `$wcbetadmin setteam`, persisting
-        # the real teams (and optionally a corrected kickoff) here. The bot
-        # overlays these onto the static fixtures at startup and after each
-        # edit, so betting, settlement (ESPN match by real team names), and the
-        # `$wcf` display all see the resolved pairing without a redeploy.
-        # time_et NULL keeps the fixture's shipped time. `source` records who
-        # set the row: 'manual' ($wcbetadmin setteam) or 'auto' (ESPN bracket
-        # resolver). Auto-resolution only ever updates its own 'auto' rows, so
-        # a manual correction is never clobbered by ESPN.
-        await conn.execute('''
-            CREATE TABLE IF NOT EXISTS wc_fixture_overrides (
-                match_id   INTEGER PRIMARY KEY,
-                home       TEXT NOT NULL,
-                away       TEXT NOT NULL,
-                time_et    TEXT,
-                source     TEXT NOT NULL DEFAULT 'manual',
-                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-            )
-        ''')
-        # Migration: add `source` to overrides created before the auto-resolver
-        # (they were all manual, which is the default).
-        await conn.execute(
-            "ALTER TABLE wc_fixture_overrides "
-            "ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'manual'",
-        )
+        # Retired tournament data is intentionally removed on existing databases.
+        await conn.execute('DROP TABLE IF EXISTS wc_parlay_legs CASCADE')
+        await conn.execute('DROP TABLE IF EXISTS wc_parlays CASCADE')
+        await conn.execute('DROP TABLE IF EXISTS wc_bets CASCADE')
+        await conn.execute('DROP TABLE IF EXISTS wc_balance_log CASCADE')
+        await conn.execute('DROP TABLE IF EXISTS wc_bet_wallets CASCADE')
+        await conn.execute('DROP TABLE IF EXISTS wc_match_results CASCADE')
+        await conn.execute('DROP TABLE IF EXISTS wc_bet_bans CASCADE')
+        await conn.execute('DROP TABLE IF EXISTS wc_predictions CASCADE')
+        await conn.execute('DROP TABLE IF EXISTS wc_fixture_overrides CASCADE')
 
         # Removed features: nogif_restrictions, vocab_card_pool and vocab_card_catches
         # are no longer created. Databases created earlier still have them; see
@@ -926,7 +693,6 @@ async def initialize_schema(pool):
             END $$;
         ''')
 
-        # ── Stats: channel activity tracking ──
         # Pre-aggregated hourly counts per channel per native-role type.
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS channel_stats (

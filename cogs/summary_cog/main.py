@@ -12,9 +12,10 @@ from discord.ext import commands
 
 from base_cog import COLORS, BaseCog
 from cogs.utils.gemini import GeminiError
+from cogs.utils.message_links import parse_message_link
 
 from .cache import SummaryCache
-from .message_parser import collect_range_messages, parse_message_link
+from .message_parser import collect_range_messages
 from .prompts import (
     FOCUSED_SUMMARY_PROMPT,
     SUGGEST_TOPICS_PROMPT,
@@ -54,23 +55,21 @@ class SummaryCog(BaseCog):
 
         Right-click a message > Copy Message Link to get links.
         """
-        # Parse both links
-        start_guild, start_channel, start_id = parse_message_link(start_link)
-        end_guild, end_channel, end_id = parse_message_link(end_link)
-
-        if start_guild is None or start_channel is None or start_id is None:
+        start = parse_message_link(start_link)
+        end = parse_message_link(end_link)
+        if start is None:
             await ctx.send("Invalid start message link.")
             return
-        if end_guild is None or end_channel is None or end_id is None:
+        if end is None:
             await ctx.send("Invalid end message link.")
             return
+        start_guild, start_channel, start_id = start
+        _, end_channel, end_id = end
 
-        # Validate same channel
         if start_channel != end_channel:
             await ctx.send("Both links must be from the same channel.")
             return
 
-        # Validate same guild
         if ctx.guild is None:
             return
         if ctx.guild.id != start_guild:
@@ -86,7 +85,6 @@ class SummaryCog(BaseCog):
             await ctx.send("I can't access that channel.")
             return
 
-        # Check cache
         cache_key_suffix = f":{topic}" if topic else ""
         cached = self.cache.get(start_channel, start_id, end_id, suffix=cache_key_suffix)
         if cached:
@@ -97,7 +95,6 @@ class SummaryCog(BaseCog):
         processing = await ctx.send("Fetching messages...")
 
         try:
-            # Fetch start and end messages to validate they exist
             try:
                 start_msg = await channel.fetch_message(start_id)
                 end_msg = await channel.fetch_message(end_id)
@@ -203,15 +200,16 @@ class SummaryCog(BaseCog):
 
         Returns actionable prompts you can pass to $sum as a topic.
         """
-        start_guild, start_channel, start_id = parse_message_link(start_link)
-        end_guild, end_channel, end_id = parse_message_link(end_link)
-
-        if start_guild is None or start_channel is None or start_id is None:
+        start = parse_message_link(start_link)
+        end = parse_message_link(end_link)
+        if start is None:
             await ctx.send("Invalid start message link.")
             return
-        if end_guild is None or end_channel is None or end_id is None:
+        if end is None:
             await ctx.send("Invalid end message link.")
             return
+        start_guild, start_channel, start_id = start
+        _, end_channel, end_id = end
 
         if start_channel != end_channel:
             await ctx.send("Both links must be from the same channel.")

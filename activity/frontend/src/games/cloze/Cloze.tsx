@@ -17,7 +17,7 @@ import { defaultLangForTarget, DEFAULT_LANG } from "./i18n";
 // "playing" is the card round; "done" is the score + misses recap.
 type Screen = "setup" | "playing" | "done";
 
-export default function Cloze({ accessToken }: GameProps) {
+export default function Cloze({ accessToken, displayName }: GameProps) {
   const [screen, setScreen] = useState<Screen>("setup");
   const [sealed, setSealed] = useState<string | null>(null);
   const [view, setView] = useState<ClozeView | null>(null);
@@ -105,7 +105,7 @@ export default function Cloze({ accessToken }: GameProps) {
   }, [error, screen]);
 
   if (screen === "setup") {
-    return <Setup onStart={begin} busy={busy} error={error} />;
+    return <Setup displayName={displayName} onStart={begin} busy={busy} error={error} />;
   }
 
   if (screen === "done" && view?.result) {

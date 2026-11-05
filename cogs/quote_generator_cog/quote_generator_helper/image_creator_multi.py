@@ -43,7 +43,6 @@ AVATAR_GAP = 12
 NAME_GAP = 4          # gap between name line and first text line
 LINE_SPACING = 4      # extra leading between wrapped text lines
 
-# Discord dark-theme palette
 BG_COLOR = (43, 45, 49)          # #2b2d31
 NAME_COLOR = (242, 243, 245)     # #f2f3f5
 TEXT_COLOR = (219, 222, 225)     # #dbdee1
@@ -207,14 +206,12 @@ def _wrap_content(
     # Normalize newlines/tabs to spaces (HTML renderers collapse whitespace too).
     content = content.replace("\r", " ").replace("\n", " ").replace("\t", " ")
 
-    # Flatten tokens into atomic units: words, single spaces, and emoji.
     units: list[_Segment] = []
     for kind, value in tokenize_for_render(content):
         if kind == "emoji":
             img = _emoji_image(value, emoji_cache, emoji_px)
             units.append(_Segment("emoji", emoji_px, image=img))
             continue
-        # Split text into words and spaces so wrapping happens on spaces.
         for i, word in enumerate(value.split(" ")):
             if i > 0:
                 sp_w = int(measure.textlength(" ", font=font))
@@ -225,14 +222,11 @@ def _wrap_content(
             if w <= max_width:
                 units.append(_Segment("text", w, text=word))
             else:
-                # A single word wider than the line — break it into
-                # character chunks so it wraps instead of overflowing.
                 units.extend(_break_long_word(word, font, max_width, measure))
 
     lines: list[list[_Segment]] = [[]]
     line_w = 0
     for unit in units:
-        # Skip a leading space on a fresh line.
         if not lines[-1] and unit.kind == "text" and unit.text == " ":
             continue
         if line_w + unit.width > max_width and lines[-1]:
@@ -270,7 +264,6 @@ def create_multi_image(
     name_font = _font(NAME_FONT_PX, bold=True)
     text_font = _font(body_px, bold=False)
 
-    # Scaled layout metrics (internal super-sampled pixels).
     width = DISPLAY_WIDTH * S
     pad_x = CARD_PAD_X * S
     pad_y = CARD_PAD_Y * S
@@ -284,11 +277,9 @@ def create_multi_image(
     text_x = pad_x + avatar_sz + avatar_gap
     text_max_w = width - text_x - pad_x
 
-    # Line heights from font metrics.
     name_h = _line_height(name_font, NAME_FONT_PX * S)
     text_line_h = _line_height(text_font, body_px * S)
 
-    # A scratch draw context for text measurement before we know the height.
     measure = ImageDraw.Draw(Image.new("RGB", (1, 1)))
     emoji_cache: dict[str, Image.Image | None] = {}
 

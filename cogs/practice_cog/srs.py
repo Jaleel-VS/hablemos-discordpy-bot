@@ -29,9 +29,3 @@ def review_card(card_json: str | None, rating: Rating) -> tuple[str, datetime]:
     card, _log = scheduler.review_card(card, rating)
     return card.to_json(), card.due
 
-
-# Re-export for views
-RATING_AGAIN = Rating.Again
-RATING_HARD = Rating.Hard
-RATING_GOOD = Rating.Good
-RATING_EASY = Rating.Easy

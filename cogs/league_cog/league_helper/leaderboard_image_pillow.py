@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 SCALE = 3
 OUTPUT_SCALE = 2
-S = SCALE * OUTPUT_SCALE  # 6
+S = SCALE * OUTPUT_SCALE
 
 DISPLAY_WIDTH = 800       # CSS pixels Discord displays the image at
 DISPLAY_ENTRY_HEIGHT = 80
@@ -138,7 +138,6 @@ def generate_leaderboard_image(leaderboard_data: list[dict]) -> BytesIO:
         rank (int), user_id (int), username (str),
         total_score (int), active_days (int), avatar_url (str)
     """
-    # Internal (super-sampled) dimensions
     WIDTH = DISPLAY_WIDTH * S
     ENTRY_HEIGHT = DISPLAY_ENTRY_HEIGHT * S
     PADDING = DISPLAY_PADDING * S
@@ -169,26 +168,22 @@ def generate_leaderboard_image(leaderboard_data: list[dict]) -> BytesIO:
         entry_w = WIDTH - 2 * PADDING
         entry_h = ENTRY_HEIGHT - 10 * S
 
-        # Gradient background with rounded corners
         gradient = Image.new("RGB", (entry_w, entry_h))
         _gradient_rect(ImageDraw.Draw(gradient), (0, 0, entry_w, entry_h), bg1, bg2)
         mask = Image.new("L", (entry_w, entry_h), 0)
         ImageDraw.Draw(mask).rounded_rectangle((0, 0, entry_w, entry_h), ENTRY_RADIUS, fill=255)
         image.paste(gradient, (PADDING, y), mask)
 
-        # Rank badge
         rank_text = f"#{rank}"
         rb = draw.textbbox((0, 0), rank_text, font=rank_font)
         rx = PADDING + 20 * S
         ry = y + entry_h // 2 - (rb[3] - rb[1]) // 2
         draw.text((rx, ry), rank_text, fill=text_color, font=rank_font, anchor="la")
 
-        # Avatar
         ax = PADDING + 20 * S + RANK_AREA
         ay = y + entry_h // 2 - AVATAR_SIZE // 2
         avatar = _download_avatar(avatar_url, AVATAR_SIZE)
 
-        # White halo border
         border_sz = AVATAR_SIZE + AVATAR_BORDER * 2
         border = Image.new("RGBA", (border_sz, border_sz), (255, 255, 255, 100))
         bm = Image.new("L", (border_sz, border_sz), 0)
@@ -197,7 +192,6 @@ def generate_leaderboard_image(leaderboard_data: list[dict]) -> BytesIO:
         image.paste(border, (ax - AVATAR_BORDER, ay - AVATAR_BORDER), border)
         image.paste(avatar, (ax, ay), avatar)
 
-        # Username (truncated)
         ux = ax + AVATAR_SIZE + 20 * S
         ub = draw.textbbox((0, 0), username, font=username_font)
         uy = y + entry_h // 2 - (ub[3] - ub[1]) // 2
@@ -209,7 +203,6 @@ def generate_leaderboard_image(leaderboard_data: list[dict]) -> BytesIO:
             utext += "…"
         draw.text((ux, uy), utext, fill=text_color, font=username_font, anchor="la")
 
-        # Score (right-aligned)
         score_text = f"{total_score} pts"
         sb = draw.textbbox((0, 0), score_text, font=score_font)
         sx = WIDTH - PADDING - (sb[2] - sb[0]) - 20 * S

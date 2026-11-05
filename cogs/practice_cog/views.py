@@ -4,10 +4,10 @@ from collections.abc import Awaitable, Callable
 
 import discord
 from discord import ButtonStyle, Color, Interaction, ui
+from fsrs import Rating
 
 from .modals import AnswerModal
 from .session import PracticeCard, PracticeSession
-from .srs import RATING_AGAIN, RATING_EASY, RATING_GOOD, RATING_HARD
 
 LEVEL_LABELS = {"A": "Beginner", "B": "Intermediate", "C": "Advanced"}
 LANG_EMOJI = {"spanish": "🇪🇸", "english": "🇬🇧"}
@@ -31,8 +31,6 @@ def _normalize_word(text: str) -> str:
     """Lowercase strip for simple comparison."""
     return text.strip().lower()
 
-
-# ── Question ──
 
 def build_question_view(
     session: PracticeSession,
@@ -61,11 +59,9 @@ def build_question_view(
         parts.append(ui.Separator(visible=True))
         parts.append(ui.TextDisplay(f"-# *{card.sentence_translation}*"))
 
-    # Choice or typing buttons
     if card_mode == "choice" and len(distractors) >= 3:
         # Use the actual blanked word (conjugated form) instead of the infinitive
         correct_label = _extract_blanked_word(card) or card.word
-        # Deduplicate: remove distractors that match the correct answer
         unique_distractors = [d for d in distractors if _normalize_word(d) != _normalize_word(correct_label)]
         if len(unique_distractors) >= 3:
             choices = [*unique_distractors[:3], correct_label]
@@ -77,7 +73,6 @@ def build_question_view(
                 choice_row.add_item(btn)
             parts.append(choice_row)
         else:
-            # Not enough unique distractors — fall back to typing
             card_mode = "typing"
 
     if card_mode == "typing":
@@ -87,7 +82,6 @@ def build_question_view(
         type_row.add_item(answer_btn)
         parts.append(type_row)
 
-    # Control row
     ctrl = ui.ActionRow()
     skip_btn = ui.Button(label="Skip", style=ButtonStyle.secondary)
     skip_btn.callback = _simple_cb(on_skip)
@@ -101,8 +95,6 @@ def build_question_view(
     view.add_item(ui.Container(*parts, accent_colour=Color.blue()))
     return view
 
-
-# ── Result ──
 
 def build_result_view(
     card: PracticeCard,
@@ -146,21 +138,20 @@ def build_result_view(
     if card.sentence_translation:
         parts.append(ui.TextDisplay(f"-# *{card.sentence_translation}*"))
 
-    # Action row depends on tracked vs untracked
     row = ui.ActionRow()
     if tracked and on_rating:
         if was_correct:
             for label, style, rating in [
-                ("Hard", ButtonStyle.secondary, RATING_HARD),
-                ("Good", ButtonStyle.primary, RATING_GOOD),
-                ("Easy", ButtonStyle.success, RATING_EASY),
+                ("Hard", ButtonStyle.secondary, Rating.Hard),
+                ("Good", ButtonStyle.primary, Rating.Good),
+                ("Easy", ButtonStyle.success, Rating.Easy),
             ]:
                 btn = ui.Button(label=label, style=style)
                 btn.callback = _rating_cb(on_rating, rating)
                 row.add_item(btn)
         else:
             btn = ui.Button(label="Again", style=ButtonStyle.danger)
-            btn.callback = _rating_cb(on_rating, RATING_AGAIN)
+            btn.callback = _rating_cb(on_rating, Rating.Again)
             row.add_item(btn)
     else:
         if on_next:
@@ -176,8 +167,6 @@ def build_result_view(
     view.add_item(ui.Container(*parts, accent_colour=colour))
     return view
 
-
-# ── Summary ──
 
 def build_summary_view(session: PracticeSession, *, quit_early: bool = False) -> ui.LayoutView:
     """Build a LayoutView for the session summary."""
@@ -206,8 +195,6 @@ def build_summary_view(session: PracticeSession, *, quit_early: bool = False) ->
     return view
 
 
-# ── Stats (still Embed — works outside ephemeral practice flow) ──
-
 def create_stats_embed(language: str, stats: dict) -> discord.Embed:
     """Create an embed showing practice statistics with per-level breakdown."""
     lang_emoji = LANG_EMOJI.get(language, "")
@@ -235,8 +222,6 @@ def create_stats_embed(language: str, stats: dict) -> discord.Embed:
     )
     return embed
 
-
-# ── Callback helpers ──
 
 def _answer_cb(on_answer, choice):
     async def cb(interaction: Interaction):

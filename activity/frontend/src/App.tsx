@@ -104,7 +104,7 @@ export default function App() {
         </span>
       </header>
       {GameComponent && activeInfo ? (
-        <GameComponent accessToken={session.accessToken} onExit={onExit} />
+        <GameComponent accessToken={session.accessToken} displayName={activeInfo.display_name} onExit={onExit} />
       ) : (
         <Home
           games={games}

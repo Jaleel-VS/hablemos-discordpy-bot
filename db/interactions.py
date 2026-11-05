@@ -15,7 +15,6 @@ class InteractionsMixin(DatabaseMixin):
         interaction_type: str,
     ) -> None:
         """Record a reply or mention interaction between two users."""
-        # Normalize pair so (A,B) and (B,A) are the same row
         lo, hi = min(user_a, user_b), max(user_a, user_b)
         await self._execute(
             """
@@ -102,5 +101,4 @@ class InteractionsMixin(DatabaseMixin):
             "DELETE FROM interactions WHERE created_at < NOW() - INTERVAL '1 day' * $1",
             days,
         )
-        # result is like 'DELETE 42'
         return int(result.split()[-1])

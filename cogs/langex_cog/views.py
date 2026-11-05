@@ -26,6 +26,7 @@ from .embeds import build_matches_embed
 from .i18n import t
 from .matching import rank_matches
 from .modals import DetailsModal
+from .posts import delete_exchange_post
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -178,24 +179,10 @@ class LangExPanelView(View):
     )
     async def delete_button(self, interaction: Interaction, _btn: Button):
         lang = _ui_lang(interaction)
-        existing = await self.bot.db.get_exchange_post(interaction.user.id)
-        if not existing:
+        if not await delete_exchange_post(self.bot, interaction.user.id):
             await interaction.response.send_message(embed=red_embed(t("delete_none", lang)), ephemeral=True)
             return
 
-        await _delete_message(self.bot, existing.get("channel_id"), existing.get("message_id"))
-        await self.bot.db.delete_exchange_post(interaction.user.id)
         await interaction.response.send_message(embed=green_embed(t("delete_ok", lang)), ephemeral=True)
 
 
-async def _delete_message(bot: Hablemos, channel_id: int | None, message_id: int | None) -> None:
-    if not channel_id or not message_id:
-        return
-    channel = bot.get_channel(channel_id)
-    if not isinstance(channel, discord.abc.Messageable):
-        return
-    try:
-        msg = await channel.fetch_message(message_id)
-        await msg.delete()
-    except (discord.NotFound, discord.Forbidden, discord.HTTPException):
-        pass

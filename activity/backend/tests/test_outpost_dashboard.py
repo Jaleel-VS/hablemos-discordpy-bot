@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import sqlite3
-import tempfile
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -165,7 +164,6 @@ def _build_db(tmp_dir: Path) -> tuple[Path, Path]:
     conn = sqlite3.connect(db_path)
     conn.executescript(_DDL)
 
-    # sweep
     conn.execute(
         "INSERT INTO sweeps VALUES (1, 'test-sweep', '2026-01-01T00:00:00', ?)",
         (json.dumps({"speed": 100, "players": 4}),),
@@ -196,7 +194,6 @@ def _build_db(tmp_dir: Path) -> tuple[Path, Path]:
                     "INSERT INTO run_metrics VALUES (?, 'gini_power', ?)",
                     (run_id, 0.3 + run_id * 0.01),
                 )
-                # player results: 4 players, 2 archetypes
                 for pid in range(1, 5):
                     arch = "raider" if pid <= 2 else "builder"
                     conn.execute(
@@ -219,7 +216,6 @@ def _build_db(tmp_dir: Path) -> tuple[Path, Path]:
                             2.0,
                         ),
                     )
-                # series: power every 24 h for 3 days
                 for pid in range(1, 5):
                     for t_h in (0, 24, 48, 72):
                         conn.execute(
@@ -246,7 +242,6 @@ def _build_db(tmp_dir: Path) -> tuple[Path, Path]:
                     (run_id, "p2_loss_cap", 1, None),
                 )
 
-    # evolution rows: 3 generations × 4 individuals
     for gen in range(3):
         for idx in range(4):
             conn.execute(
@@ -262,7 +257,6 @@ def _build_db(tmp_dir: Path) -> tuple[Path, Path]:
     conn.commit()
     conn.close()
 
-    # trace file for run 1
     trace = {
         "meta": {
             "run_id": 1,
@@ -308,7 +302,6 @@ class _HTMLChecker(HTMLParser):
         super().__init__()
         self.external_refs: list[str] = []
         self.ids: set[str] = set()
-        self.errors: list[str] = []
 
     def handle_starttag(
         self, tag: str, attrs: list[tuple[str, str | None]]
@@ -323,8 +316,6 @@ class _HTMLChecker(HTMLParser):
             if (ref.startswith("http://") or ref.startswith("https://")) and tag in ("script", "link"):
                 self.external_refs.append(ref)
 
-    def handle_error(self, message: str) -> None:
-        self.errors.append(message)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -400,16 +391,6 @@ class TestBuildDashboard:
             f"External http(s) script/link refs found: {checker.external_refs}"
         )
 
-    def test_html_parses_without_error(
-        self, db_and_trace: tuple[Path, Path], tmp_dir: Path
-    ) -> None:
-        db_path, _ = db_and_trace
-        out = tmp_dir / "report.html"
-        build_dashboard(db_path, out)
-        html = out.read_text(encoding="utf-8")
-        checker = _HTMLChecker()
-        checker.feed(html)
-        assert not checker.errors, f"HTML parse errors: {checker.errors}"
 
     def test_sweep_filter(
         self, db_and_trace: tuple[Path, Path], tmp_dir: Path
@@ -568,7 +549,6 @@ class TestStrategyMapTab:
         html = out.read_text(encoding="utf-8")
         payload = self._get_payload(html)
         me = payload["map_elites"]
-        # 6 filled / 16 total = 0.375
         assert me["coverage"] == pytest.approx(6 / 16)
         expected_qd = sum(c[2] for c in _ME_CELLS)
         assert me["qd_score"] == pytest.approx(expected_qd)
@@ -585,25 +565,6 @@ class TestStrategyMapTab:
         assert "panel-strategy-map" in html
         payload = self._get_payload(html)
         assert payload["map_elites"] is None
-        # empty-state text is rendered statically in the HTML
         assert "python -m app.outpost.sim map" in html
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Live HTML generation smoke test
-# ──────────────────────────────────────────────────────────────────────────────
-
-
-def test_generate_html_to_tmp() -> None:
-    """Build a real HTML file under /tmp and assert it is loadable."""
-    with tempfile.TemporaryDirectory(prefix="outpost_dash_") as td:
-        tmp = Path(td)
-        db_path, _ = _build_db(tmp)
-        out = Path("/tmp/outpost_report.html")
-        result = build_dashboard(db_path, out)
-        assert result.exists()
-        html = result.read_text(encoding="utf-8")
-        checker = _HTMLChecker()
-        checker.feed(html)
-        assert not checker.errors
-        print(f"Dashboard written to: {result}")

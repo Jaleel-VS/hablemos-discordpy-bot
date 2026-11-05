@@ -205,7 +205,6 @@ class TicketsCog(BaseCog):
             await ctx.send("No forum channels configured. Set `STAFF_FORUM_ID` / `ADMIN_FORUM_ID`.")
             return
 
-        # Send loading state
         msg = await ctx.send(view=_loading_view())
 
         # Flat list of (forum_name, formatted_line) across every forum, in
@@ -230,7 +229,6 @@ class TicketsCog(BaseCog):
                 logger.exception("Failed to edit tickets message")
             return
 
-        # Edit with final paginated view
         try:
             await msg.edit(view=TicketsView(ctx.author.id, entries, total))
         except discord.HTTPException:
@@ -265,7 +263,6 @@ class TicketsCog(BaseCog):
         forum_ids = list(_watched_forum_ids())
         await self.bot.db.migrate_legacy_ticket_subs(guild_id, forum_ids)
 
-        # Build list of (forum_id, display_name) for available forums
         forums: list[tuple[int, str]] = []
         for fid in forum_ids:
             channel = self.bot.get_channel(fid)
@@ -281,7 +278,6 @@ class TicketsCog(BaseCog):
         subscribed = await self.bot.db.get_ticket_subscribed_forums(user_id, guild_id)
         subscribed_ids = {fid for fid in subscribed if fid != 0}
 
-        # Build status embed
         if subscribed_ids:
             names = [n for fid, n in forums if fid in subscribed_ids]
             listing = ", ".join(f"**#{n}**" for n in names)

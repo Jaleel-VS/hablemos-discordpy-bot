@@ -28,7 +28,6 @@ logger = logging.getLogger(__name__)
 # interaction. Short since it's an on-demand, click-right-away button.
 VIEW_TIMEOUT = 180
 
-# User-facing failure message (never leaks the underlying exception).
 _LAUNCH_ERROR = "No pude abrir el juego. Inténtalo de nuevo en un momento."
 
 
@@ -41,7 +40,6 @@ class ActivityLaunchView(discord.ui.View):
 
     def __init__(self, *, label: str, emoji: str) -> None:
         super().__init__(timeout=VIEW_TIMEOUT)
-        # Build the button dynamically so label/emoji can vary per launcher.
         button: discord.ui.Button = discord.ui.Button(
             label=label, emoji=emoji, style=discord.ButtonStyle.primary,
         )

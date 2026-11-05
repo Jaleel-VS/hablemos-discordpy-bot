@@ -8,6 +8,7 @@ from __future__ import annotations
 import csv
 import logging
 import random
+import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -26,6 +27,12 @@ class WordEntry:
     clue_en: str
     theme: str
     difficulty: str
+
+
+def normalize_word(text: str) -> str:
+    """Return crossword identity, ignoring case, accents, and punctuation."""
+    nfkd = unicodedata.normalize("NFKD", text.strip().lower())
+    return "".join(c for c in nfkd if not unicodedata.combining(c) and c.isalnum())
 
 
 def _load_csv_fallback() -> list[WordEntry]:
@@ -83,7 +90,6 @@ def pick_words(
         if w.difficulty == difficulty:
             by_theme.setdefault(w.theme, []).append(w)
 
-    # One random word per theme
     pool: list[WordEntry] = []
     themes = list(by_theme.keys())
     random.shuffle(themes)
@@ -93,13 +99,11 @@ def pick_words(
             break
 
     if len(pool) < count:
-        # Pull more from same difficulty, allowing same themes
         remaining = [w for w in words if w.difficulty == difficulty and w not in pool]
         extra = random.sample(remaining, min(count - len(pool), len(remaining)))
         pool.extend(extra)
 
     if len(pool) < count:
-        # Still short — pull from other difficulty
         remaining = [w for w in words if w not in pool]
         extra = random.sample(remaining, min(count - len(pool), len(remaining)))
         pool.extend(extra)

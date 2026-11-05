@@ -70,10 +70,8 @@ class TicketSubView(View):
 
         guild_id = interaction.guild.id
         user_id = interaction.user.id
-        # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
         db = interaction.client.db  # type: ignore[attr-defined]
 
-        # Determine additions and removals
         to_add = selected_ids - self.subscribed_ids
         to_remove = self.subscribed_ids - selected_ids
 
@@ -82,10 +80,8 @@ class TicketSubView(View):
         for forum_id in to_remove:
             await db.remove_ticket_subscription(user_id, guild_id, forum_id)
 
-        # Update local state and rebuild
         self.subscribed_ids = selected_ids
 
-        # Build response
         if selected_ids:
             forum_names = [
                 name for fid, name in self.forums if fid in selected_ids
@@ -100,7 +96,6 @@ class TicketSubView(View):
             color=discord.Color.green() if selected_ids else discord.Color.orange(),
         )
 
-        # Rebuild select to reflect new state
         self.clear_items()
         self._build_select()
 

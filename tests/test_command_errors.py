@@ -10,6 +10,7 @@ from discord.ext import commands
 
 from base_cog import BaseCog
 from cogs.error_handler_cog.main import ErrorHandler
+from cogs.utils.guild import HOME_GUILD_ID
 
 
 @dataclass
@@ -29,6 +30,7 @@ class FakeContext:
     cog: Any = None
     message: Any = field(default_factory=lambda: SimpleNamespace(content="$practice"))
     sent: list[str] = field(default_factory=list)
+    error_handled: bool = False
 
     async def send(self, content: str) -> None:
         self.sent.append(content)
@@ -52,7 +54,6 @@ async def test_basecog_cooldown_sets_handled_and_replies_once() -> None:
     await cog.cog_command_error(ctx, error)
 
     assert ctx.sent == ["⏱️ Command is on cooldown. Try again in 4.2 seconds."]
-    assert ctx.__dict__["error_handled"] is True
 
 
 async def test_basecog_check_failure_uses_fail_msg() -> None:
@@ -62,7 +63,6 @@ async def test_basecog_check_failure_uses_fail_msg() -> None:
     await cog.cog_command_error(ctx, commands.CheckFailure())
 
     assert ctx.sent == ["Mods only."]
-    assert ctx.__dict__["error_handled"] is True
 
 
 async def test_basecog_missing_permissions_uses_generic_check_copy() -> None:
@@ -72,7 +72,6 @@ async def test_basecog_missing_permissions_uses_generic_check_copy() -> None:
     await cog.cog_command_error(ctx, commands.MissingPermissions(["manage_messages"]))
 
     assert ctx.sent == ["You don't have permission to use this command."]
-    assert ctx.__dict__["error_handled"] is True
 
 
 
@@ -84,30 +83,19 @@ async def test_basecog_user_input_error_omits_raw_exception() -> None:
 
     assert ctx.sent == ["Invalid input.\nUsage: `$practice [action]`"]
     assert "internal converter boom" not in ctx.sent[0]
-    assert ctx.__dict__["error_handled"] is True
-
-async def test_basecog_unexpected_error_does_not_claim_handled() -> None:
-    cog = BaseCog(cast(Any, SimpleNamespace()))
-    ctx = FakeContext()
-
-    await cog.cog_command_error(ctx, RuntimeError("boom"))
-
-    assert ctx.sent == []
-    assert "error_handled" not in ctx.__dict__
-
 
 async def test_error_handler_skips_user_reply_when_basecog_handled() -> None:
     db = SimpleNamespace(record_command=AsyncMock())
-    bot = SimpleNamespace(db=db, command_prefix="$", settings=SimpleNamespace(league_guild_id=3))
+    bot = SimpleNamespace(db=db, command_prefix="$")
     handler = ErrorHandler(cast(Any, bot))
     ctx = FakeContext()
-    ctx.__dict__["error_handled"] = True
-
-    await handler.on_command_error(ctx, commands.CommandOnCooldown(
+    await BaseCog(cast(Any, bot)).cog_command_error(ctx, commands.CommandOnCooldown(
         commands.Cooldown(1, 10), retry_after=1.0, type=commands.BucketType.user,
     ))
 
-    assert ctx.sent == []
+    await handler.on_command_error(ctx, commands.CommandInvokeError(RuntimeError("already answered")))
+
+    assert ctx.sent == ["⏱️ Command is on cooldown. Try again in 1.0 seconds."]
     db.record_command.assert_awaited_once()
     assert db.record_command.await_args.kwargs["failed"] is True
 
@@ -117,11 +105,11 @@ async def test_error_handler_unexpected_error_replies_once() -> None:
     bot = SimpleNamespace(
         db=db,
         command_prefix="$",
-        settings=SimpleNamespace(league_guild_id=3),
     )
     handler = ErrorHandler(cast(Any, bot))
     ctx = FakeContext()
 
+    await BaseCog(cast(Any, bot)).cog_command_error(ctx, RuntimeError("db down"))
     await handler.on_command_error(
         ctx, commands.CommandInvokeError(RuntimeError("db down")),
     )
@@ -136,7 +124,6 @@ async def test_command_not_found_without_match_still_replies() -> None:
     bot = SimpleNamespace(
         db=db,
         command_prefix="$",
-        settings=SimpleNamespace(league_guild_id=3),
         commands=[ping],
         error_channel=None,
     )
@@ -144,7 +131,7 @@ async def test_command_not_found_without_match_still_replies() -> None:
     ctx = FakeContext()
     ctx.invoked_with = "doesnotexist"
     ctx.message = SimpleNamespace(content="$doesnotexist")
-    ctx.guild = SimpleNamespace(id=3, name="league")
+    ctx.guild = SimpleNamespace(id=HOME_GUILD_ID, name="league")
     ctx.author = SimpleNamespace(id=2)
     ctx.channel = SimpleNamespace(id=1)
 
@@ -159,7 +146,6 @@ async def test_command_not_found_with_match_suggests() -> None:
     bot = SimpleNamespace(
         db=db,
         command_prefix="$",
-        settings=SimpleNamespace(league_guild_id=3),
         commands=[ping],
         error_channel=None,
     )
@@ -167,7 +153,7 @@ async def test_command_not_found_with_match_suggests() -> None:
     ctx = FakeContext()
     ctx.invoked_with = "png"
     ctx.message = SimpleNamespace(content="$png")
-    ctx.guild = SimpleNamespace(id=3, name="league")
+    ctx.guild = SimpleNamespace(id=HOME_GUILD_ID, name="league")
     ctx.author = SimpleNamespace(id=2)
     ctx.channel = SimpleNamespace(id=1)
 

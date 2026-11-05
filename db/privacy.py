@@ -11,8 +11,6 @@ from db import DatabaseMixin
 
 logger = logging.getLogger(__name__)
 
-# (table, SQL). $1 is the user ID. Order matters where foreign keys apply:
-# wc_bets / wc_parlays reference wc_bet_wallets, so they go first.
 _DELETES: list[tuple[str, str]] = [
     ("notes", "DELETE FROM notes WHERE user_id = $1"),
     ("vocab_notes", "DELETE FROM vocab_notes WHERE user_id = $1"),
@@ -24,7 +22,6 @@ _DELETES: list[tuple[str, str]] = [
     ("league_round_winners", "DELETE FROM league_round_winners WHERE user_id = $1"),
     ("command_metrics", "DELETE FROM command_metrics WHERE user_id = $1"),
     ("interactions", "DELETE FROM interactions WHERE user_a = $1 OR user_b = $1"),
-    ("crossword_scores", "DELETE FROM crossword_scores WHERE user_id = $1"),
     ("crossword_participants", "DELETE FROM crossword_participants WHERE user_id = $1"),
     ("dictation_scores", "DELETE FROM dictation_scores WHERE user_id = $1"),
     ("ticket_subscriptions", "DELETE FROM ticket_subscriptions WHERE user_id = $1"),
@@ -32,11 +29,6 @@ _DELETES: list[tuple[str, str]] = [
     ("user_activity", "DELETE FROM user_activity WHERE user_id = $1"),
     ("user_clock_prefs", "DELETE FROM user_clock_prefs WHERE user_id = $1"),
     ("spotify_optins", "DELETE FROM spotify_optins WHERE user_id = $1"),
-    ("wc_predictions", "DELETE FROM wc_predictions WHERE user_id = $1"),
-    ("wc_parlays", "DELETE FROM wc_parlays WHERE user_id = $1"),
-    ("wc_bets", "DELETE FROM wc_bets WHERE user_id = $1"),
-    ("wc_balance_log", "DELETE FROM wc_balance_log WHERE user_id = $1"),
-    ("wc_bet_wallets", "DELETE FROM wc_bet_wallets WHERE user_id = $1"),
 ]
 
 # Rows that stay but lose identifying data.
@@ -78,7 +70,6 @@ DELETED_TABLES: frozenset[str] = frozenset(
 KEPT_TABLES: dict[str, str] = {
     "quote_optouts": "your choice not to be quoted",
     "quote_banned_users": "moderation record",
-    "wc_bet_bans": "moderation record",
     "intro_exempt_users": "moderation record",
     "introductions": "moderation record",
     "exchange_posts": "anti-spam cooldown",

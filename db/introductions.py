@@ -1,25 +1,8 @@
-
-import logging
-
+"""Introduction attempts and exemptions."""
 from db import DatabaseMixin
-
-logger = logging.getLogger(__name__)
 
 
 class IntroductionsMixin(DatabaseMixin):
-    async def check_user_introduction(self, user_id: int, cooldown_days: int = 90) -> dict | None:
-        """Check if the user has an accepted introduction within the cooldown window."""
-        row = await self._fetchrow('''
-            SELECT id, user_id, posted_at
-            FROM introductions
-            WHERE user_id = $1
-            AND accepted
-            AND posted_at > NOW() - make_interval(days => $2)
-            ORDER BY posted_at DESC
-            LIMIT 1
-        ''', user_id, cooldown_days)
-        return dict(row) if row else None
-
     async def get_introduction_count(self, user_id: int) -> int:
         """Get total number of introduction attempts a user has posted."""
         count = await self._fetchval(
@@ -33,18 +16,27 @@ class IntroductionsMixin(DatabaseMixin):
             'DELETE FROM introductions WHERE user_id = $1', user_id,
         )
 
-    async def record_introduction(self, user_id: int, *, accepted: bool = True) -> bool:
-        """Record an introduction. Only accepted rows start or extend the cooldown."""
-        try:
-            await self._execute(
-                'INSERT INTO introductions (user_id, posted_at, accepted) VALUES ($1, NOW(), $2)',
-                user_id,
-                accepted,
+    async def record_introduction(self, user_id: int, cooldown_days: int) -> bool:
+        """Record an attempt, returning whether it starts the accepted cooldown.
+
+        Rejected attempts never extend the cooldown.
+        """
+        return await self._fetchval('''
+            INSERT INTO introductions (user_id, posted_at, accepted)
+            SELECT $1, NOW(), NOT EXISTS (
+                SELECT 1 FROM introductions
+                WHERE user_id = $1 AND accepted
+                AND posted_at > NOW() - make_interval(days => $2)
             )
-            return True
-        except Exception as e:
-            logger.error("Error recording introduction: %s", e)
-            return False
+            RETURNING accepted
+        ''', user_id, cooldown_days)
+
+    async def record_accepted_introduction(self, user_id: int) -> None:
+        """Record an introduction that is accepted regardless of the cooldown."""
+        await self._execute(
+            'INSERT INTO introductions (user_id, posted_at, accepted) VALUES ($1, NOW(), TRUE)',
+            user_id,
+        )
 
     async def get_introduction_stats(self, cooldown_days: int = 90) -> dict:
         """Get introduction tracker statistics."""
@@ -59,8 +51,6 @@ class IntroductionsMixin(DatabaseMixin):
         ''', cooldown_days)
         row = rows[0]
         return {"total": row["total"], "unique_users": row["unique_users"], "recent": row["recent"]}
-
-    # ── Intro exemptions ──
 
     async def get_intro_exempt_users(self) -> set[int]:
         """Return set of user IDs exempt from intro tracking."""

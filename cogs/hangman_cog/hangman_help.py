@@ -113,11 +113,9 @@ def create_final_embed(player_name: str, words: list[str], category: str, won: b
     Returns:
         Tuple of (Discord File or None, Discord Embed)
     """
-    # Validate input
     if len(words) < 2:
         raise ValueError(f"Words list must contain at least 2 elements, got {len(words)}")
 
-    # Create result object for better organization
     result = GameResult(
         player_name=player_name,
         word=words[0],
@@ -126,14 +124,11 @@ def create_final_embed(player_name: str, words: list[str], category: str, won: b
         won=won
     )
 
-    # Try to get an image
     image_data = get_image(result.display_word, category)
 
     if image_data is None:
-        # Return embed without image
         return None, _get_fallback_embed(result)
 
-    # Create embed with image
     file_path, filename = image_data
     file = File(file_path, filename=filename)
 
@@ -145,11 +140,9 @@ def create_final_embed(player_name: str, words: list[str], category: str, won: b
 
     return file, embed
 
-# returns hidden string with space(s)
 def get_hidden_word(word):
-    return [' ' if s == ' ' else '◯' for s in word]  # faster than regex sub('[^\s]', '◯', string)
+    return [' ' if s == ' ' else '◯' for s in word]
 
-# new hangman
 def start_game(word):
     return f"""
     `{' '.join(word)}`

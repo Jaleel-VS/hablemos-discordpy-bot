@@ -56,12 +56,10 @@ class VocabNoteModal(Modal, title="Add Vocabulary Note"):
             user_id = interaction.user.id
             username = str(interaction.user)
 
-            # Get values from form (convert empty strings to None)
             word_value = self.word.value.strip()
             translation_value = self.translation.value.strip() or None
             language_value = self.language.value.strip().lower() if self.language.value.strip() else None
 
-            # Add to database
             note_id = await self.bot.db.add_vocab_note(
                 user_id=user_id,
                 username=username,
@@ -70,10 +68,8 @@ class VocabNoteModal(Modal, title="Add Vocabulary Note"):
                 language=language_value
             )
 
-            # Get total count
             total_count = await self.bot.db.get_vocab_note_count(user_id)
 
-            # Create success embed
             embed = Embed(
                 title="✅ Vocabulary Note Added",
                 description=f"**Word:** {word_value}",
@@ -115,7 +111,6 @@ class VocabCog(BaseCog):
     @vocab_group.command(name="add", description="Add a new vocabulary note")
     async def vocab_add(self, interaction: Interaction):
         """Show a form to add a new vocabulary note"""
-        # Send the modal (form) to the user
         await interaction.response.send_modal(VocabNoteModal(self.bot))
 
     @vocab_group.command(name="list", description="View all your vocabulary notes")
@@ -131,7 +126,6 @@ class VocabCog(BaseCog):
         try:
             user_id = interaction.user.id
 
-            # Validate limit
             if limit < 1 or limit > 50:
                 embed = Embed(
                     title="Invalid Limit",
@@ -141,7 +135,6 @@ class VocabCog(BaseCog):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
 
-            # Get notes from database
             notes = await self.bot.db.get_user_vocab_notes(user_id, limit)
 
             if not notes:
@@ -153,13 +146,11 @@ class VocabCog(BaseCog):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
 
-            # Create embed with notes
             embed = Embed(
                 title=f"Your Vocabulary Notes ({len(notes)} shown)",
                 color=discord.Color.blue()
             )
 
-            # Add notes as fields
             for note in notes:
                 word = note['word']
                 translation = note['translation'] or "No translation"
@@ -201,7 +192,6 @@ class VocabCog(BaseCog):
         try:
             user_id = interaction.user.id
 
-            # Search notes
             notes = await self.bot.db.search_vocab_notes(user_id, query)
 
             if not notes:
@@ -213,14 +203,12 @@ class VocabCog(BaseCog):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
 
-            # Create embed with search results
             embed = Embed(
                 title=f"Search Results for: {query}",
                 description=f"Found {len(notes)} matching note(s)",
                 color=discord.Color.blue()
             )
 
-            # Add notes as fields
             for note in notes:
                 word = note['word']
                 translation = note['translation'] or "No translation"
@@ -261,7 +249,6 @@ class VocabCog(BaseCog):
         try:
             user_id = interaction.user.id
 
-            # Delete from database
             deleted = await self.bot.db.delete_vocab_note(note_id, user_id)
 
             if deleted:
@@ -293,13 +280,11 @@ class VocabCog(BaseCog):
     async def vocab_export(self, interaction: Interaction):
         """Export all vocabulary notes as CSV file (ephemeral)"""
         try:
-            # Defer response since this might take a moment
             await interaction.response.defer(ephemeral=True)
 
             user_id = interaction.user.id
             username = str(interaction.user)
 
-            # Get all notes for the user (no limit)
             notes = await self.bot.db.get_user_vocab_notes(user_id, limit=10000)
 
             if not notes:
@@ -311,14 +296,11 @@ class VocabCog(BaseCog):
                 await interaction.followup.send(embed=embed, ephemeral=True)
                 return
 
-            # Create CSV in memory
             output = io.StringIO()
             csv_writer = csv.writer(output)
 
-            # Write header
             csv_writer.writerow(['ID', 'Word', 'Translation', 'Language', 'Created At'])
 
-            # Write data rows
             for note in notes:
                 csv_writer.writerow([
                     note['id'],
@@ -328,19 +310,15 @@ class VocabCog(BaseCog):
                     note['created_at'].strftime('%Y-%m-%d %H:%M:%S') if note['created_at'] else ''
                 ])
 
-            # Convert to bytes for Discord file
             output.seek(0)
             csv_bytes = output.getvalue().encode('utf-8')
             csv_file = io.BytesIO(csv_bytes)
 
-            # Create filename with timestamp
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             filename = f"vocab_notes_{username}_{timestamp}.csv"
 
-            # Create Discord file object
             file = discord.File(csv_file, filename=filename)
 
-            # Create success embed
             embed = Embed(
                 title="📥 Vocabulary Notes Exported",
                 description=f"Successfully exported **{len(notes)}** vocabulary notes!",
@@ -353,7 +331,6 @@ class VocabCog(BaseCog):
             )
             embed.set_footer(text=f"Exported at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-            # Send file with embed
             await interaction.followup.send(embed=embed, file=file, ephemeral=True)
             logger.info("User %s (%s) exported %s vocab notes to CSV", username, user_id, len(notes))
 

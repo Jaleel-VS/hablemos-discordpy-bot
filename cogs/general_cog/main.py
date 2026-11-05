@@ -80,7 +80,6 @@ def _collect_cog_entries(bot: Hablemos) -> list[tuple[str, str, list[str], list[
             if isinstance(cmd, app_commands.Command):
                 slash_lines.append(_format_slash_cmd(cmd))
 
-        # Also show top-level groups themselves
         for cmd in cog.get_app_commands():
             if isinstance(cmd, app_commands.Group):
                 slash_lines.insert(0, _format_slash_cmd(cmd))
@@ -103,9 +102,6 @@ class General(BaseCog):
     def __init__(self, bot: Hablemos):
         super().__init__(bot)
 
-    # ------------------------------------------------------------------
-    # /help  (slash)
-    # ------------------------------------------------------------------
 
     @app_commands.command(
         name="help",
@@ -117,7 +113,6 @@ class General(BaseCog):
         entries = _collect_cog_entries(self.bot)
 
         if category:
-            # Find matching cog (case-insensitive)
             match = next(
                 (e for e in entries if e[0].lower() == category.lower()),
                 None,
@@ -197,9 +192,6 @@ class General(BaseCog):
             if current.lower() in name.lower()
         ][:25]
 
-    # ------------------------------------------------------------------
-    # $help  (prefix) — keeps the existing fallback-to-command.help pattern
-    # ------------------------------------------------------------------
 
     @command()
     async def help(self, ctx, arg=''):
@@ -221,9 +213,6 @@ class General(BaseCog):
             )
             await ctx.send(embed=green_embed(to_send))
 
-    # ------------------------------------------------------------------
-    # Utility commands
-    # ------------------------------------------------------------------
 
     @command()
     async def info(self, ctx):
@@ -302,7 +291,6 @@ class General(BaseCog):
 
         roles = ", ".join(f"{r.name}({r.id})" for r in me.roles)
 
-        # Per-channel + category-level role overwrites that apply to the bot
         overwrites: list[str] = []
         for role in me.roles:
             ow = target.overwrites_for(role)
@@ -357,7 +345,6 @@ class General(BaseCog):
         # Always log so the log capture keeps it even if all sends fail
         logger.info("permdebug for channel %s (%s):\n%s", target.name, target.id, report)
 
-        # Try channel first, fall back to DM
         try:
             await ctx.send(f"```\n{report[:1900]}\n```")
             return

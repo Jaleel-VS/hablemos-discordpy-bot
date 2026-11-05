@@ -28,12 +28,10 @@ class QuestionView(ui.LayoutView):
         self.card_index = card_index
         self.total = total
 
-        # Distractors
         other_words = [c["word"] for c in SAMPLE_CARDS if c["word"] != card["word"]]
         choices = [*random.sample(other_words, min(3, len(other_words))), card["word"]]
         random.shuffle(choices)
 
-        # Build layout
         row = ui.ActionRow()
         for choice in choices:
             btn = ui.Button(label=choice, style=discord.ButtonStyle.primary)
@@ -102,7 +100,6 @@ class ResultView(ui.LayoutView):
         if not correct:
             parts.insert(2, ui.TextDisplay(f"Your answer: ~~{answer}~~"))
 
-        # Next button
         row = ui.ActionRow()
         if card_index + 1 < total:
             next_btn = ui.Button(label="Next", style=discord.ButtonStyle.primary)

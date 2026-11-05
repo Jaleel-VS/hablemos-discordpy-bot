@@ -52,7 +52,6 @@ def _make_cog(spanish_first_channels: list[int] | None = None) -> ConvoStarter:
             convo_spa_channels=spanish_first_channels or []
         )
     )
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     return ConvoStarter(cast(Any, bot))
 
 
@@ -61,7 +60,6 @@ async def _run_topic(
     ctx: FakeContext,
     category: str | None = None,
 ) -> None:
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     callback = cast(Any, cog.topic.callback)
     if category is None:
         await callback(cog, ctx)
@@ -70,7 +68,6 @@ async def _run_topic(
 
 
 async def _run_list(cog: ConvoStarter, ctx: FakeContext) -> None:
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     callback = cast(Any, cog.lst.callback)
     await callback(cog, ctx)
 
@@ -79,26 +76,13 @@ async def test_topic_defaults_to_general(monkeypatch: Any) -> None:
     cog = _make_cog()
     cog.questions["general"] = (("Pregunta", "Question"),)
     ctx = FakeContext(channel_id=1)
-    selected: list[tuple[tuple[str, str], ...]] = []
-
-    def choose(options: Any) -> Any:
-        if options is cog.questions["general"]:
-            selected.append(options)
-        return options[0]
-
-    monkeypatch.setattr("cogs.convo_starter_cog.main.choice", choose)
+    monkeypatch.setattr(
+        "cogs.convo_starter_cog.main.choice", lambda options: options[0]
+    )
 
     await _run_topic(cog, ctx)
 
-    assert selected == [cog.questions["general"]]
-
-
-def test_legacy_embed_helper_remains_compatible() -> None:
-    from cogs.convo_starter_cog.main import embed_question
-
-    embed = embed_question("Primary", "Translation")
-
-    assert embed.description == "**Primary**\n\nTranslation"
+    assert ctx.sent[0][1]["embed"].description == "**Question**\n\nPregunta"
 
 
 async def test_topic_accepts_case_insensitive_numeric_alias(

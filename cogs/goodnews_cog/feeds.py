@@ -24,12 +24,10 @@ _TITLE_MAX = 250
 _EXCERPT_MAX = 350
 _URL_MAX = 512
 
-# Case-insensitive category slugs that must be excluded.
 _EXCLUDED_CATEGORIES: frozenset[str] = frozenset(
     {"opinion", "opinión", "sponsored", "promoted", "advertorial"}
 )
 
-# Characters forbidden in link URLs.
 _BAD_URL_CHARS = re.compile(r"[\s\x00-\x1f\x7f<>]")
 
 
@@ -60,10 +58,6 @@ FEEDS: dict[str, Feed] = {
 }
 
 
-# ---------------------------------------------------------------------------
-# HTML cleaning
-# ---------------------------------------------------------------------------
-
 def _is_wp_footer(text: str) -> bool:
     """Return True if paragraph text is a WordPress 'appeared first on' attribution."""
     t = text.strip()
@@ -85,10 +79,6 @@ def _strip_html(raw: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
-# ---------------------------------------------------------------------------
-# URL validation
-# ---------------------------------------------------------------------------
-
 def _valid_url(url: str, feed: Feed) -> bool:
     """Return True for a safe HTTPS article URL on the publisher's host."""
     if not url or len(url) > _URL_MAX:
@@ -108,10 +98,6 @@ def _valid_url(url: str, feed: Feed) -> bool:
         return False
 
 
-# ---------------------------------------------------------------------------
-# Date parsing
-# ---------------------------------------------------------------------------
-
 def _parse_date(raw: str | None) -> datetime | None:
     if not raw:
         return None
@@ -121,10 +107,6 @@ def _parse_date(raw: str | None) -> datetime | None:
     except (TypeError, ValueError, OverflowError):
         return None
 
-
-# ---------------------------------------------------------------------------
-# Core parser
-# ---------------------------------------------------------------------------
 
 class _SkipItem(Exception):
     """Signal to skip a single item without aborting the whole feed."""
@@ -137,18 +119,15 @@ def _parse_item(
     now: datetime,
     oldest: datetime,
 ) -> NewsArticle:
-    # Categories — cheap filter first.
     categories = {(el.text or "").strip().lower() for el in item.iterfind("category")}
     if categories & _EXCLUDED_CATEGORIES:
         raise _SkipItem("excluded category")
 
-    # Link
     link_el = item.find("link")
     url = (link_el.text or "").strip() if link_el is not None else ""
     if not _valid_url(url, feed):
         raise _SkipItem("invalid link")
 
-    # Date
     pub_el = item.find("pubDate")
     pub_date = _parse_date(pub_el.text if pub_el is not None else None)
     if pub_date is None:
@@ -165,7 +144,6 @@ def _parse_item(
     if not title:
         raise _SkipItem("empty title")
 
-    # Description → excerpt teaser (publisher HTML, WP footer removed).
     desc_el = item.find("description")
     raw_desc = (desc_el.text or "") if desc_el is not None else ""
     excerpt = shorten(_strip_html(raw_desc), width=_EXCERPT_MAX, placeholder="…")

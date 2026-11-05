@@ -9,44 +9,32 @@ from typing import Final
 
 import discord
 
+from cogs.utils.guild import ENGLISH_NATIVE_ROLE_ID, SPANISH_NATIVE_ROLE_ID
 from config import get_int_env
 
-# CHANNELS
-
-# Channel hosting the persistent panel (Post / Find buttons).
 # NOTE: temporarily pointed at a test channel while the feature is in
 # testing — change back to the real langex channel before going live.
 PANEL_CHANNEL_ID: Final[int] = get_int_env("LANGEX_PANEL_CHANNEL_ID", 1515639236164980778)
 
-# Channel where profile embeds are posted (the browsable feed). Also a
-# test channel for now (see note above).
+# Also a test channel for now (see note above).
 FEED_CHANNEL_ID: Final[int] = get_int_env("LANGEX_FEED_CHANNEL_ID", 1515641245471473704)
 
 # Channel for audit-log embeds (post/update/delete). Reuses the introduce
 # audit channel by default.
 AUDIT_CHANNEL_ID: Final[int] = get_int_env("LANGEX_AUDIT_CHANNEL_ID", 1476661597970628719)
 
-# NATIVE-LANGUAGE ROLES (for bilingual UI + embed color)
 
-SPANISH_NATIVE_ROLE_ID: Final[int] = get_int_env("SPANISH_NATIVE_ROLE_ID", 243854128424550401)
-ENGLISH_NATIVE_ROLE_ID: Final[int] = get_int_env("ENGLISH_NATIVE_ROLE_ID", 243853718758359040)
-OTHER_NATIVE_ROLE_ID: Final[int] = get_int_env("OTHER_NATIVE_ROLE_ID", 247020385730691073)
-
-# EMBED COLORS (by native-language role combo)
 
 COLOR_ENGLISH_NATIVE: Final[discord.Color] = discord.Color.blue()
 COLOR_SPANISH_NATIVE: Final[discord.Color] = discord.Color.dark_green()
 COLOR_BOTH_NATIVE: Final[discord.Color] = discord.Color.orange()
 COLOR_OTHER_NATIVE: Final[discord.Color] = discord.Color.purple()
 
-# REPOST / UPDATE COOLDOWN
 
 REPOST_GRACE_MINUTES: Final[int] = 10
 REPOST_COOLDOWN_DAYS: Final[int] = 14
 
-# LANGUAGE OPTIONS
 
-# Language you OFFER (native / can teach).
 OFFER_LANGUAGES: Final[list[tuple[str, str]]] = [
     ("English", "english"),
     ("Spanish", "spanish"),
@@ -59,7 +47,6 @@ SEEK_LANGUAGES: Final[list[tuple[str, str]]] = [
     ("Spanish", "spanish"),
 ]
 
-# Flag emoji per language value, for compact match lines.
 LANG_FLAGS: Final[dict[str, str]] = {
     "english": "🇬🇧",
     "spanish": "🇪🇸",

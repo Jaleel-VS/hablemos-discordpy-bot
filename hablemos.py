@@ -1,6 +1,5 @@
 """Bot entrypoint — Hablemos subclass of discord.py Bot."""
 import asyncio
-import importlib
 import logging
 from datetime import UTC, datetime
 
@@ -8,34 +7,18 @@ import discord
 from discord import Game
 from discord.ext.commands import Bot
 
-from cogs.utils.discovery import discover_extensions
+from cogs.utils.discovery import discover_extensions, is_code_enabled
 from cogs.utils.gemini import Gemini
 from cogs.utils.login_guard import run_with_login_guard
 from config import load_settings
 from db import Database
 from logger import setup_logging
 
-# Configure logging before anything else
 setup_logging()
 logger = logging.getLogger(__name__)
 
 settings = load_settings()
 logger.info("Environment: %s", settings.environment)
-
-
-def _is_code_enabled(ext: str) -> bool:
-    """Check the code-level ENABLED flag in a cog's config module.
-
-    Returns True (load) unless the cog's config explicitly sets ENABLED = False.
-    """
-    # ext is like 'cogs.worldcup_cog.main' → config module is 'cogs.worldcup_cog.config'
-    config_module = ext.rsplit('.', 1)[0] + '.config'
-    try:
-        mod = importlib.import_module(config_module)
-    except (ImportError, ModuleNotFoundError):
-        # No config module → assume enabled
-        return True
-    return getattr(mod, 'ENABLED', True)
 
 
 class Hablemos(Bot):
@@ -88,13 +71,11 @@ class Hablemos(Bot):
         else:
             logger.info("GEMINI_API_KEY not set — Gemini-using cogs will not load")
 
-        # Load disabled cogs set for filtering
         try:
             disabled = await self.db.get_disabled_cogs()
         except Exception:
             disabled = set()
 
-        # Load explicitly enabled cogs (DB overrides code-level ENABLED=False)
         try:
             enabled = await self.db.get_enabled_cogs()
         except Exception:
@@ -104,8 +85,7 @@ class Hablemos(Bot):
             if ext in disabled:
                 logger.info("Skipping disabled extension: %s", ext)
                 continue
-            # Code-level ENABLED flag (checked unless DB explicitly enables)
-            if ext not in enabled and not _is_code_enabled(ext):
+            if ext not in enabled and not is_code_enabled(ext):
                 logger.info("Skipping code-disabled extension: %s", ext)
                 continue
             try:
@@ -116,7 +96,6 @@ class Hablemos(Bot):
             except Exception:
                 logger.error("Failed to load extension %s", ext, exc_info=True)
 
-        # on_app_command_completion is a client event, not a tree attribute
 
     async def on_ready(self):
         guild_id = self.settings.bot_playground_guild_id
@@ -180,6 +159,5 @@ class Hablemos(Bot):
         except Exception as e:
             logger.debug("Failed to record slash command metric: %s", e)
 
-# Initialize and run
 bot = Hablemos(settings.prefix, settings)
 run_with_login_guard(lambda: bot.run(settings.bot_token))

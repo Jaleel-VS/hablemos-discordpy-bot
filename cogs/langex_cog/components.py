@@ -18,18 +18,18 @@ from discord.ui import (
     Thumbnail,
 )
 
+from cogs.utils.guild import ENGLISH_NATIVE_ROLE_ID, SPANISH_NATIVE_ROLE_ID
+
 from .config import (
     COLOR_BOTH_NATIVE,
     COLOR_ENGLISH_NATIVE,
     COLOR_OTHER_NATIVE,
     COLOR_SPANISH_NATIVE,
     CONTACT_METHODS,
-    ENGLISH_NATIVE_ROLE_ID,
     LANG_FLAGS,
     OFFER_LANGUAGES,
     REGIONS,
     SEEK_LANGUAGES,
-    SPANISH_NATIVE_ROLE_ID,
 )
 from .i18n import t
 

@@ -16,10 +16,14 @@ import json
 import re
 import sys
 import time
-import unicodedata
 from pathlib import Path
 
 import boto3
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from cogs.crossword_cog.config import MAX_WORD_LENGTH
+from cogs.crossword_cog.words import normalize_word
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "cogs" / "crossword_cog" / "data"
 OUTPUT_CSV = DATA_DIR / "generated_batch.csv"
@@ -29,7 +33,6 @@ DEFAULT_TARGET = 70
 DEFAULT_BATCH_SIZE = 25
 
 THEMES = [
-    # Existing 56
     "adjetivos", "animales", "apariencia", "arte", "aves", "bebidas",
     "calendario", "casa", "ciencia", "ciudad", "clima", "cocinar",
     "colores", "comida", "compras", "comunicacion", "cuerpo", "cultura",
@@ -40,19 +43,12 @@ THEMES = [
     "pasatiempos", "personalidad", "profesiones", "relaciones", "religion",
     "restaurante", "ropa", "salud", "sentimientos", "tecnologia", "tiempo",
     "trabajo", "transporte", "verbos", "verduras", "viajes",
-    # New 18
     "medicina", "leyes", "moda", "arquitectura", "filosofia", "economia",
     "militar", "mitologia", "astronomia", "quimica", "botanica", "zoologia",
     "gastronomia", "fotografia", "cine", "teatro", "danza", "literatura",
 ]
 
 DIFFICULTIES = ["beginner", "advanced"]
-
-
-def normalize(text: str) -> str:
-    """Strip accents and lowercase for comparison."""
-    nfkd = unicodedata.normalize("NFKD", text.strip().lower())
-    return "".join(c for c in nfkd if not unicodedata.combining(c))
 
 
 def load_existing() -> tuple[set[str], dict[tuple[str, str], int]]:
@@ -65,7 +61,7 @@ def load_existing() -> tuple[set[str], dict[tuple[str, str], int]]:
         with open(path) as f:
             for row in csv.reader(f):
                 if len(row) == 6:
-                    existing.add(normalize(row[0]))
+                    existing.add(normalize_word(row[0]))
                     key = (row[4], row[5])
                     counts[key] = counts.get(key, 0) + 1
     return existing, counts
@@ -93,7 +89,7 @@ def build_prompt(theme: str, difficulty: str, exclude_words: list[str], count: i
     return f"""Generate exactly {count} Spanish crossword words for theme "{theme}" at {difficulty} level ({diff_desc}).
 
 HARD RULES — every word must satisfy ALL of these:
-1. word_es: a single real Spanish word, lowercase, max 12 characters, no spaces, no hyphens, no accents needed (stripped for crossword grid)
+1. word_es: a single real Spanish word, lowercase, max {MAX_WORD_LENGTH} characters, no spaces, no hyphens, no accents needed (stripped for crossword grid)
 2. word_en: accurate English translation (single word preferred, multi-word OK if needed)
 3. clue_es: Spanish hint, 1 sentence, ≤80 characters. Must NOT contain the answer word (word_es).
 4. clue_en: English hint, 1 sentence, ≤80 characters. Must NOT contain the answer word (word_en).
@@ -137,16 +133,15 @@ def validate_word(entry: dict, existing: set[str]) -> str | None:
 
     if not w_es:
         return "empty word_es"
-    if len(w_es) > 12:
+    if len(w_es) > MAX_WORD_LENGTH:
         return f"too long ({len(w_es)}): {w_es}"
     if " " in w_es or "-" in w_es:
         return f"space/hyphen: {w_es}"
     if not re.match(r"^[a-záéíóúüñ]+$", w_es):
         return f"invalid chars: {w_es}"
-    if normalize(w_es) in existing:
+    if normalize_word(w_es) in existing:
         return f"duplicate: {w_es}"
-    # Reject if es == en after normalization (cognates)
-    if normalize(w_es) == normalize(w_en):
+    if normalize_word(w_es) == normalize_word(w_en):
         return f"cognate: {w_es}={w_en}"
     if _looks_truncated(w_es):
         return f"truncated: {w_es}"
@@ -159,13 +154,11 @@ def validate_word(entry: dict, existing: set[str]) -> str | None:
     c_es = entry.get("clue_es", "").strip()
     c_en = entry.get("clue_en", "").strip()
 
-    # Clue must not contain the answer
     if w_es in c_es.lower():
         return f"clue_es contains '{w_es}'"
     if w_en.lower() in c_en.lower():
         return f"clue_en contains '{w_en}'"
 
-    # Clue length
     if len(c_es) > 80:
         return f"clue_es too long ({len(c_es)})"
     if len(c_en) > 80:
@@ -213,11 +206,9 @@ def main():
     existing, counts = load_existing()
     print(f"Existing: {len(existing)} unique words\n")
 
-    # Filter themes/difficulties if specified
     themes = [t.strip() for t in args.themes.split(",") if t.strip()] if args.themes else THEMES
     diffs = [d.strip() for d in args.difficulties.split(",") if d.strip()] if args.difficulties else DIFFICULTIES
 
-    # Build generation plan: (theme, difficulty, needed)
     plan: list[tuple[str, str, int]] = []
     for theme in themes:
         for diff in diffs:
@@ -226,7 +217,6 @@ def main():
             if needed > 0:
                 plan.append((theme, diff, needed))
 
-    # Sort: most-needed first (new themes get priority)
     plan.sort(key=lambda x: -x[2])
 
     total_needed = sum(n for _, _, n in plan)
@@ -310,7 +300,7 @@ def main():
                         diff,
                     )
                     writer.writerow(row)
-                    existing.add(normalize(entry["word_es"]))
+                    existing.add(normalize_word(entry["word_es"]))
                     theme_words.append(entry["word_es"])
                     valid += 1
 

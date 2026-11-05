@@ -112,8 +112,6 @@ class ClozeEngine:
     key = "cloze"
     display_name = "Cloze"
 
-    # ── lifecycle ─────────────────────────────────────────────────────────
-
     def new_game(
         self, *, mode: Mode, user_id: str, options: dict[str, Any] | None = None,
     ) -> GuessOutcome:
@@ -222,7 +220,6 @@ class ClozeEngine:
         awaiting_retry = bool(state.get("awaiting_retry", False))
         awaiting_continue = bool(state.get("awaiting_continue", False))
 
-        # ── continue (choice mode, freeplay only) ─────────────────────────
         if action == "continue":
             if not awaiting_continue:
                 raise GameError("No hay nada que continuar.")
@@ -232,7 +229,6 @@ class ClozeEngine:
                 state["status"] = "over"
             return GuessOutcome(state=state, client_view=self.client_view(state))
 
-        # ── skip (freeplay only, not while a miss is pending) ─────────────
         if action == "skip":
             # A pending miss must be resolved (retype / continue) first; skipping
             # it would record the same card twice and desync answered vs cards.
@@ -252,7 +248,6 @@ class ClozeEngine:
                 state["status"] = "over"
             return GuessOutcome(state=state, client_view=self.client_view(state))
 
-        # ── retry (type mode, freeplay only) ──────────────────────────────
         if action == "retry":
             if not awaiting_retry:
                 raise GameError("No hay reintento pendiente.")
@@ -281,7 +276,6 @@ class ClozeEngine:
                 state["retry_attempts"] = retry_attempts
             return GuessOutcome(state=state, client_view=self.client_view(state))
 
-        # ── answer (default) ──────────────────────────────────────────────
         # If client is awaiting_retry and sends action="answer", treat as retry
         # (lenient: avoids race where client didn't see the awaiting_retry flag).
         if awaiting_retry:
@@ -336,8 +330,6 @@ class ClozeEngine:
 
     def is_over(self, state: dict[str, Any]) -> bool:
         return state.get("status") == "over"
-
-    # ── result card ───────────────────────────────────────────────────────
 
     def result_payload(self, state: dict[str, Any]) -> dict[str, Any]:
         correct = int(state.get("correct", 0))
@@ -415,8 +407,6 @@ class ClozeEngine:
             "misses": misses,
             "review_ids": review_ids,
         }
-
-    # ── helpers ───────────────────────────────────────────────────────────
 
     def client_view(self, state: dict[str, Any]) -> dict[str, Any]:
         """What the client may see. Excludes the pending answer while playing."""

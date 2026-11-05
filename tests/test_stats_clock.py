@@ -46,15 +46,13 @@ class FakeContext:
         self.sent.append(message)
 
 
-# ── Renderer ──
-
 def test_render_returns_square_png() -> None:
     hours = [1, 0, 0, 2, 5, 9] + [0] * 18
     buf = clock.render_activity_clock(hours, utc_offset=1)
     assert isinstance(buf, io.BytesIO)
     img = Image.open(buf)
     assert img.format == "PNG"
-    assert img.width == img.height  # square clock face
+    assert img.width == img.height
 
 
 def test_render_handles_all_zero_hours() -> None:
@@ -71,8 +69,6 @@ def test_render_rejects_nothing_within_range() -> None:
     assert Image.open(buf).format == "PNG"
 
 
-# ── Timezone helpers ──
-
 def test_format_offset_uses_unicode_minus() -> None:
     assert _format_offset(1) == "UTC+1"
     assert _format_offset(0) == "UTC+0"
@@ -85,10 +81,7 @@ def test_now_at_offset_is_hhmm() -> None:
     assert len(label) == 5 and 0 <= int(hh) <= 23 and 0 <= int(mm) <= 59
 
 
-# ── Command ──
-
 def test_result_view_has_post_and_change_buttons() -> None:
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     view = ClockResultView(cast(Any, object()), offset=1)
     labels = [c.label for c in view.children if isinstance(c, discord.ui.Button)]
     assert "Publicar en el canal" in labels
@@ -101,7 +94,6 @@ class FakeUser:
 
 
 def test_public_clock_embed_attributes_owner() -> None:
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     embed = _public_clock_embed(cast(Any, FakeUser()), offset=-5)
     assert "Ada" in (embed.title or "")
     assert "UTC−5" in (embed.description or "")
@@ -110,11 +102,9 @@ def test_public_clock_embed_attributes_owner() -> None:
 
 async def test_myclock_posts_launcher() -> None:
     cog = StatsCog.__new__(StatsCog)
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     cog.bot = cast(Any, object())
     ctx = FakeContext()
 
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     callback = cast(Any, cog.myclock.callback)
     await callback(cog, ctx)
 

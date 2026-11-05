@@ -11,7 +11,6 @@ class SafeFormatter(string.Formatter):
         return super().get_value(key, args, kwargs)
 
     def get_field(self, field_name, args, kwargs):
-        # Block private attribute access and deep nesting
         if field_name.count(".") > 2 or "._" in field_name:
             return ("", field_name)
         try:

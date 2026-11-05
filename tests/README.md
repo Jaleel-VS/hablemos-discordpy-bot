@@ -48,7 +48,7 @@ tests/
     ├── __init__.py
     ├── conftest.py                 — fakes + fixtures (FakeBot, FakeDB, etc.)
     ├── test_normalize.py           — accent/punctuation normalization
-    ├── test_grid.py                — grid generation + reduction math
+    ├── test_grid.py                — grid generation + reduction behavior
     ├── test_try_solve.py           — CrosswordGame.try_solve
     ├── test_use_hint.py            — CrosswordGame.use_hint
     └── test_on_message.py          — full on_message flow + concurrency

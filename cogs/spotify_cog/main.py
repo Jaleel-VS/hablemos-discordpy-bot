@@ -48,7 +48,6 @@ async def _dominant_color(url: str) -> Color:
             data = await resp.read()
         img = Image.open(BytesIO(data)).convert("RGB").resize((100, 100))
 
-        # Quantize to 16 color palette
         quantized = img.quantize(colors=16, method=Image.Quantize.MEDIANCUT)
         raw_palette = quantized.getpalette()
         if raw_palette is None:
@@ -64,7 +63,6 @@ async def _dominant_color(url: str) -> Color:
             r, g, b = palette[i * 3], palette[i * 3 + 1], palette[i * 3 + 2]
             rf, gf, bf = r / 255, g / 255, b / 255
 
-            # Chroma (colorfulness)
             rg = rf - gf
             yb = (rf + gf) / 2 - bf
             chroma = math.sqrt(rg ** 2 + yb ** 2)
@@ -73,13 +71,11 @@ async def _dominant_color(url: str) -> Color:
             lum = math.sqrt(0.299 * rf**2 + 0.587 * gf**2 + 0.114 * bf**2)
             darkness = 1 - lum
 
-            # Dominance (area coverage)
             dominance = hist[i] / total_pixels if total_pixels else 0
 
             # Spotify-inspired scoring: heavily weight chroma
             score = chroma * 4.92 + darkness * 1.41 + dominance * 0.79
 
-            # Skip near-gray colors (low saturation)
             if chroma < 0.05:
                 continue
 
@@ -90,7 +86,6 @@ async def _dominant_color(url: str) -> Color:
         if best_score < 0:
             return ART_FALLBACK_ACCENT
 
-        # Boost saturation in HSV space
         rf, gf, bf = [c / 255 for c in best_color]
         h, s, v = colorsys.rgb_to_hsv(rf, gf, bf)
         s = min(s * 1.4, 1.0)  # boost saturation 40%
@@ -269,7 +264,6 @@ class SpotifyCog(BaseCog):
             return
         target, spotify = resolved
 
-        # Extract dominant color from album art
         accent = CARD_FALLBACK_RGB
         if spotify.album_cover_url:
             color = await _dominant_color(spotify.album_cover_url)
@@ -287,7 +281,6 @@ class SpotifyCog(BaseCog):
 
         file = File(buf, filename="nowplaying.png")
 
-        # Send as v2 with Listen button
         try:
             view = discord.ui.LayoutView()
             container_children: list[discord.ui.Item] = [
@@ -308,7 +301,6 @@ class SpotifyCog(BaseCog):
             view.add_item(discord.ui.Container(*container_children))
             await ctx.send(view=view, file=file)
         except HTTPException:
-            # Fallback: just send the image
             buf.seek(0)
             await ctx.send(file=File(buf, filename="nowplaying.png"))
 

@@ -39,25 +39,26 @@ export interface WordleResultPayload extends ResultPayload {
   learning_card?: WordleLearningCard;
 }
 
-export interface WordleView extends GameView {
-  result?: WordleResultPayload;
+export interface GameView<Result = unknown> {
+  game: string;
+  mode: "daily" | "free";
+  puzzle_no: number | null;
+  status: string;
+  result?: Result;
+}
+
+export interface WordleView extends GameView<WordleResultPayload> {
+  game: "wordle";
+  max_guesses: number;
+  word_length: number;
+  rows: Row[];
+  status: "playing" | "won" | "lost";
   hint?: WordleHint;
 }
 
-export interface GameView {
-  game: string;
-  mode: "daily" | "free";
-  max_guesses: number;
-  word_length: number;
-  puzzle_no: number | null;
-  rows: Row[];
-  status: "playing" | "won" | "lost";
-  result?: ResultPayload;
-}
-
-export interface GameResponse {
+export interface GameResponse<View extends GameView = GameView> {
   sealed_state: string;
-  view: GameView;
+  view: View;
 }
 
 export interface Stats {
@@ -134,13 +135,11 @@ export interface ConjugationResult {
   review_verbs: string[];
 }
 
-export interface ConjugationView {
+export interface ConjugationView extends GameView<ConjugationResult> {
   game: "conjugation";
-  mode: "daily" | "free";
   timed: boolean;
   duration: number | null; // null when untimed
   deadline: string | null; // ISO server-authoritative end time; null when untimed
-  puzzle_no: number | null;
   correct: number;
   streak: number;
   best_streak: number;
@@ -148,17 +147,13 @@ export interface ConjugationView {
   status: "playing" | "over";
   last: ConjugationFeedback | null;
   prompt?: ConjugationPrompt;
-  result?: ConjugationResult;
   awaiting_retry: boolean;
   strict: boolean;
   items: number;          // 0 = open-ended
   remaining_items: number | null;
 }
 
-export interface ConjugationResponse {
-  sealed_state: string;
-  view: ConjugationView;
-}
+export type ConjugationResponse = GameResponse<ConjugationView>;
 
 // Options a game may take at start (conjugation: verb set / tenses / pronouns /
 // whether the run is the 60s sprint or untimed practice).
@@ -260,13 +255,11 @@ export interface ClozeResult {
 }
 
 
-export interface ClozeView {
+export interface ClozeView extends GameView<ClozeResult> {
   game: "cloze";
-  mode: "daily" | "free";
   answer_mode: "choice" | "type";
   target: string;
   difficulty: string | null;
-  puzzle_no: number | null;
   round_size: number;
   seq: number;
   // Withheld (null) during daily play so a replayed token can't probe the
@@ -283,14 +276,10 @@ export interface ClozeView {
   awaiting_continue: boolean;
   last: ClozeFeedback | null;
   prompt?: ClozePrompt;
-  result?: ClozeResult;
 }
 
 
-export interface ClozeResponse {
-  sealed_state: string;
-  view: ClozeView;
-}
+export type ClozeResponse = GameResponse<ClozeView>;
 
 // The server (guild) the Activity was launched in, set once after the SDK
 // handshake. Sent with every game start so finished results are attributed to
@@ -330,12 +319,12 @@ export function listGames(): Promise<{ games: GameInfo[] }> {
   });
 }
 
-export function startGame(
+export function startGame<View extends GameView>(
   gameKey: string,
   accessToken: string,
   mode: "daily" | "free",
   options?: StartOptions,
-): Promise<GameResponse> {
+): Promise<GameResponse<View>> {
   return post(`/.proxy/api/games/${gameKey}/start`, {
     access_token: accessToken,
     mode,
@@ -344,8 +333,6 @@ export function startGame(
   });
 }
 
-// Conjugation shares the generic start/guess endpoints but returns its own view
-// shape, so it gets typed wrappers rather than reusing the Wordle GameResponse.
 export function startConjugation(
   accessToken: string,
   mode: "daily" | "free",
@@ -382,12 +369,12 @@ export function fetchConjugationCatalog(): Promise<ConjugationCatalog> {
   });
 }
 
-export function submitGuess(
+export function submitGuess<View extends GameView>(
   gameKey: string,
   accessToken: string,
   sealedState: string,
   guess: string,
-): Promise<GameResponse> {
+): Promise<GameResponse<View>> {
   return post(`/.proxy/api/games/${gameKey}/guess`, {
     access_token: accessToken,
     sealed_state: sealedState,
@@ -507,13 +494,11 @@ export interface PhrasalResult {
   review_ids: string[]; // wrong+close ids, validated, capped 10, daily ids excluded
 }
 
-export interface PhrasalView {
+export interface PhrasalView extends GameView<PhrasalResult> {
   game: "phrasal";
-  mode: "daily" | "free";
   answer_mode: "choice" | "type";
   blank_mode: "particle" | "whole";
   difficulty: string | null;
-  puzzle_no: number | null;
   round_size: number;
   seq: number;
   // Withheld (null) during daily play so a replayed token can't probe the
@@ -527,13 +512,9 @@ export interface PhrasalView {
   awaiting_continue: boolean;
   last: PhrasalFeedback | null;
   prompt?: PhrasalPrompt;
-  result?: PhrasalResult;
 }
 
-export interface PhrasalResponse {
-  sealed_state: string;
-  view: PhrasalView;
-}
+export type PhrasalResponse = GameResponse<PhrasalView>;
 
 export function startPhrasal(
   accessToken: string,

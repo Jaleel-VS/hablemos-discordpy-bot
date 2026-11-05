@@ -23,10 +23,9 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-# ── Scale ──
 SCALE = 3
 OUTPUT_SCALE = 2
-S = SCALE * OUTPUT_SCALE  # 6
+S = SCALE * OUTPUT_SCALE
 
 DISPLAY = 340  # CSS pixels Discord displays the square image at
 
@@ -73,7 +72,6 @@ def _font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
 def _lerp(low: tuple[int, int, int], high: tuple[int, int, int], t: float) -> tuple[int, int, int]:
     """Linear-interpolate between two RGB colours (t clamped to [0, 1])."""
     t = max(0.0, min(1.0, t))
-    # SAFETY: This assertion bridges a tested framework or fake-object type boundary.
     return tuple(int(low[i] + (high[i] - low[i]) * t) for i in range(3))  # type: ignore[return-value]
 
 
@@ -122,7 +120,6 @@ def render_activity_clock(hours: list[int], utc_offset: int) -> io.BytesIO:
     peak = max(hours) if hours else 0
     half = (15.0 - _WEDGE_GAP_DEG) / 2.0
 
-    # 1) Pale track petals (full length, every hour) behind the data.
     for h in range(24):
         c = _pil_angle(h)
         draw.pieslice(
@@ -132,7 +129,6 @@ def render_activity_clock(hours: list[int], utc_offset: int) -> io.BytesIO:
             fill=_TRACK,
         )
 
-    # 2) Data petals: length + colour keyed to share of the peak hour.
     if peak > 0:
         for h in range(24):
             count = hours[h]
@@ -148,7 +144,6 @@ def render_activity_clock(hours: list[int], utc_offset: int) -> io.BytesIO:
                 fill=_lerp(_RAMP_LOW, _RAMP_HIGH, t),
             )
 
-    # 3) Carve the centre hole so petals read as an annulus.
     draw.ellipse(_bbox(center, _INNER * S), fill=_BG)
 
     # 4) Clock face: disc, border, hour ticks.

@@ -19,7 +19,6 @@ from .config import PROFICIENCY_LEVELS, REGION_BUCKET
 # Level value → rank index (0 = strongest/C2). Used for level-fit scoring.
 _LEVEL_INDEX: dict[str, int] = {value: i for i, (_label, value) in enumerate(PROFICIENCY_LEVELS)}
 
-# Scoring weights.
 _W_REGION_EXACT = 3
 _W_REGION_BUCKET = 1
 _W_INTEREST_EACH = 1
@@ -28,7 +27,6 @@ _W_LEVEL_FIT = 2
 _W_RECENT_7D = 2
 _W_RECENT_30D = 1
 
-# Stopwords stripped before interest-keyword overlap.
 _STOPWORDS: frozenset[str] = frozenset({
     "the", "and", "for", "with", "you", "your", "are", "but", "not", "can",
     "want", "like", "love", "some", "any", "all", "this", "that", "they",
@@ -99,7 +97,6 @@ def _recency_points(posted_at: datetime | None, now: datetime) -> int:
 def _score(me: dict, them: dict, my_interests: set[str], posted_at: datetime | None, now: datetime) -> int:
     score = 0
 
-    # Region proximity.
     my_region = me.get("region")
     their_region = them.get("region")
     if my_region and their_region:
@@ -108,7 +105,6 @@ def _score(me: dict, them: dict, my_interests: set[str], posted_at: datetime | N
         elif REGION_BUCKET.get(my_region) == REGION_BUCKET.get(their_region):
             score += _W_REGION_BUCKET
 
-    # Shared interests (keyword overlap, capped).
     overlap = my_interests & _keywords(_interest_text(them))
     score += min(len(overlap) * _W_INTEREST_EACH, _W_INTEREST_CAP)
 
@@ -123,7 +119,6 @@ def _score(me: dict, them: dict, my_interests: set[str], posted_at: datetime | N
     ):
         score += _W_LEVEL_FIT
 
-    # Recency — favor people who posted recently (more likely active).
     score += _recency_points(posted_at, now)
 
     return score
@@ -188,6 +183,5 @@ def rank_matches(
             ),
         ))
 
-    # Sort by score desc, then most-recent first, then user_id for stability.
     scored.sort(key=lambda t: (-t[0], -t[1].timestamp(), t[2].user_id))
     return [m for _s, _t, m in scored[:limit]]

@@ -1,10 +1,7 @@
 """Database mixin for exchange partner post tracking."""
-import logging
 from datetime import datetime
 
 from db import DatabaseMixin
-
-logger = logging.getLogger(__name__)
 
 
 class ExchangePostsMixin(DatabaseMixin):
@@ -16,21 +13,17 @@ class ExchangePostsMixin(DatabaseMixin):
         message_id: int,
         channel_id: int,
         post_data: dict | None = None,
-    ) -> bool:
+    ) -> None:
         """Save or replace a user's exchange post reference."""
         import json
-        try:
-            await self._execute(
-                """INSERT INTO exchange_posts (user_id, message_id, channel_id, post_data)
-                   VALUES ($1, $2, $3, $4::jsonb)
-                   ON CONFLICT (user_id)
-                   DO UPDATE SET message_id = $2, channel_id = $3, post_data = $4::jsonb, posted_at = NOW()""",
-                user_id, message_id, channel_id, json.dumps(post_data) if post_data else None,
-            )
-            return True
-        except Exception:
-            logger.exception("Failed to save exchange post for user %s", user_id)
-            return False
+
+        await self._execute(
+            """INSERT INTO exchange_posts (user_id, message_id, channel_id, post_data)
+               VALUES ($1, $2, $3, $4::jsonb)
+               ON CONFLICT (user_id)
+               DO UPDATE SET message_id = $2, channel_id = $3, post_data = $4::jsonb, posted_at = NOW()""",
+            user_id, message_id, channel_id, json.dumps(post_data) if post_data else None,
+        )
 
     async def get_exchange_post(self, user_id: int) -> dict | None:
         """Get a user's current exchange post."""
@@ -88,7 +81,6 @@ class ExchangePostsMixin(DatabaseMixin):
         if not row:
             return True, None
         posted_at = row["posted_at"]
-        # Allow repost within grace period OR after full cooldown
         can = await self._fetchval(
             """SELECT $1 > NOW() - make_interval(mins => $2)
                    OR $1 < NOW() - make_interval(days => $3)""",

@@ -170,12 +170,9 @@ def _ensure_contrast(r: int, g: int, b: int) -> tuple[int, int, int]:
     """Adjust color to ensure white text is readable on it."""
     lum = 0.299 * r + 0.587 * g + 0.114 * b
     if lum > 160:
-        # Too bright for white text — darken
         factor = 0.5
         return int(r * factor), int(g * factor), int(b * factor)
     if lum < 50:
-        # Too dark — blend toward a muted version so it's not just black
-        # Boost the most dominant channel to create some color
         mx = max(r, g, b, 1)
         return int(r / mx * 90 + 20), int(g / mx * 90 + 20), int(b / mx * 90 + 20)
     return r, g, b
@@ -233,11 +230,9 @@ async def render_nowplaying(
     # Charcoal is a deliberate fallback, not a dark artwork swatch to brighten.
     r, g, b = accent if accent == CARD_FALLBACK_RGB else _ensure_contrast(*accent)
 
-    # Create card at 2x resolution for crisp text
     card = Image.new("RGBA", (WIDTH, HEIGHT), (r, g, b, 255))
     draw = ImageDraw.Draw(card)
 
-    # Album art
     art_x, art_y = PADDING, PADDING
     if album_art_url:
         art = await _fetch_image(album_art_url)
@@ -246,7 +241,6 @@ async def render_nowplaying(
             art = _round_corners(art, 8 * SCALE)
             card.paste(art, (art_x, art_y), art)
 
-    # Text area
     text_x = art_x + ART_SIZE + PADDING
     text_max_w = WIDTH - text_x - PADDING
 
@@ -266,7 +260,6 @@ async def render_nowplaying(
     artist_text = _truncate(artist, artist_font, text_max_w, artist_cjk)
     album_text = _truncate(album, album_font, text_max_w, album_cjk)
 
-    # Spotify logo (top-right)
     if SPOTIFY_LOGO.exists():
         logo = Image.open(SPOTIFY_LOGO).convert("RGBA")
         logo_size = 28 * SCALE * OUTPUT_SCALE
@@ -299,7 +292,6 @@ async def render_nowplaying(
     text_y += 26 * SCALE * OUTPUT_SCALE
     _draw_line(draw, (text_x, text_y), album_text, album_font, album_cjk, white_dim)
 
-    # Round corners
     card = _round_corners(card, CORNER_RADIUS)
 
     # Flatten onto accent-colored background so the rounded corners

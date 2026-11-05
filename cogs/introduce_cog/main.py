@@ -55,7 +55,6 @@ class IntroduceCog(BaseCog):
         super().__init__(bot)
         bot.add_view(IntroduceButton())
 
-    # ── /introduce ──
 
     @app_commands.command(name="introduce", description="Introduce yourself to the community")
     async def introduce_slash(self, interaction: Interaction):

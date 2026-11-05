@@ -2,6 +2,7 @@
 """Database mixin for Language League leaderboard queries."""
 import asyncio
 
+from cogs.league_cog.config import SCORING
 from db import DatabaseMixin
 
 
@@ -178,7 +179,6 @@ class LeaderboardMixin(DatabaseMixin):
             round_id_value = int(round_id)
 
         async with self._pool().acquire() as conn:
-            # Single query: user metadata + round aggregates
             row = await conn.fetchrow('''
                 SELECT lu.username, lu.learning_spanish, lu.learning_english,
                        COALESCE(SUM(la.points), 0)              AS total_points,
@@ -194,7 +194,7 @@ class LeaderboardMixin(DatabaseMixin):
 
             total_points = int(row['total_points'] or 0)
             active_days = int(row['active_days'] or 0)
-            total_score = total_points + active_days * 5
+            total_score = total_points + active_days * SCORING.ACTIVE_DAY_BONUS_MULTIPLIER
 
             # Fetch relevant ranks concurrently — each call acquires its own
             # pool connection, so they run in parallel rather than serially.
@@ -221,76 +221,32 @@ class LeaderboardMixin(DatabaseMixin):
             }
 
     async def _get_user_rank(self, user_id: int, board_type: str, round_id: int) -> int | None:
-        """Return the rank of ``user_id`` on the given leaderboard for ``round_id``.
-
-        Uses static per-board queries so Postgres can cache a plan for each shape.
-        """
-        if board_type == 'spanish':
-            sql = '''
-                WITH user_stats AS (
-                    SELECT lu.user_id,
-                           COALESCE(SUM(la.points), 0)          AS total_points,
-                           COUNT(DISTINCT DATE(la.created_at))  AS active_days
-                    FROM leaderboard_users lu
-                    LEFT JOIN leaderboard_activity la
-                           ON la.user_id = lu.user_id AND la.round_id = $2
-                    WHERE lu.opted_in = TRUE AND lu.banned = FALSE
-                      AND lu.learning_spanish = TRUE
-                    GROUP BY lu.user_id
-                ),
-                ranked AS (
-                    SELECT user_id,
-                           RANK() OVER (
-                               ORDER BY (total_points + active_days * 5) DESC
-                           ) AS rank
-                    FROM user_stats
-                )
-                SELECT rank FROM ranked WHERE user_id = $1
-            '''
-        elif board_type == 'english':
-            sql = '''
-                WITH user_stats AS (
-                    SELECT lu.user_id,
-                           COALESCE(SUM(la.points), 0)          AS total_points,
-                           COUNT(DISTINCT DATE(la.created_at))  AS active_days
-                    FROM leaderboard_users lu
-                    LEFT JOIN leaderboard_activity la
-                           ON la.user_id = lu.user_id AND la.round_id = $2
-                    WHERE lu.opted_in = TRUE AND lu.banned = FALSE
-                      AND lu.learning_english = TRUE
-                    GROUP BY lu.user_id
-                ),
-                ranked AS (
-                    SELECT user_id,
-                           RANK() OVER (
-                               ORDER BY (total_points + active_days * 5) DESC
-                           ) AS rank
-                    FROM user_stats
-                )
-                SELECT rank FROM ranked WHERE user_id = $1
-            '''
-        else:  # combined
-            sql = '''
-                WITH user_stats AS (
-                    SELECT lu.user_id,
-                           COALESCE(SUM(la.points), 0)          AS total_points,
-                           COUNT(DISTINCT DATE(la.created_at))  AS active_days
-                    FROM leaderboard_users lu
-                    LEFT JOIN leaderboard_activity la
-                           ON la.user_id = lu.user_id AND la.round_id = $2
-                    WHERE lu.opted_in = TRUE AND lu.banned = FALSE
-                    GROUP BY lu.user_id
-                ),
-                ranked AS (
-                    SELECT user_id,
-                           RANK() OVER (
-                               ORDER BY (total_points + active_days * 5) DESC
-                           ) AS rank
-                    FROM user_stats
-                )
-                SELECT rank FROM ranked WHERE user_id = $1
-            '''
-        row = await self._fetchrow(sql, user_id, round_id)
+        """Return the user's position using the displayed board's tie-break."""
+        row = await self._fetchrow('''
+            WITH user_stats AS (
+                SELECT lu.user_id,
+                       COALESCE(SUM(la.points), 0) AS total_points,
+                       COUNT(DISTINCT DATE(la.created_at)) AS active_days
+                FROM leaderboard_users lu
+                LEFT JOIN leaderboard_activity la
+                       ON la.user_id = lu.user_id AND la.round_id = $2
+                WHERE lu.opted_in = TRUE AND lu.banned = FALSE
+                  AND CASE $3::text
+                      WHEN 'spanish' THEN lu.learning_spanish
+                      WHEN 'english' THEN lu.learning_english
+                      ELSE TRUE
+                  END
+                GROUP BY lu.user_id
+            ),
+            ranked AS (
+                SELECT user_id,
+                       ROW_NUMBER() OVER (
+                           ORDER BY (total_points + active_days * $4) DESC, user_id
+                       ) AS rank
+                FROM user_stats
+            )
+            SELECT rank FROM ranked WHERE user_id = $1
+        ''', user_id, round_id, board_type, SCORING.ACTIVE_DAY_BONUS_MULTIPLIER)
         return row['rank'] if row else None
 
     async def get_leaderboard(self, board_type: str, limit: int = 10, round_id: int | None = None) -> list[dict]:
@@ -317,12 +273,12 @@ class LeaderboardMixin(DatabaseMixin):
                 GROUP BY lu.user_id, lu.username
             )
             SELECT user_id, username, total_points, active_days,
-                   (total_points + (active_days * 5)) as total_score,
+                   (total_points + (active_days * $3)) as total_score,
                    ROW_NUMBER() OVER (
-                       ORDER BY (total_points + (active_days * 5)) DESC, user_id
+                       ORDER BY (total_points + (active_days * $3)) DESC, user_id
                    ) as rank
             FROM user_stats ORDER BY total_score DESC, user_id LIMIT $1
-        ''', limit, round_id_value)
+        ''', limit, round_id_value, SCORING.ACTIVE_DAY_BONUS_MULTIPLIER)
         return [dict(row) for row in rows]
 
     async def exclude_channel(self, channel_id: int, channel_name: str, admin_id: int) -> bool:
@@ -359,8 +315,6 @@ class LeaderboardMixin(DatabaseMixin):
 
     async def get_league_admin_stats(self) -> dict:
         """Get admin statistics for the Language League."""
-        # Two queries instead of five: leaderboard_users is a single table scan
-        # with FILTER aggregates; leaderboard_activity is a separate table.
         row = await self._fetchrow('''
             SELECT
                 COUNT(*) FILTER (WHERE opted_in = TRUE AND banned = FALSE)
@@ -385,7 +339,6 @@ class LeaderboardMixin(DatabaseMixin):
             'total_messages_30d': msgs,
         }
 
-    # Round management
 
     async def get_current_round(self) -> dict | None:
         """Get the currently active round"""

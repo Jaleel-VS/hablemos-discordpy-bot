@@ -3,7 +3,6 @@ Ask cog — owner-only Gemini Q&A with paginated responses.
 """
 from __future__ import annotations
 
-import asyncio
 import logging
 from typing import TYPE_CHECKING
 
@@ -22,7 +21,6 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 PAGE_CONTENT_LIMIT = 3900
-GEMINI_TIMEOUT = 30
 
 
 def split_response(text: str) -> list[str]:
@@ -111,13 +109,7 @@ class AskCog(BaseCog):
         processing = await ctx.send("Thinking...")
 
         try:
-            text = await asyncio.wait_for(
-                self.bot.gemini.run(ASK_PROMPT, question),
-                timeout=GEMINI_TIMEOUT,
-            )
-        except TimeoutError:
-            await processing.edit(content=f"Gemini didn't respond within {GEMINI_TIMEOUT}s. Try again.")
-            return
+            text = await self.bot.gemini.run(ASK_PROMPT, question)
         except GeminiError as e:
             logger.warning("Ask Gemini error code=%s: %s", e.code, e.message)
             await processing.edit(content=e.user_message)

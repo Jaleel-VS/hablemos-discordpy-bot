@@ -10,39 +10,6 @@ logger = logging.getLogger(__name__)
 class StatsMixin(DatabaseMixin):
     """Query methods for stats tracking (channel_stats + user_activity)."""
 
-    # ── Upserts (called from on_message listener) ──
-
-    async def upsert_channel_stat(
-        self, channel_id: int, role_type: str, hour_bucket: datetime
-    ) -> None:
-        """Increment message count for a channel/role/hour bucket."""
-        await self._execute(
-            """
-            INSERT INTO channel_stats (channel_id, role_type, hour_bucket, msg_count)
-            VALUES ($1, $2, $3, 1)
-            ON CONFLICT (channel_id, role_type, hour_bucket)
-            DO UPDATE SET msg_count = channel_stats.msg_count + 1
-            """,
-            channel_id,
-            role_type,
-            hour_bucket,
-        )
-
-    async def upsert_user_activity(self, user_id: int, role_type: str) -> None:
-        """Record user activity (first_seen on insert, last_seen on update)."""
-        now = datetime.now(UTC)
-        await self._execute(
-            """
-            INSERT INTO user_activity (user_id, role_type, first_seen, last_seen)
-            VALUES ($1, $2, $3, $3)
-            ON CONFLICT (user_id)
-            DO UPDATE SET role_type = $2, last_seen = $3
-            """,
-            user_id,
-            role_type,
-            now,
-        )
-
     async def track_message_stats(
         self,
         channel_id: int,
@@ -91,23 +58,6 @@ class StatsMixin(DatabaseMixin):
                 user_id,
                 hour_bucket,
             )
-
-    # ── Channel stats queries ──
-
-    async def upsert_user_message_count(
-        self, user_id: int, hour_bucket: datetime
-    ) -> None:
-        """Increment message count for a user/hour bucket."""
-        await self._execute(
-            """
-            INSERT INTO user_message_counts (user_id, hour_bucket, msg_count)
-            VALUES ($1, $2, 1)
-            ON CONFLICT (user_id, hour_bucket)
-            DO UPDATE SET msg_count = user_message_counts.msg_count + 1
-            """,
-            user_id,
-            hour_bucket,
-        )
 
     async def get_top_channels(
         self, days: int = 7, limit: int = 10
@@ -374,8 +324,6 @@ class StatsMixin(DatabaseMixin):
         )
         return [dict(r) for r in rows]
 
-    # ── User adoption queries ──
-
     async def get_new_users_per_week(self, weeks: int = 8) -> list[dict]:
         """Count of new users per week (by first_seen)."""
         rows = await self._fetch(
@@ -426,8 +374,6 @@ class StatsMixin(DatabaseMixin):
             "monthly_active": mau,
             "new_users": new_users or 0,
         }
-
-    # ── Activity clock ($myclock) ──
 
     async def get_user_clock_tz(self, user_id: int) -> int | None:
         """Return a user's saved whole-hour UTC offset, or None if unset.

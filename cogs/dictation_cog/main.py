@@ -116,7 +116,6 @@ class DictationCog(BaseCog):
             interaction.user, channel_id, language.value, level.value, sentence["id"],
         )
 
-        # Wait for answer
         def check(m: discord.Message) -> bool:
             return m.channel.id == channel_id and m.author.id == user_id and not m.author.bot
 

@@ -59,14 +59,16 @@ async def test_english_card_hides_spanish_without_affecting_spanish_browser(cata
         initial = _text(view)
         assert initial.index(entry.meaning_en) < initial.index(entry.meaning_es)
         spanish_initial = _text(spanish_view)
-        await view._toggle_translation(interaction)
+        toggle = next(item for item in view.walk_children() if isinstance(item, discord.ui.Button) and item.label == "Hide Spanish")
+        await toggle.callback(interaction)
         visible = _text(view)
         assert entry.meaning_en in visible
         assert entry.meaning_es not in visible
         assert all(example.en in visible and example.es not in visible for example in entry.examples)
         assert entry.note in visible
         assert _text(spanish_view) == spanish_initial
-        await view._toggle_translation(interaction)
+        toggle = next(item for item in view.walk_children() if isinstance(item, discord.ui.Button) and item.label == "Show Spanish")
+        await toggle.callback(interaction)
         assert entry.meaning_es in _text(view)
     finally:
         view.stop()

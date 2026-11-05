@@ -22,7 +22,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from .config import Settings, load_settings
+from .config import Settings, get_str_env, load_settings
 from .db import Database
 from .discord_oauth import (
     DiscordOAuthError,
@@ -30,6 +30,7 @@ from .discord_oauth import (
     exchange_code,
     fetch_user,
 )
+from .games.registry import available_games
 from .games.routes import build_router
 from .pet import build_pet_router
 
@@ -84,7 +85,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # modules is dropped (root defaults to WARNING). Honor a LOG_LEVEL env var,
     # defaulting to INFO. Safe to call repeatedly (force=True re-applies).
     logging.basicConfig(
-        level=os.getenv("LOG_LEVEL", "INFO").upper(),
+        level=get_str_env("LOG_LEVEL", "INFO").upper(),
         format="%(asctime)s %(levelname)s %(name)s %(message)s",
         force=True,
     )
@@ -104,7 +105,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if cfg.database_url:
             db = Database(cfg.database_url)
             try:
-                await db.connect()
+                await db.connect(
+                    game_labels={g["key"]: g["display_name"] for g in available_games()},
+                )
                 db_holder["db"] = db
             except Exception:
                 logger.exception("DB connect failed; running without persistence")

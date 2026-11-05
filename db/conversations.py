@@ -70,7 +70,7 @@ class ConversationsMixin(DatabaseMixin):
         ''', language, level, category)
         return int(result.split()[-1]) if result and result.split() else 0
 
-    async def check_daily_limit(self, user_id: int, limit: int = 2) -> int:
+    async def check_daily_limit(self, user_id: int) -> int:
         """Check how many conversations a user has requested today."""
         row = await self._fetchrow('''
             SELECT conversation_count
@@ -79,7 +79,7 @@ class ConversationsMixin(DatabaseMixin):
         ''', user_id)
         return row['conversation_count'] if row else 0
 
-    async def try_reserve_daily_usage(self, user_id: int, limit: int = 2) -> bool:
+    async def try_reserve_daily_usage(self, user_id: int, limit: int) -> bool:
         """Atomically consume one daily slot. False if the user is already at the limit."""
         reserved = await self._fetchval('''
             INSERT INTO user_conversation_limits (user_id, date, conversation_count)
@@ -108,9 +108,9 @@ class ConversationsMixin(DatabaseMixin):
         ''', user_id)
 
 
-    async def get_daily_usage_remaining(self, user_id: int, limit: int = 2) -> int:
+    async def get_daily_usage_remaining(self, user_id: int, limit: int) -> int:
         """Get how many conversations a user has remaining today."""
-        used = await self.check_daily_limit(user_id, limit)
+        used = await self.check_daily_limit(user_id)
         return max(0, limit - used)
 
     async def get_conversation_stats_by_combo(self) -> list:

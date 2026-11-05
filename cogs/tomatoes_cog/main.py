@@ -14,7 +14,6 @@ from PIL import Image
 
 from base_cog import BaseCog
 from cogs.tomatoes_cog.generator import generate_tomatoes
-from cogs.tomatoes_cog.generator_v2 import generate_tomatoes_v2
 from cogs.utils.embeds import red_embed
 
 logger = logging.getLogger(__name__)
@@ -83,50 +82,6 @@ class TomatoesCog(BaseCog):
             if output_path:
                 Path(output_path).unlink(missing_ok=True)
 
-    @command(aliases=["t2"])
-    @cooldown(1, 5, type=BucketType.user)
-    async def tomato2(self, ctx: Context, *user_input):
-        """Throws tomatoes AGGRESSIVELY at a user (v2).
-
-        Example usage:
-        `$tomato2 @Pablo`
-        `$t2 @Rai`
-        Or reply to a message with `$tomato2`
-        """
-        try:
-            user = _target_user(ctx)
-            if user is None:
-                await ctx.send(embed=red_embed("Mention someone or reply to a message! `$t2 @user`"))
-                return
-
-            async with ctx.typing():
-                pfp = user.display_avatar.with_size(512)
-                data = BytesIO(await pfp.read())
-                avatar = Image.open(data).convert("RGBA")
-                gif_buf = generate_tomatoes_v2(avatar)
-
-            await ctx.send(
-                content=user.mention,
-                file=File(gif_buf, filename="tomatoes.gif"),
-            )
-        except Forbidden:
-            logger.warning(
-                "Missing permissions to send tomatoes in channel %s (guild %s)",
-                ctx.channel.id,
-                ctx.guild.id if ctx.guild else "DM",
-            )
-        except HTTPException:
-            logger.exception("Failed to send tomatoes v2 image")
-            try:
-                await ctx.send(embed=red_embed("Something went wrong sending the image."))
-            except Forbidden:
-                logger.warning("Missing permissions to send error embed in channel %s", ctx.channel.id)
-        except Exception:
-            logger.exception("Failed to generate tomatoes v2 image")
-            try:
-                await ctx.send(embed=red_embed("Something went wrong generating the image."))
-            except Forbidden:
-                logger.warning("Missing permissions to send error embed in channel %s", ctx.channel.id)
 
 async def setup(bot):
     """Setup function to add the cog to the bot"""
