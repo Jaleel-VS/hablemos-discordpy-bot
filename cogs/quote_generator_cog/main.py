@@ -254,7 +254,7 @@ class QuoteGenerator(BaseCog):
                 return None
             return await self._extract_quote_data(ctx, msg)
 
-        if len(user_input) == 1 and user_input[0].startswith("https://discord.com/channels/"):
+        if len(user_input) == 1 and "/channels/" in user_input[0]:
             parsed = parse_message_link(user_input[0])
             if parsed is None:
                 await ctx.send(embed=red_embed("That doesn't look like a valid message link."))

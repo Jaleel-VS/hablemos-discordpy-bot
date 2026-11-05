@@ -16,8 +16,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# Discord returns ~25 results per page (fixed, not configurable)
-RESULTS_PER_PAGE = 25
 DISPLAY_PER_PAGE = 5
 
 
