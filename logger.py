@@ -26,6 +26,10 @@ class DiscordWebhookHandler(logging.Handler):
     def emit(self, record: logging.LogRecord):
         try:
             loop = asyncio.get_running_loop()
+        except RuntimeError:
+            # Records logged before the bot's event loop starts stay in the file and stdout logs.
+            return
+        try:
             task = loop.create_task(self._send(self.format(record), record))
             self._tasks.add(task)
             task.add_done_callback(self._tasks.discard)
