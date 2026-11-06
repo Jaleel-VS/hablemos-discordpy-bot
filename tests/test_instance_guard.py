@@ -32,7 +32,8 @@ async def fresh_db() -> AsyncIterator[tuple[Database, asyncpg.Connection]]:
         yield database, raw
     finally:
         await raw.close()
-        await database.close()
+        # terminate, not close: a failed test can leave a guard's LISTEN connection checked out.
+        database.pool.terminate()
         await admin.execute(f'DROP DATABASE "{name}" WITH (FORCE)')
         await admin.close()
 

@@ -1,5 +1,6 @@
 """Regression coverage for startup and on_ready lifecycle."""
 
+from datetime import UTC, datetime
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
@@ -7,7 +8,9 @@ import discord
 import pytest
 
 import db
+from cogs.utils.instance_guard import StaleDeployment
 from db import Database
+from db.instances import InstanceClaim
 from hablemos import Hablemos
 
 
@@ -149,4 +152,42 @@ async def test_schema_failure_propagates_and_closes_pool(monkeypatch: pytest.Mon
     pool.close.assert_awaited_once()
     await database.close()
     pool.close.assert_awaited_once()
+
+
+async def test_stale_deploy_never_reaches_the_gateway(monkeypatch: pytest.MonkeyPatch) -> None:
+    """An older container than the session owner stops in setup_hook, before connecting."""
+    settings = SimpleNamespace(
+        environment="test",
+        prefix="$",
+        owner_id=1,
+        database_url="postgresql://unused",
+        bot_token="unused",
+        gemini_api_key=None,
+        deploy_version=5,
+        deploy_sha="test",
+    )
+    bot = Hablemos("$", settings)
+    gateway_connected = False
+
+    async def login(token: str) -> None:
+        await bot.setup_hook()
+
+    async def connect(*, reconnect: bool = True) -> None:
+        nonlocal gateway_connected
+        gateway_connected = True
+
+    monkeypatch.setattr(Database, "connect", AsyncMock())
+    monkeypatch.setattr(
+        Database, "active_instance",
+        AsyncMock(return_value=InstanceClaim(9, "newer", datetime.now(UTC))),
+    )
+    monkeypatch.setattr(Database, "record_instance_event", AsyncMock())
+    monkeypatch.setattr(bot, "login", login)
+    monkeypatch.setattr(bot, "connect", connect)
+
+    async with bot:
+        with pytest.raises(StaleDeployment):
+            await bot.start("unused")
+
+    assert not gateway_connected
 
