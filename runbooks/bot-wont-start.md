@@ -1,7 +1,7 @@
 # Bot is offline or won't start
 
 **When:** the Lightsail service is `RUNNING` but the bot isn't online, or a deploy failed.
-**Last verified:** 2026-11-05
+**Last verified:** 2026-11-06
 
 ## Steps
 
