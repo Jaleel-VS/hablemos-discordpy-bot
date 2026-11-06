@@ -1,0 +1,58 @@
+name: Tests
+
+# Runs on pull requests and is called by the deploy workflow, so nothing
+# reaches Lightsail without passing.
+
+on:
+  pull_request:
+  workflow_call:
+
+jobs:
+  bot:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run pytest -q
+
+  activity-backend:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: activity/backend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+      - run: uv sync --locked
+      - run: uv run python -m pytest -q
+
+  activity-frontend:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: activity/frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+          cache-dependency-path: activity/frontend/package-lock.json
+      - run: npm ci
+      - run: npx tsc -b

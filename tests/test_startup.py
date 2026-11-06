@@ -1,18 +1,14 @@
 """Regression coverage for startup and on_ready lifecycle."""
 
-import runpy
-from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import discord
 import pytest
-from discord.ext.commands import Bot
 
-import config
 import db
-import logger
 from db import Database
+from hablemos import Hablemos
 
 
 async def test_database_retry_exhaustion_aborts_startup(
@@ -27,14 +23,7 @@ async def test_database_retry_exhaustion_aborts_startup(
         bot_token="unused",
         gemini_api_key=None,
     )
-    monkeypatch.setattr(config, "load_settings", lambda: settings)
-    monkeypatch.setattr(logger, "setup_logging", lambda: None)
-    # Load the entrypoint without invoking its blocking runner.
-    monkeypatch.setattr(Bot, "run", lambda self, token: None)
-    namespace = runpy.run_path(
-        str(Path(__file__).resolve().parents[1] / "hablemos.py")
-    )
-    bot = namespace["bot"]
+    bot = Hablemos("$", settings)
     failures: list[ConnectionError] = []
     delays: list[int] = []
     gateway_connected = False
@@ -87,13 +76,7 @@ async def test_on_ready_announces_online_once(monkeypatch: pytest.MonkeyPatch) -
         error_channel_id=22,
         online_channel_id=33,
     )
-    monkeypatch.setattr(config, "load_settings", lambda: settings)
-    monkeypatch.setattr(logger, "setup_logging", lambda: None)
-    monkeypatch.setattr(Bot, "run", lambda self, token: None)
-    namespace = runpy.run_path(
-        str(Path(__file__).resolve().parents[1] / "hablemos.py")
-    )
-    bot = namespace["bot"]
+    bot = Hablemos("$", settings)
 
     sent: list[str] = []
 
@@ -137,13 +120,7 @@ async def test_on_ready_missing_guild_is_nonfatal(
         error_channel_id=22,
         online_channel_id=33,
     )
-    monkeypatch.setattr(config, "load_settings", lambda: settings)
-    monkeypatch.setattr(logger, "setup_logging", lambda: None)
-    monkeypatch.setattr(Bot, "run", lambda self, token: None)
-    namespace = runpy.run_path(
-        str(Path(__file__).resolve().parents[1] / "hablemos.py")
-    )
-    bot = namespace["bot"]
+    bot = Hablemos("$", settings)
     monkeypatch.setattr(bot, "get_guild", lambda guild_id: None)
 
     await bot.on_ready()
