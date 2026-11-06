@@ -35,11 +35,14 @@ if [ -z "$IMAGE_REF" ]; then
 fi
 echo "==> Pushed image ref: $IMAGE_REF"
 
-# Substitute __IMAGE__ into a temp copy of the container config.
+# Substitute __IMAGE__ and __DEPLOY_VERSION__ into a temp copy of the container config.
+# DEPLOY_VERSION is the creation time, so whichever Lightsail deployment is newest
+# (CI, laptop or rollback) is the one the bot's instance guard lets run.
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 CONTAINERS_RESOLVED="$WORK/containers.json"
-sed "s|__IMAGE__|$IMAGE_REF|g" "$CONTAINERS_JSON" > "$CONTAINERS_RESOLVED"
+sed -e "s|__IMAGE__|$IMAGE_REF|g" -e "s|__DEPLOY_VERSION__|$(date +%s)|g" \
+  "$CONTAINERS_JSON" > "$CONTAINERS_RESOLVED"
 
 DEPLOY_ARGS=(--region "$REGION" --service-name "$SERVICE" --containers "file://$CONTAINERS_RESOLVED")
 if [ -n "$ENDPOINT_JSON" ]; then

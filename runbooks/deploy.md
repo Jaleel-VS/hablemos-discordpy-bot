@@ -33,7 +33,16 @@ Pipeline, secrets and manual laptop deploys: `deploy/README.md`.
     --service-name hablemos-discordpy-bot --query 'deployments[:3].[version,state]' --output text
   ```
 - Lightsail keeps the previous version serving until the new one is healthy. A
-  `FAILED` deploy leaves the old version running.
+  `FAILED` deploy leaves the old version running, unless the new bot already
+  reached the gateway: then the old bot has handed over (below) and idles, so the
+  bot is offline until you roll back.
+- Only one bot holds the Discord session (`cogs/utils/instance_guard.py`). Each
+  deployment gets `DEPLOY_VERSION` = its creation time from `scripts/lightsail_deploy.sh`
+  (rollbacks restamp it). The new bot claims the session on gateway connect and the old
+  one logs `took over the bot session`, then idles until Lightsail stops it. A
+  deployment edited by hand in the Lightsail console keeps its old version and will
+  refuse to start; deploy through the scripts instead. `$deploys` (owner) lists the
+  handovers, including `overlap_seconds`.
 - `ThrottlingException` on `CreateContainerServiceDeployment` means several
   services deployed at once hit the Lightsail API rate limit. Re-run the failed job.
 - A push during a manual run queues. Deploys of the same ref never overlap.
@@ -42,5 +51,5 @@ Pipeline, secrets and manual laptop deploys: `deploy/README.md`.
 
 ## Verify
 
-State is `ACTIVE`. The logs (see `read-logs.md`) show `Shard ID None has connected to Gateway`
-and one `Loaded extension:` line per enabled cog.
+State is `ACTIVE`. The logs (see `read-logs.md`) show `Shard ID None has connected to Gateway`,
+`claimed the bot session`, and one `Loaded extension:` line per enabled cog.

@@ -38,13 +38,13 @@ class MetricsMixin(DatabaseMixin):
     async def record_command(self, command_name: str, cog_name: str | None,
                              user_id: int, guild_id: int | None,
                              channel_id: int | None, is_slash: bool,
-                             failed: bool = False) -> None:
-        """Record a single command invocation."""
+                             instance_id: str, failed: bool = False) -> None:
+        """Record a single command invocation and which bot instance handled it."""
         await self._execute('''
             INSERT INTO command_metrics
-                (command_name, cog_name, user_id, guild_id, channel_id, is_slash, failed)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
-        ''', command_name, cog_name, user_id, guild_id, channel_id, is_slash, failed)
+                (command_name, cog_name, user_id, guild_id, channel_id, is_slash, failed, instance_id)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        ''', command_name, cog_name, user_id, guild_id, channel_id, is_slash, failed, instance_id)
 
     async def get_command_counts(self, days: int = 7, limit: int = 15) -> list[dict]:
         """Top commands by usage in the last N days (raw + rolled-up)."""

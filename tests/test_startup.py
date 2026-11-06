@@ -22,6 +22,8 @@ async def test_database_retry_exhaustion_aborts_startup(
         database_url="postgresql://unused",
         bot_token="unused",
         gemini_api_key=None,
+        deploy_version=0,
+        deploy_sha="test",
     )
     bot = Hablemos("$", settings)
     failures: list[ConnectionError] = []
@@ -72,6 +74,8 @@ async def test_on_ready_announces_online_once(monkeypatch: pytest.MonkeyPatch) -
         database_url="postgresql://unused",
         bot_token="unused",
         gemini_api_key=None,
+        deploy_version=0,
+        deploy_sha="test",
         bot_playground_guild_id=11,
         error_channel_id=22,
         online_channel_id=33,
@@ -116,6 +120,8 @@ async def test_on_ready_missing_guild_is_nonfatal(
         database_url="postgresql://unused",
         bot_token="unused",
         gemini_api_key=None,
+        deploy_version=0,
+        deploy_sha="test",
         bot_playground_guild_id=11,
         error_channel_id=22,
         online_channel_id=33,
