@@ -1,13 +1,15 @@
 # Deploy, re-run or roll back
 
 **When:** shipping a change, re-running a failed deploy, or rolling back.
-**Last verified:** 2026-10-11
+**Last verified:** 2026-11-06
 
 Pipeline, secrets and manual laptop deploys: `deploy/README.md`.
 
 ## Steps
 
-1. **Ship:** push to `main`. `.github/workflows/deploy-lightsail.yml` deploys only
+1. **Ship:** push to `main`. `.github/workflows/deploy-lightsail.yml` first runs
+   the Tests workflow (bot suite with Postgres, Activity backend, frontend
+   typecheck); a red test blocks every deploy job. It then deploys only
    the services whose files changed (bot: `cogs/`, `db/`, the root Python files,
    `pyproject.toml`, `Dockerfile`, `deploy/bot.containers.json`; Activity:
    `activity/**`; log forwarder: `logforwarder/**`). Tests and runbooks don't deploy.
@@ -32,6 +34,8 @@ Pipeline, secrets and manual laptop deploys: `deploy/README.md`.
   ```
 - Lightsail keeps the previous version serving until the new one is healthy. A
   `FAILED` deploy leaves the old version running.
+- `ThrottlingException` on `CreateContainerServiceDeployment` means several
+  services deployed at once hit the Lightsail API rate limit. Re-run the failed job.
 - A push during a manual run queues. Deploys of the same ref never overlap.
 - A bot that exits on a rejected login (`cogs/utils/login_guard.py`) waits 30
   minutes first, so it still counts as running and the deploy goes `ACTIVE`.

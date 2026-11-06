@@ -14,11 +14,7 @@ from config import load_settings
 from db import Database
 from logger import setup_logging
 
-setup_logging()
 logger = logging.getLogger(__name__)
-
-settings = load_settings()
-logger.info("Environment: %s", settings.environment)
 
 
 class Hablemos(Bot):
@@ -159,5 +155,15 @@ class Hablemos(Bot):
         except Exception as e:
             logger.debug("Failed to record slash command metric: %s", e)
 
-bot = Hablemos(settings.prefix, settings)
-run_with_login_guard(lambda: bot.run(settings.bot_token))
+
+def main() -> None:
+    """Configure logging, load settings and run the bot."""
+    setup_logging()
+    settings = load_settings()
+    logger.info("Environment: %s", settings.environment)
+    bot = Hablemos(settings.prefix, settings)
+    run_with_login_guard(lambda: bot.run(settings.bot_token))
+
+
+if __name__ == "__main__":
+    main()

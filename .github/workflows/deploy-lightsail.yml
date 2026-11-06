@@ -31,6 +31,9 @@ env:
   AWS_REGION: us-east-1
 
 jobs:
+  tests:
+    uses: ./.github/workflows/tests.yml
+
   # Detect which parts of the monorepo changed so we only rebuild what's needed.
   changes:
     runs-on: ubuntu-24.04
@@ -74,7 +77,7 @@ jobs:
               - '.github/workflows/deploy-lightsail.yml'
 
   deploy-activity:
-    needs: changes
+    needs: [changes, tests]
     if: >-
       (github.event_name == 'push' && needs.changes.outputs.activity == 'true') ||
       (github.event_name == 'workflow_dispatch' && inputs.deploy_activity)
@@ -122,7 +125,7 @@ jobs:
             deploy/activity.endpoint.json
 
   deploy-bot:
-    needs: changes
+    needs: [changes, tests]
     if: >-
       (github.event_name == 'push' && needs.changes.outputs.bot == 'true') ||
       (github.event_name == 'workflow_dispatch' && inputs.deploy_bot)
@@ -173,7 +176,7 @@ jobs:
             /tmp/bot.containers.json
 
   deploy-logforwarder:
-    needs: changes
+    needs: [changes, tests]
     if: >-
       (github.event_name == 'push' && needs.changes.outputs.logforwarder == 'true') ||
       (github.event_name == 'workflow_dispatch' && inputs.deploy_logforwarder)
