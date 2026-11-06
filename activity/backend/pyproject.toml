@@ -9,5 +9,5 @@ dependencies = [
     "httpx~=0.28",
     "python-dotenv~=1.2",
     "asyncpg~=0.31",
-    "cryptography~=44.0",
+    "cryptography>=44,<51",
 ]
