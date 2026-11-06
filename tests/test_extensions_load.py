@@ -6,6 +6,7 @@ Skipped unless TEST_DATABASE_URL points at a server where the user can
 create databases.
 """
 import os
+import sys
 from urllib.parse import urlsplit, urlunsplit
 from uuid import uuid4
 
@@ -30,6 +31,9 @@ async def test_every_enabled_extension_loads(
     monkeypatch.setenv("DATABASE_URL", urlunsplit(urlsplit(url)._replace(path="/" + name)))
     monkeypatch.setenv("GEMINI_API_KEY", "unused")
     bot = Hablemos("$", load_settings())
+    # load_extension re-executes each cog module into sys.modules; put the
+    # originals back so later tests patch the modules their objects came from.
+    modules = dict(sys.modules)
     try:
         async with bot:
             await bot.setup_hook()
@@ -40,5 +44,6 @@ async def test_every_enabled_extension_loads(
                 await bot.unload_extension(ext)
         assert loaded == expected, failures
     finally:
+        sys.modules.update(modules)
         await admin.execute(f'DROP DATABASE "{name}" WITH (FORCE)')
         await admin.close()

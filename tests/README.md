@@ -1,15 +1,17 @@
 # Tests
 
-Unit and integration tests for the bot's logic. No real Discord gateway,
-no real PostgreSQL — the harness in `tests/crossword/conftest.py` stubs
-both with plain Python objects that record calls so assertions can be
-made against them.
+Unit and integration tests for the bot's logic. No real Discord gateway.
+Most tests stub PostgreSQL with plain Python objects (see
+`tests/crossword/conftest.py`); the ones that need a real server skip
+unless `TEST_DATABASE_URL` points at one where the user can create databases.
 
 ## Running
 
 ```bash
 uv sync                             # installs the dev group by default
 uv run pytest                       # full suite
+docker run -d --rm -p 54331:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17-alpine
+TEST_DATABASE_URL=postgresql://postgres@localhost:54331/postgres uv run pytest   # include DB tests
 uv run pytest tests/crossword/      # one cog
 uv run pytest -k race               # just the concurrency tests
 uv run pytest -x --tb=short         # stop on first failure, short trace
@@ -17,6 +19,10 @@ uv run pytest -x --tb=short         # stop on first failure, short trace
 
 `pytest.ini` enables `asyncio_mode=auto`, so `async def test_...` is
 picked up without any decorator.
+
+CI (`.github/workflows/tests.yml`) runs this suite with a Postgres service on
+every pull request and before every deploy, plus the Activity backend tests
+and the frontend typecheck.
 
 ## Anti-slop audit
 
@@ -58,9 +64,6 @@ tests/
 
 - Anything that requires a real Discord gateway (intents, sharding,
   slash command dispatch). These live in the framework, not our code.
-- Anything that requires a real PostgreSQL. Query methods in `db/`
-  should be covered separately with a docker-compose fixture if you
-  ever want to go there; for now the cog tests stub `self.bot.db`.
 - The Pillow rendering (`renderer.py`). It's hard to assert on a PNG
   meaningfully, and font availability is environment-dependent.
 
