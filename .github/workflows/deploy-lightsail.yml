@@ -33,7 +33,7 @@ env:
 jobs:
   # Detect which parts of the monorepo changed so we only rebuild what's needed.
   changes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       bot: ${{ steps.filter.outputs.bot }}
       activity: ${{ steps.filter.outputs.activity }}
@@ -78,7 +78,7 @@ jobs:
     if: >-
       (github.event_name == 'push' && needs.changes.outputs.activity == 'true') ||
       (github.event_name == 'workflow_dispatch' && inputs.deploy_activity)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
 
@@ -126,7 +126,7 @@ jobs:
     if: >-
       (github.event_name == 'push' && needs.changes.outputs.bot == 'true') ||
       (github.event_name == 'workflow_dispatch' && inputs.deploy_bot)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
 
@@ -177,7 +177,7 @@ jobs:
     if: >-
       (github.event_name == 'push' && needs.changes.outputs.logforwarder == 'true') ||
       (github.event_name == 'workflow_dispatch' && inputs.deploy_logforwarder)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
 
