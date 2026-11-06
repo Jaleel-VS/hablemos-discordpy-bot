@@ -9,11 +9,11 @@ dependencies = [
     "httpx~=0.28",
     "python-dotenv~=1.2",
     "asyncpg~=0.31",
-    "cryptography~=44.0",
+    "cryptography>=44,<51",
 ]
 
 [dependency-groups]
 dev = [
-    "pytest~=8.3",
-    "pytest-asyncio~=0.24",
+    "pytest>=8.3,<10.0",
+    "pytest-asyncio>=0.24,<2.0",
 ]
