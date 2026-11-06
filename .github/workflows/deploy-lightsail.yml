@@ -39,8 +39,8 @@ jobs:
       activity: ${{ steps.filter.outputs.activity }}
       logforwarder: ${{ steps.filter.outputs.logforwarder }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |
@@ -80,10 +80,10 @@ jobs:
       (github.event_name == 'workflow_dispatch' && inputs.deploy_activity)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-access-key-id: ${{ secrets.DEPLOY_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.DEPLOY_AWS_SECRET_ACCESS_KEY }}
@@ -128,10 +128,10 @@ jobs:
       (github.event_name == 'workflow_dispatch' && inputs.deploy_bot)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-access-key-id: ${{ secrets.DEPLOY_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.DEPLOY_AWS_SECRET_ACCESS_KEY }}
@@ -179,10 +179,10 @@ jobs:
       (github.event_name == 'workflow_dispatch' && inputs.deploy_logforwarder)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-access-key-id: ${{ secrets.DEPLOY_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.DEPLOY_AWS_SECRET_ACCESS_KEY }}
