@@ -38,6 +38,7 @@ from db.dictation import DictationMixin
 from db.exchange_posts import ExchangePostsMixin
 from db.facts import FactsMixin
 from db.game_results import GameResultsMixin
+from db.instances import InstancesMixin
 from db.interactions import InteractionsMixin
 from db.introductions import IntroductionsMixin
 from db.leaderboard import LeaderboardMixin
@@ -79,6 +80,7 @@ class Database(
     PrivacyMixin,
     FactsMixin,
     NewsMixin,
+    InstancesMixin,
 ):
     def __init__(self, database_url: str):
         self.pool: asyncpg.Pool | None = None

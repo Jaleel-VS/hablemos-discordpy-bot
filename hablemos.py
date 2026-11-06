@@ -1,6 +1,7 @@
 """Bot entrypoint — Hablemos subclass of discord.py Bot."""
 import asyncio
 import logging
+import time
 from datetime import UTC, datetime
 
 import discord
@@ -9,6 +10,7 @@ from discord.ext.commands import Bot
 
 from cogs.utils.discovery import discover_extensions, is_code_enabled
 from cogs.utils.gemini import Gemini
+from cogs.utils.instance_guard import InstanceGuard, StaleDeployment
 from cogs.utils.login_guard import run_with_login_guard
 from config import load_settings
 from db import Database
@@ -39,8 +41,15 @@ class Hablemos(Bot):
         self._announced_online = False
         self.db = Database(settings.database_url)
         self.gemini: Gemini | None = None  # populated in setup_hook
+        self.instance_guard = InstanceGuard(
+            self.db, settings.deploy_version, settings.deploy_sha, self._step_aside,
+        )
+
+    async def _step_aside(self) -> None:
+        await self.close()
 
     async def close(self):
+        await self.instance_guard.stop()
         await self.db.close()
         await super().close()
 
@@ -56,6 +65,8 @@ class Hablemos(Bot):
                     logger.error("Database unavailable after 5 attempts — aborting setup")
                     raise
                 await asyncio.sleep(2 ** attempt)
+
+        await self.instance_guard.start()
 
         if self.settings.gemini_api_key:
             try:
@@ -92,6 +103,16 @@ class Hablemos(Bot):
             except Exception:
                 logger.error("Failed to load extension %s", ext, exc_info=True)
 
+
+    async def on_connect(self):
+        logger.info("Gateway connected as instance %s", self.instance_guard.instance_id)
+        await self.instance_guard.claim()
+
+    async def on_disconnect(self):
+        logger.warning("Gateway disconnected (instance %s)", self.instance_guard.instance_id)
+
+    async def on_resumed(self):
+        logger.info("Gateway session resumed (instance %s)", self.instance_guard.instance_id)
 
     async def on_ready(self):
         guild_id = self.settings.bot_playground_guild_id
@@ -137,6 +158,7 @@ class Hablemos(Bot):
                 guild_id=ctx.guild.id if ctx.guild else None,
                 channel_id=ctx.channel.id,
                 is_slash=False,
+                instance_id=self.instance_guard.instance_id,
             )
         except Exception as e:
             logger.debug("Failed to record command metric: %s", e)
@@ -151,6 +173,7 @@ class Hablemos(Bot):
                 guild_id=interaction.guild_id,
                 channel_id=interaction.channel_id,
                 is_slash=True,
+                instance_id=self.instance_guard.instance_id,
             )
         except Exception as e:
             logger.debug("Failed to record slash command metric: %s", e)
@@ -160,9 +183,22 @@ def main() -> None:
     """Configure logging, load settings and run the bot."""
     setup_logging()
     settings = load_settings()
-    logger.info("Environment: %s", settings.environment)
+    logger.info(
+        "Environment: %s, deploy v%s (%s)",
+        settings.environment, settings.deploy_version, settings.deploy_sha,
+    )
     bot = Hablemos(settings.prefix, settings)
-    run_with_login_guard(lambda: bot.run(settings.bot_token))
+    try:
+        run_with_login_guard(lambda: bot.run(settings.bot_token))
+    except StaleDeployment:
+        pass
+    else:
+        if not bot.instance_guard.superseded:
+            return
+    # Exiting would make Lightsail restart this old container; idle until it is stopped.
+    logger.warning("A newer deploy owns the bot session; idling until this container is stopped")
+    while True:
+        time.sleep(3600)
 
 
 if __name__ == "__main__":

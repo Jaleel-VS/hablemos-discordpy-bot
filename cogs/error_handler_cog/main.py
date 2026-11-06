@@ -38,6 +38,7 @@ class ErrorHandler(BaseCog):
                 guild_id=ctx.guild.id if ctx.guild else None,
                 channel_id=ctx.channel.id,
                 is_slash=False,
+                instance_id=self.bot.instance_guard.instance_id,
                 failed=True,
             )
         except Exception:

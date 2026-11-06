@@ -33,7 +33,7 @@ aws lightsail get-container-service-deployments \
   --region "$REGION" --service-name "$SERVICE" --output json > "$WORK/deployments.json"
 
 RESOLVED_VERSION="$(TARGET="$TARGET_VERSION" WORK="$WORK" python3 <<'PY'
-import os, json
+import os, json, time
 work = os.environ["WORK"]
 with open(os.path.join(work, "deployments.json")) as f:
     deployments = json.load(f)["deployments"]
@@ -62,6 +62,13 @@ else:
             break
     if chosen is None:
         raise SystemExit("ERROR: no previous successful deployment to roll back to")
+
+# The bot's instance guard lets only the newest DEPLOY_VERSION run, so a rollback
+# must carry a fresh one or the restored container would refuse to log in.
+for container in chosen["containers"].values():
+    env = container.get("environment", {})
+    if "DEPLOY_VERSION" in env:
+        env["DEPLOY_VERSION"] = str(int(time.time()))
 
 with open(os.path.join(work, "containers.json"), "w") as f:
     json.dump(chosen["containers"], f)

@@ -86,7 +86,7 @@ async def test_basecog_user_input_error_omits_raw_exception() -> None:
 
 async def test_error_handler_skips_user_reply_when_basecog_handled() -> None:
     db = SimpleNamespace(record_command=AsyncMock())
-    bot = SimpleNamespace(db=db, command_prefix="$")
+    bot = SimpleNamespace(db=db, command_prefix="$", instance_guard=SimpleNamespace(instance_id="test"))
     handler = ErrorHandler(cast(Any, bot))
     ctx = FakeContext()
     await BaseCog(cast(Any, bot)).cog_command_error(ctx, commands.CommandOnCooldown(
@@ -105,6 +105,7 @@ async def test_error_handler_unexpected_error_replies_once() -> None:
     bot = SimpleNamespace(
         db=db,
         command_prefix="$",
+        instance_guard=SimpleNamespace(instance_id="test"),
     )
     handler = ErrorHandler(cast(Any, bot))
     ctx = FakeContext()

@@ -646,6 +646,21 @@ class AdminCog(BaseCog):
         await status.edit(content=f"✅ Exported {len(messages)} messages from {channel.mention}.")
         await ctx.send(file=file)
 
+    @commands.command(name='deploys')
+    @commands.is_owner()
+    async def deploys(self, ctx: commands.Context, limit: int = 15):
+        """Show recent bot instance lifecycle events. Usage: $deploys [limit]"""
+        guard = self.bot.instance_guard
+        events = await self.bot.db.recent_instance_events(max(1, min(limit, 40)))
+        lines = [f"this instance: {guard.instance_id} (deploy v{guard.deploy_version}, {guard.deploy_sha[:7]})"]
+        for event in reversed(events):
+            detail = ", ".join(f"{key}={value}" for key, value in event["detail"].items())
+            lines.append(
+                f"{event['created_at']:%m-%d %H:%M:%S} v{event['deploy_version']} "
+                f"{event['instance_id']} {event['event']} {detail}"
+            )
+        await ctx.send("```\n" + "\n".join(lines)[-1900:] + "\n```")
+
 
     @commands.command(name='rawembed')
     @commands.is_owner()

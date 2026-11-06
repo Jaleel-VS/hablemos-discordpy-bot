@@ -395,6 +395,9 @@ async def initialize_schema(pool):
                 invoked_at TIMESTAMPTZ DEFAULT NOW()
             )
         ''')
+        await conn.execute('''
+            ALTER TABLE command_metrics ADD COLUMN IF NOT EXISTS instance_id TEXT
+        ''')
 
         await conn.execute('''
             CREATE INDEX IF NOT EXISTS idx_metrics_invoked
@@ -815,6 +818,31 @@ async def initialize_schema(pool):
                 url TEXT NOT NULL REFERENCES good_news_articles(url) ON DELETE CASCADE,
                 PRIMARY KEY (channel_id, url)
             )
+        ''')
+
+        # Deploy that owns the Discord session; no user data.
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS bot_instance (
+                singleton BOOLEAN PRIMARY KEY DEFAULT TRUE CHECK (singleton),
+                deploy_version BIGINT NOT NULL,
+                instance_id TEXT NOT NULL,
+                claimed_at TIMESTAMPTZ NOT NULL
+            )
+        ''')
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS bot_instance_events (
+                id BIGSERIAL PRIMARY KEY,
+                deploy_version BIGINT NOT NULL,
+                instance_id TEXT NOT NULL,
+                deploy_sha TEXT NOT NULL,
+                event TEXT NOT NULL,
+                detail JSONB NOT NULL DEFAULT '{}',
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        ''')
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_bot_instance_events_created
+            ON bot_instance_events(created_at)
         ''')
 
         logger.info("Database schema initialized")

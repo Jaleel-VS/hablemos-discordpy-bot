@@ -65,6 +65,9 @@ class Settings:
     environment: str
     website_api_url: str
     convo_spa_channels: list[int]
+    # Deploy creation time (stamped by scripts/lightsail_deploy.sh) and commit; 0 / "local" otherwise.
+    deploy_version: int
+    deploy_sha: str
 
 
 def load_settings() -> Settings:
@@ -95,4 +98,6 @@ def load_settings() -> Settings:
         convo_spa_channels=get_int_list_env(
             "CONVO_SPA_CHANNELS", convo_spa_defaults
         ),
+        deploy_version=get_int_env("DEPLOY_VERSION", 0),
+        deploy_sha=get_str_env("DEPLOY_SHA", "local"),
     )
