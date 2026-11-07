@@ -1,0 +1,483 @@
+{
+  "ds3": [
+    {
+      "speaker": "Opening narration",
+      "text": "The fire fades, and the lords go without thrones.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Lore"
+    },
+    {
+      "speaker": "Opening narration",
+      "text": "When the link of fire is threatened, the bell tolls,\nunearthing the old Lords of Cinder from their graves.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Lore"
+    },
+    {
+      "speaker": "Opening narration",
+      "text": "Yes, indeed. It is called Lothric,\nWhere the transitory lands of the Lords of Cinder converge.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Lore"
+    },
+    {
+      "speaker": "Fire Keeper",
+      "text": "Welcome to the bonfire, Unkindled One.\nI am a Fire Keeper.\nI tend to the flame, and tend to thee.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Fire_Keeper"
+    },
+    {
+      "speaker": "Fire Keeper",
+      "text": "Ashen one, hearest thou my voice, still?",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Fire_Keeper"
+    },
+    {
+      "speaker": "Father Ariandel",
+      "text": "When the Ashes are two, a flame alighteth. Thou'rt Ash, and fire befits thee, of course...",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Sister_Friede"
+    },
+    {
+      "speaker": "Fire Keeper",
+      "text": "Ashen one, to be Unkindled is to be a vessel for souls.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Fire_Keeper"
+    },
+    {
+      "speaker": "Fire Keeper",
+      "text": "Sovereignless souls will become thy strength.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Fire_Keeper"
+    },
+    {
+      "speaker": "Fire Keeper",
+      "text": "Farewell, ashen one. Mayst thou thy peace discov'r.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Fire_Keeper"
+    },
+    {
+      "speaker": "Siegward of Catarina",
+      "text": "To be honest, I'm in a bit of a pickle.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Siegward_of_Catarina"
+    },
+    {
+      "speaker": "Siegward of Catarina",
+      "text": "I've got to use my head. And think.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Siegward_of_Catarina"
+    },
+    {
+      "speaker": "Siegward of Catarina",
+      "text": "To your valour, my sword, and our victory together.\nLong may the Sun shine!",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Siegward_of_Catarina"
+    },
+    {
+      "speaker": "Siegward of Catarina",
+      "text": "Not to worry. Great planning begets great fortune.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Siegward_of_Catarina"
+    },
+    {
+      "speaker": "Siegward of Catarina",
+      "text": "Even we Undead deserve a little normalcy, from time to time.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Siegward_of_Catarina"
+    },
+    {
+      "speaker": "Siegward of Catarina",
+      "text": "Yhorm, old friend.\nI, Siegward of the Knights of Catarina, have come to uphold my promise!\nLet the sun shine upon this Lord of Cinder.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Siegward_of_Catarina"
+    },
+    {
+      "speaker": "Hawkwood",
+      "text": "Well, you're not alone. We Unkindled are worthless. Can't even die right. Gives me conniptions.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Hawkwood"
+    },
+    {
+      "speaker": "Hawkwood",
+      "text": "The poor wretched souls... Be they lord or legend, the curse shows no mercy. What a shame.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Hawkwood"
+    },
+    {
+      "speaker": "Hawkwood",
+      "text": "And they made him a Lord of Cinder. Not for virtue, but for might.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Hawkwood"
+    },
+    {
+      "speaker": "Hawkwood",
+      "text": "Even accursed Undead want to believe they're special, it seems.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Hawkwood"
+    },
+    {
+      "speaker": "Hawkwood",
+      "text": "You are a dragon, more dragon than I.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Hawkwood"
+    },
+    {
+      "speaker": "Blacksmith Andre",
+      "text": "Let me smith y' weapons. I am a smith, such is my purpose.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Blacksmith_Andre"
+    },
+    {
+      "speaker": "Blacksmith Andre",
+      "text": "In battle, y' weapons are yer only friends. Forge them well, and they won't let y' down.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Blacksmith_Andre"
+    },
+    {
+      "speaker": "Blacksmith Andre",
+      "text": "A cursed fate this may be, but hope remains, does it not?",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Blacksmith_Andre"
+    },
+    {
+      "speaker": "Blacksmith Andre",
+      "text": "Overstep not your bounds, cousin. I may serve, but I'm no slave. I have business I must attend, begone.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Blacksmith_Andre"
+    },
+    {
+      "speaker": "Sir Vilhelm",
+      "text": "Every fleeing man must be caught. Every secret must be unearthed.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Sir_Vilhelm"
+    },
+    {
+      "speaker": "Sir Vilhelm",
+      "text": "Such is the conceit of the self-proclaimed seeker of truth.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Sir_Vilhelm"
+    },
+    {
+      "speaker": "Sir Vilhelm",
+      "text": "Stray from the withering flame, and the snow will swallow you whole.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Sir_Vilhelm"
+    },
+    {
+      "speaker": "Sir Vilhelm",
+      "text": "No bell tolls, and yet, you've slipped into the painting?",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Sir_Vilhelm"
+    },
+    {
+      "speaker": "Sister Friede",
+      "text": "Leave us be, Ashen One.\nSweep all thought of us from thy mind. As thy kind always have.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Sister_Friede"
+    },
+    {
+      "speaker": "Opening narration",
+      "text": "That ash seeketh embers.",
+      "source_url": "https://darksouls3.wiki.fextralife.com/Lore"
+    }
+  ],
+  "bb": [
+    {
+      "speaker": "Master Willem",
+      "text": "...We are born of the blood, made men by the blood, undone by the blood. Our eyes are yet to open...",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Master_Willem"
+    },
+    {
+      "speaker": "Micolash, Host of the Nightmare",
+      "text": "A hunter is a hunter, even in a dream.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Micolash,_Host_of_the_Nightmare"
+    },
+    {
+      "speaker": "Gehrman",
+      "text": "Tonight, Gehrman joins the hunt...",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Gehrman"
+    },
+    {
+      "speaker": "Gehrman",
+      "text": "The night, and the dream, were long...",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Gehrman"
+    },
+    {
+      "speaker": "Micolash, Host of the Nightmare",
+      "text": "As you once did for the vacuous Rom, grant us eyes, grant us eyes. Plant eyes on our brains, to cleanse our beastly idiocy.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Micolash,_Host_of_the_Nightmare"
+    },
+    {
+      "speaker": "Micolash, Host of the Nightmare",
+      "text": "Ahh, Kos, or some say Kosm... Do you hear our prayers?",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Micolash,_Host_of_the_Nightmare"
+    },
+    {
+      "speaker": "The Doll",
+      "text": "Hello, good hunter. I am a doll, here in this dream to look after you.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Plain_Doll"
+    },
+    {
+      "speaker": "Ludwig, The Holy Blade",
+      "text": "Aah, you were at my side, all along.\nMy true mentor...\nMy guiding moonlight...",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Ludwig,_The_Holy_Blade"
+    },
+    {
+      "speaker": "Lady Maria of the Astral Clocktower",
+      "text": "A corpse... should be left well alone.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Lady_Maria_of_the_Astral_Clocktower"
+    },
+    {
+      "speaker": "Master Willem",
+      "text": "By the gods, fear it, Laurence.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Master_Willem"
+    },
+    {
+      "speaker": "Master Willem",
+      "text": "Oh, I know, I know. You think now, to betray me.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Master_Willem"
+    },
+    {
+      "speaker": "Laurence",
+      "text": "No, but you will never listen. I tell you, I will not forget our adage.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Master_Willem"
+    },
+    {
+      "speaker": "The Doll",
+      "text": "Welcome home, good hunter. What is it you desire?",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Plain_Doll"
+    },
+    {
+      "speaker": "The Doll",
+      "text": "Farewell, good hunter. May you find your worth in the waking world.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Plain_Doll"
+    },
+    {
+      "speaker": "The Doll",
+      "text": "Good hunter... Your presence somehow soothes... I sense the ancient echoes, they course your veins...",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Plain_Doll"
+    },
+    {
+      "speaker": "Gehrman",
+      "text": "The moon is close. It will be a long hunt tonight.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Gehrman"
+    },
+    {
+      "speaker": "Gehrman",
+      "text": "Just go out and kill a few beasts. It's for your own good. You know, it's just what hunters do!",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Gehrman"
+    },
+    {
+      "speaker": "Gehrman",
+      "text": "Farewell, my keen hunter. Fear the blood.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Gehrman"
+    },
+    {
+      "speaker": "Micolash, Host of the Nightmare",
+      "text": "No, we shall not abandon the dream.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Micolash,_Host_of_the_Nightmare"
+    },
+    {
+      "speaker": "Micolash, Host of the Nightmare",
+      "text": "The cosmos, of course!",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Micolash,_Host_of_the_Nightmare"
+    },
+    {
+      "speaker": "Micolash, Host of the Nightmare",
+      "text": "New ideas, of the higher plane!",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Micolash,_Host_of_the_Nightmare"
+    },
+    {
+      "speaker": "Ludwig, The Holy Blade",
+      "text": "Good hunter, have you seen the thread of light?",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Ludwig,_The_Holy_Blade"
+    },
+    {
+      "speaker": "Ludwig, The Holy Blade",
+      "text": "Thank you kindly. Now I may sleep in peace.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Ludwig,_The_Holy_Blade"
+    },
+    {
+      "speaker": "Lady Maria of the Astral Clocktower",
+      "text": "Oh, I know very well. How the secrets beckon so sweetly.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Lady_Maria_of_the_Astral_Clocktower"
+    },
+    {
+      "speaker": "Lady Maria of the Astral Clocktower",
+      "text": "Only an honest death will cure you now.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Lady_Maria_of_the_Astral_Clocktower"
+    },
+    {
+      "speaker": "Eileen the Crow",
+      "text": "Without fear in our hearts, we're little different from the beasts themselves.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Eileen_The_Crow"
+    },
+    {
+      "speaker": "Eileen the Crow",
+      "text": "What are you still doing here? Enough trembling in your boots. A hunter must hunt.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Eileen_The_Crow"
+    },
+    {
+      "speaker": "Eileen the Crow",
+      "text": "This too is hunters' work, but bears no honor. A burden you may choose to carry.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Eileen_The_Crow"
+    },
+    {
+      "speaker": "Eileen the Crow",
+      "text": "Few hunters can resist the intoxication of the hunt. Look at you, just the same as all the rest...",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Eileen_The_Crow"
+    },
+    {
+      "speaker": "Father Gascoigne",
+      "text": "...Beasts all over the shop... You'll be one of them, sooner or later...",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Father_Gascoigne"
+    },
+    {
+      "speaker": "Father Gascoigne",
+      "text": "What's that smell? ... The sweet blood, oh, it sings to me. It's enough to make a man sick",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Father_Gascoigne"
+    },
+    {
+      "speaker": "Djura",
+      "text": "The things you hunt, they're not beasts. They're people.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Djura"
+    },
+    {
+      "speaker": "Djura",
+      "text": "You have the whole night to dream. Make the best of it.",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Djura"
+    },
+    {
+      "speaker": "Djura",
+      "text": "There's nothing more horrific than a hunt. In case you've failed to realize...",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Djura"
+    },
+    {
+      "speaker": "Djura",
+      "text": "Is it the blood, or are you just raving mad?",
+      "source_url": "https://bloodborne.wiki.fextralife.com/Djura"
+    }
+  ],
+  "sekiro": [
+    {
+      "speaker": "Isshin, the Sword Saint",
+      "text": "Hesitation is defeat.",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Isshin%2C_the_Sword_Saint"
+    },
+    {
+      "speaker": "Owl",
+      "text": "There is no shame in losing one battle. But you must take revenge by any means necessary!",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Great_Shinobi_-_Owl"
+    },
+    {
+      "speaker": "Kuro",
+      "text": "How many times have you died and come back to life for my sake...?",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/The_Divine_Heir/Dialogue"
+    },
+    {
+      "speaker": "Wolf",
+      "text": "A code must be determined by the individual... This is what I've decided.",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Great_Shinobi_-_Owl"
+    },
+    {
+      "speaker": "Isshin, the Sword Saint",
+      "text": "How my blood boils! Face me, Sekiro!",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Isshin%2C_the_Sword_Saint"
+    },
+    {
+      "speaker": "Isshin, the Sword Saint",
+      "text": "Come... Sekiro.",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Isshin%2C_the_Sword_Saint"
+    },
+    {
+      "speaker": "Genichiro",
+      "text": "I will restore Ashina to glory!",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Isshin%2C_the_Sword_Saint"
+    },
+    {
+      "speaker": "Genichiro",
+      "text": "I will not allow Ashina to be crushed...!",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Isshin%2C_the_Sword_Saint"
+    },
+    {
+      "speaker": "Genichiro",
+      "text": "I too have a duty I must uphold... Farewell.",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Isshin%2C_the_Sword_Saint"
+    },
+    {
+      "speaker": "Genichiro",
+      "text": "We are not so different, you and I...Wolf.",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Isshin%2C_the_Sword_Saint"
+    },
+    {
+      "speaker": "Owl",
+      "text": "Been a while since we did this. Give me your all!",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Great_Shinobi_-_Owl"
+    },
+    {
+      "speaker": "Owl",
+      "text": "It warms my heart, Wolf! To see how you've grown!",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Great_Shinobi_-_Owl"
+    },
+    {
+      "speaker": "Owl",
+      "text": "No more than a stray dog after all.",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Great_Shinobi_-_Owl"
+    },
+    {
+      "speaker": "Wolf",
+      "text": "Death of a shadow... You taught me well.",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Great_Shinobi_-_Owl"
+    },
+    {
+      "speaker": "Wolf",
+      "text": "As it was for the purpose of defending my Lord, the number does not matter.",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/The_Divine_Heir/Dialogue"
+    },
+    {
+      "speaker": "Wolf",
+      "text": "My lord's oath is all I need.",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/The_Divine_Heir/Dialogue"
+    },
+    {
+      "speaker": "Kuro",
+      "text": "I do not wish to bind you... to an eternity of undeath.",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/The_Divine_Heir/Dialogue"
+    },
+    {
+      "speaker": "Kuro",
+      "text": "Wolf... Rice tastes a lot better when cooked.",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/The_Divine_Heir/Dialogue"
+    },
+    {
+      "speaker": "Kuro",
+      "text": "The sword that can kill those who cannot die...",
+      "source_url": "https://sekiro-shadows-die-twice.fandom.com/wiki/The_Divine_Heir/Dialogue"
+    },
+    {
+      "speaker": "Lady Butterfly",
+      "text": "Now then, son of Owl. Shall we dance?",
+      "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Kuro,_the_Divine_Heir"
+    },
+    {
+      "speaker": "Kuro",
+      "text": "Loyal Wolf, take my blood and live again.",
+      "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Kuro,_the_Divine_Heir"
+    },
+    {
+      "speaker": "Emma",
+      "text": "It's just...I would want to kill a demon if one were to appear.",
+      "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Emma"
+    },
+    {
+      "speaker": "Emma",
+      "text": "As a doctor, I do have other uses for sake beyond just drinking.",
+      "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Emma"
+    },
+    {
+      "speaker": "Emma",
+      "text": "He was a very kind monkey.",
+      "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Emma"
+    },
+    {
+      "speaker": "The Sculptor",
+      "text": "Looks like death is not your fate just yet.",
+      "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Sculptor"
+    },
+    {
+      "speaker": "The Sculptor",
+      "text": "Your death won't come easily.",
+      "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Sculptor"
+    },
+    {
+      "speaker": "The Sculptor",
+      "text": "In other words, that prosthetic arm... is Dogen's legacy.",
+      "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Sculptor"
+    },
+    {
+      "speaker": "Isshin Ashina",
+      "text": "Those who go on killing will eventually become Shura.",
+      "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Isshin_Ashina"
+    },
+    {
+      "speaker": "Isshin Ashina",
+      "text": "There aren't many masters of the sword like her. To see her fight, it's like she is dancing.",
+      "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Isshin_Ashina"
+    },
+    {
+      "speaker": "Isshin Ashina",
+      "text": "I've lived a long life, but that was the closest I've come to death.",
+      "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Isshin_Ashina"
+    }
+  ]
+}
