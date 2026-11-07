@@ -20,7 +20,7 @@ from cogs.stats_cog.views import (
     ClockResultView,
     _format_offset,
     _now_at_offset,
-    _public_clock_embed,
+    _public_clock_view,
 )
 
 
@@ -36,6 +36,7 @@ class FakeContext:
     """Minimal command context that records sent messages."""
 
     sent: list[SentMessage] = field(default_factory=list)
+    author: Any = field(default_factory=lambda: discord.Object(id=42))
 
     async def send(self, **kwargs: Any) -> None:
         message: SentMessage = {}
@@ -81,11 +82,32 @@ def test_now_at_offset_is_hhmm() -> None:
     assert len(label) == 5 and 0 <= int(hh) <= 23 and 0 <= int(mm) <= 59
 
 
-def test_result_view_has_post_and_change_buttons() -> None:
+def _buttons(view: discord.ui.LayoutView) -> list[discord.ui.Button]:
+    return [c for c in view.walk_children() if isinstance(c, discord.ui.Button)]
+
+
+def _text(view: discord.ui.LayoutView) -> str:
+    return "\n".join(
+        c.content for c in view.walk_children() if isinstance(c, discord.ui.TextDisplay)
+    )
+
+
+def _gallery_urls(view: discord.ui.LayoutView) -> list[str]:
+    return [
+        item.media.url
+        for c in view.walk_children()
+        if isinstance(c, discord.ui.MediaGallery)
+        for item in c.items
+    ]
+
+
+def test_result_view_has_clock_image_and_both_actions() -> None:
     view = ClockResultView(cast(Any, object()), offset=1)
-    labels = [c.label for c in view.children if isinstance(c, discord.ui.Button)]
+    labels = [b.label for b in _buttons(view)]
     assert "Publicar en el canal" in labels
     assert "Cambiar zona horaria" in labels
+    assert _gallery_urls(view) == ["attachment://activity_clock.png"]
+    assert "UTC+1" in _text(view)
 
 
 @dataclass
@@ -93,11 +115,12 @@ class FakeUser:
     display_name: str = "Ada"
 
 
-def test_public_clock_embed_attributes_owner() -> None:
-    embed = _public_clock_embed(cast(Any, FakeUser()), offset=-5)
-    assert "Ada" in (embed.title or "")
-    assert "UTC−5" in (embed.description or "")
-    assert (embed.image.url or "").endswith("activity_clock.png")
+def test_public_clock_view_attributes_owner_without_controls() -> None:
+    view = _public_clock_view(cast(Any, FakeUser()), offset=-5)
+    assert "Ada" in _text(view)
+    assert "UTC−5" in _text(view)
+    assert _gallery_urls(view) == ["attachment://activity_clock.png"]
+    assert _buttons(view) == []
 
 
 async def test_myclock_posts_launcher() -> None:
@@ -109,11 +132,12 @@ async def test_myclock_posts_launcher() -> None:
     await callback(cog, ctx)
 
     assert len(ctx.sent) == 1
-    embed = ctx.sent[0].get("embed")
+    assert "embed" not in ctx.sent[0]
     view = ctx.sent[0].get("view")
-    assert isinstance(embed, discord.Embed)
-    assert "reloj de actividad" in (embed.title or "")
     assert isinstance(view, ClockLauncherView)
-    button = view.children[0]
-    assert isinstance(button, discord.ui.Button)
+    assert "reloj de actividad" in _text(view)
+    [button] = _buttons(view)
     assert button.label == "Ver mi reloj"
+    assert button.custom_id == "stats_clock:launch"
+    assert view.is_persistent()
+    assert view.owner_id == 42

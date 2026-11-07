@@ -70,6 +70,20 @@ async def _render_clock_file(
     return discord.File(buf, filename="activity_clock.png")
 
 
+_ACCENT = discord.Colour(0x5865F2)
+_CLOCK_IMAGE = "attachment://activity_clock.png"
+
+
+def _clock_card(title: str, body: str, *extra: discord.ui.Item) -> discord.ui.Container:
+    """Container holding a heading, a body, the clock image, then *extra* items."""
+    return discord.ui.Container(
+        discord.ui.TextDisplay(f"## {title}\n{body}"),
+        discord.ui.MediaGallery(discord.MediaGalleryItem(media=_CLOCK_IMAGE)),
+        *extra,
+        accent_colour=_ACCENT,
+    )
+
+
 async def _send_clock(interaction: discord.Interaction, bot: Hablemos, offset: int) -> None:
     """Render and deliver the clock as an ephemeral followup (response deferred)."""
     file = await _render_clock_file(bot, interaction.user.id, offset)
@@ -79,137 +93,142 @@ async def _send_clock(interaction: discord.Interaction, bot: Hablemos, offset: i
             ephemeral=True,
         )
         return
-
-    embed = discord.Embed(
-        title="🕐 Tu reloj de actividad",
-        description=(
-            f"Cuándo escribes, en los últimos **{_CLOCK_DAYS} días** "
-            f"({_format_offset(offset)}).\n"
-            "Los pétalos largos y oscuros son tus horas más activas."
-        ),
-        color=0x5865F2,
-    )
-    embed.set_image(url="attachment://activity_clock.png")
     await interaction.followup.send(
-        embed=embed,
-        file=file,
-        view=ClockResultView(bot, offset),
-        ephemeral=True,
+        file=file, view=ClockResultView(bot, offset), ephemeral=True
     )
 
 
-def _public_clock_embed(user: discord.abc.User, offset: int) -> discord.Embed:
-    """Embed for a clock shared publicly — attributed to its owner."""
-    embed = discord.Embed(
-        title=f"🕐 El reloj de actividad de {user.display_name}",
-        description=(
-            f"Cuándo escribe, en los últimos **{_CLOCK_DAYS} días** "
-            f"({_format_offset(offset)})."
-        ),
-        color=0x5865F2,
-    )
-    embed.set_image(url="attachment://activity_clock.png")
-    return embed
+def _public_clock_view(user: discord.abc.User, offset: int) -> discord.ui.LayoutView:
+    """Clock card shared publicly — attributed to its owner, no controls."""
+    view = discord.ui.LayoutView(timeout=None)
+    view.add_item(_clock_card(
+        f"🕐 El reloj de actividad de {user.display_name}",
+        f"Cuándo escribe, en los últimos **{_CLOCK_DAYS} días** ({_format_offset(offset)}).",
+    ))
+    return view
 
 
-class ClockLauncherView(discord.ui.View):
-    """Public one-button launcher. Each clicker gets their own ephemeral clock."""
+class ClockLauncherView(discord.ui.LayoutView):
+    """Public one-button launcher. Each clicker gets their own ephemeral clock.
 
-    def __init__(self, bot: Hablemos) -> None:
+    When ``owner_id`` (the user who ran ``$myclock``) clicks, the launcher is
+    deleted once their result is delivered. The startup-registered persistent
+    instance has no owner, so launchers that outlive a restart are never deleted.
+    """
+
+    def __init__(self, bot: Hablemos, owner_id: int | None = None) -> None:
         super().__init__(timeout=None)  # persistent-friendly; button is idempotent
         self.bot = bot
+        self.owner_id = owner_id
+        button = discord.ui.Button(
+            label="Ver mi reloj", emoji="🕐", style=discord.ButtonStyle.primary,
+            custom_id="stats_clock:launch",
+        )
+        button.callback = self.launch
+        self.add_item(discord.ui.Container(
+            discord.ui.TextDisplay(
+                "## 🕐 Tu reloj de actividad\n"
+                "Descubre a qué horas del día sueles escribir más.\n\n"
+                "Pulsa el botón para ver tu reloj (solo tú lo verás)."
+            ),
+            discord.ui.ActionRow(button),
+            accent_colour=_ACCENT,
+        ))
 
-    @discord.ui.button(
-        label="Ver mi reloj", emoji="🕐", style=discord.ButtonStyle.primary,
-        custom_id="stats_clock:launch",
-    )
-    async def launch(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ) -> None:
+    async def launch(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=True, thinking=True)
         try:
             offset = await self.bot.db.get_user_clock_tz(interaction.user.id)
             if offset is None:
                 await interaction.followup.send(
-                    embed=_picker_prompt(),
-                    view=TimezonePickerView(self.bot),
-                    ephemeral=True,
+                    view=TimezonePickerView(self.bot), ephemeral=True
                 )
-                return
-            await _send_clock(interaction, self.bot, offset)
+            else:
+                await _send_clock(interaction, self.bot, offset)
         except Exception:
             logger.exception("Failed to build activity clock for %s", interaction.user.id)
             await interaction.followup.send(embed=red_embed(_LAUNCH_ERROR), ephemeral=True)
+        if interaction.user.id == self.owner_id and interaction.message is not None:
+            try:
+                await interaction.message.delete()
+            except (discord.NotFound, discord.Forbidden, discord.HTTPException):
+                logger.warning("Could not delete clock launcher %s", interaction.message.id)
 
 
-def _picker_prompt() -> discord.Embed:
-    """The 'confirm your timezone' embed, anchored to the viewer's local time."""
-    now_ts = int(datetime.now(UTC).timestamp())
-    return discord.Embed(
-        title="🌍 ¿Cuál es tu zona horaria?",
-        description=(
-            f"Tu hora local ahora mismo es <t:{now_ts}:t>.\n"
-            "Elige la opción de abajo cuya hora coincida — la usaré para "
-            "etiquetar tu reloj y la recordaré la próxima vez."
-        ),
-        color=0x5865F2,
-    )
+class TimezonePickerView(discord.ui.LayoutView):
+    """Ephemeral prompt + dropdown to pick (and persist) a whole-hour UTC offset.
 
-
-class TimezonePickerView(discord.ui.View):
-    """Ephemeral dropdown to pick (and persist) a whole-hour UTC offset."""
+    The prompt embeds ``<t:now:t>`` so it is anchored to the viewer's local time.
+    """
 
     def __init__(self, bot: Hablemos) -> None:
         super().__init__(timeout=VIEW_TIMEOUT)
         self.bot = bot
-        self.add_item(_TimezoneSelect())
+        select = discord.ui.Select(
+            placeholder="Elige tu zona horaria…",
+            options=[
+                discord.SelectOption(
+                    label=_format_offset(off),
+                    value=str(off),
+                    description=f"Ahora serían las {_now_at_offset(off)}",
+                )
+                for off in _OFFSETS
+            ],
+        )
+        select.callback = self.pick
+        self.select = select
+        now_ts = int(datetime.now(UTC).timestamp())
+        self.add_item(discord.ui.Container(
+            discord.ui.TextDisplay(
+                "## 🌍 ¿Cuál es tu zona horaria?\n"
+                f"Tu hora local ahora mismo es <t:{now_ts}:t>.\n"
+                "Elige la opción de abajo cuya hora coincida — la usaré para "
+                "etiquetar tu reloj y la recordaré la próxima vez."
+            ),
+            discord.ui.ActionRow(select),
+            accent_colour=_ACCENT,
+        ))
 
-
-class _TimezoneSelect(discord.ui.Select):
-    """Select whose option descriptions show the current time at each offset."""
-
-    def __init__(self) -> None:
-        options = [
-            discord.SelectOption(
-                label=_format_offset(off),
-                value=str(off),
-                description=f"Ahora serían las {_now_at_offset(off)}",
-            )
-            for off in _OFFSETS
-        ]
-        super().__init__(placeholder="Elige tu zona horaria…", options=options)
-
-    async def callback(self, interaction: discord.Interaction) -> None:
-        view: TimezonePickerView = self.view  # type: ignore[assignment]
-        offset = int(self.values[0])
+    async def pick(self, interaction: discord.Interaction) -> None:
+        offset = int(self.select.values[0])
         await interaction.response.defer(ephemeral=True, thinking=True)
         try:
-            await view.bot.db.set_user_clock_tz(interaction.user.id, offset)
-            await _send_clock(interaction, view.bot, offset)
+            await self.bot.db.set_user_clock_tz(interaction.user.id, offset)
+            await _send_clock(interaction, self.bot, offset)
         except Exception:
             logger.exception("Failed to save/render clock tz for %s", interaction.user.id)
             await interaction.followup.send(embed=red_embed(_LAUNCH_ERROR), ephemeral=True)
 
 
-class ClockResultView(discord.ui.View):
-    """Attached under a user's ephemeral clock.
+class ClockResultView(discord.ui.LayoutView):
+    """A user's ephemeral clock card with its two actions.
 
-    Offers two actions: share the clock to the current channel, or re-pick the
-    timezone. The offset is carried so "post" can re-render (a rendered
-    ``discord.File`` is single-use and cannot be re-sent from the ephemeral one).
+    Share the clock to the current channel, or re-pick the timezone. The offset
+    is carried so "post" can re-render (a rendered ``discord.File`` is
+    single-use and cannot be re-sent from the ephemeral one).
     """
 
     def __init__(self, bot: Hablemos, offset: int) -> None:
         super().__init__(timeout=VIEW_TIMEOUT)
         self.bot = bot
         self.offset = offset
+        self.post_button = discord.ui.Button(
+            label="Publicar en el canal", emoji="📤", style=discord.ButtonStyle.primary
+        )
+        self.post_button.callback = self.post
+        change_button = discord.ui.Button(
+            label="Cambiar zona horaria", emoji="🌍", style=discord.ButtonStyle.secondary
+        )
+        change_button.callback = self.change
+        self.add_item(_clock_card(
+            "🕐 Tu reloj de actividad",
+            f"Cuándo escribes, en los últimos **{_CLOCK_DAYS} días** "
+            f"({_format_offset(offset)}).\n"
+            "Los pétalos largos y oscuros son tus horas más activas.",
+            discord.ui.ActionRow(self.post_button, change_button),
+        ))
 
-    @discord.ui.button(
-        label="Publicar en el canal", emoji="📤", style=discord.ButtonStyle.primary
-    )
-    async def post(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ) -> None:
+    async def post(self, interaction: discord.Interaction) -> None:
         channel = interaction.channel
         if not isinstance(channel, discord.abc.Messageable):
             await interaction.response.send_message(
@@ -226,24 +245,17 @@ class ClockResultView(discord.ui.View):
                 )
                 return
             await channel.send(
-                embed=_public_clock_embed(interaction.user, self.offset), file=file
+                view=_public_clock_view(interaction.user, self.offset), file=file
             )
         except Exception:
             logger.exception("Failed to post clock for %s", interaction.user.id)
             await interaction.followup.send(embed=red_embed(_LAUNCH_ERROR), ephemeral=True)
             return
 
-        button.disabled = True
+        self.post_button.disabled = True
         await interaction.edit_original_response(view=self)
 
-    @discord.ui.button(
-        label="Cambiar zona horaria", emoji="🌍", style=discord.ButtonStyle.secondary
-    )
-    async def change(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ) -> None:
+    async def change(self, interaction: discord.Interaction) -> None:
         await interaction.response.send_message(
-            embed=_picker_prompt(),
-            view=TimezonePickerView(self.bot),
-            ephemeral=True,
+            view=TimezonePickerView(self.bot), ephemeral=True
         )

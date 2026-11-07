@@ -158,15 +158,7 @@ class StatsCog(BaseCog):
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def myclock(self, ctx: commands.Context) -> None:
         """Post a button that shows your personal activity clock."""
-        embed = discord.Embed(
-            title="🕐 Tu reloj de actividad",
-            description=(
-                "Descubre a qué horas del día sueles escribir más.\n\n"
-                "Pulsa el botón para ver tu reloj (solo tú lo verás)."
-            ),
-            color=0x5865F2,
-        )
-        await ctx.send(embed=embed, view=ClockLauncherView(self.bot))
+        await ctx.send(view=ClockLauncherView(self.bot, owner_id=ctx.author.id))
 
 
     @commands.group(name="stats", invoke_without_command=True)
