@@ -2,6 +2,7 @@
 
 import csv
 from collections.abc import Mapping
+from dataclasses import dataclass
 from pathlib import Path
 
 CATEGORY_DESCRIPTIONS = {
@@ -12,8 +13,28 @@ CATEGORY_DESCRIPTIONS = {
     "cursed": "Cursed deals: amazing power, terrible catch",
 }
 
+
+@dataclass(frozen=True)
+class CategoryStyle:
+    """How a category looks on its topic card and hint button."""
+
+    emoji: str
+    label: str
+    colour: int
+
+
+CATEGORY_STYLES: dict[str, CategoryStyle] = {
+    "general": CategoryStyle("💬", "General", 0x3498DB),
+    "phil": CategoryStyle("🤔", "Philosophical", 0x9B59B6),
+    "would": CategoryStyle("⚖️", "Would you rather", 0xE67E22),
+    "other": CategoryStyle("🎲", "Random", 0x1ABC9C),
+    "cursed": CategoryStyle("💀", "Cursed deals", 0xC0392B),
+}
+
 DATA_DIR = Path(__file__).resolve().parent / "convo_starter_data"
-MAX_COMBINED_QUESTION_LENGTH = 4090  # 4096-char embed description, less markup
+# Discord allows 4000 characters of text per Components v2 message; the rest
+# covers the category line, heading markup and the hint row.
+MAX_COMBINED_QUESTION_LENGTH = 3800
 
 type Question = tuple[str, str]
 type QuestionBank = Mapping[str, tuple[Question, ...]]

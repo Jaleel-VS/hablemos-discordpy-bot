@@ -2,14 +2,19 @@
 
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass, field
 from types import SimpleNamespace
 from typing import Any, TypedDict, cast
 
 import discord
 
-from cogs.convo_starter_cog.main import ConvoStarter
-from cogs.convo_starter_cog.questions import CATEGORY_DESCRIPTIONS
+from cogs.convo_starter_cog.main import HINT_CHOICES, HINT_GAPS, ConvoStarter
+from cogs.convo_starter_cog.questions import (
+    CATEGORY_DESCRIPTIONS,
+    CATEGORY_STYLES,
+)
+from cogs.convo_starter_cog.views import TopicCard
 
 
 @dataclass
@@ -23,6 +28,7 @@ class SendKwargs(TypedDict, total=False):
     """Keyword arguments captured from a fake context send."""
 
     embed: discord.Embed
+    view: discord.ui.LayoutView
 
 
 @dataclass
@@ -39,11 +45,24 @@ class FakeContext:
     def __post_init__(self) -> None:
         self.channel = FakeChannel(self.channel_id)
 
-    async def send(self, *args: Any, **kwargs: Any) -> None:
+    async def send(self, *args: Any, **kwargs: Any) -> object:
         captured: SendKwargs = {}
         if "embed" in kwargs:
             captured["embed"] = kwargs["embed"]
+        if "view" in kwargs:
+            captured["view"] = kwargs["view"]
         self.sent.append((args, captured))
+        return object()
+
+
+def _question_text(view: discord.ui.LayoutView) -> str:
+    """The card's first text block: category line, question, translation."""
+    first = next(c for c in view.walk_children() if isinstance(c, discord.ui.TextDisplay))
+    return first.content
+
+
+def _hint_labels(view: discord.ui.LayoutView) -> list[str | None]:
+    return [c.label for c in view.walk_children() if isinstance(c, discord.ui.Button)]
 
 
 def _make_cog(spanish_first_channels: list[int] | None = None) -> ConvoStarter:
@@ -82,7 +101,8 @@ async def test_topic_defaults_to_general(monkeypatch: Any) -> None:
 
     await _run_topic(cog, ctx)
 
-    assert ctx.sent[0][1]["embed"].description == "**Question**\n\nPregunta"
+    view = ctx.sent[0][1]["view"]
+    assert _question_text(view) == "-# 💬 General questions\n### Question\nPregunta"
 
 
 async def test_topic_accepts_case_insensitive_numeric_alias(
@@ -97,10 +117,8 @@ async def test_topic_accepts_case_insensitive_numeric_alias(
 
     await _run_topic(cog, ctx, " 5 ")
 
-    embed = ctx.sent[0][1].get("embed")
-    assert embed is not None
-    assert embed.title is None
-    assert embed.description == "**Deal**\n\nTrato"
+    view = ctx.sent[0][1]["view"]
+    assert _question_text(view).endswith("### Deal\nTrato")
 
 
 async def test_topic_places_spanish_first_in_configured_channel(
@@ -115,11 +133,8 @@ async def test_topic_places_spanish_first_in_configured_channel(
 
     await _run_topic(cog, ctx, "PHIL")
 
-    embed = ctx.sent[0][1].get("embed")
-    assert embed is not None
-    assert isinstance(embed, discord.Embed)
-    assert embed.title is None
-    assert embed.description == "**Español**\n\nEnglish"
+    view = ctx.sent[0][1]["view"]
+    assert _question_text(view).endswith("### Español\nEnglish")
 
 
 async def test_invalid_topic_uses_prefix_and_resets_cooldown(
@@ -157,3 +172,78 @@ async def test_list_is_generated_from_categories_and_prefix() -> None:
     assert "`!topic <category>`" in description
     for index, category in enumerate(CATEGORY_DESCRIPTIONS, start=1):
         assert f"`{category}`, `{index}`" in description
+
+
+def test_every_category_has_a_style() -> None:
+    assert CATEGORY_STYLES.keys() == CATEGORY_DESCRIPTIONS.keys()
+
+
+def test_hints_land_every_two_to_four_topics_per_channel() -> None:
+    random.seed(7)
+    cog = _make_cog()
+    hint_turns = [n for n in range(1, 301) if cog._deal(1, "general").buttons]
+    gaps = {b - a for a, b in zip([0, *hint_turns], hint_turns, strict=False)}
+    assert gaps == set(HINT_GAPS)
+    # Another channel's pacing is untouched by channel 1's topics.
+    assert not cog._deal(2, "general").buttons
+
+
+def test_hint_offers_other_distinct_categories() -> None:
+    random.seed(3)
+    cog = _make_cog()
+    for _ in range(200):
+        card = cog._deal(1, "phil")
+        if not card.buttons:
+            continue
+        labels = _hint_labels(card)
+        assert len(set(labels)) == HINT_CHOICES
+        assert CATEGORY_STYLES["phil"].label not in labels
+
+
+def test_longest_question_with_hint_fits_message_limit() -> None:
+    cog = _make_cog()
+    longest = max(
+        (pair for pairs in cog.questions.values() for pair in pairs),
+        key=lambda pair: len(pair[0]) + len(pair[1]),
+    )
+    card = TopicCard(
+        "would", *longest, hints=["general", "phil", "cursed"], on_pick=cast(Any, None)
+    )
+    assert card.content_length() <= 4000
+
+
+@dataclass
+class FakeResponse:
+    """Records interaction responses."""
+
+    sent: list[dict[str, Any]] = field(default_factory=list)
+
+    async def send_message(self, content: str | None = None, **kwargs: Any) -> None:
+        self.sent.append({"content": content, **kwargs})
+
+
+def _interaction(user_id: int) -> Any:
+    # Shaped like discord.Interaction: .user, no .author.
+    async def original_response() -> object:
+        return object()
+
+    return SimpleNamespace(
+        user=SimpleNamespace(id=user_id),
+        channel_id=1,
+        response=FakeResponse(),
+        original_response=original_response,
+    )
+
+
+async def test_hint_click_posts_topic_then_rate_limits_that_user() -> None:
+    cog = _make_cog()
+    first, again, other = _interaction(5), _interaction(5), _interaction(6)
+
+    await cog._pick(first, "cursed")
+    await cog._pick(again, "cursed")
+    await cog._pick(other, "cursed")
+
+    assert isinstance(first.response.sent[0]["view"], TopicCard)
+    assert again.response.sent[0]["ephemeral"] is True
+    assert "view" not in again.response.sent[0]
+    assert isinstance(other.response.sent[0]["view"], TopicCard)
