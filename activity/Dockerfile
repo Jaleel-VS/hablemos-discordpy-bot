@@ -19,7 +19,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # --- Stage 2: python runtime -------------------------------------------------
-FROM python:3.12-slim-bookworm AS runtime
+FROM python:3.15-slim-bookworm AS runtime
 
 COPY --from=ghcr.io/astral-sh/uv:0.10.4 /uv /uvx /bin/
 
