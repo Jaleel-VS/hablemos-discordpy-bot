@@ -1,7 +1,7 @@
 # Deploy, re-run or roll back
 
 **When:** shipping a change, re-running a failed deploy, or rolling back.
-**Last verified:** 2026-11-06
+**Last verified:** 2026-11-08
 
 Pipeline, secrets and manual laptop deploys: `deploy/README.md`.
 
@@ -48,6 +48,11 @@ Pipeline, secrets and manual laptop deploys: `deploy/README.md`.
 - A push during a manual run queues. Deploys of the same ref never overlap.
 - A bot that exits on a rejected login (`cogs/utils/login_guard.py`) waits 30
   minutes first, so it still counts as running and the deploy goes `ACTIVE`.
+- The Docker base images' Python (`FROM python:3.12-…` in `Dockerfile`, `activity/Dockerfile`,
+  `logforwarder/Dockerfile`) must match `requires-python` in each `pyproject.toml`. A mismatch
+  fails the image build with `No interpreter found for Python ==3.12.*` while tests stay green
+  (they don't run in the image). Dependabot's 3.15 bump did this on 2026-11-08; it now skips
+  Python major/minor image bumps (`.github/dependabot.yml`), so upgrade both together by hand.
 
 ## Verify
 
