@@ -37,3 +37,8 @@ updates:
     groups:
       docker:
         patterns: ["*"]
+    ignore:
+      # The base image's Python must match requires-python (==3.12.*) in each
+      # pyproject.toml; a 3.x jump breaks `uv sync --locked` in every image.
+      - dependency-name: python
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]

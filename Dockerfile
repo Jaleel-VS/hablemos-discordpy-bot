@@ -1,4 +1,4 @@
-FROM python:3.15-slim-bookworm
+FROM python:3.12-slim-bookworm
 
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y --no-install-recommends \
