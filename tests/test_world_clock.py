@@ -317,15 +317,29 @@ async def test_reset_waits_for_confirmation() -> None:
     assert db.clocks == []
 
 
-@pytest.mark.parametrize(
-    ("editing", "values"),
-    [(None, [None, None]), (SavedClock("Emily", "Europe/Berlin"), ["Emily", "Europe/Berlin"])],
-)
-def test_clock_form_uses_labelled_inputs(editing: SavedClock | None, values: list[str | None]) -> None:
+def _form(editing: SavedClock | None) -> tuple[list[dict[str, Any]], list[str], str | None]:
+    """(rows, preselected offsets, prefilled "other" text) of the clock form."""
+    rows = ClockModal(ClockMenuView(_bot(FakeDB()), 42, []), editing).to_dict()["components"]
+    select, other = rows[1]["component"], rows[2]["component"]
+    return rows, [o["value"] for o in select["options"] if o.get("default")], other.get("value")
+
+
+def test_clock_form_offers_every_offset_in_labelled_fields() -> None:
     # Discord rejected the bare action-row inputs; each field must sit in a Label (type 18).
-    menu = ClockMenuView(_bot(FakeDB()), 42, [])
-    form = ClockModal(menu, editing).to_dict()["components"]
-    assert [(row["type"], row["label"], row["component"].get("value")) for row in form] == [
-        (18, "Name", values[0]),
-        (18, "Timezone", values[1]),
+    rows, preselected, other = _form(None)
+    assert [(row["type"], row["label"]) for row in rows] == [
+        (18, "Name"), (18, "Timezone"), (18, "Not in the list?"),
     ]
+    options = rows[1]["component"]["options"]
+    assert len(options) == 25
+    assert [options[0]["label"], options[-1]["label"]] == ["UTC−11", "UTC+13"]
+    assert all(zones.resolve_zone(o["value"]) == o["value"] for o in options)
+    assert (preselected, other) == ([], None)
+
+
+@pytest.mark.parametrize(
+    ("zone", "preselected", "other"),
+    [("UTC+02:00", ["UTC+02:00"], None), ("Europe/Berlin", [], "Europe/Berlin"), ("UTC+05:30", [], "UTC+05:30")],
+)
+def test_edit_form_puts_saved_zone_where_it_fits(zone: str, preselected: list[str], other: str | None) -> None:
+    assert _form(SavedClock("Emily", zone))[1:] == (preselected, other)

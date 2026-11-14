@@ -8,7 +8,7 @@ button that opens the clicker's own ephemeral menu (the ``$myclock`` pattern).
 from __future__ import annotations
 
 import logging
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING
 
 import discord
@@ -228,28 +228,62 @@ class ClockMenuLauncherView(discord.ui.LayoutView):
                 logger.warning("Could not delete world clock launcher %s", interaction.message.id)
 
 
+_OFFSET_HOURS = range(-11, 14)  # 25 options, Discord's limit for one dropdown
+
+
+def _offset_options(now: datetime, selected: str | None) -> list[discord.SelectOption]:
+    """One option per whole-hour offset; the description shows its time right now."""
+    options = []
+    for hours in _OFFSET_HOURS:
+        offset = timedelta(hours=hours)
+        key = zones.resolve_zone(zones.format_offset(offset)) or "UTC+00:00"
+        options.append(discord.SelectOption(
+            label=zones.format_offset(offset),
+            value=key,
+            description=f"Now {now + offset:%H:%M}",
+            default=key == selected,
+        ))
+    return options
+
+
 class ClockModal(discord.ui.Modal):
-    """Name and timezone form for adding or editing one clock."""
+    """Name, a UTC-offset dropdown, and an optional typed timezone for anything else."""
 
     def __init__(self, menu: ClockMenuView, editing: SavedClock | None) -> None:
         super().__init__(title="Edit clock" if editing else "Add a clock", timeout=_PANEL_TIMEOUT)
         self.menu = menu
         self.editing = editing
+        options = _offset_options(datetime.now(UTC), editing.zone if editing else None)
+        in_list = editing is not None and any(o.default for o in options)
         self.name_input = discord.ui.TextInput(
             placeholder="Emily", max_length=MAX_LABEL_LEN,
             default=editing.label if editing else None,
         )
-        self.zone_input = discord.ui.TextInput(
-            placeholder="Berlin, America/Bogota or UTC+2", max_length=64,
-            default=editing.zone if editing else None,
+        self.offset_select = discord.ui.Select(
+            placeholder="Pick the offset whose time matches theirs", options=options, required=False,
+        )
+        self.other_input = discord.ui.TextInput(
+            placeholder="UTC+5:30, Delhi or Europe/Berlin", max_length=64, required=False,
+            default=editing.zone if editing and not in_list else None,
         )
         self.add_item(discord.ui.Label(text="Name", component=self.name_input))
-        self.add_item(discord.ui.Label(text="Timezone", component=self.zone_input))
+        self.add_item(discord.ui.Label(
+            text="Timezone", description="Fixed offset: change it yourself when daylight saving starts or ends.",
+            component=self.offset_select,
+        ))
+        self.add_item(discord.ui.Label(
+            text="Not in the list?", description="Type an offset or a place. A place follows daylight saving.",
+            component=self.other_input,
+        ))
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
         db = self.menu.bot.db
         owner = self.menu.owner_id
-        name, zone = self.name_input.value, self.zone_input.value
+        zone = self.other_input.value.strip() or next(iter(self.offset_select.values), "")
+        if not zone:
+            await interaction.response.send_message("Pick a timezone from the list or type one.", ephemeral=True)
+            return
+        name = self.name_input.value
         if self.editing is None:
             outcome = await actions.add_clock(db, owner, name, zone)
         else:
