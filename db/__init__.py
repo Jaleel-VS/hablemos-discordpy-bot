@@ -55,6 +55,7 @@ from db.stats import StatsMixin
 from db.tasks import TasksMixin
 from db.ticket_subs import TicketSubsMixin
 from db.vocab import VocabMixin
+from db.world_clock import WorldClockMixin
 
 
 class Database(
@@ -81,6 +82,7 @@ class Database(
     FactsMixin,
     NewsMixin,
     InstancesMixin,
+    WorldClockMixin,
 ):
     def __init__(self, database_url: str):
         self.pool: asyncpg.Pool | None = None

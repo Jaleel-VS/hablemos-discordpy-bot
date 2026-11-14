@@ -561,6 +561,7 @@ dependencies = [
     { name = "python-dotenv" },
     { name = "requests" },
     { name = "seaborn" },
+    { name = "tzdata" },
     { name = "yarl" },
 ]
 
@@ -592,6 +593,7 @@ requires-dist = [
     { name = "python-dotenv", specifier = "~=1.2" },
     { name = "requests", specifier = "~=2.32" },
     { name = "seaborn", specifier = "~=0.13" },
+    { name = "tzdata", specifier = ">=2025.2" },
     { name = "yarl", specifier = "~=1.23" },
 ]
 

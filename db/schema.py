@@ -758,6 +758,22 @@ async def initialize_schema(pool):
             )
         ''')
 
+        # ── World clock: up to 12 labelled zones per member ($clock) ──
+        # zone is an IANA name or a fixed "UTC+05:30" key (worldclock_cog.zones).
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS user_world_clocks (
+                user_id     BIGINT NOT NULL,
+                label       TEXT NOT NULL,
+                zone        TEXT NOT NULL,
+                created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_user_world_clocks_label
+            ON user_world_clocks (user_id, lower(label))
+        ''')
+
         # ── Spotify: now-playing opt-ins ──
         # Sharing is off by default. A row means the member allows
         # $nowplaying / $np2 to show their Spotify activity.

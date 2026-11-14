@@ -30,6 +30,7 @@ dependencies = [
     "aioboto3~=15.5",
     "demoji>=1.1,<3.0",
     "yarl~=1.23",
+    "tzdata>=2025.2",
 ]
 
 [dependency-groups]

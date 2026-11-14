@@ -1,6 +1,6 @@
 # Hablemos Privacy Policy
 
-_Last updated: 2026-10-13_
+_Last updated: 2026-11-14_
 
 Hablemos is a Discord bot for the
 [Spanish-English Learning Server](https://discord.gg/spanish-english). This
@@ -27,6 +27,8 @@ policy explains what data the bot collects, why, and how to have it removed.
   entries and game scores so they can be shown later.
 - **Message counts** per user, channel and hour, used for server stats.
   The text of these messages is not stored.
+- **Your world clocks**: the names and timezones you save with `$clock add`.
+  They appear only when you run `$clock` yourself.
 - **Who replies to or mentions whom** (user IDs and channel only), used
   for staff interaction analysis. Deleted after 90 days.
 - **Your Spotify sharing setting** (whether you ran `$spotify on`).

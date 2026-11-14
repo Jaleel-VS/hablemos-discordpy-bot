@@ -28,6 +28,7 @@ _DELETES: list[tuple[str, str]] = [
     ("user_message_counts", "DELETE FROM user_message_counts WHERE user_id = $1"),
     ("user_activity", "DELETE FROM user_activity WHERE user_id = $1"),
     ("user_clock_prefs", "DELETE FROM user_clock_prefs WHERE user_id = $1"),
+    ("user_world_clocks", "DELETE FROM user_world_clocks WHERE user_id = $1"),
     ("spotify_optins", "DELETE FROM spotify_optins WHERE user_id = $1"),
 ]
 
