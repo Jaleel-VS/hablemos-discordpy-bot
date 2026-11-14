@@ -317,10 +317,15 @@ async def test_reset_waits_for_confirmation() -> None:
     assert db.clocks == []
 
 
-def test_clock_form_uses_labelled_inputs_prefilled_for_edit() -> None:
+@pytest.mark.parametrize(
+    ("editing", "values"),
+    [(None, [None, None]), (SavedClock("Emily", "Europe/Berlin"), ["Emily", "Europe/Berlin"])],
+)
+def test_clock_form_uses_labelled_inputs(editing: SavedClock | None, values: list[str | None]) -> None:
+    # Discord rejected the bare action-row inputs; each field must sit in a Label (type 18).
     menu = ClockMenuView(_bot(FakeDB()), 42, [])
-    form = ClockModal(menu, SavedClock("Emily", "Europe/Berlin")).to_dict()["components"]
+    form = ClockModal(menu, editing).to_dict()["components"]
     assert [(row["type"], row["label"], row["component"].get("value")) for row in form] == [
-        (18, "Name", "Emily"),
-        (18, "Timezone", "Europe/Berlin"),
+        (18, "Name", values[0]),
+        (18, "Timezone", values[1]),
     ]
