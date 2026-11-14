@@ -132,7 +132,10 @@ async def render_board(
         lines.append(f"At **{at.strftime('%H:%M')}** {where}, which is "
                      f"<t:{int(instant.timestamp())}:F> in your local time.")
     if not saved:
-        lines.append(f"These are the default cities. Add your own with `$clock add Emily Berlin` (up to {MAX_CLOCKS}).")
+        lines.append(
+            f"These are the default cities. Add up to {MAX_CLOCKS} of your own with "
+            "`$clock menu` or `$clock add Emily Berlin`."
+        )
     if home is None:
         lines.append("Pick your timezone with `$myclock` to get a **You** card.")
 

@@ -1,8 +1,10 @@
 """World clock cog: a board of digital clocks for cities or people you choose.
 
 ``$clock`` (``$wc``) shows the board, ``$clock 20:00`` shows it at a planned
-time, and ``add``/``remove``/``list``/``reset`` manage up to 12 saved clocks.
-Each is also a ``/clock`` slash command, where the timezone autocompletes.
+time, and ``add``/``remove``/``reset`` manage up to 12 saved clocks.
+``menu`` (``list``) opens a private menu for all of it: ephemeral as
+``/clock menu``, behind a launcher button as ``$clock menu``. Each is also a
+``/clock`` slash command, where the timezone autocompletes.
 """
 from __future__ import annotations
 
@@ -17,7 +19,7 @@ from base_cog import BaseCog
 from cogs.utils.embeds import red_embed
 
 from . import actions, zones
-from .views import ClockManagerView, board_view
+from .views import ClockMenuLauncherView, board_view, open_menu
 
 if TYPE_CHECKING:
     from hablemos import Hablemos
@@ -29,6 +31,12 @@ _RENDER_FAILED = "I couldn't draw your clocks. Try again in a moment."
 
 class WorldClock(BaseCog):
     """Digital world clock board with per-member saved clocks."""
+
+    def __init__(self, bot: Hablemos) -> None:
+        super().__init__(bot)
+        # Launchers posted before a restart keep working.
+        if not any(isinstance(v, ClockMenuLauncherView) for v in bot.persistent_views):
+            bot.add_view(ClockMenuLauncherView(bot))
 
     @commands.hybrid_group(name="clock", aliases=["wc", "worldclock"], fallback="show")
     @commands.cooldown(1, 10, commands.BucketType.user)
@@ -89,12 +97,14 @@ class WorldClock(BaseCog):
             if current.lower() in c.label.lower()
         ][:25]
 
-    @clock.command(name="list")
+    @clock.command(name="menu", aliases=["list"])
     @commands.cooldown(2, 30, commands.BucketType.user)
-    async def clock_list(self, ctx: commands.Context) -> None:
-        """List your clocks with buttons to add, edit and remove."""
-        clocks = await self.bot.db.get_world_clocks(ctx.author.id)
-        await ctx.send(view=ClockManagerView(self.bot, ctx.author.id, clocks), ephemeral=True)
+    async def clock_menu(self, ctx: commands.Context) -> None:
+        """Open your private menu to add, edit, preview and post your clocks."""
+        if ctx.interaction is not None:
+            await open_menu(self.bot, ctx.interaction)
+            return
+        await ctx.send(view=ClockMenuLauncherView(self.bot, owner_id=ctx.author.id))
 
     @clock.command(name="reset")
     @commands.cooldown(2, 60, commands.BucketType.user)

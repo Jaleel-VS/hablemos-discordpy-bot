@@ -1,4 +1,10 @@
-"""Components v2 views for the world clock: the board card and the manage panel."""
+"""Components v2 views for the world clock: the board card, the private menu
+and its launcher.
+
+``/clock menu`` opens :class:`ClockMenuView` ephemerally. ``$clock menu``
+can't reply privately, so it posts :class:`ClockMenuLauncherView`, a single
+button that opens the clicker's own ephemeral menu (the ``$myclock`` pattern).
+"""
 from __future__ import annotations
 
 import logging
@@ -19,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 _ACCENT = discord.Colour(0x5865F2)
 _PANEL_TIMEOUT = 600
-_FAILED = "Something went wrong saving your clocks. Try again in a moment."
+_FAILED = "Something went wrong with your clocks. Try again in a moment."
 
 
 def board_view(rendered: actions.RenderedBoard) -> discord.ui.LayoutView:
@@ -43,8 +49,22 @@ def _clock_line(clock: SavedClock, now: datetime) -> str:
     return f"- **{label}**: {actions.describe_zone(clock.zone)} · {local}"
 
 
-class ClockManagerView(discord.ui.LayoutView):
-    """Owner-only panel listing saved clocks with add, edit and remove."""
+def _button(label: str, emoji: str, style: discord.ButtonStyle, callback, *, disabled: bool = False) -> discord.ui.Button:
+    button = discord.ui.Button(label=label, emoji=emoji, style=style, disabled=disabled)
+    button.callback = callback
+    return button
+
+
+async def open_menu(bot: Hablemos, interaction: discord.Interaction) -> None:
+    """Reply to *interaction* with the clicker's private menu."""
+    clocks = await bot.db.get_world_clocks(interaction.user.id)
+    await interaction.response.send_message(
+        view=ClockMenuView(bot, interaction.user.id, clocks), ephemeral=True
+    )
+
+
+class ClockMenuView(discord.ui.LayoutView):
+    """A member's private menu: list, add, edit, remove, preview, post, reset."""
 
     def __init__(
         self,
@@ -53,24 +73,33 @@ class ClockManagerView(discord.ui.LayoutView):
         clocks: list[SavedClock],
         selected: str | None = None,
         notice: str | None = None,
+        confirming_reset: bool = False,
     ) -> None:
         super().__init__(timeout=_PANEL_TIMEOUT)
         self.bot = bot
         self.owner_id = owner_id
-        self.clocks = clocks
         self.selected = next((c for c in clocks if c.label == selected), None)
 
         now = datetime.now(UTC)
         lines = [_clock_line(c, now) for c in clocks] or [
-            "No clocks yet, so `$clock` shows the default cities. Press **Add** to start."
+            "No clocks yet, so your board shows the default cities. Press **Add** to start."
         ]
         text = f"## 🕐 Your clocks ({len(clocks)}/{MAX_CLOCKS})\n" + "\n".join(lines)
         if notice:
             text += f"\n\n{notice}"
         items: list[discord.ui.Item] = [discord.ui.TextDisplay(text)]
 
+        if confirming_reset:
+            items.append(discord.ui.TextDisplay(f"**Delete all {len(clocks)} clocks?** This can't be undone."))
+            items.append(discord.ui.ActionRow(
+                _button("Yes, delete all", "🗑️", discord.ButtonStyle.danger, self._reset_confirmed),
+                _button("Cancel", "↩️", discord.ButtonStyle.secondary, self._reset_cancelled),
+            ))
+            self.add_item(discord.ui.Container(*items, accent_colour=_ACCENT))
+            return
+
         if clocks:
-            select = discord.ui.Select(
+            self.select = discord.ui.Select(
                 placeholder="Choose a clock to edit or remove…",
                 options=[
                     discord.SelectOption(
@@ -80,40 +109,37 @@ class ClockManagerView(discord.ui.LayoutView):
                     for c in clocks
                 ],
             )
-            select.callback = self._pick
-            self.select = select
-            items.append(discord.ui.ActionRow(select))
+            self.select.callback = self._pick
+            items.append(discord.ui.ActionRow(self.select))
 
-        add = discord.ui.Button(label="Add", emoji="➕", style=discord.ButtonStyle.primary,
-                                disabled=len(clocks) >= MAX_CLOCKS)
-        add.callback = self._add
-        edit = discord.ui.Button(label="Edit", emoji="✏️", style=discord.ButtonStyle.secondary,
-                                 disabled=self.selected is None)
-        edit.callback = self._edit
-        remove = discord.ui.Button(label="Remove", emoji="🗑️", style=discord.ButtonStyle.danger,
-                                   disabled=self.selected is None)
-        remove.callback = self._remove
-        items.append(discord.ui.ActionRow(add, edit, remove))
+        nothing_selected = self.selected is None
+        items.append(discord.ui.ActionRow(
+            _button("Add", "➕", discord.ButtonStyle.primary, self._add, disabled=len(clocks) >= MAX_CLOCKS),
+            _button("Edit", "✏️", discord.ButtonStyle.secondary, self._edit, disabled=nothing_selected),
+            _button("Remove", "➖", discord.ButtonStyle.secondary, self._remove, disabled=nothing_selected),
+        ))
+        items.append(discord.ui.ActionRow(
+            _button("Preview", "👀", discord.ButtonStyle.secondary, self._preview),
+            _button("Post to channel", "📤", discord.ButtonStyle.secondary, self._post),
+            _button("Reset all", "🗑️", discord.ButtonStyle.danger, self._reset, disabled=not clocks),
+        ))
         self.add_item(discord.ui.Container(*items, accent_colour=_ACCENT))
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
-        if interaction.user.id == self.owner_id:
-            return True
-        await interaction.response.send_message(
-            "This panel belongs to someone else. Run `$clock list` for yours.", ephemeral=True
-        )
-        return False
-
     async def on_error(self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item) -> None:
-        logger.exception("World clock panel failed for %s", interaction.user.id, exc_info=error)
+        logger.exception("World clock menu failed for %s", interaction.user.id, exc_info=error)
         await _send_failure(interaction)
 
     async def refresh(
-        self, interaction: discord.Interaction, *, selected: str | None = None, notice: str | None = None
+        self,
+        interaction: discord.Interaction,
+        *,
+        selected: str | None = None,
+        notice: str | None = None,
+        confirming_reset: bool = False,
     ) -> None:
-        """Redraw the panel from the database in the message it lives on."""
+        """Redraw the menu from the database in the message it lives on."""
         clocks = await self.bot.db.get_world_clocks(self.owner_id)
-        view = ClockManagerView(self.bot, self.owner_id, clocks, selected, notice)
+        view = ClockMenuView(self.bot, self.owner_id, clocks, selected, notice, confirming_reset)
         await interaction.response.edit_message(view=view)
 
     async def _pick(self, interaction: discord.Interaction) -> None:
@@ -133,13 +159,81 @@ class ClockManagerView(discord.ui.LayoutView):
         label = discord.utils.escape_markdown(self.selected.label)
         await self.refresh(interaction, notice=f"Removed **{label}**." if removed else None)
 
+    async def _preview(self, interaction: discord.Interaction) -> None:
+        await interaction.response.defer(ephemeral=True, thinking=True)
+        rendered = await actions.render_board(self.bot.db, self.owner_id, None)
+        await interaction.followup.send(view=board_view(rendered), file=rendered.file(), ephemeral=True)
+
+    async def _post(self, interaction: discord.Interaction) -> None:
+        channel = interaction.channel
+        if not isinstance(channel, discord.abc.Messageable):
+            await interaction.response.send_message("I can't post in this channel.", ephemeral=True)
+            return
+        await interaction.response.defer(ephemeral=True, thinking=True)
+        rendered = await actions.render_board(self.bot.db, self.owner_id, None)
+        try:
+            await channel.send(view=board_view(rendered), file=rendered.file())
+        except discord.Forbidden:
+            await interaction.followup.send("I'm not allowed to post in this channel.", ephemeral=True)
+            return
+        await interaction.followup.send("📤 Posted your board.", ephemeral=True)
+
+    async def _reset(self, interaction: discord.Interaction) -> None:
+        await self.refresh(interaction, confirming_reset=True)
+
+    async def _reset_confirmed(self, interaction: discord.Interaction) -> None:
+        removed = await self.bot.db.clear_world_clocks(self.owner_id)
+        await self.refresh(interaction, notice=f"Removed {removed} clock(s).")
+
+    async def _reset_cancelled(self, interaction: discord.Interaction) -> None:
+        await self.refresh(interaction)
+
+
+class ClockMenuLauncherView(discord.ui.LayoutView):
+    """Public button that opens each clicker's private menu.
+
+    When ``owner_id`` (who ran ``$clock menu``) clicks, the launcher deletes
+    itself. The startup-registered persistent instance has no owner, so
+    launchers that outlive a restart stay for anyone to use.
+    """
+
+    def __init__(self, bot: Hablemos, owner_id: int | None = None) -> None:
+        super().__init__(timeout=None)
+        self.bot = bot
+        self.owner_id = owner_id
+        button = discord.ui.Button(
+            label="Manage my clocks", emoji="🕐", style=discord.ButtonStyle.primary,
+            custom_id="world_clock:menu",
+        )
+        button.callback = self.launch
+        self.add_item(discord.ui.Container(
+            discord.ui.TextDisplay(
+                "## 🌍 World clock\n"
+                "Add, edit and preview your clocks. Only you will see your menu."
+            ),
+            discord.ui.ActionRow(button),
+            accent_colour=_ACCENT,
+        ))
+
+    async def launch(self, interaction: discord.Interaction) -> None:
+        try:
+            await open_menu(self.bot, interaction)
+        except Exception:
+            logger.exception("Failed to open world clock menu for %s", interaction.user.id)
+            await _send_failure(interaction)
+        if interaction.user.id == self.owner_id and interaction.message is not None:
+            try:
+                await interaction.message.delete()
+            except (discord.NotFound, discord.Forbidden, discord.HTTPException):
+                logger.warning("Could not delete world clock launcher %s", interaction.message.id)
+
 
 class ClockModal(discord.ui.Modal):
     """Name and timezone form for adding or editing one clock."""
 
-    def __init__(self, panel: ClockManagerView, editing: SavedClock | None) -> None:
+    def __init__(self, menu: ClockMenuView, editing: SavedClock | None) -> None:
         super().__init__(title="Edit clock" if editing else "Add a clock", timeout=_PANEL_TIMEOUT)
-        self.panel = panel
+        self.menu = menu
         self.editing = editing
         self.name = discord.ui.TextInput(
             label="Name", placeholder="Emily", max_length=MAX_LABEL_LEN,
@@ -153,8 +247,8 @@ class ClockModal(discord.ui.Modal):
         self.add_item(self.zone)
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        db = self.panel.bot.db
-        owner = self.panel.owner_id
+        db = self.menu.bot.db
+        owner = self.menu.owner_id
         if self.editing is None:
             outcome = await actions.add_clock(db, owner, self.name.value, self.zone.value)
         else:
@@ -162,7 +256,7 @@ class ClockModal(discord.ui.Modal):
         if not outcome.ok:
             await interaction.response.send_message(outcome.message, ephemeral=True)
             return
-        await self.panel.refresh(interaction, notice=outcome.message)
+        await self.menu.refresh(interaction, notice=outcome.message)
 
     async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
         logger.exception("World clock form failed for %s", interaction.user.id, exc_info=error)
