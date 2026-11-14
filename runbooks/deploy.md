@@ -1,7 +1,7 @@
 # Deploy, re-run or roll back
 
 **When:** shipping a change, re-running a failed deploy, or rolling back.
-**Last verified:** 2026-11-08
+**Last verified:** 2026-11-14
 
 Pipeline, secrets and manual laptop deploys: `deploy/README.md`.
 
@@ -23,9 +23,28 @@ Pipeline, secrets and manual laptop deploys: `deploy/README.md`.
 4. **Watch:** `gh run watch <run-id> --exit-status`.
 5. **Roll back:** `AWS_REGION=us-east-1 scripts/lightsail_rollback.sh <service> [version]`.
 6. **New global slash commands:** run `$sync` as the owner. Prefix commands need nothing.
+7. **Deploy from the laptop when Actions can't run** (no tests run, so run `pytest` first).
+   GitHub secrets can't be read back, so copy the live deployment's spec instead and
+   change only the image, version and SHA:
+   ```bash
+   umask 077; export AWS_PROFILE=Jaleel AWS_REGION=us-east-1
+   git archive HEAD | docker build --platform linux/amd64 -t hablemos-bot:local -
+   aws lightsail get-container-service-deployments --service-name hablemos-discordpy-bot \
+     --query 'deployments[0].containers' --output json \
+     | jq --arg sha "$(git rev-parse HEAD)" '.app.image="__IMAGE__"
+         | .app.environment.DEPLOY_VERSION="__DEPLOY_VERSION__" | .app.environment.DEPLOY_SHA=$sha' \
+     > /tmp/bot.containers.json
+   bash scripts/lightsail_deploy.sh hablemos-discordpy-bot hablemos-bot:local /tmp/bot.containers.json
+   rm /tmp/bot.containers.json
+   ```
+   `deployments[0]` must be the version you want to keep settings from (normally the `ACTIVE` one).
 
 ## Gotchas
 
+- Every job failing within seconds, with no logs and the annotation "account is locked due
+  to a billing issue", is a GitHub account lock, not the workflow. Re-runs fail the same way.
+  The repo is public, so Actions usage costs nothing; check the payment method and billing
+  email, then open a GitHub Support ticket (Billing). Ship with step 7 meanwhile.
 - The deploy script polls for about 6.7 minutes (40 checks, 10 s apart). Lightsail
   sometimes needs longer, so a red run can still end `ACTIVE`. Check:
   ```bash
