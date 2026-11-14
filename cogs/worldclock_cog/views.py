@@ -235,24 +235,25 @@ class ClockModal(discord.ui.Modal):
         super().__init__(title="Edit clock" if editing else "Add a clock", timeout=_PANEL_TIMEOUT)
         self.menu = menu
         self.editing = editing
-        self.name = discord.ui.TextInput(
-            label="Name", placeholder="Emily", max_length=MAX_LABEL_LEN,
+        self.name_input = discord.ui.TextInput(
+            placeholder="Emily", max_length=MAX_LABEL_LEN,
             default=editing.label if editing else None,
         )
-        self.zone = discord.ui.TextInput(
-            label="Timezone", placeholder="Berlin, America/Bogota or UTC+2", max_length=64,
+        self.zone_input = discord.ui.TextInput(
+            placeholder="Berlin, America/Bogota or UTC+2", max_length=64,
             default=editing.zone if editing else None,
         )
-        self.add_item(self.name)
-        self.add_item(self.zone)
+        self.add_item(discord.ui.Label(text="Name", component=self.name_input))
+        self.add_item(discord.ui.Label(text="Timezone", component=self.zone_input))
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
         db = self.menu.bot.db
         owner = self.menu.owner_id
+        name, zone = self.name_input.value, self.zone_input.value
         if self.editing is None:
-            outcome = await actions.add_clock(db, owner, self.name.value, self.zone.value)
+            outcome = await actions.add_clock(db, owner, name, zone)
         else:
-            outcome = await actions.edit_clock(db, owner, self.editing.label, self.name.value, self.zone.value)
+            outcome = await actions.edit_clock(db, owner, self.editing.label, name, zone)
         if not outcome.ok:
             await interaction.response.send_message(outcome.message, ephemeral=True)
             return

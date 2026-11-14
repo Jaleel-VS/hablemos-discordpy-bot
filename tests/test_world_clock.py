@@ -17,7 +17,11 @@ from PIL import Image
 from cogs.worldclock_cog import actions, board, renderer, zones
 from cogs.worldclock_cog.config import DEFAULT_CLOCKS, MAX_CLOCKS, ZONE_ALIASES
 from cogs.worldclock_cog.main import WorldClock
-from cogs.worldclock_cog.views import ClockMenuLauncherView, ClockMenuView
+from cogs.worldclock_cog.views import (
+    ClockMenuLauncherView,
+    ClockMenuView,
+    ClockModal,
+)
 from db.world_clock import SaveClockResult, SavedClock
 
 SUMMER = datetime(2026, 7, 1, 12, 0, tzinfo=UTC)
@@ -311,3 +315,12 @@ async def test_reset_waits_for_confirmation() -> None:
     confirm = interaction.response.edited[-1]
     await _button(confirm, "Yes, delete all").callback(cast(Any, interaction))
     assert db.clocks == []
+
+
+def test_clock_form_uses_labelled_inputs_prefilled_for_edit() -> None:
+    menu = ClockMenuView(_bot(FakeDB()), 42, [])
+    form = ClockModal(menu, SavedClock("Emily", "Europe/Berlin")).to_dict()["components"]
+    assert [(row["type"], row["label"], row["component"].get("value")) for row in form] == [
+        (18, "Name", "Emily"),
+        (18, "Timezone", "Europe/Berlin"),
+    ]

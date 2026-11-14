@@ -45,16 +45,20 @@ _MOON = (226, 230, 245)
 _DARK_TEXT = (20, 24, 33)
 _LIGHT_TEXT = (245, 247, 250)
 
-# (local hour, card colour); interpolated between stops.
+# (local hour, card colour); interpolated in RGB between stops. Lavender sits
+# between blue and the warm colours because a direct blue/amber blend is grey.
 _SKY: tuple[tuple[float, tuple[int, int, int]], ...] = (
     (0.0, (22, 27, 58)),
     (4.5, (30, 36, 82)),
-    (6.0, (214, 112, 96)),
+    (5.5, (92, 62, 128)),
+    (6.3, (230, 124, 104)),
+    (7.2, (170, 160, 220)),
     (8.0, (110, 170, 225)),
     (16.5, (95, 160, 222)),
-    (18.5, (232, 150, 70)),
-    (20.0, (70, 52, 110)),
-    (22.0, (22, 27, 58)),
+    (17.4, (160, 150, 215)),
+    (18.2, (232, 130, 96)),
+    (19.2, (100, 60, 120)),
+    (21.0, (22, 27, 58)),
     (24.0, (22, 27, 58)),
 )
 
