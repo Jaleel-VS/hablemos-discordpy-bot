@@ -21,6 +21,7 @@ from cogs.worldclock_cog.views import (
     ClockMenuLauncherView,
     ClockMenuView,
     ClockModal,
+    chosen_zone,
 )
 from db.world_clock import SaveClockResult, SavedClock
 
@@ -335,6 +336,7 @@ def test_clock_form_offers_every_offset_in_labelled_fields() -> None:
     assert [options[0]["label"], options[-1]["label"]] == ["UTC−11", "UTC+13"]
     assert all(zones.resolve_zone(o["value"]) == o["value"] for o in options)
     assert (preselected, other) == ([], None)
+    assert rows[1]["component"]["min_values"] == 0  # optional dropdown; 1 would contradict required=False
 
 
 @pytest.mark.parametrize(
@@ -343,3 +345,20 @@ def test_clock_form_offers_every_offset_in_labelled_fields() -> None:
 )
 def test_edit_form_puts_saved_zone_where_it_fits(zone: str, preselected: list[str], other: str | None) -> None:
     assert _form(SavedClock("Emily", zone))[1:] == (preselected, other)
+
+
+@pytest.mark.parametrize(
+    ("picked", "typed", "prefilled", "zone"),
+    [
+        (["UTC+02:00"], "", None, "UTC+02:00"),                    # add: dropdown only
+        ([], "Delhi", None, "Delhi"),                              # add: typed only
+        (["UTC+02:00"], "Europe/Berlin", "Europe/Berlin", "UTC+02:00"),  # edit: new pick beats untouched text
+        (["UTC+02:00"], "Tokyo", None, "Tokyo"),                   # edit: newly typed text beats preselection
+        ([], "Europe/Berlin", "Europe/Berlin", "Europe/Berlin"),  # edit: nothing changed
+        ([], "  ", None, ""),                                       # nothing given
+    ],
+)
+def test_chosen_zone_follows_what_the_member_changed(
+    picked: list[str], typed: str, prefilled: str | None, zone: str
+) -> None:
+    assert chosen_zone(picked, typed, prefilled) == zone

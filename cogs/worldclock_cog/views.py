@@ -246,6 +246,15 @@ def _offset_options(now: datetime, selected: str | None) -> list[discord.SelectO
     return options
 
 
+def chosen_zone(picked: list[str], typed: str, prefilled: str | None) -> str:
+    """The zone the member meant: newly typed text, else the dropdown, else the
+    prefilled text left as it was ("" when nothing was given)."""
+    typed = typed.strip()
+    if typed and typed != (prefilled or ""):
+        return typed
+    return picked[0] if picked else typed
+
+
 class ClockModal(discord.ui.Modal):
     """Name, a UTC-offset dropdown, and an optional typed timezone for anything else."""
 
@@ -260,7 +269,8 @@ class ClockModal(discord.ui.Modal):
             default=editing.label if editing else None,
         )
         self.offset_select = discord.ui.Select(
-            placeholder="Pick the offset whose time matches theirs", options=options, required=False,
+            placeholder="Pick the offset whose time matches theirs", options=options,
+            required=False, min_values=0,
         )
         self.other_input = discord.ui.TextInput(
             placeholder="UTC+5:30, Delhi or Europe/Berlin", max_length=64, required=False,
@@ -279,7 +289,7 @@ class ClockModal(discord.ui.Modal):
     async def on_submit(self, interaction: discord.Interaction) -> None:
         db = self.menu.bot.db
         owner = self.menu.owner_id
-        zone = self.other_input.value.strip() or next(iter(self.offset_select.values), "")
+        zone = chosen_zone(self.offset_select.values, self.other_input.value, self.other_input.default)
         if not zone:
             await interaction.response.send_message("Pick a timezone from the list or type one.", ephemeral=True)
             return
