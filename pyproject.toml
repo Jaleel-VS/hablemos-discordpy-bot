@@ -9,7 +9,7 @@ dependencies = [
     "asyncpg~=0.31",
     "python-dotenv~=1.2",
     # AI
-    "google-genai>=1.68,<3.0",
+    "google-genai>=1.68,<4.0",
     # Web/HTTP
     "aiohttp~=3.13",
     "requests~=2.32",
