@@ -276,13 +276,44 @@ async def initialize_schema(pool):
         ''')
 
         # Level XP: league points earned since levels launched (no backfill).
+        # Streaks count consecutive UTC days with a counted message, from launch.
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS league_levels (
                 user_id BIGINT PRIMARY KEY,
                 xp BIGINT NOT NULL DEFAULT 0,
                 cards_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+                current_streak INTEGER NOT NULL DEFAULT 0,
+                best_streak INTEGER NOT NULL DEFAULT 0,
+                last_active_date DATE,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
             )
+        ''')
+
+        await conn.execute('''
+            ALTER TABLE league_levels
+            ADD COLUMN IF NOT EXISTS current_streak INTEGER NOT NULL DEFAULT 0,
+            ADD COLUMN IF NOT EXISTS best_streak INTEGER NOT NULL DEFAULT 0,
+            ADD COLUMN IF NOT EXISTS last_active_date DATE
+        ''')
+
+        # Every participant's final standing per round and board, saved at
+        # round end. leaderboard_activity is purged after two rounds, so this
+        # is the lasting record (rank movement, best round).
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS league_round_results (
+                round_id INTEGER NOT NULL REFERENCES league_rounds(round_id) ON DELETE CASCADE,
+                user_id BIGINT NOT NULL,
+                league_type VARCHAR(20) NOT NULL,
+                rank INTEGER NOT NULL,
+                total_score INTEGER NOT NULL,
+                active_days INTEGER NOT NULL,
+                PRIMARY KEY (round_id, user_id, league_type)
+            )
+        ''')
+
+        await conn.execute('''
+            CREATE INDEX IF NOT EXISTS idx_league_round_results_user
+            ON league_round_results(user_id)
         ''')
 
         await conn.execute('''

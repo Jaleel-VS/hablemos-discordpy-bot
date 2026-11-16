@@ -56,7 +56,7 @@ Earn points by chatting in your target language channels. The more active you ar
 
 **How to join:** Use `/league join` (you need a native + learning role)
 **View rankings:** `/league view`
-**Your stats:** `/league stats`
+**Your profile:** `/league profile`
 **Leave:** `/league leave`
 
 Rounds last 1 week. Top performers earn a champion role!"""

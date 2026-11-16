@@ -1,10 +1,15 @@
 
 """Database mixin for Language League leaderboard queries."""
 import asyncio
-from datetime import datetime
+from datetime import UTC, date, datetime, timedelta
 
 from cogs.league_cog.config import SCORING
-from cogs.league_cog.levels import XpGain
+from cogs.league_cog.levels import XpGain, progress_for_xp
+from cogs.league_cog.profile import (
+    LeagueProfile,
+    RoundStanding,
+    effective_streak,
+)
 from db import DatabaseMixin
 
 
@@ -148,19 +153,132 @@ class LeaderboardMixin(DatabaseMixin):
                 (user_id, activity_type, channel_id, points, round_id, message_id)
                 VALUES ($1, $2, $3, $4, $5, $6)
             ''', user_id, activity_type, channel_id, points, round_id, message_id)
+            # Streak: same UTC day keeps it, the next day extends it, a gap resets it.
             row = await conn.fetchrow('''
-                INSERT INTO league_levels (user_id, xp) VALUES ($1, $2)
-                ON CONFLICT (user_id) DO UPDATE
-                SET xp = league_levels.xp + EXCLUDED.xp, updated_at = CURRENT_TIMESTAMP
+                INSERT INTO league_levels
+                    (user_id, xp, current_streak, best_streak, last_active_date)
+                VALUES ($1, $2, 1, 1, $3)
+                ON CONFLICT (user_id) DO UPDATE SET
+                    xp = league_levels.xp + EXCLUDED.xp,
+                    current_streak = CASE league_levels.last_active_date
+                        WHEN $3 THEN league_levels.current_streak
+                        WHEN $3 - 1 THEN league_levels.current_streak + 1
+                        ELSE 1 END,
+                    best_streak = GREATEST(league_levels.best_streak, CASE league_levels.last_active_date
+                        WHEN $3 THEN league_levels.current_streak
+                        WHEN $3 - 1 THEN league_levels.current_streak + 1
+                        ELSE 1 END),
+                    last_active_date = $3,
+                    updated_at = CURRENT_TIMESTAMP
                 RETURNING xp, cards_enabled
-            ''', user_id, points)
+            ''', user_id, points, datetime.now(UTC).date())
         xp = int(row['xp'])
         return XpGain(xp_before=xp - points, xp_after=xp, cards_enabled=row['cards_enabled'])
 
-    async def get_level_xp(self, user_id: int) -> int:
-        """Total level XP for a user; 0 if they haven't earned any."""
-        xp = await self._fetchval('SELECT xp FROM league_levels WHERE user_id = $1', user_id)
-        return int(xp or 0)
+    async def get_league_profile(
+        self, user_id: int, round_id: int | None, today: date,
+    ) -> LeagueProfile:
+        """Everything ``/league profile`` shows. ``round_id`` is the active round, if any."""
+        levels = await self._fetchrow('''
+            SELECT xp, current_streak, best_streak, last_active_date
+            FROM league_levels WHERE user_id = $1
+        ''', user_id)
+        podium_rows = await self._fetch('''
+            SELECT rank, COUNT(*) AS n FROM league_round_winners
+            WHERE user_id = $1 GROUP BY rank
+        ''', user_id)
+        podiums = {row['rank']: int(row['n']) for row in podium_rows}
+        champion_weeks = await self._fetchval(
+            'SELECT COUNT(*) FROM league_role_recipients WHERE user_id = $1', user_id,
+        )
+        # Podium scores go back to the first round; full results only to levels launch.
+        best_round = await self._fetchval('''
+            SELECT MAX(total_score) FROM (
+                SELECT total_score FROM league_round_results WHERE user_id = $1
+                UNION ALL
+                SELECT total_score FROM league_round_winners WHERE user_id = $1
+            ) scores
+        ''', user_id)
+        start = today - timedelta(days=6)
+        daily_rows = await self._fetch('''
+            SELECT DATE(created_at) AS day, SUM(points) AS points
+            FROM leaderboard_activity
+            WHERE user_id = $1 AND created_at >= $2
+            GROUP BY day
+        ''', user_id, datetime(start.year, start.month, start.day))
+        by_day = {row['day']: int(row['points']) for row in daily_rows}
+
+        xp, streak, best_streak, last_active = (
+            (int(levels['xp']), levels['current_streak'], levels['best_streak'],
+             levels['last_active_date'])
+            if levels else (0, 0, 0, None)
+        )
+        return LeagueProfile(
+            progress=progress_for_xp(xp),
+            streak=effective_streak(streak, last_active, today),
+            best_streak=best_streak,
+            podiums=(podiums.get(1, 0), podiums.get(2, 0), podiums.get(3, 0)),
+            champion_weeks=int(champion_weeks or 0),
+            best_round=int(best_round or 0),
+            daily_points=tuple(by_day.get(start + timedelta(days=i), 0) for i in range(7)),
+            standing=await self._get_round_standing(user_id, round_id) if round_id else None,
+        )
+
+    async def _get_round_standing(self, user_id: int, round_id: int) -> RoundStanding | None:
+        """The member's place on their board this round; None if not competing."""
+        member = await self._fetchrow('''
+            SELECT learning_spanish FROM leaderboard_users
+            WHERE user_id = $1 AND opted_in = TRUE AND banned = FALSE
+        ''', user_id)
+        if not member:
+            return None
+        board = 'spanish' if member['learning_spanish'] else 'english'
+        row = await self._fetchrow('''
+            WITH user_stats AS (
+                SELECT lu.user_id,
+                       COALESCE(SUM(la.points), 0) AS points,
+                       COUNT(DISTINCT DATE(la.created_at)) AS active_days
+                FROM leaderboard_users lu
+                LEFT JOIN leaderboard_activity la
+                       ON la.user_id = lu.user_id AND la.round_id = $2
+                WHERE lu.opted_in = TRUE AND lu.banned = FALSE
+                  AND CASE $3::text WHEN 'spanish' THEN lu.learning_spanish
+                                    ELSE lu.learning_english END
+                GROUP BY lu.user_id
+            ),
+            ranked AS (
+                SELECT user_id, points, active_days,
+                       points + active_days * $4 AS score,
+                       ROW_NUMBER() OVER w AS rank,
+                       LAG(points + active_days * $4) OVER w AS above_score,
+                       LEAD(points + active_days * $4) OVER w AS below_score
+                FROM user_stats
+                WINDOW w AS (ORDER BY points + active_days * $4 DESC, user_id)
+            )
+            SELECT * FROM ranked WHERE user_id = $1
+        ''', user_id, round_id, board, SCORING.ACTIVE_DAY_BONUS_MULTIPLIER)
+        if not row:
+            return None
+        previous_rank = await self._fetchval('''
+            SELECT rank FROM league_round_results
+            WHERE user_id = $1 AND league_type = $2 AND round_id = (
+                SELECT round_id FROM league_rounds WHERE status = 'completed'
+                ORDER BY round_number DESC LIMIT 1
+            )
+        ''', user_id, board)
+        combined_rank = await self._get_user_rank(user_id, 'combined', round_id)
+        score = int(row['score'])
+        return RoundStanding(
+            board=board,
+            rank=int(row['rank']),
+            combined_rank=combined_rank or int(row['rank']),
+            points=int(row['points']),
+            active_days=int(row['active_days']),
+            bonus=int(row['active_days']) * SCORING.ACTIVE_DAY_BONUS_MULTIPLIER,
+            previous_rank=previous_rank,
+            above_gap=None if row['above_score'] is None else int(row['above_score']) - score,
+            below_gap=None if row['below_score'] is None else score - int(row['below_score']),
+        )
 
     async def set_level_cards(self, user_id: int, enabled: bool) -> None:
         """Turn a user's level-up cards on or off."""
@@ -249,8 +367,10 @@ class LeaderboardMixin(DatabaseMixin):
         ''', user_id, round_id, board_type, SCORING.ACTIVE_DAY_BONUS_MULTIPLIER)
         return row['rank'] if row else None
 
-    async def get_leaderboard(self, board_type: str, limit: int = 10, round_id: int | None = None) -> list[dict]:
-        """Get leaderboard rankings for a specific round"""
+    async def get_leaderboard(
+        self, board_type: str, limit: int | None = 10, round_id: int | None = None,
+    ) -> list[dict]:
+        """Leaderboard rankings for a round; ``limit=None`` returns everyone."""
         if round_id is None:
             current_round = await self.get_current_round()
             if not current_round:
@@ -354,6 +474,7 @@ class LeaderboardMixin(DatabaseMixin):
         self,
         round_id: int,
         winners_data: list[dict],
+        results: list[dict],
         role_recipient_ids: list[int],
         next_round_number: int,
         next_start: datetime,
@@ -361,10 +482,11 @@ class LeaderboardMixin(DatabaseMixin):
     ) -> int | None:
         """End a round and open the next one in one transaction.
 
-        Saves the winners and champion-role recipients, marks the round
-        completed, and creates the next round. Returns the new round's ID,
-        or ``None`` when the round was no longer active (another caller
-        already completed it), in which case nothing is written.
+        Saves the winners, every participant's final standing, and the
+        champion-role recipients, marks the round completed, and creates the
+        next round. Returns the new round's ID, or ``None`` when the round was
+        no longer active (another caller already completed it), in which case
+        nothing is written.
         """
         async with self._pool().acquire() as conn, conn.transaction():
             result = await conn.execute('''
@@ -373,6 +495,19 @@ class LeaderboardMixin(DatabaseMixin):
             ''', round_id)
             if result != 'UPDATE 1':
                 return None
+            if results:
+                await conn.executemany(
+                    '''
+                    INSERT INTO league_round_results
+                        (round_id, user_id, league_type, rank, total_score, active_days)
+                    VALUES ($1, $2, $3, $4, $5, $6)
+                    ''',
+                    [
+                        (round_id, r['user_id'], r['league_type'], r['rank'],
+                         r['total_score'], r['active_days'])
+                        for r in results
+                    ],
+                )
             if winners_data:
                 await conn.executemany(
                     '''

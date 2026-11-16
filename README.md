@@ -82,9 +82,10 @@ Opt-in competitive system that tracks language practice activity across weekly r
 | `/league join` | Join the competition |
 | `/league leave` | Opt out (preserves history) |
 | `/league view [board] [limit]` | View rankings (spanish, english, or combined) |
-| `/league stats [@user]` | View stats for yourself or another user |
+| `/league profile [@user]` | Level, this round's standing and league history as one card |
+| `/league levelups on\|off` | Turn your level-up cards on or off |
 
-**Scoring:** `Total = Message Points + (Active Days x 5)`. Anti-spam measures include language detection, 2-minute per-channel cooldowns, 10-character minimum, and a 50-message daily cap.
+**Scoring:** `Total = Message Points + (Active Days x 5)`. Anti-spam measures include language detection, 30-second per-channel cooldowns, 10-character minimum, and a 200-message daily cap. Points also build a lifetime level; crossing one gets a level-up card.
 
 **Requirements:** Must have exactly one Learning role (Spanish or English). Cannot be native in the language you're learning.
 

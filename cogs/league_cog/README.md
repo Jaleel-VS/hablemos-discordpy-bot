@@ -17,7 +17,7 @@ cogs/league_cog/
 └── league_helper/
     ├── leaderboard_image_pillow.py  # /league view image
     ├── round_end_image.py           # Round-end podium image
-    ├── level_card_image.py          # Level-up card and /league level card
+    ├── level_card_image.py          # Level-up card and /league profile card
     ├── level_backgrounds/           # One background per tier (generated, committed)
     ├── topchannels_image.py         # $league topchannels image
     └── heatmap_image.py             # $league heatmap image
@@ -32,8 +32,9 @@ Database queries live in `db/leaderboard.py` (`LeaderboardMixin`); tables are cr
   for that language. The board (Spanish or English) is fixed at join time.
 - `/league leave`
 - `/league view [spanish|english|combined]`: top 10 as an image, cached for 30 seconds.
-- `/league stats [user]`
-- `/league level [user]`: level card with a progress bar.
+- `/league profile [user]`: one card with the level and progress bar, this round (board and
+  combined rank, movement since last round, score, active days, gap to the next rank) and history
+  (streak, podiums, champion weeks, best round, last 7 days).
 - `/league levelups on|off`: level-up cards on or off; the level keeps counting either way.
 
 ## Scoring
@@ -61,6 +62,23 @@ replies to it with a level-up card (no ping) unless the author turned cards off.
 Cards use the tier's background: Dawn 1–9, Mist 10–24, Lilac 25–49, Tide 50–74, Bloom 75–99,
 Gold 100+ (`TIERS` in `levels.py`). The backgrounds come from Stable Image Core on Bedrock;
 `scripts/generate_level_backgrounds.py [tier ...]` regenerates them.
+
+## Profile and card language
+
+Cards are in the language the reader is learning: Spanish for members with only the
+learning-Spanish role, English otherwise (`card_text.py`). The level-up card follows its author's
+roles; `/league profile` follows the viewer's.
+
+`leaderboard_activity` is purged two rounds back (`purge_old_league_activity`), so lasting stats
+are stored as they happen:
+
+- `league_round_results`: every participant's final rank and score per board, saved in the
+  round-end transaction. Rank movement and best round read it. It starts with the first round to
+  end after this launch; best round also counts podium scores from `league_round_winners`.
+- Streaks live in `league_levels` (current, best, last active UTC day), updated with each counted
+  message, from launch. A streak shows as 0 once a whole UTC day passes without activity.
+- Podiums and champion weeks come from `league_round_winners` and `league_role_recipients`,
+  which go back to the first round.
 
 ## Rounds
 

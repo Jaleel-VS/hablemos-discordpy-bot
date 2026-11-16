@@ -7,7 +7,7 @@ Usage:
 Writes ``cogs/league_cog/league_helper/level_backgrounds/<tier>.jpg``, cropped
 to the card's aspect ratio. Needs the ``ada`` credentials that ``_bedrock`` uses.
 Fixed seeds keep reruns close to the committed images; change a tier's seed or
-prompt to get a new one, then check the card with ``/league level``.
+prompt to get a new one, then check the card with ``/league profile``.
 """
 from __future__ import annotations
 

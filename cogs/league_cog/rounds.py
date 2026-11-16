@@ -139,8 +139,17 @@ async def process_round_end(
 
     last_round_recipients = await bot.db.get_last_round_role_recipients()
 
-    spanish_top = await bot.db.get_leaderboard('spanish', limit=10, round_id=round_id)
-    english_top = await bot.db.get_leaderboard('english', limit=10, round_id=round_id)
+    spanish_board = await bot.db.get_leaderboard('spanish', limit=None, round_id=round_id)
+    english_board = await bot.db.get_leaderboard('english', limit=None, round_id=round_id)
+    spanish_top = spanish_board[:10]
+    english_top = english_board[:10]
+
+    results = [
+        {**entry, 'league_type': league_type}
+        for league_type, board in [('spanish', spanish_board), ('english', english_board)]
+        for entry in board
+        if entry['total_score'] > 0
+    ]
 
     spanish_top3 = spanish_top[:3]
     english_top3 = english_top[:3]
@@ -167,7 +176,7 @@ async def process_round_end(
     now = datetime.now(UTC)
     next_end = next_round_end(now)
     next_round_id = await bot.db.complete_round(
-        round_id, winners_data, new_role_recipient_ids, round_number + 1, now, next_end,
+        round_id, winners_data, results, new_role_recipient_ids, round_number + 1, now, next_end,
     )
     if next_round_id is None:
         logger.warning("Round %s (ID: %s) was already completed; skipping", round_number, round_id)

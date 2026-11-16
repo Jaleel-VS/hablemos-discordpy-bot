@@ -99,8 +99,8 @@ class FakeBot:
 def rendered(monkeypatch: pytest.MonkeyPatch) -> list[tuple]:
     calls: list[tuple] = []
 
-    def fake_render(old_level, progress, avatar_url) -> io.BytesIO:
-        calls.append((old_level, progress.level, avatar_url))
+    def fake_render(old_level, progress, avatar_url, text) -> io.BytesIO:
+        calls.append((old_level, progress.level, avatar_url, text.level_up))
         return io.BytesIO(b"png")
 
     monkeypatch.setattr("cogs.league_cog.main.render_level_up", fake_render)
@@ -121,7 +121,7 @@ async def _send(db: FakeDB) -> Message:
 async def test_crossing_a_threshold_replies_with_a_card(rendered: list[tuple]) -> None:
     message = await _send(FakeDB(xp=xp_for_level(2) - 1))
 
-    assert rendered == [(1, 2, "https://cdn.example/avatar.png")]
+    assert rendered == [(1, 2, "https://cdn.example/avatar.png", "LEVEL UP")]
     assert len(message.replies) == 1
     assert message.replies[0]["mention_author"] is False
 

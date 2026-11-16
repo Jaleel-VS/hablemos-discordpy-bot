@@ -17,6 +17,7 @@ from discord import Embed, Interaction, Member, app_commands
 from discord.ext import commands, tasks
 
 from base_cog import BaseCog
+from cogs.league_cog.card_text import CardText, card_text_for
 from cogs.league_cog.config import (
     DISPLAY,
     RATE_LIMITS,
@@ -27,8 +28,8 @@ from cogs.league_cog.league_helper.leaderboard_image_pillow import (
     generate_leaderboard_image,
 )
 from cogs.league_cog.league_helper.level_card_image import (
-    render_level_card,
     render_level_up,
+    render_profile,
 )
 from cogs.league_cog.levels import XpGain, progress_for_xp
 from cogs.league_cog.rounds import (
@@ -54,8 +55,22 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 def _avatar_url(user: discord.abc.User) -> str:
-    """A small avatar URL; level cards draw it at 150 px."""
+    """A small avatar URL; cards draw it at 150 px or less."""
     return str(user.display_avatar.with_size(256).url)
+
+
+def _card_text(user: discord.abc.User) -> CardText:
+    """Card text in the language ``user`` is learning, from their roles."""
+    roles = user.roles if isinstance(user, Member) else []
+    return card_text_for({role.id for role in roles})
+
+
+def _ends_in(end_date: datetime, now: datetime, text: CardText) -> str:
+    """Time left in the round, e.g. ``ENDS IN 2d 5h``."""
+    if end_date.tzinfo is None:
+        end_date = end_date.replace(tzinfo=UTC)
+    hours = max(0, int((end_date - now).total_seconds() // 3600))
+    return text.ends(hours // 24, hours % 24)
 
 def handle_interaction_errors[**P, T](
     func: Callable[P, Awaitable[T]],
@@ -335,7 +350,7 @@ class LeagueCog(BaseCog):
                 title="✅ You're already in the league!",
                 description=(
                     f"You're currently competing in the **{league_name}**.\n\n"
-                    f"Use `/league stats` to track your progress or "
+                    f"Use `/league profile` to track your progress or "
                     f"`/league view` to see the leaderboard!"
                 ),
                 color=discord.Color.green(),
@@ -376,7 +391,7 @@ class LeagueCog(BaseCog):
                 f"• {RATE_LIMITS.MESSAGE_COOLDOWN_SECONDS}-second cooldown per channel (no spam!)\n"
                 f"• Max {RATE_LIMITS.DAILY_MESSAGE_CAP} counted messages per day\n"
                 f"• +{SCORING.ACTIVE_DAY_BONUS_MULTIPLIER} bonus points for each active day\n\n"
-                f"Use `/league stats` to track your progress!\n\n"
+                f"Use `/league profile` to track your progress!\n\n"
                 f"Good luck! 🎯"
             ),
             color=discord.Color.green(),
@@ -603,117 +618,31 @@ class LeagueCog(BaseCog):
             )
             await interaction.followup.send(embed=embed, ephemeral=True)
 
-    @league_group.command(name="stats", description="View league stats")
-    @app_commands.describe(
-        user="User to view stats for (leave empty for yourself)"
-    )
-    async def league_stats(
-        self,
-        interaction: Interaction,
-        user: Member | None = None
-    ):
-        """View personal or another user's stats"""
-        try:
-            target = user or interaction.user
-
-            current_round = await self.bot.db.get_current_round()
-            if not current_round:
-                embed = Embed(
-                    title="ℹ️ No Active Round",
-                    description="There is no active league round at the moment.",
-                    color=discord.Color.orange()
-                )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
-                return
-
-            stats = await self.bot.db.get_user_stats(target.id)
-
-            if not stats:
-                embed = Embed(
-                    title="ℹ️ Not Found",
-                    description=(
-                        f"{'You are' if target == interaction.user else f'{target.display_name} is'} not in the league system.\n\n"
-                        f"Use `/league join` to {'join' if target == interaction.user else 'get them to join'}!"
-                    ),
-                    color=discord.Color.orange()
-                )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
-                return
-
-            is_self = target == interaction.user
-            title = "📊 Your League Stats" if is_self else f"📊 {target.display_name}'s League Stats"
-
-            embed = Embed(
-                title=title,
-                description=f"**Round {current_round['round_number']}**",
-                color=discord.Color.blue()
-            )
-
-            embed.add_field(
-                name="Points & Activity",
-                value=(
-                    f"**Total Points:** {stats['total_points']}\n"
-                    f"**Active Days:** {stats['active_days']}\n"
-                    f"**Total Score:** {stats['total_score']} ({stats['total_points']} + {stats['active_days'] * SCORING.ACTIVE_DAY_BONUS_MULTIPLIER} bonus)"
-                ),
-                inline=False
-            )
-
-            rankings_text = []
-            if stats['rank_spanish']:
-                rankings_text.append(f"🇪🇸 Spanish: **#{stats['rank_spanish']}**")
-            if stats['rank_english']:
-                rankings_text.append(f"🇬🇧 English: **#{stats['rank_english']}**")
-            if stats['rank_combined']:
-                rankings_text.append(f"🌍 Combined: **#{stats['rank_combined']}**")
-
-            if rankings_text:
-                embed.add_field(
-                    name="Rankings",
-                    value="\n".join(rankings_text),
-                    inline=False
-                )
-
-            end_date = current_round['end_date']
-            if end_date.tzinfo is None:
-                end_date = end_date.replace(tzinfo=UTC)
-
-            footer_text = f"Round ends: {end_date.strftime('%Y-%m-%d %H:%M')} UTC"
-            if is_self and stats['active_days'] > 0:
-                footer_text += " • Keep it up! 🔥"
-
-            embed.set_footer(text=footer_text)
-
-            await interaction.response.send_message(embed=embed)
-            logger.info("User %s viewed stats for %s", interaction.user, target)
-
-        except Exception as e:
-            logger.error("Error viewing stats: %s", e, exc_info=True)
-            embed = Embed(
-                title="❌ Error",
-                description="Failed to load stats. Please try again later.",
-                color=discord.Color.red()
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-
-    @league_group.command(name="level", description="Show a level card")
-    @app_commands.describe(user="Whose level to show (leave empty for yourself)")
+    @league_group.command(name="profile", description="Your league profile: level, this round and history")
+    @app_commands.describe(user="Whose profile to show (leave empty for yourself)")
     @handle_interaction_errors
-    async def league_level(self, interaction: Interaction, user: Member | None = None):
-        """Show a member's level and progress toward the next one."""
+    async def league_profile(self, interaction: Interaction, user: Member | None = None):
+        """Show a member's level, standing this round and league history."""
         target = user or interaction.user
         await interaction.response.defer()
-        progress = progress_for_xp(await self.bot.db.get_level_xp(target.id))
+        now = datetime.now(UTC)
+        current_round = self._current_round
+        profile = await self.bot.db.get_league_profile(
+            target.id, current_round['round_id'] if current_round else None, now.date(),
+        )
+        # The reader's language: the viewer may be looking at someone else's card.
+        text = _card_text(interaction.user)
+        ends_in = _ends_in(current_round['end_date'], now, text) if current_round else ""
         buf = await asyncio.wait_for(
-            asyncio.to_thread(render_level_card, progress, _avatar_url(target)),
+            asyncio.to_thread(render_profile, profile, _avatar_url(target), text, ends_in),
             timeout=30,
         )
         card = discord.File(
-            buf, filename="level.png",
-            description=f"Level {progress.level}, {progress.xp} XP",
+            buf, filename="profile.png",
+            description=f"Level {profile.progress.level}, {profile.progress.xp} XP",
         )
         await interaction.followup.send(
-            content=None if target == interaction.user else f"{target.mention}'s level",
+            content=None if target == interaction.user else target.mention,
             file=card,
             allowed_mentions=discord.AllowedMentions.none(),
         )
@@ -731,7 +660,7 @@ class LeagueCog(BaseCog):
         await self.bot.db.set_level_cards(interaction.user.id, enabled)
         text = (
             "Level-up cards are on." if enabled
-            else "Level-up cards are off. Your level still goes up; see it with `/league level`."
+            else "Level-up cards are off. Your level still goes up; see it with `/league profile`."
         )
         await interaction.response.send_message(embed=green_embed(text), ephemeral=True)
 
@@ -813,6 +742,7 @@ class LeagueCog(BaseCog):
         buf = await asyncio.wait_for(
             asyncio.to_thread(
                 render_level_up, gain.old_level, progress, _avatar_url(message.author),
+                _card_text(message.author),
             ),
             timeout=30,
         )
