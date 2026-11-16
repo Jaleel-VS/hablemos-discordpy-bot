@@ -149,7 +149,9 @@ class MetricsMixin(DatabaseMixin):
     async def purge_old_league_activity(self) -> int:
         """
         Delete leaderboard_activity rows from rounds that are 2+ rounds
-        behind the current active round. Keeps current + previous round.
+        behind the current active round. Keeps current + previous round,
+        and always the last 8 days: the profile's 7-day chart reads them,
+        and ``$league endround`` can end rounds faster than weekly.
         """
         result = await self._execute('''
             DELETE FROM leaderboard_activity
@@ -158,6 +160,7 @@ class MetricsMixin(DatabaseMixin):
                   SELECT COALESCE(MAX(round_id), 0) - 1
                   FROM league_rounds
               )
+              AND created_at < CURRENT_TIMESTAMP - INTERVAL '8 days'
         ''')
         count = int(result.split()[-1]) if result else 0
         if count:

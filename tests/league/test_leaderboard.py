@@ -205,3 +205,26 @@ async def test_profile_standing_and_history(league_db: Database) -> None:
 
     await league_db.leaderboard_leave(10)
     assert (await league_db.get_league_profile(10, round_id, today)).standing is None
+
+
+async def test_purge_keeps_the_chart_week_when_rounds_end_early(league_db: Database) -> None:
+    start = datetime.now(UTC)
+    await league_db.leaderboard_join(10, '10', True, False)
+    round_id = await league_db.create_round(1, start, start + timedelta(days=7))
+    await league_db.record_activity(10, points=7, round_id=round_id)
+    for number in (2, 3, 4):  # three manual round ends on the same day
+        next_id = await league_db.complete_round(
+            round_id, [], [], [], number, start, start + timedelta(days=7),
+        )
+        assert next_id is not None
+        round_id = next_id
+    async with league_db._pool().acquire() as conn:
+        await conn.execute(
+            '''INSERT INTO leaderboard_activity (user_id, activity_type, points, round_id, created_at)
+               VALUES (10, 'message', 1, $1, $2)''',
+            round_id - 3, start.replace(tzinfo=None) - timedelta(days=9),
+        )
+
+    assert await league_db.purge_old_league_activity() == 1
+    profile = await league_db.get_league_profile(10, round_id, start.date())
+    assert profile.daily_points[-1] == 7
