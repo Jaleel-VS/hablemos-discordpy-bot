@@ -26,12 +26,18 @@ from cogs.league_cog.config import (
 from cogs.league_cog.league_helper.leaderboard_image_pillow import (
     generate_leaderboard_image,
 )
+from cogs.league_cog.league_helper.level_card_image import (
+    render_level_card,
+    render_level_up,
+)
+from cogs.league_cog.levels import XpGain, progress_for_xp
 from cogs.league_cog.rounds import (
     ensure_round_exists,
     process_round_end,
 )
 from cogs.league_cog.scoring import points_for_message
 from cogs.league_cog.views import LeagueJoinView
+from cogs.utils.embeds import green_embed
 from cogs.utils.flags import random_english_flag, random_spanish_flag
 from cogs.utils.guild import (
     ENGLISH_NATIVE_ROLE_ID,
@@ -46,6 +52,10 @@ if TYPE_CHECKING:
     from hablemos import Hablemos
 
 logger = logging.getLogger(__name__)
+
+def _avatar_url(user: discord.abc.User) -> str:
+    """A small avatar URL; level cards draw it at 150 px."""
+    return str(user.display_avatar.with_size(256).url)
 
 def handle_interaction_errors[**P, T](
     func: Callable[P, Awaitable[T]],
@@ -686,6 +696,45 @@ class LeagueCog(BaseCog):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
+    @league_group.command(name="level", description="Show a level card")
+    @app_commands.describe(user="Whose level to show (leave empty for yourself)")
+    @handle_interaction_errors
+    async def league_level(self, interaction: Interaction, user: Member | None = None):
+        """Show a member's level and progress toward the next one."""
+        target = user or interaction.user
+        await interaction.response.defer()
+        progress = progress_for_xp(await self.bot.db.get_level_xp(target.id))
+        buf = await asyncio.wait_for(
+            asyncio.to_thread(render_level_card, progress, _avatar_url(target)),
+            timeout=30,
+        )
+        card = discord.File(
+            buf, filename="level.png",
+            description=f"Level {progress.level}, {progress.xp} XP",
+        )
+        await interaction.followup.send(
+            content=None if target == interaction.user else f"{target.mention}'s level",
+            file=card,
+            allowed_mentions=discord.AllowedMentions.none(),
+        )
+
+    @league_group.command(name="levelups", description="Turn your level-up cards on or off")
+    @app_commands.describe(setting="Whether the bot replies with a card when you level up")
+    @app_commands.choices(setting=[
+        app_commands.Choice(name="On", value="on"),
+        app_commands.Choice(name="Off", value="off"),
+    ])
+    @handle_interaction_errors
+    async def league_levelups(self, interaction: Interaction, setting: str):
+        """Opt in or out of level-up cards. Levels keep counting either way."""
+        enabled = setting == "on"
+        await self.bot.db.set_level_cards(interaction.user.id, enabled)
+        text = (
+            "Level-up cards are on." if enabled
+            else "Level-up cards are off. Your level still goes up; see it with `/league level`."
+        )
+        await interaction.response.send_message(embed=green_embed(text), ephemeral=True)
+
 
     @commands.Cog.listener()
     async def on_user_data_deleted(self, user_id: int) -> None:
@@ -741,7 +790,7 @@ class LeagueCog(BaseCog):
             if not self._check_and_increment_daily(message.author.id):
                 return
 
-            await self.bot.db.record_activity(
+            gain = await self.bot.db.record_activity(
                 user_id=message.author.id,
                 activity_type='message',
                 channel_id=message.channel.id,
@@ -752,8 +801,31 @@ class LeagueCog(BaseCog):
 
             self.update_message_cooldown(message.author.id, message.channel.id)
 
+            if gain.leveled_up and gain.cards_enabled:
+                await self._announce_level_up(message, gain)
+
         except Exception as e:
             logger.error("Error in league message tracking: %s", e, exc_info=True)
+
+    async def _announce_level_up(self, message: discord.Message, gain: XpGain) -> None:
+        """Reply to the message that levelled its author up with a level-up card."""
+        progress = progress_for_xp(gain.xp_after)
+        buf = await asyncio.wait_for(
+            asyncio.to_thread(
+                render_level_up, gain.old_level, progress, _avatar_url(message.author),
+            ),
+            timeout=30,
+        )
+        card = discord.File(
+            buf, filename="level_up.png",
+            description=f"Level up: {gain.old_level} to {gain.new_level}",
+        )
+        try:
+            await message.reply(file=card, mention_author=False)
+        except discord.HTTPException as e:
+            logger.warning("Could not post level-up card in %s: %s", message.channel.id, e)
+            return
+        logger.info("User %s reached level %s", message.author.id, gain.new_level)
 
     def _check_and_increment_daily(self, user_id: int) -> bool:
         """Return True if user is under the daily cap, incrementing their count.

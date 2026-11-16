@@ -11,11 +11,14 @@ cogs/league_cog/
 ├── admin.py     # LeagueAdminCog: owner-only $league group and $langa
 ├── rounds.py    # Round end: winners, next round, champion role, announcement
 ├── scoring.py   # Points per counted message (beginner-channel multiplier)
+├── levels.py    # Level curve, level-up detection, background tiers
 ├── views.py     # Persistent "Join the League" button
 ├── config.py    # IDs, scoring, rate limits, round and display settings
 └── league_helper/
     ├── leaderboard_image_pillow.py  # /league view image
     ├── round_end_image.py           # Round-end podium image
+    ├── level_card_image.py          # Level-up card and /league level card
+    ├── level_backgrounds/           # One background per tier (generated, committed)
     ├── topchannels_image.py         # $league topchannels image
     └── heatmap_image.py             # $league heatmap image
 ```
@@ -30,6 +33,8 @@ Database queries live in `db/leaderboard.py` (`LeaderboardMixin`); tables are cr
 - `/league leave`
 - `/league view [spanish|english|combined]`: top 10 as an image, cached for 30 seconds.
 - `/league stats [user]`
+- `/league level [user]`: level card with a progress bar.
+- `/league levelups on|off`: level-up cards on or off; the level keeps counting either way.
 
 ## Scoring
 
@@ -42,6 +47,20 @@ Score = points + 5 × active days in the round. Beginner channels (`LEAGUE_BEGIN
 give 2 points per message instead of 1. Boards order by score descending, then user ID ascending.
 
 Cooldowns and daily counts are kept in memory and reset on restart.
+
+## Levels
+
+Every counted message also adds its points to the author's level XP (`league_levels`), in the
+same transaction that records it, so a level-up is detected exactly once. XP counts from launch
+(2026-11-16) with no backfill, and survives leaving the league and round ends.
+
+Reaching level `L` takes `25 × (L − 1)^1.5` total XP (`LEVELS` in `config.py`): level 10 at
+about 700, 50 at about 8,600, 100 at about 24,600. When a message crosses a threshold, the bot
+replies to it with a level-up card (no ping) unless the author turned cards off.
+
+Cards use the tier's background: Dawn 1–9, Mist 10–24, Lilac 25–49, Tide 50–74, Bloom 75–99,
+Gold 100+ (`TIERS` in `levels.py`). The backgrounds come from Stable Image Core on Bedrock;
+`scripts/generate_level_backgrounds.py [tier ...]` regenerates them.
 
 ## Rounds
 

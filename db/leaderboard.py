@@ -4,6 +4,7 @@ import asyncio
 from datetime import datetime
 
 from cogs.league_cog.config import SCORING
+from cogs.league_cog.levels import XpGain
 from db import DatabaseMixin
 
 
@@ -139,13 +140,35 @@ class LeaderboardMixin(DatabaseMixin):
 
     async def record_activity(self, user_id: int, activity_type: str = 'message',
                              channel_id: int | None = None, points: int = 1,
-                             round_id: int | None = None, message_id: int | None = None) -> None:
-        """Record user activity for leaderboard"""
+                             round_id: int | None = None, message_id: int | None = None) -> XpGain:
+        """Record a counted message and add its points to the user's level XP."""
+        async with self._pool().acquire() as conn, conn.transaction():
+            await conn.execute('''
+                INSERT INTO leaderboard_activity
+                (user_id, activity_type, channel_id, points, round_id, message_id)
+                VALUES ($1, $2, $3, $4, $5, $6)
+            ''', user_id, activity_type, channel_id, points, round_id, message_id)
+            row = await conn.fetchrow('''
+                INSERT INTO league_levels (user_id, xp) VALUES ($1, $2)
+                ON CONFLICT (user_id) DO UPDATE
+                SET xp = league_levels.xp + EXCLUDED.xp, updated_at = CURRENT_TIMESTAMP
+                RETURNING xp, cards_enabled
+            ''', user_id, points)
+        xp = int(row['xp'])
+        return XpGain(xp_before=xp - points, xp_after=xp, cards_enabled=row['cards_enabled'])
+
+    async def get_level_xp(self, user_id: int) -> int:
+        """Total level XP for a user; 0 if they haven't earned any."""
+        xp = await self._fetchval('SELECT xp FROM league_levels WHERE user_id = $1', user_id)
+        return int(xp or 0)
+
+    async def set_level_cards(self, user_id: int, enabled: bool) -> None:
+        """Turn a user's level-up cards on or off."""
         await self._execute('''
-            INSERT INTO leaderboard_activity
-            (user_id, activity_type, channel_id, points, round_id, message_id)
-            VALUES ($1, $2, $3, $4, $5, $6)
-        ''', user_id, activity_type, channel_id, points, round_id, message_id)
+            INSERT INTO league_levels (user_id, cards_enabled) VALUES ($1, $2)
+            ON CONFLICT (user_id) DO UPDATE
+            SET cards_enabled = EXCLUDED.cards_enabled, updated_at = CURRENT_TIMESTAMP
+        ''', user_id, enabled)
 
     async def get_user_stats(self, user_id: int, round_id: int | None = None) -> dict | None:
         """Get leaderboard stats for a specific user in a specific round."""

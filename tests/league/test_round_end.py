@@ -8,6 +8,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
+from cogs.league_cog.levels import XpGain
 from cogs.league_cog.main import LeagueCog
 from cogs.utils.guild import HOME_GUILD_ID
 
@@ -47,8 +48,9 @@ class FakeDB:
     async def complete_round(self, *_args) -> int:
         return NEW_ROUND_ID
 
-    async def record_activity(self, *, round_id: int, **_kwargs) -> None:
+    async def record_activity(self, *, round_id: int, **_kwargs) -> XpGain:
         self.recorded_round_ids.append(round_id)
+        return XpGain(xp_before=0, xp_after=1, cards_enabled=True)
 
 
 @dataclass

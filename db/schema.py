@@ -275,6 +275,16 @@ async def initialize_schema(pool):
             ON league_round_winners(user_id, rank)
         ''')
 
+        # Level XP: league points earned since levels launched (no backfill).
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS league_levels (
+                user_id BIGINT PRIMARY KEY,
+                xp BIGINT NOT NULL DEFAULT 0,
+                cards_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+                updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+
         await conn.execute('''
             CREATE TABLE IF NOT EXISTS practice_cards (
                 id SERIAL PRIMARY KEY,

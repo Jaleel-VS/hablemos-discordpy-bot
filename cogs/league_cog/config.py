@@ -78,6 +78,21 @@ ROUNDS = RoundConfig()
 
 
 @dataclass(frozen=True)
+class LevelConfig:
+    """Level curve: reaching level ``L`` takes ``BASE * (L - 1) ** EXPONENT`` total XP.
+
+    XP is league points earned since levels launched. Tuned so a learner
+    earning about 50 points a day reaches level 10 in two weeks and level 50
+    in six months.
+    """
+
+    BASE: int = 25
+    EXPONENT: float = 1.5
+
+LEVELS = LevelConfig()
+
+
+@dataclass(frozen=True)
 class LeagueDisplay:
     """Display strings for different league types."""
 

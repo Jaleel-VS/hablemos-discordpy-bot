@@ -20,6 +20,7 @@ _DELETES: list[tuple[str, str]] = [
     # Banned members keep their row so the ban survives; see _ANONYMIZE.
     ("leaderboard_users", "DELETE FROM leaderboard_users WHERE user_id = $1 AND banned = FALSE"),
     ("league_round_winners", "DELETE FROM league_round_winners WHERE user_id = $1"),
+    ("league_levels", "DELETE FROM league_levels WHERE user_id = $1"),
     ("command_metrics", "DELETE FROM command_metrics WHERE user_id = $1"),
     ("interactions", "DELETE FROM interactions WHERE user_a = $1 OR user_b = $1"),
     ("crossword_participants", "DELETE FROM crossword_participants WHERE user_id = $1"),

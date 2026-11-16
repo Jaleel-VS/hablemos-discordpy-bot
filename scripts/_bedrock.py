@@ -11,10 +11,13 @@ Nothing here runs at Activity runtime; these are dev/build-time utilities.
 """
 from __future__ import annotations
 
+import base64
 import json
 import re
 import subprocess
+import tempfile
 import unicodedata
+from pathlib import Path
 
 # ── AWS CLI configuration ────────────────────────────────────────────────────
 from typing import TypedDict
@@ -94,6 +97,56 @@ def bedrock_converse(
             f"{proc.stderr.strip()[:400]}"
         )
     return proc.stdout
+
+
+#: Stability image models are served in us-west-2 for this account.
+IMAGE_REGION = "us-west-2"
+MODEL_STABLE_IMAGE_CORE = "stability.stable-image-core-v1:1"
+
+
+def bedrock_image(
+    prompt: str,
+    *,
+    negative_prompt: str,
+    aspect_ratio: str,
+    seed: int,
+    model: str = MODEL_STABLE_IMAGE_CORE,
+) -> bytes:
+    """Generate one PNG with a Stability model on Bedrock, returning its bytes.
+
+    Raises ``RuntimeError`` on a CLI failure or when the model filters the image.
+    """
+    request = {
+        "prompt": prompt,
+        "negative_prompt": negative_prompt,
+        "aspect_ratio": aspect_ratio,
+        "output_format": "png",
+        "seed": seed,
+    }
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "out.json"
+        proc = subprocess.run(
+            [
+                "aws", "bedrock-runtime", "invoke-model",
+                "--region", IMAGE_REGION, "--profile", PROFILE,
+                "--model-id", model,
+                "--body", json.dumps(request),
+                "--cli-binary-format", "raw-in-base64-out",
+                str(out),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        if proc.returncode != 0:
+            raise RuntimeError(
+                f"bedrock invoke-model failed (exit {proc.returncode}): "
+                f"{proc.stderr.strip()[:400]}"
+            )
+        body = json.loads(out.read_text())
+    reasons = [r for r in body.get("finish_reasons", []) if r]
+    if reasons:
+        raise RuntimeError(f"image generation filtered: {reasons}")
+    return base64.b64decode(body["images"][0])
 
 
 def extract_json_array(text: str) -> list:

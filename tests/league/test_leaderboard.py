@@ -115,3 +115,22 @@ async def test_leave_and_unban_report_whether_anything_changed(league_db: Databa
     assert [row['user_id'] for row in banned] == [20]
     assert await league_db.leaderboard_unban_user(20) is True
     assert await league_db.leaderboard_unban_user(20) is False
+
+
+async def test_counted_messages_add_level_xp(league_db: Database) -> None:
+    start = datetime.now(UTC)
+    round_id = await league_db.create_round(1, start, start + timedelta(days=7))
+    await league_db.leaderboard_join(10, '10', True, False)
+
+    first = await league_db.record_activity(10, points=20, round_id=round_id)
+    second = await league_db.record_activity(10, points=10, round_id=round_id)
+
+    assert (first.xp_before, first.xp_after, first.leveled_up) == (0, 20, False)
+    assert (second.xp_before, second.xp_after, second.leveled_up) == (20, 30, True)
+    assert second.cards_enabled
+    assert await league_db.get_level_xp(10) == 30
+    assert await league_db.get_level_xp(99) == 0
+
+    await league_db.set_level_cards(10, False)
+    third = await league_db.record_activity(10, points=1, round_id=round_id)
+    assert (third.xp_after, third.cards_enabled) == (31, False)
