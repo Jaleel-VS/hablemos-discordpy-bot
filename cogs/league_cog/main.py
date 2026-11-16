@@ -163,9 +163,6 @@ class LeagueCog(BaseCog):
             if now >= end_date:
                 logger.info("Round %s has ended, processing...", current_round['round_id'])
                 await self._process_round_end(current_round)
-                # Round-end creates a new round; refresh the cache immediately
-                # so on_message picks it up without waiting for the next tick.
-                self._current_round = await self.bot.db.get_current_round()
 
             self.cleanup_old_cooldowns()
         except Exception as e:
@@ -198,10 +195,13 @@ class LeagueCog(BaseCog):
         self._leaderboard_cache.clear()
 
     async def _process_round_end(self, current_round: dict) -> dict | None:
-        """Delegate to rounds module and invalidate cache."""
-        result = await process_round_end(self.bot, current_round)
+        """Delegate to rounds module, switching scoring to the new round on commit."""
+        return await process_round_end(self.bot, current_round, on_next_round=self._start_round)
+
+    def _start_round(self, new_round: dict) -> None:
+        """Score new messages into ``new_round`` and drop boards from the old one."""
+        self._current_round = new_round
         self.invalidate_leaderboard_cache()
-        return result
 
     league_group = app_commands.Group(
         name="league",

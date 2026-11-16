@@ -1,6 +1,7 @@
 """Round lifecycle management — end processing, winner selection, announcements."""
 import asyncio
 import logging
+from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 
 import discord
@@ -110,12 +111,16 @@ def next_round_end(now: datetime) -> datetime:
     return next_sunday.replace(hour=12, minute=0, second=0, microsecond=0)
 
 
-async def process_round_end(bot, current_round: dict) -> dict | None:
+async def process_round_end(
+    bot, current_round: dict, *, on_next_round: Callable[[dict], None],
+) -> dict | None:
     """
     Full round-end processing: save winners, create the next round, manage roles, announce.
 
     The database writes run in one transaction before any Discord call, so a
     failure or restart can't leave the league without an active round.
+    ``on_next_round`` receives the new round as soon as it is committed, so
+    messages scored during the role and announcement awaits land in it.
     Returns a summary for the caller, or ``None`` if the round was already
     completed by another caller (nothing is changed).
     """
@@ -168,6 +173,13 @@ async def process_round_end(bot, current_round: dict) -> dict | None:
         logger.warning("Round %s (ID: %s) was already completed; skipping", round_number, round_id)
         return None
     logger.info("Created next round %s (ID: %s): %s to %s", round_number + 1, next_round_id, now, next_end)
+    on_next_round({
+        'round_id': next_round_id,
+        'round_number': round_number + 1,
+        'start_date': now,
+        'end_date': next_end,
+        'status': 'active',
+    })
 
     roles_added = []
     roles_removed = []

@@ -52,6 +52,7 @@ Cooldowns and daily counts are kept in memory and reset on restart.
 2. In one transaction (`complete_round`): saves the top 3 per board to `league_round_winners`,
    records the champions in `league_role_recipients`, marks the round completed, and creates the
    next round. If the round was already completed, nothing changes and it returns `None`.
+   Once it commits, new messages score into the next round.
 3. Moves the champion role and posts the announcement with the podium image. Failures here are
    logged and don't affect the database state.
 
