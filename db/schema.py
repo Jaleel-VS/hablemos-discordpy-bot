@@ -246,15 +246,15 @@ async def initialize_schema(pool):
                 rank INTEGER NOT NULL,
                 total_score INTEGER NOT NULL,
                 active_days INTEGER NOT NULL,
-                received_role BOOLEAN DEFAULT FALSE,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (round_id) REFERENCES league_rounds(round_id) ON DELETE CASCADE
             )
         ''')
 
+        # Never written; champion holders live in league_role_recipients.
         await conn.execute('''
             ALTER TABLE league_round_winners
-            ADD COLUMN IF NOT EXISTS received_role BOOLEAN DEFAULT FALSE
+            DROP COLUMN IF EXISTS received_role
         ''')
 
         # Separate table to track champion role recipients (decoupled from winners)

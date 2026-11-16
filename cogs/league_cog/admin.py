@@ -241,15 +241,13 @@ Rounds last 1 week. Top performers earn a champion role!"""
 
         try:
             user_id = ctx.message.mentions[0].id if ctx.message.mentions else int(target)
-            success = await self.bot.db.leaderboard_ban_user(user_id)
-            if success:
-                league_cog = self._league_cog()
-                if league_cog:
-                    league_cog._banned_users.add(user_id)
-                await ctx.send(f"✅ Banned user `{user_id}` from league.")
-                logger.info("Admin %s banned user %s from league", ctx.author, user_id)
-            else:
-                await ctx.send(f"❌ Failed to ban user `{user_id}`.")
+            user = self.bot.get_user(user_id)
+            await self.bot.db.leaderboard_ban_user(user_id, str(user) if user else '')
+            league_cog = self._league_cog()
+            if league_cog:
+                league_cog._banned_users.add(user_id)
+            await ctx.send(f"✅ Banned user `{user_id}` from league.")
+            logger.info("Admin %s banned user %s from league", ctx.author, user_id)
         except ValueError:
             await ctx.send("❌ Invalid user ID.")
 
@@ -270,7 +268,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
                 await ctx.send(f"✅ Unbanned user `{user_id}` from league.")
                 logger.info("Admin %s unbanned user %s from league", ctx.author, user_id)
             else:
-                await ctx.send(f"❌ Failed to unban user `{user_id}`.")
+                await ctx.send(f"ℹ️ User `{user_id}` isn't banned from the league.")
         except ValueError:
             await ctx.send("❌ Invalid user ID.")
 
@@ -521,6 +519,8 @@ Rounds last 1 week. Top performers earn a champion role!"""
                 return await ctx.send("❌ LeagueCog not loaded.")
 
             result = await league_cog._process_round_end(current_round)
+            if result is None:
+                return await ctx.send(f"ℹ️ Round {round_number} was already ended.")
 
             end_timestamp = int(result['next_end'].timestamp())
             embed = Embed(

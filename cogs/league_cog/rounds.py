@@ -100,11 +100,24 @@ def build_round_end_announcement(
     return "\n".join(lines)
 
 
-async def process_round_end(bot, current_round: dict) -> dict:
-    """
-    Full round-end processing: save winners, manage roles, announce, create next round.
+def next_round_end(now: datetime) -> datetime:
+    """Return the end of a round starting at ``now``: the next Sunday, 12:00 UTC.
 
-    Returns dict with summary info for the caller.
+    A round started on a Sunday runs to the following Sunday.
+    """
+    days_until_sunday = (6 - now.weekday()) % 7 or 7
+    next_sunday = now + timedelta(days=days_until_sunday)
+    return next_sunday.replace(hour=12, minute=0, second=0, microsecond=0)
+
+
+async def process_round_end(bot, current_round: dict) -> dict | None:
+    """
+    Full round-end processing: save winners, create the next round, manage roles, announce.
+
+    The database writes run in one transaction before any Discord call, so a
+    failure or restart can't leave the league without an active round.
+    Returns a summary for the caller, or ``None`` if the round was already
+    completed by another caller (nothing is changed).
     """
     round_id = current_round['round_id']
     round_number = current_round['round_number']
@@ -138,10 +151,6 @@ async def process_round_end(bot, current_round: dict) -> dict:
                 'total_score': entry['total_score'],
                 'active_days': entry['active_days'],
             })
-    if winners_data:
-        await bot.db.save_round_winners(round_id, winners_data)
-
-    await bot.db.end_round(round_id)
 
     spanish_champions = get_eligible_champions(spanish_top, last_round_recipients)
     english_champions = get_eligible_champions(english_top, last_round_recipients)
@@ -149,6 +158,16 @@ async def process_round_end(bot, current_round: dict) -> dict:
     new_role_recipient_ids = list(dict.fromkeys(
         e['user_id'] for e in spanish_champions + english_champions
     ))
+
+    now = datetime.now(UTC)
+    next_end = next_round_end(now)
+    next_round_id = await bot.db.complete_round(
+        round_id, winners_data, new_role_recipient_ids, round_number + 1, now, next_end,
+    )
+    if next_round_id is None:
+        logger.warning("Round %s (ID: %s) was already completed; skipping", round_number, round_id)
+        return None
+    logger.info("Created next round %s (ID: %s): %s to %s", round_number + 1, next_round_id, now, next_end)
 
     roles_added = []
     roles_removed = []
@@ -171,9 +190,6 @@ async def process_round_end(bot, current_round: dict) -> dict:
                     roles_added.append(user_id)
             except Exception as e:
                 logger.error("Failed to add champion role to %s: %s", user_id, e)
-
-    if new_role_recipient_ids:
-        await bot.db.mark_role_recipients(round_id, new_role_recipient_ids)
 
     try:
         channel = bot.get_channel(WINNER_CHANNEL_ID)
@@ -221,16 +237,6 @@ async def process_round_end(bot, current_round: dict) -> dict:
     except Exception as e:
         logger.error("Error announcing winners: %s", e, exc_info=True)
 
-    now = datetime.now(UTC)
-    days_until_sunday = (6 - now.weekday()) % 7
-    if days_until_sunday == 0:
-        days_until_sunday = 7
-    next_sunday = now + timedelta(days=days_until_sunday)
-    next_end = next_sunday.replace(hour=12, minute=0, second=0, microsecond=0)
-
-    next_round_id = await bot.db.create_round(round_number + 1, now, next_end)
-    logger.info("Created next round %s (ID: %s): %s to %s", round_number + 1, next_round_id, now, next_end)
-
     return {
         'round_number': round_number,
         'spanish_top3': spanish_top3,
@@ -248,11 +254,7 @@ async def ensure_round_exists(bot) -> None:
         current_round = await bot.db.get_current_round()
         if not current_round:
             start_date = datetime.now(UTC)
-            days_until_sunday = (6 - start_date.weekday()) % 7
-            if days_until_sunday == 0:
-                days_until_sunday = 7
-            end_date = start_date + timedelta(days=days_until_sunday)
-            end_date = end_date.replace(hour=23, minute=59, second=59)
+            end_date = next_round_end(start_date)
 
             round_id = await bot.db.create_round(1, start_date, end_date)
             logger.info("Created initial round %s: %s to %s", round_id, start_date, end_date)

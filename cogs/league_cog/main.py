@@ -197,7 +197,7 @@ class LeagueCog(BaseCog):
         """Clear the leaderboard cache (call after score updates)"""
         self._leaderboard_cache.clear()
 
-    async def _process_round_end(self, current_round: dict) -> dict:
+    async def _process_round_end(self, current_round: dict) -> dict | None:
         """Delegate to rounds module and invalidate cache."""
         result = await process_round_end(self.bot, current_round)
         self.invalidate_leaderboard_cache()
@@ -720,28 +720,25 @@ class LeagueCog(BaseCog):
             if not self.check_message_cooldown(message.author.id, message.channel.id):
                 return
 
-            # Reject undetectable text before consuming the daily message cap.
             detected_lang = detect_message_language(message.content, min_length=RATE_LIMITS.MIN_MESSAGE_LENGTH)
             if not detected_lang:
-                return
-
-            if not self._check_and_increment_daily(message.author.id):
                 return
 
             learning = self._user_learning.get(message.author.id)
             if not learning:
                 return  # Not in cache (race with leave); skip
 
-            is_valid_message = False
-            if (detected_lang == 'es' and learning['learning_spanish']) or (detected_lang == 'en' and learning['learning_english']):
-                is_valid_message = True
-
-            if not is_valid_message:
+            if not ((detected_lang == 'es' and learning['learning_spanish'])
+                    or (detected_lang == 'en' and learning['learning_english'])):
                 return
 
             current_round = self._current_round
             if not current_round:
                 logger.warning("No active round found, cannot record activity")
+                return
+
+            # Only messages that would score consume the daily cap.
+            if not self._check_and_increment_daily(message.author.id):
                 return
 
             await self.bot.db.record_activity(

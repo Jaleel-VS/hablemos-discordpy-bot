@@ -1,4 +1,5 @@
 """League ranks and scores agree with the displayed PostgreSQL board."""
+import asyncio
 import os
 from collections.abc import AsyncIterator
 from dataclasses import replace
@@ -76,3 +77,41 @@ async def test_configured_active_day_bonus_changes_scores_and_order(
     assert stats["rank_combined"] == 1
     assert stats["rank_spanish"] == 1
     assert stats["rank_english"] == 1
+
+
+async def test_complete_round_runs_once(league_db: Database) -> None:
+    start = datetime.now(UTC)
+    round_id = await league_db.create_round(4, start, start + timedelta(days=7))
+    winners = [{
+        'user_id': 10, 'username': '10', 'league_type': 'spanish',
+        'rank': 1, 'total_score': 50, 'active_days': 3,
+    }]
+    end = start + timedelta(days=14)
+
+    first, second = await asyncio.gather(
+        league_db.complete_round(round_id, winners, [10], 5, start, end),
+        league_db.complete_round(round_id, winners, [10], 5, start, end),
+    )
+
+    assert [first, second].count(None) == 1
+    current = await league_db.get_current_round()
+    assert current is not None
+    assert current['round_number'] == 5
+    assert await league_db.get_last_round_role_recipients() == {10}
+    async with league_db._pool().acquire() as conn:
+        assert await conn.fetchval('SELECT COUNT(*) FROM league_round_winners') == 1
+        assert await conn.fetchval('SELECT COUNT(*) FROM league_rounds') == 2
+
+
+async def test_leave_and_unban_report_whether_anything_changed(league_db: Database) -> None:
+    assert await league_db.leaderboard_leave(10) is False
+    await league_db.leaderboard_join(10, '10', True, False)
+    assert await league_db.leaderboard_leave(10) is True
+    assert await league_db.leaderboard_leave(10) is False
+
+    assert await league_db.leaderboard_unban_user(20) is False
+    await league_db.leaderboard_ban_user(20, '20')
+    banned = await league_db.get_all_banned_users()
+    assert [row['user_id'] for row in banned] == [20]
+    assert await league_db.leaderboard_unban_user(20) is True
+    assert await league_db.leaderboard_unban_user(20) is False

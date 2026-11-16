@@ -1,128 +1,74 @@
 # Language League Cog
 
-A modular Discord bot cog for managing language learning competitions.
+A weekly competition for language learners. Opted-in members score points for messages written in
+the language they are learning, and the top scorers of each round get the champion role.
 
-## Architecture
-
-This cog has been refactored following clean architecture principles:
+## Layout
 
 ```
 cogs/league_cog/
-├── main.py              # User-facing features (slash commands, message tracking)
-├── admin.py             # Admin-only commands (owner permissions required)
-├── config.py            # Configuration constants
-└── league_helper/       # Helper modules (image generation, etc.)
-    └── leaderboard_image_pillow.py
+├── main.py      # LeagueCog: /league slash commands, message scoring, round check task
+├── admin.py     # LeagueAdminCog: owner-only $league group and $langa
+├── rounds.py    # Round end: winners, next round, champion role, announcement
+├── scoring.py   # Points per counted message (beginner-channel multiplier)
+├── views.py     # Persistent "Join the League" button
+├── config.py    # IDs, scoring, rate limits, round and display settings
+└── league_helper/
+    ├── leaderboard_image_pillow.py  # /league view image
+    ├── round_end_image.py           # Round-end podium image
+    ├── topchannels_image.py         # $league topchannels image
+    └── heatmap_image.py             # $league heatmap image
 ```
 
-## Module Responsibilities
+Database queries live in `db/leaderboard.py` (`LeaderboardMixin`); tables are created in
+`db/schema.py`. `main.py`'s `setup()` loads both cogs.
 
-### main.py (LeagueCog)
-**Purpose:** User-facing league functionality
+## User commands
 
-**Features:**
-- `/league join` - Join the language league
-- `/league leave` - Leave the language league
-- `/league view` - View leaderboard rankings
-- `/league stats` - View personal or user stats
-- Message tracking and scoring
-- Round management (automatic round end/start)
-- Winner announcements
+- `/league join` (or the join button): needs exactly one learning role, and not the native role
+  for that language. The board (Spanish or English) is fixed at join time.
+- `/league leave`
+- `/league view [spanish|english|combined]`: top 10 as an image, cached for 30 seconds.
+- `/league stats [user]`
 
-**Key Components:**
-- Role validation system
-- Message cooldown tracking
-- Language detection integration
-- Round scheduling (checks every 1 minute)
+## Scoring
 
-### admin.py (LeagueAdminCog)
-**Purpose:** Admin tools and debugging (owner-only)
+A message counts when the author is opted in and not banned, the channel isn't excluded, the
+per-channel 30-second cooldown has passed, and `cogs/utils/language.py` detects the language the
+author is learning (at least 10 characters after removing emojis, confidence 0.8). At most 200
+counted messages per user per UTC day; only messages that would score use up the cap.
 
-**Commands:**
-- `$league ban <user>` - Ban user from league
-- `$league unban <user>` - Unban user
-- `$league exclude <#channel>` - Exclude channel from tracking
-- `$league include <#channel>` - Re-include channel
-- `$league excluded` - List excluded channels
-- `$league admin_stats` - Show league statistics
-- `$league validatemessage <link>` - Debug message language detection
-- `$league audit <user>` - Show last 3 counted messages for verification
+Score = points + 5 × active days in the round. Beginner channels (`LEAGUE_BEGINNER_CHANNEL_IDS`)
+give 2 points per message instead of 1. Boards order by score descending, then user ID ascending.
 
-**Key Components:**
-- User management (banning/unbanning)
-- Channel exclusion system
-- Audit tools for debugging
-- Statistics dashboard
+Cooldowns and daily counts are kept in memory and reset on restart.
 
-### Shared language detection
+## Rounds
 
-`cogs/utils/language.py` owns `detect_message_language(content, *, min_length,
-min_confidence=0.8)` and the custom Discord and Unicode emoji patterns.
-It removes emojis before measuring length, rejects unsupported languages,
-and returns `es`, `en`, or `None` below the confidence threshold.
-The league passes `RATE_LIMITS.MIN_MESSAGE_LENGTH` (10 characters).
-The breakdown cog passes its own `MIN_INPUT_LENGTH` (5 characters).
+`check_round_end` runs every minute. When the active round's end date passes, `process_round_end`:
 
-## Design Principles Applied
+1. Reads the boards and picks the champions: the top 3 per board, skipping anyone who held the
+   role last round.
+2. In one transaction (`complete_round`): saves the top 3 per board to `league_round_winners`,
+   records the champions in `league_role_recipients`, marks the round completed, and creates the
+   next round. If the round was already completed, nothing changes and it returns `None`.
+3. Moves the champion role and posts the announcement with the podium image. Failures here are
+   logged and don't affect the database state.
 
-1. **Separation of Concerns**
-   - User features and admin features are completely separate
-   - Shared code extracted to utils module
-   - Each file has a single, clear responsibility
+Rounds end on Sunday at 12:00 UTC; a round started on a Sunday runs to the next Sunday.
 
-2. **DRY (Don't Repeat Yourself)**
-   - Language detection logic in one place
-   - Emoji patterns defined once
-   - Both cogs can use shared utilities
+## Admin commands (owner only)
 
-3. **Single Responsibility Principle**
-   - LeagueCog: Handles user interactions and league mechanics
-   - LeagueAdminCog: Handles admin operations and debugging
-   - `cogs/utils/language.py` provides language detection for multiple features
+| Command | Purpose |
+|---|---|
+| `$league ban/unban <user>` | Ban or unban; banning works for users who never joined |
+| `$league exclude/include <#channel>`, `$league excluded` | Channel exclusions |
+| `$league validatemessage <link>`, `$langa <text\|link>` | Debug language detection |
+| `$league admin_stats` | User and message counts |
+| `$league audit <user>` | Last 3 counted messages |
+| `$league endround`, `$league preview` | End the round now; dry run of the result |
+| `$league seedrole <ids>` | Seed last round's champion holders |
+| `$league topchannels [days]`, `$league heatmap [days]`, `$league recent [n]` | Activity reports |
+| `$league reminder [#channel]` | Post the join reminder with the button |
 
-4. **Maintainability**
-   - Admin features can evolve independently
-   - User features can be updated without touching admin code
-   - Utilities are tested once, used everywhere
-
-## Loading
-
-Both cogs are loaded from `main.py`'s setup function:
-
-```python
-async def setup(bot):
-    await bot.add_cog(LeagueCog(bot))
-    await bot.add_cog(LeagueAdminCog(bot))
-```
-
-This ensures both cogs are always loaded together when the league_cog module loads.
-
-## Configuration
-
-League settings live in `cogs/league_cog/config.py`:
-
-- `WINNER_CHANNEL_ID` - Channel for winner announcements
-- `SCORING` - Points and multipliers
-- `RATE_LIMITS` - Anti-spam settings
-- `ROUNDS` - Round duration and check intervals
-- `DISPLAY` - UI strings and emojis
-
-`cogs/utils/guild.py` owns the shared server identity. Its environment variables
-are `HOME_GUILD_ID`, `SPANISH_NATIVE_ROLE_ID`, `ENGLISH_NATIVE_ROLE_ID`,
-`OTHER_NATIVE_ROLE_ID`, `LEARNING_SPANISH_ROLE_ID`, and `LEARNING_ENGLISH_ROLE_ID`.
-League, stats, introductions, language exchange, and quote generation use these
-values rather than feature-specific copies.
-
-Scores add `SCORING.ACTIVE_DAY_BONUS_MULTIPLIER` for each active day. The board
-and personal stats both order users by score descending, then user ID ascending,
-so tied scores have distinct, consistent ranks.
-
-## Future Enhancements
-
-With this architecture, it's easy to:
-
-- Add new admin commands without touching user code
-- Add new user features without bloating admin tools
-- Test components independently
-- Extract more shared utilities as needed
-- Add more specialized cogs (analytics, reports, etc.)
+Round-end troubleshooting: `runbooks/league-round-end.md`.
