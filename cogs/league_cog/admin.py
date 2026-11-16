@@ -1,8 +1,9 @@
 """
 Language League Admin Cog
 
-This module contains all admin-only commands for managing and auditing
-the Language League system. All commands require bot owner permissions.
+This module contains the admin commands for managing and auditing the
+Language League system. Every subcommand requires bot owner permissions;
+bare ``$league`` from anyone else posts the public join reminder.
 """
 from __future__ import annotations
 
@@ -37,18 +38,35 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+def _reminder_embed() -> Embed:
+    """The public "Join the League" embed that goes with ``LeagueJoinView``."""
+    return Embed(
+        title="🏆 Join the Language League!",
+        description=(
+            "Chat in Spanish or English, earn points, win a champion role.\n\n"
+            "Click below to join. Requires a native role + a learning role."
+        ),
+        color=discord.Color.gold(),
+    )
+
+
 class LeagueAdminCog(BaseCog):
     """Admin-only commands for Language League management"""
 
     def __init__(self, bot: Hablemos):
         super().__init__(bot)
+        # Members typing `$league` get the join reminder; once per channel per minute.
+        self._public_reminder_cooldown = commands.CooldownMapping.from_cooldown(
+            1, 60, commands.BucketType.channel,
+        )
 
     def _league_cog(self) -> LeagueCog | None:
         """Return the main LeagueCog instance if loaded (typed accessor)."""
         return cast("LeagueCog | None", self.bot.get_cog("LeagueCog"))
 
+    # No group-level owner check: members get the join reminder, and every
+    # subcommand carries its own @commands.is_owner().
     @commands.group(name="league", invoke_without_command=True)
-    @commands.is_owner()
     async def league_admin(self, ctx: commands.Context):
         """🏆 Language League — Compete with other learners!
 
@@ -60,8 +78,17 @@ Earn points by chatting in your target language channels. The more active you ar
 **Leave:** `/league leave`
 
 Rounds last 1 week. Top performers earn a champion role!"""
-        await ctx.send(
-            "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole|preview|reminder|recent|topchannels|heatmap> [target]`"
+        if await self.bot.is_owner(ctx.author):
+            await ctx.send(
+                "❌ Usage: `$league <ban|unban|exclude|include|excluded|admin_stats|validatemessage|audit|endround|seedrole|preview|reminder|recent|topchannels|heatmap> [target]`"
+            )
+            return
+        if ctx.guild is None or ctx.guild.id != HOME_GUILD_ID:
+            return
+        if self._public_reminder_cooldown.update_rate_limit(ctx.message):
+            return
+        await ctx.reply(
+            embed=_reminder_embed(), view=LeagueJoinView(self.bot), mention_author=False,
         )
 
     @league_admin.command(name="topchannels", aliases=["topchans"])
@@ -211,14 +238,7 @@ Rounds last 1 week. Top performers earn a champion role!"""
         if not isinstance(target, discord.TextChannel) or target.guild.id != HOME_GUILD_ID:
             return await ctx.send("❌ Target channel must be a text channel in the league guild.")
 
-        embed = Embed(
-            title="🏆 Join the Language League!",
-            description=(
-                "Chat in Spanish or English, earn points, win a champion role.\n\n"
-                "Click below to join. Requires a native role + a learning role."
-            ),
-            color=discord.Color.gold(),
-        )
+        embed = _reminder_embed()
 
         try:
             await target.send(embed=embed, view=LeagueJoinView(self.bot))
