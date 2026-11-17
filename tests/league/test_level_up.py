@@ -58,6 +58,10 @@ class Author:
     bot: bool = False
     display_avatar: Asset = field(default_factory=Asset)
 
+    @property
+    def mention(self) -> str:
+        return f"<@{self.id}>"
+
 
 @dataclass
 class Guild:
@@ -67,19 +71,21 @@ class Guild:
 @dataclass
 class Channel:
     id: int = 555
+    sent: list[dict] = field(default_factory=list)
+
+    async def send(self, **kwargs) -> None:
+        self.sent.append(kwargs)
 
 
 @dataclass
 class Message:
+    """No ``reply``: the card must be posted to the channel, not as a reply."""
+
     content: str = "Hoy hace muy buen tiempo y quiero salir a caminar por el parque."
     author: Author = field(default_factory=Author)
     guild: Guild = field(default_factory=Guild)
     channel: Channel = field(default_factory=Channel)
     id: int = 1
-    replies: list[dict] = field(default_factory=list)
-
-    async def reply(self, **kwargs) -> None:
-        self.replies.append(kwargs)
 
 
 @dataclass
@@ -118,12 +124,14 @@ async def _send(db: FakeDB) -> Message:
     return message
 
 
-async def test_crossing_a_threshold_replies_with_a_card(rendered: list[tuple]) -> None:
+async def test_crossing_a_threshold_posts_a_card_in_the_channel(rendered: list[tuple]) -> None:
     message = await _send(FakeDB(xp=xp_for_level(2) - 1))
 
     assert rendered == [(1, 2, "https://cdn.example/avatar.png", "LEVEL UP")]
-    assert len(message.replies) == 1
-    assert message.replies[0]["mention_author"] is False
+    assert len(message.channel.sent) == 1
+    post = message.channel.sent[0]
+    assert post["content"] == f"<@{LEARNER_ID}>"
+    assert post["allowed_mentions"].users is False
 
 
 async def test_no_card_without_a_level_up_or_with_cards_off(rendered: list[tuple]) -> None:
@@ -131,5 +139,5 @@ async def test_no_card_without_a_level_up_or_with_cards_off(rendered: list[tuple
     cards_off = await _send(FakeDB(xp=xp_for_level(2) - 1, cards_enabled=False))
 
     assert rendered == []
-    assert within_level.replies == []
-    assert cards_off.replies == []
+    assert within_level.channel.sent == []
+    assert cards_off.channel.sent == []

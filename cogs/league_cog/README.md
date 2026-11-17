@@ -57,7 +57,8 @@ same transaction that records it, so a level-up is detected exactly once. XP cou
 
 Reaching level `L` takes `25 × (L − 1)^1.5` total XP (`LEVELS` in `config.py`): level 10 at
 about 700, 50 at about 8,600, 100 at about 24,600. When a message crosses a threshold, the bot
-replies to it with a level-up card (no ping) unless the author turned cards off.
+posts a level-up card in that channel, naming the author without pinging them, unless the author
+turned cards off.
 
 Cards use the tier's background: Dawn 1–9, Mist 10–24, Lilac 25–49, Tide 50–74, Bloom 75–99,
 Gold 100+ (`TIERS` in `levels.py`). The backgrounds come from Stable Image Core on Bedrock;

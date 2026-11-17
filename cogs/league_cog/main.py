@@ -737,7 +737,7 @@ class LeagueCog(BaseCog):
             logger.error("Error in league message tracking: %s", e, exc_info=True)
 
     async def _announce_level_up(self, message: discord.Message, gain: XpGain) -> None:
-        """Reply to the message that levelled its author up with a level-up card."""
+        """Post a level-up card in the channel of the message that levelled its author up."""
         progress = progress_for_xp(gain.xp_after)
         buf = await asyncio.wait_for(
             asyncio.to_thread(
@@ -751,7 +751,11 @@ class LeagueCog(BaseCog):
             description=f"Level up: {gain.old_level} to {gain.new_level}",
         )
         try:
-            await message.reply(file=card, mention_author=False)
+            # The mention names who levelled up; AllowedMentions.none() keeps it from pinging.
+            await message.channel.send(
+                content=message.author.mention, file=card,
+                allowed_mentions=discord.AllowedMentions.none(),
+            )
         except discord.HTTPException as e:
             logger.warning("Could not post level-up card in %s: %s", message.channel.id, e)
             return
