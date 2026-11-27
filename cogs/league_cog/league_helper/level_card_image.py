@@ -2,10 +2,11 @@
 
 Both draw a frosted panel on the tier's background image (see
 ``cogs/league_cog/levels.py`` and ``scripts/generate_level_backgrounds.py``),
-plus the member's avatar, in the language from ``card_text.py``. Rendered at
-``S`` times display size and LANCZOS-downsampled to ``OUTPUT_SCALE``;
-coordinates below are display units multiplied by ``S``. CPU- and
-network-bound (avatar fetch); call via ``asyncio.to_thread``.
+plus the member's avatar, in the language from ``card_text.py``. The frosted
+background is built once per tier and card size, then rendered at ``S`` times
+display size and LANCZOS-downsampled to ``OUTPUT_SCALE``; coordinates below are
+display units multiplied by ``S``. CPU- and network-bound (avatar fetch); call
+via ``asyncio.to_thread``.
 """
 from __future__ import annotations
 
@@ -22,7 +23,7 @@ from cogs.league_cog.profile import LeagueProfile, RoundStanding
 
 from .leaderboard_image_pillow import create_default_avatar, download_avatar
 
-SCALE = 3
+SCALE = 2
 OUTPUT_SCALE = 2
 S = SCALE * OUTPUT_SCALE
 
@@ -55,11 +56,6 @@ def _font(size: int, weight: str) -> ImageFont.FreeTypeFont:
     return font
 
 
-@functools.cache
-def _background(path: Path) -> Image.Image:
-    return Image.open(path).convert("RGB")
-
-
 def _scaled(box: Box, k: int) -> Box:
     x0, y0, x1, y1 = box
     return x0 * k, y0 * k, x1 * k, y1 * k
@@ -81,26 +77,34 @@ def _draw(canvas: Image.Image) -> ImageDraw.ImageDraw:
     return ImageDraw.Draw(canvas, "RGBA")
 
 
+@functools.cache
+def _frosted(path: Path, height: int, panel: Box) -> tuple[Image.Image, bool]:
+    """The tier background at output size with the panel blurred, and whether the panel is light.
+
+    Cached per tier and card size; callers must not modify the returned image.
+    """
+    with Image.open(path) as image:
+        bg = _cover(image.convert("RGB"), _W * OUTPUT_SCALE, height * OUTPUT_SCALE)
+    box = _scaled(panel, OUTPUT_SCALE)
+    region = bg.crop(box)
+    light = ImageStat.Stat(region.convert("L")).mean[0] > _LIGHT_BACKGROUND
+    # Blur at stored size: the result is smooth, so upscaling it loses nothing.
+    blurred = region.filter(ImageFilter.GaussianBlur(15 * OUTPUT_SCALE))
+    mask = Image.new("L", blurred.size, 0)
+    ImageDraw.Draw(mask).rounded_rectangle(
+        (0, 0, *blurred.size), _RADIUS * OUTPUT_SCALE, fill=255,
+    )
+    bg.paste(blurred, (box[0], box[1]), mask)
+    return bg, light
+
+
 class _Card:
     """A canvas with the tier background, frosted panel and chosen text colour."""
 
     def __init__(self, level: int, height: int, panel: Box):
         self.height = height
-        bg = _cover(
-            _background(tier_for_level(level).background),
-            _W * OUTPUT_SCALE, height * OUTPUT_SCALE,
-        )
-        box = _scaled(panel, OUTPUT_SCALE)
-        region = bg.crop(box)
-        light = ImageStat.Stat(region.convert("L")).mean[0] > _LIGHT_BACKGROUND
-        # Blur at stored size: the result is smooth, so upscaling it loses nothing.
-        blurred = region.filter(ImageFilter.GaussianBlur(15 * OUTPUT_SCALE))
-        mask = Image.new("L", blurred.size, 0)
-        ImageDraw.Draw(mask).rounded_rectangle(
-            (0, 0, *blurred.size), _RADIUS * OUTPUT_SCALE, fill=255,
-        )
-        bg.paste(blurred, (box[0], box[1]), mask)
-
+        bg, light = _frosted(tier_for_level(level).background, height, panel)
+        # resize returns a new image, so the cached background stays untouched.
         self.canvas = bg.resize((_W * S, height * S), Image.Resampling.BICUBIC)
         self.draw = _draw(self.canvas)
         self.draw.rounded_rectangle(
@@ -150,7 +154,7 @@ class _Card:
             (_W * OUTPUT_SCALE, self.height * OUTPUT_SCALE), Image.Resampling.LANCZOS,
         )
         buf = io.BytesIO()
-        out.save(buf, "PNG", optimize=True)
+        out.save(buf, "PNG")
         buf.seek(0)
         return buf
 
