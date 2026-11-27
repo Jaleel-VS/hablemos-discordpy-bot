@@ -627,13 +627,15 @@ class LeagueCog(BaseCog):
         await interaction.response.defer()
         now = datetime.now(UTC)
         current_round = self._current_round
+        db_started = time.perf_counter()
         profile = await self.bot.db.get_league_profile(
             target.id, current_round['round_id'] if current_round else None, now.date(),
         )
+        db_seconds = time.perf_counter() - db_started
         # The reader's language: the viewer may be looking at someone else's card.
         text = _card_text(interaction.user)
         ends_in = _ends_in(current_round['end_date'], now, text) if current_round else ""
-        buf = await asyncio.wait_for(
+        buf, avatar_seconds, render_seconds = await asyncio.wait_for(
             asyncio.to_thread(render_profile, profile, _avatar_url(target), text, ends_in),
             timeout=30,
         )
@@ -641,10 +643,16 @@ class LeagueCog(BaseCog):
             buf, filename="profile.png",
             description=f"Level {profile.progress.level}, {profile.progress.xp} XP",
         )
+        upload_started = time.perf_counter()
         await interaction.followup.send(
             content=None if target == interaction.user else target.mention,
             file=card,
             allowed_mentions=discord.AllowedMentions.none(),
+        )
+        logger.info(
+            "league_profile db_ms=%.1f avatar_ms=%.1f render_ms=%.1f upload_ms=%.1f",
+            db_seconds * 1000, avatar_seconds * 1000, render_seconds * 1000,
+            (time.perf_counter() - upload_started) * 1000,
         )
 
     @league_group.command(name="levelups", description="Turn your level-up cards on or off")

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import functools
 import io
+import time
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageStat
@@ -130,15 +131,19 @@ class _Card:
     def divider(self, y: int, x0: int, x1: int) -> None:
         self.draw.line((x0 * S, y * S, x1 * S, y * S), fill=(*self.fg, 70), width=S)
 
-    def avatar(self, center: tuple[int, int], radius: int, avatar_url: str | None) -> None:
+    def avatar(self, center: tuple[int, int], radius: int, avatar_url: str | None) -> float:
+        """Draw the avatar and return seconds spent loading it, excluding compositing."""
         size = radius * 2 * S
+        started = time.perf_counter()
         avatar = download_avatar(avatar_url, size) if avatar_url else create_default_avatar(size)
+        load_seconds = time.perf_counter() - started
         cx, cy = center[0] * S, center[1] * S
         ring = (radius + 5) * S
         self.draw.ellipse((cx - ring, cy - ring, cx + ring, cy + ring), fill=(255, 255, 255, 210))
         circle = Image.new("L", (size, size), 0)
         ImageDraw.Draw(circle).ellipse((0, 0, size, size), fill=255)
         self.canvas.paste(avatar.convert("RGB"), (cx - size // 2, cy - size // 2), circle)
+        return load_seconds
 
     def export(self) -> io.BytesIO:
         out = self.canvas.resize(
@@ -236,8 +241,9 @@ def _history_band(card: _Card, profile: LeagueProfile, text: CardText) -> None:
 
 def render_profile(
     profile: LeagueProfile, avatar_url: str | None, text: CardText, ends_in: str,
-) -> io.BytesIO:
-    """Level, this round's standing and league history on one card."""
+) -> tuple[io.BytesIO, float, float]:
+    """Return the profile PNG, avatar load seconds and exclusive render seconds."""
+    started = time.perf_counter()
     progress = profile.progress
     card = _Card(progress.level, _PROFILE_H, (20, 20, 880, 480))
 
@@ -247,7 +253,7 @@ def render_profile(
     card.bar((_TEXT_X, 150, 680, 162), progress.fraction)
     to_next = text.to_next.format(points=progress.to_next, level=progress.level + 1)
     card.text(_TEXT_X + 2, 172, f"{progress.xp:,} XP  ·  {to_next}", 19, muted=True)
-    card.avatar((785, 112), 68, avatar_url)
+    avatar_seconds = card.avatar((785, 112), 68, avatar_url)
 
     card.divider(212, _TEXT_X, 845)
     header = f"{text.this_round}  ·  {ends_in}" if ends_in else text.this_round
@@ -259,4 +265,5 @@ def render_profile(
 
     card.divider(366, _TEXT_X, 845)
     _history_band(card, profile, text)
-    return card.export()
+    buf = card.export()
+    return buf, avatar_seconds, time.perf_counter() - started - avatar_seconds

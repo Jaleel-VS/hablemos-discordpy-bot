@@ -35,6 +35,8 @@ Database queries live in `db/leaderboard.py` (`LeaderboardMixin`); tables are cr
 - `/league profile [user]`: one card with the level and progress bar, this round (board and
   combined rank, movement since last round, score, active days, gap to the next rank) and history
   (streak, podiums, champion weeks, best round, last 7 days).
+  Successful requests log `league_profile` timings in milliseconds for DB reads, avatar loading,
+  card rendering (including PNG encoding, excluding avatar loading), and the Discord upload.
 - `/league levelups on|off`: level-up cards on or off; the level keeps counting either way.
 
 ## Scoring
